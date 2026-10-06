@@ -47,17 +47,35 @@
     "executableFileVersion": "2.02.0",
     "executableSignatureStatus": "Valid",
     "cliHelpExitCode": 0,
-    "loginVerified": false,
+    "loginVerified": true,
     "projectAccessVerified": false
   },
   "loginObservation": {
     "userReply": "已登录",
     "cliCommand": "islogin --lang zh",
     "cliExitCode": 0,
-    "cliError": "IDE_SERVICE_PORT_DISABLED",
-    "servicePortEnabled": false,
-    "verificationStatus": "blocked-by-service-port",
-    "cloudEnvironmentQueryExecuted": false
+    "cliError": null,
+    "servicePortEnabled": true,
+    "servicePortUserReply": "已开启",
+    "serviceAddress": "http://127.0.0.1:51438",
+    "response": { "login": true },
+    "verificationStatus": "verified",
+    "cloudEnvironmentQueryExecuted": true
+  },
+  "cloudEnvironmentObservation": {
+    "appId": "wx358290e451cb06e7",
+    "diagnosticProject": ".local/permission-check",
+    "diagnosticProjectOpenExitCode": 0,
+    "diagnosticProjectOpenResult": "open-success",
+    "queryAttempts": 3,
+    "cliExitCode": 0,
+    "platformErrorCode": 10,
+    "platformRet": 1000,
+    "platformMessage": "system error.",
+    "status": "query-failed",
+    "environments": null,
+    "projectAccessVerified": false,
+    "resourcesCreated": false
   },
   "prerequisites": {
     "dataHandlingConfirmed": false,

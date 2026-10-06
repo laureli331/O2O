@@ -124,7 +124,7 @@ test('official installer verification and the confirmed installation remain trac
   assert.equal(prepared.installationExecuted, true);
   assert.equal(record.installedDeveloperTools.approvalReply, '确认');
   assert.equal(record.installedDeveloperTools.packageVersion, prepared.version);
-  assert.equal(record.installedDeveloperTools.loginVerified, false);
+  assert.equal(record.installedDeveloperTools.loginVerified, true);
   assert.equal(record.installedDeveloperTools.projectAccessVerified, false);
   assert(technical.includes(prepared.sha256));
   const ignoredFolders = read('.gitignore').split(/\r?\n/);
@@ -156,19 +156,48 @@ test('configured AppID must use the official format and preserve the resource re
   assert.throws(() => validateDevelopmentRecord(absent, plan), /Configured AppID conflicts with resource record/);
 });
 
-test('reported login and a zero exit code with an IDE error do not verify login or cloud access', () => {
+test('login verification uses the explicit successful response from the active service port', () => {
   assert.equal(record.loginObservation.userReply, '已登录');
   assert.equal(record.loginObservation.cliExitCode, 0);
-  assert.equal(record.loginObservation.cliError, 'IDE_SERVICE_PORT_DISABLED');
-  assert.equal(record.loginObservation.servicePortEnabled, false);
-  assert.equal(record.loginObservation.cloudEnvironmentQueryExecuted, false);
+  assert.equal(record.loginObservation.cliError, null);
+  assert.equal(record.loginObservation.servicePortEnabled, true);
+  assert.equal(record.loginObservation.response.login, true);
+  const missingResponse = copy();
+  delete missingResponse.loginObservation.response;
+  assert.throws(() => validateDevelopmentRecord(missingResponse, plan), /explicit successful login response/);
+  const failedResponse = copy();
+  failedResponse.loginObservation.response.login = false;
+  assert.throws(() => validateDevelopmentRecord(failedResponse, plan), /explicit successful login response/);
+});
+
+test('a zero exit code with an IDE error still cannot verify login or cloud access', () => {
   const falseLogin = copy();
+  falseLogin.loginObservation.cliError = 'IDE_SERVICE_PORT_DISABLED';
   falseLogin.installedDeveloperTools.loginVerified = true;
   assert.throws(() => validateDevelopmentRecord(falseLogin, plan), /CLI errors cannot verify login/);
   const falseAccess = copy();
+  falseAccess.installedDeveloperTools.loginVerified = false;
+  falseAccess.loginObservation.servicePortEnabled = false;
   falseAccess.installedDeveloperTools.projectAccessVerified = true;
   assert.throws(() => validateDevelopmentRecord(falseAccess, plan), /Closed service port cannot verify project access/);
   const falseQuery = copy();
+  falseQuery.installedDeveloperTools.loginVerified = false;
+  falseQuery.loginObservation.servicePortEnabled = false;
   falseQuery.loginObservation.cloudEnvironmentQueryExecuted = true;
   assert.throws(() => validateDevelopmentRecord(falseQuery, plan), /Cloud environment query was blocked/);
+});
+
+test('cloud system errors are distinct from an empty environment list or verified project access', () => {
+  assert.equal(record.cloudEnvironmentObservation.platformRet, 1000);
+  assert.equal(record.cloudEnvironmentObservation.platformErrorCode, 10);
+  assert.equal(record.cloudEnvironmentObservation.queryAttempts, 3);
+  assert.equal(record.cloudEnvironmentObservation.status, 'query-failed');
+  assert.equal(record.cloudEnvironmentObservation.environments, null);
+  assert.equal(record.cloudEnvironmentObservation.resourcesCreated, false);
+  const emptyList = copy();
+  emptyList.cloudEnvironmentObservation.environments = [];
+  assert.throws(() => validateDevelopmentRecord(emptyList, plan), /Failed cloud query cannot be reported as an empty environment list/);
+  const access = copy();
+  access.cloudEnvironmentObservation.projectAccessVerified = true;
+  assert.throws(() => validateDevelopmentRecord(access, plan), /Failed cloud query cannot verify project permissions/);
 });

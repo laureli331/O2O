@@ -45,10 +45,21 @@ function validateDevelopmentRecord(record, plan) {
     if (record.loginObservation.cliError !== null) {
       assert.equal(record.installedDeveloperTools.loginVerified, false, 'CLI errors cannot verify login, even when exit code is zero');
     }
+    if (record.installedDeveloperTools.loginVerified) {
+      assert.equal(record.loginObservation.cliExitCode, 0, 'Login command did not succeed');
+      assert.equal(record.loginObservation.servicePortEnabled, true, 'Verified login requires an active service port');
+      assert.equal(record.loginObservation.response?.login, true, 'Verified login requires an explicit successful login response');
+      assert.equal(record.loginObservation.verificationStatus, 'verified', 'Login verification status disagrees with verified result');
+    }
     if (!record.loginObservation.servicePortEnabled) {
       assert.equal(record.installedDeveloperTools.projectAccessVerified, false, 'Closed service port cannot verify project access');
       assert.equal(record.loginObservation.cloudEnvironmentQueryExecuted, false, 'Cloud environment query was blocked by the closed service port');
     }
+  }
+  if (record.cloudEnvironmentObservation?.status === 'query-failed') {
+    assert.equal(record.cloudEnvironmentObservation.environments, null, 'Failed cloud query cannot be reported as an empty environment list');
+    assert.equal(record.cloudEnvironmentObservation.projectAccessVerified, false, 'Failed cloud query cannot verify project permissions');
+    assert.equal(record.installedDeveloperTools.projectAccessVerified, false, 'Failed cloud query cannot verify installed tool project access');
   }
 
   const tasks = new Map();
