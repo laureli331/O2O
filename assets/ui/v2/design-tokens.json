@@ -1,0 +1,161 @@
+{
+  "version": 2,
+  "status": "user-directed-revision",
+  "confirmedDate": "2026-10-06",
+  "palette": {
+    "green": "#618872",
+    "ivory": "#FCFBF7",
+    "ink": "#263A31"
+  },
+  "maxBaseColors": 3,
+  "tonalMethod": "opacity-and-blends-only",
+  "typography": {
+    "fontFamily": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif",
+    "pageTitle": 26,
+    "sectionTitle": 18,
+    "body": 16,
+    "metadata": 13,
+    "weights": [
+      400,
+      500,
+      600
+    ],
+    "unit": "logical-px"
+  },
+  "layout": {
+    "spacing": [
+      8,
+      16,
+      24,
+      32,
+      40
+    ],
+    "outerMargin": 32,
+    "sectionGap": 36,
+    "cardPadding": 24,
+    "cardRadius": 8,
+    "controlRadius": 6,
+    "touchTargetMin": 44,
+    "unit": "logical-px",
+    "overflow": "vertical-scroll",
+    "avoidFitAllContent": true
+  },
+  "icons": {
+    "source": "icons.svg",
+    "count": 20,
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75
+  },
+  "effects": {
+    "glass": {
+      "surfaceColor": "ivory",
+      "surfaceOpacity": 0.76,
+      "backdropBlur": 24,
+      "blurUnit": "logical-px",
+      "visibleBackdropRequired": true,
+      "sharpText": true,
+      "locations": [
+        "home-tabbar",
+        "secondhand-tabbar",
+        "my-tabbar",
+        "repair-photo-overlay",
+        "repair-action-tray",
+        "errand-action-tray"
+      ]
+    },
+    "gradient": {
+      "direction": "diagonal",
+      "stops": [
+        {
+          "color": "green",
+          "opacity": 0.95
+        },
+        {
+          "color": "green",
+          "opacity": 0.64
+        }
+      ],
+      "locations": [
+        "primary-actions",
+        "home-upper-wash"
+      ],
+      "mustBeVisiblyDistinct": true
+    },
+    "noise": {
+      "opacity": 0.015
+    },
+    "shadow": {
+      "color": "ink",
+      "opacity": 0.08,
+      "blur": 24,
+      "offsetY": 8
+    },
+    "screenshots": {
+      "reduceVisibleRecords": true,
+      "allowBelowFoldContent": true,
+      "whitespaceTarget": "30-40 percent; visual target, not a measured claim"
+    }
+  },
+  "screens": [
+    {
+      "id": "01",
+      "label": "首页",
+      "prd": [
+        "V01"
+      ]
+    },
+    {
+      "id": "02",
+      "label": "维修详情",
+      "prd": [
+        "V02"
+      ]
+    },
+    {
+      "id": "03",
+      "label": "跑腿报价选人",
+      "prd": [
+        "V03"
+      ],
+      "viewer": "publisher"
+    },
+    {
+      "id": "04",
+      "label": "二手列表",
+      "prd": [
+        "V01",
+        "V02"
+      ]
+    },
+    {
+      "id": "05",
+      "label": "三维评分",
+      "prd": [
+        "V18"
+      ]
+    },
+    {
+      "id": "06",
+      "label": "我的",
+      "prd": [
+        "V05",
+        "V06",
+        "V07",
+        "V08",
+        "V09",
+        "V10",
+        "V11",
+        "V12",
+        "V13",
+        "V14"
+      ]
+    }
+  ],
+  "previousVersion": "../v1/overview.png",
+  "paletteScope": "UI-components-only",
+  "photography": {
+    "naturalColor": true,
+    "restrictedToUIPalette": false,
+    "exampleOnly": true
+  }
+}

@@ -1,0 +1,74 @@
+Use case: ui-mockup — EDIT the supplied six-screen UI mockup into a visibly redesigned version.
+The user rejected the input as cramped, lacking breathing room, and lacking actual visible gradients and frosted glass. The user also clarified that the three-color limit applies ONLY to UI elements, not to illustrative photos, which SHOULD be naturally colored. This correction takes precedence over all previous monochrome-photo restrictions.
+
+PRIMARY GOAL: Make the difference unmistakable at first glance. REDESIGN the interior layouts substantially, not just their colors. Keep the same SIX Chinese WeChat mini-program screen purposes, arranged 3 columns x 2 rows on a large portrait presentation board. Flat straight-on screens, no physical phones or 3D perspective. Large clear Simplified Chinese sans-serif. Board heading "乡镇生活服务", subtitle "UI 设计 · 设计示例". All records and photos are fictional DESIGN EXAMPLES, no real township/merchant/street names.
+
+APPROVED CORRECTION:
+UI ONLY uses three base colors: soft sage green #618872; VERY PALE LIGHT IVORY #FCFBF7; dark green-charcoal #263A31. All UI variants use opacity/mixtures of these three. Background must read almost white with a warm ivory undertone, NOT beige, khaki or dirty grey.
+Product imagery is EXEMPT from this palette. Use rich natural photographic colors: a red bicycle, a pale blue washing machine detail, warm orange/cardboard parcel, light wood shelving. These are ordinary credible everyday product photos, not monotone green pictures and not UI accent colors.
+Do not fill every pixel with cards and text. Aim for roughly 30–40 percent open whitespace within each viewport. At least 28–32 logical px outer horizontal margins; 28–40 px separation between major sections; 24 px card padding; use comfortable 16–20 px gaps inside cards. Maintain compact SMALL 8px card corners and 6px buttons, NOT huge rounded bubble corners.
+Increase perceived whitespace by reducing repeated explanations and showing fewer records per viewport. Lists naturally continue by scrolling; do NOT squeeze all records and tool rows into the screen. Keep the essential actions and permissions. Page titles 26px, body 16px, brief secondary metadata 13–14px. Never shrink text to fit more.
+Use distinct typography levels and larger page-top breathing space. Almost no visible outlines around routine cards, no nested box inside box inside box. Restrained subtle depth through translucent surfaces and broad soft shadows. Fine microtexture should barely be noticeable.
+
+VISIBLE REAL GLASS AND GRADIENTS — NON-NEGOTIABLE:
+Each main green CTA must visibly show a soft diagonal gradient, from stronger sage at lower left to lighter translucent sage at upper right, all derived from the same green base. It must NOT be a flat green rectangle.
+A translucent frosted-glass bottom tab bar floats above screen content on screens 01, 04, 06: light ivory approximately 70–80% opacity, visibly blurred backdrop, thin light catching edge and subtle lifted shadow. Place the tail of a colored content thumbnail OR green background glow just behind part of this bar so frosted diffusion is unmistakable. The underlying shapes must actually look blurred and partially visible through the glass; do not draw an opaque ivory rectangle and merely call it glass. Keep all labels sharp and dark.
+On screens 02 and 03, the sticky CTA tray must also be a visibly translucent frosted-ivory surface with soft backdrop Gaussian blur. Enough space above and below button for breathing.
+On screen 01, use one restrained green-to-transparent diagonal wash behind the upper category area, or a faint blurred sage light bloom behind a floating glass category panel. The gradient should be visible but elegant, no neon/huge decorative blobs.
+Use a frosted-glass information overlay on the colorful washing-machine photograph in screen 02, with readable text above naturally blurred photograph, to clearly demonstrate glass. Keep subtle privacy/location metadata in this overlay; never show full address. Photo colors remain photo content, exempt from UI palette.
+Main card surfaces softly fade from near-transparent ivory to brighter ivory; Gaussian blur belongs behind surfaces, not on text. Provide plausible broad soft shadows for distinct z-depth. Preserve legibility.
+
+SCREEN 01 — 首页:
+Top header "乡镇生活服务", "选择村/社区", compact WeChat capsule.
+Airy search "搜索维修、跑腿、二手".
+One spacious floating glass three-column icon panel: "维修", "跑腿", "二手"; consistent SVG-style outline icons, no emoji.
+Generously separated single understated service promotion card: small "广告" tag, label "维修推广", natural colorful appliance thumbnail, "示例维修服务", concise "查看资料" action. Do not invent real credentials, quality guarantees or popularity.
+Below a clearly spaced section title "最新需求", small filter "全部 · 维修 · 跑腿 · 二手".
+Show ONE roomy information card with naturally colored parcel thumbnail: "代取快递", "示例区域", "服务费预算 ¥12". Allow next record to continue offscreen, not three cramped fully filled records.
+Bottom frosted glass navigation "首页", "服务", "发布", "消息", "我的". No big tall opaque footer. All available features remain in their existing sections; do not add chat/shopping functionality.
+
+SCREEN 02 — 维修详情:
+Simple header "维修求助".
+Large beautiful naturally colored appliance photo, pale blue machine in a bright real domestic scene. Add a small genuinely translucent frosted overlay along the bottom of the image reading "维修 · 示例区域" over the blurred underlying photo.
+Considerable whitespace between photo and title "洗衣机无法启动".
+One concise description "启动后无反应，希望维修人员联系查看。"
+One relaxed contact section, no redundant repeated demand-description card: "联系方式", "138****0000"; helper "获准后可查看完整号码". No full phone number, real name, identity document or street number.
+Small "举报" link and "设计示例".
+Frosted sticky CTA tray with clear sage gradient "申请联系". No immediate phone dialing, price checkout or platform-guaranteed service.
+
+SCREEN 03 — 跑腿报价选人:
+Title "选择承接者"; small "发布者视角 · 设计示例".
+A concise airy task header "代取快递", "示例区域", "服务费预算 ¥12".
+Minimal three-step status line "待承接 / 履约中 / 待确认", first active.
+Two generously padded candidate cards with abstract line-profile icons and lots of whitespace: "示例用户 A", "服务费报价 ¥12", "不垫付"; and "示例用户 B", "服务费报价 ¥15", "愿垫付 · 上限 ¥50". A selected-looking outline on first card means draft choice only. No arbitrary public score or real avatar.
+Avoid extra repeated paragraphs or separate large fee-summary box.
+Short footer note "确认费用与垫付条件 · 双方直接结算".
+Visible frosted bottom CTA tray, green-gradient action "确认费用并选此人". No auto-dispatch, no platform collecting service fee, no private task addresses visible.
+
+SCREEN 04 — 二手列表:
+Title "二手信息"; roomy search "搜索闲置物品"; simple row "全部分类" and "选择村/社区", small "最新发布".
+Spacious 2-column product grid. Show only TWO large fully visible cards: natural RED bicycle photo, title "闲置自行车", price "¥180"; warm light WOOD bookshelf photo, title "二手书架", price "面议". Each secondary metadata "示例区域".
+Let just the upper part of next row be visible lower down behind the glass bottom tab bar; lists scroll, do not cram four complete cards in.
+Natural full-color photos with visually attractive bright daylight. No three-color restriction on photos.
+No secondhand paid promotion, cart, buy/checkout button, GPS distance or fabricated sales numbers.
+Bottom tab bar actual translucent frosted glass, identical five tabs.
+
+SCREEN 05 — 三维评分:
+Header "评价承接者".
+Brief qualification line "跑腿 · 承接者" and "实际完成已确认 · 设计示例"; omit oversized user card.
+Three LARGE comfortably separated independent rating rows "态度", "效率", "沟通"; each exactly FIVE EMPTY OUTLINED STARS, none preselected; "请选择" can be small. Don't prefill zero/5 stars.
+Brief helper "三项必选，每项1—5星".
+Roomy textarea "分享本次实际体验（选填）", counter "0/300".
+Simple outline-image add control "添加图片 · 最多3张".
+Only ONE short visible policy note "图文审核通过后公开"; an info icon can afford access to full rules. Full policy can scroll below; do not stuff three extra small print paragraphs in.
+Bottom action "提交评价" disabled while unselected. Use reduced-opacity sage gradient, not flat opaque dark fill. No likes, public comments, free chat or fourth dimension.
+
+SCREEN 06 — 我的:
+Large title "我的", small settings SVG-style line icon.
+Airy profile header "示例用户" with small separate statuses "微信已登录" and "资格待核验"; helper "发布或接单时核验资格".
+One roomy 2x2 tool bento grid, not four cramped tiles across: "我的发布", "我的跑腿", "联系申请", "我的评价".
+Next section has simple unboxed rows for "收藏", "草稿", "私人地址簿", with comfortable padding and consistent icons.
+Service management and appeals remain lower in this scrollable page, accessible by a small row "服务管理与帮助"; not all management rows must be visible in this screenshot. No wallet/balance/age badge or exclusive rider identity.
+Bottom genuine frosted-glass five-tab navigation, "我的" active.
+
+Across all screens: consistent SVG-like line icons 24px grid, 1.75px stroke, rounded line ends; independent SVG source assets exist separately. Typeface consistent Chinese system sans-serif, weights regular/medium/semibold only. All key labels accurately spelled. Board must convincingly demonstrate the user's requested new spacing, ALMOST-WHITE warm ivory, natural colored images, CLEAR VISIBLE gradients, and REAL translucent frosted blurred layers. Preserve all six screen purposes and approved business permissions. A premium calm useful mobile product, NOT a busy retail dashboard, NOT just recoloring the input.
