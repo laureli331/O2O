@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-06",
+  "timezone": "Asia/Shanghai",
+  "approval": {
+    "reply": "采用",
+    "frontend": "native-wechat-typescript",
+    "backend": "node-cloud-functions",
+    "database": "cloudbase",
+    "storage": "cloudbase-storage",
+    "scheduler": "cloud-timer-with-recovery",
+    "operations": "miniapp-two-independent-equal-role-accounts",
+    "developmentScope": "local-and-controlled-tests",
+    "purchasePolicy": "confirm-cost-before-purchase"
+  },
+  "resources": {
+    "appIdExists": true,
+    "appIdValue": null,
+    "currentSubject": "personal",
+    "individualBusinessRegistration": "willing-if-needed-not-registered",
+    "developerToolsInstalled": false,
+    "cloudEnvironmentOpened": false,
+    "localNodeVersion": "24.18.0",
+    "localNpmVersion": "11.16.0",
+    "cloudRuntimeVersion": null,
+    "databaseMode": null,
+    "productionBudget": null
+  },
+  "preparedDeveloperTools": {
+    "channel": "stable",
+    "version": "2.02.2608080",
+    "architecture": "Windows-x64",
+    "source": "https://devtools.wxqcloud.qq.com.cn/WechatWebDev/release/be1ec64cf6184b0fa64091919793f068/wechat_devtools_2.02.2608080_win32_x64.exe",
+    "localPath": ".local/downloads/wechat_devtools_2.02.2608080_win32_x64.exe",
+    "bytes": 190935184,
+    "sha256": "8a3255fe7626879b472dc5145e1b29d797f86d0a6bd9d775097f2ba5f9bb7467",
+    "signatureStatus": "Valid",
+    "signer": "Tencent Technology (Shenzhen) Company Limited",
+    "fileVersion": "2.02.2608080",
+    "installationExecuted": false
+  },
+  "prerequisites": {
+    "dataHandlingConfirmed": false,
+    "businessConfigurationConfirmed": false,
+    "remainingPagesConfirmed": false,
+    "scheduleAndBudgetConfirmed": false
+  },
+  "tasks": {
+    "DP01": "执行中",
+    "DP02": "资料准备中",
+    "DP03": "未开始",
+    "DP04": "资料准备中",
+    "DP05": "未开始",
+    "DP06": "未开始",
+    "DP07": "未开始"
+  },
+  "externalGates": [
+    { "id": "E01", "status": "待外部依据", "evidence": [] },
+    { "id": "E02", "status": "待外部依据", "evidence": [] },
+    { "id": "E03", "status": "待用户确认", "evidence": [] },
+    { "id": "E04", "status": "待外部依据", "evidence": [] },
+    { "id": "E05", "status": "待用户确认", "evidence": [] },
+    { "id": "E06", "status": "待外部依据", "evidence": [] },
+    { "id": "QG01", "status": "待外部依据", "evidence": [] }
+  ],
+  "productionEnabled": false
+}
