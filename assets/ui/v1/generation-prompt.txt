@@ -1,0 +1,65 @@
+Use case: ui-mockup.
+Create a production-quality HIGH FIDELITY UI design image for a Chinese WeChat mini program for township residents in Yongxing County. This is a UI visual review artifact based on an approved PRD, not a marketing poster. Generate ONE large crisp portrait design board, ideally 2160 x 2880, with SIX FULL mobile app screens arranged as a tidy 3-column by 2-row grid. Each screen has a consistent 390 x 760 logical proportion and generous gutters. No perspective, no physical phones, no glossy device frames, no cropped screens. Display actual UI at large enough size for readable Simplified Chinese. Use the entire canvas sensibly. Minimal board heading "乡镇生活服务 · UI 设计" and smaller subtitle "设计示例 · 六个核心页面". Number the screens with small labels outside the screens.
+
+APPROVED VISUAL SYSTEM — MUST FOLLOW:
+ONLY THREE base colors throughout: soft forest green #527A63, warm ivory #F5F3EC, deep charcoal green #25382E. Derive all tones ONLY using opacity and blends of these three. No orange, blue, yellow, purple, red, gold or pure black/white accents, including in stars, photos, badges and charts. Greys are blends of approved colors. Muted soft color, not saturated emerald or neon. Dark charcoal text for readable contrast. Main actions use green with ivory lettering.
+Airy sophisticated card-based bento composition, generous whitespace and breathing room. Small corner radii: roughly 8px cards, 6px controls; no giant pill-shaped cards. Restrained frosted glass on navigation or overlapping surfaces with subtle Gaussian background blur, translucent ivory surfaces, gentle green-to-transparent gradients, extremely fine barely-visible noise texture. Subtle low-contrast ambient shadows produce depth without heavy decoration. Mostly stable opaque surfaces behind text. No noisy patterned background, no huge decorative blobs, no ornamental 3D graphics.
+Clear strong information hierarchy: very readable modern Simplified Chinese sans-serif like PingFang SC / Noto Sans SC. Consistent type scale: 24 logical px page heading, 18px section title, 16px body/button, 13px metadata minimum. Regular 400, medium 500 and semibold 600 weights; no serif or calligraphy. Consistent alignment and spacing rhythm 8/16/24. Touch actions about 44 logical px tall.
+Icons must look like clean SVG line icons: consistent 24px square, 1.75px stroke, rounded linecaps, monochrome green/charcoal, no emoji or stock colored pictograms. SVG source assets are delivered separately; the picture is a raster mockup. Show short useful visualizations ONLY for real UI information: a simple quote comparison, a 3-step task status indicator, and three independent five-star rating rows. No invented activity charts, popularity counts or business achievements.
+Every screen must visibly include "设计示例". All names are explicitly generic demo labels, all areas displayed as "示例区域" or "选择村/社区"; do not invent actual township names, street addresses, real merchants, real photos of people, GPS distances, or live operational data. Sample photos of an appliance, a bicycle and a parcel, if used, must be rendered as muted monochrome green/ivory studio thumbnails within the three-color palette.
+
+SCREEN 01 — 首页 (V01):
+WeChat standard status bar and compact menu capsule. Header title "乡镇生活服务"; manually selectable area control "选择村/社区" with chevron (no GPS prompt).
+Search input "搜索维修、跑腿、二手".
+Three generous equal category tiles with line icons and exact labels "维修", "跑腿", "二手".
+A visually separate restrained block labeled "维修推广 · 设计示例", with small "广告" tag and ONE generic service profile "示例维修服务", short text "服务项目与区域由本人填写", outline button "查看资料". Capacity is at most three per category, never combine secondhand ads or imply platform endorsement.
+Below it "最新需求" heading, compact filter "全部 / 维修 / 跑腿 / 二手" with "全部" active.
+Two or three clean roomy cards: "洗衣机无法启动", "代取快递", "闲置自行车"; metadata "示例区域"; appliance/parcel thumbnail optional. A quote budget is labeled "服务费预算 ¥12" ONLY for errand task, never a total charged by platform.
+Bottom consistent 5-tab navigation "首页", "服务", center outlined-plus "发布", "消息", "我的". Simple green active state, no extra tab like chat/feed/social.
+
+SCREEN 02 — 维修详情 (V02):
+Header back icon, title "维修求助", collection and share outline icons.
+Single gentle appliance image/illustration upper card, low visual weight. Title "洗衣机无法启动"; chips "维修" and "示例区域"; body "启动后无反应，希望维修人员联系查看。"
+Contact card labeled "联系方式" with phone "138****0000" and exact helper "同意联系后可查看完整号码".
+Privacy helper "公开位置仅到村/社区"; do NOT show house number, full address, real identity or identity card.
+State "可申请联系". Small text link "举报".
+Pinned bottom large green action "申请联系". Do NOT display immediate dial, booking payment, guaranteed quality or repaired-order checkout. Distinguish the request from a service provider profile; do not assign a provider review score to the requesting resident.
+
+SCREEN 03 — 跑腿报价选人 (V03, publisher view):
+Header "选择承接者", small "发布者视角 · 设计示例".
+Compact task card title "代取快递", metadata "示例区域", separate "服务费预算 ¥12"; privacy note "选定后双方可查看必要联系与取送信息".
+A restrained 3-step horizontal visualization "待承接 → 履约中 → 待确认", first step current.
+Section "候选报价".
+TWO candidate bento cards using abstract outline profile icons, no real person photo: names "示例用户 A", "示例用户 B"; prominent current quotes "¥12" and "¥15"; clearly "服务费报价"; notes "不垫付" and "愿垫付 · 上限 ¥50" respectively. Each has outline "查看申请", and one selection checkbox or border active state but no actual formal selection committed.
+Footer fee summary "最终服务费 ¥12" with clear note "选定前需确认费用与垫付条件" and "双方直接结算".
+Green bottom button "确认费用并选此人". Only one formal selected person, no auto dispatch, no platform pay or escrow button; no candidate view of other applicant private information.
+
+SCREEN 04 — 二手列表 (V01/V02):
+Title "二手信息", search "搜索闲置物品", area selector "选择村/社区".
+Filter bar "全部分类", "区域"; indicate ordering "最新发布".
+2-column card grid with generous whitespace and small radius. Generic palette-restricted monochrome illustrations/photos: "闲置自行车" priced "¥180", "二手书架" with "面议", "闲置电风扇" priced "¥45", "闲置台灯" priced "¥30". Each card metadata "示例区域 · 设计示例".
+No paid placements in secondhand, no "销量", no verified trade numbers, no cart, no platform buying or purchase CTA, no GPS distance.
+Consistent five-tab bottom navigation.
+
+SCREEN 05 — 三维评分 (V18):
+Header "评价承接者".
+Business-role chip "跑腿 · 承接者", label "实际完成已确认 · 设计示例".
+Three independent rows exactly "态度", "效率", "沟通", each FIVE OUTLINED UNSELECTED stars and "请选择"; all stars use approved monochrome palette. Do NOT preselect five stars or insert a zero rating, no half-stars. Clear helper "三项必选，每项 1—5 星".
+Textarea placeholder "分享本次实际体验（选填）", counter "0/300".
+Image upload with line plus and label "添加图片 · 最多3张"; no visible private image.
+Info card with two readable short lines "图文审核通过后公开" and "评分与图文审核状态分开".
+Small explanatory line "首次评分窗口7天，提交后7天内可修改1次".
+Bottom green action "提交评价" shown disabled until all three selections made using reduced green opacity and charcoal/ivory contrast. No visitor comment, likes, public chat or promise all users may rate.
+No conflated whole-site personal score.
+
+SCREEN 06 — 我的 (V06-V14):
+Header "我的", settings outline icon.
+Profile bento card abstract profile icon, nickname "示例用户"; two distinct small status entries "微信已登录" and "资格待核验"; note "发布或接单时核验资格" so login is not real-name qualification.
+Four compact tool tiles "我的发布", "我的跑腿", "联系申请", "我的评价"; no invented real counts.
+A separate personal toolbox card with rows "收藏", "草稿", "私人地址簿"; each clean SVG icon and chevron.
+A service card with two rows "我的服务资料" and "推广管理", with small secondary copy "基础展示免费" and "自愿购买推广". No fake active payment launch, no wallet balance, no rider-exclusive account, no public age badge.
+Help row "举报与申诉".
+Bottom same five tabs "首页", "服务", "发布", "消息", "我的", "我的" active.
+
+FINAL CONSTRAINTS:
+Prioritize professional readable UI and strong visual hierarchy, not cramming the PRD text into screens. Exact Chinese spelling in all important labels. Clean crisp screens with air around elements and restrained tactile depth. Show complete bottom actions where applicable. No unrelated functionality, no invented brand, mascot, logo, slogan, extra color, map, identity document, complete phone number, full address, or data dashboard. All sample prices and records are design examples, not actual operational facts.
