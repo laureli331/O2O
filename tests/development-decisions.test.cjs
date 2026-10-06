@@ -155,3 +155,20 @@ test('configured AppID must use the official format and preserve the resource re
   absent.resources.appIdExists = false;
   assert.throws(() => validateDevelopmentRecord(absent, plan), /Configured AppID conflicts with resource record/);
 });
+
+test('reported login and a zero exit code with an IDE error do not verify login or cloud access', () => {
+  assert.equal(record.loginObservation.userReply, '已登录');
+  assert.equal(record.loginObservation.cliExitCode, 0);
+  assert.equal(record.loginObservation.cliError, 'IDE_SERVICE_PORT_DISABLED');
+  assert.equal(record.loginObservation.servicePortEnabled, false);
+  assert.equal(record.loginObservation.cloudEnvironmentQueryExecuted, false);
+  const falseLogin = copy();
+  falseLogin.installedDeveloperTools.loginVerified = true;
+  assert.throws(() => validateDevelopmentRecord(falseLogin, plan), /CLI errors cannot verify login/);
+  const falseAccess = copy();
+  falseAccess.installedDeveloperTools.projectAccessVerified = true;
+  assert.throws(() => validateDevelopmentRecord(falseAccess, plan), /Closed service port cannot verify project access/);
+  const falseQuery = copy();
+  falseQuery.loginObservation.cloudEnvironmentQueryExecuted = true;
+  assert.throws(() => validateDevelopmentRecord(falseQuery, plan), /Cloud environment query was blocked/);
+});

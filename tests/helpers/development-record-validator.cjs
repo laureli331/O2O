@@ -40,6 +40,16 @@ function validateDevelopmentRecord(record, plan) {
     assert.equal(installed.executableSignatureStatus, 'Valid', 'Installed executable signature is not verified');
     assert.equal(installed.cliHelpExitCode, 0, 'Installed CLI did not pass');
   }
+  if (record.loginObservation) {
+    assert.equal(record.loginObservation.userReply, '已登录', 'User login report is missing');
+    if (record.loginObservation.cliError !== null) {
+      assert.equal(record.installedDeveloperTools.loginVerified, false, 'CLI errors cannot verify login, even when exit code is zero');
+    }
+    if (!record.loginObservation.servicePortEnabled) {
+      assert.equal(record.installedDeveloperTools.projectAccessVerified, false, 'Closed service port cannot verify project access');
+      assert.equal(record.loginObservation.cloudEnvironmentQueryExecuted, false, 'Cloud environment query was blocked by the closed service port');
+    }
+  }
 
   const tasks = new Map();
   for (const match of plan.matchAll(/^\| (DP\d{2}) \|[^\r\n]+/gm)) {

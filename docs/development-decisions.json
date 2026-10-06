@@ -50,6 +50,15 @@
     "loginVerified": false,
     "projectAccessVerified": false
   },
+  "loginObservation": {
+    "userReply": "已登录",
+    "cliCommand": "islogin --lang zh",
+    "cliExitCode": 0,
+    "cliError": "IDE_SERVICE_PORT_DISABLED",
+    "servicePortEnabled": false,
+    "verificationStatus": "blocked-by-service-port",
+    "cloudEnvironmentQueryExecuted": false
+  },
   "prerequisites": {
     "dataHandlingConfirmed": false,
     "businessConfigurationConfirmed": false,
