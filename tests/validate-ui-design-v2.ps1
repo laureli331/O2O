@@ -26,7 +26,7 @@ foreach ($uiV2Name in @('overview.png', 'overview-before-spacing.png')) {
     finally { $uiV2Bitmap.Dispose() }
 }
 $uiV2Hash = (Get-FileHash -LiteralPath (Join-Path $uiV2Assets 'overview.png') -Algorithm SHA256).Hash
-Assert-UIV2 ($uiV2Hash -eq '252EECDA040DA95AAD582DEB83944DA9AC051E8FD68F5A62E27476E93B6C21E4') 'Final PNG is the reviewed spacing revision'
+Assert-UIV2 ($uiV2Hash -eq '252EECDA040DA95AAD582DEB83944DA9AC051E8FD68F5A62E27476E93B6C21E4') 'Nonselected spacing candidate remains unchanged'
 $uiV2Tokens = Get-Content -LiteralPath (Join-Path $uiV2Assets 'design-tokens.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $uiV2Colors = @($uiV2Tokens.palette.PSObject.Properties | ForEach-Object { $_.Value })
 $uiV2Approved = @('#618872', '#FCFBF7', '#263A31')
@@ -59,6 +59,29 @@ $uiV2Doc = Get-Content -LiteralPath $uiV2DocPath -Raw -Encoding UTF8
 $uiV2BrokenLinks = @([regex]::Matches($uiV2Doc, '\]\(([^)]+)\)') | Where-Object {
     -not (Test-Path -LiteralPath (Join-Path (Split-Path -Parent $uiV2DocPath) $_.Groups[1].Value))
 })
-Assert-UIV2 ($uiV2BrokenLinks.Count -eq 0 -and $uiV2Doc.Contains($uiV2Hash)) 'Document links resolve and identify the reviewed image'
+Assert-UIV2 ($uiV2BrokenLinks.Count -eq 0 -and $uiV2Doc.Contains($uiV2Hash)) 'Document links resolve and preserve candidate history'
+Assert-UIV2 ($uiV2Tokens.status -eq 'approved-visual-direction') 'Design variables record user approval'
+$uiSelectionRoot = Join-Path $uiV2Root 'assets\ui'
+$uiSelection = Get-Content -LiteralPath (Join-Path $uiSelectionRoot 'approved-selection.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+$uiSelectedPath = Join-Path $uiSelectionRoot $uiSelection.image
+$uiSelectionReferences = @($uiSelection.image, $uiSelection.designTokens, $uiSelection.svgIcons, $uiSelection.designDocument, $uiSelection.nonselectedCandidate)
+$uiSelectionBroken = @($uiSelectionReferences | Where-Object { -not (Test-Path -LiteralPath (Join-Path $uiSelectionRoot $_)) })
+Assert-UIV2 ($uiSelection.status -eq 'approved' -and $uiSelectionBroken.Count -eq 0 -and $uiSelection.image -eq ('v2/' + $uiV2Tokens.approvedOverview) -and $uiSelection.image -ne $uiSelection.nonselectedCandidate) 'Approved image and related assets resolve without choosing the other candidate'
+$uiSelectedFileHash = (Get-FileHash -LiteralPath $uiSelectedPath -Algorithm SHA256).Hash
+Assert-UIV2 ($uiSelectedFileHash -eq $uiSelection.imageSha256) 'Approved image file matches the recorded selection'
+$uiSelectedBitmap = [System.Drawing.Bitmap]::new($uiSelectedPath)
+try {
+    $uiSelectedRect = [System.Drawing.Rectangle]::new(0, 0, $uiSelectedBitmap.Width, $uiSelectedBitmap.Height)
+    $uiSelectedData = $uiSelectedBitmap.LockBits($uiSelectedRect, [System.Drawing.Imaging.ImageLockMode]::ReadOnly, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    try {
+        $uiSelectedPixels = [byte[]]::new([Math]::Abs($uiSelectedData.Stride) * $uiSelectedData.Height)
+        [Runtime.InteropServices.Marshal]::Copy($uiSelectedData.Scan0, $uiSelectedPixels, 0, $uiSelectedPixels.Length)
+        $uiSelectedHasher = [Security.Cryptography.SHA256]::Create()
+        try { $uiSelectedPixelHash = [BitConverter]::ToString($uiSelectedHasher.ComputeHash($uiSelectedPixels)).Replace('-', '') }
+        finally { $uiSelectedHasher.Dispose() }
+        Assert-UIV2 ($uiSelectedPixelHash -eq $uiSelection.decodedArgbSha256 -and $uiSelectedBitmap.Width -eq $uiSelection.width -and $uiSelectedBitmap.Height -eq $uiSelection.height) 'Selected image matches the approved attachment pixel fingerprint and dimensions'
+    } finally { $uiSelectedBitmap.UnlockBits($uiSelectedData) }
+} finally { $uiSelectedBitmap.Dispose() }
+Assert-UIV2 ($uiV2Doc.Contains($uiSelection.userDecision) -and $uiV2Doc.Contains($uiSelection.imageSha256) -and $uiV2Doc.Contains($uiSelection.decodedArgbSha256)) 'Design document agrees with the actual user selection'
 Assert-UIV2 ((Test-Path -LiteralPath (Join-Path $uiV2Root 'assets\ui\v1\overview.png')) -and (Test-Path -LiteralPath (Join-Path $uiV2Root 'docs\ui-design-v1.md'))) 'Previous version is retained'
 Write-Output "UI v2 resource validation passed: $uiV2Passed checks."

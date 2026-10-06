@@ -2,7 +2,17 @@
 
 日期：2026-10-06（Asia/Shanghai）
 
-基于 [PRD v1.3](prd.md) 与用户对 v1 的明确修正：增加呼吸感，三色限制仅针对 UI，示例图片可自然彩色，米白底更浅，实际呈现渐变与毛玻璃。本轮已完成 image_gen 两次编辑。后续视觉基准采用 v2；[v1](ui-design-v1.md) 仅作为历史版本保留。
+基于 [PRD v1.3](prd.md) 与用户对 v1 的明确修正：增加呼吸感，三色限制仅针对 UI，示例图片可自然彩色，米白底更浅，实际呈现渐变与毛玻璃。image_gen 已生成两张 v2 候选图；用户随后附图明确回复“采用这版”，采用第一次 v2 修正版，即下方“已采用”图片；第二次留白精简图作为未采用候选保留。[v1](ui-design-v1.md) 仅作为历史版本保留。
+
+## 用户确认与当前视觉基准
+
+确认日期：2026-10-06（Asia/Shanghai）。用户原文：“采用这版”。
+
+已将用户附图与两张 v2 图片比较：附图与第一次 v2 修正版均为1086×1448，解码后的ARGB像素SHA-256完全一致：`16A5E1C19AC89DC8E7C8F131590610190A90CAF8274B6A36417BE44E5CF3350B`。PNG容器字节不同，但显示像素完全一致。因此直接采用项目内已有图片，不重新生成、不替换或删除旧图。
+
+后续设计按这张图的整体视觉与布局展开：保留首页柔和绿色背景与叶片装饰、玻璃分类面板、明显渐变按钮与毛玻璃操作底栏；保留二手页两张完整商品卡及下一排预览、评分资料卡、个人工具箱和服务管理与帮助入口。此前第二次候选中删除装饰、进一步减少首屏内容的调整不作为已采纳决定。
+
+采用记录：[已确认图片与资源入口](../assets/ui/approved-selection.json)。已采用图片文件SHA-256：`6FE356D4CE4FB49B28AB8E5852EE6FEFF2C117403F3EA4F924B2C262458D3F3A`。示例文字、图片和记录继续是设计示例；关键业务及权限仍以PRD为准，中文字形按精确文案排版。
 
 ## 验证方案
 
@@ -21,14 +31,14 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\validate-ui-desi
 
 ## 文件
 
-- [v2 最终总览](../assets/ui/v2/overview.png)
-- [加大留白前的 v2 图](../assets/ui/v2/overview-before-spacing.png)
+- [已采用：v2 第一次修正版](../assets/ui/v2/overview-before-spacing.png)
+- [未采用候选：进一步留白精简图](../assets/ui/v2/overview.png)
 - [v2 设计变量](../assets/ui/v2/design-tokens.json)
 - [v2 SVG 图标](../assets/ui/v2/icons.svg)
 - [第一次修正提示词](../assets/ui/v2/generation-prompt.txt)
 - [留白精简提示词](../assets/ui/v2/spacing-refinement-prompt.txt)
 
-内置 image_gen 编辑，以 v1 为输入；第二次以第一次 v2 图为输入。源图和旧文件全部保留。最终 PNG：1086 × 1448。SHA-256：`252EECDA040DA95AAD582DEB83944DA9AC051E8FD68F5A62E27476E93B6C21E4`。
+内置 image_gen 编辑，以 v1 为输入；第二次以第一次 v2 图为输入。源图和旧文件全部保留，两张图均为1086×1448。第二次未采用候选的文件SHA-256：`252EECDA040DA95AAD582DEB83944DA9AC051E8FD68F5A62E27476E93B6C21E4`；已采用版本的校验值见上方确认记录。
 
 ## 当前规范
 
@@ -52,7 +62,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\validate-ui-desi
 
 上述尺寸和效果数值是后续实现的设计标尺，并非生成位图中精确可测的样式参数。实际渐变与毛玻璃效果已通过目视检查；图片上的中文小字仍以 [精确文案](ui-design-v1.md) 为实现依据。
 
-## 六页改动
+## 第二次留白精简候选的改动（未采用，历史记录）
 
 | 页面 | 呈现与留白调整 |
 | --- | --- |
@@ -65,7 +75,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\validate-ui-desi
 
 截图中的筛选、完整管理入口和评分规则提示未全部展开，仍按 PRD 保留在滚动页及对应入口。视觉精简不删除分类/区域筛选、推广管理、服务资料、举报申诉或评分时间规则，不增加自由聊天、付款托管或全站混合评分。
 
-## 人工复核
+## 第二次候选的人工复核（历史记录）
 
 - 新版的重复说明和同屏记录减少；评分、详情和二手页有明显空白区。
 - 更浅米白底；洗衣机、快递、红色自行车与木色书架为自然彩色示例图片。
@@ -74,4 +84,4 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\validate-ui-desi
 - 电话继续打码；推广有广告标签；跑腿为发布者选人，报价与垫付分开；三维评分未预选；登录与资格分开。
 - 生成图存在少量中文小字偏差，尚不作为精确文字排版稿。独立 SVG 文件是矢量源；图里的图标是位图表现。
 
-自动验证：Windows PowerShell 5.1 下执行通过，22项资源检查全部通过。PRD 和 v1 文件均未修改；本轮新增 v2 资源、说明与验证。
+历史自动验证：Windows PowerShell 5.1 下执行通过，22项资源检查全部通过。用户确认后补充了当前采用记录、图片内容哈希、解码像素哈希、资源指向和文档一致性的验证；当前27项检查全部通过。PRD、v1和两张v2图片均未修改。
