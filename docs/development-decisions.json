@@ -77,6 +77,27 @@
     "projectAccessVerified": false,
     "resourcesCreated": false
   },
+  "developerToolsDiagnosis": {
+    "userReport": "点击云开发没有反应",
+    "nativeSkillVersion": "0.3.11",
+    "nativeAuthorizationVerified": true,
+    "managedAppIdFound": true,
+    "nativeCloudQuery": { "success": false, "platformRet": 1000, "message": "system error." },
+    "runtimePageQuery": "timeout waiting for automator response",
+    "vendorInstallError": "EXDEV",
+    "vendorDirectoryEncrypted": true,
+    "renameProbe": {
+      "syntheticFilesOnly": true,
+      "toolRuntimeResult": "EXDEV",
+      "localNodeResult": "EXDEV",
+      "windowsNativeResult": "success",
+      "syntheticDecryptionResult": "Access is denied",
+      "actualCacheDecryptionExecuted": false
+    },
+    "encryptionCauseVerified": false,
+    "cloudButtonRootCauseVerified": false,
+    "repairVerified": false
+  },
   "prerequisites": {
     "dataHandlingConfirmed": false,
     "businessConfigurationConfirmed": false,

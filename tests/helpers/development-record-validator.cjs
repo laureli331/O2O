@@ -62,6 +62,22 @@ function validateDevelopmentRecord(record, plan) {
     assert.equal(record.installedDeveloperTools.projectAccessVerified, false, 'Failed cloud query cannot verify installed tool project access');
   }
 
+  const diagnosis = record.developerToolsDiagnosis;
+  if (diagnosis) {
+    if (!diagnosis.nativeCloudQuery.success) {
+      assert.equal(record.cloudEnvironmentObservation.environments, null, 'Native cloud error cannot establish an environment list');
+    }
+    if (!diagnosis.encryptionCauseVerified) {
+      assert.equal(diagnosis.repairVerified, false, 'Unverified diagnosis cannot certify repair');
+    }
+    if (!diagnosis.cloudButtonRootCauseVerified) {
+      assert.equal(diagnosis.repairVerified, false, 'Runtime probe cannot certify the cloud button repair');
+    }
+    if (diagnosis.renameProbe.syntheticDecryptionResult === 'Access is denied') {
+      assert.equal(diagnosis.encryptionCauseVerified, false, 'Denied decryption cannot establish an encryption control experiment');
+    }
+  }
+
   const tasks = new Map();
   for (const match of plan.matchAll(/^\| (DP\d{2}) \|[^\r\n]+/gm)) {
     const cells = match[0].split('|').map(cell => cell.trim());

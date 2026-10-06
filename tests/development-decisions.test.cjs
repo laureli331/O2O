@@ -201,3 +201,31 @@ test('cloud system errors are distinct from an empty environment list or verifie
   access.cloudEnvironmentObservation.projectAccessVerified = true;
   assert.throws(() => validateDevelopmentRecord(access, plan), /Failed cloud query cannot verify project permissions/);
 });
+
+test('native diagnostics preserve successful account lookup and unresolved runtime failures separately', () => {
+  const diagnosis = record.developerToolsDiagnosis;
+  assert.equal(diagnosis.managedAppIdFound, true);
+  assert.equal(diagnosis.nativeAuthorizationVerified, true);
+  assert.equal(diagnosis.nativeCloudQuery.success, false);
+  assert.equal(diagnosis.nativeCloudQuery.platformRet, 1000);
+  assert.equal(diagnosis.renameProbe.toolRuntimeResult, 'EXDEV');
+  assert.equal(diagnosis.renameProbe.localNodeResult, 'EXDEV');
+  assert.equal(diagnosis.renameProbe.windowsNativeResult, 'success');
+  assert.equal(diagnosis.renameProbe.actualCacheDecryptionExecuted, false);
+  assert.equal(diagnosis.repairVerified, false);
+});
+
+test('an unsuccessful encryption experiment cannot be recorded as proof of cause or repair', () => {
+  const falseCause = copy();
+  falseCause.developerToolsDiagnosis.encryptionCauseVerified = true;
+  assert.throws(() => validateDevelopmentRecord(falseCause, plan), /Denied decryption cannot establish/);
+  const falseRepair = copy();
+  falseRepair.developerToolsDiagnosis.repairVerified = true;
+  assert.throws(() => validateDevelopmentRecord(falseRepair, plan), /Unverified diagnosis cannot certify repair/);
+  falseRepair.developerToolsDiagnosis.encryptionCauseVerified = true;
+  assert.throws(() => validateDevelopmentRecord(falseRepair, plan), /Runtime probe cannot certify the cloud button repair/);
+  const falseEnvironments = copy();
+  falseEnvironments.cloudEnvironmentObservation.status = 'diagnosing';
+  falseEnvironments.cloudEnvironmentObservation.environments = [];
+  assert.throws(() => validateDevelopmentRecord(falseEnvironments, plan), /Native cloud error cannot establish/);
+});
