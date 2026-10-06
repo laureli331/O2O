@@ -22,12 +22,12 @@ test('actual adoption and task progress obey the original dependency plan', () =
   assert(plan.includes('技术执行记录'));
 });
 
-test('confirmed resource facts preserve personal subject and unopened environment', () => {
+test('resource progress preserves personal subject and unopened cloud environment', () => {
   assert.equal(record.resources.appIdExists, true);
-  assert.equal(record.resources.appIdValue, null);
+  assert.equal(record.resources.appIdValue, 'wx358290e451cb06e7');
   assert.equal(record.resources.currentSubject, 'personal');
   assert.equal(record.resources.individualBusinessRegistration, 'willing-if-needed-not-registered');
-  assert.equal(record.resources.developerToolsInstalled, false);
+  assert.equal(record.resources.developerToolsInstalled, true);
   assert.equal(record.resources.cloudEnvironmentOpened, false);
   assert.equal(record.resources.cloudRuntimeVersion, null);
   assert.equal(record.resources.databaseMode, null);
@@ -111,7 +111,7 @@ test('external ledger covers every condition and labels draft consultations unse
   assert(record.externalGates.every(gate => gate.status !== '已完成' && gate.evidence.length === 0));
 });
 
-test('prepared official installer is recorded without claiming an installation', () => {
+test('official installer verification and the confirmed installation remain traceable', () => {
   const prepared = record.preparedDeveloperTools;
   assert.equal(prepared.channel, 'stable');
   assert.equal(prepared.architecture, 'Windows-x64');
@@ -121,9 +121,37 @@ test('prepared official installer is recorded without claiming an installation',
   assert.equal(prepared.signer, 'Tencent Technology (Shenzhen) Company Limited');
   assert.equal(prepared.bytes, 190935184);
   assert.match(prepared.sha256, /^[a-f0-9]{64}$/);
-  assert.equal(prepared.installationExecuted, false);
+  assert.equal(prepared.installationExecuted, true);
+  assert.equal(record.installedDeveloperTools.approvalReply, '确认');
+  assert.equal(record.installedDeveloperTools.packageVersion, prepared.version);
+  assert.equal(record.installedDeveloperTools.loginVerified, false);
+  assert.equal(record.installedDeveloperTools.projectAccessVerified, false);
   assert(technical.includes(prepared.sha256));
   const ignoredFolders = read('.gitignore').split(/\r?\n/);
   assert(ignoredFolders.includes('.local/'), 'Local installers must not enter Git');
   assert(prepared.localPath.startsWith('.local/downloads/'));
+});
+
+test('missing installation verification and failed installer or CLI cannot be recorded as success', () => {
+  const missing = copy();
+  delete missing.installedDeveloperTools;
+  assert.throws(() => validateDevelopmentRecord(missing, plan), /Installed tool lacks verification record/);
+  const failedInstall = copy();
+  failedInstall.installedDeveloperTools.installerExitCode = 1;
+  assert.throws(() => validateDevelopmentRecord(failedInstall, plan), /Installation failed/);
+  const failedCli = copy();
+  failedCli.installedDeveloperTools.cliHelpExitCode = 1;
+  assert.throws(() => validateDevelopmentRecord(failedCli, plan), /Installed CLI did not pass/);
+  const unsigned = copy();
+  unsigned.installedDeveloperTools.executableSignatureStatus = 'NotSigned';
+  assert.throws(() => validateDevelopmentRecord(unsigned, plan), /Installed executable signature is not verified/);
+});
+
+test('configured AppID must use the official format and preserve the resource record', () => {
+  const malformed = copy();
+  malformed.resources.appIdValue = '12345';
+  assert.throws(() => validateDevelopmentRecord(malformed, plan), /Invalid WeChat AppID format/);
+  const absent = copy();
+  absent.resources.appIdExists = false;
+  assert.throws(() => validateDevelopmentRecord(absent, plan), /Configured AppID conflicts with resource record/);
 });

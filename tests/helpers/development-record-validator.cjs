@@ -24,6 +24,23 @@ function validateDevelopmentRecord(record, plan) {
     assert.equal(record.approval[choice], expected, `Approved choice changed: ${choice}`);
   }
 
+  if (record.resources.appIdValue !== null) {
+    assert.match(record.resources.appIdValue, /^wx[0-9a-f]{16}$/, 'Invalid WeChat AppID format');
+    assert.equal(record.resources.appIdExists, true, 'Configured AppID conflicts with resource record');
+  }
+
+  assert.equal(typeof record.resources.developerToolsInstalled, 'boolean', 'Installation state must be explicit');
+  assert.equal(record.preparedDeveloperTools.installationExecuted, record.resources.developerToolsInstalled, 'Prepared and installed tool states disagree');
+  if (record.resources.developerToolsInstalled) {
+    const installed = record.installedDeveloperTools;
+    assert(installed, 'Installed tool lacks verification record');
+    assert.equal(installed.approvalReply, '确认', 'Installation lacks user confirmation');
+    assert.equal(installed.installerExitCode, 0, 'Installation failed');
+    assert.equal(installed.packageVersion, record.preparedDeveloperTools.version, 'Installed package version mismatch');
+    assert.equal(installed.executableSignatureStatus, 'Valid', 'Installed executable signature is not verified');
+    assert.equal(installed.cliHelpExitCode, 0, 'Installed CLI did not pass');
+  }
+
   const tasks = new Map();
   for (const match of plan.matchAll(/^\| (DP\d{2}) \|[^\r\n]+/gm)) {
     const cells = match[0].split('|').map(cell => cell.trim());

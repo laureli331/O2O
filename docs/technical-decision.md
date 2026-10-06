@@ -12,7 +12,7 @@
 
 上轮建议为原生微信小程序＋TypeScript＋Node.js云函数＋CloudBase数据库/云存储、云端定时触发与到期扫描及失败补偿；运营入口位于小程序内，两位运营者独立账号、同等权限。费用安排为先完成本地和受控测试，采购前给出具体清单并取得确认。用户实际回复：**“采用”**。
 
-用户已说明有AppID；未提供具体值。对开发工具和云环境两项的追问，实际回复：**“两项都没有”**。主体实际回复：**“暂时是个人主体, 若有需要, 可注册个体工商户”**。这不是已注册个体工商户或已经完成主体迁移。
+用户最初说明有AppID；后续提供**`wx358290e451cb06e7`**，已记录并检查格式。对开发工具和云环境两项的追问，实际回复：**“两项都没有”**。主体实际回复：**“暂时是个人主体, 若有需要, 可注册个体工商户”**。这不是已注册个体工商户或已经完成主体迁移。
 
 机器可读记录：[development-decisions.json](development-decisions.json)。当前AppID的存在不代表云环境、身份、手机号、检测、通知或支付权限已经开通。
 
@@ -38,13 +38,19 @@
 - [PostgreSQL约束](https://www.postgresql.org/docs/current/ddl-constraints.html)：作为独立后端候选的唯一约束等能力依据，不作为当前部署选择。
 - [Node.js测试运行器](https://nodejs.org/docs/latest-v24.x/api/test.html)：本次开发记录验证使用本机已存在的Node.js及内置node:test，无需安装测试库。产品TypeScript构建、集成与小程序自动化依赖将在DP01环境准备时查版本、安装后验证并锁定；当前未完成锁定。
 
-本机实际检查：Node.js **24.18.0**，npm **11.16.0**；常见安装路径和卸载记录中没有找到微信开发者工具，与用户回复一致。没有改动现有Node安装或系统环境变量。
+安装前本机检查：Node.js **24.18.0**，npm **11.16.0**；常见安装路径和卸载记录中没有找到微信开发者工具，与用户回复一致。本次没有改动现有Node安装或全局环境变量。
 
 微信工具版本依据：[官方工具下载页](https://developers.weixin.qq.com/miniprogram/dev/devtools/download.html)及其加载的[官方版本清单](https://devtools.wxqcloud.qq.com.cn/WechatWebDev/nightly/versions/config.json)。2026-10-06实际读取稳定版为**2.02.2608080**，清单日期2026-09-30；安装前须验证Windows架构、安装包签名和实际版本。读取版本清单不等于已经安装。
 
-已完成安装准备：本机架构AMD64；从官方清单提供的Windows 64位稳定版链接下载到`.local/downloads/wechat_devtools_2.02.2608080_win32_x64.exe`，实际190,935,184字节。Windows Authenticode校验为**Valid**，签名主体Tencent Technology (Shenzhen) Company Limited，文件版本**2.02.2608080**。SHA-256：`8a3255fe7626879b472dc5145e1b29d797f86d0a6bd9d775097f2ba5f9bb7467`。这是本地文件校验值，不能表述为官方另行公布的校验值。安装包由`.gitignore`排除，已保留，安装尚未执行。
+已完成安装准备：本机架构AMD64；从官方清单提供的Windows 64位稳定版链接下载到`.local/downloads/wechat_devtools_2.02.2608080_win32_x64.exe`，实际190,935,184字节。Windows Authenticode校验为**Valid**，签名主体Tencent Technology (Shenzhen) Company Limited，文件版本**2.02.2608080**。SHA-256：`8a3255fe7626879b472dc5145e1b29d797f86d0a6bd9d775097f2ba5f9bb7467`。这是本地文件校验值，不能表述为官方另行公布的校验值。安装包由`.gitignore`排除，已保留；准备阶段没有执行安装，后续实际结果如下。
 
-DP01写明“采购或安装另需对应授权”。因此在官方包、版本与签名可审阅后确认安装动作；不凭技术选择替代安装授权。安装后再核实实际工具版本、AppID登录/开发权限和云环境；创建云资源前说明对应套餐与费用，按已采用的费用安排确认。扫码登录/主体资料由用户完成，密钥不进入聊天或Git。
+DP01写明“采购或安装另需对应授权”。官方包、版本与签名交付后，用户实际回复**“确认”**，安装动作已获授权。
+
+安装结果：2026-10-06使用官方安装程序安装到`E:\O2O\.local\tools\wechat-devtools`，返回码**0**。读取实际安装包的`resources/app.asar.unpacked/package.json`，应用版本为**2.02.2608080**；Windows安装记录一致。主程序文件版本为**2.02.0**，这是Electron外壳版本字段，不能拿它代替应用完整构建号；主程序签名校验**Valid**且签名主体腾讯。`cli.bat --help`和`cli.bat open --help`返回码均为**0**。已启动工具供用户扫码；登录、AppID开发权限和云环境尚未验证。
+
+安装程序类型从本地包清单识别为NSIS；安装选项依据[NSIS官方说明](https://nsis.sourceforge.io/Docs/Chapter3.html)。没有关闭安装包CRC验证。工具和安装包均位于Git忽略的`.local/`目录。需要回退时使用该目录内官方`卸载微信开发者工具.exe`或Windows已登记的卸载入口；卸载另经确认，不删除项目、账号或云数据，也不为回退删除安装包。
+
+真实工具验证入口：[validate-devtools-installation.ps1](../tests/validate-devtools-installation.ps1)。它检查安装文件、应用完整版本、签名、卸载入口和CLI命令，失败立即停止。该检查针对当前Windows机器，不代表小程序登录、功能路径或生产部署通过。创建云资源前说明对应套餐与费用，按已采用的费用安排确认。扫码登录/主体资料由用户完成。
 
 ## 5. 后续目录与验证方式
 
@@ -64,6 +70,7 @@ DP01写明“采购或安装另需对应授权”。因此在官方包、版本�
 
 ```powershell
 node --test tests/development-decisions.test.cjs
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/validate-devtools-installation.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/validate-development-plan.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/validate-structured-design.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/validate-ui-design-v2.ps1
@@ -76,7 +83,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/validate-ui-design
 
 | 任务 | 状态 | 已完成内容 | 剩余内容 |
 | --- | --- | --- | --- |
-| DP01 | 执行中 | 技术与费用安排获确认；本机环境检查；官方稳定版安装包下载、签名/版本/大小/哈希校验；目录和验证分层 | 安装授权及安装验证、选定实际数据库模式与SDK/运行版本、依赖锁定及环境步骤验证 |
+| DP01 | 执行中 | 技术与费用安排获确认；官方工具已获授权安装并通过版本/签名/CLI验证；目录和验证分层 | 扫码登录与AppID开发权限、选定实际数据库模式与SDK/运行版本、依赖锁定及云环境步骤验证 |
 | DP02 | 资料准备中 | [外部证据台账](external-evidence.md)建立；真实主体及缺项列出；咨询草稿可审阅 | 核实项目适用来源、填写实际后台材料和负责事项；草稿未发送 |
 | DP03 | 未开始 | 既有最小必要与不存原证件约束保持 | 依赖DP02；具体保存期限、删除触发及供应商留存须核实并确认 |
 | DP04 | 资料准备中 | 小程序内运营入口已确认 | 依赖DP02；实际地区/分类/供给资料、两位账号和交接仍待用户提供 |

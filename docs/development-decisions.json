@@ -15,10 +15,10 @@
   },
   "resources": {
     "appIdExists": true,
-    "appIdValue": null,
+    "appIdValue": "wx358290e451cb06e7",
     "currentSubject": "personal",
     "individualBusinessRegistration": "willing-if-needed-not-registered",
-    "developerToolsInstalled": false,
+    "developerToolsInstalled": true,
     "cloudEnvironmentOpened": false,
     "localNodeVersion": "24.18.0",
     "localNpmVersion": "11.16.0",
@@ -37,7 +37,18 @@
     "signatureStatus": "Valid",
     "signer": "Tencent Technology (Shenzhen) Company Limited",
     "fileVersion": "2.02.2608080",
-    "installationExecuted": false
+    "installationExecuted": true
+  },
+  "installedDeveloperTools": {
+    "approvalReply": "确认",
+    "installPath": "E:\\O2O\\.local\\tools\\wechat-devtools",
+    "installerExitCode": 0,
+    "packageVersion": "2.02.2608080",
+    "executableFileVersion": "2.02.0",
+    "executableSignatureStatus": "Valid",
+    "cliHelpExitCode": 0,
+    "loginVerified": false,
+    "projectAccessVerified": false
   },
   "prerequisites": {
     "dataHandlingConfirmed": false,
