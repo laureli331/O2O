@@ -301,7 +301,7 @@ test('latest platform evidence preserves unresolved eligibility and destructive 
   assert.equal(p.subjectChangeFee.amount, 300);
   assert.equal(p.subjectChangeFee.source, 'user-report');
   assert.equal(p.aiAdviceVerified, false);
-  assert.equal(p.registrationRouteConfirmed, false);
+  assert.equal(p.registrationRouteConfirmed, true);
   assert.equal(p.oldAccountCancelled, false);
   assert.equal(record.selectedDevelopmentEnvironment.id, 'cloud1-d1g1mv89t76512a25');
   assert.equal(record.selectedDevelopmentEnvironment.userReply, '采用，使用现有 cloud1');
@@ -310,4 +310,30 @@ test('latest platform evidence preserves unresolved eligibility and destructive 
   assert(technical.includes('基础信息已完成'));
   assert(evidence.includes('微信开发者助手'));
   assert.equal(record.externalGates.find(g=>g.id==='E01').status, '待外部依据');
+});
+
+test('confirmed dual-account route does not fabricate completed registration or cloud purchases', () => {
+  const route = record.accountRouteDecision;
+  assert.equal(route.route, 'new-individual-business-miniapp');
+  assert.equal(route.testAccountReply, '没问题');
+  assert.equal(route.oldAccountRetained, true);
+  assert.equal(route.oldAccountRenameExecuted, false);
+  assert.equal(route.oldAccountNewName, null);
+  assert.equal(route.oldEnvironmentAction, 'retain');
+  assert.equal(route.oldEnvironmentId, record.selectedDevelopmentEnvironment.id);
+  assert.equal(route.formalNameToRetain, '湘邻湘友');
+  assert.equal(route.newAppId, null);
+  assert.equal(route.newEnvironmentId, null);
+  assert.equal(route.nameReleaseRuleVerified, false);
+  assert.equal(route.newEnvironmentPriceVerified, false);
+  assert.equal(route.formalVerificationAccount, 'new-miniapp-development-and-trial-versions');
+  for (const key of ['licenseRegistered', 'newAccountRegistered', 'subjectChanged', 'oldAccountCancelled']) {
+    assert.equal(record.platformProgress[key], false);
+  }
+  assert.equal(record.productionEnabled, false);
+  for (const document of [technical, evidence]) {
+    assert(document.includes('新注册个体工商户小程序路线已确认'));
+    assert(document.includes('未注册新账号') || document.includes('新 AppID和新环境尚未取得'));
+  }
+  assert(plan.includes('旧账号测试不能代替正式验收'));
 });
