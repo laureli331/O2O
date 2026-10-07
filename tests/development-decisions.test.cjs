@@ -22,13 +22,14 @@ test('actual adoption and task progress obey the original dependency plan', () =
   assert(plan.includes('技术执行记录'));
 });
 
-test('resource progress preserves personal subject and unopened cloud environment', () => {
+test('resource progress preserves personal subject and verified current cloud environment', () => {
   assert.equal(record.resources.appIdExists, true);
   assert.equal(record.resources.appIdValue, 'wx358290e451cb06e7');
   assert.equal(record.resources.currentSubject, 'personal');
   assert.equal(record.resources.individualBusinessRegistration, 'willing-if-needed-not-registered');
   assert.equal(record.resources.developerToolsInstalled, true);
-  assert.equal(record.resources.cloudEnvironmentOpened, false);
+  assert.equal(record.resources.cloudEnvironmentOpened, true);
+  assert.equal(record.cloudConsoleObservation.environmentAvailable, true);
   assert.equal(record.resources.cloudRuntimeVersion, null);
   assert.equal(record.resources.databaseMode, null);
   assert.equal(record.resources.productionBudget, null);
@@ -251,4 +252,24 @@ test('diagnostic permission cannot be silently expanded to real cache changes', 
   const wrongScope = copy();
   wrongScope.developerToolsRevalidation.scope = 'all-user-data';
   assert.throws(() => validateDevelopmentRecord(wrongScope, plan), /Revalidation exceeds approved scope/);
+});
+
+test('current cloud UI availability does not overwrite historical CLI failures or certify root cause', () => {
+  const observation = record.cloudConsoleObservation;
+  assert.equal(observation.diagnosticPageDisplayed, true);
+  assert.equal(observation.cloudButtonOpenedWindow, true);
+  assert.equal(observation.packageLabel, '免费开发环境');
+  assert.equal(observation.usageBasedBillingEnabled, false);
+  assert.equal(observation.automaticRenewalEnabled, false);
+  assert.equal(observation.agentCreatedResources, false);
+  assert.equal(observation.agentPurchasedResources, false);
+  assert.equal(observation.rootCauseVerified, false);
+  assert.equal(observation.officialCliQueryReverified, false);
+  assert.equal(record.cloudEnvironmentObservation.status, 'query-failed');
+  const noEvidence = copy();
+  delete noEvidence.cloudConsoleObservation;
+  assert.throws(() => validateDevelopmentRecord(noEvidence, plan), /Opened cloud environment requires current availability evidence/);
+  const unavailable = copy();
+  unavailable.cloudConsoleObservation.environmentAvailable = false;
+  assert.throws(() => validateDevelopmentRecord(unavailable, plan), /Opened cloud environment requires current availability evidence/);
 });

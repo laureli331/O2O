@@ -90,6 +90,12 @@ function validateDevelopmentRecord(record, plan) {
     }
   }
 
+  if (record.resources.cloudEnvironmentOpened) {
+    assert.equal(record.cloudConsoleObservation?.environmentAvailable, true, 'Opened cloud environment requires current availability evidence');
+    assert.equal(record.cloudConsoleObservation?.cloudButtonOpenedWindow, true, 'Environment observation lacks cloud console verification');
+    assert.equal(record.cloudConsoleObservation?.verificationMethod, 'native-window-and-visible-ui', 'Environment verification method must be explicit');
+  }
+
   const tasks = new Map();
   for (const match of plan.matchAll(/^\| (DP\d{2}) \|[^\r\n]+/gm)) {
     const cells = match[0].split('|').map(cell => cell.trim());
