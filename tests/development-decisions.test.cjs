@@ -273,3 +273,21 @@ test('current cloud UI availability does not overwrite historical CLI failures o
   unavailable.cloudConsoleObservation.environmentAvailable = false;
   assert.throws(() => validateDevelopmentRecord(unavailable, plan), /Opened cloud environment requires current availability evidence/);
 });
+
+test('restart verification distinguishes a closed current port from historical login success', () => {
+  const observation = record.postRestartObservation;
+  assert.equal(observation.restartUserReply, '已重启');
+  assert.equal(observation.servicePortEnabled, false);
+  assert.equal(observation.nativeConnectionStatus, 'CONNECT_ERROR');
+  assert.equal(observation.cloudConsoleDisplayed, true);
+  assert.equal(observation.openingActorConfirmed, false);
+  const falseConnection = copy();
+  falseConnection.postRestartObservation.nativeConnectionStatus = 'verified';
+  assert.throws(() => validateDevelopmentRecord(falseConnection, plan), /Closed current service port cannot certify/);
+  const falseActor = copy();
+  falseActor.postRestartObservation.openingActorConfirmed = true;
+  assert.throws(() => validateDevelopmentRecord(falseActor, plan), /Uncertain user report cannot prove/);
+  const securityChange = copy();
+  securityChange.postRestartObservation.securitySettingsChangedByAgent = true;
+  assert.throws(() => validateDevelopmentRecord(securityChange, plan), /Security setting requires manual/);
+});

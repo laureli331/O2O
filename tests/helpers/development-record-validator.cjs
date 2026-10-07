@@ -96,6 +96,17 @@ function validateDevelopmentRecord(record, plan) {
     assert.equal(record.cloudConsoleObservation?.verificationMethod, 'native-window-and-visible-ui', 'Environment verification method must be explicit');
   }
 
+  const restart = record.postRestartObservation;
+  if (restart) {
+    if (restart.openingUserReply === '好像点了') {
+      assert.equal(restart.openingActorConfirmed, false, 'Uncertain user report cannot prove who opened the environment');
+    }
+    assert.equal(restart.securitySettingsChangedByAgent, false, 'Security setting requires manual user action');
+    if (!restart.servicePortEnabled) {
+      assert.notEqual(restart.nativeConnectionStatus, 'verified', 'Closed current service port cannot certify restart-time connection');
+    }
+  }
+
   const tasks = new Map();
   for (const match of plan.matchAll(/^\| (DP\d{2}) \|[^\r\n]+/gm)) {
     const cells = match[0].split('|').map(cell => cell.trim());
