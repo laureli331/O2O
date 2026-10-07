@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "createdDate": "2026-10-07",
+  "status": "generated",
+  "uploadFile": "avatar-144.png",
+  "sourceFile": "source.png",
+  "format": "png",
+  "width": 144,
+  "height": 144,
+  "bytes": 21110,
+  "maxBytesExclusive": 2000000,
+  "sha256": "7C106F429C4FB46BCE4993FADB5C985DC0A355F468032ADB338C53842AD2D808",
+  "generator": "built-in image_gen",
+  "prompt": "generation-prompt.txt",
+  "palette": [
+    "#618872",
+    "#FCFBF7",
+    "#263A31"
+  ],
+  "concept": "Home with integrated leaf and ivory Chinese character",
+  "text": "湘",
+  "textCodepoint": "U+6E58",
+  "previousVersion": "../miniapp-avatar-v1/avatar-144.png",
+  "visualBaseline": "../../ui/approved-selection.json"
+}

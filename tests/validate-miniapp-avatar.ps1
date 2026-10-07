@@ -1,8 +1,8 @@
-﻿param()
+﻿param([ValidateSet('v1','v2')][string]$Version = 'v1')
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $avatarRoot = Split-Path -Parent $PSScriptRoot
-$avatarDirectory = Join-Path $avatarRoot 'assets\branding\miniapp-avatar-v1'
+$avatarDirectory = Join-Path $avatarRoot "assets\branding\miniapp-avatar-$Version"
 $avatarRecord = Get-Content -LiteralPath (Join-Path $avatarDirectory 'manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $avatarFile = Join-Path $avatarDirectory $avatarRecord.uploadFile
 $avatarPassed = 0
@@ -23,8 +23,8 @@ try {
 Assert-Avatar ((Get-FileHash -LiteralPath $avatarFile -Algorithm SHA256).Hash -eq $avatarRecord.sha256) 'Content matches the validated avatar'
 Assert-Avatar ((Test-Path -LiteralPath (Join-Path $avatarDirectory $avatarRecord.sourceFile)) -and (Get-Item -LiteralPath (Join-Path $avatarDirectory $avatarRecord.sourceFile)).Length -gt 0 -and $avatarRecord.sourceFile -ne $avatarRecord.uploadFile) 'Generation original is retained separately'
 Assert-Avatar ((Get-Item -LiteralPath (Join-Path $avatarDirectory $avatarRecord.prompt)).Length -gt 0 -and (Test-Path -LiteralPath (Join-Path $avatarDirectory $avatarRecord.visualBaseline))) 'Prompt and approved visual baseline are available'
-$avatarDocPath = Join-Path $avatarRoot 'docs\miniapp-avatar-v1.md'
+$avatarDocPath = Join-Path $avatarRoot "docs\miniapp-avatar-$Version.md"
 $avatarDoc = Get-Content -LiteralPath $avatarDocPath -Raw -Encoding UTF8
 $avatarBrokenLinks = @([regex]::Matches($avatarDoc, '\]\(([^)]+)\)') | Where-Object { -not (Test-Path -LiteralPath (Join-Path (Split-Path -Parent $avatarDocPath) $_.Groups[1].Value)) })
 Assert-Avatar ($avatarBrokenLinks.Count -eq 0 -and $avatarDoc.Contains($avatarRecord.sha256)) 'Document references resolve and identify exact deliverable'
-Write-Output "Avatar validation passed: $avatarPassed checks."
+Write-Output "Avatar $Version validation passed: $avatarPassed checks."
