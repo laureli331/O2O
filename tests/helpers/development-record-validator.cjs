@@ -78,6 +78,18 @@ function validateDevelopmentRecord(record, plan) {
     }
   }
 
+  const revalidation = record.developerToolsRevalidation;
+  if (revalidation) {
+    assert.equal(revalidation.scope, 'synthetic-diagnostic-directory-only', 'Revalidation exceeds approved scope');
+    assert.equal(revalidation.actualCacheDecryptionExecuted, false, 'Actual cache decryption was not authorized');
+    if (revalidation.encryptionTransitionCause === 'unknown') {
+      assert.equal(diagnosis.encryptionCauseVerified, false, 'Changed environment cannot prove the encryption hypothesis');
+    }
+    if (revalidation.pageVerification !== 'passed' || revalidation.cloudButtonVerification !== 'passed' || revalidation.cloudEnvironmentVerification !== 'passed') {
+      assert.equal(revalidation.originalSymptomResolved, false, 'Rename regression cannot substitute for original symptom verification');
+    }
+  }
+
   const tasks = new Map();
   for (const match of plan.matchAll(/^\| (DP\d{2}) \|[^\r\n]+/gm)) {
     const cells = match[0].split('|').map(cell => cell.trim());

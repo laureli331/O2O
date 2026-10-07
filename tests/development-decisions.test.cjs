@@ -229,3 +229,26 @@ test('an unsuccessful encryption experiment cannot be recorded as proof of cause
   falseEnvironments.cloudEnvironmentObservation.environments = [];
   assert.throws(() => validateDevelopmentRecord(falseEnvironments, plan), /Native cloud error cannot establish/);
 });
+
+test('a changed environment and passing rename checks cannot certify cloud UI recovery', () => {
+  const observation = record.developerToolsRevalidation;
+  assert.equal(observation.date, '2026-10-07');
+  assert.equal(observation.renameRegression.localNode, 'passed');
+  assert.equal(observation.renameRegression.wechatRuntime, 'passed');
+  assert.equal(observation.encryptionTransitionCause, 'unknown');
+  assert.equal(observation.actualCacheDecryptionExecuted, false);
+  assert.equal(observation.pageVerification, 'blocked-by-project-trust-prompt');
+  assert.equal(observation.originalSymptomResolved, false);
+  const falseResolution = copy();
+  falseResolution.developerToolsRevalidation.originalSymptomResolved = true;
+  assert.throws(() => validateDevelopmentRecord(falseResolution, plan), /Rename regression cannot substitute/);
+});
+
+test('diagnostic permission cannot be silently expanded to real cache changes', () => {
+  const broadened = copy();
+  broadened.developerToolsRevalidation.actualCacheDecryptionExecuted = true;
+  assert.throws(() => validateDevelopmentRecord(broadened, plan), /Actual cache decryption was not authorized/);
+  const wrongScope = copy();
+  wrongScope.developerToolsRevalidation.scope = 'all-user-data';
+  assert.throws(() => validateDevelopmentRecord(wrongScope, plan), /Revalidation exceeds approved scope/);
+});

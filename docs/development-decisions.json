@@ -98,6 +98,32 @@
     "cloudButtonRootCauseVerified": false,
     "repairVerified": false
   },
+  "developerToolsRevalidation": {
+    "date": "2026-10-07",
+    "approvalReply": "允许, 继续吧",
+    "scope": "synthetic-diagnostic-directory-only",
+    "activeInstallPath": "E:\\微信web开发者工具",
+    "activePackageVersion": "2.02.2608080",
+    "cipherExitCode": 0,
+    "preChangeAttributesCaptured": false,
+    "diagnosticDirectoryEncrypted": false,
+    "diagnosticFileEncrypted": false,
+    "untouchedVendorRootEncrypted": false,
+    "untouchedSecondProbeEncrypted": false,
+    "encryptionTransitionCause": "unknown",
+    "actualCacheDecryptionExecuted": false,
+    "renameRegression": {
+      "localNode": "passed",
+      "wechatRuntime": "passed",
+      "contentPreserved": true
+    },
+    "nativeToolConnection": "CONNECT_ERROR: wait WechatIDE authorization timeout",
+    "diagnosticProjectImported": true,
+    "pageVerification": "blocked-by-project-trust-prompt",
+    "cloudButtonVerification": "not-tested",
+    "cloudEnvironmentVerification": "not-tested",
+    "originalSymptomResolved": false
+  },
   "prerequisites": {
     "dataHandlingConfirmed": false,
     "businessConfigurationConfirmed": false,
