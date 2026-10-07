@@ -15,6 +15,13 @@ const technical = read('docs/technical-decision.md');
 const evidence = read('docs/external-evidence.md');
 const copy = () => structuredClone(record);
 
+test('test-account guidance is deferred until needed without granting account mutations', () => {
+  assert(technical.includes('当前无需用户处理小程序测试号或小游戏测试号'));
+  assert(technical.includes('说明选用哪个账号、具体用途和操作步骤'));
+  assert(technical.includes('不据此认定权限已验证'));
+  assert(technical.includes('不授权改名、删除账号、切换项目配置或开通收费服务'));
+});
+
 test('actual adoption and task progress obey the original dependency plan', () => {
   assert.equal(validateDevelopmentRecord(record, plan), true);
   assert(technical.includes('用户实际回复：**“采用”**'));
