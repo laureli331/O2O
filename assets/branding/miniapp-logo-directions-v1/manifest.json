@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "date": "2026-10-07",
+  "status": "design-options",
+  "selected": null,
+  "generator": "built-in image_gen",
+  "palette": [
+    "#618872",
+    "#FCFBF7",
+    "#263A31"
+  ],
+  "character": "湘",
+  "visualBaseline": "../../ui/approved-selection.json",
+  "maxBytesExclusive": 2000000,
+  "directions": [
+    {
+      "key": "water",
+      "name": "水波湘",
+      "file": "water/avatar-144.png",
+      "source": "water/source.png",
+      "prompt": "water/generation-prompt.txt",
+      "format": "png",
+      "width": 144,
+      "height": 144,
+      "bytes": 21702,
+      "sha256": "0769D10E21C820D1EFBAFDBD1C8CEE2F9B7E3BD4A31D7556C1BA6729EA70969A"
+    },
+    {
+      "key": "neighbor",
+      "name": "邻里湘",
+      "file": "neighbor/avatar-144.png",
+      "source": "neighbor/source.png",
+      "prompt": "neighbor/generation-prompt.txt",
+      "format": "png",
+      "width": 144,
+      "height": 144,
+      "bytes": 17664,
+      "sha256": "4F279116771C7B80E42784E6ED158752697CFFF220A0AF648F1E46ED8C8232E5"
+    },
+    {
+      "key": "seal",
+      "name": "软糖湘",
+      "file": "seal/avatar-144.png",
+      "source": "seal/source.png",
+      "prompt": "seal/generation-prompt.txt",
+      "format": "png",
+      "width": 144,
+      "height": 144,
+      "bytes": 24455,
+      "sha256": "8DE1D8A9B2DEFB0D68D4B557B5B3FE80652C401E101BE08E726DBF55D9CAF2EE"
+    }
+  ],
+  "refinementBase": "neighbor"
+}
