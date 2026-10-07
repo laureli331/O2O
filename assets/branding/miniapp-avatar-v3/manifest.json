@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "createdDate": "2026-10-07",
+  "status": "liked-refinement",
+  "uploadFile": "avatar-144.png",
+  "sourceFile": "source.png",
+  "format": "png",
+  "width": 144,
+  "height": 144,
+  "bytes": 22683,
+  "maxBytesExclusive": 2000000,
+  "sha256": "BACA515224ADAA6FEEC9992C6C7AF3A53E44F76F82FACD67CB9AA80F24F89CC5",
+  "generator": "built-in image_gen",
+  "prompt": "generation-prompt.txt",
+  "palette": [
+    "#618872",
+    "#FCFBF7",
+    "#263A31"
+  ],
+  "characterInspiration": "湘",
+  "pictorialStrokeSimplification": true,
+  "baseLogo": "../miniapp-logo-directions-v1/neighbor/source.png",
+  "visualBaseline": "../../ui/approved-selection.json",
+  "userFeedback": "这版特别好，试试再削弱一点立体感"
+}

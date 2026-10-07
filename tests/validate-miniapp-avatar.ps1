@@ -1,4 +1,4 @@
-﻿param([ValidateSet('v1','v2')][string]$Version = 'v1')
+﻿param([ValidateSet('v1','v2','v3')][string]$Version = 'v1')
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
 $avatarRoot = Split-Path -Parent $PSScriptRoot

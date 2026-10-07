@@ -1,0 +1,20 @@
+Use case: logo-brand / precise-object-edit.
+EDIT the attached candidate #2 "neighbor Xiang" logo. The user explicitly chose this direction as the basis for refinement and requests: more texture because it feels too flat and monotonous; a stronger HOUSE / NEIGHBORHOOD impression; tastefully OMIT character strokes when that improves beauty. This permission for intentional pictorial simplification supersedes earlier strict stroke-preservation requirements.
+
+KEEP the concept: Chinese "湘" transformed through its own glyph into a friendly compact neighborhood. Three left droplet/conversation shapes evoke 氵; central structural strokes form a small home; right stacked window block evokes 目. Keep the soft sage #618872 / very pale warm ivory #FCFBF7 / dark charcoal green #263A31 palette and broad readable negative spaces. Square opaque ivory avatar canvas, central circular-safe placement, no captions or watermark.
+
+PRIMARY CHANGE 1 — HOUSE FORM:
+Turn the central 木-derived structure into a clearly welcoming small house made from the LETTER STROKES THEMSELVES. Define one elegant gabled roof, a small integrated chimney/stem, broad quiet wall mass and a simple recessed doorway. Simplify or omit the awkward extra horizontal crossbar and extra branching lower strokes so the center is optically balanced, clean and recognizably a HOME, not a rigid tree glyph with a door cut into it. A few surviving stem/roof/leg relationships should still hint at 木 inside 湘. Do NOT put a complete printed 湘 character on top of a separate house.
+Make the right 目-derived block read as an adjoining little building: small pitched/slanted roof cap, clear broad stacked window openings, a subtle side plane. You may omit one internal separator if it yields a more handsome, spacious window system. Preserve the overall 水 + neighborhood word-shape recognition.
+The two buildings should have visually related roofs and softly rounded architectural corners. A subtle shared edge or tiny ground-level connection may unify them, but no large enclosing frame or additional landscape.
+The three left speech-droplets should stay playful, gently arranged with clear gaps; no separate cartoon people or full literal speech outlines. Overall balanced silhouette, roughly 65–72 percent of canvas width with generous empty margins.
+
+PRIMARY CHANGE 2 — TACTILE DEPTH / TEXTURE:
+The logo must visibly gain a refined MATTE LOW-RELIEF material feel, like softly pressed textured paper or fine microcement, not flat fill and not shiny toy plastic.
+Add fine tasteful grain on green house WALL PLANES, broad soft directional light from upper-left, a subtly darker roof-edge plane, shallow recessed windows/door and just a hint of gentle cast shadow. Use green tonal variants derived from approved colors. The material must feel touchable and warm.
+Texture must be visible when viewing the large original and understated at 144x144; important depth should come from simplified light/shadow planes that survive reduction. Do NOT cover text/counters with busy speckles, scratches, photorealistic brick patterns or wood-grain linework.
+Keep bevels VERY SMALL and shapes crisp. No dramatic isometric perspective, no tall 3D extrusion, no chrome, no glossy glass highlight, no complex realistic architecture, no gradients of unrelated colors. View remains nearly straight-on, as a professional brand mark with shallow tactile depth.
+Warm, useful, clever visual wit: discover a small neighborhood within the character; friendliness through roof rhythm, rounded corners, offset windows and welcoming doorway. Not a stern official seal.
+
+OUTPUT:
+One refined logo image only, 1:1 square PNG with opaque pale ivory background. Full mark, not a collage or process sheet. All essential geometry and counters must be readable at final export 144x144. Brand form inspired by 湘; intentional omission permitted, but don't replace it with unrelated letters or a generic house-and-leaf icon. Preserve the original candidate as a recognizable starting point while creating a clearer house silhouette and sophisticated material texture.
