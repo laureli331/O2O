@@ -1,0 +1,9 @@
+Use case: precise-object-edit
+Asset type: square WeChat mini-program brand avatar, glyph-derived logo inspired by the Chinese character 湘.
+Input image: the supplied textured green neighborhood 湘 logo is the EDIT TARGET.
+Primary request: The user loves this exact version and asks to weaken the dimensionality JUST A LITTLE. Make a restrained material and depth refinement of this exact logo.
+Preserve all existing outer silhouettes, positions, scale, spacing, three teardrop shapes at the left, central gabled house/木 shape, chimney, arch doorway, the small right-hand house/目 shape and its exactly two stacked windows. Preserve the clever omitted strokes, playful character-derived identity and unmistakable house feeling. Do not redraw the geometry or add Chinese text.
+Change only depth and shading: slightly shallower extrusion and thinner visible side faces on roofs, chimney and house edges; a modest reduction of relief around 20–30 percent visually, not fully flat. Lighten the dark side faces and internal doorway/window shading subtly. Make the ground shadow lighter and softer. The resulting logo should feel like a matte shallow relief with a little volume, rather than a thick freestanding 3D object.
+Keep the attractive fine irregular tactile grain / microcement paper-like surface texture visible and refined. Keep soft broad light gradients, no glossy highlights, no plastic, no metallic effects. The visual must stay warm, calm and friendly.
+Palette: same muted sage green (#618872 family) with pale ivory (#FCFBF7 family) and darker green shadows (#263A31 family). Gentle tonal changes within these colors only.
+Composition: exact reference composition and generous ivory square background. No label, no frame, no watermark, no extra decoration. Opaque background. Aim for the same design with subtly quieter dimensionality, clear and attractive when reduced to a 144x144 avatar.

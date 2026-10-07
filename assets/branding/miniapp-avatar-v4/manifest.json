@@ -1,0 +1,25 @@
+{
+  "version": 4,
+  "createdDate": "2026-10-07",
+  "status": "generated-comparison",
+  "uploadFile": "avatar-144.png",
+  "sourceFile": "source.png",
+  "format": "png",
+  "width": 144,
+  "height": 144,
+  "bytes": 24100,
+  "maxBytesExclusive": 2000000,
+  "sha256": "7A5D06FD6C17751338415F9E45E2F2EE8ACA75E209E6A0D5B775462C5670AD64",
+  "generator": "built-in image_gen",
+  "prompt": "generation-prompt.txt",
+  "palette": [
+    "#618872",
+    "#FCFBF7",
+    "#263A31"
+  ],
+  "characterInspiration": "湘",
+  "pictorialStrokeSimplification": true,
+  "baseLogo": "../miniapp-avatar-v3/source.png",
+  "visualBaseline": "../../ui/approved-selection.json",
+  "userFeedback": "这版特别好，试试再削弱一点立体感"
+}
