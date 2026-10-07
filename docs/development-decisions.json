@@ -58,7 +58,9 @@
     "servicePortEnabled": true,
     "servicePortUserReply": "已开启",
     "serviceAddress": "http://127.0.0.1:51438",
-    "response": { "login": true },
+    "response": {
+      "login": true
+    },
     "verificationStatus": "verified",
     "cloudEnvironmentQueryExecuted": true
   },
@@ -82,7 +84,11 @@
     "nativeSkillVersion": "0.3.11",
     "nativeAuthorizationVerified": true,
     "managedAppIdFound": true,
-    "nativeCloudQuery": { "success": false, "platformRet": 1000, "message": "system error." },
+    "nativeCloudQuery": {
+      "success": false,
+      "platformRet": 1000,
+      "message": "system error."
+    },
     "runtimePageQuery": "timeout waiting for automator response",
     "vendorInstallError": "EXDEV",
     "vendorDirectoryEncrypted": true,
@@ -182,13 +188,101 @@
     "DP07": "未开始"
   },
   "externalGates": [
-    { "id": "E01", "status": "待外部依据", "evidence": [] },
-    { "id": "E02", "status": "待外部依据", "evidence": [] },
-    { "id": "E03", "status": "待用户确认", "evidence": [] },
-    { "id": "E04", "status": "待外部依据", "evidence": [] },
-    { "id": "E05", "status": "待用户确认", "evidence": [] },
-    { "id": "E06", "status": "待外部依据", "evidence": [] },
-    { "id": "QG01", "status": "待外部依据", "evidence": [] }
+    {
+      "id": "E01",
+      "status": "待外部依据",
+      "evidence": []
+    },
+    {
+      "id": "E02",
+      "status": "待外部依据",
+      "evidence": []
+    },
+    {
+      "id": "E03",
+      "status": "待用户确认",
+      "evidence": []
+    },
+    {
+      "id": "E04",
+      "status": "待外部依据",
+      "evidence": []
+    },
+    {
+      "id": "E05",
+      "status": "待用户确认",
+      "evidence": []
+    },
+    {
+      "id": "E06",
+      "status": "待外部依据",
+      "evidence": []
+    },
+    {
+      "id": "QG01",
+      "status": "待外部依据",
+      "evidence": []
+    }
   ],
-  "productionEnabled": false
+  "productionEnabled": false,
+  "selectedDevelopmentEnvironment": {
+    "date": "2026-10-07",
+    "id": "cloud1-d1g1mv89t76512a25",
+    "name": "cloud1",
+    "userReply": "采用，使用现有 cloud1",
+    "scope": "development-and-controlled-tests",
+    "productionApproved": false
+  },
+  "connectionRevalidation": {
+    "date": "2026-10-07",
+    "serviceAddress": "http://127.0.0.1:31781",
+    "servicePortListening": true,
+    "loginResponse": {
+      "login": true
+    },
+    "environmentQuerySucceeded": true,
+    "environmentIds": [
+      "cloud1-d1g1mv89t76512a25"
+    ],
+    "functionListQuerySucceeded": true,
+    "functionListEmpty": true,
+    "nativeAuthorizationVerified": false,
+    "nativeError": "CONNECT_ERROR: wait WechatIDE authorization timeout",
+    "cloudWritesExecuted": false
+  },
+  "platformProgress": {
+    "date": "2026-10-07",
+    "name": "湘邻湘友",
+    "basicInformationCompleted": true,
+    "basicInformationEvidence": "user-screenshot-home-completed",
+    "settingsPageStillRequestsBasicInformation": true,
+    "settingsDiscrepancyCause": null,
+    "categoriesSubmitted": false,
+    "categoryObservations": {
+      "housekeepingScope": "保姆、月嫂、房屋保洁、家电维修、数码电器维修等在线预约服务",
+      "secondhandSearch": "user-reported-no-results",
+      "errandSearchDisplayed": [
+        "物流服务 > 查件",
+        "物流服务 > 装卸搬运"
+      ],
+      "loadingScope": "物流行业货物装卸搬运，如工程、港口",
+      "loadingSelectionCancelled": true
+    },
+    "aiAdviceSource": "微信小微AI及微信开发者助手AI（用户转述）",
+    "aiAdviceVerified": false,
+    "licenseRegistered": false,
+    "subjectChangeFee": {
+      "amount": 300,
+      "currency": "CNY",
+      "source": "user-report",
+      "feePageVerified": false,
+      "paid": false
+    },
+    "registrationRouteConfirmed": false,
+    "subjectChanged": false,
+    "newAccountRegistered": false,
+    "oldAccountCancelled": false,
+    "registrationLocation": null,
+    "registrationAddressAvailable": null
+  }
 }

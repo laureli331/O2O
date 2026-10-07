@@ -291,3 +291,23 @@ test('restart verification distinguishes a closed current port from historical l
   securityChange.postRestartObservation.securitySettingsChangedByAgent = true;
   assert.throws(() => validateDevelopmentRecord(securityChange, plan), /Security setting requires manual/);
 });
+
+test('latest platform evidence preserves unresolved eligibility and destructive decisions', () => {
+  const p=record.platformProgress;
+  assert.equal(p.basicInformationCompleted, true);
+  assert.equal(p.name, '湘邻湘友');
+  assert.equal(p.categoriesSubmitted, false);
+  assert.equal(p.licenseRegistered, false);
+  assert.equal(p.subjectChangeFee.amount, 300);
+  assert.equal(p.subjectChangeFee.source, 'user-report');
+  assert.equal(p.aiAdviceVerified, false);
+  assert.equal(p.registrationRouteConfirmed, false);
+  assert.equal(p.oldAccountCancelled, false);
+  assert.equal(record.selectedDevelopmentEnvironment.id, 'cloud1-d1g1mv89t76512a25');
+  assert.equal(record.selectedDevelopmentEnvironment.userReply, '采用，使用现有 cloud1');
+  assert.equal(record.connectionRevalidation.loginResponse.login, true);
+  assert.equal(record.connectionRevalidation.nativeAuthorizationVerified, false);
+  assert(technical.includes('基础信息已完成'));
+  assert(evidence.includes('微信开发者助手'));
+  assert.equal(record.externalGates.find(g=>g.id==='E01').status, '待外部依据');
+});
