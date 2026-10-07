@@ -344,3 +344,27 @@ test('confirmed dual-account route does not fabricate completed registration or 
   }
   assert(plan.includes('旧账号测试不能代替正式验收'));
 });
+
+test('license plan records tomorrow as a plan without claiming completed registration', () => {
+  const plan = record.businessLicensePlan;
+  assert.equal(plan.recordedDate, '2026-10-07');
+  assert.equal(plan.plannedDate, '2026-10-08');
+  assert.equal(plan.userReply, '执照明天办, 你可以更新进度文档了');
+  assert.equal(plan.applicationSubmitted, false);
+  assert.equal(plan.licenseObtained, false);
+  assert.equal(record.platformProgress.licenseRegistered, false);
+  assert.equal(plan.operator, 'user');
+  assert.equal(plan.composition, 'personal-operation');
+  assert.equal(plan.preSubmissionUserReviewRequired, true);
+  assert.equal(plan.finalName, null);
+  assert.equal(plan.finalBusinessScope, null);
+  for (const document of [technical, evidence]) {
+    assert(document.includes('2026-10-08'));
+    assert(document.includes('不是承诺当日获照'));
+    assert(document.includes('本轮仅授权更新进度'));
+    assert(document.includes('E01—E06/QG01仍待核实'));
+  }
+  for (const file of [plan.preparationDocument, plan.handoffDocument]) {
+    assert(fs.existsSync(path.join(repo, file)));
+  }
+});

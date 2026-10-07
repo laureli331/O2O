@@ -303,5 +303,25 @@
     "newEnvironmentPriceVerified": false,
     "nameReleaseRuleVerified": false,
     "formalVerificationAccount": "new-miniapp-development-and-trial-versions"
+  },
+  "businessLicensePlan": {
+    "recordedDate": "2026-10-07",
+    "plannedDate": "2026-10-08",
+    "userReply": "执照明天办, 你可以更新进度文档了",
+    "status": "planned-not-evidenced-submitted",
+    "assistance": "father-contacting-local-registration-staff",
+    "operator": "user",
+    "operatorAdultConfirmed": true,
+    "composition": "personal-operation",
+    "location": "湖南省郴州市永兴县湘阴渡",
+    "premises": "father-owned-self-built-residence",
+    "use": "free-use-for-own-office-no-visitors-no-stock",
+    "applicationSubmitted": false,
+    "licenseObtained": false,
+    "finalName": null,
+    "finalBusinessScope": null,
+    "preSubmissionUserReviewRequired": true,
+    "preparationDocument": "docs/registration-preparation.md",
+    "handoffDocument": "docs/registration-handoff-to-father.md"
   }
 }
