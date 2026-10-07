@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "createdDate": "2026-10-07",
+  "status": "generated",
+  "uploadFile": "avatar-144.png",
+  "sourceFile": "source.png",
+  "format": "png",
+  "width": 144,
+  "height": 144,
+  "bytes": 22038,
+  "maxBytesExclusive": 2000000,
+  "sha256": "550F3776383D6F52D77BF671223DA715E15C59807D8D88997F33077EFBEE60DB",
+  "generator": "built-in image_gen",
+  "prompt": "generation-prompt.txt",
+  "palette": [
+    "#618872",
+    "#FCFBF7",
+    "#263A31"
+  ],
+  "concept": "Home with one integrated leaf, no text",
+  "visualBaseline": "../../ui/approved-selection.json"
+}
