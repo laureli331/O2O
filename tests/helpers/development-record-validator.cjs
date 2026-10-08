@@ -113,7 +113,45 @@ function validateDevelopmentRecord(record, plan) {
     assert(!tasks.has(match[1]), `Duplicate task: ${match[1]}`);
     tasks.set(match[1], [...cells[4].matchAll(/DP\d{2}/g)].map(item => item[0]));
   }
-  assert.equal(tasks.size, 40, 'Original forty-task plan must be retained');
+  assert.equal(tasks.size, 48, 'Original forty tasks and eight new tasks must be retained');
+  const allTaskIds = Array.from({length:48}, (_,i) => 'DP' + String(i+1).padStart(2,'0'));
+  assert.deepEqual([...tasks.keys()].sort(), allTaskIds, 'Task numbering must retain all original and added IDs');
+  assert.deepEqual(Object.keys(record.tasks).sort(), allTaskIds, 'Every task needs an explicit actual status');
+  const visiting = new Set(), visited = new Set();
+  function visit(id) {
+    assert(tasks.has(id), 'Unknown dependency: ' + id);
+    assert(!visiting.has(id), 'Dependency cycle: ' + id);
+    if(visited.has(id)) return;
+    visiting.add(id);
+    for(const dependency of tasks.get(id)) visit(dependency);
+    visiting.delete(id); visited.add(id);
+  }
+  for(const id of tasks.keys()) visit(id);
+  for(const [id, required] of [['DP03','DP41'], ['DP36','DP48']]) {
+    assert(tasks.get(id).includes(required), 'Required new prerequisite: ' + id + ' requires ' + required);
+  }
+  const feature = record.featurePlanning;
+  assert(feature, 'Current feature planning must be recorded');
+  assert.equal(feature.prdVersion, '1.4', 'Current PRD version must match planning');
+  assert.equal(feature.planTaskCount, 48, 'Feature planning task count mismatch');
+  assert.equal(feature.baseScopeRetained, true, 'Original scope cannot be removed');
+  assert.deepEqual(feature.v1AiBusinesses, ['errands','secondhand'], 'AI business scope changed');
+  assert.equal(feature.inputCharacterLimit, 1000, 'AI input limit changed');
+  for(const flag of ['historicalReference','privateFieldsSentToModel','v1ModelReadsImages','automaticOverwrite','automaticPublish','automaticRetry','rawAiAnalysisLogs']) {
+    assert.equal(feature[flag], false, 'AI boundary changed: ' + flag);
+  }
+  assert.equal(feature.userImagesOptional, true, 'Images must remain optional');
+  assert.equal(feature.userDraftSaveExplicit, true, 'Cloud drafts require explicit save');
+  assert.equal(feature.dashboardRoles, 'two-independent-equal-role-operators', 'Dashboard role scope changed');
+  assert.deepEqual(feature.dashboardFilters, ['date-range','business-type'], 'Dashboard filters changed');
+  assert.equal(feature.dashboardCutoff, 'previous-natural-day-Asia/Shanghai', 'Dashboard cutoff changed');
+  assert.equal(feature.errandFunnelCohort, 'firstPublishedAt', 'Funnel cohort changed');
+  assert.equal(feature.aiPublicationAttribution, 'last-adopted-valid-draft-first-publication', 'AI attribution changed');
+  assert.deepEqual(feature.v2Scope, ['VP01','VP02','VP03'], 'Second version scope changed');
+  if(['provider','model','channel','dailyQuota','dailyBudget','monthlyBudget','concurrencyLimit','timeoutMs','outputTokenLimit'].some(key => feature[key] == null)) {
+    assert.equal(feature.realAiEnabled, false, 'Unknown AI configuration cannot enable real calls');
+  }
+  if(feature.newAnalyticsRetention == null) assert.equal(feature.newProductionAnalyticsEnabled, false, 'Unknown retention cannot enable production analytics');
   for (const [id, status] of Object.entries(record.tasks)) {
     assert(tasks.has(id), `Unknown task: ${id}`);
     assert(taskStates.has(status), `Invalid task status: ${id}`);
@@ -125,8 +163,8 @@ function validateDevelopmentRecord(record, plan) {
     }
   }
 
-  const gateIds = ['E01', 'E02', 'E03', 'E04', 'E05', 'E06', 'QG01'];
-  assert.deepEqual(record.externalGates.map(gate => gate.id).sort(), gateIds, 'All seven external conditions must be tracked exactly once');
+  const gateIds = ['AG01', 'DG01', 'E01', 'E02', 'E03', 'E04', 'E05', 'E06', 'QG01'];
+  assert.deepEqual(record.externalGates.map(gate => gate.id).sort(), gateIds, 'All nine external conditions must be tracked exactly once');
   for (const gate of record.externalGates) {
     assert(['待外部依据', '待用户确认', '已完成'].includes(gate.status), `Invalid condition status: ${gate.id}`);
     assert(Array.isArray(gate.evidence), `Evidence must be a list: ${gate.id}`);

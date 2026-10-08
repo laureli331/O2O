@@ -29,9 +29,9 @@ $planDecoder = New-Object System.Text.UTF8Encoding($false, $true)
 $planText = $planDecoder.GetString([IO.File]::ReadAllBytes($DocumentPath))
 $planPrd = $planDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $planDocDirectory 'prd.md')))
 Assert-Plan ($planText.StartsWith('# 永兴乡镇生活服务小程序开发计划')) 'Plan is strict UTF-8 and identifies the deliverable'
-Assert-Plan ($planText.Contains('PRD v1.3') -and $planPrd.Contains('版本：1.3')) 'Plan uses the current PRD version'
+Assert-Plan ($planText.Contains('PRD v1.4') -and $planPrd.Contains('版本：1.4')) 'Plan uses the current PRD version'
 Assert-Plan ($planText.Contains('尚未选定，先列技术方案确认任务')) 'Actual user decision on technology is recorded'
-Assert-Plan ($planText.IndexOf('## 1. 先确定验证方案') -lt $planText.IndexOf('## 4. 可领取的40项执行任务')) 'Validation is defined before the multi-step task plan'
+Assert-Plan ($planText.IndexOf('## 1. 先确定验证方案') -lt $planText.IndexOf('## 4. 可领取的48项执行任务')) 'Validation is defined before the multi-step task plan'
 
 $planLinks = @([regex]::Matches($planText, '\]\(([^)]+)\)') | Where-Object { $_.Groups[1].Value -notmatch '^(https?://|#)' })
 foreach ($planLink in $planLinks) {
@@ -41,9 +41,9 @@ foreach ($planLink in $planLinks) {
 Assert-Plan ($planLinks.Count -ge 5) 'Plan links its PRD, design, approval and validation sources'
 
 $planTasks = Get-PlanRows $planText 'DP\d{2}'
-Assert-Plan ($planTasks.Count -eq 40) 'Exactly forty unique task rows exist'
+Assert-Plan ($planTasks.Count -eq 48) 'Exactly forty-eight unique task rows exist'
 $planDependencies = @{}
-for ($planIndex = 1; $planIndex -le 40; $planIndex++) {
+for ($planIndex = 1; $planIndex -le 48; $planIndex++) {
     $planTaskId = 'DP{0:D2}' -f $planIndex
     Assert-Plan ($planTasks.ContainsKey($planTaskId)) "Task numbering is complete: $planTaskId"
     $planCells = $planTasks[$planTaskId]
@@ -55,7 +55,7 @@ for ($planIndex = 1; $planIndex -le 40; $planIndex++) {
     Assert-Plan (@($planTaskDeps | Select-Object -Unique).Count -eq $planTaskDeps.Count) "Dependencies have no duplicate edges: $planTaskId"
     $planDependencies[$planTaskId] = $planTaskDeps
     if ($planCells[1] -notin @('A')) {
-        Assert-Plan ([regex]::IsMatch($planCells[5], '\b(?:RT|T)\d{2}\b|检查：')) "Task defines an acceptance or review condition: $planTaskId"
+        Assert-Plan ([regex]::IsMatch($planCells[5], '\b(?:AT|DT|RT|T)\d{2}\b|检查：')) "Task defines an acceptance or review condition: $planTaskId"
     }
 }
 
@@ -72,7 +72,7 @@ do {
         }
     }
 } while ($planProgress)
-Assert-Plan ($planResolved.Count -eq 40) 'Task dependency graph has no cycles'
+Assert-Plan ($planResolved.Count -eq 48) 'Task dependency graph has no cycles'
 
 $planRequiredEdges = @{
     'DP07' = @('DP01', 'DP03', 'DP04')
@@ -81,23 +81,27 @@ $planRequiredEdges = @{
     'DP26' = @('DP24', 'DP25')
     'DP28' = @('DP27')
     'DP32' = @('DP31')
-    'DP36' = @('DP29', 'DP35')
+    'DP36' = @('DP29', 'DP35', 'DP48')
+    'DP03' = @('DP02', 'DP41')
+    'DP42' = @('DP08', 'DP41')
+    'DP43' = @('DP42', 'DP13', 'DP17', 'DP20')
+    'DP48' = @('DP44', 'DP47')
     'DP40' = @('DP39')
 }
 foreach ($planEdgeId in $planRequiredEdges.Keys) {
     Assert-Plan (@($planRequiredEdges[$planEdgeId] | Where-Object { $_ -notin $planDependencies[$planEdgeId] }).Count -eq 0) "Safety-critical prerequisites remain present: $planEdgeId"
 }
 
-$planPrdIds = @([regex]::Matches($planPrd, '(?m)^(?:\| |\- )((?:RT|T|M|R|V|F|N|S|E)\d{2})(?: \|| )') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
-$planReferences = @([regex]::Matches($planText, '(?<![A-Z0-9])(?:RT|T|M|R|V|F|N|S|E)\d{2}(?![A-Z0-9])') | ForEach-Object { $_.Value } | Select-Object -Unique)
+$planPrdIds = @([regex]::Matches($planPrd, '(?m)^(?:\| |\- )((?:AT|DT|AI|BS|AM|AG|DG|VP|QG|RT|T|M|R|V|F|N|S|E)\d{2})(?: \|| )') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
+$planReferences = @([regex]::Matches($planText, '(?<![A-Z0-9])(?:AT|DT|AI|BS|AM|AG|DG|VP|QG|RT|T|M|R|V|F|N|S|E)\d{2}(?![A-Z0-9])') | ForEach-Object { $_.Value } | Select-Object -Unique)
 Assert-Plan (@($planReferences | Where-Object { $_ -notin $planPrdIds }).Count -eq 0) 'Plan references only existing PRD identifiers'
 $planUnknownTasks = @([regex]::Matches($planText, '\bDP\d{2}\b') | ForEach-Object { $_.Value } | Where-Object { -not $planTasks.ContainsKey($_) })
 Assert-Plan ($planUnknownTasks.Count -eq 0) 'All task references resolve'
 
 $planCoverage = Get-PlanRows $planText '(?:M|R)\d{2}'
-Assert-Plan ($planCoverage.Count -eq 18) 'All ten modules and eight extensions have explicit traceability rows'
+Assert-Plan ($planCoverage.Count -eq 20) 'All twelve modules and eight extensions have explicit traceability rows'
 $planCoverageRefs = ($planCoverage.Values | ForEach-Object { $_ -join ' ' }) -join "`n"
-foreach ($planFamily in @(@('M',10), @('R',8), @('F',16), @('V',20), @('N',9), @('S',4))) {
+foreach ($planFamily in @(@('M',12), @('R',8), @('F',18), @('V',21), @('N',9), @('S',4))) {
     for ($planIndex = 1; $planIndex -le $planFamily[1]; $planIndex++) {
         $planRequirementId = '{0}{1:D2}' -f $planFamily[0], $planIndex
         Assert-Plan ([regex]::IsMatch($planCoverageRefs, '\b' + $planRequirementId + '\b')) "Traceability covers: $planRequirementId"
@@ -107,16 +111,16 @@ foreach ($planCoverageId in $planCoverage.Keys) {
     Assert-Plan ($planCoverage[$planCoverageId].Count -eq 3 -and [regex]::IsMatch($planCoverage[$planCoverageId][1], '\bDP\d{2}\b')) "Requirement has an executable task mapping: $planCoverageId"
 }
 
-$planAcceptances = Get-PlanRows $planText '(?:RT|T)\d{2}'
-Assert-Plan ($planAcceptances.Count -eq 34) 'All thirty-four original acceptance scenarios have unique execution rows'
-foreach ($planTestFamily in @(@('T',18), @('RT',16))) {
+$planAcceptances = Get-PlanRows $planText '(?:AT|DT|RT|T)\d{2}'
+Assert-Plan ($planAcceptances.Count -eq 56) 'All fifty-six original and added acceptance scenarios have unique execution rows'
+foreach ($planTestFamily in @(@('T',18), @('RT',16), @('AT',12), @('DT',10))) {
     for ($planIndex = 1; $planIndex -le $planTestFamily[1]; $planIndex++) {
         $planTestId = '{0}{1:D2}' -f $planTestFamily[0], $planIndex
         Assert-Plan ($planAcceptances.ContainsKey($planTestId)) "Acceptance scenario is not omitted: $planTestId"
         Assert-Plan ($planAcceptances[$planTestId].Count -eq 3 -and [regex]::IsMatch($planAcceptances[$planTestId][1], '\bDP\d{2}\b') -and $planAcceptances[$planTestId][2].Length -ge 15) "Acceptance has responsible tasks and an observable expected result: $planTestId"
     }
 }
-Assert-Plan ((Get-PlanRows $planText 'E\d{2}').Count -eq 6 -and $planText.Contains('| QG01 |')) 'All external gates have explicit evidence and blocked-capability rows'
+Assert-Plan ((Get-PlanRows $planText 'E\d{2}').Count -eq 6 -and $planText.Contains('| QG01 |') -and $planText.Contains('| AG01 |') -and $planText.Contains('| DG01 |')) 'All external gates have explicit evidence and blocked-capability rows'
 
 $planCriticalPhrases = @(
     '登录不解码', '原始完整姓名/身份证', '只有1承接者', '同时多单承接不限量',

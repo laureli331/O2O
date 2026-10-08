@@ -62,6 +62,7 @@ test('starting product engineering before prerequisites finish is rejected', () 
 test('task labels cannot substitute for unconfirmed data and business decisions', () => {
   const changed = copy();
   for (let index = 1; index <= 7; index++) changed.tasks[`DP${String(index).padStart(2, '0')}`] = '已完成';
+  changed.tasks.DP41 = '已完成';
   assert.throws(() => validateDevelopmentRecord(changed, plan), /Data handling decision is not confirmed/);
   changed.prerequisites.dataHandlingConfirmed = true;
   assert.throws(() => validateDevelopmentRecord(changed, plan), /Business configuration is not confirmed/);
@@ -70,10 +71,10 @@ test('task labels cannot substitute for unconfirmed data and business decisions'
 test('missing or duplicate external conditions are rejected', () => {
   const missing = copy();
   missing.externalGates.pop();
-  assert.throws(() => validateDevelopmentRecord(missing, plan), /All seven external conditions/);
+  assert.throws(() => validateDevelopmentRecord(missing, plan), /All nine external conditions/);
   const duplicate = copy();
   duplicate.externalGates.push(duplicate.externalGates[0]);
-  assert.throws(() => validateDevelopmentRecord(duplicate, plan), /All seven external conditions/);
+  assert.throws(() => validateDevelopmentRecord(duplicate, plan), /All nine external conditions/);
 });
 
 test('no evidence and general documentation cannot be called project verification', () => {
@@ -110,8 +111,8 @@ test('documents link existing local sources and preserve paired fences and table
 });
 
 test('external ledger covers every condition and labels draft consultations unsent', () => {
-  const ids = [...evidence.matchAll(/^\| (E0[1-6]|QG01) \|/gm)].map(match => match[1]);
-  assert.deepEqual(ids, ['E01', 'E02', 'E03', 'E04', 'E05', 'E06', 'QG01']);
+  const ids = [...evidence.matchAll(/^\| (E0[1-6]|QG01|AG01|DG01) \|/gm)].map(match => match[1]);
+  assert.deepEqual(ids, ['E01', 'E02', 'E03', 'E04', 'E05', 'E06', 'QG01', 'AG01', 'DG01']);
   assert(evidence.includes('微信平台咨询草稿（未发送）'));
   assert(evidence.includes('核验供应商咨询草稿（未发送）'));
   assert(evidence.includes('未处理真实证件或支付'));

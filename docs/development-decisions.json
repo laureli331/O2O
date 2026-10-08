@@ -185,7 +185,48 @@
     "DP04": "资料准备中",
     "DP05": "未开始",
     "DP06": "未开始",
-    "DP07": "未开始"
+    "DP07": "未开始",
+    "DP08": "未开始",
+    "DP09": "未开始",
+    "DP10": "未开始",
+    "DP11": "未开始",
+    "DP12": "未开始",
+    "DP13": "未开始",
+    "DP14": "未开始",
+    "DP15": "未开始",
+    "DP16": "未开始",
+    "DP17": "未开始",
+    "DP18": "未开始",
+    "DP19": "未开始",
+    "DP20": "未开始",
+    "DP21": "未开始",
+    "DP22": "未开始",
+    "DP23": "未开始",
+    "DP24": "未开始",
+    "DP25": "未开始",
+    "DP26": "未开始",
+    "DP27": "未开始",
+    "DP28": "未开始",
+    "DP29": "未开始",
+    "DP30": "未开始",
+    "DP31": "未开始",
+    "DP32": "未开始",
+    "DP33": "未开始",
+    "DP34": "未开始",
+    "DP35": "未开始",
+    "DP36": "未开始",
+    "DP37": "未开始",
+    "DP38": "未开始",
+    "DP39": "未开始",
+    "DP40": "未开始",
+    "DP41": "未开始",
+    "DP42": "未开始",
+    "DP43": "未开始",
+    "DP44": "未开始",
+    "DP45": "未开始",
+    "DP46": "未开始",
+    "DP47": "未开始",
+    "DP48": "未开始"
   },
   "externalGates": [
     {
@@ -221,6 +262,16 @@
     {
       "id": "QG01",
       "status": "待外部依据",
+      "evidence": []
+    },
+    {
+      "id": "AG01",
+      "status": "待外部依据",
+      "evidence": []
+    },
+    {
+      "id": "DG01",
+      "status": "待用户确认",
       "evidence": []
     }
   ],
@@ -327,7 +378,10 @@
   "businessLicenseCompletion": {
     "recordedDate": "2026-10-08",
     "licenseObtained": true,
-    "evidence": ["user-report", "user-provided-license-photo"],
+    "evidence": [
+      "user-report",
+      "user-provided-license-photo"
+    ],
     "independentRegistryVerification": false,
     "fullName": "永兴县渐循信息技术服务中心（个体工商户）",
     "tradeName": "渐循",
@@ -338,13 +392,71 @@
     "premisesMatchesFatherResidenceConfirmed": true,
     "fullAddressStored": false,
     "licenseImageStoredInRepository": false,
-    "readableScopeItems": ["信息咨询服务（不含许可类信息咨询服务）", "广告发布"],
+    "readableScopeItems": [
+      "信息咨询服务（不含许可类信息咨询服务）",
+      "广告发布"
+    ],
     "fullBusinessScopeTranscriptionVerified": false,
     "scopeExpandsProductRequirements": false,
     "nextStep": "prepare-new-individual-business-miniapp-registration",
     "newMiniappRegistered": false,
     "productionEligibilityVerified": false,
-    "supersedesCurrentLicenseStatusIn": ["platformProgress", "businessLicensePlan"],
+    "supersedesCurrentLicenseStatusIn": [
+      "platformProgress",
+      "businessLicensePlan"
+    ],
     "historicalRecordsRetained": true
+  },
+  "featurePlanning": {
+    "date": "2026-10-08",
+    "approvalReply": "你认为还有需要讨论的地方吗? 没有的话, 就A选项",
+    "prdVersion": "1.4",
+    "planTaskCount": 48,
+    "baseScopeRetained": true,
+    "v1Modules": [
+      "M11",
+      "M12"
+    ],
+    "v1AiBusinesses": [
+      "errands",
+      "secondhand"
+    ],
+    "inputCharacterLimit": 1000,
+    "v1ModelReadsImages": false,
+    "userImagesOptional": true,
+    "historicalReference": false,
+    "privateFieldsSentToModel": false,
+    "automaticOverwrite": false,
+    "automaticPublish": false,
+    "automaticRetry": false,
+    "rawAiAnalysisLogs": false,
+    "userDraftSaveExplicit": true,
+    "dashboardRoles": "two-independent-equal-role-operators",
+    "dashboardFilters": [
+      "date-range",
+      "business-type"
+    ],
+    "dashboardCutoff": "previous-natural-day-Asia/Shanghai",
+    "errandFunnelCohort": "firstPublishedAt",
+    "aiPublicationAttribution": "last-adopted-valid-draft-first-publication",
+    "v2Scope": [
+      "VP01",
+      "VP02",
+      "VP03"
+    ],
+    "generalPostsRelease": null,
+    "provider": null,
+    "model": null,
+    "channel": null,
+    "dailyQuota": null,
+    "dailyBudget": null,
+    "monthlyBudget": null,
+    "concurrencyLimit": null,
+    "timeoutMs": null,
+    "outputTokenLimit": null,
+    "newAnalyticsRetention": null,
+    "realAiEnabled": false,
+    "newProductionAnalyticsEnabled": false,
+    "productCodeImplemented": false
   }
 }

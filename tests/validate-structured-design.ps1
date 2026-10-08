@@ -75,29 +75,33 @@ function Get-ContractRows([string]$Text, [string]$Prefix) {
 }
 $designPageRows = Get-ContractRows $designText 'V'
 $designPrdPageRows = Get-ContractRows $designPrd 'V'
-Assert-Design ($designPageRows.Count -eq $designPrdPageRows.Count -and $designPageRows.Count -eq 20) 'All twenty PRD page groups have one structured entry'
+Assert-Design ($designPageRows.Count -eq $designPrdPageRows.Count -and $designPageRows.Count -eq 21) 'All twenty-one PRD page groups have one structured entry'
 foreach ($designPageId in $designPrdPageRows.Keys) {
     Assert-Design ($designPageRows.ContainsKey($designPageId)) "No omitted page group: $designPageId"
     $designPageCells = @($designPageRows[$designPageId].Split('|') | ForEach-Object { $_.Trim() })
     $designFieldIds = @([regex]::Matches($designPageRows[$designPageId], '\bF\d{2}\b') | ForEach-Object { $_.Value })
-    $designTestIds = @([regex]::Matches($designPageRows[$designPageId], '\b(?:RT|T)\d{2}\b') | ForEach-Object { $_.Value })
+    $designTestIds = @([regex]::Matches($designPageRows[$designPageId], '\b(?:AT|DT|RT|T)\d{2}\b') | ForEach-Object { $_.Value })
     Assert-Design ($designPageCells.Count -eq 10 -and $designFieldIds.Count -gt 0 -and $designTestIds.Count -gt 0) "Page has entry, access, structure, actions, fields and acceptance references: $designPageId"
 }
 $designFieldRows = Get-ContractRows $designText 'F'
 $designPrdFieldRows = Get-ContractRows $designPrd 'F'
-Assert-Design ($designFieldRows.Count -eq 16) 'All sixteen field contracts are included'
+Assert-Design ($designFieldRows.Count -eq 18) 'All eighteen field contracts are included'
 foreach ($designFieldId in $designPrdFieldRows.Keys) {
     Assert-Design ($designFieldRows.ContainsKey($designFieldId) -and $designFieldRows[$designFieldId] -ceq $designPrdFieldRows[$designFieldId]) "Field constraints and visibility match the PRD verbatim: $designFieldId"
 }
-$designReferencedIds = @([regex]::Matches($designText, '(?<![A-Z0-9])(?:V|F|RT|T|M|R|N|S|E)\d{2}(?![A-Z0-9])') | ForEach-Object { $_.Value } | Select-Object -Unique)
-$designSourceIds = @([regex]::Matches($designPrd, '(?m)^(?:\| |\- )((?:V|F|RT|T|M|R|N|S|E)\d{2})(?: \|| )') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
+$designReferencedIds = @([regex]::Matches($designText, '(?<![A-Z0-9])(?:AT|DT|AI|BS|AM|AG|DG|VP|QG|V|F|RT|T|M|R|N|S|E)\d{2}(?![A-Z0-9])') | ForEach-Object { $_.Value } | Select-Object -Unique)
+$designSourceIds = @([regex]::Matches($designPrd, '(?m)^(?:\| |\- )((?:AT|DT|AI|BS|AM|AG|DG|VP|QG|V|F|RT|T|M|R|N|S|E)\d{2})(?: \|| )') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
 $designUnknownIds = @($designReferencedIds | Where-Object { $_ -notin $designSourceIds })
 Assert-Design ($designUnknownIds.Count -eq 0) 'All PRD references name existing requirements'
-foreach ($designFamily in @(@('M',10), @('R',8), @('N',9), @('S',4), @('T',18), @('RT',16), @('E',6))) {
+foreach ($designFamily in @(@('M',12), @('R',8), @('N',9), @('S',4), @('T',18), @('RT',16), @('AT',12), @('DT',10), @('AI',16), @('BS',12), @('AM',8), @('AG',1), @('DG',1), @('E',6))) {
     $designAbsent = @()
     for ($designIndex=1; $designIndex -le $designFamily[1]; $designIndex++) {
         $designRequirementId = '{0}{1:D2}' -f $designFamily[0], $designIndex
-        if (-not [regex]::IsMatch($designText, '\b' + $designRequirementId + '\b')) { $designAbsent += $designRequirementId }
+        $designRangeCovered = $false
+        foreach ($designRange in [regex]::Matches($designText, '(?<![A-Z])' + $designFamily[0] + '(\d{2})—' + $designFamily[0] + '(\d{2})')) {
+            if ($designIndex -ge [int]$designRange.Groups[1].Value -and $designIndex -le [int]$designRange.Groups[2].Value) { $designRangeCovered = $true }
+        }
+        if (-not $designRangeCovered -and -not [regex]::IsMatch($designText, '(?<![A-Z])' + $designRequirementId + '\b')) { $designAbsent += $designRequirementId }
     }
     Assert-Design ($designAbsent.Count -eq 0) "Full requirement and acceptance family covered: $($designFamily[0])"
 }

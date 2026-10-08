@@ -29,10 +29,11 @@ function validate(text) {
     assert.deepEqual(actual,expected,`Phase ${phase} must retain original tasks`);
     if(phase!=='A') assert.match(checks, /(?:T\d{2}|检查：)/,'Phase acceptance is required');
   }
-  assert.equal(new Set(tasks).size,40,'Forty unique tasks required');
+  assert.equal(new Set(tasks).size,48,'Forty-eight unique tasks required');
   const finalChecks=rows.find(r=>r[1]==='G')[4];
   assert.deepEqual(expand(finalChecks,'T'), Array.from({length:18},(_,i)=>'T'+String(i+1).padStart(2,'0')),'All T cases required');
   assert.deepEqual(expand(finalChecks,'RT'), Array.from({length:16},(_,i)=>'RT'+String(i+1).padStart(2,'0')),'All RT cases required');
+  for(const [prefix,count] of [['AT',12],['DT',10]]) assert.deepEqual(expand(finalChecks,prefix), Array.from({length:count},(_,i)=>prefix+String(i+1).padStart(2,'0')), 'All '+prefix+' cases required');
   assert(text.includes(record.resources.appIdValue),'Old AppID must match record');
   assert(text.includes(record.accountRouteDecision.oldEnvironmentId),'Old environment must match record');
   for(const line of [
@@ -80,3 +81,6 @@ test('existing technical and development entries link to the new execution docum
   assert(read('docs/technical-decision.md').includes('(post-registration-development.md)'));
   assert(plan.includes('(post-registration-development.md)'));
 });
+
+test('omitting added AI acceptance from final checks is rejected',()=>assert.throws(()=>validate(document().replace('T01—T18、RT01—RT16、AT01—AT12、DT01—DT10','T01—T18、RT01—RT16、AT01—AT11、DT01—DT10')),/All AT cases/));
+test('omitting added dashboard acceptance from final checks is rejected',()=>assert.throws(()=>validate(document().replace('T01—T18、RT01—RT16、AT01—AT12、DT01—DT10','T01—T18、RT01—RT16、AT01—AT12、DT01—DT09')),/All DT cases/));
