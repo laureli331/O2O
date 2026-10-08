@@ -410,7 +410,7 @@
   "featurePlanning": {
     "date": "2026-10-08",
     "approvalReply": "你认为还有需要讨论的地方吗? 没有的话, 就A选项",
-    "prdVersion": "1.4",
+    "prdVersion": "1.5",
     "planTaskCount": 48,
     "baseScopeRetained": true,
     "v1Modules": [
@@ -442,7 +442,9 @@
     "v2Scope": [
       "VP01",
       "VP02",
-      "VP03"
+      "VP03",
+      "VP04",
+      "VP05"
     ],
     "generalPostsRelease": null,
     "provider": null,
@@ -457,6 +459,50 @@
     "newAnalyticsRetention": null,
     "realAiEnabled": false,
     "newProductionAnalyticsEnabled": false,
-    "productCodeImplemented": false
+    "productCodeImplemented": false,
+    "merchantSquareRelease": "v2",
+    "merchantSquareMainPosts": "merchants-only",
+    "merchantSquareCustomerActions": [
+      "comment",
+      "favorite",
+      "wechat-share"
+    ],
+    "merchantCommercialTermsConfirmed": false,
+    "merchantPrices": null,
+    "merchantTransactionCommissionPlanned": false,
+    "merchantPermissionVerified": false,
+    "userRestrictionCorrection": "third-party-transaction-entry-and-commission-not-all-payment"
+  },
+  "versionTwoReminder": {
+    "createdDate": "2026-10-08",
+    "automationId": "automation",
+    "kind": "heartbeat",
+    "status": "ACTIVE",
+    "localCheckTime": "20:00",
+    "timezone": "Asia/Shanghai",
+    "target": "current-thread",
+    "scope": [
+      "VP01",
+      "VP02",
+      "VP03",
+      "VP04",
+      "VP05"
+    ],
+    "triggerApproval": "完整上线验收通过，且有连续14天稳定记录；出现阻断核心流程或严重安全／资金问题后，从修复验收通过时重新计时",
+    "fullLaunchAcceptanceRequired": true,
+    "continuousStableDaysRequired": 14,
+    "stableEvidenceRequired": true,
+    "resetAfterBlockingOrSevereIncident": true,
+    "resetOrigin": "repair-acceptance-passed",
+    "silenceProvesStability": false,
+    "creationDateIsObservationStart": false,
+    "notifyOncePerStableCycle": true,
+    "automaticImplementation": false,
+    "formalReleaseVersion": null,
+    "fullLaunchAcceptanceAt": null,
+    "observationStartedAt": null,
+    "stableEvidence": [],
+    "lastRepairAcceptanceAt": null,
+    "reminderDeliveredAt": null
   }
 }

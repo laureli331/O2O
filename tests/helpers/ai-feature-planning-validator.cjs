@@ -25,7 +25,7 @@ function validateAiFeaturePlanning(bundle) {
   const ai = family(prd, 'AI', 16, 'AI rules');
   const bs = family(prd, 'BS', 12, 'Business statistics');
   const am = family(prd, 'AM', 8, 'AI metrics');
-  family(decisions, 'FC', 18, 'Confirmed decisions');
+  family(decisions, 'FC', 21, 'Confirmed decisions');
   for (const [prefix, count] of [['M',12], ['R',8], ['F',18], ['V',21], ['T',18], ['RT',16], ['AT',12], ['DT',10]]) {
     family(prd, prefix, count, 'PRD ' + prefix);
   }

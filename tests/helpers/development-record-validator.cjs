@@ -132,7 +132,7 @@ function validateDevelopmentRecord(record, plan) {
   }
   const feature = record.featurePlanning;
   assert(feature, 'Current feature planning must be recorded');
-  assert.equal(feature.prdVersion, '1.4', 'Current PRD version must match planning');
+  assert.equal(feature.prdVersion, '1.5', 'Current PRD version must match planning');
   assert.equal(feature.planTaskCount, 48, 'Feature planning task count mismatch');
   assert.equal(feature.baseScopeRetained, true, 'Original scope cannot be removed');
   assert.deepEqual(feature.v1AiBusinesses, ['errands','secondhand'], 'AI business scope changed');
@@ -147,7 +147,7 @@ function validateDevelopmentRecord(record, plan) {
   assert.equal(feature.dashboardCutoff, 'previous-natural-day-Asia/Shanghai', 'Dashboard cutoff changed');
   assert.equal(feature.errandFunnelCohort, 'firstPublishedAt', 'Funnel cohort changed');
   assert.equal(feature.aiPublicationAttribution, 'last-adopted-valid-draft-first-publication', 'AI attribution changed');
-  assert.deepEqual(feature.v2Scope, ['VP01','VP02','VP03'], 'Second version scope changed');
+  assert.deepEqual(feature.v2Scope, ['VP01','VP02','VP03','VP04','VP05'], 'Second version scope changed');
   if(['provider','model','channel','dailyQuota','dailyBudget','monthlyBudget','concurrencyLimit','timeoutMs','outputTokenLimit'].some(key => feature[key] == null)) {
     assert.equal(feature.realAiEnabled, false, 'Unknown AI configuration cannot enable real calls');
   }

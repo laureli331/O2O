@@ -29,7 +29,7 @@ $planDecoder = New-Object System.Text.UTF8Encoding($false, $true)
 $planText = $planDecoder.GetString([IO.File]::ReadAllBytes($DocumentPath))
 $planPrd = $planDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $planDocDirectory 'prd.md')))
 Assert-Plan ($planText.StartsWith('# 永兴乡镇生活服务小程序开发计划')) 'Plan is strict UTF-8 and identifies the deliverable'
-Assert-Plan ($planText.Contains('PRD v1.4') -and $planPrd.Contains('版本：1.4')) 'Plan uses the current PRD version'
+Assert-Plan ($planText.Contains('PRD v1.5') -and $planPrd.Contains('版本：1.5')) 'Plan uses the current PRD version'
 Assert-Plan ($planText.Contains('尚未选定，先列技术方案确认任务')) 'Actual user decision on technology is recorded'
 Assert-Plan ($planText.IndexOf('## 1. 先确定验证方案') -lt $planText.IndexOf('## 4. 可领取的48项执行任务')) 'Validation is defined before the multi-step task plan'
 

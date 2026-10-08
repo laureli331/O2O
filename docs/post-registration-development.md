@@ -1,8 +1,8 @@
 # 新账号注册后的技术开发执行文档
 
-版本：1.1。更新日期：2026-10-08（Asia/Shanghai）。对象：湘邻湘友。
+版本：1.2。更新日期：2026-10-08（Asia/Shanghai）。对象：湘邻湘友。
 
-本文回答“新账号注册后怎么开发”，属于现有计划的执行补充，不替代业务基线、不将账号注册写成产品完成。依据为[PRD v1.4](prd.md)、[结构化设计](structured-design.md)、[已采用UI v2](ui-design-v2.md)、[48项开发计划](development-plan.md)、[技术决定与实际进度](technical-decision.md)、[结构化记录](development-decisions.json)及[外部证据台账](external-evidence.md)。
+本文回答“新账号注册后怎么开发”，属于现有计划的执行补充，不替代业务基线、不将账号注册写成产品完成。依据为[PRD v1.5](prd.md)、[结构化设计](structured-design.md)、[已采用UI v2](ui-design-v2.md)、[48项开发计划](development-plan.md)、[技术决定与实际进度](technical-decision.md)、[结构化记录](development-decisions.json)及[外部证据台账](external-evidence.md)。
 
 ## 1. 验证与完成标准
 
@@ -15,7 +15,7 @@
 
 本轮没有产品代码，本轮没有部署或发布。本文新增的文档测试也不能证明产品已实现。
 
-新增范围依据[AI功能确认记录](ai-feature-decisions.md)：第一版保留原全部业务，增加AI文字发布与供需履约看板；第二版VP01—VP03仅确认范围。历史参考取消，普通发帖/评论版本未定。
+新增范围依据[AI功能确认记录](ai-feature-decisions.md)：第一版保留原全部业务，增加AI文字发布与供需履约看板；第二版VP01—VP05仅确认范围，新增商家广场及营销服务方向，不纳入第一版48任务。历史参考取消，全民主帖广场未确认。第一版成功跑通/稳定两周的提醒与证据见[路线记录](v2-roadmap.md)。
 
 ## 2. 为什么不重写现有技术文档
 
@@ -116,7 +116,7 @@ E01—E06、QG01 全部待核实；AG01/DG01同样未核实通过；办理执照
 现在可以运行的仓库检查命令如下。现有安装/连接/重命名检查针对这台Windows机器及旧账号；新账号登记后应扩展并验证新目标，不能将旧检查成功写为新账号通过。
 
 ```powershell
-node --test tests/development-decisions.test.cjs tests/post-registration-development.test.cjs tests/ai-feature-planning.test.cjs
+node --test tests/development-decisions.test.cjs tests/post-registration-development.test.cjs tests/ai-feature-planning.test.cjs tests/v2-roadmap.test.cjs
 Get-ChildItem tests -Filter validate-*.ps1 | ForEach-Object {
     & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $_.FullName
     if ($LASTEXITCODE -ne 0) { throw ('验证失败：' + $_.Name) }
