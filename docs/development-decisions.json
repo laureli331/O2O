@@ -323,5 +323,28 @@
     "preSubmissionUserReviewRequired": true,
     "preparationDocument": "docs/registration-preparation.md",
     "handoffDocument": "docs/registration-handoff-to-father.md"
+  },
+  "businessLicenseCompletion": {
+    "recordedDate": "2026-10-08",
+    "licenseObtained": true,
+    "evidence": ["user-report", "user-provided-license-photo"],
+    "independentRegistryVerification": false,
+    "fullName": "永兴县渐循信息技术服务中心（个体工商户）",
+    "tradeName": "渐循",
+    "type": "individual-business",
+    "composition": "personal-operation",
+    "registrationDate": "2026-10-08",
+    "operatorIsUserConfirmed": true,
+    "premisesMatchesFatherResidenceConfirmed": true,
+    "fullAddressStored": false,
+    "licenseImageStoredInRepository": false,
+    "readableScopeItems": ["信息咨询服务（不含许可类信息咨询服务）", "广告发布"],
+    "fullBusinessScopeTranscriptionVerified": false,
+    "scopeExpandsProductRequirements": false,
+    "nextStep": "prepare-new-individual-business-miniapp-registration",
+    "newMiniappRegistered": false,
+    "productionEligibilityVerified": false,
+    "supersedesCurrentLicenseStatusIn": ["platformProgress", "businessLicensePlan"],
+    "historicalRecordsRetained": true
   }
 }

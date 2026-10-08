@@ -368,3 +368,26 @@ test('license plan records tomorrow as a plan without claiming completed registr
     assert(fs.existsSync(path.join(repo, file)));
   }
 });
+test('obtained license supersedes historical plans without enabling miniapp production', () => {
+  const actual = record.businessLicenseCompletion;
+  assert.equal(actual.recordedDate, '2026-10-08');
+  assert.equal(actual.licenseObtained, true);
+  assert.equal(actual.fullName, '永兴县渐循信息技术服务中心（个体工商户）');
+  assert.equal(actual.operatorIsUserConfirmed, true);
+  assert.equal(actual.premisesMatchesFatherResidenceConfirmed, true);
+  assert.equal(actual.independentRegistryVerification, false);
+  assert.equal(actual.fullBusinessScopeTranscriptionVerified, false);
+  assert.equal(actual.scopeExpandsProductRequirements, false);
+  assert.equal(actual.newMiniappRegistered, false);
+  assert.equal(actual.productionEligibilityVerified, false);
+  assert.equal(actual.fullAddressStored, false);
+  assert.equal(actual.licenseImageStoredInRepository, false);
+  assert.deepEqual(actual.supersedesCurrentLicenseStatusIn, ['platformProgress', 'businessLicensePlan']);
+  for (const document of [technical, evidence]) {
+    assert(document.includes('最新进度：已取得营业执照'));
+    assert(document.includes(actual.fullName));
+    assert(document.includes('尚未逐字校对完整原文'));
+    assert(document.includes('不能据此启用生产业务'));
+    assert(document.includes('历史记录保留'));
+  }
+});
