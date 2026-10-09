@@ -1,0 +1,14 @@
+Edit this exact six-page 湘邻湘友 UI board, preserving sage/ivory palette, red prices and yellow hints, six-phone 3x2 composition, all existing text and functionality except following 12 authorized changes:
+1 Homepage promotion heading "维修推广" -> "优选".
+2 Remove "广告" badge entirely.
+3 In homepage THREE LARGE CATEGORY ICON TILES beneath promotion, remove only text captions "维修","跑腿","闲置". Keep their icons and three frosted tiles; do NOT delete categories in filter row.
+4 Homepage latest-request filter row add "其它", so five compact pills "全部 / 维修 / 跑腿 / 闲置 / 其它", evenly spaced and readable.
+5 Top-right provider-selection page delete small subtitle "发布者视角 · 设计示例" under "选择接单员". No small line there.
+6 Candidate B separate "愿垫付" and "上限 ¥50" into distinct adjacent elements or two short lines. Willing-to-advance tag stays sage. Upper-limit amount ¥50 is secondary, small dark ink/gray-green, NOT red or bold large. Keep quote ¥15 red.
+7 Rating page bottom advisory "图文审核通过后公开" including tiny yellow info icon must be horizontally centered as a group above submit button.
+8 Profile earnings line "在湘邻湘友赚了xx元": only xx numeric placeholder red, 元 suffix ordinary dark/ochre, NOT red.
+9 That earnings line becomes smaller, understated, readable, placed within 我的交易 card. No real earnings invented.
+10 Profile toolbox is too crowded. Increase row padding and vertical spacing between 收藏, 草稿, 私人地址簿; increase separation before 服务管理与帮助. Rebalance profile page with slightly shorter header and trade card if needed, keep comfortable breathing room and no collisions with bottom nav. Preserve all items.
+11 Profile bottom nav 服务 icon must be SAME thin-line bag/briefcase icon as 服务 in homepage and idle-list nav, not puzzle/star icon. Same size, stroke, baseline.
+12 Replace EVERY content photograph (washer hero, promotion thumbnail, parcel thumbnails, all idle-product photos including partial lower row) with neutral pale sage/ivory image placeholder rectangles, subtle thin landscape/image pictogram centered, no actual objects or photographic scenes. Retain original photo area proportions and rounded corners. Profile avatar icons remain avatar placeholders. Decorative soft blurred green atmosphere may remain.
+Keep exact brand 湘邻湘友, 接单员 terminology, idle 闲置 wording, 联系/确定选择 CTAs, centered profile avatar, 我的交易 four shortcuts, all 3 rating rows each five empty stars. Accurate Chinese text, premium whitespace, frosted glass and gradients. No extra pages.
