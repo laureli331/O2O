@@ -1,0 +1,5 @@
+Make a very small precise text correction to this eight-screen Chinese high-fidelity UI overview, keep composition, entire screen layouts, placeholder assets, green/ivory palette and all other content unchanged.
+In SCREEN03 跑腿选人, add the clearly readable explanatory line “确认费用与垫付条件，双方直接结算。” in the existing empty space directly ABOVE the green main action button and BELOW the two candidate cards. This line is essential. Make it compact dark green and crisp. Do not remove candidate details or the action button.
+In SCREEN06 我的, the “资格待核验” chip needs a small CLOCK outline icon, NOT a success/check-mark icon, because qualification is still pending. Keep “微信已登录” with its check mark.
+On the board footer keep exact wording “占位图片 · 示例数据 · 非运行页面”.
+No other changes. Preserve all eight pages and their fully visible bottom sections.

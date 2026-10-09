@@ -1,0 +1,48 @@
+{
+  "status": "visual-reference-not-product-implementation",
+  "date": "2026-10-09",
+  "sourceDocument": "design.md",
+  "assetPolicy": "image-placeholders-and-generic-avatar-placeholders",
+  "method": "built-in-imagegen",
+  "pages": [
+    "首页",
+    "维修详情",
+    "跑腿选人",
+    "二手列表",
+    "三维评分",
+    "我的",
+    "AI发布助手",
+    "运营看板"
+  ],
+  "image": "assets/ui/design-reference-20261009/overview.png",
+  "width": 1448,
+  "height": 1086,
+  "sha256": "dfb6ad22eca79fe12692fe0712d59071606b8095c8b97dac032dbe6829c95a70",
+  "currentApprovedSelectionChanged": false,
+  "originalAssetsChanged": false,
+  "prompts": [
+    "generation-prompt.txt",
+    "refinement-prompt.txt",
+    "final-correction-prompt.txt"
+  ],
+  "retainedCandidates": [
+    "overview-initial.png",
+    "overview-colour-corrected.png"
+  ],
+  "manualReview": [
+    "Eight pages visible",
+    "Images and avatars are placeholders",
+    "Sage/ivory/ink visual direction",
+    "Masked phone number",
+    "Direct settlement note present",
+    "Three dimensions each show five unselected stars",
+    "Pending qualification uses clock icon",
+    "AI adoption does not publish",
+    "Dashboard is operator-only with example data"
+  ],
+  "limitations": [
+    "Static raster reference; no product implementation or live verification",
+    "Generated small Chinese text requires exact-copy typesetting during implementation",
+    "Pixel colors include blends and antialiasing; not constrained to three RGB values"
+  ]
+}
