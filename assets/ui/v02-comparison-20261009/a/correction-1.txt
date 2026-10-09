@@ -1,0 +1,5 @@
+Correct this five-phone A board ONLY for unwanted regressions. Preserve all other edits and five-phone layout.
+Homepage MUST restore the existing 优选 promotion card immediately after search and before 最新需求, with compact pale image placeholder, 示例维修服务, 家电维修 · 示例区域 and 查看资料 button, no 广告. Remove only the three category icon tiles, NOT 优选. Keep 最新需求 category pills + location/latest filter row + two-column grid. Fit header/search/promotion compactly without losing breathing room, show first grid row fully and second partial row.
+Profile restore status row under nickname: green 微信已登录, muted ochre clock 资格待核验. BELOW status row on its own small line 发布或接单时核验资格。 in subdued ochre #A38B56. Do not merge qualification and helper into one row. Income prefix 在湘邻湘友赚了 and suffix 元 use subdued ochre #A38B56, only xx red.
+ALL price red values should be subdued brick #AA655F, not vivid red. ALL hint texts and icons subdued ochre #A38B56, not vivid orange. Green #618872, no bright emerald. Apply to provider page and rating hint too.
+Keep 方案 A, V02 single 联系 button and large placeholder. Accurate Chinese, preserve remaining content.

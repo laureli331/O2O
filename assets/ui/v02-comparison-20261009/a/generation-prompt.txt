@@ -1,0 +1,22 @@
+Use case: precise-object-edit. Edit image1 湘邻湘友 UI overview; image2 is ONLY a V02 layout reference, never copy its task content, price, address, scores, dates, policy or orange theme.
+Deliver a premium FIVE-phone UI overview: top row 首页 V01 / 维修详情 V02 / 跑腿报价选人 V03; bottom row 三维评分 V18 / 个人页 V06-V14, centered with generous margins. Remove the entire standalone 闲置列表 phone, do not leave a blank phone. Preserve sage/ivory frosted glass, gradients, muted texture, small rounded corners, clear typography. All content images stay pale image placeholders. Brand exact 湘邻湘友.
+Apply ALL shared edits:
+1 Homepage REMOVE the entire three large icon-tile modules beneath 优选, including their containers and icons, because filter categories already exist.
+2 Move location selector from homepage header to the filtering area beneath 最新需求: first category pills 全部/维修/跑腿/闲置/其它; second compact filter row 选择村/社区 plus 最新 dropdown. Header now brand and search only. Maintain spacing.
+3 Homepage request feed is TWO columns per row, card grid with placeholder image above title, area and muted red price. Demonstrate two cards "代取快递" and "洗衣机无法启动". Reuse existing ¥12 for courier, use "面议" for repair, not fabricated numeric price. No actual content photography.
+4 No separate 闲置 page.
+5 Profile helper 发布或接单时核验资格。 restore subdued yellow/ochre like earlier version, not bright orange.
+6 Profile earnings EXACT 在湘邻湘友赚了xx元: preceding text and 元 suffix muted ochre yellow; ONLY xx muted red. Small understated line in 我的交易.
+7 Rating delete entire 实际完成已确认 · 设计示例 line.
+8 Rating role badge only 接单员, remove 跑腿 and divider.
+9 Rating delete 三项必选，每项1-5星 guidance line.
+10 Textarea placeholder exact 说说这次服务的感受吧...
+11 Rating recipient card keep 示例用户A; beneath it show order title 代取快递 instead of actual-completion text. No completion disclaimer elsewhere.
+12 Profile remove top title 我的, keep settings and centered avatar/nickname/status. Bottom nav 我的 label and section 我的交易 remain.
+Semantic colors softer, low saturation to harmonize: sage confirmed #618872, muted brick price red #AA655F, soft ochre hints #A38B56. No neon red/orange. Maintain contrast. 上限 ¥50 secondary dark gray-green small; 愿垫付 separate tag. CTA green. Service bag/briefcase icon SAME across all navs.
+Keep three rating dimensions 态度 效率 沟通, FIVE EMPTY STARS per row, 0/300 textarea counter, image upload and centered tiny audit hint; keep contact privacy masking and trade/toolbox items. No real operational data. Layout photo placeholders remain large especially V02.
+VERSION A: label the overview subtitle "方案 A · 分块布局 · 设计示例".
+V02 borrows ONLY stacked separated card organization from image2. Keep original functional content, NO new numeric price or requester fields:
+Top centered nav title 维修. First compact summary card: chip 维修, title 洗衣机无法启动, 发布 2小时前 and 示例区域.
+Second roomy content card: short existing description 启动后无反应，希望维修人员联系查看。 then LARGE full-width image placeholder, landscape approx 4:3, not tiny thumbnail. Do not add unnecessary 需求说明 label.
+Third compact 联系方式 card: 138****0000 and muted ochre 致电后可查看完整号码. Keep bottom single wide 联系 button. No 分享任务 or 接单 buttons in A. No invented requester names/address/reviews/prices. This is purely layout refactoring.

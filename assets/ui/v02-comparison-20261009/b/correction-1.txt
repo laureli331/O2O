@@ -1,0 +1,4 @@
+Final targeted correction to this VERSION B five-phone overview, preserve complete V02 with 大图, 需求方信息 and 分享任务/接单, all other layout.
+Personal profile: keep 微信已登录 and 资格待核验 in one status row. Restore the helper 发布或接单时核验资格。 beneath it, small muted ochre yellow. MOVE earnings 在湘邻湘友赚了xx元 out of avatar area and INTO 我的交易 card as a small line by its heading. Prefix 在湘邻湘友赚了 and suffix 元 must be warm muted ochre #A38B56; only xx brick red #AA655F. Make that exact color separation visible, don't render prefix or suffix gray/black. Keep four shortcut rows and toolbox, no removed content. Do not substitute earnings for qualification helper.
+Homepage 优选 heading use dark ink like other section headings, not yellow.
+Everything else unchanged.

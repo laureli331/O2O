@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-09",
+  "method": "built-in-imagegen",
+  "status": "review-candidates",
+  "pageCount": 5,
+  "originalSha256": "DD69C941368768E7EEE8C79F86F19BDEFCBE2A20C59CFA6E830788DDE671C82C",
+  "variants": {
+    "a": {
+      "width": 1086,
+      "height": 1448,
+      "sha256": "BE54DF4B55CEB4D1B53124B428209837FE188053E9D4C34A79F131C30D4035F0",
+      "prompts": [
+        "correction-1.txt",
+        "correction-2.txt",
+        "correction-3.txt",
+        "generation-prompt.txt"
+      ]
+    },
+    "b": {
+      "width": 1086,
+      "height": 1448,
+      "sha256": "75F87161F158046B79A237F878A9ECB99A74443202B334F54632F897D2188DEE",
+      "prompts": [
+        "correction-1.txt",
+        "generation-prompt.txt"
+      ]
+    }
+  },
+  "approvedSelectionChanged": false,
+  "visualReview": "manual",
+  "automatedOCR": false
+}

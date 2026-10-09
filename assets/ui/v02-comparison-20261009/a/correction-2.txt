@@ -1,0 +1,4 @@
+Final targeted corrections to this five-phone VERSION A overview. Change ONLY:
+Homepage compact promotion card above 最新需求: make heading 优选 visibly appear above 示例维修服务 inside the card, without removing anything or changing card size significantly.
+Profile income line inside 我的交易 card: 在湘邻湘友赚了xx元; prefix and 元 are muted ochre #A38B56, only xx muted brick red #AA655F. Keep separate 发布或接单时核验资格。 below 微信已登录/资格待核验 status row, muted ochre.
+Everything else strictly unchanged, especially A V02 large image and single 联系 button, exact five page layout and placeholders, rating content. No additional changes.

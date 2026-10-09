@@ -1,0 +1,11 @@
+Edit Image1 five-phone board into VERSION B. Image2 only provides V02 structural reference. Keep exactly five phones and all shared edits already visible: no standalone idle page, no homepage large category icon tiles, homepage filter area location+latest, 2-column feed, simplified rating with order title, personal page no 我的 top title, muted sage/ivory, empty image placeholders and softer red/ochre colors.
+Critical text fixes across board: homepage promotion must visibly have heading 优选 (currently omitted); keep its compact placeholder, 示例维修服务 and 查看资料. Profile income must read 在湘邻湘友赚了xx元 with prefix AND 元 in subdued ochre #A38B56, ONLY xx muted brick red.
+Subtitle becomes "方案 B · 完整布局 · 设计示例".
+CHANGE V02 ONLY into complete structured layout inspired by Image2, with generous card spacing and LARGE image:
+Nav title 需求详情.
+Summary card: category chip 维修, title 洗衣机无法启动, price placeholder ¥-- in subdued brick red, small "费用待协商" (no invented numeric price).
+Description card: heading 需求说明, copy 启动后无反应，希望维修人员联系查看。 then full-width large landscape image placeholder about 4:3. Not tiny thumbnail.
+Requester card below: heading 需求方信息, small muted ochre hint 接单后查看完整信息。 Three simple compact separated rows 姓名：示例用户 / 电话：138****0000 / 地址：示例区域***. Bottom small nested row 对方的评价 / 待展示 >; no invented score or review count.
+Fixed bottom TWO actions: 分享任务 (quiet ivory) and 接单 (sage primary), clearly distinct.
+To retain image size, V02 body can show bottom requester content partly at scroll boundary, with thin subtle scroll indicator. Do not shrink hero to thumbnail. It should feel like a realistic scrollable app, not cramming all content. No copying reference's review-manipulation task, address, dates, numerical price, warnings or policy.
+All four other phones unchanged except heading 优选 and income color fix.
