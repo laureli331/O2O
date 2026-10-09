@@ -1,0 +1,6 @@
+Targeted regression fixes only to this five-page B UI board:
+Candidate A must retain original ONE badge 不垫付. Remove 愿垫付 and 上限¥50 from A, they belong ONLY to B. Candidate B keeps TWO matching pale sage/green pills 愿垫付 and 上限 ¥50; remove separator dot between pills.
+Profile toolbox restore three separate full-width rows 收藏 / 草稿 / 私人地址簿, each icon-left text-left chevron-right, comfortable vertical padding. Do not combine 收藏 and 草稿 in same row. Fit by slightly tightening trade card/header, preserve income separate line within 我的交易 and gray 资格待核验.
+Top-right courier summary restore 示例区域 with location icon beneath 代取快递 (homepage demand cards must remain WITHOUT region).
+Retain all seven edits: 优选 first line left; large V02 image then description below; label 服务时间 no value; no rating role badge; income in trade card, qualification gray.
+Restore subdued colors throughout: price red muted brick #AA655F, hints ochre #A38B56, selected sage #618872. Avoid bright neon red/orange. NO OTHER changes.
