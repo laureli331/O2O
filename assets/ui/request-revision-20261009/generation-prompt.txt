@@ -1,0 +1,26 @@
+Edit the supplied six-phone Chinese mini-program UI overview, preserving the exact 3 columns x 2 rows, sage green / light ivory / dark ink palette, colorful photos, airy layout, frosted glass, gentle gradients, small rounded corners, clean icons and typographic hierarchy. This input is the edit target, not a style-only reference. Apply ALL following 18 user changes with accurate readable Chinese text. Do not add pages or invent business data.
+1 Replace "乡镇生活服务" everywhere including board title and homepage with "湘邻湘友".
+2 Homepage swap the vertical positions of the three category tiles and the repair promotion card: AFTER search comes promotion card, THEN category tiles "维修","跑腿","闲置", THEN latest requests. Keep both sections and spacing.
+3 Repair page title "维修求助" -> "维修".
+4 Remove the translucent location/example band covering the washer photo. Place "维修 · 示例区域" as a small caption BELOW the photo outside it, so no label covers the photo.
+5 Delete the entire "需求说明 / 设计示例" metadata column and its document icon on repair page. Preserve publish time column.
+6 Make the repair "联系方式" heading smaller and normal subsection size, phone number still legible, contact card more compact.
+7 Delete "服务费预算" labels above ¥12 in top-right job card AND homepage request card; directly show ¥12.
+8 Idle list screen title "二手信息" -> "闲置".
+9 Filter "全部分类" -> "全部".
+10 Filter "最新发布" -> "最新".
+11 Profile "个人工具箱" -> "工具箱".
+12 Repair bottom primary button "申请联系" -> "联系".
+13 Choose-provider bottom primary button "确认费用并选此人" -> "确定选择".
+14 On profile, put ALL four existing shortcuts in ONE clearly grouped card/block with heading "我的交易": 2x2 shortcuts.
+15 Within that same "我的交易" card, include a compact line exactly "在湘邻湘友赚了xx元". xx is a literal placeholder, do not invent numeric earnings. Make this visible above the toolbox and above navigation.
+16 In that trade card use exact shortcut texts: "我发布的", "我服务的", "联系申请", "我评价的". Keep appropriate thin icons.
+17 Rating screen shrink the "图文审核通过后公开" info line AND its icon into a subtle smaller hint, more breathing room.
+18 EVERY occurrence of "二手" becomes "闲置", including page labels above the phones, search placeholder, category/filter buttons, and product label "二手书架" becomes "闲置书架". Ensure zero 二手 remains.
+Keep six page labels: "01. 首页 (V01)", "02. 维修详情 (V02)", "03. 跑腿报价选人 (V03)", "04. 闲置列表 (V01/V02)", "05. 三维评分 (V18)", "06. 我的 (V06-V14)".
+Preserve other content and existing illustrative prices/photos, 5 bottom navigation items, three rating rows 态度/效率/沟通 with five empty stars each. Profile must fit all sections in phone without overlap: profile card, My trades card (4 shortcuts + earnings placeholder), Toolbox (收藏/草稿/私人地址簿), 服务管理与帮助, bottom nav. Use compact but comfortable height and typographic hierarchy. Do not remove toolbox rows or hide earnings. Preserve example context subtitle "UI 设计 · 设计示例". High fidelity, portrait overview.
+ADDITIONAL USER CHANGES, overriding earlier restrictions on UI color count where needed:
+19 Image 2 is a reference ONLY for the profile avatar/header layout. On page 06 replace the left-avatar horizontal card with a centered profile header: circular outline avatar centered, bold "示例用户" underneath, compact status row underneath with "微信已登录" (green check) and "资格待核验" (yellow clock), and tiny helper "发布或接单时核验资格。" below. Follow image 2's arrangement and proportions, but keep the overview's sage/ivory atmosphere with frosted gradient background, not its blue palette. Keep "我的" title and settings icon. Fit the centered header above 我的交易 without overlapping sections.
+20 Replace EVERY "承接者" with "接单员", e.g. "选择接单员","候选接单员","评价接单员","跑腿 · 接单员". No 承接者 remains.
+21 Every monetary PRICE has a muted readable RED font (#C45E58 family), e.g. ¥12, ¥15, ¥180 and ¥50; negotiable price "面议" also red. Advisory / hint copy uses readable YELLOW / ochre (#B58B32 family), e.g. contact privacy hint, qualification hint, fee agreement hint, rating publication notice. Use green/yellow/red as semantic states wherever necessary: green for verified/selected, yellow for pending/warning, red for price. These semantic accents are explicitly authorized exceptions to the earlier 3-color UI limit. Do not paint all text yellow: headings and body remain dark ink, secondary metadata neutral. Maintain legibility against pale ivory. Keep selected card green border and CTA sage. Literal earnings placeholder remains "在湘邻湘友赚了xx元", with xx元 red if highlighted. Do not add fabricated transaction totals.
+All original 18 changes AND these 3 changes must appear together in this final six-page board.

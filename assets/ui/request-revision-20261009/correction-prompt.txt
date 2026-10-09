@@ -1,0 +1,5 @@
+Precise final correction of supplied six-phone UI board. Preserve all 21 edits, all layout, photos, colors and page count exactly. Change ONLY these corrections:
+A Homepage: remove the "广告" badge next to "最新需求". Put a small "广告" badge inside the upper repair promotion card at its top-right, and give that card a compact label "维修推广" above its content within the card. Keep promotion ABOVE the 维修/跑腿/闲置 category tiles. Latest requests are NOT advertisements.
+B Profile trade card heading must be spelled EXACTLY "我的交易", four characters 我的交易, no distorted substitute glyph. Its income line must read EXACTLY "在湘邻湘友赚了xx元" with literal lowercase xx, not real data. Keep it inside the card, readable; wrap into a separate small line if necessary for breathing room. Four shortcuts remain "我发布的","我服务的","联系申请","我评价的".
+C Profile helper "发布或接单时核验资格。" should use readable ochre yellow like other hints. All price amounts stay red; green verified/selected states; yellow pending states. Do not recolor ordinary metadata.
+No other changes. Accurate Chinese typography, high resolution.

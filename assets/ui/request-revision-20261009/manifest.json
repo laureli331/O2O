@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-09",
+  "method": "built-in-imagegen",
+  "userRequirements": 21,
+  "status": "review-candidate",
+  "width": 1086,
+  "height": 1448,
+  "sha256": "55B882A99A30B2E86431302BD58DBEDA022A4B19EF44BA1192927C0A5A178712",
+  "originalSha256": "6FE356D4CE4FB49B28AB8E5852EE6FEFF2C117403F3EA4F924B2C262458D3F3A",
+  "approvedSelectionChanged": false,
+  "semanticColors": {
+    "confirmed": "green",
+    "price": "red",
+    "hint": "yellow-ochre"
+  },
+  "earnings": "xx-placeholder",
+  "visualReview": "manual",
+  "automatedOCR": false
+}
