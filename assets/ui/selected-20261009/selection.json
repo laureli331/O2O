@@ -1,0 +1,14 @@
+{
+  "status": "user-selected",
+  "confirmedDate": "2026-10-09",
+  "userDecision": "保留这个",
+  "image": "overview.png",
+  "imageSha256": "A73C4D802FBE91900CF9D1E751AB1C45391B7FD10C1868476BDF392605EEE011",
+  "attachmentSha256": "A73C4D802FBE91900CF9D1E751AB1C45391B7FD10C1868476BDF392605EEE011",
+  "width": 1086,
+  "height": 1448,
+  "source": "User attachment",
+  "transformed": false,
+  "scope": "current-visual-iteration",
+  "previousHistoricalApproval": "../approved-selection.json"
+}
