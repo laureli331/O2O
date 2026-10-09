@@ -1,0 +1,13 @@
+{
+  "date": "2026-10-09",
+  "method": "built-in-imagegen",
+  "userRequirements": 4,
+  "status": "review-candidate",
+  "width": 1086,
+  "height": 1448,
+  "sha256": "01F7ACF92C16FD19B46012656B465BA7E518EE5FA02E95832A37BFD35B0D02E0",
+  "originalSha256": "CD02AA5D6F1811BF8B79D06198CD631D82527A7222A2F923C062B1598E8A86CF",
+  "approvedSelectionChanged": false,
+  "visualReview": "manual",
+  "automatedOCR": false
+}
