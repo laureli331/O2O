@@ -1,0 +1,25 @@
+/* Generated from design-tokens.json; not imported by a product project. */
+/* At 375 logical px reference width only: value * 2 gives the 750 rpx scale. */
+/* No unverified backdrop-filter, custom-property or safe-area assumption. */
+.ui-page { background: #FCFBF7; color: #263A31; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif; font-size: 16px; }
+.ui-page-padding { padding-left: 64rpx; padding-right: 64rpx; }
+.ui-page-title { font-size: 26px; font-weight: 600; }
+.ui-section-title { font-size: 18px; font-weight: 600; }
+.ui-metadata { font-size: 13px; color: #68726B; }
+.ui-card { padding: 48rpx; border-radius: 16rpx; background: #FCFBF7; }
+.ui-card-compact { padding: 32rpx; }
+.ui-section-gap { margin-top: 72rpx; }
+.ui-demand-grid { display: flex; flex-wrap: wrap; justify-content: space-between; }
+.ui-demand-grid-item { width: calc((100% - 32rpx) / 2); margin-bottom: 32rpx; }
+.ui-price { color: #9B514C; font-weight: 600; }
+.ui-hint, .ui-qualification-pending { color: #806C3E; }
+.ui-qualification-helper { color: #68726B; }
+.ui-earnings { text-align: right; font-size: 13px; color: #806C3E; }
+.ui-earnings-amount, .ui-earnings-unit { color: #806C3E; }
+.ui-advance-tag { color: #365C49; background: #E8F0EA; border-radius: 12rpx; padding: 8rpx 16rpx; font-size: 13px; }
+.ui-primary-action { min-height: 88rpx; color: #FCFBF7; background: linear-gradient(135deg, #45634F, #54735F); border-radius: 12rpx; font-size: 16px; }
+.ui-glass-fallback { background: rgba(252,251,247,0.76); border: 1px solid #D8E2DA; box-shadow: 0 16rpx 48rpx rgba(38,58,49,0.08); }
+.ui-icon { width: 24px; height: 24px; }
+.ui-touch-target { min-width: 88rpx; min-height: 88rpx; }
+.ui-noise-decoration { opacity: 0.015; pointer-events: none; }
+/* Add real runtime bottom safe-area padding and measured action-tray height in the product. */

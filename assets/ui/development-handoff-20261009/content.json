@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "status": "copy-contract-not-live-data",
+  "displayAliases": {
+    "乡镇生活服务": "湘邻湘友",
+    "二手": "闲置",
+    "承接者": "接单员"
+  },
+  "labels": {
+    "brand": "湘邻湘友",
+    "homeSearch": "搜索维修、跑腿、闲置",
+    "promotionTitle": "优选",
+    "promotionAction": "查看资料",
+    "latestRequests": "最新需求",
+    "categories": [
+      "全部",
+      "维修",
+      "跑腿",
+      "闲置",
+      "其它"
+    ],
+    "locationFilter": "选择村/社区",
+    "latestSort": "最新",
+    "navigation": [
+      "首页",
+      "服务",
+      "发布",
+      "消息",
+      "我的"
+    ],
+    "detailTitle": "需求详情",
+    "serviceTime": "服务时间",
+    "description": "需求说明",
+    "requester": "需求方信息",
+    "reviews": "对方的评价",
+    "selectTitle": "选择接单员",
+    "candidateHeading": "候选接单员",
+    "choose": "确定选择",
+    "noAdvance": "不垫付",
+    "willAdvance": "愿垫付",
+    "advanceLimit": "上限",
+    "feeNote": "确认费用与垫付条件 · 双方直接结算。",
+    "ratingTitle": "评价接单员",
+    "dimensions": [
+      "态度",
+      "效率",
+      "沟通"
+    ],
+    "ratingPlaceholder": "说说这次服务的感受吧...",
+    "uploadLabel": "添加图片 · 最多3张",
+    "reviewAudit": "图文审核通过后公开。",
+    "submitRating": "提交评价",
+    "loggedIn": "微信已登录",
+    "pendingQualification": "资格待核验",
+    "qualificationHelper": "发布或接单时核验资格。",
+    "myTransactions": "我的交易",
+    "earningsTemplate": "在湘邻湘友赚了{amount}元",
+    "earningsDisclosure": "非到账金额",
+    "earningsDescription": "已确认完成的跑腿服务费累计，不含垫付款。",
+    "shortcuts": [
+      "我发布的",
+      "我服务的",
+      "联系申请",
+      "我评价的"
+    ],
+    "toolbox": "工具箱",
+    "tools": [
+      "收藏",
+      "草稿",
+      "私人地址簿"
+    ],
+    "help": "服务管理与帮助"
+  },
+  "rasterOnlyOrGated": {
+    "repairAccept": {
+      "text": "接单",
+      "decision": "HD01",
+      "notProductionContract": true
+    },
+    "repairPrice": {
+      "text": "¥--",
+      "decision": "HD01",
+      "notDefaultValue": true
+    },
+    "requesterHint": {
+      "text": "接单后查看完整信息。",
+      "decision": "HD01",
+      "privacyRequiresServerAuthorization": true
+    },
+    "earnings": {
+      "rasterText": "在湘邻湘友赚了xx元",
+      "decision": "HD02",
+      "placeholderForbiddenInProduction": true,
+      "amountMustNotDefaultToZeroWhenUnknown": true
+    },
+    "promotion": {
+      "text": "优选",
+      "decision": "HD03",
+      "doesNotSilentlyWaivePaidDisclosure": true
+    },
+    "otherFilter": {
+      "text": "其它",
+      "decision": "HD04",
+      "doesNotApproveOtherBusinesses": true
+    }
+  },
+  "preview": {
+    "synthetic": true,
+    "notProductionDefaults": true,
+    "names": [
+      "示例维修服务",
+      "示例用户",
+      "示例用户A",
+      "示例用户B"
+    ],
+    "titles": [
+      "洗衣机无法启动",
+      "代取快递"
+    ],
+    "repairDescription": "启动后无反应，希望维修人员联系查看。",
+    "courierBudget": 12,
+    "quoteA": 12,
+    "quoteB": 15,
+    "advanceLimitB": 50,
+    "region": "示例区域",
+    "phone": "138****0000",
+    "earnings": "xx"
+  },
+  "productionPolicies": {
+    "fakeRegionNames": false,
+    "rawIdentityPublic": false,
+    "privacyGatedByServer": true,
+    "exampleAmountsNotDefaultValues": true,
+    "avatarUserConsentRequired": true
+  }
+}

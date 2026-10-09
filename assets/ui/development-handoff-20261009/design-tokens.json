@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "status": "implementation-baseline-needs-device-review",
+  "date": "2026-10-09",
+  "visualSource": "../selected-20261009/overview.png",
+  "selection": "../selected-20261009/selection.json",
+  "valuePolicy": {
+    "screenshotMeasurement": false,
+    "inherited": "../v2/design-tokens.json",
+    "semanticHex": "implementation candidates; original generation targets retained",
+    "deviceValidationPassed": false
+  },
+  "palette": {
+    "sage": "#618872",
+    "ivory": "#FCFBF7",
+    "ink": "#263A31",
+    "priceText": "#9B514C",
+    "hintText": "#806C3E",
+    "mutedText": "#68726B",
+    "badgeText": "#365C49",
+    "badgeSurface": "#E8F0EA",
+    "placeholderSurface": "#DCE7DE",
+    "border": "#D8E2DA",
+    "primaryStart": "#45634F",
+    "primaryEnd": "#54735F"
+  },
+  "generationTargets": {
+    "red": "#AA655F",
+    "yellow": "#A38B56",
+    "gray": "#858B87"
+  },
+  "semanticRoles": {
+    "price": "priceText",
+    "qualificationPending": "hintText",
+    "qualificationHelper": "mutedText",
+    "earningsAllCharacters": "hintText",
+    "earningsAlignment": "right",
+    "advanceAmount": "badgeText",
+    "confirmed": "badgeText"
+  },
+  "typography": {
+    "family": "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif",
+    "pageTitle": 26,
+    "sectionTitle": 18,
+    "body": 16,
+    "metadata": 13,
+    "weights": [
+      400,
+      500,
+      600
+    ],
+    "unit": "logical-px"
+  },
+  "layout": {
+    "referenceWidth": 375,
+    "responsiveCanvas": 750,
+    "unit": "logical-px",
+    "spacing": [
+      8,
+      16,
+      24,
+      32,
+      40
+    ],
+    "pagePadding": 32,
+    "sectionGap": 36,
+    "cardPadding": 24,
+    "compactCardPadding": 16,
+    "gridGap": 16,
+    "cardRadius": 8,
+    "controlRadius": 6,
+    "touchTargetMin": 44,
+    "homeGridColumns": 2,
+    "promotionImage": 96,
+    "detailImageAspectRatio": "4:3",
+    "overflow": "vertical-scroll",
+    "bottomSafeArea": "measure-in-selected-runtime; no fixed screenshot value"
+  },
+  "effects": {
+    "glass": {
+      "opacity": 0.76,
+      "blurTarget": 24,
+      "fallback": "translucent-ivory-border-shadow",
+      "supportedInRuntime": null
+    },
+    "gradient": {
+      "direction": "diagonal",
+      "start": "primaryStart",
+      "end": "primaryEnd"
+    },
+    "shadow": {
+      "color": "ink",
+      "opacity": 0.08,
+      "blur": 24,
+      "offsetY": 8
+    },
+    "noise": {
+      "opacity": 0.015,
+      "decorativeOnly": true
+    }
+  },
+  "contrastPolicy": {
+    "minimumTextOnDeclaredSolidBackground": 4.5,
+    "notMeasuredOnGlassOrDevice": true,
+    "pairs": [
+      [
+        "priceText",
+        "ivory"
+      ],
+      [
+        "hintText",
+        "ivory"
+      ],
+      [
+        "mutedText",
+        "ivory"
+      ],
+      [
+        "ink",
+        "ivory"
+      ],
+      [
+        "badgeText",
+        "badgeSurface"
+      ],
+      [
+        "ivory",
+        "primaryStart"
+      ],
+      [
+        "ivory",
+        "primaryEnd"
+      ]
+    ]
+  },
+  "icons": {
+    "viewBox": "0 0 24 24",
+    "strokeWidth": 1.75,
+    "inheritedCount": 20,
+    "added": [
+      "icon-services-bag",
+      "icon-info"
+    ],
+    "total": 22,
+    "nav": [
+      "icon-home",
+      "icon-services-bag",
+      "icon-plus",
+      "icon-message",
+      "icon-user"
+    ]
+  },
+  "media": {
+    "designReferenceOnlyPlaceholders": true,
+    "productionMayShowAuthorizedImages": true,
+    "avatar": "generic-icon-not-real-user-photo",
+    "cropScreenshotIntoComponents": false
+  }
+}

@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "source": "human replies in this chat",
+  "items": [
+    {
+      "id": "HD01",
+      "status": "scope-approved-rules-pending",
+      "userReply": "扩展维修接单流程，另行讨论并补齐业务规则",
+      "confirmed": "维修扩展接单意图",
+      "pending": [
+        "报价/选人",
+        "联系解码",
+        "履约/完成/取消/异议",
+        "费用与维修收入",
+        "评价资格"
+      ],
+      "prd": [
+        "M02",
+        "V02",
+        "F02",
+        "CT03"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "id": "HD02",
+      "status": "principle-approved-details-pending",
+      "userReply": "按已确认完成的跑腿服务费累计，排除垫付款，注明非到账金额",
+      "confirmed": {
+        "business": "跑腿",
+        "include": "本人提供服务且已确认完成的服务费",
+        "exclude": [
+          "垫付款",
+          "商品/门店费用",
+          "本人发单支出"
+        ],
+        "disclosure": "非到账金额",
+        "wallet": false
+      },
+      "pending": [
+        "自动完成计入口径",
+        "费用更正排除",
+        "累计周期",
+        "数据合同"
+      ],
+      "prd": [
+        "M04",
+        "V07",
+        "RUN04",
+        "RUN11",
+        "RUN12"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "id": "HD03",
+      "status": "paid-nature-approved-label-pending",
+      "userReply": "优选就是付费推广",
+      "confirmed": "优选属于M06付费推广",
+      "pending": [
+        "付费推广识别文案与位置"
+      ],
+      "prd": [
+        "M06",
+        "F08",
+        "AD01",
+        "AD03"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "id": "HD04",
+      "status": "classification-pending",
+      "confirmed": "首页显示其它标签",
+      "pending": [
+        "真实信息集合与发布入口",
+        "不扩展首期禁止任务"
+      ],
+      "prd": [
+        "V01",
+        "F04",
+        "RUN01"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "id": "HD05",
+      "status": "confirmed-visual-label-only",
+      "userReply": "只显示“服务时间”，暂不填值",
+      "confirmed": "服务时间仅标签；不新增值或必填规则",
+      "prd": [
+        "V02",
+        "F02"
+      ],
+      "productionAllowed": true
+    },
+    {
+      "id": "HD06",
+      "status": "existing-prd-boundary",
+      "confirmed": "姓名示例为昵称占位，不能公开原实名/私密地址",
+      "prd": [
+        "F01",
+        "ID06",
+        "CT02",
+        "RA12"
+      ],
+      "productionAllowed": true
+    },
+    {
+      "id": "HD07",
+      "status": "coverage-gap",
+      "confirmed": "五页图不替代V01—V21全状态",
+      "prd": [
+        "V01",
+        "V21"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "id": "HD08",
+      "status": "runtime-review-pending",
+      "confirmed": "变量/样式/图标源可交接，未实机核实",
+      "pending": [
+        "基础库/渲染器",
+        "SVG实际显示与导出",
+        "模糊回退",
+        "字体/窗口"
+      ],
+      "prd": [],
+      "productionAllowed": false
+    }
+  ]
+}

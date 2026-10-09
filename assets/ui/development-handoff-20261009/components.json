@@ -1,0 +1,331 @@
+{
+  "schemaVersion": 1,
+  "scope": "UI contracts only; no API or database schema",
+  "sharedRules": [
+    "service-nav-icon-is-one-shared-bag",
+    "server-authorizes-fields-not-css",
+    "unknown-is-not-zero-or-success",
+    "failed-submit-retains-user-input",
+    "draft-selection-is-not-accepted-order"
+  ],
+  "items": [
+    {
+      "id": "C01",
+      "name": "导航与操作托盘",
+      "states": [
+        "idle",
+        "active",
+        "login-required",
+        "loading"
+      ],
+      "pages": [
+        "V01",
+        "V04",
+        "V05"
+      ],
+      "acceptance": [
+        "T01",
+        "T15"
+      ]
+    },
+    {
+      "id": "C02",
+      "name": "组合搜索筛选",
+      "states": [
+        "idle",
+        "loading",
+        "empty",
+        "filtered-empty",
+        "error",
+        "loading-more",
+        "end"
+      ],
+      "pages": [
+        "V01"
+      ],
+      "acceptance": [
+        "T04",
+        "T15"
+      ]
+    },
+    {
+      "id": "C03",
+      "name": "优选大卡",
+      "states": [
+        "loading",
+        "valid",
+        "image-failed",
+        "unavailable"
+      ],
+      "pages": [
+        "V01",
+        "V11",
+        "V12"
+      ],
+      "acceptance": [
+        "T11",
+        "T12",
+        "T13"
+      ]
+    },
+    {
+      "id": "C04",
+      "name": "双列需求卡",
+      "states": [
+        "valid",
+        "image-empty",
+        "image-failed",
+        "long-title",
+        "invalid"
+      ],
+      "pages": [
+        "V01",
+        "V02",
+        "V03"
+      ],
+      "acceptance": [
+        "T03",
+        "T04"
+      ]
+    },
+    {
+      "id": "C05",
+      "name": "大图与图下说明",
+      "states": [
+        "loading",
+        "empty",
+        "image-failed",
+        "loaded",
+        "multiple-images"
+      ],
+      "pages": [
+        "V02",
+        "V03"
+      ],
+      "acceptance": [
+        "T03",
+        "T04"
+      ]
+    },
+    {
+      "id": "C06",
+      "name": "联系与资料授权",
+      "states": [
+        "no-request",
+        "pending",
+        "authorized",
+        "cooldown",
+        "revoked",
+        "unavailable"
+      ],
+      "pages": [
+        "V02",
+        "V08"
+      ],
+      "acceptance": [
+        "T02",
+        "T05",
+        "T16"
+      ]
+    },
+    {
+      "id": "C07",
+      "name": "候选卡与草选",
+      "states": [
+        "unselected",
+        "draft-selected",
+        "submitting",
+        "changed",
+        "withdrawn",
+        "unknown",
+        "confirmed"
+      ],
+      "pages": [
+        "V03"
+      ],
+      "acceptance": [
+        "T06",
+        "T07"
+      ]
+    },
+    {
+      "id": "C08",
+      "name": "费用与垫付标签",
+      "states": [
+        "no-advance",
+        "advance",
+        "agreement-required",
+        "changed"
+      ],
+      "pages": [
+        "V03",
+        "V07"
+      ],
+      "acceptance": [
+        "T07",
+        "T08"
+      ]
+    },
+    {
+      "id": "C09",
+      "name": "三维评分",
+      "states": [
+        "unselected",
+        "incomplete",
+        "editing",
+        "submitting",
+        "failed",
+        "saved",
+        "ineligible",
+        "expired"
+      ],
+      "pages": [
+        "V18"
+      ],
+      "acceptance": [
+        "RT05",
+        "RT09",
+        "RT10"
+      ]
+    },
+    {
+      "id": "C10",
+      "name": "评价内容与图片",
+      "states": [
+        "empty",
+        "editing",
+        "uploading",
+        "upload-failed",
+        "too-many",
+        "invalid-type",
+        "over-limit",
+        "pending-review",
+        "rejected",
+        "published"
+      ],
+      "pages": [
+        "V18",
+        "V20"
+      ],
+      "acceptance": [
+        "RT05",
+        "RT06",
+        "RT07",
+        "RT15"
+      ]
+    },
+    {
+      "id": "C11",
+      "name": "个人与资格",
+      "states": [
+        "guest",
+        "logged-in-pending",
+        "verified",
+        "failed",
+        "service-unavailable"
+      ],
+      "pages": [
+        "V05"
+      ],
+      "acceptance": [
+        "T01",
+        "T02"
+      ]
+    },
+    {
+      "id": "C12",
+      "name": "交易与私人工具入口",
+      "states": [
+        "guest",
+        "loading",
+        "ready",
+        "empty",
+        "error",
+        "invalid-favorite"
+      ],
+      "pages": [
+        "V06",
+        "V07",
+        "V08",
+        "V09",
+        "V18"
+      ],
+      "acceptance": [
+        "T15",
+        "RT10"
+      ]
+    },
+    {
+      "id": "C13",
+      "name": "收入显示",
+      "states": [
+        "undefined-policy",
+        "loading",
+        "unknown",
+        "valid-zero",
+        "valid-amount",
+        "error"
+      ],
+      "pages": [
+        "V07"
+      ],
+      "acceptance": [
+        "T09",
+        "T10"
+      ]
+    },
+    {
+      "id": "C14",
+      "name": "计时/通知/结果反馈",
+      "states": [
+        "pending",
+        "reminded",
+        "expired",
+        "disputed",
+        "resolved",
+        "unknown"
+      ],
+      "pages": [
+        "V07",
+        "V14",
+        "V17"
+      ],
+      "acceptance": [
+        "T09",
+        "T10",
+        "RT01",
+        "RT04"
+      ]
+    },
+    {
+      "id": "C15",
+      "name": "确认与提交",
+      "states": [
+        "review-impact",
+        "cancelled",
+        "submitting",
+        "success",
+        "server-rejected",
+        "unknown"
+      ],
+      "pages": [
+        "V03",
+        "V06",
+        "V07",
+        "V09"
+      ],
+      "acceptance": [
+        "T05",
+        "T06",
+        "T08",
+        "T15"
+      ]
+    }
+  ],
+  "gates": {
+    "C03": "HD03",
+    "C13": "HD02",
+    "repairOrder": "HD01",
+    "otherCategory": "HD04"
+  }
+}

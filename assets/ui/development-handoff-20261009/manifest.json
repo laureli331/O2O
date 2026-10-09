@@ -1,0 +1,461 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-09",
+  "selectedImage": "../selected-20261009/overview.png",
+  "selectedImageSha256": "A73C4D802FBE91900CF9D1E751AB1C45391B7FD10C1868476BDF392605EEE011",
+  "selectedImageModified": false,
+  "editableLayerFile": null,
+  "generator": "scripts/prepare-ui-development-handoff.cjs",
+  "sources": [
+    {
+      "path": "assets/ui/v2/icons.svg",
+      "sha256": "516D9A5EDE655C638E0D85833FECF32EF605C592BADE9E53BE20A3ED48649747",
+      "usage": "20 inherited SVG symbols; original unchanged"
+    },
+    {
+      "path": "assets/ui/v2/design-tokens.json",
+      "sha256": "B7ACE2CB378504EC82590D39C9A69861776AA6F5B1A656240CAA8CD2078DA156",
+      "usage": "historical numerical baseline"
+    }
+  ],
+  "priorBrandAvatar": {
+    "path": "../../branding/miniapp-avatar-v4/avatar-144.png",
+    "note": "Prepared prior upload candidate; latest UI selection does not newly approve a brand-avatar change"
+  },
+  "iconCount": 22,
+  "standaloneIconCount": 44,
+  "icons": [
+    {
+      "id": "icon-home",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-home.svg",
+      "green": "icons/icon-home-green.svg"
+    },
+    {
+      "id": "icon-repair",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-repair.svg",
+      "green": "icons/icon-repair-green.svg"
+    },
+    {
+      "id": "icon-runner",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-runner.svg",
+      "green": "icons/icon-runner-green.svg"
+    },
+    {
+      "id": "icon-package",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-package.svg",
+      "green": "icons/icon-package-green.svg"
+    },
+    {
+      "id": "icon-search",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-search.svg",
+      "green": "icons/icon-search-green.svg"
+    },
+    {
+      "id": "icon-plus",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-plus.svg",
+      "green": "icons/icon-plus-green.svg"
+    },
+    {
+      "id": "icon-message",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-message.svg",
+      "green": "icons/icon-message-green.svg"
+    },
+    {
+      "id": "icon-user",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-user.svg",
+      "green": "icons/icon-user-green.svg"
+    },
+    {
+      "id": "icon-star",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-star.svg",
+      "green": "icons/icon-star-green.svg"
+    },
+    {
+      "id": "icon-file",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-file.svg",
+      "green": "icons/icon-file-green.svg"
+    },
+    {
+      "id": "icon-pin",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-pin.svg",
+      "green": "icons/icon-pin-green.svg"
+    },
+    {
+      "id": "icon-phone",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-phone.svg",
+      "green": "icons/icon-phone-green.svg"
+    },
+    {
+      "id": "icon-share",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-share.svg",
+      "green": "icons/icon-share-green.svg"
+    },
+    {
+      "id": "icon-chevron",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-chevron.svg",
+      "green": "icons/icon-chevron-green.svg"
+    },
+    {
+      "id": "icon-gear",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-gear.svg",
+      "green": "icons/icon-gear-green.svg"
+    },
+    {
+      "id": "icon-shield",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-shield.svg",
+      "green": "icons/icon-shield-green.svg"
+    },
+    {
+      "id": "icon-clock",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-clock.svg",
+      "green": "icons/icon-clock-green.svg"
+    },
+    {
+      "id": "icon-check",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-check.svg",
+      "green": "icons/icon-check-green.svg"
+    },
+    {
+      "id": "icon-image",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-image.svg",
+      "green": "icons/icon-image-green.svg"
+    },
+    {
+      "id": "icon-back",
+      "source": "assets/ui/v2/icons.svg",
+      "normal": "icons/icon-back.svg",
+      "green": "icons/icon-back-green.svg"
+    },
+    {
+      "id": "icon-services-bag",
+      "source": "new deterministic SVG in inherited 24px/1.75 family",
+      "normal": "icons/icon-services-bag.svg",
+      "green": "icons/icon-services-bag-green.svg"
+    },
+    {
+      "id": "icon-info",
+      "source": "new deterministic SVG in inherited 24px/1.75 family",
+      "normal": "icons/icon-info.svg",
+      "green": "icons/icon-info-green.svg"
+    }
+  ],
+  "navigation": [
+    {
+      "label": "首页",
+      "icon": "icon-home"
+    },
+    {
+      "label": "服务",
+      "icon": "icon-services-bag"
+    },
+    {
+      "label": "发布",
+      "icon": "icon-plus"
+    },
+    {
+      "label": "消息",
+      "icon": "icon-message"
+    },
+    {
+      "label": "我的",
+      "icon": "icon-user"
+    }
+  ],
+  "files": [
+    {
+      "path": "avatar-placeholder.svg",
+      "bytes": 458,
+      "sha256": "015C71C9D8E52D6AA5B0D2B13402362AADCBC5C441E09C506D376B2C099DC0BE"
+    },
+    {
+      "path": "components.json",
+      "bytes": 5626,
+      "sha256": "8571CDCFCF7D93A4CCA8D2AA75479025808D2978153CECB59AB9E6397EB4D980"
+    },
+    {
+      "path": "content.json",
+      "bytes": 3655,
+      "sha256": "ED90A5127E6844884BD9D20865D5EA8A5D6526131028A71BF632BA25050E8F09"
+    },
+    {
+      "path": "coverage.json",
+      "bytes": 7309,
+      "sha256": "3425B8856595A6D71F7700A0D346AF45812AC5AA03F67E0CA0258A7B109852F9"
+    },
+    {
+      "path": "decisions.json",
+      "bytes": 3239,
+      "sha256": "5B67BA82DA3B4777F1D4DC6F3131DCFB054BD5FE9613111772AA472C6DED1B4A"
+    },
+    {
+      "path": "design-tokens.json",
+      "bytes": 3511,
+      "sha256": "4498A3B791AD1E739BFF193BEC1BDA81F4A7A770258678C622434887AD7C2A86"
+    },
+    {
+      "path": "icons.svg",
+      "bytes": 7433,
+      "sha256": "A1C185E72C508F30AC89C346DB0B4577007D3BE8498D9E3A2732F6141E40D22E"
+    },
+    {
+      "path": "icons/icon-back-green.svg",
+      "bytes": 232,
+      "sha256": "8698CDDB1E4B1A76926E1B49E4B508AE62205467A9F0CDDC942DA318F3E82E6F"
+    },
+    {
+      "path": "icons/icon-back.svg",
+      "bytes": 232,
+      "sha256": "FB56F7B0B97C8B5033C7AB81DCC46E6FC0F0BEE34EAB9C334B63118587619C6C"
+    },
+    {
+      "path": "icons/icon-check-green.svg",
+      "bytes": 233,
+      "sha256": "24AFCC70990659197AB4570AFE624C902C5B91C0BFB31213D7F4CBB903D7899A"
+    },
+    {
+      "path": "icons/icon-check.svg",
+      "bytes": 233,
+      "sha256": "3DE7A1E26A10E8041C3554952EF3FF19857022AC9CA3735BC6857976543FD891"
+    },
+    {
+      "path": "icons/icon-chevron-green.svg",
+      "bytes": 231,
+      "sha256": "D602FA64BEB01511FFFB1244D9A78E662C76BE7E991489C3811A6BAEBDCE6B0F"
+    },
+    {
+      "path": "icons/icon-chevron.svg",
+      "bytes": 231,
+      "sha256": "368270E5AAC0FCA62D7D903A0A6162FBA3C8F6FE3313910AA6CF24155783C94B"
+    },
+    {
+      "path": "icons/icon-clock-green.svg",
+      "bytes": 261,
+      "sha256": "3EE9065C3A86A5DB89C01555FEDF79A46E4B1A6FBC0153177D635B8DE9980377"
+    },
+    {
+      "path": "icons/icon-clock.svg",
+      "bytes": 261,
+      "sha256": "CD6CBEC6A7CA231B31FA189A1476B8E69F77ECF7E81BE1B9C42677D6F9A387B6"
+    },
+    {
+      "path": "icons/icon-file-green.svg",
+      "bytes": 258,
+      "sha256": "B141A108BD92C4AEF4F726AF2274EE5408BD8949FF8453E50956B29413481472"
+    },
+    {
+      "path": "icons/icon-file.svg",
+      "bytes": 258,
+      "sha256": "26024D288519DD1CE556ECF7A0E276268B8D6C5E1F26338199A78CF67D1E13F0"
+    },
+    {
+      "path": "icons/icon-gear-green.svg",
+      "bytes": 330,
+      "sha256": "4F231A6DCB3AAA18322BC2461CF561834FF8B9189CEF8B568123D9DC749F6307"
+    },
+    {
+      "path": "icons/icon-gear.svg",
+      "bytes": 330,
+      "sha256": "A71C074A4F0EBC59E792342D1C92D7B489CC3FC1D61A60D63FA0D4207B13BF0B"
+    },
+    {
+      "path": "icons/icon-home-green.svg",
+      "bytes": 276,
+      "sha256": "22C466465F5262AB02E238FF818D3A4B6F5CF031E0A1EB38136081582A9A6F51"
+    },
+    {
+      "path": "icons/icon-home.svg",
+      "bytes": 276,
+      "sha256": "4E9984EB494E359F3A16B07F1DD19AC4429E0FECF77D72086E90DCE6271F5DD6"
+    },
+    {
+      "path": "icons/icon-image-green.svg",
+      "bytes": 320,
+      "sha256": "F6493080DE32F1FFE0493EC47C6A9F61629EF3FE7F336A96B31C074B757B150F"
+    },
+    {
+      "path": "icons/icon-image.svg",
+      "bytes": 320,
+      "sha256": "FC3A5B1B3736303C4DCD9D5EBEA91603324103AA687A590E7CCE0D3B90D97B30"
+    },
+    {
+      "path": "icons/icon-info-green.svg",
+      "bytes": 323,
+      "sha256": "2435CFB053E390645B2DA9D26CC85AD6F26831F6D1C9C190EFD897265EF37E90"
+    },
+    {
+      "path": "icons/icon-info.svg",
+      "bytes": 323,
+      "sha256": "7EA2254572BDC581C842F6638196DB09105EF4FEAAC4E01ADBB4AB15C58D061E"
+    },
+    {
+      "path": "icons/icon-message-green.svg",
+      "bytes": 307,
+      "sha256": "55A2EDA817F55E099B20C484E08ADEBB8016E2F68E49102BFD988BA1B270F72F"
+    },
+    {
+      "path": "icons/icon-message.svg",
+      "bytes": 307,
+      "sha256": "C3637F350A70A9061B772BCC72C219A8557639D91A28E571BAEB8DF762430D2A"
+    },
+    {
+      "path": "icons/icon-package-green.svg",
+      "bytes": 275,
+      "sha256": "6D6E66C42C800B35053CCA1F5F1D6B8757E505AF4D98CBDF25D569549F55404B"
+    },
+    {
+      "path": "icons/icon-package.svg",
+      "bytes": 275,
+      "sha256": "6CE9B433D27DC089623F322D1696560D88C76B362BE5837DC7864BB4572E9F7E"
+    },
+    {
+      "path": "icons/icon-phone-green.svg",
+      "bytes": 298,
+      "sha256": "1B443F48AF4BC8BFF73FE8A033DD719ADFAB055FA734B2B0827DD36FF881C63D"
+    },
+    {
+      "path": "icons/icon-phone.svg",
+      "bytes": 298,
+      "sha256": "F439B285BE709772AA44DA9B1529D09D3A53932AE8D6BAB77EAE6251C450B9D4"
+    },
+    {
+      "path": "icons/icon-pin-green.svg",
+      "bytes": 298,
+      "sha256": "07D21A68D08968C4E5D4FFEA77EF01071DD5D1A1290AFD2EE2ECA27EC7639FA4"
+    },
+    {
+      "path": "icons/icon-pin.svg",
+      "bytes": 298,
+      "sha256": "FB28671710D5B6F20E3FBC09B11EE4C5E1CD7C8219B24B5D996CAB80A062A0C9"
+    },
+    {
+      "path": "icons/icon-plus-green.svg",
+      "bytes": 235,
+      "sha256": "29A47823A7E17CA5ED8A71B0C66F72D0D8155765A417EF324D81C3E389C323FE"
+    },
+    {
+      "path": "icons/icon-plus.svg",
+      "bytes": 235,
+      "sha256": "660640E227B3F6DA4EDE845987ACC52E369D5A22E9E985A41441918957F86290"
+    },
+    {
+      "path": "icons/icon-repair-green.svg",
+      "bytes": 289,
+      "sha256": "1CCDF6EAA4F9E94EFA49FB456A012FE5DE817B76002FC0F921363096565BEFE0"
+    },
+    {
+      "path": "icons/icon-repair.svg",
+      "bytes": 289,
+      "sha256": "BC811FDCA457950F20B687FA5319A2B20993B996CFB234D703C76F982CB09C12"
+    },
+    {
+      "path": "icons/icon-runner-green.svg",
+      "bytes": 296,
+      "sha256": "112F3F88C442B17A544AA8FBC7D6454F3E52035D85A2008F885454911094761F"
+    },
+    {
+      "path": "icons/icon-runner.svg",
+      "bytes": 296,
+      "sha256": "F471C9F67D58601D924ACFDD05B0058A084112C30801DA93947EC08971DE612A"
+    },
+    {
+      "path": "icons/icon-search-green.svg",
+      "bytes": 266,
+      "sha256": "7607275386C9DB25035FA8C2005650F574D1349DCE806515A9D48AB9B59E76BD"
+    },
+    {
+      "path": "icons/icon-search.svg",
+      "bytes": 266,
+      "sha256": "53F79D58D5058C3BDE35E29150858FD103C33B39953A0A1D60130643739853D2"
+    },
+    {
+      "path": "icons/icon-services-bag-green.svg",
+      "bytes": 290,
+      "sha256": "91E8F2D8655D2180E82245758947DA48546FA4F0605DDC0F50C8582BA348A0A2"
+    },
+    {
+      "path": "icons/icon-services-bag.svg",
+      "bytes": 290,
+      "sha256": "345FBD3C94C6CE24D02ECDDA500C82041FE2B5BA433795BFF1F98ABE44E23DAB"
+    },
+    {
+      "path": "icons/icon-share-green.svg",
+      "bytes": 256,
+      "sha256": "905922990023DEA2C49CCD009774AD9A5DBC2BBFDA7D1D82BC08AE52213B88DB"
+    },
+    {
+      "path": "icons/icon-share.svg",
+      "bytes": 256,
+      "sha256": "EE8B4C83E4FFAADC319D2B3CF673543C475024B8E11D2817292699726BA5C41F"
+    },
+    {
+      "path": "icons/icon-shield-green.svg",
+      "bytes": 282,
+      "sha256": "8316DA6E1E08A58C88EF57FD03C80C534DD08DA6A7AB2AF116A2CF595E02E1B3"
+    },
+    {
+      "path": "icons/icon-shield.svg",
+      "bytes": 282,
+      "sha256": "E51167A012BBF3F6CFDCF4B3A82B480B27CC1D5A5B87835FC4CD6DFEB2650A95"
+    },
+    {
+      "path": "icons/icon-star-green.svg",
+      "bytes": 290,
+      "sha256": "E2D64D1E5A2A14EBE05F995D9EFB27B2FFE3620F6262FE52D5F0E4E4F820D380"
+    },
+    {
+      "path": "icons/icon-star.svg",
+      "bytes": 290,
+      "sha256": "7BBDB18D24F83BE945EFF7245AAF1D90FB1D3FF6230A7D88E32B9495D99D87A4"
+    },
+    {
+      "path": "icons/icon-user-green.svg",
+      "bytes": 275,
+      "sha256": "E39FAB28AD35339EB959325AB157840909F4E571FF105DF1EF45A351CF7712E7"
+    },
+    {
+      "path": "icons/icon-user.svg",
+      "bytes": 275,
+      "sha256": "824BA6968A235290BA30B1DF245918A8DADB53763C13AA2291EDB75A20DE8EF9"
+    },
+    {
+      "path": "image-placeholder.svg",
+      "bytes": 413,
+      "sha256": "780655AE41CDAF86689F36D1C7890C48D700818E3113DAACB5A9EFD5E460AE11"
+    },
+    {
+      "path": "noise-tile.svg",
+      "bytes": 2473,
+      "sha256": "17C1AC653A3E4D223328E319C667FEE965AAE44C19FC970450721EEFC36C1A05"
+    },
+    {
+      "path": "theme.wxss",
+      "bytes": 1877,
+      "sha256": "BA2FE9AD9CBC9CBE3A1ED1BF6DA3564D59D376B9AE480107CEB587F3A1630ADB"
+    }
+  ],
+  "limitations": [
+    "No Figma/native layered source reconstructed",
+    "SVG display and any PNG export not yet verified on WeChat runtime",
+    "Leaf decoration editable source not available",
+    "Styles and candidate colors require device review"
+  ]
+}
