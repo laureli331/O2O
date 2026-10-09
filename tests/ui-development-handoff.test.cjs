@@ -91,7 +91,7 @@ test('selected attachment is byte-identical and source artifacts remain traceabl
   assert.equal(bytes.readUInt32BE(20), 1448);
   assert.equal(manifest.selectedImageModified, false);
   assert.equal(manifest.editableLayerFile, null);
-  for (const source of manifest.sources) assert.equal(hash(fs.readFileSync(path.join(repo, source.path))), source.sha256);
+  for (const source of manifest.sources) assert.equal(hash(read(path.join(repo, source.path)).replace(/\r\n/g, '\n')), source.sha256LfNormalized);
   assert(fs.existsSync(path.join(directory, manifest.priorBrandAvatar.path)));
   const selection = JSON.parse(read(path.join(repo, 'assets/ui/selected-20261009/selection.json')));
   assert.equal(selection.transformed, false);
@@ -196,6 +196,7 @@ test('handoff Markdown links resolve and current source takes precedence without
 });
 
 test('generated outputs and manifest are reproducible and no assets drift silently', () => {
+  assert(read(path.join(repo, '.gitattributes')).includes('assets/ui/development-handoff-20261009/** text eol=lf'));
   execFileSync(process.execPath, [path.join(repo, 'scripts/prepare-ui-development-handoff.cjs'), '--check'], { cwd: repo, encoding: 'utf8' });
   for (const item of manifest.files) {
     const bytes = fs.readFileSync(path.join(directory, item.path));

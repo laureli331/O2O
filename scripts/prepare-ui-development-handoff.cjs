@@ -8,6 +8,7 @@ const repo = path.resolve(__dirname, '..');
 const directory = path.join(repo, 'assets/ui/development-handoff-20261009');
 const check = process.argv.includes('--check');
 const hash = data => crypto.createHash('sha256').update(data).digest('hex').toUpperCase();
+const sourceTextHash = file => hash(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n'));
 const read = name => fs.readFileSync(path.join(directory, name), 'utf8');
 const tokens = JSON.parse(read('design-tokens.json'));
 const selected = fs.readFileSync(path.join(directory, tokens.visualSource));
@@ -92,8 +93,8 @@ const manifest = {
   editableLayerFile: null,
   generator: 'scripts/prepare-ui-development-handoff.cjs',
   sources: [
-    { path: 'assets/ui/v2/icons.svg', sha256: hash(fs.readFileSync(sourcePath)), usage: '20 inherited SVG symbols; original unchanged' },
-    { path: 'assets/ui/v2/design-tokens.json', sha256: hash(fs.readFileSync(path.join(repo, 'assets/ui/v2/design-tokens.json'))), usage: 'historical numerical baseline' }
+    { path: 'assets/ui/v2/icons.svg', sha256LfNormalized: sourceTextHash(sourcePath), usage: '20 inherited SVG symbols; original unchanged' },
+    { path: 'assets/ui/v2/design-tokens.json', sha256LfNormalized: sourceTextHash(path.join(repo, 'assets/ui/v2/design-tokens.json')), usage: 'historical numerical baseline' }
   ],
   priorBrandAvatar: { path: '../../branding/miniapp-avatar-v4/avatar-144.png', note: 'Prepared prior upload candidate; latest UI selection does not newly approve a brand-avatar change' },
   iconCount: symbols.length,

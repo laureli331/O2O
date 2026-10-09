@@ -9,12 +9,12 @@
   "sources": [
     {
       "path": "assets/ui/v2/icons.svg",
-      "sha256": "516D9A5EDE655C638E0D85833FECF32EF605C592BADE9E53BE20A3ED48649747",
+      "sha256LfNormalized": "516D9A5EDE655C638E0D85833FECF32EF605C592BADE9E53BE20A3ED48649747",
       "usage": "20 inherited SVG symbols; original unchanged"
     },
     {
       "path": "assets/ui/v2/design-tokens.json",
-      "sha256": "B7ACE2CB378504EC82590D39C9A69861776AA6F5B1A656240CAA8CD2078DA156",
+      "sha256LfNormalized": "B7ACE2CB378504EC82590D39C9A69861776AA6F5B1A656240CAA8CD2078DA156",
       "usage": "historical numerical baseline"
     }
   ],
