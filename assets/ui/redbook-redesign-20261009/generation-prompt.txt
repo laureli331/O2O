@@ -1,0 +1,57 @@
+Use case: ui-mockup. Generate a completely NEW high-fidelity Chinese WeChat mini-program design proposal for “湘邻湘友”, township life services. One large polished overview board with EIGHT full mobile screens, four across and two rows. This is a NEW design exploration drawn from clean aviation UI, frosted silver finance UI and efficient monochrome fitness dashboards. DO NOT reference, reuse or recolor any earlier app mockup. Recompose every screen from scratch. The only reference language is: silver soft light, elegant translucent layered surfaces, a small amount of aviation blue, clearly separated task modules and outstanding whitespace. Keep functional app content but invent NO extra business features or trust facts.
+
+Board aesthetic: light cool pearl silver background, very subtle light-blue/lavender luminous wash, dark charcoal text, restrained typography. Header “湘邻湘友” and small subtitle “银白柔光 · 清晰分层 · 全新视觉提案”. Bottom footer “图片占位 · 示例数据 · 非运行页面”. No leaves, nature, forests, green brand palette, rustic decoration, heavy dark green frames or old rounded rectangular compartment arrangement. Use very minimal thin silver mobile outlines rather than dark device borders. Each canvas looks like a modern premium mobile product, NOT a gray wireframe. Aim high-resolution image around 3200x2400 if possible, very crisp readable Chinese, all eight artboards fully visible.
+
+NEW VISUAL SYSTEM: white/pearl/silver main surfaces, charcoal/black titles, light cool-gray metadata. Blue gradient used ONLY for selected elements and high-priority primary CTAs, less than about one-fifth of each content area as visual intent, not a measurement. Some secondary CTAs are charcoal. Modern comfortable rounded card corners, capsule controls and fine white reflective rim, layered translucent surfaces on softly luminous cool-gray backdrops, soft wide shadows with low opacity. Elegant diffuse glass without blurring text. Large editorial page headings, fewer enclosing boxes, grouped rows separated with whitespace and delicate dividers. Category icons use consistent monochrome thin-line icons within small silver circles; do not place them in one large three-compartment glass box. Consistent contemporary Chinese sans-serif, distinct heading/value/body/metadata levels. Main actions as floating compact full-width capsule trays with refined blue gradient. Bottom NAV uses five conventional equal items 首页 / 服务 / 发布 / 消息 / 我的, small blue selected dot, no giant raised circular plus. No unnecessary giant price numerals for household tasks.
+
+PLACEHOLDER POLICY: All product, service and user photos must be gray-silver placeholder rectangles with outlined image icon and exact readable caption “图片占位”; avatars must be plain outlined person silhouettes. No generated real photography, scenery, appliances, bicycles or human faces. Placeholders have intentional dimensions and consistent soft rounding; every placeholder is clearly marked. Vector-like UI symbols and abstract light gradients are fine.
+
+Eight radically redesigned pages:
+01 首页:
+Airy asymmetric editorial hero, small 湘邻湘友 branding line, prominent “附近的生活需求” heading, tiny current area selector “选择村／社区”. Wide clean search row “搜索维修、跑腿、二手”. Three separately spaced circular monochrome category shortcuts 维修 / 跑腿 / 二手, not inside a containing panel.
+Feature section “服务推荐”, one generous floating translucent advertising card with placeholder thumbnail, title “示例维修服务”, subtitle“示例区域”, small “广告” badge, right arrow.
+“最新需求” heading and understated underline tabs 全部 / 维修 / 跑腿 / 二手. Single clean errand list row “代取快递”, “服务费预算 ¥12”, region示例区域, thumbnail placeholder. Bottom equal-item floating silver NAV with 首页 selected. Do NOT add a side menu or made-up promotions.
+
+02 维修详情:
+Small nav with back/share/collection. Editorial two-line title “洗衣机无法启动” before the main image area. Slim category/area chips “维修”“示例区域”. Wide silver placeholder image panel with airy bottom space, not a photo with a green overlay. Then readable description “启动后无反应，希望维修人员联系查看。” and small “2小时前 · 示例”.
+A minimal grouped contact row separated by hairline, label“联系方式”, masked “138****0000”, note“获准后可查看完整号码”.
+Bottom floating pale-silver operation capsule with bold blue “申请联系”. No pay buttons.
+
+03 跑腿选人:
+Heading “选择承接者”, small“发布者视角”. A compact horizontal task summary “代取快递” and “服务费预算 ¥12”; no old three-step horizontal progress diagram.
+A broad light glass comparison surface with two vertically separated candidate rows; each row person silhouette, name, large enough quote and condition. A: “示例用户 A”“服务费报价 ¥12”“不垫付”, selected BLUE small check. B:“示例用户 B”“服务费报价 ¥15”“愿垫付 · 上限 ¥50”, empty selection ring. No nested separately bordered green cards, no fake history, no reviews or completion counts.
+Summary strip “已选：示例用户 A” and “确认费用与垫付条件，双方直接结算。”
+Bottom blue CTA“确认费用并选此人”. Lots of breathing room. No platform payment checkout.
+
+04 二手列表:
+Large editorial heading “发现闲置好物”, clear subheading“二手信息”. Rounded silver search row “搜索闲置物品”, lightweight filters “全部分类”“选择村／社区”“最新发布”.
+Two curated side-by-side product tiles, wide silver placeholder photos, captions“闲置自行车”“二手书架”, area示例区域, prices“¥180”“面议”. Tiles use white surface with no dark outer border. Small lower continuation glimpse supports scroll, no squeezed extra rows. Floating silver 5-item NAV, 首页 selected.
+
+05 三维评分:
+Title“分享服务体验”, smaller “评价承接者”. Slim flat profile row with silhouette,“示例用户 A”“跑腿 · 承接者”, small“实际完成已确认 · 设计示例”.
+An airy white sheet with three rating bands separated by subtle hairlines. Labels“态度”“效率”“沟通”, EACH with exactly FIVE EMPTY OUTLINE STARS. All unselected. “请选择” hint. Do not fill any stars. Hint“三项必选，每项 1—5 星”.
+Light open textarea“分享本次实际体验（选填）”,0/300. One slim dashed placeholder-upload tile with caption“添加图片 · 最多3张”. “图文审核通过后公开”.
+Bottom light gray DISABLED “提交评价”. No invented five-star trust promise.
+
+06 我的:
+New editorial personalized layout: top “我的”, setting icon, LARGE generic silhouette centered in upper section, “示例用户”. Under it horizontal plain status labels with small icons “微信已登录” (check) and “资格待核验” (clock). “发布或接单时校验资格。” Fine silver halo, no nature background or boxed green profile.
+Business tools as a single clean 2x2 white surface with hairline separation (not four independent puffy cards), icons and labels 我的发布 / 我的跑腿 / 联系申请 / 我的评价.
+Section“个人工具箱”, open list rows 收藏 / 草稿 / 私人地址簿.
+“服务管理与帮助” clean row. Equal-item floating silver 5-item NAV with 我的 selected.
+
+07 AI发布助手:
+Heading“整理发布内容”, contextual label“发布跑腿”. NOT CHAT.
+Beautiful one-task editor sheet with optional compact “AI帮我整理（可选）” and input“帮我取一个快递，今天下午，服务费12元，不需要垫付。” No unverified character count. Small secondary action“整理文字”.
+Layered suggested-result white glass sheet partially overlapping editor with title“整理建议”. Distinct field rows “任务 代取快递”“服务费预算 ¥12”“垫付 不需要”. Light-gray informational hint with blue icon “待补充：区域、具体时间”.
+“选择要采用的字段” three checkbox options task, service fee, advance, all selected for illustration. Blue main action“采用所选内容”. Secondary“继续手工填写”. Explicit bottom“确认后再提交，不会自动发布。”
+No bubbles, no free chat or image analysis.
+
+08 运营看板:
+New data-priority mobile layout. Large“运营概况” with smaller“运营看板 · 仅运营者可见”. Date/context controls“昨日”“全部业务”, “统计截至昨日 · 示例数据”.
+Prominent large “昨日发布 30” with explanatory“维修8 · 二手12 · 跑腿10”. Secondary thin metric strip“待承接 4”.
+A light flat WHITE chart surface “三业务发布量”, THREE precisely labeled bars 维修8 / 二手12 / 跑腿10, blue focus on selected bar and silver others.
+“同批跑腿漏斗” as descending HORIZONTAL BAR lengths, labels and counts 发布10 / 有申请7 / 已选人5 / 已完成3; no old four tiny adjacent tiles.
+“AI使用” simple row “整理请求6 · 已采用4”.
+Bottom note“仅汇总，不代表成交或资金结清”. No desktop sidebar, no stocks/finance payments, no undisclosed fees.
+
+QUALITY: Each page must materially differ in composition from a green village-themed boxed UI. Silver finance-inspired airy glass, aviation-style clear functional groups, data-workspace focus, no green, no leaves, no nature. Do not just recolor old layouts. Keep readable simplified Chinese and stable distinct hierarchy, icons thin and unified, ample whitespace. Restrained abstract silver-blue light backdrop only, no 3D ornaments or fake pictures. All eight pages full height including their operation/nav. Prefer elegance and visible spacing to cramming extra text. Business claims restricted to above illustrative values.
