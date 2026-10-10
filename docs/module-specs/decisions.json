@@ -11,12 +11,15 @@
         "name": "其它",
         "businessModule": true,
         "excludeCategories": ["维修", "跑腿", "闲置"],
-        "purpose": "整理其它需求数据，作为后续更新迭代依据"
+        "purpose": "整理其它需求数据，作为后续更新迭代依据",
+        "publicPublishing": true,
+        "applicationsAllowed": true
       },
       "followUp": [
-        { "date": "2026-10-10", "userReply": "除了\"维修、跑腿、闲置\", 方便为后续更新迭代整理数据" }
+        { "date": "2026-10-10", "userReply": "除了\"维修、跑腿、闲置\", 方便为后续更新迭代整理数据" },
+        { "date": "2026-10-10", "userReply": "A", "selectedOption": "公开发布并允许申请接单：用户可以实际找到人处理需求，同时积累分类数据" }
       ],
-      "pending": ["公开接单或仅收集需求", "分类判断与禁止范围细则", "发布/接单流程", "字段/权限/状态及保存用途期限", "费用/完成/取消/争议/评价适用性", "页面及PRD编号"],
+      "pending": ["申请后的选人模式", "分类判断与禁止范围细则", "发布/接单流程细则", "字段/权限/状态及保存用途期限", "费用/完成/取消/争议/评价适用性", "页面及PRD编号"],
       "fullWorkflowReady": false,
       "handoffDecision": "HD04"
     },

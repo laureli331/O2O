@@ -18,7 +18,12 @@ function verify(value) {
   assert.deepEqual(other.confirmed.excludeCategories, ['维修', '跑腿', '闲置']);
   assert.equal(other.confirmed.purpose, '整理其它需求数据，作为后续更新迭代依据');
   assert.equal(other.followUp[0].userReply, '除了"维修、跑腿、闲置", 方便为后续更新迭代整理数据');
-  assert(other.pending.includes('公开接单或仅收集需求'));
+  assert.equal(other.confirmed.publicPublishing, true);
+  assert.equal(other.confirmed.applicationsAllowed, true);
+  assert.equal(other.followUp[1].userReply, 'A');
+  assert.equal(other.followUp[1].selectedOption, '公开发布并允许申请接单：用户可以实际找到人处理需求，同时积累分类数据');
+  assert(!other.pending.includes('公开接单或仅收集需求'));
+  assert(other.pending.includes('申请后的选人模式'));
   assert.equal(repair.userReply, 'A');
   assert.equal(repair.confirmed.matchingMode, 'apply-then-publisher-selects');
   assert.equal(repair.confirmed.quoteRequiredAtApplication, false);
@@ -35,12 +40,15 @@ test('actual answers include other business and repair application mode without 
   assert.equal(repair.followUp[0].userReply, 'A');
   assert(repair.confirmed.includes('申请时不强制报价'));
   assert.equal(handoff.items.find(item => item.id === 'HD04').userReply, records.items[0].userReply);
-  assert.equal(handoff.items.find(item => item.id === 'HD04').status, 'business-scope-approved-rules-pending');
+  assert.equal(handoff.items.find(item => item.id === 'HD04').status, 'public-business-approved-rules-pending');
   for (const mutation of [
     data => { data.items[0].confirmed.businessModule = false; },
     data => { data.items[0].confirmed.excludeCategories = ['维修']; },
     data => { data.items[0].confirmed.purpose = '所有需求均可直接抢单'; },
-    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '公开接单或仅收集需求'); },
+    data => { data.items[0].confirmed.publicPublishing = false; },
+    data => { data.items[0].confirmed.applicationsAllowed = false; },
+    data => { data.items[0].followUp[1].selectedOption = '仅收集需求'; },
+    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请后的选人模式'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
     data => { data.items[0].fullWorkflowReady = true; }
@@ -63,12 +71,14 @@ test('planning references resolve and existing handoff points to the new confirm
   assert(read('docs/ui-development-handoff/page-spec.md').includes('其它属于业务模块'));
 });
 
-test('other classification purpose is synchronized without pre-approving a collection or order workflow', () => {
+test('other public publishing direction is synchronized while selection and full order workflow remain unresolved', () => {
   const other = handoff.items.find(item => item.id === 'HD04');
   assert.equal(other.followUp[0].userReply, records.items[0].followUp[0].userReply);
   assert(other.confirmed.includes('为后续更新迭代提供依据'));
-  assert(other.pending.includes('公开接单或仅收集需求'));
-  assert(read('CONTEXT.md').includes('是否公开供人接单'));
+  assert.deepEqual(other.followUp[1], records.items[0].followUp[1]);
+  assert(other.confirmed.includes('允许公开发布并申请接单'));
+  assert(other.pending.includes('申请后的选人模式'));
+  assert(read('CONTEXT.md').includes('允许公开发布并申请接单'));
   assert(read('docs/module-specs/README.md').includes('归类原则和整理数据目的已确认'));
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
 });
