@@ -1,15 +1,23 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-09",
+  "updatedAt": "2026-10-10",
   "source": "human replies in this chat",
   "items": [
     {
       "id": "HD01",
       "status": "scope-approved-rules-pending",
       "userReply": "扩展维修接单流程，另行讨论并补齐业务规则",
-      "confirmed": "维修扩展接单意图",
+      "confirmed": "维修扩展接单；先申请，再由发布者选人；申请时不强制报价",
+      "followUp": [
+        {
+          "date": "2026-10-10",
+          "userReply": "A",
+          "selectedOption": "先申请，再由发布者选人；申请时不强制报维修价格；价格如何确定下一步讨论"
+        }
+      ],
       "pending": [
-        "报价/选人",
+        "价格确定方式及申请/选人细则",
         "联系解码",
         "履约/完成/取消/异议",
         "费用与维修收入",
@@ -71,10 +79,13 @@
     },
     {
       "id": "HD04",
-      "status": "classification-pending",
-      "confirmed": "首页显示其它标签",
+      "status": "business-scope-approved-rules-pending",
+      "userReply": "业务还包括\"其它\"",
+      "confirmed": "其它作为业务模块纳入本次规划，不仅是首页筛选标签",
       "pending": [
-        "真实信息集合与发布入口",
+        "允许需求清单、与维修/跑腿/闲置的分类边界",
+        "发布/接单流程、字段、权限、状态与验收",
+        "PRD业务编号及页面覆盖同步",
         "不扩展首期禁止任务"
       ],
       "prd": [
