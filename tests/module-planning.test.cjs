@@ -23,7 +23,13 @@ function verify(value) {
   assert.equal(other.followUp[1].userReply, 'A');
   assert.equal(other.followUp[1].selectedOption, '公开发布并允许申请接单：用户可以实际找到人处理需求，同时积累分类数据');
   assert(!other.pending.includes('公开接单或仅收集需求'));
-  assert(other.pending.includes('申请后的选人模式'));
+  assert.equal(other.confirmed.matchingMode, 'apply-then-publisher-selects');
+  assert.equal(other.followUp[2].userReply, 'A');
+  assert.equal(other.followUp[2].selectedOption, '先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议');
+  assert(!other.pending.includes('申请后的选人模式'));
+  assert(other.pending.includes('申请内容、选择人数及生效/竞争申请规则'));
+  assert.equal(Object.hasOwn(other.confirmed, 'quoteRequiredAtApplication'), false);
+  assert.equal(Object.hasOwn(other.confirmed, 'selectedWorkerCount'), false);
   assert.equal(repair.userReply, 'A');
   assert.equal(repair.confirmed.matchingMode, 'apply-then-publisher-selects');
   assert.equal(repair.confirmed.quoteRequiredAtApplication, false);
@@ -48,7 +54,10 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[0].confirmed.publicPublishing = false; },
     data => { data.items[0].confirmed.applicationsAllowed = false; },
     data => { data.items[0].followUp[1].selectedOption = '仅收集需求'; },
-    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请后的选人模式'); },
+    data => { data.items[0].confirmed.matchingMode = 'first-come-first-served'; },
+    data => { data.items[0].confirmed.quoteRequiredAtApplication = false; },
+    data => { data.items[0].confirmed.selectedWorkerCount = 1; },
+    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请内容、选择人数及生效/竞争申请规则'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
     data => { data.items[0].fullWorkflowReady = true; }
@@ -71,14 +80,16 @@ test('planning references resolve and existing handoff points to the new confirm
   assert(read('docs/ui-development-handoff/page-spec.md').includes('其它属于业务模块'));
 });
 
-test('other public publishing direction is synchronized while selection and full order workflow remain unresolved', () => {
+test('other publisher selection mode is synchronized while quote and worker-count rules remain unresolved', () => {
   const other = handoff.items.find(item => item.id === 'HD04');
   assert.equal(other.followUp[0].userReply, records.items[0].followUp[0].userReply);
   assert(other.confirmed.includes('为后续更新迭代提供依据'));
   assert.deepEqual(other.followUp[1], records.items[0].followUp[1]);
   assert(other.confirmed.includes('允许公开发布并申请接单'));
-  assert(other.pending.includes('申请后的选人模式'));
-  assert(read('CONTEXT.md').includes('允许公开发布并申请接单'));
+  assert.deepEqual(other.followUp[2], records.items[0].followUp[2]);
+  assert(other.confirmed.includes('先申请再由发布者选人'));
+  assert(other.pending.includes('申请内容、选择人数及生效/竞争申请规则'));
+  assert(read('CONTEXT.md').includes('先申请再由发布者选人'));
   assert(read('docs/module-specs/README.md').includes('归类原则和整理数据目的已确认'));
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
 });
