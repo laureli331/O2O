@@ -27,7 +27,7 @@ function verify(value) {
   assert.equal(other.followUp[2].userReply, 'A');
   assert.equal(other.followUp[2].selectedOption, '先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议');
   assert(!other.pending.includes('申请后的选人模式'));
-  assert(other.pending.includes('申请内容、同一人重复申请、选定生效/竞争申请及改选规则'));
+  assert(other.pending.includes('申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'));
   assert.equal(other.confirmed.quoteRequiredAtApplication, false);
   assert.equal(Object.hasOwn(other.confirmed, 'defaultServiceFee'), false);
   assert.equal(other.confirmed.selectedWorkerCount, 1);
@@ -37,6 +37,7 @@ function verify(value) {
   for (const item of value.items) {
     assert.equal(item.confirmed.selectedWorkerCount, 1);
     assert.deepEqual(item.confirmed.applicantLimit, { kind: 'no-product-cap' });
+    assert.deepEqual(item.confirmed.applicationRules, { activePerPersonPerRequest: 1, editableBeforeSelection: true, withdrawableBeforeSelection: true, repeatedSubmitCreatesNew: false });
     assert.equal(Object.hasOwn(item.confirmed, 'concurrentTaskLimit'), false);
     assert.equal(item.fullWorkflowReady, false);
     assert(item.pending.length >= 5);
@@ -66,7 +67,10 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[0].confirmed.applicantLimit = { kind: 'fixed', count: 1 }; },
     data => { data.items[1].confirmed.applicantLimit = null; },
     data => { data.items[0].confirmed.concurrentTaskLimit = null; },
-    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请内容、同一人重复申请、选定生效/竞争申请及改选规则'); },
+    data => { data.items[0].confirmed.applicationRules.activePerPersonPerRequest = 2; },
+    data => { data.items[1].confirmed.applicationRules.withdrawableBeforeSelection = false; },
+    data => { data.items[0].confirmed.applicationRules.repeatedSubmitCreatesNew = true; },
+    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
     data => { data.items[0].fullWorkflowReady = true; }
@@ -97,7 +101,7 @@ test('other publisher selection mode is synchronized while voluntary quote and d
   assert(other.confirmed.includes('允许公开发布并申请接单'));
   assert.deepEqual(other.followUp[2], records.items[0].followUp[2]);
   assert(other.confirmed.includes('先申请再由发布者选人'));
-  assert(other.pending.includes('申请内容、同一人重复申请、选定生效/竞争申请及改选规则'));
+  assert(other.pending.includes('申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'));
   assert(read('CONTEXT.md').includes('先申请再由发布者选1位接单员'));
   assert(read('docs/module-specs/README.md').includes('归类原则和整理数据目的已确认'));
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
@@ -146,8 +150,26 @@ test('no applicant cap approval is synchronized and does not imply unlimited con
   for (const item of records.items) {
     assert.deepEqual(item.confirmed.applicantLimit, { kind: 'no-product-cap' });
     assert.equal(item.confirmed.selectedWorkerCount, 1);
-    assert(item.pending.some(text => text.includes('同一人重复申请')));
+    assert.equal(item.confirmed.applicationRules.activePerPersonPerRequest, 1);
     assert(item.pending.includes('接单员同时接单规则'));
   }
   assert(read('CONTEXT.md').includes('将不设申请人数上限解释为同一人可无限重复提交或同时接单不限量'));
+});
+
+test('one active editable application is synchronized without approving reapplication cooldown or withdrawal after selection', () => {
+  const [other, repair] = records.items;
+  const answer = other.followUp[6];
+  assert.equal(answer.date, '2026-10-11');
+  assert.equal(answer.userReply, 'A');
+  assert.equal(answer.selectedOption, '维修和其它同一人对同一需求只保留1份有效申请；选定前可修改或撤回；重复点击申请不新增记录');
+  assert.deepEqual(repair.followUp[2], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD01').followUp[3], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[6], answer);
+  for (const item of records.items) {
+    assert.equal(Object.hasOwn(item.confirmed.applicationRules, 'reapplyCooldownHours'), false);
+    assert.equal(Object.hasOwn(item.confirmed.applicationRules, 'withdrawableAfterSelection'), false);
+    assert(item.pending.some(text => text.includes('撤回后重申/冷却')));
+  }
+  assert(read('CONTEXT.md').includes('重复点击申请不新增记录'));
+  assert(read('docs/module-specs/README.md').includes('选定前可撤回申请不代表选定后可单方取消服务'));
 });
