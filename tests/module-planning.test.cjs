@@ -39,6 +39,7 @@ function verify(value) {
     assert.deepEqual(item.confirmed.applicantLimit, { kind: 'no-product-cap' });
     assert.deepEqual(item.confirmed.applicationRules, { activePerPersonPerRequest: 1, editableBeforeSelection: true, withdrawableBeforeSelection: true, repeatedSubmitCreatesNew: false });
     assert.deepEqual(item.confirmed.contactVisibility, { beforeSelection: 'masked', afterSuccessfulSelection: 'selected-parties-only', otherApplicants: 'masked' });
+    assert.deepEqual(item.confirmed.feeAgreement, { recordedInMiniapp: true, requiresBothPartiesConfirmation: true });
     assert.equal(Object.hasOwn(item.confirmed, 'concurrentTaskLimit'), false);
     assert.equal(item.fullWorkflowReady, false);
     assert(item.pending.length >= 5);
@@ -74,6 +75,9 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[0].confirmed.contactVisibility.beforeSelection = 'full'; },
     data => { data.items[1].confirmed.contactVisibility.otherApplicants = 'full'; },
     data => { data.items[0].confirmed.contactVisibility.afterSuccessfulSelection = 'all-applicants'; },
+    data => { data.items[0].confirmed.feeAgreement.recordedInMiniapp = false; },
+    data => { data.items[1].confirmed.feeAgreement.requiresBothPartiesConfirmation = false; },
+    data => { data.items[0].confirmed.feeAgreement.paid = true; },
     data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
@@ -83,6 +87,27 @@ test('actual answers include other business and repair application mode without 
     mutation(changed);
     assert.throws(() => verify(changed));
   }
+});
+
+test('fee recording and mutual confirmation are approved without inventing payment, itemization or confirmation timing', () => {
+  const [other, repair] = records.items;
+  const answer = other.followUp[8];
+  assert.equal(answer.date, '2026-10-11');
+  assert.equal(answer.userReply, 'A');
+  assert.equal(answer.selectedOption, '维修和其它协商后的费用在小程序内记录并由双方确认；记录金额不代表已经付款；费用明细和确认时点另议');
+  assert.deepEqual(repair.followUp[4], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD01').followUp[5], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[8], answer);
+  for (const item of records.items) {
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'stage'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'items'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'paid'), false);
+    assert(item.pending.some(text => text.includes('费用明细')));
+  }
+  const earnings = handoff.items.find(item => item.id === 'HD02').confirmed;
+  assert.equal(earnings.business, '跑腿');
+  assert.equal(earnings.wallet, false);
+  assert(read('docs/module-specs/README.md').includes('不新增平台代收、余额或自动结算'));
 });
 
 test('full contact is released only to selected parties without granting address or permanent historical access', () => {
