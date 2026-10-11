@@ -28,7 +28,8 @@ function verify(value) {
   assert.equal(other.followUp[2].selectedOption, '先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议');
   assert(!other.pending.includes('申请后的选人模式'));
   assert(other.pending.includes('申请内容、同一人重复申请、选定生效/竞争申请及改选规则'));
-  assert.equal(Object.hasOwn(other.confirmed, 'quoteRequiredAtApplication'), false);
+  assert.equal(other.confirmed.quoteRequiredAtApplication, false);
+  assert.equal(Object.hasOwn(other.confirmed, 'defaultServiceFee'), false);
   assert.equal(other.confirmed.selectedWorkerCount, 1);
   assert.equal(repair.userReply, 'A');
   assert.equal(repair.confirmed.matchingMode, 'apply-then-publisher-selects');
@@ -58,7 +59,8 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[0].confirmed.applicationsAllowed = false; },
     data => { data.items[0].followUp[1].selectedOption = '仅收集需求'; },
     data => { data.items[0].confirmed.matchingMode = 'first-come-first-served'; },
-    data => { data.items[0].confirmed.quoteRequiredAtApplication = false; },
+    data => { data.items[0].confirmed.quoteRequiredAtApplication = true; },
+    data => { data.items[0].confirmed.defaultServiceFee = 0; },
     data => { data.items[0].confirmed.selectedWorkerCount = 2; },
     data => { data.items[1].confirmed.selectedWorkerCount = 2; },
     data => { data.items[0].confirmed.applicantLimit = { kind: 'fixed', count: 1 }; },
@@ -87,7 +89,7 @@ test('planning references resolve and existing handoff points to the new confirm
   assert(read('docs/ui-development-handoff/page-spec.md').includes('其它属于业务模块'));
 });
 
-test('other publisher selection mode is synchronized while quote and detailed application rules remain unresolved', () => {
+test('other publisher selection mode is synchronized while voluntary quote and detailed application rules remain unresolved', () => {
   const other = handoff.items.find(item => item.id === 'HD04');
   assert.equal(other.followUp[0].userReply, records.items[0].followUp[0].userReply);
   assert(other.confirmed.includes('为后续更新迭代提供依据'));
@@ -99,6 +101,22 @@ test('other publisher selection mode is synchronized while quote and detailed ap
   assert(read('CONTEXT.md').includes('先申请再由发布者选1位接单员'));
   assert(read('docs/module-specs/README.md').includes('归类原则和整理数据目的已确认'));
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
+});
+
+test('other optional application quote is independently approved without declaring free service or a fee agreement stage', () => {
+  const other = records.items[0];
+  const answer = other.followUp[5];
+  assert.equal(answer.date, '2026-10-11');
+  assert.equal(answer.userReply, 'A');
+  assert.equal(answer.selectedOption, '其它申请时不强制填写服务费报价；允许先申请，金额后续协商');
+  const handoffOther = handoff.items.find(item => item.id === 'HD04');
+  assert.deepEqual(handoffOther.followUp[5], answer);
+  assert(handoffOther.confirmed.includes('申请时不强制填写服务费报价'));
+  assert(handoffOther.pending.includes('自愿报价与费用确定时点'));
+  assert.equal(Object.hasOwn(other.confirmed, 'feeAgreementStage'), false);
+  assert.equal(Object.hasOwn(other.confirmed, 'voluntaryQuoteField'), false);
+  assert(other.pending.some(text => text.includes('自愿报价')));
+  assert(read('docs/module-specs/README.md').includes('不强制报价不代表免费'));
 });
 
 test('single selected worker approval is dated and synchronized for both businesses without imposing an applicant cap', () => {

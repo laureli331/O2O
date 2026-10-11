@@ -17,16 +17,18 @@
         "applicationsAllowed": true,
         "matchingMode": "apply-then-publisher-selects",
         "selectedWorkerCount": 1,
-        "applicantLimit": { "kind": "no-product-cap" }
+        "applicantLimit": { "kind": "no-product-cap" },
+        "quoteRequiredAtApplication": false
       },
       "followUp": [
         { "date": "2026-10-10", "userReply": "除了\"维修、跑腿、闲置\", 方便为后续更新迭代整理数据" },
         { "date": "2026-10-10", "userReply": "A", "selectedOption": "公开发布并允许申请接单：用户可以实际找到人处理需求，同时积累分类数据" },
         { "date": "2026-10-10", "userReply": "A", "selectedOption": "先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议" },
         { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求不设产品申请人数上限；允许多人申请，发布者最终选1位" }
+        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求不设产品申请人数上限；允许多人申请，发布者最终选1位" },
+        { "date": "2026-10-11", "userReply": "A", "selectedOption": "其它申请时不强制填写服务费报价；允许先申请，金额后续协商" }
       ],
-      "pending": ["申请内容、同一人重复申请、选定生效/竞争申请及改选规则", "分类判断与禁止范围细则", "发布/接单流程细则", "字段/权限/状态及保存用途期限", "报价与费用/完成/取消/争议/评价适用性", "页面及PRD编号", "接单员同时接单规则"],
+      "pending": ["申请内容、同一人重复申请、选定生效/竞争申请及改选规则", "分类判断与禁止范围细则", "发布/接单流程细则", "字段/权限/状态及保存用途期限", "自愿报价、费用确定时点及完成/取消/争议/评价适用性", "页面及PRD编号", "接单员同时接单规则"],
       "fullWorkflowReady": false,
       "handoffDecision": "HD04"
     },
