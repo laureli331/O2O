@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-10",
+  "updatedAt": "2026-10-11",
   "source": "human replies in this chat",
   "items": [
     {
@@ -14,14 +15,16 @@
         "purpose": "整理其它需求数据，作为后续更新迭代依据",
         "publicPublishing": true,
         "applicationsAllowed": true,
-        "matchingMode": "apply-then-publisher-selects"
+        "matchingMode": "apply-then-publisher-selects",
+        "selectedWorkerCount": 1
       },
       "followUp": [
         { "date": "2026-10-10", "userReply": "除了\"维修、跑腿、闲置\", 方便为后续更新迭代整理数据" },
         { "date": "2026-10-10", "userReply": "A", "selectedOption": "公开发布并允许申请接单：用户可以实际找到人处理需求，同时积累分类数据" },
-        { "date": "2026-10-10", "userReply": "A", "selectedOption": "先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议" }
+        { "date": "2026-10-10", "userReply": "A", "selectedOption": "先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议" },
+        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论" }
       ],
-      "pending": ["申请内容、选择人数及生效/竞争申请规则", "分类判断与禁止范围细则", "发布/接单流程细则", "字段/权限/状态及保存用途期限", "报价与费用/完成/取消/争议/评价适用性", "页面及PRD编号"],
+      "pending": ["申请人数/内容、选定生效/竞争申请及改选规则", "分类判断与禁止范围细则", "发布/接单流程细则", "字段/权限/状态及保存用途期限", "报价与费用/完成/取消/争议/评价适用性", "页面及PRD编号"],
       "fullWorkflowReady": false,
       "handoffDecision": "HD04"
     },
@@ -30,8 +33,11 @@
       "topic": "维修选人模式",
       "userReply": "A",
       "selectedOption": "先申请，再由发布者选人：申请时不强制报维修价格；价格如何确定下一步讨论",
-      "confirmed": { "business": "维修", "matchingMode": "apply-then-publisher-selects", "quoteRequiredAtApplication": false },
-      "pending": ["申请内容与自愿报价", "选择人数及生效/竞争申请规则", "费用确定方式", "联系与地址授权", "预约/诊断/完成/取消/争议", "评价和收入适用范围"],
+      "confirmed": { "business": "维修", "matchingMode": "apply-then-publisher-selects", "quoteRequiredAtApplication": false, "selectedWorkerCount": 1 },
+      "followUp": [
+        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论" }
+      ],
+      "pending": ["申请人数/内容与自愿报价", "选定生效/竞争申请及改选规则", "费用确定方式", "联系与地址授权", "预约/诊断/完成/取消/争议", "评价和收入适用范围"],
       "fullWorkflowReady": false,
       "handoffDecision": "HD01"
     }
