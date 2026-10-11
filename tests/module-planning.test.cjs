@@ -38,6 +38,7 @@ function verify(value) {
     assert.equal(item.confirmed.selectedWorkerCount, 1);
     assert.deepEqual(item.confirmed.applicantLimit, { kind: 'no-product-cap' });
     assert.deepEqual(item.confirmed.applicationRules, { activePerPersonPerRequest: 1, editableBeforeSelection: true, withdrawableBeforeSelection: true, repeatedSubmitCreatesNew: false });
+    assert.deepEqual(item.confirmed.contactVisibility, { beforeSelection: 'masked', afterSuccessfulSelection: 'selected-parties-only', otherApplicants: 'masked' });
     assert.equal(Object.hasOwn(item.confirmed, 'concurrentTaskLimit'), false);
     assert.equal(item.fullWorkflowReady, false);
     assert(item.pending.length >= 5);
@@ -70,6 +71,9 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[0].confirmed.applicationRules.activePerPersonPerRequest = 2; },
     data => { data.items[1].confirmed.applicationRules.withdrawableBeforeSelection = false; },
     data => { data.items[0].confirmed.applicationRules.repeatedSubmitCreatesNew = true; },
+    data => { data.items[0].confirmed.contactVisibility.beforeSelection = 'full'; },
+    data => { data.items[1].confirmed.contactVisibility.otherApplicants = 'full'; },
+    data => { data.items[0].confirmed.contactVisibility.afterSuccessfulSelection = 'all-applicants'; },
     data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
@@ -79,6 +83,25 @@ test('actual answers include other business and repair application mode without 
     mutation(changed);
     assert.throws(() => verify(changed));
   }
+});
+
+test('full contact is released only to selected parties without granting address or permanent historical access', () => {
+  const [other, repair] = records.items;
+  const answer = other.followUp[7];
+  assert.equal(answer.date, '2026-10-11');
+  assert.equal(answer.userReply, 'A');
+  assert.equal(answer.selectedOption, '维修和其它选定成功后，发布者与选中的接单员互看完整联系方式；其他申请者仍看打码信息');
+  assert.deepEqual(repair.followUp[3], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD01').followUp[4], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[7], answer);
+  for (const item of records.items) {
+    assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'privateAddress'), false);
+    assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'afterServiceEnd'), false);
+    assert(item.pending.some(text => text.includes('详细地址与联系变更/结束/撤销')));
+  }
+  assert(read('docs/module-specs/README.md').includes('不能把完整信息下发后仅在页面打码'));
+  assert(read('docs/module-specs/README.md').includes('闲置、免费服务目录及其推广仍沿用原CT03'));
+  assert(read('docs/ui-development-handoff/business-addendum.md').includes('旧流程切换和历史关系迁移待明确'));
 });
 
 test('planning references resolve and existing handoff points to the new confirmed decisions', () => {
