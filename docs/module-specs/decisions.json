@@ -113,6 +113,60 @@
       ]
     }
   ],
+  "fulfillmentDecisionBatches": [
+    {
+      "id": "fulfillment-round-3-20261011",
+      "date": "2026-10-11",
+      "userReply": "全A",
+      "scope": [
+        "维修",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/fulfillment-questions-20261011.md",
+      "answers": [
+        {
+          "questionId": "LQ01",
+          "answer": "A",
+          "selectedOption": "双方确认修改后生效，确认前原内容有效"
+        },
+        {
+          "questionId": "LQ02",
+          "answer": "A",
+          "selectedOption": "选填，双方确认后记录；改期也需双方确认"
+        },
+        {
+          "questionId": "LQ03",
+          "answer": "A",
+          "selectedOption": "接单员提交完成，发布者确认后完成"
+        },
+        {
+          "questionId": "LQ04",
+          "answer": "A",
+          "selectedOption": "保持待确认，不自动完成；可提醒或提出异议"
+        },
+        {
+          "questionId": "LQ05",
+          "answer": "A",
+          "selectedOption": "任一方申请，另一方确认后取消"
+        },
+        {
+          "questionId": "LQ06",
+          "answer": "A",
+          "selectedOption": "保持待确认，不自动取消；可提醒或提出异议"
+        },
+        {
+          "questionId": "LQ07",
+          "answer": "A",
+          "selectedOption": "发布者主动重新开放同一需求，重新申请和选人；旧申请不自动恢复"
+        },
+        {
+          "questionId": "LQ08",
+          "answer": "A",
+          "selectedOption": "小程序内重新打码联系方式，关闭接单员对完整地址的访问；发布者仍可管理自己的地址"
+        }
+      ]
+    }
+  ],
   "items": [
     {
       "id": "MP01",
@@ -129,9 +183,9 @@
         "selectedWorkerCount": 1,
         "applicantLimit": { "kind": "no-product-cap" },
         "quoteRequiredAtApplication": false,
-        "applicationRules": {"activePerPersonPerRequest":1,"editableBeforeSelection":true,"withdrawableBeforeSelection":true,"repeatedSubmitCreatesNew":false,"reapplication":{"allowedWhenOpen":true,"cooldownHours":0},"individualRejectionAllowed":false}, "selectionRules": {"effectiveAfterPublisherSelectionSuccess":true,"workerReconfirmationRequired":false,"otherApplications":{"end":true,"notify":true,"autoReplacement":false}}, "applicationFields": {"description":{"required":false,"maxLength":300},"estimatedServiceFee":{"required":false,"missingLabel":"待协商","isFeeAgreement":false}}, "concurrentTaskLimit": {"kind":"no-product-cap"}, "demandChanges": {"beforeSelection":{"watched":["服务内容","区域","时间"],"invalidateApplications":true,"notifyApplicants":true,"reapplyRequired":true}},
-        "contactVisibility": {"beforeSelection":"masked","afterSuccessfulSelection":"selected-parties-only","otherApplicants":"masked","privateAddress":{"optionalAtPublishing":true,"public":false,"releaseTo":"selected-worker-only"}},
-        "feeAgreement": {"recordedInMiniapp": true, "requiresBothPartiesConfirmation": true, "confirmationTiming": "before-each-charge-stage", "itemization": {"mode": "separate-service-and-expenses", "expenseExamples": ["材料", "配件", "商品"], "showTotal": true, "inspectionFeeCategory": "service-fee", "visitFeeCategory": "service-fee", "namedServiceItemsSeparatelyListed": true}, "initiation": {"allowedParties": ["发布者", "接单员"], "submissionAcknowledgesVersion": true, "effectiveAfterCounterpartyConfirmation": true}, "changes": {"addOrModifyItems": true, "requiresBothPartiesConfirmation": true, "previousVersionEffectiveUntilConfirmed": true}, "pendingProposalLimit": 1, "noResponse": {"remainsPending": true, "reminderAllowed": true, "withdrawableByInitiator": true, "autoConsent": false}, "cancellation": {"serviceMayBeCancelledBeforeExpenseAgreement": true, "incurredExpensesNegotiatedSeparately": true, "impliesSettled": false}, "receipts": {"required": false, "supported": ["票据", "照片"]}, "advance": {"voluntary": true, "requiresPriorMutualConfirmation": true, "confirmWhetherToAdvance": true, "confirmLimit": true}}
+        "applicationRules": {"activePerPersonPerRequest":1,"editableBeforeSelection":true,"withdrawableBeforeSelection":true,"repeatedSubmitCreatesNew":false,"reapplication":{"allowedWhenOpen":true,"cooldownHours":0},"individualRejectionAllowed":false}, "selectionRules": {"effectiveAfterPublisherSelectionSuccess":true,"workerReconfirmationRequired":false,"otherApplications":{"end":true,"notify":true,"autoReplacement":false}}, "applicationFields": {"description":{"required":false,"maxLength":300},"estimatedServiceFee":{"required":false,"missingLabel":"待协商","isFeeAgreement":false}}, "concurrentTaskLimit": {"kind":"no-product-cap"}, "demandChanges": {"beforeSelection":{"watched":["服务内容","区域","时间"],"invalidateApplications":true,"notifyApplicants":true,"reapplyRequired":true},"afterSelection":{"watched":["服务内容","区域"],"requiresBothPartiesConfirmation":true,"previousVersionEffectiveUntilConfirmed":true}},
+        "contactVisibility": {"beforeSelection":"masked","afterSuccessfulSelection":"selected-parties-only","otherApplicants":"masked","privateAddress":{"optionalAtPublishing":true,"public":false,"releaseTo":"selected-worker-only"},"afterServiceEnd":{"completedContact":"masked","cancelledContact":"masked","selectedWorkerFullAddressAccess":false,"publisherMayManageOwnAddress":true}},
+        "completionRules": {"initiator":"selected-worker","requiresPublisherConfirmation":true,"noResponse":{"remainsPending":true,"autoComplete":false,"reminderAllowed":true,"objectionAllowed":true}}, "cancellationRules": {"initiators":["发布者","接单员"],"requiresCounterpartyConfirmation":true,"scope":"after-selection-before-completion","noResponse":{"remainsPending":true,"autoCancel":false,"reminderAllowed":true,"objectionAllowed":true}}, "appointmentRules": {"required":false,"requiresBothPartiesConfirmation":true,"changesRequireBothPartiesConfirmation":true}, "reopeningRules": {"afterConfirmedCancellation":true,"initiator":"publisher","sameRequest":true,"freshApplicationsRequired":true,"restoreOldApplications":false,"preserveServiceAndFeeHistory":true}, "feeAgreement": {"recordedInMiniapp": true, "requiresBothPartiesConfirmation": true, "confirmationTiming": "before-each-charge-stage", "itemization": {"mode": "separate-service-and-expenses", "expenseExamples": ["材料", "配件", "商品"], "showTotal": true, "inspectionFeeCategory": "service-fee", "visitFeeCategory": "service-fee", "namedServiceItemsSeparatelyListed": true}, "initiation": {"allowedParties": ["发布者", "接单员"], "submissionAcknowledgesVersion": true, "effectiveAfterCounterpartyConfirmation": true}, "changes": {"addOrModifyItems": true, "requiresBothPartiesConfirmation": true, "previousVersionEffectiveUntilConfirmed": true}, "pendingProposalLimit": 1, "noResponse": {"remainsPending": true, "reminderAllowed": true, "withdrawableByInitiator": true, "autoConsent": false}, "cancellation": {"serviceMayBeCancelledBeforeExpenseAgreement": true, "incurredExpensesNegotiatedSeparately": true, "impliesSettled": false}, "receipts": {"required": false, "supported": ["票据", "照片"]}, "advance": {"voluntary": true, "requiresPriorMutualConfirmation": true, "confirmWhetherToAdvance": true, "confirmLimit": true}}
       },
       "followUp": [
         { "date": "2026-10-10", "userReply": "除了\"维修、跑腿、闲置\", 方便为后续更新迭代整理数据" },
@@ -146,7 +200,7 @@
         { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它费用分项记录：服务费与材料、配件、商品等实际支出分开，页面同时显示合计；检查费、上门费等具体归类另议" },
         { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它分阶段、收费前确认费用；上门检查若收费先确认该费用，诊断后再确认维修和配件费用" }
       ],
-      "pending": ["申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发及取消后改选", "分类判断与禁止范围细则", "发布/履约/完成/取消/争议/评价细则", "字段/权限/状态及保存用途期限", "费用字段/阶段细则/拒绝与待确认版本修改/异议", "页面及PRD编号", "详细地址格式与联系变更/结束/撤销规则"],
+      "pending": ["申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发与重开记录细则", "分类判断与禁止范围细则", "发布/履约/完成/取消的字段与衔接、异议/评价细则", "字段/权限/状态及保存用途期限", "费用字段/阶段细则/拒绝与待确认版本修改/异议", "页面及PRD编号", "详细地址格式与联系变更/撤销规则", "预约时间校验与变更版本细则"],
       "fullWorkflowReady": false,
       "handoffDecision": "HD04"
     },
@@ -155,7 +209,7 @@
       "topic": "维修选人模式",
       "userReply": "A",
       "selectedOption": "先申请，再由发布者选人：申请时不强制报维修价格；价格如何确定下一步讨论",
-      "confirmed": { "business": "维修", "matchingMode": "apply-then-publisher-selects", "quoteRequiredAtApplication": false, "selectedWorkerCount": 1, "applicantLimit": { "kind": "no-product-cap" }, "applicationRules": {"activePerPersonPerRequest":1,"editableBeforeSelection":true,"withdrawableBeforeSelection":true,"repeatedSubmitCreatesNew":false,"reapplication":{"allowedWhenOpen":true,"cooldownHours":0},"individualRejectionAllowed":false}, "selectionRules": {"effectiveAfterPublisherSelectionSuccess":true,"workerReconfirmationRequired":false,"otherApplications":{"end":true,"notify":true,"autoReplacement":false}}, "applicationFields": {"description":{"required":false,"maxLength":300},"estimatedServiceFee":{"required":false,"missingLabel":"待协商","isFeeAgreement":false}}, "concurrentTaskLimit": {"kind":"no-product-cap"}, "demandChanges": {"beforeSelection":{"watched":["服务内容","区域","时间"],"invalidateApplications":true,"notifyApplicants":true,"reapplyRequired":true}}, "contactVisibility": {"beforeSelection":"masked","afterSuccessfulSelection":"selected-parties-only","otherApplicants":"masked","privateAddress":{"optionalAtPublishing":true,"public":false,"releaseTo":"selected-worker-only"}}, "feeAgreement": {"recordedInMiniapp": true, "requiresBothPartiesConfirmation": true, "confirmationTiming": "before-each-charge-stage", "itemization": {"mode": "separate-service-and-expenses", "expenseExamples": ["材料", "配件", "商品"], "showTotal": true, "inspectionFeeCategory": "service-fee", "visitFeeCategory": "service-fee", "namedServiceItemsSeparatelyListed": true}, "initiation": {"allowedParties": ["发布者", "接单员"], "submissionAcknowledgesVersion": true, "effectiveAfterCounterpartyConfirmation": true}, "changes": {"addOrModifyItems": true, "requiresBothPartiesConfirmation": true, "previousVersionEffectiveUntilConfirmed": true}, "pendingProposalLimit": 1, "noResponse": {"remainsPending": true, "reminderAllowed": true, "withdrawableByInitiator": true, "autoConsent": false}, "cancellation": {"serviceMayBeCancelledBeforeExpenseAgreement": true, "incurredExpensesNegotiatedSeparately": true, "impliesSettled": false}, "receipts": {"required": false, "supported": ["票据", "照片"]}, "advance": {"voluntary": true, "requiresPriorMutualConfirmation": true, "confirmWhetherToAdvance": true, "confirmLimit": true}} },
+      "confirmed": { "business": "维修", "matchingMode": "apply-then-publisher-selects", "quoteRequiredAtApplication": false, "selectedWorkerCount": 1, "applicantLimit": { "kind": "no-product-cap" }, "applicationRules": {"activePerPersonPerRequest":1,"editableBeforeSelection":true,"withdrawableBeforeSelection":true,"repeatedSubmitCreatesNew":false,"reapplication":{"allowedWhenOpen":true,"cooldownHours":0},"individualRejectionAllowed":false}, "selectionRules": {"effectiveAfterPublisherSelectionSuccess":true,"workerReconfirmationRequired":false,"otherApplications":{"end":true,"notify":true,"autoReplacement":false}}, "applicationFields": {"description":{"required":false,"maxLength":300},"estimatedServiceFee":{"required":false,"missingLabel":"待协商","isFeeAgreement":false}}, "concurrentTaskLimit": {"kind":"no-product-cap"}, "demandChanges": {"beforeSelection":{"watched":["服务内容","区域","时间"],"invalidateApplications":true,"notifyApplicants":true,"reapplyRequired":true},"afterSelection":{"watched":["服务内容","区域"],"requiresBothPartiesConfirmation":true,"previousVersionEffectiveUntilConfirmed":true}}, "contactVisibility": {"beforeSelection":"masked","afterSuccessfulSelection":"selected-parties-only","otherApplicants":"masked","privateAddress":{"optionalAtPublishing":true,"public":false,"releaseTo":"selected-worker-only"},"afterServiceEnd":{"completedContact":"masked","cancelledContact":"masked","selectedWorkerFullAddressAccess":false,"publisherMayManageOwnAddress":true}}, "completionRules": {"initiator":"selected-worker","requiresPublisherConfirmation":true,"noResponse":{"remainsPending":true,"autoComplete":false,"reminderAllowed":true,"objectionAllowed":true}}, "cancellationRules": {"initiators":["发布者","接单员"],"requiresCounterpartyConfirmation":true,"scope":"after-selection-before-completion","noResponse":{"remainsPending":true,"autoCancel":false,"reminderAllowed":true,"objectionAllowed":true}}, "appointmentRules": {"required":false,"requiresBothPartiesConfirmation":true,"changesRequireBothPartiesConfirmation":true}, "reopeningRules": {"afterConfirmedCancellation":true,"initiator":"publisher","sameRequest":true,"freshApplicationsRequired":true,"restoreOldApplications":false,"preserveServiceAndFeeHistory":true}, "feeAgreement": {"recordedInMiniapp": true, "requiresBothPartiesConfirmation": true, "confirmationTiming": "before-each-charge-stage", "itemization": {"mode": "separate-service-and-expenses", "expenseExamples": ["材料", "配件", "商品"], "showTotal": true, "inspectionFeeCategory": "service-fee", "visitFeeCategory": "service-fee", "namedServiceItemsSeparatelyListed": true}, "initiation": {"allowedParties": ["发布者", "接单员"], "submissionAcknowledgesVersion": true, "effectiveAfterCounterpartyConfirmation": true}, "changes": {"addOrModifyItems": true, "requiresBothPartiesConfirmation": true, "previousVersionEffectiveUntilConfirmed": true}, "pendingProposalLimit": 1, "noResponse": {"remainsPending": true, "reminderAllowed": true, "withdrawableByInitiator": true, "autoConsent": false}, "cancellation": {"serviceMayBeCancelledBeforeExpenseAgreement": true, "incurredExpensesNegotiatedSeparately": true, "impliesSettled": false}, "receipts": {"required": false, "supported": ["票据", "照片"]}, "advance": {"voluntary": true, "requiresPriorMutualConfirmation": true, "confirmWhetherToAdvance": true, "confirmLimit": true}} },
       "followUp": [
         { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论" },
         { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求不设产品申请人数上限；允许多人申请，发布者最终选1位" },
@@ -165,7 +219,7 @@
         { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它费用分项记录：服务费与材料、配件、商品等实际支出分开，页面同时显示合计；检查费、上门费等具体归类另议" },
         { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它分阶段、收费前确认费用；上门检查若收费先确认该费用，诊断后再确认维修和配件费用" }
       ],
-      "pending": ["申请信息可见性/排序/开放期限、修改与重申历史细则", "选人并发及取消后改选", "费用字段/阶段细则/拒绝与待确认版本修改/异议", "详细地址格式与联系变更/结束/撤销规则", "预约/诊断/完成/取消/争议", "评价和收入适用范围", "原维修求助联系流程迁移"],
+      "pending": ["申请信息可见性/排序/开放期限、修改与重申历史细则", "选人并发与重开记录细则", "费用字段/阶段细则/拒绝与待确认版本修改/异议", "详细地址格式与联系变更/撤销规则", "预约时间校验/诊断/完成与取消字段及衔接/争议", "评价和收入适用范围", "原维修求助联系流程迁移", "服务内容变更版本/并发/拒绝与撤回细则"],
       "fullWorkflowReady": false,
       "handoffDecision": "HD01"
     }

@@ -40,10 +40,27 @@ const expectedApplicationFields = {
 };
 const expectedContactVisibility = {
   beforeSelection: 'masked', afterSuccessfulSelection: 'selected-parties-only', otherApplicants: 'masked',
-  privateAddress: { optionalAtPublishing: true, public: false, releaseTo: 'selected-worker-only' }
+  privateAddress: { optionalAtPublishing: true, public: false, releaseTo: 'selected-worker-only' },
+  afterServiceEnd: { completedContact: 'masked', cancelledContact: 'masked', selectedWorkerFullAddressAccess: false, publisherMayManageOwnAddress: true }
 };
 const expectedDemandChanges = {
-  beforeSelection: { watched: ['服务内容', '区域', '时间'], invalidateApplications: true, notifyApplicants: true, reapplyRequired: true }
+  beforeSelection: { watched: ['服务内容', '区域', '时间'], invalidateApplications: true, notifyApplicants: true, reapplyRequired: true },
+  afterSelection: { watched: ['服务内容', '区域'], requiresBothPartiesConfirmation: true, previousVersionEffectiveUntilConfirmed: true }
+};
+const expectedCompletionRules = {
+  initiator: 'selected-worker', requiresPublisherConfirmation: true,
+  noResponse: { remainsPending: true, autoComplete: false, reminderAllowed: true, objectionAllowed: true }
+};
+const expectedCancellationRules = {
+  initiators: ['发布者', '接单员'], requiresCounterpartyConfirmation: true, scope: 'after-selection-before-completion',
+  noResponse: { remainsPending: true, autoCancel: false, reminderAllowed: true, objectionAllowed: true }
+};
+const expectedAppointmentRules = {
+  required: false, requiresBothPartiesConfirmation: true, changesRequireBothPartiesConfirmation: true
+};
+const expectedReopeningRules = {
+  afterConfirmedCancellation: true, initiator: 'publisher', sameRequest: true,
+  freshApplicationsRequired: true, restoreOldApplications: false, preserveServiceAndFeeHistory: true
 };
 
 function verify(value) {
@@ -64,7 +81,7 @@ function verify(value) {
   assert.equal(other.followUp[2].userReply, 'A');
   assert.equal(other.followUp[2].selectedOption, '先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议');
   assert(!other.pending.includes('申请后的选人模式'));
-  assert(other.pending.includes('申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发及取消后改选'));
+  assert(other.pending.includes('申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发与重开记录细则'));
   assert.equal(other.confirmed.quoteRequiredAtApplication, false);
   assert.equal(Object.hasOwn(other.confirmed, 'defaultServiceFee'), false);
   assert.equal(other.confirmed.selectedWorkerCount, 1);
@@ -79,6 +96,10 @@ function verify(value) {
     assert.deepEqual(item.confirmed.applicationFields, expectedApplicationFields);
     assert.deepEqual(item.confirmed.contactVisibility, expectedContactVisibility);
     assert.deepEqual(item.confirmed.demandChanges, expectedDemandChanges);
+    assert.deepEqual(item.confirmed.completionRules, expectedCompletionRules);
+    assert.deepEqual(item.confirmed.cancellationRules, expectedCancellationRules);
+    assert.deepEqual(item.confirmed.appointmentRules, expectedAppointmentRules);
+    assert.deepEqual(item.confirmed.reopeningRules, expectedReopeningRules);
     assert.deepEqual(item.confirmed.feeAgreement, expectedFeeAgreement);
     assert.deepEqual(item.confirmed.concurrentTaskLimit, { kind: 'no-product-cap' });
     assert.equal(item.fullWorkflowReady, false);
@@ -122,7 +143,7 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[1].confirmed.feeAgreement.itemization.showTotal = false; },
     data => { data.items[0].confirmed.feeAgreement.confirmationTiming = 'after-service-completion'; },
     data => { data.items[1].confirmed.feeAgreement.requiresPrepayment = true; },
-    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发及取消后改选'); },
+    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发与重开记录细则'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
     data => { data.items[0].fullWorkflowReady = true; }
@@ -175,7 +196,7 @@ test('original itemization answer is retained and inspection or visit charges no
   assert(read('docs/ui-development-handoff/page-spec.md').includes('页面同时显示合计'));
 });
 
-test('contact and optional private address release follow approved selection while end-of-service access remains unresolved', () => {
+test('contact and optional private address release follow selection and confirmed ending restricts access without deleting owner data', () => {
   const [other, repair] = records.items;
   const answer = other.followUp[7];
   assert.equal(answer.date, '2026-10-11');
@@ -186,8 +207,8 @@ test('contact and optional private address release follow approved selection whi
   assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[7], answer);
   for (const item of records.items) {
     assert.deepEqual(item.confirmed.contactVisibility.privateAddress, expectedContactVisibility.privateAddress);
-    assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'afterServiceEnd'), false);
-    assert(item.pending.some(text => text.includes('联系变更/结束/撤销')));
+    assert.deepEqual(item.confirmed.contactVisibility.afterServiceEnd, expectedContactVisibility.afterServiceEnd);
+    assert(item.pending.some(text => text.includes('联系变更/撤销')));
   }
   assert(read('docs/module-specs/README.md').includes('不能把完整信息下发后仅在页面打码'));
   assert(read('docs/module-specs/README.md').includes('闲置、免费服务目录及其推广仍沿用原CT03'));
@@ -214,7 +235,7 @@ test('other publisher selection mode is synchronized while remaining visibility 
   assert(other.confirmed.includes('允许公开发布并申请接单'));
   assert.deepEqual(other.followUp[2], records.items[0].followUp[2]);
   assert(other.confirmed.includes('先申请再由发布者选人'));
-  assert(other.pending.includes('申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发及取消后改选'));
+  assert(other.pending.includes('申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发与重开记录细则'));
   assert(read('CONTEXT.md').includes('先申请再由发布者选1位接单员'));
   assert(read('docs/module-specs/README.md').includes('归类原则和整理数据目的已确认'));
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
@@ -304,16 +325,16 @@ test('fee integrity checks reject unapproved unilateral version replacement, aut
   }
 });
 
-test('fulfillment batch stays pending without automatically approving completion, cancellation or address retention', () => {
-  const questions = read('docs/module-specs/fulfillment-questions-20261011.md');
+test('exception and rating proposals stay pending without inventing evidence fields, dispute resolution or new rating qualifications', () => {
+  const questions = read('docs/module-specs/exception-rating-questions-20261011.md');
   assert(questions.includes('8题全部待答'));
-  assert.deepEqual([...questions.matchAll(/（(LQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `LQ${String(index + 1).padStart(2, '0')}`));
+  assert.deepEqual([...questions.matchAll(/（(EQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `EQ${String(index + 1).padStart(2, '0')}`));
   for (const item of records.items) {
-    assert.equal(Object.hasOwn(item.confirmed, 'completionRules'), false);
-    assert.equal(Object.hasOwn(item.confirmed, 'cancellationRules'), false);
-    assert.equal(Object.hasOwn(item.confirmed, 'appointmentRules'), false);
-    assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'afterServiceEnd'), false);
-    assert.equal(Object.hasOwn(item.confirmed.demandChanges, 'afterSelection'), false);
+    assert.equal(Object.hasOwn(item.confirmed, 'ratingRules'), false);
+    assert.equal(Object.hasOwn(item.confirmed, 'disputeRules'), false);
+    assert.equal(Object.hasOwn(item.confirmed.completionRules, 'evidenceFields'), false);
+    assert.equal(Object.hasOwn(item.confirmed.cancellationRules, 'refusalRules'), false);
+    assert.equal(Object.hasOwn(item.confirmed, 'pendingCompletionCancellationLimit'), false);
   }
   for (const file of require('node:fs').readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read(`docs/module-specs/${file}`);
@@ -322,6 +343,63 @@ test('fulfillment batch stays pending without automatically approving completion
     }
   }
   assert(read('docs/module-specs/fee-rules.md').includes('当前仅运行文档一致性检查'));
+});
+
+test('fulfillment all-A answer maps only to the eight questions in its own round and is synchronized with handoff', () => {
+  const [batch] = records.fulfillmentDecisionBatches;
+  assert.equal(records.fulfillmentDecisionBatches.length, 1);
+  assert.equal(batch.userReply, '全A');
+  assert.equal(batch.date, '2026-10-11');
+  assert.deepEqual(batch.scope, ['维修', '其它']);
+  assert.equal(batch.questionDocument, 'docs/module-specs/fulfillment-questions-20261011.md');
+  const document = read(batch.questionDocument);
+  assert(document.includes('8题全部选择A'));
+  const offered = [...document.matchAll(/（(LQ\d{2})）\r?\n\r?\nA：(.+?)B：/g)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(batch.answers.map(answer => answer.questionId), Array.from({length: 8}, (_, index) => `LQ${String(index + 1).padStart(2, '0')}`));
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.answer, 'A');
+    assert.equal(answer.selectedOption, offered[index][2].trim().replace(/。$/, ''));
+  });
+  assert.deepEqual(handoff.fulfillmentDecisionBatches, records.fulfillmentDecisionBatches);
+  assert.equal(records.applicationDecisionBatches[0].answers[3].answer, 'B');
+  assert.equal(handoff.items.find(item => item.id === 'HD02').confirmed.business, '跑腿');
+  assert.equal(handoff.items.find(item => item.id === 'HD05').userReply, '只显示“服务时间”，暂不填值');
+  assert(read('docs/module-specs/fulfillment-rules.md').includes('原PRD跑腿24小时自动完成规则不受本轮影响'));
+  assert(read('docs/module-specs/fulfillment-rules.md').includes('没有实现或验证真实履约功能'));
+});
+
+test('fulfillment integrity rejects automatic endings, unilateral changes, restored applicants and permanent contact access', () => {
+  verify(records);
+  for (const mutate of [
+    item => { item.demandChanges.afterSelection.requiresBothPartiesConfirmation = false; },
+    item => { item.demandChanges.afterSelection.previousVersionEffectiveUntilConfirmed = false; },
+    item => { item.appointmentRules.required = true; },
+    item => { item.appointmentRules.changesRequireBothPartiesConfirmation = false; },
+    item => { item.completionRules.initiator = 'publisher'; },
+    item => { item.completionRules.requiresPublisherConfirmation = false; },
+    item => { item.completionRules.noResponse.autoComplete = true; },
+    item => { item.completionRules.noResponse.autoCompleteHours = 24; },
+    item => { item.cancellationRules.requiresCounterpartyConfirmation = false; },
+    item => { item.cancellationRules.noResponse.autoCancel = true; },
+    item => { item.cancellationRules.noResponse.autoCancelHours = 48; },
+    item => { item.reopeningRules.afterConfirmedCancellation = false; },
+    item => { item.reopeningRules.restoreOldApplications = true; },
+    item => { item.reopeningRules.preserveServiceAndFeeHistory = false; },
+    item => { item.contactVisibility.afterServiceEnd.completedContact = 'full'; },
+    item => { item.contactVisibility.afterServiceEnd.cancelledContact = 'full'; },
+    item => { item.contactVisibility.afterServiceEnd.selectedWorkerFullAddressAccess = true; },
+    item => { item.contactVisibility.afterServiceEnd.publisherMayManageOwnAddress = false; }
+  ]) {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(records);
+      mutate(changed.items[index].confirmed);
+      assert.throws(() => verify(changed));
+    }
+  }
+  for (const item of records.items) {
+    assert.equal(item.confirmed.feeAgreement.cancellation.impliesSettled, false);
+  }
 });
 
 test('application batch preserves the exact reply and the fourth answer exception instead of treating it as all-A', () => {
