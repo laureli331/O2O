@@ -47,13 +47,22 @@ const expectedDemandChanges = {
   beforeSelection: { watched: ['服务内容', '区域', '时间'], invalidateApplications: true, notifyApplicants: true, reapplyRequired: true },
   afterSelection: { watched: ['服务内容', '区域'], requiresBothPartiesConfirmation: true, previousVersionEffectiveUntilConfirmed: true }
 };
+const expectedEvidenceFields = {
+  description: { required: true, minLength: 1, maxLength: 500 },
+  attachments: { required: false, minCount: 0, maxCount: 9 }
+};
+const expectedRefusalRules = {
+  allowed: true, reasonRequired: true, endsService: false, nextActions: ['继续协商', '提出异议']
+};
 const expectedCompletionRules = {
   initiator: 'selected-worker', requiresPublisherConfirmation: true,
-  noResponse: { remainsPending: true, autoComplete: false, reminderAllowed: true, objectionAllowed: true }
+  noResponse: { remainsPending: true, autoComplete: false, reminderAllowed: true, objectionAllowed: true },
+  evidenceFields: expectedEvidenceFields, refusalRules: expectedRefusalRules
 };
 const expectedCancellationRules = {
   initiators: ['发布者', '接单员'], requiresCounterpartyConfirmation: true, scope: 'after-selection-before-completion',
-  noResponse: { remainsPending: true, autoCancel: false, reminderAllowed: true, objectionAllowed: true }
+  noResponse: { remainsPending: true, autoCancel: false, reminderAllowed: true, objectionAllowed: true },
+  evidenceFields: expectedEvidenceFields, refusalRules: expectedRefusalRules
 };
 const expectedAppointmentRules = {
   required: false, requiresBothPartiesConfirmation: true, changesRequireBothPartiesConfirmation: true
@@ -62,6 +71,19 @@ const expectedReopeningRules = {
   afterConfirmedCancellation: true, initiator: 'publisher', sameRequest: true,
   freshApplicationsRequired: true, restoreOldApplications: false, preserveServiceAndFeeHistory: true
 };
+const expectedTerminationRequests = {
+  completionAndCancellationMayCoexist: true, endingPolicy: 'first-effective-confirmation', closeOtherOnEnd: true, preserveOtherHistory: true
+};
+const expectedDisputeRules = {
+  recordOnly: true, partiesNegotiate: true, operatorServiceMediation: false, existingReportAndRatingAppealUnaffected: true,
+  objectionFields: expectedEvidenceFields
+};
+const expectedRatingRules = business => ({
+  business, usesExistingSystem: true, mutual: true,
+  qualification: { trigger: 'publisher-confirmed-completion', requiresWorkerCompletionRequest: true, additionalExperienceConfirmationRequired: false, cancellationCreatesQualification: false },
+  statistics: { business, byRatedRole: true, separateFromOtherBusinesses: true },
+  preserveExistingValidQualificationsAndRatings: true
+});
 
 function verify(value) {
   assert.deepEqual(value.items.map(item => item.id), ['MP01', 'MP02']);
@@ -100,6 +122,9 @@ function verify(value) {
     assert.deepEqual(item.confirmed.cancellationRules, expectedCancellationRules);
     assert.deepEqual(item.confirmed.appointmentRules, expectedAppointmentRules);
     assert.deepEqual(item.confirmed.reopeningRules, expectedReopeningRules);
+    assert.deepEqual(item.confirmed.terminationRequests, expectedTerminationRequests);
+    assert.deepEqual(item.confirmed.disputeRules, expectedDisputeRules);
+    assert.deepEqual(item.confirmed.ratingRules, expectedRatingRules(item.id === 'MP01' ? '其它' : '维修'));
     assert.deepEqual(item.confirmed.feeAgreement, expectedFeeAgreement);
     assert.deepEqual(item.confirmed.concurrentTaskLimit, { kind: 'no-product-cap' });
     assert.equal(item.fullWorkflowReady, false);
@@ -325,16 +350,16 @@ test('fee integrity checks reject unapproved unilateral version replacement, aut
   }
 });
 
-test('exception and rating proposals stay pending without inventing evidence fields, dispute resolution or new rating qualifications', () => {
-  const questions = read('docs/module-specs/exception-rating-questions-20261011.md');
+test('next eight fee proposals stay pending and existing fee itemization is not silently expanded', () => {
+  const questions = read('docs/module-specs/fee-detail-questions-20261011.md');
   assert(questions.includes('8题全部待答'));
-  assert.deepEqual([...questions.matchAll(/（(EQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `EQ${String(index + 1).padStart(2, '0')}`));
+  assert.deepEqual([...questions.matchAll(/（(FQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `FQ${String(index + 9).padStart(2, '0')}`));
   for (const item of records.items) {
-    assert.equal(Object.hasOwn(item.confirmed, 'ratingRules'), false);
-    assert.equal(Object.hasOwn(item.confirmed, 'disputeRules'), false);
-    assert.equal(Object.hasOwn(item.confirmed.completionRules, 'evidenceFields'), false);
-    assert.equal(Object.hasOwn(item.confirmed.cancellationRules, 'refusalRules'), false);
-    assert.equal(Object.hasOwn(item.confirmed, 'pendingCompletionCancellationLimit'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'zeroServiceFeeAllowed'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'creationStage'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement.itemization, 'maxItems'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'pendingVersionEditing'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'refusalRules'), false);
   }
   for (const file of require('node:fs').readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read(`docs/module-specs/${file}`);
@@ -343,6 +368,68 @@ test('exception and rating proposals stay pending without inventing evidence fie
     }
   }
   assert(read('docs/module-specs/fee-rules.md').includes('当前仅运行文档一致性检查'));
+});
+
+test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {
+  const [batch] = records.exceptionRatingDecisionBatches;
+  assert.equal(records.exceptionRatingDecisionBatches.length, 1);
+  assert.equal(batch.userReply, '全A, 4B, 5B');
+  assert.equal(batch.date, '2026-10-11');
+  assert.deepEqual(batch.scope, ['维修', '其它']);
+  assert.equal(batch.questionDocument, 'docs/module-specs/exception-rating-questions-20261011.md');
+  const document = read(batch.questionDocument);
+  assert(document.includes('1A、2A、3A、4B、5B、6A、7A、8A'));
+  const offered = [...document.matchAll(/（(EQ\d{2})）\r?\n\r?\nA：(.+?)B：(.+?)\r?\n/g)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(batch.answers.map(answer => answer.questionId), Array.from({length: 8}, (_, index) => `EQ${String(index + 1).padStart(2, '0')}`));
+  assert.deepEqual(batch.answers.map(answer => answer.answer), ['A', 'A', 'A', 'B', 'B', 'A', 'A', 'A']);
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.selectedOption, offered[index][answer.answer === 'A' ? 2 : 3].trim().replace(/。$/, ''));
+    assert.deepEqual(answer.scope, index === 5 ? ['维修'] : index === 6 ? ['其它'] : ['维修', '其它']);
+  });
+  assert.deepEqual(handoff.exceptionRatingDecisionBatches, records.exceptionRatingDecisionBatches);
+  for (const id of ['HD01', 'HD04']) {
+    assert(handoff.items.find(item => item.id === id).confirmed.includes('异常与评价第四轮4B/5B、其余A'));
+  }
+});
+
+test('exception integrity prevents operator mediation, two endings, forced proof, cancelled-service scoring and cross-business mixing', () => {
+  verify(records);
+  for (const mutate of [
+    item => { item.completionRules.evidenceFields.description.required = false; },
+    item => { item.completionRules.evidenceFields.description.maxLength = 1000; },
+    item => { item.completionRules.evidenceFields.attachments.required = true; },
+    item => { item.cancellationRules.evidenceFields.description.required = false; },
+    item => { item.cancellationRules.refusalRules.reasonRequired = false; },
+    item => { item.cancellationRules.refusalRules.endsService = true; },
+    item => { item.terminationRequests.completionAndCancellationMayCoexist = false; },
+    item => { item.terminationRequests.endingPolicy = 'client-first-click'; },
+    item => { item.terminationRequests.closeOtherOnEnd = false; },
+    item => { item.terminationRequests.preserveOtherHistory = false; },
+    item => { item.disputeRules.operatorServiceMediation = true; },
+    item => { item.disputeRules.existingReportAndRatingAppealUnaffected = false; },
+    item => { item.disputeRules.objectionFields.description.required = false; },
+    item => { item.ratingRules.qualification.trigger = 'selected'; },
+    item => { item.ratingRules.qualification.requiresWorkerCompletionRequest = false; },
+    item => { item.ratingRules.qualification.additionalExperienceConfirmationRequired = true; },
+    item => { item.ratingRules.qualification.cancellationCreatesQualification = true; },
+    item => { item.ratingRules.mutual = false; },
+    item => { item.ratingRules.statistics.separateFromOtherBusinesses = false; },
+    item => { item.ratingRules.statistics.business = '跑腿'; },
+    item => { item.ratingRules.preserveExistingValidQualificationsAndRatings = false; }
+  ]) {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(records);
+      mutate(changed.items[index].confirmed);
+      assert.throws(() => verify(changed));
+    }
+  }
+  assert(read('docs/module-specs/exception-rating-rules.md').includes('取消先有效时，服务只为已取消、完成申请关闭并留历史'));
+  assert(read('docs/module-specs/exception-rating-rules.md').includes('接单申请仍不设单独拒绝'));
+  assert(read('docs/module-specs/exception-rating-rules.md').includes('既有举报、内容审核、评分核查和评价申诉仍按原职责处理'));
+  assert(read('docs/module-specs/exception-rating-rules.md').includes('没有实现或验证真实并发结束'));
+  assert.equal(handoff.items.find(item => item.id === 'HD02').confirmed.business, '跑腿');
+  assert.equal(handoff.items.find(item => item.id === 'HD02').confirmed.wallet, false);
 });
 
 test('fulfillment all-A answer maps only to the eight questions in its own round and is synchronized with handoff', () => {
