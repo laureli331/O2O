@@ -26,6 +26,26 @@ const expectedFeeAgreement = {
   advance: { voluntary: true, requiresPriorMutualConfirmation: true, confirmWhetherToAdvance: true, confirmLimit: true }
 };
 
+const expectedApplicationRules = {
+  activePerPersonPerRequest: 1, editableBeforeSelection: true, withdrawableBeforeSelection: true,
+  repeatedSubmitCreatesNew: false, reapplication: { allowedWhenOpen: true, cooldownHours: 0 }, individualRejectionAllowed: false
+};
+const expectedSelectionRules = {
+  effectiveAfterPublisherSelectionSuccess: true, workerReconfirmationRequired: false,
+  otherApplications: { end: true, notify: true, autoReplacement: false }
+};
+const expectedApplicationFields = {
+  description: { required: false, maxLength: 300 },
+  estimatedServiceFee: { required: false, missingLabel: '待协商', isFeeAgreement: false }
+};
+const expectedContactVisibility = {
+  beforeSelection: 'masked', afterSuccessfulSelection: 'selected-parties-only', otherApplicants: 'masked',
+  privateAddress: { optionalAtPublishing: true, public: false, releaseTo: 'selected-worker-only' }
+};
+const expectedDemandChanges = {
+  beforeSelection: { watched: ['服务内容', '区域', '时间'], invalidateApplications: true, notifyApplicants: true, reapplyRequired: true }
+};
+
 function verify(value) {
   assert.deepEqual(value.items.map(item => item.id), ['MP01', 'MP02']);
   const [other, repair] = value.items;
@@ -44,7 +64,7 @@ function verify(value) {
   assert.equal(other.followUp[2].userReply, 'A');
   assert.equal(other.followUp[2].selectedOption, '先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议');
   assert(!other.pending.includes('申请后的选人模式'));
-  assert(other.pending.includes('申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'));
+  assert(other.pending.includes('申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发及取消后改选'));
   assert.equal(other.confirmed.quoteRequiredAtApplication, false);
   assert.equal(Object.hasOwn(other.confirmed, 'defaultServiceFee'), false);
   assert.equal(other.confirmed.selectedWorkerCount, 1);
@@ -54,10 +74,13 @@ function verify(value) {
   for (const item of value.items) {
     assert.equal(item.confirmed.selectedWorkerCount, 1);
     assert.deepEqual(item.confirmed.applicantLimit, { kind: 'no-product-cap' });
-    assert.deepEqual(item.confirmed.applicationRules, { activePerPersonPerRequest: 1, editableBeforeSelection: true, withdrawableBeforeSelection: true, repeatedSubmitCreatesNew: false });
-    assert.deepEqual(item.confirmed.contactVisibility, { beforeSelection: 'masked', afterSuccessfulSelection: 'selected-parties-only', otherApplicants: 'masked' });
+    assert.deepEqual(item.confirmed.applicationRules, expectedApplicationRules);
+    assert.deepEqual(item.confirmed.selectionRules, expectedSelectionRules);
+    assert.deepEqual(item.confirmed.applicationFields, expectedApplicationFields);
+    assert.deepEqual(item.confirmed.contactVisibility, expectedContactVisibility);
+    assert.deepEqual(item.confirmed.demandChanges, expectedDemandChanges);
     assert.deepEqual(item.confirmed.feeAgreement, expectedFeeAgreement);
-    assert.equal(Object.hasOwn(item.confirmed, 'concurrentTaskLimit'), false);
+    assert.deepEqual(item.confirmed.concurrentTaskLimit, { kind: 'no-product-cap' });
     assert.equal(item.fullWorkflowReady, false);
     assert(item.pending.length >= 5);
     assert.equal(handoff.items.find(row => row.id === item.handoffDecision).productionAllowed, false);
@@ -99,7 +122,7 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[1].confirmed.feeAgreement.itemization.showTotal = false; },
     data => { data.items[0].confirmed.feeAgreement.confirmationTiming = 'after-service-completion'; },
     data => { data.items[1].confirmed.feeAgreement.requiresPrepayment = true; },
-    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'); },
+    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发及取消后改选'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
     data => { data.items[0].fullWorkflowReady = true; }
@@ -152,7 +175,7 @@ test('original itemization answer is retained and inspection or visit charges no
   assert(read('docs/ui-development-handoff/page-spec.md').includes('页面同时显示合计'));
 });
 
-test('full contact is released only to selected parties without granting address or permanent historical access', () => {
+test('contact and optional private address release follow approved selection while end-of-service access remains unresolved', () => {
   const [other, repair] = records.items;
   const answer = other.followUp[7];
   assert.equal(answer.date, '2026-10-11');
@@ -162,9 +185,9 @@ test('full contact is released only to selected parties without granting address
   assert.deepEqual(handoff.items.find(item => item.id === 'HD01').followUp[4], answer);
   assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[7], answer);
   for (const item of records.items) {
-    assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'privateAddress'), false);
+    assert.deepEqual(item.confirmed.contactVisibility.privateAddress, expectedContactVisibility.privateAddress);
     assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'afterServiceEnd'), false);
-    assert(item.pending.some(text => text.includes('详细地址与联系变更/结束/撤销')));
+    assert(item.pending.some(text => text.includes('联系变更/结束/撤销')));
   }
   assert(read('docs/module-specs/README.md').includes('不能把完整信息下发后仅在页面打码'));
   assert(read('docs/module-specs/README.md').includes('闲置、免费服务目录及其推广仍沿用原CT03'));
@@ -183,7 +206,7 @@ test('planning references resolve and existing handoff points to the new confirm
   assert(read('docs/ui-development-handoff/page-spec.md').includes('其它属于业务模块'));
 });
 
-test('other publisher selection mode is synchronized while voluntary quote and detailed application rules remain unresolved', () => {
+test('other publisher selection mode is synchronized while remaining visibility and workflow gaps are retained', () => {
   const other = handoff.items.find(item => item.id === 'HD04');
   assert.equal(other.followUp[0].userReply, records.items[0].followUp[0].userReply);
   assert(other.confirmed.includes('为后续更新迭代提供依据'));
@@ -191,13 +214,13 @@ test('other publisher selection mode is synchronized while voluntary quote and d
   assert(other.confirmed.includes('允许公开发布并申请接单'));
   assert.deepEqual(other.followUp[2], records.items[0].followUp[2]);
   assert(other.confirmed.includes('先申请再由发布者选人'));
-  assert(other.pending.includes('申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'));
+  assert(other.pending.includes('申请信息可见性/排序/开放期限、修改与重申历史细则、选人并发及取消后改选'));
   assert(read('CONTEXT.md').includes('先申请再由发布者选1位接单员'));
   assert(read('docs/module-specs/README.md').includes('归类原则和整理数据目的已确认'));
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
 });
 
-test('other optional application quote is independently approved without declaring free service or changing selection prerequisites', () => {
+test('other optional quote answer is retained and the approved estimate remains distinct from formal fee confirmation', () => {
   const other = records.items[0];
   const answer = other.followUp[5];
   assert.equal(answer.date, '2026-10-11');
@@ -206,10 +229,10 @@ test('other optional application quote is independently approved without declari
   const handoffOther = handoff.items.find(item => item.id === 'HD04');
   assert.deepEqual(handoffOther.followUp[5], answer);
   assert(handoffOther.confirmed.includes('申请时不强制填写服务费报价'));
-  assert(handoffOther.pending.includes('自愿报价与收费阶段细则'));
+  assert(handoffOther.pending.some(text => text.includes('费用字段/阶段细则')));
   assert.equal(Object.hasOwn(other.confirmed, 'feeAgreementStage'), false);
-  assert.equal(Object.hasOwn(other.confirmed, 'voluntaryQuoteField'), false);
-  assert(other.pending.some(text => text.includes('自愿报价')));
+  assert.deepEqual(other.confirmed.applicationFields, expectedApplicationFields);
+  assert(other.pending.some(text => text.includes('费用字段')));
   assert(read('docs/module-specs/README.md').includes('不强制报价不代表免费'));
 });
 
@@ -281,16 +304,16 @@ test('fee integrity checks reject unapproved unilateral version replacement, aut
   }
 });
 
-test('next application questions remain eight pending proposals and do not silently change application or contact permissions', () => {
-  const questions = read('docs/module-specs/application-questions-20261011.md');
+test('fulfillment batch stays pending without automatically approving completion, cancellation or address retention', () => {
+  const questions = read('docs/module-specs/fulfillment-questions-20261011.md');
   assert(questions.includes('8题全部待答'));
-  assert.deepEqual([...questions.matchAll(/（(AQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `AQ${String(index + 1).padStart(2, '0')}`));
+  assert.deepEqual([...questions.matchAll(/（(LQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `LQ${String(index + 1).padStart(2, '0')}`));
   for (const item of records.items) {
-    assert.equal(Object.hasOwn(item.confirmed, 'selectionEffectiveImmediately'), false);
-    assert.equal(Object.hasOwn(item.confirmed, 'voluntaryQuoteField'), false);
-    assert.equal(Object.hasOwn(item.confirmed, 'concurrentTaskLimit'), false);
-    assert.equal(Object.hasOwn(item.confirmed.applicationRules, 'reapplyCooldownHours'), false);
-    assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'privateAddress'), false);
+    assert.equal(Object.hasOwn(item.confirmed, 'completionRules'), false);
+    assert.equal(Object.hasOwn(item.confirmed, 'cancellationRules'), false);
+    assert.equal(Object.hasOwn(item.confirmed, 'appointmentRules'), false);
+    assert.equal(Object.hasOwn(item.confirmed.contactVisibility, 'afterServiceEnd'), false);
+    assert.equal(Object.hasOwn(item.confirmed.demandChanges, 'afterSelection'), false);
   }
   for (const file of require('node:fs').readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read(`docs/module-specs/${file}`);
@@ -299,6 +322,67 @@ test('next application questions remain eight pending proposals and do not silen
     }
   }
   assert(read('docs/module-specs/fee-rules.md').includes('当前仅运行文档一致性检查'));
+});
+
+test('application batch preserves the exact reply and the fourth answer exception instead of treating it as all-A', () => {
+  const [batch] = records.applicationDecisionBatches;
+  assert.equal(records.applicationDecisionBatches.length, 1);
+  assert.equal(batch.userReply, '全A, 4选B, 6皆不设同时接单上限,');
+  assert.equal(batch.date, '2026-10-11');
+  assert.deepEqual(batch.scope, ['维修', '其它']);
+  assert.equal(batch.questionDocument, 'docs/module-specs/application-questions-20261011.md');
+  const questions = read(batch.questionDocument);
+  assert(questions.includes('1A、2A、3A、4B、5A、6A'));
+  assert(!questions.includes('8题全部待答'));
+  const offered = [...questions.matchAll(/（(AQ\d{2})）\r?\n\r?\nA：(.+?)B：(.+?)\r?\n/g)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(batch.answers.map(answer => answer.questionId), Array.from({length: 8}, (_, index) => `AQ${String(index + 1).padStart(2, '0')}`));
+  assert.deepEqual(batch.answers.map(answer => answer.answer), ['A', 'A', 'A', 'B', 'A', 'A', 'A', 'A']);
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.selectedOption, offered[index][answer.answer === 'A' ? 2 : 3].trim().replace(/。$/, ''));
+  });
+  assert.equal(batch.answers[5].userClarification, '6皆不设同时接单上限');
+  assert.deepEqual(handoff.applicationDecisionBatches, records.applicationDecisionBatches);
+  for (const id of ['HD01', 'HD04']) {
+    const item = handoff.items.find(row => row.id === id);
+    assert(item.confirmed.includes('不设单独拒绝申请'));
+    assert(item.confirmed.includes('维修和其它均不设同时接单上限'));
+    assert(!item.pending.includes('接单员同时接单规则'));
+  }
+});
+
+test('application integrity rejects secondary acceptance, rejection bans, compulsory quotes, public addresses and stale selection', () => {
+  for (const mutate of [
+    item => { item.selectionRules.workerReconfirmationRequired = true; },
+    item => { item.selectionRules.effectiveAfterPublisherSelectionSuccess = false; },
+    item => { item.selectionRules.otherApplications.end = false; },
+    item => { item.selectionRules.otherApplications.notify = false; },
+    item => { item.selectionRules.otherApplications.autoReplacement = true; },
+    item => { item.applicationRules.reapplication.cooldownHours = 24; },
+    item => { item.applicationRules.individualRejectionAllowed = true; },
+    item => { item.applicationFields.description.required = true; },
+    item => { item.applicationFields.description.maxLength = 1000; },
+    item => { item.applicationFields.estimatedServiceFee.required = true; },
+    item => { item.applicationFields.estimatedServiceFee.missingLabel = '0元'; },
+    item => { item.applicationFields.estimatedServiceFee.isFeeAgreement = true; },
+    item => { item.concurrentTaskLimit = { kind: 'fixed', count: 1 }; },
+    item => { item.contactVisibility.privateAddress.optionalAtPublishing = false; },
+    item => { item.contactVisibility.privateAddress.public = true; },
+    item => { item.contactVisibility.privateAddress.releaseTo = 'all-applicants'; },
+    item => { item.demandChanges.beforeSelection.invalidateApplications = false; },
+    item => { item.demandChanges.beforeSelection.notifyApplicants = false; },
+    item => { item.demandChanges.beforeSelection.reapplyRequired = false; }
+  ]) {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(records);
+      mutate(changed.items[index].confirmed);
+      assert.throws(() => verify(changed));
+    }
+  }
+  assert(read('docs/module-specs/application-rules.md').includes('草选、请求失败或结果未知不算成功'));
+  assert(read('docs/module-specs/application-rules.md').includes('费用按[费用规则]'));
+  assert.equal(handoff.items.find(item => item.id === 'HD02').confirmed.business, '跑腿');
+  assert.equal(handoff.items.find(item => item.id === 'HD05').productionAllowed, true);
 });
 
 test('single selected worker approval is dated and synchronized for both businesses without imposing an applicant cap', () => {
@@ -313,10 +397,10 @@ test('single selected worker approval is dated and synchronized for both busines
   assert.deepEqual(handoff.items.find(item => item.id === 'HD01').followUp[1], answer);
   assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[3], answer);
   assert(read('docs/module-specs/README.md').includes('每条需求最终选1位'));
-  assert(read('docs/ui-development-handoff/business-addendum.md').includes('接单员同时接单'));
+  assert(read('docs/ui-development-handoff/business-addendum.md').includes('第6题明确两类同时接单均不设上限'));
 });
 
-test('no applicant cap approval is synchronized and does not imply unlimited concurrent orders or duplicate submissions', () => {
+test('applicant-cap answer is retained and independent approval now covers concurrent tasks without allowing duplicate applications', () => {
   const [other, repair] = records.items;
   const answer = other.followUp[4];
   assert.equal(answer.date, '2026-10-11');
@@ -329,12 +413,13 @@ test('no applicant cap approval is synchronized and does not imply unlimited con
     assert.deepEqual(item.confirmed.applicantLimit, { kind: 'no-product-cap' });
     assert.equal(item.confirmed.selectedWorkerCount, 1);
     assert.equal(item.confirmed.applicationRules.activePerPersonPerRequest, 1);
-    assert(item.pending.includes('接单员同时接单规则'));
+    assert(!item.pending.includes('接单员同时接单规则'));
+    assert.deepEqual(item.confirmed.concurrentTaskLimit, { kind: 'no-product-cap' });
   }
-  assert(read('CONTEXT.md').includes('将不设申请人数上限解释为同一人可无限重复提交或同时接单不限量'));
+  assert(read('CONTEXT.md').includes('用户已独立确认维修和其它均不设置此上限'));
 });
 
-test('one active editable application is synchronized without approving reapplication cooldown or withdrawal after selection', () => {
+test('one active editable application and immediate reapplication are synchronized without approving withdrawal after selection', () => {
   const [other, repair] = records.items;
   const answer = other.followUp[6];
   assert.equal(answer.date, '2026-10-11');
@@ -344,9 +429,9 @@ test('one active editable application is synchronized without approving reapplic
   assert.deepEqual(handoff.items.find(item => item.id === 'HD01').followUp[3], answer);
   assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[6], answer);
   for (const item of records.items) {
-    assert.equal(Object.hasOwn(item.confirmed.applicationRules, 'reapplyCooldownHours'), false);
+    assert.deepEqual(item.confirmed.applicationRules.reapplication, { allowedWhenOpen: true, cooldownHours: 0 });
     assert.equal(Object.hasOwn(item.confirmed.applicationRules, 'withdrawableAfterSelection'), false);
-    assert(item.pending.some(text => text.includes('撤回后重申/冷却')));
+    assert(item.pending.some(text => text.includes('修改与重申历史')));
   }
   assert(read('CONTEXT.md').includes('重复点击申请不新增记录'));
   assert(read('docs/module-specs/README.md').includes('选定前可撤回申请不代表选定后可单方取消服务'));
