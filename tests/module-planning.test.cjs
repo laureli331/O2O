@@ -39,7 +39,7 @@ function verify(value) {
     assert.deepEqual(item.confirmed.applicantLimit, { kind: 'no-product-cap' });
     assert.deepEqual(item.confirmed.applicationRules, { activePerPersonPerRequest: 1, editableBeforeSelection: true, withdrawableBeforeSelection: true, repeatedSubmitCreatesNew: false });
     assert.deepEqual(item.confirmed.contactVisibility, { beforeSelection: 'masked', afterSuccessfulSelection: 'selected-parties-only', otherApplicants: 'masked' });
-    assert.deepEqual(item.confirmed.feeAgreement, { recordedInMiniapp: true, requiresBothPartiesConfirmation: true, itemization: { mode: 'separate-service-and-expenses', expenseExamples: ['材料', '配件', '商品'], showTotal: true } });
+    assert.deepEqual(item.confirmed.feeAgreement, { recordedInMiniapp: true, requiresBothPartiesConfirmation: true, confirmationTiming: 'before-each-charge-stage', itemization: { mode: 'separate-service-and-expenses', expenseExamples: ['材料', '配件', '商品'], showTotal: true } });
     assert.equal(Object.hasOwn(item.confirmed, 'concurrentTaskLimit'), false);
     assert.equal(item.fullWorkflowReady, false);
     assert(item.pending.length >= 5);
@@ -80,6 +80,8 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[0].confirmed.feeAgreement.paid = true; },
     data => { data.items[0].confirmed.feeAgreement.itemization.mode = 'total-only'; },
     data => { data.items[1].confirmed.feeAgreement.itemization.showTotal = false; },
+    data => { data.items[0].confirmed.feeAgreement.confirmationTiming = 'after-service-completion'; },
+    data => { data.items[1].confirmed.feeAgreement.requiresPrepayment = true; },
     data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请内容、撤回后重申/冷却/修改细则、选定生效/竞争申请及改选规则'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
@@ -91,7 +93,7 @@ test('actual answers include other business and repair application mode without 
   }
 });
 
-test('fee recording and mutual confirmation are approved without inventing payment, individual entries or confirmation timing', () => {
+test('fee recording and mutual confirmation are approved without inventing payment or individual entries', () => {
   const [other, repair] = records.items;
   const answer = other.followUp[8];
   assert.equal(answer.date, '2026-10-11');
@@ -177,7 +179,7 @@ test('other publisher selection mode is synchronized while voluntary quote and d
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
 });
 
-test('other optional application quote is independently approved without declaring free service or a fee agreement stage', () => {
+test('other optional application quote is independently approved without declaring free service or changing selection prerequisites', () => {
   const other = records.items[0];
   const answer = other.followUp[5];
   assert.equal(answer.date, '2026-10-11');
@@ -186,11 +188,42 @@ test('other optional application quote is independently approved without declari
   const handoffOther = handoff.items.find(item => item.id === 'HD04');
   assert.deepEqual(handoffOther.followUp[5], answer);
   assert(handoffOther.confirmed.includes('申请时不强制填写服务费报价'));
-  assert(handoffOther.pending.includes('自愿报价与费用确定时点'));
+  assert(handoffOther.pending.includes('自愿报价与收费阶段细则'));
   assert.equal(Object.hasOwn(other.confirmed, 'feeAgreementStage'), false);
   assert.equal(Object.hasOwn(other.confirmed, 'voluntaryQuoteField'), false);
   assert(other.pending.some(text => text.includes('自愿报价')));
   assert(read('docs/module-specs/README.md').includes('不强制报价不代表免费'));
+});
+
+test('phased confirmation precedes each charge stage without inventing prepayment or mandatory inspection charges', () => {
+  const [other, repair] = records.items;
+  const answer = other.followUp[10];
+  assert.equal(answer.date, '2026-10-11');
+  assert.equal(answer.userReply, 'A');
+  assert.equal(answer.selectedOption, '维修和其它分阶段、收费前确认费用；上门检查若收费先确认该费用，诊断后再确认维修和配件费用');
+  assert.deepEqual(repair.followUp[6], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD01').followUp[7], answer);
+  assert.deepEqual(handoff.items.find(item => item.id === 'HD04').followUp[10], answer);
+  for (const item of records.items) {
+    assert.equal(item.confirmed.feeAgreement.confirmationTiming, 'before-each-charge-stage');
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'requiresPrepayment'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'mandatoryInspectionCharge'), false);
+  }
+  assert(read('docs/module-specs/README.md').includes('不代表付款必须预付'));
+});
+
+test('requested eight-question format and fee proposals remain distinct from actual approvals', () => {
+  assert.equal(records.discussionFormat.questionsPerRound, 8);
+  assert.equal(records.discussionFormat.userReply, '一次问我八个问题, 否则进度太慢了');
+  const questions = read('docs/module-specs/fee-questions-20261011.md');
+  assert(questions.includes('8题全部待答'));
+  assert.deepEqual([...questions.matchAll(/（(FQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `FQ${String(index + 1).padStart(2, '0')}`));
+  assert(read('docs/module-specs/README.md').includes('每轮集中提出8个'));
+  for (const item of records.items) {
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'advanceAllowed'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'pendingProposalLimit'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'receiptRequired'), false);
+  }
 });
 
 test('single selected worker approval is dated and synchronized for both businesses without imposing an applicant cap', () => {
