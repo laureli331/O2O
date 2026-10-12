@@ -82,9 +82,10 @@ const expectedContactVisibility = {
   privateAddress: { optionalAtPublishing: true, public: false, releaseTo: 'selected-worker-only' },
   afterServiceEnd: { completedContact: 'masked', cancelledContact: 'masked', selectedWorkerFullAddressAccess: false, publisherMayManageOwnAddress: true }
 };
+const expectedPendingChangeEnd = { closePendingChanges: true, preserveHistory: true, impliesConsent: false, blocksServiceEnding: false };
 const expectedDemandChanges = {
   beforeSelection: { watched: ['服务内容', '区域', '时间'], invalidateApplications: true, notifyApplicants: true, reapplyRequired: true },
-  afterSelection: { watched: ['服务内容', '区域'], requiresBothPartiesConfirmation: true, previousVersionEffectiveUntilConfirmed: true }
+  afterSelection: { watched: ['服务内容', '区域'], requiresBothPartiesConfirmation: true, previousVersionEffectiveUntilConfirmed: true, onServiceEnd: expectedPendingChangeEnd }
 };
 const expectedEvidenceFields = {
   description: { required: true, minLength: 1, maxLength: 500 },
@@ -105,7 +106,15 @@ const expectedCancellationRules = {
 };
 const expectedAppointmentRules = {
   required: false, requiresBothPartiesConfirmation: true, changesRequireBothPartiesConfirmation: true,
-  initiators: ['发布者', '接单员'], pendingLimit: 1, scope: 'after-successful-selection-before-service-end', pendingChangesReplaceEffectiveTime: false
+  initiators: ['发布者', '接单员'], pendingLimit: 1, scope: 'after-successful-selection-before-service-end', pendingChangesReplaceEffectiveTime: false,
+  timeFields: { mode: 'single-start-time', precision: 'minute' },
+  pastTimePolicy: { futureOnly: true, reference: 'server-time', allowHistoryBackfill: false, strictlyAfterCurrentTime: true },
+  pendingTimePassedPolicy: { scope: 'pending-future-appointment', closeAt: 'proposed-start-time', preserveHistory: true, changesPreviousAppointment: false, changesServiceState: false, autoConsent: false },
+  editingPolicy: { initiatorWithdrawalAllowed: true, mode: 'withdraw-before-resubmit', preserveHistory: true },
+  refusalRules: { reasonRequired: false, reasonMaxLength: 300, endsPendingProposal: true, preserveHistory: true, changesPreviousAppointment: false, endsService: false },
+  clearEffectiveAppointmentPolicy: { requiresBothPartiesConfirmation: true, preserveHistory: true, endsService: false },
+  onServiceEnd: expectedPendingChangeEnd,
+  overduePolicy: { markTimePassed: true, autoComplete: false, autoCancel: false, autoReminder: false, newOverdueCharge: false, newPenalty: false }
 };
 const expectedReopeningRules = {
   afterConfirmedCancellation: true, initiator: 'publisher', sameRequest: true,
@@ -684,16 +693,106 @@ test('form and appointment constraints reject unilateral incurred classification
   }
 });
 
-test('ninth-round eight appointment questions remain pending and all document links resolve', () => {
+test('ninth-round all-A answer matches only its eight table options and preserves preceding rule sources', () => {
   const questions = read('docs/module-specs/appointment-questions-20261012.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('8题全部选择A'));
   assert(questions.includes('| 编号 | 问题 | A（推荐） | B |'));
   const offered = [...questions.matchAll(/^\| [1-8]（(TQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length, 8);
   assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => `TQ${String(index + 1).padStart(2, '0')}`));
+  assert.equal(records.appointmentDecisionBatches.length, 1);
+  const batch = records.appointmentDecisionBatches[0];
+  assert.equal(batch.id, 'appointment-round-9-20261012');
+  assert.equal(batch.date, '2026-10-12');
+  assert.equal(batch.userReply, '全A');
+  assert.equal(batch.questionDocument, 'docs/module-specs/appointment-questions-20261012.md');
+  assert.deepEqual(batch.scope, ['维修', '其它']);
+  assert.equal(batch.answers.length, 8);
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.questionId, offered[index][1]);
+    assert.equal(answer.answer, 'A');
+    assert.equal(answer.selectedOption, offered[index][3].trim());
+  });
+  assert.deepEqual(handoff.appointmentDecisionBatches, records.appointmentDecisionBatches);
+  assert.equal(records.formAppointmentDecisionBatches[0].userReply, '全A');
+  assert.equal(records.closingDecisionBatches[0].answers[1].answer, 'B');
+  for (const id of ['HD01', 'HD04']) {
+    assert(handoff.items.find(x => x.id === id).confirmed.includes('预约细则第九轮8题全部A'));
+  }
+});
+
+test('appointment constraints prevent past booking, stale confirmation, unilateral clearing and automatic service endings', () => {
+  verify(records);
+  for (const mutate of [
+    item => { item.appointmentRules.timeFields.mode = 'start-end-window'; },
+    item => { item.appointmentRules.timeFields.precision = 'day'; },
+    item => { item.appointmentRules.pastTimePolicy.futureOnly = false; },
+    item => { item.appointmentRules.pastTimePolicy.reference = 'client-time'; },
+    item => { item.appointmentRules.pastTimePolicy.allowHistoryBackfill = true; },
+    item => { item.appointmentRules.pastTimePolicy.strictlyAfterCurrentTime = false; },
+    item => { item.appointmentRules.pendingTimePassedPolicy.scope = 'all-effective-appointments'; },
+    item => { item.appointmentRules.pendingTimePassedPolicy.closeAt = 'never'; },
+    item => { item.appointmentRules.pendingTimePassedPolicy.preserveHistory = false; },
+    item => { item.appointmentRules.pendingTimePassedPolicy.changesPreviousAppointment = true; },
+    item => { item.appointmentRules.pendingTimePassedPolicy.changesServiceState = true; },
+    item => { item.appointmentRules.pendingTimePassedPolicy.autoConsent = true; },
+    item => { item.appointmentRules.editingPolicy.mode = 'update-in-place'; },
+    item => { item.appointmentRules.editingPolicy.initiatorWithdrawalAllowed = false; },
+    item => { item.appointmentRules.editingPolicy.preserveHistory = false; },
+    item => { item.appointmentRules.refusalRules.reasonRequired = true; },
+    item => { item.appointmentRules.refusalRules.reasonMaxLength = 500; },
+    item => { item.appointmentRules.refusalRules.endsPendingProposal = false; },
+    item => { item.appointmentRules.refusalRules.changesPreviousAppointment = true; },
+    item => { item.appointmentRules.refusalRules.endsService = true; },
+    item => { item.appointmentRules.clearEffectiveAppointmentPolicy.requiresBothPartiesConfirmation = false; },
+    item => { item.appointmentRules.clearEffectiveAppointmentPolicy.preserveHistory = false; },
+    item => { item.appointmentRules.clearEffectiveAppointmentPolicy.endsService = true; },
+    item => { item.appointmentRules.onServiceEnd.closePendingChanges = false; },
+    item => { item.appointmentRules.onServiceEnd.impliesConsent = true; },
+    item => { item.appointmentRules.onServiceEnd.blocksServiceEnding = true; },
+    item => { item.demandChanges.afterSelection.onServiceEnd.closePendingChanges = false; },
+    item => { item.demandChanges.afterSelection.onServiceEnd.preserveHistory = false; },
+    item => { item.demandChanges.afterSelection.onServiceEnd.impliesConsent = true; },
+    item => { item.appointmentRules.overduePolicy.autoComplete = true; },
+    item => { item.appointmentRules.overduePolicy.autoCancel = true; },
+    item => { item.appointmentRules.overduePolicy.autoReminder = true; },
+    item => { item.appointmentRules.overduePolicy.newOverdueCharge = true; },
+    item => { item.appointmentRules.overduePolicy.newPenalty = true; }
+  ]) {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(records);
+      mutate(changed.items[index].confirmed);
+      assert.throws(() => verify(changed));
+    }
+  }
+  const document = read('docs/module-specs/appointment-rules.md');
+  assert(document.includes('清除请求的无回应处理不能默认套用未来预约到点关闭规则'));
+  assert(document.includes('不能把过时申请确认成已生效的未来预约'));
+  assert(document.includes('完成前仍必须处理待确认费用'));
+  assert(document.includes('该规则不关闭取消后符合条件继续待确认的已发生费用方案'));
+  assert(document.includes('没有实现或验证真实预约校验、到点任务、通知或并发状态变化'));
   for (const item of records.items) {
-    for (const key of ['timeFields', 'pastTimePolicy', 'pendingTimePassedPolicy', 'editingPolicy', 'refusalRules', 'clearEffectiveAppointmentPolicy', 'onServiceEnd', 'overduePolicy']) {
-      assert.equal(Object.hasOwn(item.confirmed.appointmentRules, key), false);
+    assert.equal(item.confirmed.completionRules.noResponse.autoComplete, false);
+    assert.equal(item.confirmed.cancellationRules.noResponse.autoCancel, false);
+    assert.equal(item.confirmed.feeAgreement.completionWithPendingProposal, 'resolve-before-completion-confirmation');
+    assert.equal(item.fullWorkflowReady, false);
+  }
+  assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
+  assert.equal(handoff.items.find(x => x.id === 'HD05').userReply, '只显示“服务时间”，暂不填值');
+});
+
+test('tenth-round eight change questions stay pending and all planning document links resolve', () => {
+  const questions = read('docs/module-specs/change-questions-20261012.md');
+  assert(questions.includes('8题全部待答'));
+  const offered = [...questions.matchAll(/^\| [1-8]（(CH\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => `CH${String(index + 1).padStart(2, '0')}`));
+  for (const item of records.items) {
+    for (const key of ['sharedPendingLimit', 'noResponse', 'editingPolicy', 'refusalRules']) {
+      assert.equal(Object.hasOwn(item.confirmed.appointmentRules.clearEffectiveAppointmentPolicy, key), false);
+    }
+    for (const key of ['initiators', 'pendingLimit', 'editingPolicy', 'refusalRules', 'noResponse']) {
+      assert.equal(Object.hasOwn(item.confirmed.demandChanges.afterSelection, key), false);
     }
   }
   for (const file of require('node:fs').readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
