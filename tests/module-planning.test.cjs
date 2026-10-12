@@ -37,6 +37,7 @@ const expectedFeeAgreement = {
     voluntary: true, requiresPriorMutualConfirmation: true, confirmWhetherToAdvance: true, confirmLimit: true,
     recordedWithFeeProposal: true, limitRequiredWhenWilling: true, limitMustBePositive: false,
     zeroLimitMeansNoActualAdvance: true, emptyLimitIsUnlimited: false,
+    notWillingLimitPolicy: { hide: true, clearCurrentFormValue: true, preserveHistoricalAgreements: true },
     overLimitPolicy: { requiresNewFeeProposalAndLimit: true, requiresBothPartiesConfirmation: true, pauseAffectedAdvanceUntilConfirmed: true, autoCancelService: false }
   },
   zeroServiceFeeAllowed: true,
@@ -47,9 +48,18 @@ const expectedFeeAgreement = {
   stageName: { mode: 'preset-or-custom', presets: ['上门检查', '服务处理', '补充费用'], customName: { minLength: 1, maxLength: 30 } },
   postCompletionChanges: false,
   maxTotal: 99999.99,
-  reopeningPolicy: { copyAsNewDraftAllowed: true, requiresNewSubmission: true, requiresNewPartiesConfirmation: true, inheritsAgreement: false, inheritsAdvanceAuthorization: false, oldReceiptAccessGranted: false },
+  reopeningPolicy: {
+    copyAsNewDraftAllowed: true, requiresNewSubmission: true, requiresNewPartiesConfirmation: true,
+    inheritsAgreement: false, inheritsAdvanceAuthorization: false, oldReceiptAccessGranted: false,
+    copyActors: 'new-service-parties-with-existing-old-proposal-access',
+    copyFields: ['阶段', '费用项目文字', '金额', '备注'], copyAdvanceConditions: false, copyReceipts: false
+  },
   completionWithPendingProposal: 'resolve-before-completion-confirmation',
-  cancelPendingProposal: { onlyIncurredKeepsPending: true, containsUnincurredCloses: true, preserveClosedHistory: true, reproposalAllowed: true, blocksCancellation: false, autoConsent: false },
+  cancelPendingProposal: {
+    onlyIncurredKeepsPending: true, containsUnincurredCloses: true, preserveClosedHistory: true,
+    reproposalAllowed: true, blocksCancellation: false, autoConsent: false,
+    incurredClassification: { mode: 'both-parties-agree-all-incurred', disagreementCloses: true, unknownCloses: true, preserveHistory: true, reproposalAllowed: true, blocksCancellation: false, approvesAmounts: false }
+  },
   zeroExpenseAllowed: true,
   stageOrganization: { mode: 'independent-stages', modificationReplaces: 'same-stage-version', serviceTotal: 'sum-current-effective-stage-versions', pendingIncluded: false, oldVersionsIncluded: false },
   maxServiceTotal: 99999.99
@@ -78,10 +88,10 @@ const expectedDemandChanges = {
 };
 const expectedEvidenceFields = {
   description: { required: true, minLength: 1, maxLength: 500 },
-  attachments: { required: false, minCount: 0, maxCount: 9 }
+  attachments: { required: false, minCount: 0, maxCount: 9, formats: ['JPEG', 'PNG'], maxSizeMB: 5 }
 };
 const expectedRefusalRules = {
-  allowed: true, reasonRequired: true, endsService: false, nextActions: ['继续协商', '提出异议']
+  allowed: true, reasonRequired: true, endsService: false, nextActions: ['继续协商', '提出异议'], reasonMinLength: 1, reasonMaxLength: 500
 };
 const expectedCompletionRules = {
   initiator: 'selected-worker', requiresPublisherConfirmation: true,
@@ -94,7 +104,8 @@ const expectedCancellationRules = {
   evidenceFields: expectedEvidenceFields, refusalRules: expectedRefusalRules, pendingPerService: 1
 };
 const expectedAppointmentRules = {
-  required: false, requiresBothPartiesConfirmation: true, changesRequireBothPartiesConfirmation: true
+  required: false, requiresBothPartiesConfirmation: true, changesRequireBothPartiesConfirmation: true,
+  initiators: ['发布者', '接单员'], pendingLimit: 1, scope: 'after-successful-selection-before-service-end', pendingChangesReplaceEffectiveTime: false
 };
 const expectedReopeningRules = {
   afterConfirmedCancellation: true, initiator: 'publisher', sameRequest: true,
@@ -598,23 +609,92 @@ test('closing constraints reject automatic fee approval, duplicate stage accumul
   assert.equal(handoff.items.find(x => x.id === 'HD05').userReply, '只显示“服务时间”，暂不填值');
 });
 
-test('eighth-round eight questions use a table and remain unapproved while document links resolve', () => {
+test('eighth-round all-A answer maps to the eight table options and preserves previous mixed choices', () => {
   const questions = read('docs/module-specs/form-appointment-questions-20261012.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('8题全部选择A'));
   assert(questions.includes('| 编号 | 问题 | A（推荐） | B |'));
   const offered = [...questions.matchAll(/^\| [1-8]（(DQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length, 8);
   assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => `DQ${String(index + 1).padStart(2, '0')}`));
+  assert.equal(records.formAppointmentDecisionBatches.length, 1);
+  const batch = records.formAppointmentDecisionBatches[0];
+  assert.equal(batch.id, 'form-appointment-round-8-20261012');
+  assert.equal(batch.date, '2026-10-12');
+  assert.equal(batch.userReply, '全A');
+  assert.equal(batch.questionDocument, 'docs/module-specs/form-appointment-questions-20261012.md');
+  assert.deepEqual(batch.scope, ['维修', '其它']);
+  assert.equal(batch.answers.length, 8);
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.questionId, offered[index][1]);
+    assert.equal(answer.answer, 'A');
+    assert.equal(answer.selectedOption, offered[index][3].trim());
+  });
+  assert.deepEqual(handoff.formAppointmentDecisionBatches, records.formAppointmentDecisionBatches);
+  assert.equal(records.closingDecisionBatches[0].answers[1].answer, 'B');
+  assert.deepEqual(records.feeDecisionBatches[2].answers.map(x => x.answer), ['B', 'B', 'B', 'A', 'B', 'B', 'A', 'B']);
+  for (const id of ['HD01', 'HD04']) {
+    assert(handoff.items.find(x => x.id === id).confirmed.includes('费用表单与预约基础第八轮8题全部A'));
+  }
+});
+
+test('form and appointment constraints reject unilateral incurred classification, copied authorization and unapproved appointment replacements', () => {
+  verify(records);
+  for (const mutate of [
+    item => { item.feeAgreement.cancelPendingProposal.incurredClassification.mode = 'initiator-declares'; },
+    item => { item.feeAgreement.cancelPendingProposal.incurredClassification.disagreementCloses = false; },
+    item => { item.feeAgreement.cancelPendingProposal.incurredClassification.unknownCloses = false; },
+    item => { item.feeAgreement.cancelPendingProposal.incurredClassification.preserveHistory = false; },
+    item => { item.feeAgreement.cancelPendingProposal.incurredClassification.blocksCancellation = true; },
+    item => { item.feeAgreement.cancelPendingProposal.incurredClassification.approvesAmounts = true; },
+    item => { item.feeAgreement.reopeningPolicy.copyActors = 'any-new-worker'; },
+    item => { item.feeAgreement.reopeningPolicy.copyFields.push('联系方式'); },
+    item => { item.feeAgreement.reopeningPolicy.copyAdvanceConditions = true; },
+    item => { item.feeAgreement.reopeningPolicy.copyReceipts = true; },
+    item => { item.feeAgreement.advance.notWillingLimitPolicy.hide = false; },
+    item => { item.feeAgreement.advance.notWillingLimitPolicy.clearCurrentFormValue = false; },
+    item => { item.feeAgreement.advance.notWillingLimitPolicy.preserveHistoricalAgreements = false; },
+    item => { item.completionRules.refusalRules.reasonMinLength = 0; },
+    item => { item.completionRules.refusalRules.reasonMaxLength = 300; },
+    item => { item.cancellationRules.refusalRules.reasonMaxLength = 300; },
+    item => { item.completionRules.evidenceFields.attachments.maxSizeMB = 10; },
+    item => { item.cancellationRules.evidenceFields.attachments.formats.push('GIF'); },
+    item => { item.disputeRules.objectionFields.attachments.maxSizeMB = 10; },
+    item => { item.appointmentRules.initiators = ['发布者']; },
+    item => { item.appointmentRules.pendingLimit = 2; },
+    item => { item.appointmentRules.scope = 'before-selection'; },
+    item => { item.appointmentRules.pendingChangesReplaceEffectiveTime = true; }
+  ]) {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(records);
+      mutate(changed.items[index].confirmed);
+      assert.throws(() => verify(changed));
+    }
+  }
+  const document = read('docs/module-specs/form-appointment-rules.md');
+  assert(document.includes('却仍未同意价格'));
+  assert(document.includes('费用是否已发生不自动继承为新服务事实'));
+  assert(document.includes('未提交并确认的新选择不撤销原有效垫付条件'));
+  assert(document.includes('没有实现或验证实际文件上传、复制权限、字段清值或预约并发行为'));
+  assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
+  assert.equal(handoff.items.find(x => x.id === 'HD05').userReply, '只显示“服务时间”，暂不填值');
   for (const item of records.items) {
-    const fee = item.confirmed.feeAgreement;
-    assert.equal(Object.hasOwn(fee.cancelPendingProposal, 'incurredClassification'), false);
-    assert.equal(Object.hasOwn(fee.reopeningPolicy, 'copyActors'), false);
-    assert.equal(Object.hasOwn(fee.reopeningPolicy, 'copyFields'), false);
-    assert.equal(Object.hasOwn(fee.advance, 'notWillingLimitPolicy'), false);
-    assert.equal(Object.hasOwn(item.confirmed.completionRules.refusalRules, 'reasonMaxLength'), false);
-    assert.equal(Object.hasOwn(item.confirmed.completionRules.evidenceFields.attachments, 'maxSizeMB'), false);
-    assert.equal(Object.hasOwn(item.confirmed.appointmentRules, 'initiators'), false);
-    assert.equal(Object.hasOwn(item.confirmed.appointmentRules, 'pendingLimit'), false);
+    assert.equal(item.fullWorkflowReady, false);
+    assert.equal(item.confirmed.feeAgreement.receipts.maxCount, 3);
+    assert.equal(item.confirmed.completionRules.evidenceFields.attachments.maxCount, 9);
+  }
+});
+
+test('ninth-round eight appointment questions remain pending and all document links resolve', () => {
+  const questions = read('docs/module-specs/appointment-questions-20261012.md');
+  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('| 编号 | 问题 | A（推荐） | B |'));
+  const offered = [...questions.matchAll(/^\| [1-8]（(TQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => `TQ${String(index + 1).padStart(2, '0')}`));
+  for (const item of records.items) {
+    for (const key of ['timeFields', 'pastTimePolicy', 'pendingTimePassedPolicy', 'editingPolicy', 'refusalRules', 'clearEffectiveAppointmentPolicy', 'onServiceEnd', 'overduePolicy']) {
+      assert.equal(Object.hasOwn(item.confirmed.appointmentRules, key), false);
+    }
   }
   for (const file of require('node:fs').readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read(`docs/module-specs/${file}`);
