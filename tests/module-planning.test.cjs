@@ -20,7 +20,7 @@ const expectedFeeAgreement = {
     fields: {
       name: { required: true, minLength: 1, maxLength: 30 },
       category: { required: true, allowed: ['服务费', '实际支出'] },
-      amount: { required: true }, remark: { required: false, maxLength: 300 }
+      amount: { required: true, maxInput: 99999.99 }, remark: { required: false, maxLength: 300 }
     }
   },
   initiation: { allowedParties: ['发布者', '接单员'], submissionAcknowledgesVersion: true, effectiveAfterCounterpartyConfirmation: true, selectedWorkerOnly: true },
@@ -28,13 +28,26 @@ const expectedFeeAgreement = {
   pendingProposalLimit: 1,
   noResponse: { remainsPending: true, reminderAllowed: true, withdrawableByInitiator: true, autoConsent: false },
   cancellation: { serviceMayBeCancelledBeforeExpenseAgreement: true, incurredExpensesNegotiatedSeparately: true, impliesSettled: false },
-  receipts: { required: false, supported: ['票据', '照片'] },
-  advance: { voluntary: true, requiresPriorMutualConfirmation: true, confirmWhetherToAdvance: true, confirmLimit: true, recordedWithFeeProposal: true },
+  receipts: {
+    required: false, supported: ['票据', '照片'], maxCount: 3, countScope: 'per-expense-item',
+    formats: ['JPEG', 'PNG'], maxSizeMB: 5, visibility: 'service-parties-while-ongoing',
+    afterServiceEndVisibility: 'neither-party', public: false, operatorAccessGranted: false
+  },
+  advance: {
+    voluntary: true, requiresPriorMutualConfirmation: true, confirmWhetherToAdvance: true, confirmLimit: true,
+    recordedWithFeeProposal: true, limitRequiredWhenWilling: true, limitMustBePositive: false,
+    zeroLimitMeansNoActualAdvance: true, emptyLimitIsUnlimited: false,
+    overLimitPolicy: { requiresNewFeeProposalAndLimit: true, requiresBothPartiesConfirmation: true, pauseAffectedAdvanceUntilConfirmed: true, autoCancelService: false }
+  },
   zeroServiceFeeAllowed: true,
   creationStage: 'after-successful-selection',
   formalAmountPolicy: { currentStageAmountsMustBeKnown: true, estimatedItemsAllowed: false, unknownFutureItems: 'omit-until-later-stage', unknownAmountsDefaultToZero: false },
   pendingVersionEditing: { mode: 'withdraw-before-resubmit', preserveHistory: true },
-  refusalRules: { reasonRequired: false, endsPendingProposal: true, previousAgreementRemainsEffective: true, allowsNewProposal: true, endsService: false }
+  refusalRules: { reasonRequired: false, endsPendingProposal: true, previousAgreementRemainsEffective: true, allowsNewProposal: true, endsService: false },
+  stageName: { mode: 'preset-or-custom', presets: ['上门检查', '服务处理', '补充费用'], customName: { minLength: 1, maxLength: 30 } },
+  postCompletionChanges: false,
+  maxTotal: 99999.99,
+  reopeningPolicy: { copyAsNewDraftAllowed: true, requiresNewSubmission: true, requiresNewPartiesConfirmation: true, inheritsAgreement: false, inheritsAdvanceAuthorization: false, oldReceiptAccessGranted: false }
 };
 
 const expectedApplicationRules = {
@@ -286,7 +299,7 @@ test('other optional quote answer is retained and the approved estimate remains 
   const handoffOther = handoff.items.find(item => item.id === 'HD04');
   assert.deepEqual(handoffOther.followUp[5], answer);
   assert(handoffOther.confirmed.includes('申请时不强制填写服务费报价'));
-  assert(handoffOther.pending.some(text => text.includes('费用字段映射/阶段细则')));
+  assert(handoffOther.pending.some(text => text.includes('费用字段映射/阶段与累计组织')));
   assert.equal(Object.hasOwn(other.confirmed, 'feeAgreementStage'), false);
   assert.deepEqual(other.confirmed.applicationFields, expectedApplicationFields);
   assert(other.pending.some(text => text.includes('费用字段')));
@@ -318,7 +331,7 @@ test('fee batch all-A reply is mapped to exactly the eight offered options and s
   assert.deepEqual([...questions.matchAll(/（(FQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `FQ${String(index + 1).padStart(2, '0')}`));
   assert(read('docs/module-specs/README.md').includes('每轮集中提出8个'));
   assert(read('docs/module-specs/README.md').includes('按钮轻微放大缩小等细微反馈'));
-  assert.equal(records.feeDecisionBatches.length, 2);
+  assert.equal(records.feeDecisionBatches.length, 3);
   const batch = records.feeDecisionBatches[0];
   assert.equal(batch.userReply, '全A');
   assert.equal(batch.date, '2026-10-11');
@@ -427,20 +440,95 @@ test('fee-detail constraints reject wrong scope, unknown zero, estimates, live e
   assert.equal(handoff.items.find(item => item.id === 'HD05').userReply, '只显示“服务时间”，暂不填值');
 });
 
-test('sixth-round eight fee boundaries stay pending, while all planning document links resolve', () => {
+test('sixth-round mixed answers preserve exact reply, options and matching business scope', () => {
   const questions = read('docs/module-specs/fee-boundary-questions-20261012.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('已确认1B、2B、3B、4A、5B、6B、7A、8B'));
   assert.deepEqual([...questions.matchAll(/（(FQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `FQ${String(index + 17).padStart(2, '0')}`));
+  const batch = records.feeDecisionBatches[2];
+  assert.equal(batch.id, 'fee-boundary-round-6-20261012');
+  assert.equal(batch.date, '2026-10-12');
+  assert.equal(batch.userReply, '1. B\n2. B\n3. B\n4. A\n5. B\n6. B\n7. A\n8. B');
+  assert.equal(batch.questionDocument, 'docs/module-specs/fee-boundary-questions-20261012.md');
+  assert.deepEqual(batch.scope, ['维修', '其它']);
+  const offered = [...questions.matchAll(/（(FQ\d{2})）\r?\n\r?\nA：(.+?)B：(.+?)\r?\n/g)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(batch.answers.map(x => x.answer), ['B', 'B', 'B', 'A', 'B', 'B', 'A', 'B']);
+  assert.equal(batch.answers.length, 8);
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.questionId, offered[index][1]);
+    assert.equal(answer.selectedOption, offered[index][answer.answer === 'A' ? 2 : 3].trim().replace(/。$/, ''));
+  });
+  assert.deepEqual(handoff.feeDecisionBatches, records.feeDecisionBatches);
+  assert.equal(records.feeDecisionBatches[1].userReply, '全A');
+  for (const id of ['HD01', 'HD04']) {
+    assert(handoff.items.find(x => x.id === id).confirmed.includes('费用边界第六轮1B、2B、3B、4A、5B、6B、7A、8B'));
+  }
+});
+
+test('fee boundaries prevent completed-service edits, unlimited advances, public or ended receipts and inherited draft authorization', () => {
+  verify(records);
+  for (const mutate of [
+    fee => { fee.stageName.mode = 'custom-only'; },
+    fee => { fee.stageName.presets.push('必收上门费'); },
+    fee => { fee.stageName.customName.maxLength = 300; },
+    fee => { fee.postCompletionChanges = true; },
+    fee => { fee.advance.limitRequiredWhenWilling = false; },
+    fee => { fee.advance.limitMustBePositive = true; },
+    fee => { fee.advance.zeroLimitMeansNoActualAdvance = false; },
+    fee => { fee.advance.emptyLimitIsUnlimited = true; },
+    fee => { fee.advance.overLimitPolicy.requiresNewFeeProposalAndLimit = false; },
+    fee => { fee.advance.overLimitPolicy.requiresBothPartiesConfirmation = false; },
+    fee => { fee.advance.overLimitPolicy.pauseAffectedAdvanceUntilConfirmed = false; },
+    fee => { fee.advance.overLimitPolicy.autoCancelService = true; },
+    fee => { fee.receipts.maxCount = 9; },
+    fee => { fee.receipts.countScope = 'whole-proposal'; },
+    fee => { fee.receipts.formats.push('GIF'); },
+    fee => { fee.receipts.maxSizeMB = 10; },
+    fee => { fee.receipts.visibility = 'all-applicants'; },
+    fee => { fee.receipts.afterServiceEndVisibility = 'original-parties'; },
+    fee => { fee.receipts.public = true; },
+    fee => { fee.receipts.operatorAccessGranted = true; },
+    fee => { fee.maxTotal = 199999.99; },
+    fee => { fee.itemization.fields.amount.maxInput = 199999.99; },
+    fee => { fee.reopeningPolicy.copyAsNewDraftAllowed = false; },
+    fee => { fee.reopeningPolicy.requiresNewSubmission = false; },
+    fee => { fee.reopeningPolicy.requiresNewPartiesConfirmation = false; },
+    fee => { fee.reopeningPolicy.inheritsAgreement = true; },
+    fee => { fee.reopeningPolicy.inheritsAdvanceAuthorization = true; },
+    fee => { fee.reopeningPolicy.oldReceiptAccessGranted = true; }
+  ]) {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(records);
+      mutate(changed.items[index].confirmed.feeAgreement);
+      assert.throws(() => verify(changed));
+    }
+  }
+  const document = read('docs/module-specs/fee-boundary-rules.md');
+  assert(document.includes('取消后已发生费用仍可另行协商'));
+  assert(document.includes('同时涵盖完成和取消'));
+  assert(document.includes('关闭访问不等于删除文件'));
+  assert(document.includes('已有缓存或用户此前保存的副本不能被声称已远程删除'));
+  assert(document.includes('没有实现或验证真实金额计算、文件访问撤销、草稿复制或服务端操作'));
+  assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
+  for (const item of records.items) {
+    assert.equal(item.fullWorkflowReady, false);
+    assert.equal(item.confirmed.completionRules.evidenceFields.attachments.maxCount, 9);
+  }
+});
+
+test('seventh-round eight closing proposals remain pending and all planning document links resolve', () => {
+  const questions = read('docs/module-specs/closing-questions-20261012.md');
+  assert(questions.includes('8题全部待答'));
+  assert.deepEqual([...questions.matchAll(/（(CQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `CQ${String(index + 1).padStart(2, '0')}`));
   for (const item of records.items) {
     const fee = item.confirmed.feeAgreement;
-    assert.equal(Object.hasOwn(fee, 'stageName'), false);
-    assert.equal(Object.hasOwn(fee, 'postCompletionChanges'), false);
-    assert.equal(Object.hasOwn(fee.advance, 'overLimitPolicy'), false);
-    assert.equal(Object.hasOwn(fee.advance, 'limitMustBePositive'), false);
-    assert.equal(Object.hasOwn(fee.receipts, 'maxCount'), false);
-    assert.equal(Object.hasOwn(fee.receipts, 'afterServiceEndVisibility'), false);
-    assert.equal(Object.hasOwn(fee, 'maxTotal'), false);
-    assert.equal(Object.hasOwn(fee, 'reopeningPolicy'), false);
+    for (const key of ['completionWithPendingProposal', 'cancelPendingProposal', 'zeroExpenseAllowed', 'stageOrganization', 'maxServiceTotal']) {
+      assert.equal(Object.hasOwn(fee, key), false);
+    }
+    assert.equal(Object.hasOwn(item.confirmed.completionRules, 'pendingPerService'), false);
+    assert.equal(Object.hasOwn(item.confirmed.cancellationRules, 'pendingPerService'), false);
+    assert.equal(Object.hasOwn(item.confirmed.terminationRequests, 'editingPolicy'), false);
+    assert.equal(Object.hasOwn(item.confirmed.terminationRequests, 'refusedRequestPolicy'), false);
   }
   for (const file of require('node:fs').readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read(`docs/module-specs/${file}`);
