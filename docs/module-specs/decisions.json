@@ -805,6 +805,114 @@
       "nextQuestionsDocument": "docs/module-specs/monthly-commission-questions-20261013.md"
     }
   ],
+  "commissionDetailDecisionBatches": [
+    {
+      "id": "commission-detail-round-14-20261013",
+      "date": "2026-10-13",
+      "userReply": "全A, 4B",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/monthly-commission-questions-20261013.md",
+      "answers": [
+        {
+          "questionId": "MC01",
+          "answer": "A",
+          "selectedOption": "分别设置，可相同也可不同"
+        },
+        {
+          "questionId": "MC02",
+          "answer": "A",
+          "selectedOption": "锁定该笔交易确认时公布的比例，新比例只用于新交易"
+        },
+        {
+          "questionId": "MC03",
+          "answer": "A",
+          "selectedOption": "按完成/成交确认成功所在月份"
+        },
+        {
+          "questionId": "MC04",
+          "answer": "B",
+          "selectedOption": "满足既有自动完成条件也计佣"
+        },
+        {
+          "questionId": "MC05",
+          "answer": "A",
+          "selectedOption": "双方确认后，运营核验批准才调整计佣金额"
+        },
+        {
+          "questionId": "MC06",
+          "answer": "A",
+          "selectedOption": "保留原账单，下月记差额调整"
+        },
+        {
+          "questionId": "MC07",
+          "answer": "A",
+          "selectedOption": "骑手、维修员、卖家主动缴纳；客户仍直接付给对方"
+        },
+        {
+          "questionId": "MC08",
+          "answer": "A",
+          "selectedOption": "纳入，沿用维修规则并单独设置比例"
+        }
+      ]
+    }
+  ],
+  "commissionDetailRules": {
+    "confirmedAt": "2026-10-13",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "sourceBatch": "commission-detail-round-14-20261013",
+    "rateConfiguration": {
+      "mode": "per-business",
+      "numericRatesConfirmed": false
+    },
+    "rateSnapshot": {
+      "at": "transaction-confirmation",
+      "newRatesAffectExisting": false
+    },
+    "billingPeriod": {
+      "at": "successful-completion-or-sale-confirmation",
+      "timezone": "Asia/Shanghai"
+    },
+    "errandEligibility": {
+      "explicitCompletion": true,
+      "conditionalAutomaticCompletion": true,
+      "reference": "RUN11",
+      "requiresNoObjectionDuring24Hours": true,
+      "changesRatingQualification": false,
+      "changesPersonalIncomeDefinition": false
+    },
+    "adjustmentApproval": {
+      "mutualConfirmationRequired": true,
+      "operatorVerificationApprovalRequired": true,
+      "serviceMediationGranted": false,
+      "provesActualRefund": false
+    },
+    "afterBillingAdjustment": {
+      "keepOriginalBill": true,
+      "recordDifferenceIn": "next-month",
+      "automaticTransfer": false
+    },
+    "collection": {
+      "mode": "provider-seller-actively-pays-commission",
+      "customerPaysCounterpartyDirectly": true,
+      "automaticDebit": false
+    },
+    "otherBusiness": {
+      "commissionIncluded": true,
+      "priceFloorFollowsRepair": true,
+      "rateConfiguredSeparately": true
+    },
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "MP01",

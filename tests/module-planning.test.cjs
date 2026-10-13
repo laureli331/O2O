@@ -9,6 +9,82 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+const expectedCommissionDetails = {
+  confirmedAt: '2026-10-13', scope: ['跑腿', '维修', '闲置', '其它'], sourceBatch: 'commission-detail-round-14-20261013',
+  rateConfiguration: { mode: 'per-business', numericRatesConfirmed: false },
+  rateSnapshot: { at: 'transaction-confirmation', newRatesAffectExisting: false },
+  billingPeriod: { at: 'successful-completion-or-sale-confirmation', timezone: 'Asia/Shanghai' },
+  errandEligibility: { explicitCompletion: true, conditionalAutomaticCompletion: true, reference: 'RUN11', requiresNoObjectionDuring24Hours: true, changesRatingQualification: false, changesPersonalIncomeDefinition: false },
+  adjustmentApproval: { mutualConfirmationRequired: true, operatorVerificationApprovalRequired: true, serviceMediationGranted: false, provesActualRefund: false },
+  afterBillingAdjustment: { keepOriginalBill: true, recordDifferenceIn: 'next-month', automaticTransfer: false },
+  collection: { mode: 'provider-seller-actively-pays-commission', customerPaysCounterpartyDirectly: true, automaticDebit: false },
+  otherBusiness: { commissionIncluded: true, priceFloorFollowsRepair: true, rateConfiguredSeparately: true },
+  readyForImplementation: false
+};
+
+test('fourteenth-round reply maps fourth B and other A answers without altering historical approvals', () => {
+  assert.equal(records.commissionDetailDecisionBatches.length, 1);
+  const batch = records.commissionDetailDecisionBatches[0];
+  assert.equal(batch.id, 'commission-detail-round-14-20261013');
+  assert.equal(batch.date, '2026-10-13');
+  assert.equal(batch.userReply, '全A, 4B');
+  assert.deepEqual(batch.scope, ['跑腿', '维修', '闲置', '其它']);
+  assert.equal(batch.questionDocument, 'docs/module-specs/monthly-commission-questions-20261013.md');
+  const questions = read(batch.questionDocument);
+  assert(questions.includes('1A、2A、3A、4B、5A、6A、7A、8A'));
+  const offered = [...questions.matchAll(/^\| [1-8]（(MC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(batch.answers.map(x => x.answer), ['A', 'A', 'A', 'B', 'A', 'A', 'A', 'A']);
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.questionId, 'MC' + String(index + 1).padStart(2, '0'));
+    assert.equal(answer.questionId, offered[index][1]);
+    assert.equal(answer.selectedOption, offered[index][answer.answer === 'B' ? 4 : 3].trim());
+  });
+  assert.deepEqual(handoff.commissionDetailDecisionBatches, records.commissionDetailDecisionBatches);
+  assert.deepEqual(records.commissionDetailRules, expectedCommissionDetails);
+  assert.deepEqual(handoff.commissionDetailRules, expectedCommissionDetails);
+  assert.deepEqual(records.commissionDesignApprovals[0].approvedRules.scope, ['跑腿', '维修', '闲置']);
+  const income = handoff.items.find(x => x.id === 'HD02');
+  assert.equal(income.confirmed.include, '本人提供服务且已确认完成的服务费');
+  assert(income.pending.includes('自动完成计入口径'));
+  assert.equal(income.confirmed.disclosure, '非到账金额');
+  const doc = read('docs/module-specs/monthly-commission-detail-rules.md');
+  assert(doc.includes('不从发布/期望时间/午夜起算'));
+  assert(doc.includes('也不产生付款成功记录'));
+  assert(doc.includes('自动完成计入口径仍为原待定事项'));
+  assert(doc.includes('没有实现或验证真实费率配置'));
+});
+
+test('commission details prevent retroactive rates, completed bill overwrites and automatic income or settlement changes', () => {
+  for (const mutate of [
+    c => { c.scope = ['跑腿', '维修', '闲置']; },
+    c => { c.rateConfiguration.numericRatesConfirmed = true; },
+    c => { c.rateSnapshot.at = 'completion-time'; },
+    c => { c.rateSnapshot.newRatesAffectExisting = true; },
+    c => { c.billingPeriod.at = 'transaction-start-time'; },
+    c => { c.errandEligibility.conditionalAutomaticCompletion = false; },
+    c => { c.errandEligibility.requiresNoObjectionDuring24Hours = false; },
+    c => { c.errandEligibility.changesRatingQualification = true; },
+    c => { c.errandEligibility.changesPersonalIncomeDefinition = true; },
+    c => { c.adjustmentApproval.mutualConfirmationRequired = false; },
+    c => { c.adjustmentApproval.operatorVerificationApprovalRequired = false; },
+    c => { c.adjustmentApproval.serviceMediationGranted = true; },
+    c => { c.adjustmentApproval.provesActualRefund = true; },
+    c => { c.afterBillingAdjustment.keepOriginalBill = false; },
+    c => { c.afterBillingAdjustment.recordDifferenceIn = 'original-month'; },
+    c => { c.afterBillingAdjustment.automaticTransfer = true; },
+    c => { c.collection.automaticDebit = true; },
+    c => { c.collection.customerPaysCounterpartyDirectly = false; },
+    c => { c.otherBusiness.priceFloorFollowsRepair = false; },
+    c => { c.otherBusiness.rateConfiguredSeparately = false; },
+    c => { c.readyForImplementation = true; }
+  ]) {
+    const changed = structuredClone(records.commissionDetailRules);
+    mutate(changed);
+    assert.throws(() => assert.deepEqual(changed, expectedCommissionDetails));
+  }
+});
+
 const expectedCommissionPrinciples = {
   scope: ['跑腿', '维修', '闲置'], incomeDirection: 'monthly-proportional-commission',
   initialAmount: { source: 'initial-mutually-confirmed-transaction-price', locked: true, preserveOriginalRecord: true, perBusinessMappingConfirmed: false },
@@ -39,7 +115,7 @@ test('commission recommendation approval is dated, synchronized and distinct fro
   assert(rules.includes('仅已完成/已成交的交易计入佣金'));
   assert(rules.includes('新增独立调整不是重新开放原费用编辑'));
   assert(rules.includes('不把记录当退款已到账'));
-  assert(rules.includes('其它适用性需单独确认'));
+  assert(rules.includes('第十四轮已确认其它纳入'));
   assert.equal(Object.hasOwn(records, 'priceFloorDecisionBatches'), false);
   assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
 });
@@ -1114,19 +1190,25 @@ test('price-floor human intent is retained without inventing an initial price or
   assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
 });
 
-test('fourteenth-round commission questions remain pending without treating approval as thirteenth-round all-A', () => {
+test('fifteenth-round numbers and billing options stay pending without inventing percentage defaults', () => {
   const original = read('docs/module-specs/price-floor-questions-20261013.md');
   assert(original.includes('原表未逐题作答'));
   assert.equal([...original.matchAll(/^\| [1-8]（PF\d{2}） /gm)].length, 8);
-  const questions = read('docs/module-specs/monthly-commission-questions-20261013.md');
+  const questions = read('docs/module-specs/commission-billing-questions-20261013.md');
   assert(questions.includes('8题全部待答'));
-  const offered = [...questions.matchAll(/^\| [1-8]（(MC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  const offered = [...questions.matchAll(/^\| [1-8]（(CB\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length, 8);
-  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => 'MC' + String(index + 1).padStart(2, '0')));
+  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => 'CB' + String(index + 1).padStart(2, '0')));
   assert.equal(Object.hasOwn(records, 'priceFloorDecisionBatches'), false);
   assert.equal(Object.hasOwn(handoff, 'priceFloorDecisionBatches'), false);
-  assert.equal(Object.hasOwn(records, 'commissionDetailDecisionBatches'), false);
-  assert.equal(Object.hasOwn(handoff, 'commissionDetailDecisionBatches'), false);
+  assert.equal(Object.hasOwn(records, 'commissionBillingDecisionBatches'), false);
+  assert.equal(Object.hasOwn(handoff, 'commissionBillingDecisionBatches'), false);
+  assert.equal(records.commissionDetailRules.rateConfiguration.numericRatesConfirmed, false);
+  assert.equal(Object.hasOwn(records.commissionDetailRules.rateConfiguration, 'rates'), false);
+  for (const key of ['rounding', 'calculationOrder', 'negativeBalancePolicy', 'paymentChannel', 'dueDays', 'overdueAction', 'scheduledBillTime']) {
+    assert.equal(Object.hasOwn(records.commissionDetailRules, key), false);
+  }
+  assert(questions.includes('“全A”不能替代四个数值'));
   assert(original.includes('不把第十二轮“其它全A”解释为本轮答案'));
   for (const file of fs.readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read('docs/module-specs/' + file);
