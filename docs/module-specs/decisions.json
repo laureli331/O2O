@@ -913,6 +913,119 @@
     },
     "readyForImplementation": false
   },
+  "commissionBillingDecisionBatches": [
+    {
+      "id": "commission-billing-round-15-20261013",
+      "date": "2026-10-13",
+      "userReply": "1. 跑腿15, 维修15, 闲置5, 其它还未确定, 你的建议是什么? 其它三项的定价你认为怎么样?\n\n6) 72h\n\n全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/commission-billing-questions-20261013.md",
+      "answers": [
+        {
+          "questionId": "CB01",
+          "answer": "CUSTOM",
+          "selectedOption": "跑腿15%、维修15%、闲置5%；其它未确定",
+          "pending": [
+            "其它比例"
+          ]
+        },
+        {
+          "questionId": "CB02",
+          "answer": "A",
+          "selectedOption": "每笔交易按锁定比例计算，再按业务汇总"
+        },
+        {
+          "questionId": "CB03",
+          "answer": "A",
+          "selectedOption": "每次计算四舍五入到小数点后2位"
+        },
+        {
+          "questionId": "CB04",
+          "answer": "A",
+          "selectedOption": "剩余金额继续结转抵扣，不自动退现金"
+        },
+        {
+          "questionId": "CB05",
+          "answer": "A",
+          "selectedOption": "探索小程序内支付平台佣金，资格通过后启用"
+        },
+        {
+          "questionId": "CB06",
+          "answer": "CUSTOM",
+          "selectedOption": "出账成功后72小时",
+          "userClarification": "6) 72h"
+        },
+        {
+          "questionId": "CB07",
+          "answer": "A",
+          "selectedOption": "提醒并限制新的接单/闲置交易，保留旧服务处理和申诉入口"
+        },
+        {
+          "questionId": "CB08",
+          "answer": "A",
+          "selectedOption": "次月1日00:10"
+        }
+      ]
+    }
+  ],
+  "commissionBillingRules": {
+    "confirmedAt": "2026-10-13",
+    "sourceBatch": "commission-billing-round-15-20261013",
+    "rateConfiguration": {
+      "ratesBasisPoints": {
+        "跑腿": 1500,
+        "维修": 1500,
+        "闲置": 500,
+        "其它": null
+      },
+      "allRatesConfirmed": false,
+      "missingRateIsZero": false,
+      "otherRecommendationApproved": false
+    },
+    "calculation": {
+      "order": "per-transaction-then-business-sum",
+      "rounding": "half-up",
+      "decimalPlaces": 2
+    },
+    "excessCredit": {
+      "policy": "carry-forward-offset",
+      "automaticCashRefund": false
+    },
+    "collectionDirection": {
+      "mode": "explore-miniapp-commission-payment-after-qualification",
+      "actualChannelConfirmed": false,
+      "qualificationVerified": false,
+      "automaticDebit": false,
+      "customerFundsCustody": false
+    },
+    "paymentDeadline": {
+      "durationHours": 72,
+      "startsAt": "actual-successful-bill-issuance",
+      "timezone": "Asia/Shanghai",
+      "cutoffComparisonConfirmed": false
+    },
+    "overdue": {
+      "remind": true,
+      "restrictNewBusinessDirection": true,
+      "retainExistingServiceAndAppealAccess": true,
+      "detailedScopeConfirmed": false,
+      "automaticPenalty": false,
+      "automaticCancellation": false
+    },
+    "billingSchedule": {
+      "monthOffset": 1,
+      "day": 1,
+      "time": "00:10",
+      "timezone": "Asia/Shanghai",
+      "scheduledTimeIsIssuanceSuccess": false
+    },
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "MP01",

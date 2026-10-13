@@ -1190,19 +1190,32 @@ test('price-floor human intent is retained without inventing an initial price or
   assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
 });
 
-test('fifteenth-round numbers and billing options stay pending without inventing percentage defaults', () => {
+test('fifteenth-round answers preserve custom percentages and 72 hours without rewriting original options or earlier batches', () => {
   const original = read('docs/module-specs/price-floor-questions-20261013.md');
   assert(original.includes('原表未逐题作答'));
   assert.equal([...original.matchAll(/^\| [1-8]（PF\d{2}） /gm)].length, 8);
   const questions = read('docs/module-specs/commission-billing-questions-20261013.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('第6题用户自定义为出账成功后72小时'));
   const offered = [...questions.matchAll(/^\| [1-8]（(CB\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length, 8);
   assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => 'CB' + String(index + 1).padStart(2, '0')));
   assert.equal(Object.hasOwn(records, 'priceFloorDecisionBatches'), false);
   assert.equal(Object.hasOwn(handoff, 'priceFloorDecisionBatches'), false);
-  assert.equal(Object.hasOwn(records, 'commissionBillingDecisionBatches'), false);
-  assert.equal(Object.hasOwn(handoff, 'commissionBillingDecisionBatches'), false);
+  assert.equal(records.commissionBillingDecisionBatches.length, 1);
+  const batch = records.commissionBillingDecisionBatches[0];
+  assert.equal(batch.id, 'commission-billing-round-15-20261013');
+  assert.equal(batch.userReply, '1. 跑腿15, 维修15, 闲置5, 其它还未确定, 你的建议是什么? 其它三项的定价你认为怎么样?\n\n6) 72h\n\n全A');
+  assert.equal(batch.questionDocument, 'docs/module-specs/commission-billing-questions-20261013.md');
+  assert.deepEqual(batch.scope, ['跑腿', '维修', '闲置', '其它']);
+  assert.deepEqual(batch.answers.map(x => x.questionId), offered.map(x => x[1]));
+  assert.deepEqual(batch.answers.map(x => x.answer), ['CUSTOM', 'A', 'A', 'A', 'A', 'CUSTOM', 'A', 'A']);
+  for (const index of [1, 2, 3, 4, 6, 7]) assert.equal(batch.answers[index].selectedOption, offered[index][3].trim());
+  assert.equal(batch.answers[0].selectedOption, '跑腿15%、维修15%、闲置5%；其它未确定');
+  assert.deepEqual(batch.answers[0].pending, ['其它比例']);
+  assert.equal(batch.answers[5].selectedOption, '出账成功后72小时');
+  assert.equal(batch.answers[5].userClarification, '6) 72h');
+  assert.equal(offered[5][3].trim(), '出账成功后7个自然日');
+  assert.deepEqual(handoff.commissionBillingDecisionBatches, records.commissionBillingDecisionBatches);
   assert.equal(records.commissionDetailRules.rateConfiguration.numericRatesConfirmed, false);
   assert.equal(Object.hasOwn(records.commissionDetailRules.rateConfiguration, 'rates'), false);
   for (const key of ['rounding', 'calculationOrder', 'negativeBalancePolicy', 'paymentChannel', 'dueDays', 'overdueAction', 'scheduledBillTime']) {
@@ -1223,6 +1236,73 @@ test('fifteenth-round numbers and billing options stay pending without inventing
     }
   }
   assert(read('docs/module-specs/fee-rules.md').includes('当前仅运行文档一致性检查'));
+});
+
+test('confirmed billing rules synchronize rates, rounding, actual issuance timing and inactive payment gates', () => {
+  const expected = {
+    confirmedAt: '2026-10-13', sourceBatch: 'commission-billing-round-15-20261013',
+    rateConfiguration: { ratesBasisPoints: { '跑腿': 1500, '维修': 1500, '闲置': 500, '其它': null }, allRatesConfirmed: false, missingRateIsZero: false, otherRecommendationApproved: false },
+    calculation: { order: 'per-transaction-then-business-sum', rounding: 'half-up', decimalPlaces: 2 },
+    excessCredit: { policy: 'carry-forward-offset', automaticCashRefund: false },
+    collectionDirection: { mode: 'explore-miniapp-commission-payment-after-qualification', actualChannelConfirmed: false, qualificationVerified: false, automaticDebit: false, customerFundsCustody: false },
+    paymentDeadline: { durationHours: 72, startsAt: 'actual-successful-bill-issuance', timezone: 'Asia/Shanghai', cutoffComparisonConfirmed: false },
+    overdue: { remind: true, restrictNewBusinessDirection: true, retainExistingServiceAndAppealAccess: true, detailedScopeConfirmed: false, automaticPenalty: false, automaticCancellation: false },
+    billingSchedule: { monthOffset: 1, day: 1, time: '00:10', timezone: 'Asia/Shanghai', scheduledTimeIsIssuanceSuccess: false },
+    readyForImplementation: false
+  };
+  assert.deepEqual(records.commissionBillingRules, expected);
+  assert.deepEqual(handoff.commissionBillingRules, expected);
+  assert.deepEqual(records.commissionDetailRules, expectedCommissionDetails);
+  assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
+  const rules = read('docs/module-specs/commission-billing-rules.md');
+  for (const phrase of ['null不是0%', '不先合计金额再舍入', '实际出账成功', '不自动退现金', '没有实现或验证真实支付', '后续差额应采用原佣金重算差', '是否阻止新的交易确认另待用户明确']) assert(rules.includes(phrase), phrase);
+});
+
+test('published commission examples match exact cent arithmetic including half-cent and per-order aggregation differences', () => {
+  // 验证交接样例数学，不代表实现了生产计佣接口。
+  const cents = value => BigInt(value.replace('.', ''));
+  const format = value => `${value / 100n}.${String(value % 100n).padStart(2, '0')}`;
+  const fee = (amount, basisPoints) => (amount * basisPoints + 5000n) / 10000n;
+  const doc = read('docs/module-specs/commission-billing-rules.md');
+  const rows = [...doc.matchAll(/^\| (?:跑腿|维修服务费|闲置成交价)(\d+\.\d{2})元[^|]* \| (\d+)% \| (\d+\.\d{2})元 \| (\d+\.\d{2})元 \|\r?$/gm)];
+  assert.equal(rows.length, 4);
+  for (const row of rows) {
+    const amount = cents(row[1]);
+    const result = fee(amount, BigInt(row[2]) * 100n);
+    assert.equal(format(result), row[3]);
+    assert.equal(format(amount - result), row[4]);
+  }
+  assert.equal(fee(10n, 1500n) + fee(10n, 1500n), 4n);
+  assert.equal(fee(20n, 1500n), 3n);
+  assert(doc.includes('汇总0.04元'));
+  assert(doc.includes('再得0.03元'));
+  assert(doc.includes('本月应缴为0、剩余10元'));
+});
+
+test('72-hour deadline examples start from real success and next-round proposals cannot fill missing rates', () => {
+  const doc = read('docs/module-specs/commission-billing-rules.md');
+  const issue = Date.parse('2026-11-01T00:10:00+08:00');
+  const delayedIssue = Date.parse('2026-11-01T01:00:00+08:00');
+  const duration = records.commissionBillingRules.paymentDeadline.durationHours * 3600000;
+  assert.equal(issue + duration, Date.parse('2026-11-04T00:10:00+08:00'));
+  assert.equal(delayedIssue + duration, Date.parse('2026-11-04T01:00:00+08:00'));
+  assert(doc.includes('2026-11-04 00:10:00'));
+  assert(doc.includes('应从01:00计算'));
+  const questions = read('docs/module-specs/commission-operation-questions-20261013.md');
+  assert(questions.includes('8题全部待答'));
+  assert.equal([...questions.matchAll(/^\| [1-8]（CO\d{2}） /gm)].length, 8);
+  assert.equal(Object.hasOwn(records, 'commissionOperationDecisionBatches'), false);
+  assert.equal(Object.hasOwn(handoff, 'commissionOperationDecisionBatches'), false);
+  const assessment = read('docs/module-specs/commission-rate-assessment-20261013.md');
+  assert(assessment.includes('尚未获用户确认'));
+  assert(assessment.includes('建议10%'));
+  assert(assessment.includes('不是基于成本测算或行业标准'));
+  assert(assessment.includes('具体合规适用仍需核验'));
+  for (const file of ['business-addendum.md', 'page-spec.md', 'decisions-and-gaps.md']) {
+    const text = read('docs/ui-development-handoff/' + file);
+    assert(text.includes('其它未定；第6题自定义出账成功后72小时'));
+    assert(text.includes('commission-billing-rules.md'));
+  }
 });
 
 test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {

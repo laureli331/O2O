@@ -28,4 +28,4 @@
 
 ## 后续缺口
 
-[第十四轮8题](monthly-commission-questions-20261013.md)已确认费率组织、生效时点、月份、自动完成、调整确认与跨月处理、主动缴纳及其它纳入，详见[抽佣细则](monthly-commission-detail-rules.md)。下一轮[第十五轮8题](commission-billing-questions-20261013.md)讨论具体金额与账单缴纳。实际百分比、金额精度/舍入、支付渠道与资格、欠费和异议、发票/报表、旧交易范围、证据权限/保存期限另议；闲置交易确认/完成/退款全流程、维修阶段基准和取消后重开仍待补齐。
+[第十四轮8题](monthly-commission-questions-20261013.md)已确认费率组织、生效时点、月份、自动完成、调整确认与跨月处理、主动缴纳及其它纳入，详见[抽佣细则](monthly-commission-detail-rules.md)。[第十五轮8题](commission-billing-questions-20261013.md)已确认三项费率、每笔舍入后汇总、抵扣结转、72小时及出账计划等，见[账单规则](commission-billing-rules.md)。其它比例、支付渠道与资格、欠费细则和异议、发票/报表、旧交易范围、证据权限/保存期限另议；闲置交易确认/完成/退款全流程、维修阶段基准和取消后重开仍待补齐。
