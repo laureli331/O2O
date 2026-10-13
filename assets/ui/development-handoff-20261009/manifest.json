@@ -203,8 +203,8 @@
     },
     {
       "path": "decisions.json",
-      "bytes": 49884,
-      "sha256": "81623F562BBC09768436BF5238DD9B0DECFE934A6F9B3CC9592A38B09B8262EF"
+      "bytes": 51991,
+      "sha256": "82B720CEFA80D7C44D0CF62AB857F065C66B51BA2008BEACE4B12E750C6D31A8"
     },
     {
       "path": "design-tokens.json",

@@ -743,6 +743,68 @@
       "requestDocument": "docs/module-specs/monthly-commission-request-20261013.md"
     }
   ],
+  "commissionDesignApprovals": [
+    {
+      "id": "CM-DESIGN-01",
+      "date": "2026-10-13",
+      "userReply": "没问题, 继续",
+      "sourceDocument": "docs/module-specs/monthly-commission-request-20261013.md",
+      "rulesDocument": "docs/module-specs/monthly-commission-rules.md",
+      "approvalKind": "previous-recommendation-approval-not-table-all-A",
+      "approvedRules": {
+        "scope": [
+          "跑腿",
+          "维修",
+          "闲置"
+        ],
+        "incomeDirection": "monthly-proportional-commission",
+        "initialAmount": {
+          "source": "initial-mutually-confirmed-transaction-price",
+          "locked": true,
+          "preserveOriginalRecord": true,
+          "perBusinessMappingConfirmed": false
+        },
+        "ordinaryPriceChanges": {
+          "minimum": "initial-locked-price",
+          "increaseRequiresMutualConfirmation": true,
+          "preserveHistory": true
+        },
+        "adjustments": {
+          "separateRecords": true,
+          "reasons": [
+            "退款",
+            "减免",
+            "误录"
+          ],
+          "preserveReason": true,
+          "preserveEvidence": true,
+          "preserveConfirmation": true,
+          "overwriteOriginal": false,
+          "approvalRouteConfirmed": false
+        },
+        "billing": {
+          "cadence": "month-end",
+          "source": "eligible-confirmed-transaction-records",
+          "readsEditableDisplayPrice": false,
+          "eligibleStates": [
+            "已完成",
+            "已成交"
+          ],
+          "allCompletionModesConfirmed": false
+        }
+      },
+      "readyForImplementation": false,
+      "pending": [
+        "实际比例/配置方式/比例冻结时点",
+        "交易归属月份及月末截止",
+        "跑腿自动完成计佣资格",
+        "调整确认/核验及跨月差额",
+        "收取渠道/资格/期限/欠费异议",
+        "其它适用性/闲置流程/维修阶段基准/旧交易范围"
+      ],
+      "nextQuestionsDocument": "docs/module-specs/monthly-commission-questions-20261013.md"
+    }
+  ],
   "items": [
     {
       "id": "MP01",

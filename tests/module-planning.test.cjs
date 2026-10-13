@@ -9,6 +9,65 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+const expectedCommissionPrinciples = {
+  scope: ['跑腿', '维修', '闲置'], incomeDirection: 'monthly-proportional-commission',
+  initialAmount: { source: 'initial-mutually-confirmed-transaction-price', locked: true, preserveOriginalRecord: true, perBusinessMappingConfirmed: false },
+  ordinaryPriceChanges: { minimum: 'initial-locked-price', increaseRequiresMutualConfirmation: true, preserveHistory: true },
+  adjustments: { separateRecords: true, reasons: ['退款', '减免', '误录'], preserveReason: true, preserveEvidence: true, preserveConfirmation: true, overwriteOriginal: false, approvalRouteConfirmed: false },
+  billing: { cadence: 'month-end', source: 'eligible-confirmed-transaction-records', readsEditableDisplayPrice: false, eligibleStates: ['已完成', '已成交'], allCompletionModesConfirmed: false }
+};
+function verifyCommissionApproval(data) {
+  assert.equal(data.commissionDesignApprovals.length, 1);
+  const approval = data.commissionDesignApprovals[0];
+  assert.equal(approval.userReply, '没问题, 继续');
+  assert.equal(approval.approvalKind, 'previous-recommendation-approval-not-table-all-A');
+  assert.deepEqual(approval.approvedRules, expectedCommissionPrinciples);
+  assert.equal(approval.readyForImplementation, false);
+  assert(approval.pending.length >= 6);
+}
+
+test('commission recommendation approval is dated, synchronized and distinct from unselected table options', () => {
+  verifyCommissionApproval(records);
+  verifyCommissionApproval(handoff);
+  assert.deepEqual(handoff.commissionDesignApprovals, records.commissionDesignApprovals);
+  const approval = records.commissionDesignApprovals[0];
+  assert.equal(approval.date, '2026-10-13');
+  assert.equal(approval.rulesDocument, 'docs/module-specs/monthly-commission-rules.md');
+  assert.equal(approval.sourceDocument, 'docs/module-specs/monthly-commission-request-20261013.md');
+  assert.equal(approval.nextQuestionsDocument, 'docs/module-specs/monthly-commission-questions-20261013.md');
+  const rules = read(approval.rulesDocument);
+  assert(rules.includes('仅已完成/已成交的交易计入佣金'));
+  assert(rules.includes('新增独立调整不是重新开放原费用编辑'));
+  assert(rules.includes('不把记录当退款已到账'));
+  assert(rules.includes('其它适用性需单独确认'));
+  assert.equal(Object.hasOwn(records, 'priceFloorDecisionBatches'), false);
+  assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
+});
+
+test('commission principles reject editable billing prices, unfinished orders, overwritten refunds and invented fees', () => {
+  for (const mutate of [
+    c => { c.scope.push('其它'); },
+    c => { c.initialAmount.source = 'published-budget'; },
+    c => { c.initialAmount.locked = false; },
+    c => { c.initialAmount.perBusinessMappingConfirmed = true; },
+    c => { c.ordinaryPriceChanges.minimum = 'none'; },
+    c => { c.ordinaryPriceChanges.increaseRequiresMutualConfirmation = false; },
+    c => { c.adjustments.separateRecords = false; },
+    c => { c.adjustments.overwriteOriginal = true; },
+    c => { c.adjustments.preserveEvidence = false; },
+    c => { c.adjustments.approvalRouteConfirmed = true; },
+    c => { c.billing.readsEditableDisplayPrice = true; },
+    c => { c.billing.eligibleStates.push('已选人'); },
+    c => { c.billing.allCompletionModesConfirmed = true; },
+    c => { c.billing.rate = 0.05; },
+    c => { c.billing.automaticDebit = true; }
+  ]) {
+    const changed = structuredClone(records);
+    mutate(changed.commissionDesignApprovals[0].approvedRules);
+    assert.throws(() => verifyCommissionApproval(changed));
+  }
+});
+
 test('monthly commission direction preserves the human purpose and does not select a rate or collection method', () => {
   assert.equal(records.commissionPlanningRequests.length, 1);
   const request = records.commissionPlanningRequests[0];
@@ -32,7 +91,8 @@ test('monthly commission direction preserves the human purpose and does not sele
 
 test('commission evaluation keeps the old baseline, operational limitations and suggestions distinct', () => {
   const doc = read(records.commissionPlanningRequests[0].requestDocument);
-  assert(doc.includes('建议方案，待用户确认'));
+  assert(doc.includes('原建议与评估记录'));
+  assert(doc.includes('用户已确认通用方案'));
   assert(doc.includes('月底账单使用明确的计费记录，不读取可随时改动的当前展示价'));
   assert(doc.includes('初始就少报价格、虚假取消后线下成交'));
   assert(doc.includes('不确认实际资格或替用户选择支付方式'));
@@ -1054,15 +1114,20 @@ test('price-floor human intent is retained without inventing an initial price or
   assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
 });
 
-test('thirteenth-round price-floor proposals stay pending and all planning document links resolve', () => {
-  const questions = read('docs/module-specs/price-floor-questions-20261013.md');
+test('fourteenth-round commission questions remain pending without treating approval as thirteenth-round all-A', () => {
+  const original = read('docs/module-specs/price-floor-questions-20261013.md');
+  assert(original.includes('原表未逐题作答'));
+  assert.equal([...original.matchAll(/^\| [1-8]（PF\d{2}） /gm)].length, 8);
+  const questions = read('docs/module-specs/monthly-commission-questions-20261013.md');
   assert(questions.includes('8题全部待答'));
-  const offered = [...questions.matchAll(/^\| [1-8]（(PF\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  const offered = [...questions.matchAll(/^\| [1-8]（(MC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length, 8);
-  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => 'PF' + String(index + 1).padStart(2, '0')));
+  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => 'MC' + String(index + 1).padStart(2, '0')));
   assert.equal(Object.hasOwn(records, 'priceFloorDecisionBatches'), false);
   assert.equal(Object.hasOwn(handoff, 'priceFloorDecisionBatches'), false);
-  assert(questions.includes('不把第十二轮“其它全A”解释为本轮答案'));
+  assert.equal(Object.hasOwn(records, 'commissionDetailDecisionBatches'), false);
+  assert.equal(Object.hasOwn(handoff, 'commissionDetailDecisionBatches'), false);
+  assert(original.includes('不把第十二轮“其它全A”解释为本轮答案'));
   for (const file of fs.readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read('docs/module-specs/' + file);
     for (const match of doc.matchAll(/\]\(([^)]+)\)/g)) {
