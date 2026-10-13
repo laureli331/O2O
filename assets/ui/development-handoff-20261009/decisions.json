@@ -1026,6 +1026,140 @@
     },
     "readyForImplementation": false
   },
+  "commissionOperationDecisionBatches": [
+    {
+      "id": "commission-operation-round-16-20261013",
+      "date": "2026-10-13",
+      "userReply": "维修, 闲置及其它封顶\n全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/commission-operation-questions-20261013.md",
+      "answers": [
+        {
+          "questionId": "CO01",
+          "answer": "A",
+          "selectedOption": "10%作为试运行费率"
+        },
+        {
+          "questionId": "CO02",
+          "answer": "A",
+          "selectedOption": "设置封顶，金额另行确定",
+          "userClarification": "维修, 闲置及其它封顶",
+          "capScope": [
+            "维修",
+            "闲置",
+            "其它"
+          ]
+        },
+        {
+          "questionId": "CO03",
+          "answer": "A",
+          "selectedOption": "允许双方确认并留存真实降价记录，初始价保留；计佣基数减少另经运营核验批准"
+        },
+        {
+          "questionId": "CO04",
+          "answer": "A",
+          "selectedOption": "向承担佣金方展示比例、预估佣金、月结规则，并确认知悉"
+        },
+        {
+          "questionId": "CO05",
+          "answer": "A",
+          "selectedOption": "允许发布/申请，暂不开放新交易确认"
+        },
+        {
+          "questionId": "CO06",
+          "answer": "A",
+          "selectedOption": "截止时刻仍未核实缴清即逾期"
+        },
+        {
+          "questionId": "CO07",
+          "answer": "A",
+          "selectedOption": "暂缓争议部分的催缴和限制，无争议部分仍须按期缴纳"
+        },
+        {
+          "questionId": "CO08",
+          "answer": "A",
+          "selectedOption": "核实全部逾期应缴金额结清后自动解除欠费限制"
+        }
+      ]
+    }
+  ],
+  "commissionOperationRules": {
+    "confirmedAt": "2026-10-13",
+    "sourceBatch": "commission-operation-round-16-20261013",
+    "rateConfiguration": {
+      "ratesBasisPoints": {
+        "跑腿": 1500,
+        "维修": 1500,
+        "闲置": 500,
+        "其它": 1000
+      },
+      "allRatesConfirmed": true,
+      "otherRateTrial": true,
+      "trialDurationConfirmed": false
+    },
+    "commissionCaps": {
+      "scope": [
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "amountsCents": {
+        "维修": null,
+        "闲置": null,
+        "其它": null
+      },
+      "amountsConfirmed": false,
+      "unitConfirmed": false,
+      "lockTimeConfirmed": false,
+      "errandCapDecisionConfirmed": false
+    },
+    "priceAdjustment": {
+      "mutualActualReductionAllowed": true,
+      "preserveInitialPrice": true,
+      "unilateralReductionAllowed": false,
+      "reducedCommissionBaseRequiresOperatorApproval": true,
+      "operatorApprovalRequiredForActualAgreement": false,
+      "provesActualRefund": false,
+      "serviceMediationGranted": false
+    },
+    "preConfirmationDisclosure": {
+      "to": "commission-payer",
+      "showRate": true,
+      "showEstimatedCommission": true,
+      "showMonthlyBilling": true,
+      "acknowledgmentRequired": true,
+      "detailedFieldsConfirmed": false
+    },
+    "missingRatePolicy": {
+      "publishingAllowed": true,
+      "applicationAllowed": true,
+      "newTransactionConfirmationAllowed": false,
+      "implicitZero": false
+    },
+    "paymentDeadline": {
+      "durationHours": 72,
+      "startsAt": "actual-successful-bill-issuance",
+      "comparison": "now-greater-than-or-equal-to-deadline-and-unverified-unpaid",
+      "timezone": "Asia/Shanghai"
+    },
+    "billingDispute": {
+      "suspendDisputedPartCollectionAndRestriction": true,
+      "undisputedPartDueAsScheduled": true,
+      "detailedProcedureConfirmed": false
+    },
+    "restrictionRecovery": {
+      "automaticAfterVerifiedAllOverduePayableSettled": true,
+      "removeOtherRestrictionReasons": false,
+      "partialPaymentIsFullSettlement": false,
+      "existingServiceAndAppealAccessRetained": true
+    },
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "HD01",

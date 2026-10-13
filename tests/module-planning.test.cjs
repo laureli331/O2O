@@ -1279,7 +1279,7 @@ test('published commission examples match exact cent arithmetic including half-c
   assert(doc.includes('本月应缴为0、剩余10元'));
 });
 
-test('72-hour deadline examples start from real success and next-round proposals cannot fill missing rates', () => {
+test('72-hour deadline examples and historical rate assessment remain traceable after subsequent approvals', () => {
   const doc = read('docs/module-specs/commission-billing-rules.md');
   const issue = Date.parse('2026-11-01T00:10:00+08:00');
   const delayedIssue = Date.parse('2026-11-01T01:00:00+08:00');
@@ -1289,20 +1289,100 @@ test('72-hour deadline examples start from real success and next-round proposals
   assert(doc.includes('2026-11-04 00:10:00'));
   assert(doc.includes('应从01:00计算'));
   const questions = read('docs/module-specs/commission-operation-questions-20261013.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('本轮8题全A'));
   assert.equal([...questions.matchAll(/^\| [1-8]（CO\d{2}） /gm)].length, 8);
-  assert.equal(Object.hasOwn(records, 'commissionOperationDecisionBatches'), false);
-  assert.equal(Object.hasOwn(handoff, 'commissionOperationDecisionBatches'), false);
+  assert.equal(records.commissionOperationDecisionBatches.length, 1);
+  assert.deepEqual(handoff.commissionOperationDecisionBatches, records.commissionOperationDecisionBatches);
   const assessment = read('docs/module-specs/commission-rate-assessment-20261013.md');
   assert(assessment.includes('尚未获用户确认'));
   assert(assessment.includes('建议10%'));
   assert(assessment.includes('不是基于成本测算或行业标准'));
   assert(assessment.includes('具体合规适用仍需核验'));
+  assert(assessment.includes('以下是前轮评估历史'));
   for (const file of ['business-addendum.md', 'page-spec.md', 'decisions-and-gaps.md']) {
     const text = read('docs/ui-development-handoff/' + file);
     assert(text.includes('其它未定；第6题自定义出账成功后72小时'));
     assert(text.includes('commission-billing-rules.md'));
   }
+});
+
+test('sixteenth-round all-A reply preserves the original options and explicitly extends commission caps to three businesses', () => {
+  const [batch] = records.commissionOperationDecisionBatches;
+  assert.equal(batch.id, 'commission-operation-round-16-20261013');
+  assert.equal(batch.userReply, '维修, 闲置及其它封顶\n全A');
+  const offered = [...read(batch.questionDocument).matchAll(/^\| [1-8]（(CO\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(batch.answers.map(x => x.questionId), offered.map(x => x[1]));
+  assert.deepEqual(batch.answers.map(x => x.answer), Array(8).fill('A'));
+  batch.answers.forEach((answer, index) => assert.equal(answer.selectedOption, offered[index][3].trim()));
+  assert.equal(batch.answers[1].userClarification, '维修, 闲置及其它封顶');
+  assert.deepEqual(batch.answers[1].capScope, ['维修', '闲置', '其它']);
+  assert(offered[1][2].includes('闲置5%'));
+  assert.deepEqual(handoff.commissionOperationDecisionBatches, records.commissionOperationDecisionBatches);
+  assert.equal(records.commissionBillingRules.rateConfiguration.ratesBasisPoints['其它'], null);
+  assert.equal(records.commissionOperationRules.rateConfiguration.ratesBasisPoints['其它'], 1000);
+  assert.deepEqual(records.commissionDetailRules, expectedCommissionDetails);
+});
+
+test('current operation rules reject invented cap amounts, unilateral commission reduction, premature payment recovery and widened operator powers', () => {
+  function verifyOperation(rules) {
+    assert.equal(rules.sourceBatch, 'commission-operation-round-16-20261013');
+    assert.deepEqual(rules.rateConfiguration, {ratesBasisPoints: {'跑腿':1500,'维修':1500,'闲置':500,'其它':1000}, allRatesConfirmed:true, otherRateTrial:true, trialDurationConfirmed:false});
+    assert.deepEqual(rules.commissionCaps, {scope:['维修','闲置','其它'],amountsCents:{'维修':null,'闲置':null,'其它':null},amountsConfirmed:false,unitConfirmed:false,lockTimeConfirmed:false,errandCapDecisionConfirmed:false});
+    assert.deepEqual(rules.priceAdjustment, {mutualActualReductionAllowed:true,preserveInitialPrice:true,unilateralReductionAllowed:false,reducedCommissionBaseRequiresOperatorApproval:true,operatorApprovalRequiredForActualAgreement:false,provesActualRefund:false,serviceMediationGranted:false});
+    assert.deepEqual(rules.preConfirmationDisclosure, {to:'commission-payer',showRate:true,showEstimatedCommission:true,showMonthlyBilling:true,acknowledgmentRequired:true,detailedFieldsConfirmed:false});
+    assert.deepEqual(rules.missingRatePolicy, {publishingAllowed:true,applicationAllowed:true,newTransactionConfirmationAllowed:false,implicitZero:false});
+    assert.deepEqual(rules.paymentDeadline, {durationHours:72,startsAt:'actual-successful-bill-issuance',comparison:'now-greater-than-or-equal-to-deadline-and-unverified-unpaid',timezone:'Asia/Shanghai'});
+    assert.deepEqual(rules.billingDispute, {suspendDisputedPartCollectionAndRestriction:true,undisputedPartDueAsScheduled:true,detailedProcedureConfirmed:false});
+    assert.deepEqual(rules.restrictionRecovery, {automaticAfterVerifiedAllOverduePayableSettled:true,removeOtherRestrictionReasons:false,partialPaymentIsFullSettlement:false,existingServiceAndAppealAccessRetained:true});
+    assert.equal(rules.readyForImplementation, false);
+  }
+  verifyOperation(records.commissionOperationRules);
+  verifyOperation(handoff.commissionOperationRules);
+  assert.deepEqual(handoff.commissionOperationRules, records.commissionOperationRules);
+  for(const mutate of [
+    r => { r.rateConfiguration.ratesBasisPoints['其它'] = 1500; },
+    r => { r.commissionCaps.scope = ['闲置']; },
+    r => { r.commissionCaps.amountsCents['维修'] = 0; },
+    r => { r.commissionCaps.unitConfirmed = true; },
+    r => { r.commissionCaps.errandCapDecisionConfirmed = true; },
+    r => { r.priceAdjustment.mutualActualReductionAllowed = false; },
+    r => { r.priceAdjustment.reducedCommissionBaseRequiresOperatorApproval = false; },
+    r => { r.priceAdjustment.operatorApprovalRequiredForActualAgreement = true; },
+    r => { r.priceAdjustment.serviceMediationGranted = true; },
+    r => { r.missingRatePolicy.implicitZero = true; },
+    r => { r.paymentDeadline.comparison = 'now-greater-than-deadline'; },
+    r => { r.billingDispute.undisputedPartDueAsScheduled = false; },
+    r => { r.restrictionRecovery.partialPaymentIsFullSettlement = true; },
+    r => { r.restrictionRecovery.removeOtherRestrictionReasons = true; },
+    r => { r.readyForImplementation = true; }
+  ]) {
+    const changed = structuredClone(records.commissionOperationRules);
+    mutate(changed);
+    assert.throws(() => verifyOperation(changed));
+  }
+});
+
+test('approved operation rules take precedence while cap amounts and seventeenth-round options remain unanswered', () => {
+  const rules = read('docs/module-specs/commission-operation-rules.md');
+  for(const phrase of ['不是服务费/成交价', '跑腿是否封顶未明确', '计佣基数不能凭单方编辑或仅双方确认直接减少', '不暂停无争议部分原期限', '不解除其他审核/违规限制', '尚未实现或验证真实交易']) assert(rules.includes(phrase), phrase);
+  const questions = read('docs/module-specs/commission-cap-questions-20261013.md');
+  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('不能用“全A”替代'));
+  const offered = [...questions.matchAll(/^\| [1-8]（(CC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(offered.map(x => x[1]), Array.from({length:8}, (_,i) => 'CC' + String(i+1).padStart(2,'0')));
+  assert.equal(Object.hasOwn(records, 'commissionCapDecisionBatches'), false);
+  assert.equal(Object.hasOwn(handoff, 'commissionCapDecisionBatches'), false);
+  for(const name of ['monthly-commission-rules.md','monthly-commission-detail-rules.md','commission-billing-rules.md','commission-rate-assessment-20261013.md']) assert(read('docs/module-specs/'+name).includes('commission-operation-rules.md'));
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']) {
+    const text = read('docs/ui-development-handoff/'+name);
+    assert(text.includes('第2题封顶范围补充为维修/闲置/其它，金额未填'));
+    assert(text.includes('commission-operation-rules.md'));
+    assert(text.includes('commission-cap-questions-20261013.md'));
+  }
+  const doc = read('docs/module-specs/README.md');
+  assert(doc.includes('第十七轮8题'));
 });
 
 test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {
