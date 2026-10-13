@@ -706,6 +706,43 @@
       "requestDocument": "docs/module-specs/price-floor-request-20261013.md"
     }
   ],
+  "commissionPlanningRequests": [
+    {
+      "id": "CM-REQUEST-01",
+      "date": "2026-10-13",
+      "status": "user-planned-direction",
+      "userReply": "我计划的抽佣方式为，在每月月末，根据骑手及维修员的服务费，以及闲置卖家的成交价格，按比例抽佣。所以我担心有骑手，维修员以及卖家为了避开抽佣，会在确认进行交易后，与客户协商修改价格。\n所以我希望在修改价格时, 不能低于初始值. 你认为呢?",
+      "statedPlan": {
+        "billing": "each-month-end",
+        "method": "proportional",
+        "bases": [
+          {
+            "actor": "骑手",
+            "amount": "服务费"
+          },
+          {
+            "actor": "维修员",
+            "amount": "服务费"
+          },
+          {
+            "actor": "闲置卖家",
+            "amount": "成交价格"
+          }
+        ],
+        "priceFloorPurpose": "prevent-post-confirmation-underreporting-for-commission"
+      },
+      "readyForImplementation": false,
+      "pending": [
+        "费率及各业务是否同率",
+        "计费订单状态/月份/金额冻结与增费",
+        "退款/减免/误录及审核",
+        "月末账单付款/收取/逾期/异议",
+        "其它适用性与旧交易范围",
+        "收入显示/闲置流程/支付条件"
+      ],
+      "requestDocument": "docs/module-specs/monthly-commission-request-20261013.md"
+    }
+  ],
   "items": [
     {
       "id": "MP01",

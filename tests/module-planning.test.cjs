@@ -9,6 +9,40 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+test('monthly commission direction preserves the human purpose and does not select a rate or collection method', () => {
+  assert.equal(records.commissionPlanningRequests.length, 1);
+  const request = records.commissionPlanningRequests[0];
+  assert.equal(request.date, '2026-10-13');
+  assert.equal(request.status, 'user-planned-direction');
+  assert.equal(request.userReply, '我计划的抽佣方式为，在每月月末，根据骑手及维修员的服务费，以及闲置卖家的成交价格，按比例抽佣。所以我担心有骑手，维修员以及卖家为了避开抽佣，会在确认进行交易后，与客户协商修改价格。\n所以我希望在修改价格时, 不能低于初始值. 你认为呢?');
+  assert.deepEqual(request.statedPlan, {
+    billing: 'each-month-end', method: 'proportional',
+    bases: [{ actor: '骑手', amount: '服务费' }, { actor: '维修员', amount: '服务费' }, { actor: '闲置卖家', amount: '成交价格' }],
+    priceFloorPurpose: 'prevent-post-confirmation-underreporting-for-commission'
+  });
+  assert.equal(request.readyForImplementation, false);
+  assert(request.pending.length >= 6);
+  assert.deepEqual(handoff.commissionPlanningRequests, records.commissionPlanningRequests);
+  for (const key of ['rate', 'eligibleStatus', 'collectionMethod', 'automaticDebit', 'refundPolicy', 'appliesToOther']) {
+    assert.equal(Object.hasOwn(request.statedPlan, key), false);
+  }
+  assert.equal(Object.hasOwn(records, 'priceFloorDecisionBatches'), false);
+  assert.equal(records.priceFloorRequests[0].readyForImplementation, false);
+});
+
+test('commission evaluation keeps the old baseline, operational limitations and suggestions distinct', () => {
+  const doc = read(records.commissionPlanningRequests[0].requestDocument);
+  assert(doc.includes('建议方案，待用户确认'));
+  assert(doc.includes('月底账单使用明确的计费记录，不读取可随时改动的当前展示价'));
+  assert(doc.includes('初始就少报价格、虚假取消后线下成交'));
+  assert(doc.includes('不确认实际资格或替用户选择支付方式'));
+  assert(doc.includes('https://pay.wechatpay.cn/doc/v3/partner/4012072582'));
+  assert(doc.includes('第十三轮8题'));
+  assert(read('docs/prd.md').includes('平台不代收、不代结算、不抽跑腿佣金'));
+  assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
+  for (const item of records.items) assert.equal(item.fullWorkflowReady, false);
+});
+
 const expectedFeeAgreement = {
   recordedInMiniapp: true,
   requiresBothPartiesConfirmation: true,
@@ -1032,6 +1066,12 @@ test('thirteenth-round price-floor proposals stay pending and all planning docum
   for (const file of fs.readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read('docs/module-specs/' + file);
     for (const match of doc.matchAll(/\]\(([^)]+)\)/g)) {
+      if (/^https?:\/\//.test(match[1])) {
+        const url = new URL(match[1]);
+        assert.equal(url.protocol, 'https:', file + ': external references must use HTTPS');
+        assert(url.hostname, file + ': external reference must have a host');
+        continue;
+      }
       assert(fs.existsSync(path.resolve(root, 'docs/module-specs', match[1])), file + ': ' + match[1]);
     }
   }
