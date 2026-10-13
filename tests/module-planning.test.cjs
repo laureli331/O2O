@@ -70,9 +70,14 @@ const expectedApplicationRules = {
   repeatedSubmitCreatesNew: false, reapplication: { allowedWhenOpen: true, cooldownHours: 0 }, individualRejectionAllowed: false,
   visibility: { publisher: 'all-applications-on-own-demand', applicant: 'own-only', others: 'none', expandsContactOrAddressAccess: false },
   candidateDisplay: { fields: ['说明', '预估服务费', '申请时间'], hideEmptyDescription: true, missingFeeLabel: '待协商' },
-  sorting: { field: 'effective-application-time', direction: 'ascending' },
+  sorting: { field: 'effective-application-time', direction: 'ascending', modificationTimePolicy: 'keep-current-application-first-effective-submit', reapplicationTimePolicy: 'new-successful-submit-time' },
   openingDeadline: { scope: 'before-selection', autoExpires: false, publisherMayClose: true },
-  publisherClosing: { scope: 'before-selection', allowedWithActiveApplications: true, endsActiveApplications: true, notifyApplicants: true, preserveHistory: true, impliesDeletion: false, allowsUnilateralServiceCancellation: false },
+  publisherClosing: {
+    scope: 'before-selection', allowedWithActiveApplications: true, endsActiveApplications: true, notifyApplicants: true, preserveHistory: true, impliesDeletion: false, allowsUnilateralServiceCancellation: false,
+    reopening: { scope: 'closed-before-selection', initiator: 'publisher', sameRequest: true, freshApplicationsRequired: true, restoreOldApplications: false, productCountLimit: null, preserveEveryCloseAndReopen: true, latestListTime: 'successful-reopen-time', preserveOriginalPublicationTime: true, ordinaryEditBumpsList: false },
+    reasonRules: { required: false, maxLength: 300 },
+    selectionConflictPolicy: { mode: 'first-server-success-wins', laterOperationExecutes: false, promptRefresh: true, rollbackSuccessfulResult: false, clientClickOrderDecides: false }
+  },
   versionHistory: { preserveSubmittedVersions: true, viewers: ['该需求发布者', '对应申请者'], public: false },
   editNotification: { notifyPublisher: true, listMark: '已修改' },
   invalidatedReapplication: { allowedWhenOpen: true, cooldownHours: 0, preserveInvalidatedHistory: true, selectInvalidatedApplication: false }
@@ -92,7 +97,7 @@ const expectedContactVisibility = {
 };
 const expectedPendingChangeEnd = { closePendingChanges: true, preserveHistory: true, impliesConsent: false, blocksServiceEnding: false };
 const expectedDemandChanges = {
-  beforeSelection: { watched: ['服务内容', '区域', '时间'], invalidateApplications: true, notifyApplicants: true, reapplyRequired: true },
+  beforeSelection: { watched: ['服务内容', '区域', '时间'], invalidateApplications: true, notifyApplicants: true, reapplyRequired: true, criticalFields: ['标题', '描述', '图片', '公开区域', '服务时间'] },
   afterSelection: {
     watched: ['服务内容', '区域'], requiresBothPartiesConfirmation: true, previousVersionEffectiveUntilConfirmed: true, onServiceEnd: expectedPendingChangeEnd,
     initiators: ['发布者', '接单员'], scope: 'after-successful-selection-before-service-end', pendingLimit: 1,
@@ -174,7 +179,7 @@ function verify(value) {
   assert.equal(other.followUp[2].userReply, 'A');
   assert.equal(other.followUp[2].selectedOption, '先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议');
   assert(!other.pending.includes('申请后的选人模式'));
-  assert(other.pending.includes('申请修改/重申排序时间与历史展示、关闭理由/重开记录/公开排序、选人并发细则'));
+  assert(other.pending.includes('申请同时间排序/历史展示/关闭理由可见范围、取消后重开排序及并发实现'));
   assert.equal(other.confirmed.quoteRequiredAtApplication, false);
   assert.equal(Object.hasOwn(other.confirmed, 'defaultServiceFee'), false);
   assert.equal(other.confirmed.selectedWorkerCount, 1);
@@ -239,7 +244,7 @@ test('actual answers include other business and repair application mode without 
     data => { data.items[1].confirmed.feeAgreement.itemization.showTotal = false; },
     data => { data.items[0].confirmed.feeAgreement.confirmationTiming = 'after-service-completion'; },
     data => { data.items[1].confirmed.feeAgreement.requiresPrepayment = true; },
-    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请修改/重申排序时间与历史展示、关闭理由/重开记录/公开排序、选人并发细则'); },
+    data => { data.items[0].pending = data.items[0].pending.filter(item => item !== '申请同时间排序/历史展示/关闭理由可见范围、取消后重开排序及并发实现'); },
     data => { data.items[1].confirmed.matchingMode = 'first-come-first-served'; },
     data => { data.items[1].confirmed.quoteRequiredAtApplication = true; },
     data => { data.items[0].fullWorkflowReady = true; }
@@ -331,7 +336,7 @@ test('other publisher selection mode is synchronized while remaining visibility 
   assert(other.confirmed.includes('允许公开发布并申请接单'));
   assert.deepEqual(other.followUp[2], records.items[0].followUp[2]);
   assert(other.confirmed.includes('先申请再由发布者选人'));
-  assert(other.pending.includes('申请修改/重申排序时间与历史展示、关闭理由/重开记录/公开排序、选人并发细则'));
+  assert(other.pending.includes('申请同时间排序/历史展示/关闭理由可见范围、取消后重开排序及并发实现'));
   assert(read('CONTEXT.md').includes('先申请再由发布者选1位接单员'));
   assert(read('docs/module-specs/README.md').includes('归类原则和整理数据目的已确认'));
   assert(read('docs/ui-development-handoff/business-addendum.md').includes('没有自动批准新增采集方案'));
@@ -928,19 +933,102 @@ test('application display integrity rejects public bids, stale selections, expir
   assert(read('docs/module-specs/application-rules.md').includes('[申请展示与历史](application-detail-rules.md)'));
 });
 
-test('twelfth-round proposals stay pending and all planning document links resolve', () => {
+test('twelfth-round answer preserves fourth B and records the price-floor request separately', () => {
   const questions = read('docs/module-specs/application-reopen-questions-20261012.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('1A、2A、3A、4B、5A、6A、7A、8A'));
   const offered = [...questions.matchAll(/^\| [1-8]（(AR\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length, 8);
-  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => 'AR' + String(index + 1).padStart(2, '0')));
+  assert.equal(records.applicationReopenDecisionBatches.length, 1);
+  const batch = records.applicationReopenDecisionBatches[0];
+  assert.equal(batch.id, 'application-reopen-round-12-20261013');
+  assert.equal(batch.date, '2026-10-13');
+  assert.equal(batch.userReply, '4. B\n\n其它全A');
+  assert.equal(batch.questionDocument, 'docs/module-specs/application-reopen-questions-20261012.md');
+  assert.deepEqual(batch.scope, ['维修', '其它']);
+  assert.deepEqual(batch.answers.map(x => x.answer), ['A', 'A', 'A', 'B', 'A', 'A', 'A', 'A']);
+  batch.answers.forEach((answer, index) => {
+    assert.equal(answer.questionId, 'AR' + String(index + 1).padStart(2, '0'));
+    assert.equal(answer.questionId, offered[index][1]);
+    assert.equal(answer.selectedOption, offered[index][answer.answer === 'B' ? 4 : 3].trim());
+  });
+  assert.deepEqual(handoff.applicationReopenDecisionBatches, records.applicationReopenDecisionBatches);
+  for (const id of ['HD01', 'HD04']) {
+    assert(handoff.items.find(x => x.id === id).confirmed.includes('申请排序与关闭重开第十二轮1A、2A、3A、4B'));
+  }
+  assert.equal(records.applicationDecisionBatches[0].answers[3].answer, 'B');
+  assert.equal(records.applicationDetailDecisionBatches[0].date, '2026-10-12');
+});
+
+test('reopen integrity rejects edit bumping, stale application order, restored applications and two successful outcomes', () => {
+  for (const mutate of [
+    c => { c.applicationRules.sorting.modificationTimePolicy = 'last-edit-time'; },
+    c => { c.applicationRules.sorting.reapplicationTimePolicy = 'original-first-application-time'; },
+    c => { c.applicationRules.publisherClosing.reopening.scope = 'completed-service'; },
+    c => { c.applicationRules.publisherClosing.reopening.sameRequest = false; },
+    c => { c.applicationRules.publisherClosing.reopening.restoreOldApplications = true; },
+    c => { c.applicationRules.publisherClosing.reopening.productCountLimit = 3; },
+    c => { c.applicationRules.publisherClosing.reopening.preserveEveryCloseAndReopen = false; },
+    c => { c.applicationRules.publisherClosing.reopening.latestListTime = 'original-publication-time'; },
+    c => { c.applicationRules.publisherClosing.reopening.preserveOriginalPublicationTime = false; },
+    c => { c.applicationRules.publisherClosing.reopening.ordinaryEditBumpsList = true; },
+    c => { c.applicationRules.publisherClosing.reasonRules.required = true; },
+    c => { c.applicationRules.publisherClosing.reasonRules.maxLength = 500; },
+    c => { c.applicationRules.publisherClosing.selectionConflictPolicy.mode = 'client-first-click'; },
+    c => { c.applicationRules.publisherClosing.selectionConflictPolicy.laterOperationExecutes = true; },
+    c => { c.applicationRules.publisherClosing.selectionConflictPolicy.rollbackSuccessfulResult = true; },
+    c => { c.applicationRules.publisherClosing.selectionConflictPolicy.promptRefresh = false; },
+    c => { c.demandChanges.beforeSelection.criticalFields = ['标题', '描述', '公开区域', '服务时间']; }
+  ]) {
+    for (const index of [0, 1]) {
+      const changed = structuredClone(records);
+      mutate(changed.items[index].confirmed);
+      assert.throws(() => verify(changed));
+    }
+  }
+  const rules = read('docs/module-specs/application-reopen-rules.md');
+  assert(rules.includes('已完成服务不能通过本轮重开'));
+  assert(rules.includes('其首页排序及其它细节不自动套用本轮'));
+  assert(rules.includes('普通编辑不刷新该排序时间'));
+  assert(rules.includes('仅替换图片也会使旧申请失效'));
+  assert(rules.includes('未实现或验证真实排序'));
+});
+
+test('price-floor human intent is retained without inventing an initial price or idle transaction flow', () => {
+  assert.equal(records.priceFloorRequests.length, 1);
+  const request = records.priceFloorRequests[0];
+  assert.equal(request.date, '2026-10-13');
+  assert.equal(request.userReply, '新增规则: 确认进行交易后, 若骑手及维修员修改服务费, 闲置卖家修改金额, 不能低于初始金额');
+  assert.deepEqual(request.confirmedIntent, { afterTransactionConfirmation: true, actors: ['骑手', '维修员', '闲置卖家'], lowerThanInitialAmountAllowed: false });
+  assert.equal(request.readyForImplementation, false);
+  assert(request.pending.length >= 6);
+  assert.deepEqual(handoff.priceFloorRequests, records.priceFloorRequests);
+  for (const key of ['initialAmountSource', 'freezeAt', 'comparisonScope', 'appliesToOther', 'idleTransactionFlow', 'allActorsBound']) {
+    assert.equal(Object.hasOwn(request.confirmedIntent, key), false);
+  }
   for (const item of records.items) {
-    const application = item.confirmed.applicationRules;
-    for (const key of ['modificationTimePolicy', 'reapplicationTimePolicy']) assert.equal(Object.hasOwn(application.sorting, key), false);
-    for (const key of ['reopening', 'reasonRules', 'selectionConflictPolicy']) assert.equal(Object.hasOwn(application.publisherClosing, key), false);
-    assert.equal(Object.hasOwn(item.confirmed.demandChanges.beforeSelection, 'criticalFields'), false);
+    assert.equal(Object.hasOwn(item.confirmed.feeAgreement, 'priceFloor'), false);
+    assert.equal(item.confirmed.feeAgreement.requiresBothPartiesConfirmation, true);
+    assert.equal(item.confirmed.feeAgreement.postCompletionChanges, false);
     assert.equal(item.fullWorkflowReady, false);
   }
+  const note = read(request.requestDocument);
+  assert(note.includes(request.userReply));
+  assert(note.includes('联系获准不等于成交'));
+  assert(note.includes('原话没有提“其它”'));
+  assert(note.includes('不授予单方涨价即生效权限'));
+  assert(note.includes('不从禁止降低金额推出禁止退款'));
+  assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
+});
+
+test('thirteenth-round price-floor proposals stay pending and all planning document links resolve', () => {
+  const questions = read('docs/module-specs/price-floor-questions-20261013.md');
+  assert(questions.includes('8题全部待答'));
+  const offered = [...questions.matchAll(/^\| [1-8]（(PF\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(offered.map(x => x[1]), Array.from({length: 8}, (_, index) => 'PF' + String(index + 1).padStart(2, '0')));
+  assert.equal(Object.hasOwn(records, 'priceFloorDecisionBatches'), false);
+  assert.equal(Object.hasOwn(handoff, 'priceFloorDecisionBatches'), false);
+  assert(questions.includes('不把第十二轮“其它全A”解释为本轮答案'));
   for (const file of fs.readdirSync(path.join(root, 'docs/module-specs')).filter(name => name.endsWith('.md'))) {
     const doc = read('docs/module-specs/' + file);
     for (const match of doc.matchAll(/\]\(([^)]+)\)/g)) {
@@ -1132,7 +1220,7 @@ test('application integrity rejects secondary acceptance, rejection bans, compul
 
 test('single selected worker approval is dated and synchronized for both businesses without imposing an applicant cap', () => {
   const [other, repair] = records.items;
-  assert.equal(records.updatedAt, '2026-10-12');
+  assert.equal(records.updatedAt, '2026-10-13');
   assert.equal(handoff.updatedAt, records.updatedAt);
   const answer = other.followUp[3];
   assert.equal(answer.date, '2026-10-11');
@@ -1176,7 +1264,7 @@ test('one active editable application and immediate reapplication are synchroniz
   for (const item of records.items) {
     assert.deepEqual(item.confirmed.applicationRules.reapplication, { allowedWhenOpen: true, cooldownHours: 0 });
     assert.equal(Object.hasOwn(item.confirmed.applicationRules, 'withdrawableAfterSelection'), false);
-    assert(item.pending.some(text => text.includes('申请修改/重申排序时间与历史展示')));
+    assert(item.pending.some(text => text.includes('申请同时间排序/历史展示')));
   }
   assert(read('CONTEXT.md').includes('重复点击申请不新增记录'));
   assert(read('docs/module-specs/README.md').includes('选定前可撤回申请不代表选定后可单方取消服务'));
