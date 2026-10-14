@@ -2026,6 +2026,79 @@
     "actualCompletionIncomeAndRatingRulesChanged": false,
     "enablesProductImplementation": false
   },
+  "commissionSimplificationOperationQuestionSet": {
+    "preparedAt": "2026-10-14",
+    "revision": "first-release-round-3-20261014",
+    "request": "继续",
+    "status": "paused-for-deadline-completion-planning",
+    "questionDocument": "docs/module-specs/commission-simplification-operation-questions-20261014.md",
+    "displayOrder": [
+      "SO09",
+      "SO02",
+      "SO03",
+      "SO04",
+      "SO05",
+      "SO06",
+      "SO07",
+      "SO08"
+    ],
+    "withdrawnQuestionIds": [
+      "SO01"
+    ],
+    "newlyProposedQuestionIds": [
+      "SO09"
+    ],
+    "continuationCountsAsAnswer": false,
+    "choicesApproved": false,
+    "confirmedIncomeDefinitionChanged": false,
+    "actualCompletionOrRatingRulesChanged": false,
+    "implementationEnabled": false
+  },
+  "automaticDeadlineCompletionRequests": [
+    {
+      "date": "2026-10-14",
+      "userReply": "都设定一个服务结束期限吧, 到了期限自动完成",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "document": "docs/module-specs/deadline-completion-request-20261014.md",
+      "confirmedDirection": {
+        "allBusinessRequireEndDeadline": true,
+        "automaticFlowCompletionAtDeadline": true,
+        "customerCompletionClickRequiredForAutomaticCompletion": false
+      },
+      "preciseDeadlinePolicyConfirmed": false,
+      "relationshipTo72HourWindowConfirmed": false,
+      "exceptionPolicyConfirmed": false,
+      "feeAndCommissionLinkConfirmed": false,
+      "incomeAndRatingChangesConfirmed": false,
+      "provesActualPayment": false,
+      "implementationEnabled": false
+    }
+  ],
+  "currentPlanningFocus": {
+    "date": "2026-10-14",
+    "phase": "first-release-business-planning",
+    "direction": "deadline-automatic-completion",
+    "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
+    "questionDocument": "docs/module-specs/deadline-completion-questions-20261014.md",
+    "status": "direction-confirmed-details-pending",
+    "pendingQuestionIds": [
+      "AF01",
+      "AF02",
+      "AF03",
+      "AF04",
+      "AF05",
+      "AF06",
+      "AF07",
+      "AF08"
+    ],
+    "priorQuestionSetPaused": true,
+    "implementationEnabled": false
+  },
   "items": [
     {
       "id": "HD01",

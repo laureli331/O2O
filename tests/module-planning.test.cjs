@@ -1962,8 +1962,8 @@ test('boundary time and month scenarios are exact and unresolved third-round saf
   const questions=read('docs/module-specs/commission-simplification-operation-questions-20261014.md');
   assert(questions.includes('SO02—SO08共7题仍待答'));
   const rows=[...questions.matchAll(/^\| [1-8]（(SO\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
-  assert.equal(rows.length,7);
-  assert.deepEqual(rows.map(x=>x[1]),Array.from({length:7},(_,i)=>'SO'+String(i+2).padStart(2,'0')));
+  assert.equal(rows.length,8);
+  assert.deepEqual(rows.map(x=>x[1]),['SO09',...Array.from({length:7},(_,i)=>'SO'+String(i+2).padStart(2,'0'))]);
   assert(questions.includes('已有明确金额/时间后'));
   assert(questions.includes('不套用首次费用未知'));
   assert.equal(Object.hasOwn(records,'commissionSimplificationOperationDecisionBatches'),false);
@@ -2042,6 +2042,64 @@ test('first-release clarification withdraws migration question without inventing
     const text = read(file);
     assert(text.includes('首发阶段纠偏：2026-10-14'),file);
     assert(text.includes('planning-stage-clarification-20261014.md'),file);
+  }
+});
+
+test('continued question preparation preserves eight unanswered choices and pauses them when the user changes the completion direction', () => {
+  const expected={preparedAt:'2026-10-14',revision:'first-release-round-3-20261014',request:'继续',status:'paused-for-deadline-completion-planning',questionDocument:'docs/module-specs/commission-simplification-operation-questions-20261014.md',displayOrder:['SO09','SO02','SO03','SO04','SO05','SO06','SO07','SO08'],withdrawnQuestionIds:['SO01'],newlyProposedQuestionIds:['SO09'],continuationCountsAsAnswer:false,choicesApproved:false,confirmedIncomeDefinitionChanged:false,actualCompletionOrRatingRulesChanged:false,implementationEnabled:false};
+  assert.deepEqual(records.commissionSimplificationOperationQuestionSet,expected);
+  assert.deepEqual(handoff.commissionSimplificationOperationQuestionSet,expected);
+  const doc=read(expected.questionDocument);
+  const rows=[...doc.matchAll(/^\| [1-8]（(SO\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.deepEqual(rows.map(row=>row[1]),expected.displayOrder);
+  assert(doc.includes('本表八题未获回答'));
+  assert(doc.includes('SO01仅为提问追溯保留，不是待答项'));
+  assert(doc.includes('“继续”不是选项答案'));
+  assert(doc.includes('均注明“非到账金额”'));
+  assert(doc.includes('详情独立展示、不占主收入'));
+  assert(doc.includes('不批准仅凭暂定计佣认定真实交付或评价资格'));
+  assert.equal(Object.hasOwn(records,'commissionSimplificationOperationDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'commissionSimplificationOperationDecisionBatches'),false);
+});
+
+test('deadline completion direction applies to all four businesses without selecting unanswered exceptions, income, ratings or billing options', () => {
+  const expected={date:'2026-10-14',userReply:'都设定一个服务结束期限吧, 到了期限自动完成',scope:['跑腿','维修','闲置','其它'],document:'docs/module-specs/deadline-completion-request-20261014.md',confirmedDirection:{allBusinessRequireEndDeadline:true,automaticFlowCompletionAtDeadline:true,customerCompletionClickRequiredForAutomaticCompletion:false},preciseDeadlinePolicyConfirmed:false,relationshipTo72HourWindowConfirmed:false,exceptionPolicyConfirmed:false,feeAndCommissionLinkConfirmed:false,incomeAndRatingChangesConfirmed:false,provesActualPayment:false,implementationEnabled:false};
+  const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:expected.document,questionDocument:'docs/module-specs/deadline-completion-questions-20261014.md',status:'direction-confirmed-details-pending',pendingQuestionIds:['AF01','AF02','AF03','AF04','AF05','AF06','AF07','AF08'],priorQuestionSetPaused:true,implementationEnabled:false};
+  const validate=data=>{
+    assert.deepEqual(data.automaticDeadlineCompletionRequests,[expected]);
+    assert.deepEqual(data.currentPlanningFocus,focus);
+    assert.equal(Object.hasOwn(data,'deadlineCompletionDecisionBatches'),false);
+    assert.equal(data.commissionSimplificationOperationQuestionSet.choicesApproved,false);
+    assert.equal(data.commissionSimplificationBoundaryDecisionBatches[0].userReply,'全A');
+    assert.equal(data.planningStageClarification.existingTransactionMigrationRequired,false);
+    assert.equal(data.commissionSimplificationRules.amountBasis.unknownPermitsAutomaticBilling,false);
+    assert.equal(data.commissionBillingRules.paymentDeadline.durationHours,72);
+    assert.equal(data.commissionBillingRules.paymentDeadline.startsAt,'actual-successful-bill-issuance');
+    assert.equal(data.commissionSimplificationBoundaryRules.primaryRecord.onePerTransaction,true);
+  };
+  validate(records);validate(handoff);
+  for(const mutate of [
+    data=>{data.automaticDeadlineCompletionRequests[0].scope=['跑腿'];},
+    data=>{data.automaticDeadlineCompletionRequests[0].confirmedDirection.automaticFlowCompletionAtDeadline=false;},
+    data=>{data.automaticDeadlineCompletionRequests[0].relationshipTo72HourWindowConfirmed=true;},
+    data=>{data.automaticDeadlineCompletionRequests[0].incomeAndRatingChangesConfirmed=true;},
+    data=>{data.automaticDeadlineCompletionRequests[0].provesActualPayment=true;},
+    data=>{data.currentPlanningFocus.implementationEnabled=true;},
+    data=>{data.deadlineCompletionDecisionBatches=[{userReply:'全A'}];},
+    data=>{data.commissionSimplificationRules.amountBasis.unknownPermitsAutomaticBilling=true;}
+  ]){const changed=structuredClone(records);mutate(changed);assert.throws(()=>validate(changed));}
+  const request=read(expected.document);
+  assert(request.includes(expected.userReply));
+  assert(request.includes('不将系统到期行为伪称为用户点击确认或线下付款'));
+  assert(request.includes('四类交易都设置结束期限'));
+  const questions=read(focus.questionDocument);
+  const rows=[...questions.matchAll(/^\| [1-8]（(AF\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);
+  assert.deepEqual(rows.map(row=>row[1]),focus.pendingQuestionIds);
+  assert(questions.includes('以下8题全部待答'));
+  for(const phrase of ['预计结束时间后保留72小时','不默认0、不按未知金额计佣','未经双方确认不改变既有结束期限','首次成功形成月份归账','不重复累计自动结束后又补确认','不自动生成评分','出账成功后的72小时缴佣期限是独立时钟','不因到点就默认取得资格']) assert(questions.includes(phrase),phrase);
+  for(const file of ['docs/module-specs/README.md','docs/module-specs/commission-simplification-rules.md','docs/module-specs/commission-simplification-boundaries-rules.md','docs/module-specs/planning-stage-clarification-20261014.md','docs/ui-development-handoff/README.md','docs/ui-development-handoff/business-addendum.md','docs/ui-development-handoff/page-spec.md','docs/ui-development-handoff/decisions-and-gaps.md']){
+    const doc=read(file);assert(doc.includes('当前规划方向更新：'));assert(doc.includes('deadline-completion-request-20261014.md'));assert(doc.includes('deadline-completion-questions-20261014.md'));
   }
 });
 
