@@ -1363,17 +1363,17 @@ test('current operation rules reject invented cap amounts, unilateral commission
   }
 });
 
-test('approved operation rules take precedence while cap amounts and seventeenth-round options remain unanswered', () => {
+test('approved operation rules remain historical and seventeenth-round amounts stay pending while the remaining answers are approved', () => {
   const rules = read('docs/module-specs/commission-operation-rules.md');
   for(const phrase of ['不是服务费/成交价', '跑腿是否封顶未明确', '计佣基数不能凭单方编辑或仅双方确认直接减少', '不暂停无争议部分原期限', '不解除其他审核/违规限制', '尚未实现或验证真实交易']) assert(rules.includes(phrase), phrase);
   const questions = read('docs/module-specs/commission-cap-questions-20261013.md');
-  assert(questions.includes('8题全部待答'));
-  assert(questions.includes('不能用“全A”替代'));
+  assert(questions.includes('金额仍待确认；第4—8题A'));
+  assert(questions.includes('不把全A当数值答案'));
   const offered = [...questions.matchAll(/^\| [1-8]（(CC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length, 8);
   assert.deepEqual(offered.map(x => x[1]), Array.from({length:8}, (_,i) => 'CC' + String(i+1).padStart(2,'0')));
-  assert.equal(Object.hasOwn(records, 'commissionCapDecisionBatches'), false);
-  assert.equal(Object.hasOwn(handoff, 'commissionCapDecisionBatches'), false);
+  assert.equal(records.commissionCapDecisionBatches.length, 1);
+  assert.deepEqual(handoff.commissionCapDecisionBatches, records.commissionCapDecisionBatches);
   for(const name of ['monthly-commission-rules.md','monthly-commission-detail-rules.md','commission-billing-rules.md','commission-rate-assessment-20261013.md']) assert(read('docs/module-specs/'+name).includes('commission-operation-rules.md'));
   for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']) {
     const text = read('docs/ui-development-handoff/'+name);
@@ -1383,6 +1383,93 @@ test('approved operation rules take precedence while cap amounts and seventeenth
   }
   const doc = read('docs/module-specs/README.md');
   assert(doc.includes('第十七轮8题'));
+});
+
+test('seventeenth-round recommendation request does not approve amounts and only questions four to eight select A', () => {
+  const [batch] = records.commissionCapDecisionBatches;
+  assert.equal(batch.id, 'commission-cap-round-17-20261014');
+  assert.equal(batch.date, '2026-10-14');
+  assert.equal(batch.userReply, '123你的建议是多少元?\n全A');
+  const offered = [...read(batch.questionDocument).matchAll(/^\| [1-8]（(CC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length, 8);
+  assert.deepEqual(batch.answers.map(x => x.questionId), offered.map(x => x[1]));
+  assert.deepEqual(batch.answers.map(x => x.answer), ['PENDING','PENDING','PENDING','A','A','A','A','A']);
+  batch.answers.forEach((answer,i) => {
+    if(i < 3) {
+      assert.equal(answer.selectedOption, '请求建议，金额未确认');
+      assert.equal(answer.userClarification, '123你的建议是多少元?');
+      assert(fs.existsSync(path.join(root, answer.recommendationDocument)));
+    } else assert.equal(answer.selectedOption, offered[i][3].trim());
+  });
+  assert.deepEqual(handoff.commissionCapDecisionBatches, records.commissionCapDecisionBatches);
+  assert.deepEqual(handoff.commissionCapRecommendations, records.commissionCapRecommendations);
+  assert.equal(records.commissionCapRecommendations.length, 1);
+  assert.deepEqual(records.commissionCapRecommendations[0], {date:'2026-10-14',status:'proposal',userApproved:false,amountsCents:{'维修':3000,'闲置':2000,'其它':2000},document:'docs/module-specs/commission-cap-assessment-20261014.md'});
+  assert.equal(records.commissionOperationRules.commissionCaps.errandCapDecisionConfirmed, false);
+  assert.deepEqual(records.commissionCapRules.errand, {rateBasisPoints:1500,capped:false});
+});
+
+test('cap rule integrity preserves shared service caps, snapshot timing, approved recomputation and missing-configuration gates', () => {
+  const expected = {
+    confirmedAt:'2026-10-14',sourceBatch:'commission-cap-round-17-20261014',
+    caps:{scope:['维修','闲置','其它'],amountsCents:{'维修':null,'闲置':null,'其它':null},amountsConfirmed:false,serviceUnit:'entire-service-all-stages-one-cap',idleUnit:'single-transaction',phaseRoundingConfirmed:false,cancelReopenUnitConfirmed:false},
+    snapshot:{at:'transaction-confirmation',withRate:true,newCapsAffectExisting:false,perBusinessActionConfirmed:false},
+    approvedReduction:{method:'recompute-with-original-rules-then-subtract-original-commission',directReductionAmountTimesRate:false,overwriteOriginalBill:false,automaticCashRefund:false},
+    errand:{rateBasisPoints:1500,capped:false},
+    missingCapPolicy:{publishingAllowed:true,applicationAllowed:true,newTransactionConfirmationAllowed:false,implicitZero:false,implicitUnlimited:false},
+    readyForImplementation:false
+  };
+  const verifyCap = data => assert.deepEqual(data, expected);
+  verifyCap(records.commissionCapRules);
+  verifyCap(handoff.commissionCapRules);
+  for(const mutate of [
+    r => { r.caps.amountsCents['维修'] = 3000; },
+    r => { r.caps.amountsConfirmed = true; },
+    r => { r.caps.serviceUnit = 'per-stage'; },
+    r => { r.caps.cancelReopenUnitConfirmed = true; },
+    r => { r.snapshot.newCapsAffectExisting = true; },
+    r => { r.snapshot.perBusinessActionConfirmed = true; },
+    r => { r.approvedReduction.directReductionAmountTimesRate = true; },
+    r => { r.approvedReduction.overwriteOriginalBill = true; },
+    r => { r.approvedReduction.automaticCashRefund = true; },
+    r => { r.errand.capped = true; },
+    r => { r.missingCapPolicy.newTransactionConfirmationAllowed = true; },
+    r => { r.missingCapPolicy.implicitUnlimited = true; },
+    r => { r.readyForImplementation = true; }
+  ]) {
+    const changed = structuredClone(records.commissionCapRules);
+    mutate(changed); assert.throws(() => verifyCap(changed));
+  }
+});
+
+test('cap advice and adjustment examples use exact money math while eighteenth-round decisions stay pending', () => {
+  // 仅检验建议和验收数字，不提供生产接口，也不使建议配置生效。
+  const rounded = (base, rate) => (base * rate + 5000n) / 10000n;
+  const capped = (base, rate, cap) => {const raw=rounded(base,rate);return raw < cap ? raw : cap;};
+  const advice = read('docs/module-specs/commission-cap-assessment-20261014.md');
+  const rows = [...advice.matchAll(/^\| (维修|闲置|其它) \| (\d+)% \| (\d+\.\d{2})元 \| (?:服务费|成交价)(\d+\.\d{2})元 \|\r?$/gm)];
+  assert.equal(rows.length,3);
+  for(const row of rows) {
+    const cap=BigInt(row[3].replace('.','')), base=BigInt(row[4].replace('.','')), rate=BigInt(row[2])*100n;
+    assert.equal(rounded(base,rate),cap);
+    assert.equal(Number(cap),records.commissionCapRecommendations[0].amountsCents[row[1]]);
+    assert.equal(records.commissionCapRules.caps.amountsCents[row[1]],null);
+  }
+  assert.equal(capped(80000n,500n,2000n),2000n);
+  assert.equal(capped(60000n,500n,2000n)-capped(80000n,500n,2000n),0n);
+  assert.equal(capped(30000n,500n,2000n)-capped(80000n,500n,2000n),-500n);
+  assert.equal(capped(10000n+15000n,1500n,3000n),3000n);
+  assert.equal(capped(10000n,1500n,3000n)+capped(15000n,1500n,3000n),3750n);
+  const rules=read('docs/module-specs/commission-cap-rules.md');
+  for(const text of ['20.00元 | 20.00元 | 0.00元', '20.00元 | 15.00元 | -5.00元', '37.50元', '没有实现或验证真实计佣']) assert(rules.includes(text),text);
+  assert(advice.includes('尚未获用户确认'));
+  assert(advice.includes('不是行业标准'));
+  const questions=read('docs/module-specs/commission-confirmation-questions-20261014.md');
+  assert(questions.includes('8题全部待答'));
+  assert.equal([...questions.matchAll(/^\| [1-8]（CT\d{2}） /gm)].length,8);
+  assert.equal(Object.hasOwn(records,'commissionConfirmationDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'commissionConfirmationDecisionBatches'),false);
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']) assert(read('docs/ui-development-handoff/'+name).includes('第4—8题A'));
 });
 
 test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {
@@ -1567,7 +1654,7 @@ test('application integrity rejects secondary acceptance, rejection bans, compul
 
 test('single selected worker approval is dated and synchronized for both businesses without imposing an applicant cap', () => {
   const [other, repair] = records.items;
-  assert.equal(records.updatedAt, '2026-10-13');
+  assert.equal(records.updatedAt, '2026-10-14');
   assert.equal(handoff.updatedAt, records.updatedAt);
   const answer = other.followUp[3];
   assert.equal(answer.date, '2026-10-11');

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-09",
-  "updatedAt": "2026-10-13",
+  "updatedAt": "2026-10-14",
   "source": "human replies in this chat",
   "feeDecisionBatches": [
     {
@@ -1160,6 +1160,126 @@
     },
     "readyForImplementation": false
   },
+  "commissionCapDecisionBatches": [
+    {
+      "id": "commission-cap-round-17-20261014",
+      "date": "2026-10-14",
+      "userReply": "123你的建议是多少元?\n全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/commission-cap-questions-20261013.md",
+      "answers": [
+        {
+          "questionId": "CC01",
+          "answer": "PENDING",
+          "selectedOption": "请求建议，金额未确认",
+          "userClarification": "123你的建议是多少元?",
+          "recommendationDocument": "docs/module-specs/commission-cap-assessment-20261014.md"
+        },
+        {
+          "questionId": "CC02",
+          "answer": "PENDING",
+          "selectedOption": "请求建议，金额未确认",
+          "userClarification": "123你的建议是多少元?",
+          "recommendationDocument": "docs/module-specs/commission-cap-assessment-20261014.md"
+        },
+        {
+          "questionId": "CC03",
+          "answer": "PENDING",
+          "selectedOption": "请求建议，金额未确认",
+          "userClarification": "123你的建议是多少元?",
+          "recommendationDocument": "docs/module-specs/commission-cap-assessment-20261014.md"
+        },
+        {
+          "questionId": "CC04",
+          "answer": "A",
+          "selectedOption": "同一次服务的全部阶段合计，只封顶一次"
+        },
+        {
+          "questionId": "CC05",
+          "answer": "A",
+          "selectedOption": "与比例一起，在交易确认时锁定，后续修改只用于新交易"
+        },
+        {
+          "questionId": "CC06",
+          "answer": "A",
+          "selectedOption": "用原锁定规则重算该笔最终佣金，再与原佣金相减"
+        },
+        {
+          "questionId": "CC07",
+          "answer": "A",
+          "selectedOption": "不封顶，按15%计算"
+        },
+        {
+          "questionId": "CC08",
+          "answer": "A",
+          "selectedOption": "可发布/申请，暂不开放该类新交易确认"
+        }
+      ]
+    }
+  ],
+  "commissionCapRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "commission-cap-round-17-20261014",
+    "caps": {
+      "scope": [
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "amountsCents": {
+        "维修": null,
+        "闲置": null,
+        "其它": null
+      },
+      "amountsConfirmed": false,
+      "serviceUnit": "entire-service-all-stages-one-cap",
+      "idleUnit": "single-transaction",
+      "phaseRoundingConfirmed": false,
+      "cancelReopenUnitConfirmed": false
+    },
+    "snapshot": {
+      "at": "transaction-confirmation",
+      "withRate": true,
+      "newCapsAffectExisting": false,
+      "perBusinessActionConfirmed": false
+    },
+    "approvedReduction": {
+      "method": "recompute-with-original-rules-then-subtract-original-commission",
+      "directReductionAmountTimesRate": false,
+      "overwriteOriginalBill": false,
+      "automaticCashRefund": false
+    },
+    "errand": {
+      "rateBasisPoints": 1500,
+      "capped": false
+    },
+    "missingCapPolicy": {
+      "publishingAllowed": true,
+      "applicationAllowed": true,
+      "newTransactionConfirmationAllowed": false,
+      "implicitZero": false,
+      "implicitUnlimited": false
+    },
+    "readyForImplementation": false
+  },
+  "commissionCapRecommendations": [
+    {
+      "date": "2026-10-14",
+      "status": "proposal",
+      "userApproved": false,
+      "amountsCents": {
+        "维修": 3000,
+        "闲置": 2000,
+        "其它": 2000
+      },
+      "document": "docs/module-specs/commission-cap-assessment-20261014.md"
+    }
+  ],
   "items": [
     {
       "id": "HD01",
