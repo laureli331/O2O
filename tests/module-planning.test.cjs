@@ -1524,7 +1524,7 @@ test('current confirmation rules preserve cap amounts, distinct agreement facts,
   ]) {const changed=structuredClone(records.commissionConfirmationRules);mutate(changed);assert.throws(()=>verifyCurrent(changed));}
 });
 
-test('approved cap examples match current configuration and new idle workflow questions remain proposals', () => {
+test('approved cap examples remain current and nineteenth-round idle answers are retained separately', () => {
   const config=records.commissionConfirmationRules.businessConfiguration;
   const fee=(business,baseCents)=>{const row=config[business];const raw=(BigInt(baseCents)*BigInt(row.rateBasisPoints)+5000n)/10000n;return row.cap.kind==='none'?raw:raw>BigInt(row.cap.amountCents)?BigInt(row.cap.amountCents):raw;};
   assert.equal(fee('维修',25000),3000n);
@@ -1536,18 +1536,96 @@ test('approved cap examples match current configuration and new idle workflow qu
   const rules=read('docs/module-specs/commission-confirmation-rules.md');
   for(const phrase of ['不产生未确认服务费金额','草选、提交报价或失败/未知结果','评分资格','不重复知悉','不从文档确认日计时','没有实现或验证真实交易']) assert(rules.includes(phrase),phrase);
   const questions=read('docs/module-specs/idle-transaction-questions-20261014.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('第5题B，其余A'));
   const offered=[...questions.matchAll(/^\| [1-8]（(IT\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length,8);
   assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'IT'+String(i+1).padStart(2,'0')));
-  assert.equal(Object.hasOwn(records,'idleTransactionDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'idleTransactionDecisionBatches'),false);
+  assert.equal(records.idleTransactionDecisionBatches.length,1);
+  assert.deepEqual(handoff.idleTransactionDecisionBatches,records.idleTransactionDecisionBatches);
   assert.equal(handoff.items.find(x=>x.id==='HD02').confirmed.business,'跑腿');
   for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
     const text=read('docs/ui-development-handoff/'+name);
     assert(text.includes('第十八轮实际回复“全A”'));
     assert(text.includes('commission-confirmation-rules.md'));
     assert(text.includes('idle-transaction-questions-20261014.md'));
+  }
+});
+
+test('nineteenth-round reply selects fifth B and preserves the seven A options without changing pricing history', () => {
+  const [batch]=records.idleTransactionDecisionBatches;
+  assert.equal(batch.id,'idle-transaction-round-19-20261014');
+  assert.equal(batch.date,'2026-10-14');
+  assert.equal(batch.userReply,'5B, 全A');
+  assert.deepEqual(batch.scope,['闲置']);
+  const offered=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(IT\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(batch.answers.map(x=>x.questionId),offered.map(x=>x[1]));
+  assert.deepEqual(batch.answers.map(x=>x.answer),['A','A','A','A','B','A','A','A']);
+  batch.answers.forEach((answer,i)=>assert.equal(answer.selectedOption,offered[i][i===4?4:3].trim()));
+  assert.deepEqual(handoff.idleTransactionDecisionBatches,records.idleTransactionDecisionBatches);
+  assert.equal(records.commissionConfirmationRules.businessConfiguration['闲置'].rateBasisPoints,500);
+  assert.equal(records.commissionConfirmationRules.businessConfiguration['闲置'].cap.amountCents,2000);
+  assert.equal(records.commissionConfirmationRules.idleAgreement.completeWorkflowConfirmed,false);
+});
+
+test('idle transaction integrity rejects optional refusal reasons, public targets, duplicate trades, overwritten requests and automatic completion', () => {
+  const expected={
+    confirmedAt:'2026-10-14',sourceBatch:'idle-transaction-round-19-20261014',
+    transactionRequest:{initiator:'seller',confirmationBy:'buyer',target:'buyer-with-approved-contact-on-same-post',maxPendingPerPost:1,maxInProgressPerPost:1,editing:'withdraw-then-new-version',oldVersionPreserved:true,withdrawnVersionConfirmable:false,noResponse:'keep-pending',automaticAcceptance:false,automaticExpiry:false,sellerMayRemind:true,sellerMayWithdraw:true},
+    refusal:{reasonRequired:true,minLength:1,maxLength:300,endsRequest:true,preserveHistory:true,cancelsEffectiveTransaction:false},
+    inProgressListing:{status:'transaction-in-progress',newContactApplicationsAllowed:false,existingLegalAuthorizationsRetained:true,extendsAuthorizationLifetime:false,marksSold:false},
+    deliveryCompletion:{requestBy:'seller',confirmedBy:'buyer',automaticCompletion:false,noResponse:'keep-pending',reminderAllowed:true,objectionAllowed:true,operatorMayConfirmForBuyer:false,requestProvesCompletion:false,completionProvesPayment:false,ratingLinkConfirmed:false},
+    completeWorkflowConfirmed:false,readyForImplementation:false
+  };
+  const verifyIdle=data=>assert.deepEqual(data,expected);
+  verifyIdle(records.idleTransactionRules);
+  verifyIdle(handoff.idleTransactionRules);
+  for(const mutate of [
+    r=>{r.refusal.reasonRequired=false;},
+    r=>{r.refusal.minLength=0;},
+    r=>{r.refusal.maxLength=500;},
+    r=>{r.refusal.cancelsEffectiveTransaction=true;},
+    r=>{r.transactionRequest.target='any-registered-buyer';},
+    r=>{r.transactionRequest.maxPendingPerPost=5;},
+    r=>{r.transactionRequest.maxInProgressPerPost=2;},
+    r=>{r.transactionRequest.editing='overwrite-pending';},
+    r=>{r.transactionRequest.withdrawnVersionConfirmable=true;},
+    r=>{r.transactionRequest.automaticAcceptance=true;},
+    r=>{r.transactionRequest.automaticExpiry=true;},
+    r=>{r.inProgressListing.newContactApplicationsAllowed=true;},
+    r=>{r.inProgressListing.existingLegalAuthorizationsRetained=false;},
+    r=>{r.inProgressListing.extendsAuthorizationLifetime=true;},
+    r=>{r.inProgressListing.marksSold=true;},
+    r=>{r.deliveryCompletion.automaticCompletion=true;},
+    r=>{r.deliveryCompletion.operatorMayConfirmForBuyer=true;},
+    r=>{r.deliveryCompletion.requestProvesCompletion=true;},
+    r=>{r.deliveryCompletion.ratingLinkConfirmed=true;},
+    r=>{r.completeWorkflowConfirmed=true;},
+    r=>{r.readyForImplementation=true;}
+  ]) {const changed=structuredClone(records.idleTransactionRules);mutate(changed);assert.throws(()=>verifyIdle(changed));}
+});
+
+test('idle refusal limits and no-response boundaries are explicit while cancellation and rating choices remain pending', () => {
+  const rules=read('docs/module-specs/idle-transaction-rules.md');
+  for(const phrase of ['1A、2A、3A、4A、5B、6A、7A、8A','理由必填1—300字','0字或301字','满24小时也不自动同意/关闭','无回应超过24小时仍待确认','评分衔接继续待定','没有实现或验证真实交易']) assert(rules.includes(phrase),phrase);
+  const range=records.idleTransactionRules.refusal;
+  for(const [length,valid] of [[0,false],[1,true],[300,true],[301,false]]) {
+    const value='字'.repeat(length);
+    assert.equal(value.length>=range.minLength&&value.length<=range.maxLength,valid);
+  }
+  const questions=read('docs/module-specs/idle-change-questions-20261014.md');
+  assert(questions.includes('8题全部待答'));
+  const offered=[...questions.matchAll(/^\| [1-8]（(IC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'IC'+String(i+1).padStart(2,'0')));
+  assert.equal(Object.hasOwn(records,'idleChangeDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'idleChangeDecisionBatches'),false);
+  assert(read('docs/module-specs/commission-confirmation-rules.md').includes('idle-transaction-rules.md'));
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']) {
+    const text=read('docs/ui-development-handoff/'+name);
+    assert(text.includes('第十九轮实际回复“5B, 全A”'));
+    assert(text.includes('idle-transaction-rules.md'));
+    assert(text.includes('idle-change-questions-20261014.md'));
   }
 });
 

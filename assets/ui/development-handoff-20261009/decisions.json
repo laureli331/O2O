@@ -1413,6 +1413,107 @@
     },
     "readyForImplementation": false
   },
+  "idleTransactionDecisionBatches": [
+    {
+      "id": "idle-transaction-round-19-20261014",
+      "date": "2026-10-14",
+      "userReply": "5B, 全A",
+      "scope": [
+        "闲置"
+      ],
+      "questionDocument": "docs/module-specs/idle-transaction-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "IT01",
+          "answer": "A",
+          "selectedOption": "仅向该闲置帖联系申请已获准的买家"
+        },
+        {
+          "questionId": "IT02",
+          "answer": "A",
+          "selectedOption": "最多1份待确认，确认后只保留1笔进行中交易"
+        },
+        {
+          "questionId": "IT03",
+          "answer": "A",
+          "selectedOption": "先撤回再提交新版本，买家重新确认"
+        },
+        {
+          "questionId": "IT04",
+          "answer": "A",
+          "selectedOption": "保持待确认，卖家可提醒或撤回，不自动同意"
+        },
+        {
+          "questionId": "IT05",
+          "answer": "B",
+          "selectedOption": "必填1—300字；该请求结束并留历史"
+        },
+        {
+          "questionId": "IT06",
+          "answer": "A",
+          "selectedOption": "标记交易中，暂停新联系申请，既有合法权限保留"
+        },
+        {
+          "questionId": "IT07",
+          "answer": "A",
+          "selectedOption": "卖家提交交付完成，买家确认后完成"
+        },
+        {
+          "questionId": "IT08",
+          "answer": "A",
+          "selectedOption": "保持待确认，不自动完成，可提醒或提出异议"
+        }
+      ]
+    }
+  ],
+  "idleTransactionRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "idle-transaction-round-19-20261014",
+    "transactionRequest": {
+      "initiator": "seller",
+      "confirmationBy": "buyer",
+      "target": "buyer-with-approved-contact-on-same-post",
+      "maxPendingPerPost": 1,
+      "maxInProgressPerPost": 1,
+      "editing": "withdraw-then-new-version",
+      "oldVersionPreserved": true,
+      "withdrawnVersionConfirmable": false,
+      "noResponse": "keep-pending",
+      "automaticAcceptance": false,
+      "automaticExpiry": false,
+      "sellerMayRemind": true,
+      "sellerMayWithdraw": true
+    },
+    "refusal": {
+      "reasonRequired": true,
+      "minLength": 1,
+      "maxLength": 300,
+      "endsRequest": true,
+      "preserveHistory": true,
+      "cancelsEffectiveTransaction": false
+    },
+    "inProgressListing": {
+      "status": "transaction-in-progress",
+      "newContactApplicationsAllowed": false,
+      "existingLegalAuthorizationsRetained": true,
+      "extendsAuthorizationLifetime": false,
+      "marksSold": false
+    },
+    "deliveryCompletion": {
+      "requestBy": "seller",
+      "confirmedBy": "buyer",
+      "automaticCompletion": false,
+      "noResponse": "keep-pending",
+      "reminderAllowed": true,
+      "objectionAllowed": true,
+      "operatorMayConfirmForBuyer": false,
+      "requestProvesCompletion": false,
+      "completionProvesPayment": false,
+      "ratingLinkConfirmed": false
+    },
+    "completeWorkflowConfirmed": false,
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "HD01",
