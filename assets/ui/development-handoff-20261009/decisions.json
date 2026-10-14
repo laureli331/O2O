@@ -2084,19 +2084,19 @@
     "phase": "first-release-business-planning",
     "direction": "deadline-automatic-completion",
     "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
-    "ruleDocument": "docs/module-specs/deadline-completion-boundaries-rules.md",
-    "sourceBatch": "deadline-completion-round-2-20261014",
-    "questionDocument": "docs/module-specs/deadline-completion-entry-questions-20261014.md",
-    "status": "second-round-confirmed-entries-pending",
+    "ruleDocument": "docs/module-specs/deadline-completion-entry-rules.md",
+    "sourceBatch": "deadline-completion-round-3-20261014",
+    "questionDocument": "docs/module-specs/deadline-completion-detail-questions-20261014.md",
+    "status": "third-round-confirmed-details-pending",
     "pendingQuestionIds": [
-      "DC01",
-      "DC02",
-      "DC03",
-      "DC04",
-      "DC05",
-      "DC06",
-      "DC07",
-      "DC08"
+      "DT01",
+      "DT02",
+      "DT03",
+      "DT04",
+      "DT05",
+      "DT06",
+      "DT07",
+      "DT08"
     ],
     "priorQuestionSetPaused": true,
     "implementationEnabled": false
@@ -2140,6 +2140,28 @@
         "DA06",
         "DA07",
         "DA08"
+      ],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false
+    },
+    {
+      "date": "2026-10-14",
+      "phase": "first-release-business-planning",
+      "direction": "deadline-automatic-completion",
+      "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
+      "ruleDocument": "docs/module-specs/deadline-completion-boundaries-rules.md",
+      "sourceBatch": "deadline-completion-round-2-20261014",
+      "questionDocument": "docs/module-specs/deadline-completion-entry-questions-20261014.md",
+      "status": "second-round-confirmed-entries-pending",
+      "pendingQuestionIds": [
+        "DC01",
+        "DC02",
+        "DC03",
+        "DC04",
+        "DC05",
+        "DC06",
+        "DC07",
+        "DC08"
       ],
       "priorQuestionSetPaused": true,
       "implementationEnabled": false
@@ -2419,6 +2441,151 @@
       "realAuthorizationChanged": false
     },
     "firstRoundIncomeAndRatingRulesChanged": false,
+    "ratesAndCapsChanged": false,
+    "automaticDebit": false,
+    "provesCustomerPayment": false,
+    "readyForImplementation": false
+  },
+  "deadlineCompletionEntryDecisionBatches": [
+    {
+      "id": "deadline-completion-round-3-20261014",
+      "date": "2026-10-14",
+      "userReply": "5B, 全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/deadline-completion-entry-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "DC01",
+          "answer": "A",
+          "selectedOption": "发布需求时填写，接单员申请时明确接受；发布者选人时再次校验仍在未来"
+        },
+        {
+          "questionId": "DC02",
+          "answer": "A",
+          "selectedOption": "发布需求时填写，接单员报价时明确接受；客户选报价时再次校验"
+        },
+        {
+          "questionId": "DC03",
+          "answer": "A",
+          "selectedOption": "买家联系申请时填写，卖家发起交易确认时明确接受并带入，买家确认同一版本"
+        },
+        {
+          "questionId": "DC04",
+          "answer": "A",
+          "selectedOption": "新预计结束时间加完整72小时，保留时间变更历史"
+        },
+        {
+          "questionId": "DC05",
+          "answer": "B",
+          "selectedOption": "直接标“已售”，同时展示自动完成来源"
+        },
+        {
+          "questionId": "DC06",
+          "answer": "A",
+          "selectedOption": "与明确完成一致：双方关闭查看权限，保留费用文字历史"
+        },
+        {
+          "questionId": "DC07",
+          "answer": "A",
+          "selectedOption": "金额变更须双方确认，不重置窗口，保留原截止；有效异议仍有处理出口"
+        },
+        {
+          "questionId": "DC08",
+          "answer": "A",
+          "selectedOption": "从解除成功时间与当前约定预计结束时间中较晚者重新72小时"
+        }
+      ]
+    }
+  ],
+  "deadlineCompletionEntryRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "deadline-completion-round-3-20261014",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "enabled": false,
+    "acceptanceEntries": {
+      "repairOther": {
+        "customerEntersAt": "demand-publication",
+        "workerAcceptsAt": "application",
+        "expectedEndRequiredAtPublication": true,
+        "revalidateFutureAtSelection": true,
+        "estimatedFeeRequired": false
+      },
+      "errand": {
+        "customerEntersAt": "demand-publication",
+        "workerAcceptsAt": "quote-submission",
+        "expectedEndRequiredAtPublication": true,
+        "revalidateAtQuoteSelection": true,
+        "quoteTimeChangePolicyConfirmed": false
+      },
+      "idle": {
+        "buyerEntersAt": "contact-request",
+        "sellerAcceptsAt": "transaction-request",
+        "sameVersionBuyerConfirmationRequired": true,
+        "approvedContactTargetRequired": true,
+        "earlyContactDisclosure": false,
+        "expiredBuyerTimePolicyConfirmed": false
+      },
+      "defaultConsent": false,
+      "secondWorkerAcceptanceAfterSelectionRequired": false
+    },
+    "confirmedExtension": {
+      "deadline": "new-agreed-expected-end-plus-72-hours",
+      "windowHours": 72,
+      "preserveHistory": true,
+      "unilateral": false,
+      "reopensEndedFlow": false,
+      "rangeAndAdvancePolicyConfirmed": false
+    },
+    "idlePublicState": {
+      "label": "已售",
+      "automaticCompletionSourceVisible": true,
+      "provesVerifiedDelivery": false,
+      "provesPayment": false,
+      "createsVerifiedActualSaleStatistics": false,
+      "incomeDefinitionChanged": false,
+      "reopeningPolicyConfirmed": false
+    },
+    "receipts": {
+      "afterAutomaticCompletion": "neither-party",
+      "preserveFeeTextHistory": true,
+      "preserveFeeHandlingEntry": true,
+      "newUploadApproved": false,
+      "newPartyAccessGranted": false,
+      "operatorAccessGranted": false,
+      "physicalDeletionApproved": false,
+      "retentionPeriodConfirmed": false,
+      "realAuthorizationChanged": false
+    },
+    "lateFeeRepricing": {
+      "scope": "late-fee-window-without-primary-record",
+      "mutualAmountConfirmationRequired": true,
+      "resetsOriginalWindow": false,
+      "preservesOriginalCutoff": true,
+      "pendingProposalAutoConsent": false,
+      "unresolvedAmountIssueBypassed": false,
+      "appliesToExistingRecordCorrection": false,
+      "postCutoffEffectiveFeePolicyConfirmed": false
+    },
+    "deliveryIssueResumption": {
+      "startAt": "later-of-effective-clearance-and-current-agreed-expected-end",
+      "windowHours": 72,
+      "appliesTo": "automatic-flow-completion-clock",
+      "unilateralClearanceAllowed": false,
+      "clearanceAuthorityConfirmed": false,
+      "operatorServiceMediationApproved": false,
+      "otherClockMappingConfirmed": false
+    },
+    "initialIncomeAndRatingRulesChanged": false,
     "ratesAndCapsChanged": false,
     "automaticDebit": false,
     "provesCustomerPayment": false,
