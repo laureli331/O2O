@@ -1705,6 +1705,63 @@ test('idle change refusal and completion dependencies are documented without sel
   assert.equal(handoff.items.find(x=>x.id==='HD02').confirmed.business,'跑腿');
 });
 
+test('offline transaction reassessment preserves the exact user concern without answering prior questions or replacing confirmed rules', () => {
+  assert.equal(records.offlineTransactionReplanRequests.length,1);
+  const request=records.offlineTransactionReplanRequests[0];
+  assert.equal(request.id,'offline-transaction-replan-request-20261014');
+  assert.equal(request.userReply,'我发现一个问题: 在线下完成交易后, 用户往往不会再在小程序继续进行那一单的操作, 我认为我们可以重新规划相关部分, 节省资源的同时也防止用户逃佣. 你可以从心理学的角度好好考量');
+  assert.deepEqual(request.scope,['跑腿','维修','闲置','其它']);
+  assert.equal(request.status,'requested-reassessment');
+  assert.equal(request.answersPriorRound,false);
+  assert.equal(request.approvedModel,null);
+  assert.equal(request.approvedRuleReplacement,false);
+  assert.equal(request.currentConfirmedRulesRetained,true);
+  assert.equal(request.readyForImplementation,false);
+  assert.deepEqual(handoff.offlineTransactionReplanRequests,records.offlineTransactionReplanRequests);
+  assert.equal(Object.hasOwn(records,'idleRequestDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'idleRequestDecisionBatches'),false);
+  assert.equal(records.idleTransactionRules.deliveryCompletion.automaticCompletion,false);
+  assert.equal(records.idleChangeRules.newFlowRatingQualification.trigger,'seller-delivery-request-and-buyer-confirmation');
+  assert.equal(records.commissionConfirmationRules.businessConfiguration['闲置'].rateBasisPoints,500);
+  assert.equal(records.commissionConfirmationRules.businessConfiguration['闲置'].cap.amountCents,2000);
+  assert.equal(records.commissionConfirmationRules.trialReview.enabled,false);
+});
+
+test('replanning proposals cannot silently enable contact charges, automatic outcomes, payments or ratings', () => {
+  const expected={date:'2026-10-14',status:'proposal',recommendedModel:'fixed-matching-service-fee',recommendedPilotScope:['闲置'],alternativeModels:['simplified-percentage-commission','verified-platform-customer-payment'],newFeeAmountConfirmed:false,newFeeAmountCents:null,contactPaywallApproved:false,automaticCompletionApproved:false,automaticDebitApproved:false,customerPaymentCustodyApproved:false,silenceProvesCompletion:false,silenceProvesFraud:false,archiveProvesPayment:false,ratingFromFeePaymentAllowed:false,actualPilotRun:false,effectivenessMeasured:false,qualificationVerified:false,readyForImplementation:false};
+  assert.equal(records.offlineTransactionReplanProposals.length,1);
+  assert.deepEqual(records.offlineTransactionReplanProposals[0],expected);
+  assert.deepEqual(handoff.offlineTransactionReplanProposals,records.offlineTransactionReplanProposals);
+  for(const key of ['newFeeAmountConfirmed','contactPaywallApproved','automaticCompletionApproved','automaticDebitApproved','customerPaymentCustodyApproved','silenceProvesCompletion','silenceProvesFraud','archiveProvesPayment','ratingFromFeePaymentAllowed','actualPilotRun','effectivenessMeasured','qualificationVerified','readyForImplementation']){
+    const changed=structuredClone(expected);changed[key]=true;
+    assert.throws(()=>assert.deepEqual(changed,expected));
+  }
+  const withInventedFee=structuredClone(expected);withInventedFee.newFeeAmountCents=200;
+  assert.throws(()=>assert.deepEqual(withInventedFee,expected));
+});
+
+test('behavioral replan reviews alternatives, entry-point leakage and failure scenarios without asserting unobserved conversion or evasion results', () => {
+  const request=records.offlineTransactionReplanRequests[0];
+  const doc=read(request.document);
+  for(const phrase of ['不是对第二十一轮8题作答','先批准联系并展示完整联系方式','本项目待验证的推论','提前付款抵触','不能把看不到的线下交易数当成可测的逃佣率','先用A验证闲置','不能以金额记录、截图或发起支付作为支付成功'])assert(doc.includes(phrase),phrase);
+  for(const scenario of ['真正线下成交后不回来操作','仅看帖子、未表达联系意向','支付发起后失败/结果未知','信息虚假或联系方式不可用','撮合成功后线下未成交','双方谎报未成交、重复接触/多账号','新规则前已确认/已出账旧交易'])assert(doc.includes(scenario),scenario);
+  assert(doc.includes('不可观察事实'));
+  assert(doc.includes('BIT-EAST-1.pdf'));
+  assert(doc.includes('不重复收费或追溯改价'));
+  const questions=read(request.questionDocument);
+  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('第2—8题围绕第1题A'));
+  const offered=[...questions.matchAll(/^\| [1-8]（(RP\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'RP'+String(i+1).padStart(2,'0')));
+  assert.equal(Object.hasOwn(records,'offlineTransactionReplanDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'offlineTransactionReplanDecisionBatches'),false);
+  const prior=read('docs/module-specs/idle-request-questions-20261014.md');
+  assert(prior.includes('本表仍未作答'));
+  assert.equal([...prior.matchAll(/^\| [1-8]（IR\d{2}） /gm)].length,8);
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md'])assert(read('docs/ui-development-handoff/'+name).includes('offline-transaction-replan-20261014.md'));
+});
+
 test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {
   const [batch] = records.exceptionRatingDecisionBatches;
   assert.equal(records.exceptionRatingDecisionBatches.length, 1);

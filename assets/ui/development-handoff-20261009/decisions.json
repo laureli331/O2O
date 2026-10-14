@@ -1621,6 +1621,55 @@
     "completeWorkflowConfirmed": false,
     "readyForImplementation": false
   },
+  "offlineTransactionReplanRequests": [
+    {
+      "id": "offline-transaction-replan-request-20261014",
+      "date": "2026-10-14",
+      "userReply": "我发现一个问题: 在线下完成交易后, 用户往往不会再在小程序继续进行那一单的操作, 我认为我们可以重新规划相关部分, 节省资源的同时也防止用户逃佣. 你可以从心理学的角度好好考量",
+      "status": "requested-reassessment",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "document": "docs/module-specs/offline-transaction-replan-20261014.md",
+      "questionDocument": "docs/module-specs/offline-transaction-replan-questions-20261014.md",
+      "answersPriorRound": false,
+      "approvedModel": null,
+      "approvedRuleReplacement": false,
+      "currentConfirmedRulesRetained": true,
+      "readyForImplementation": false
+    }
+  ],
+  "offlineTransactionReplanProposals": [
+    {
+      "date": "2026-10-14",
+      "status": "proposal",
+      "recommendedModel": "fixed-matching-service-fee",
+      "recommendedPilotScope": [
+        "闲置"
+      ],
+      "alternativeModels": [
+        "simplified-percentage-commission",
+        "verified-platform-customer-payment"
+      ],
+      "newFeeAmountConfirmed": false,
+      "newFeeAmountCents": null,
+      "contactPaywallApproved": false,
+      "automaticCompletionApproved": false,
+      "automaticDebitApproved": false,
+      "customerPaymentCustodyApproved": false,
+      "silenceProvesCompletion": false,
+      "silenceProvesFraud": false,
+      "archiveProvesPayment": false,
+      "ratingFromFeePaymentAllowed": false,
+      "actualPilotRun": false,
+      "effectivenessMeasured": false,
+      "qualificationVerified": false,
+      "readyForImplementation": false
+    }
+  ],
   "items": [
     {
       "id": "HD01",
