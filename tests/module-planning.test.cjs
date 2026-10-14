@@ -1749,17 +1749,71 @@ test('behavioral replan reviews alternatives, entry-point leakage and failure sc
   assert(doc.includes('BIT-EAST-1.pdf'));
   assert(doc.includes('不重复收费或追溯改价'));
   const questions=read(request.questionDocument);
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('第1题B已确认'));
   assert(questions.includes('第2—8题围绕第1题A'));
   const offered=[...questions.matchAll(/^\| [1-8]（(RP\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length,8);
   assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'RP'+String(i+1).padStart(2,'0')));
-  assert.equal(Object.hasOwn(records,'offlineTransactionReplanDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'offlineTransactionReplanDecisionBatches'),false);
+  assert.equal(records.offlineTransactionReplanDecisionBatches.length,1);
+  assert.deepEqual(handoff.offlineTransactionReplanDecisionBatches,records.offlineTransactionReplanDecisionBatches);
   const prior=read('docs/module-specs/idle-request-questions-20261014.md');
   assert(prior.includes('本表仍未作答'));
   assert.equal([...prior.matchAll(/^\| [1-8]（IR\d{2}） /gm)].length,8);
   for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md'])assert(read('docs/ui-development-handoff/'+name).includes('offline-transaction-replan-20261014.md'));
+});
+
+test('B selects only the original revenue-direction question and does not answer the fixed-matching branch', () => {
+  const [batch]=records.offlineTransactionReplanDecisionBatches;
+  assert.equal(batch.id,'offline-replan-direction-20261014');
+  assert.equal(batch.date,'2026-10-14');
+  assert.equal(batch.userReply,'B');
+  const rows=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(RP\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);
+  assert.deepEqual(batch.answers,[{questionId:'RP01',answer:'B',selectedOption:rows[0][4].trim()}]);
+  assert.deepEqual(batch.notApplicableQuestionIds,rows.slice(1).map(x=>x[1]));
+  assert.deepEqual(handoff.offlineTransactionReplanDecisionBatches,records.offlineTransactionReplanDecisionBatches);
+  assert.deepEqual(records.commissionSimplificationDirection,{confirmedAt:'2026-10-14',sourceBatch:batch.id,model:'percentage-commission',acceptOfflineBlindSpots:true,simplifyFlow:true,ratesAndCapsChanged:false,fixedMatchingFeeSelected:false,customerPlatformPaymentsSelected:false,automaticBillingMechanismApproved:false,currentRulesReplaced:false,pilotScopeConfirmed:false,readyForImplementation:false});
+  assert.deepEqual(handoff.commissionSimplificationDirection,records.commissionSimplificationDirection);
+  assert.equal(records.offlineTransactionReplanRequests[0].approvedModel,null);
+  assert.equal(records.offlineTransactionReplanProposals[0].status,'proposal');
+  assert(read('docs/module-specs/offline-transaction-replan-20261014.md').includes('不把A当已选方案'));
+});
+
+test('percentage simplification proposals preserve unknown-price, unresolved-issue and qualification barriers', () => {
+  const expected={date:'2026-10-14',status:'proposal',recommendedMechanism:'preagreed-timed-provisional-commission',candidatePilotScope:['闲置'],candidateObjectionWindowHours:72,windowConfirmed:false,needsKnownMutualEffectivePrice:true,needsMutualTimeAndRuleAgreement:true,missingFactsPermitAutomaticCharge:false,unresolvedIssuePermitsAutomaticCharge:false,unknownNotificationPermitsAutomaticCharge:false,definesActualDeliveryCompleted:false,createsRatingQualification:false,createsPersonalIncome:false,automaticDebit:false,enabled:false,legalApplicabilityVerified:false,stateMigrationConfirmed:false,readyForImplementation:false};
+  assert.equal(records.commissionSimplificationProposals.length,1);
+  assert.deepEqual(records.commissionSimplificationProposals[0],expected);
+  assert.deepEqual(handoff.commissionSimplificationProposals,records.commissionSimplificationProposals);
+  for(const key of ['windowConfirmed','missingFactsPermitAutomaticCharge','unresolvedIssuePermitsAutomaticCharge','unknownNotificationPermitsAutomaticCharge','definesActualDeliveryCompleted','createsRatingQualification','createsPersonalIncome','automaticDebit','enabled','legalApplicabilityVerified','stateMigrationConfirmed','readyForImplementation']){
+    const changed=structuredClone(expected);changed[key]=true;assert.throws(()=>assert.deepEqual(changed,expected));
+  }
+  assert.equal(records.commissionBillingRules.paymentDeadline.durationHours,72);
+  assert.equal(records.commissionBillingRules.paymentDeadline.startsAt,'actual-successful-bill-issuance');
+  assert.equal(records.commissionDetailRules.errandEligibility.reference,'RUN11');
+  assert.equal(records.commissionDetailRules.errandEligibility.requiresNoObjectionDuring24Hours,true);
+  assert.equal(records.idleTransactionRules.deliveryCompletion.automaticCompletion,false);
+});
+
+test('commission simplification requires a new decision and keeps provisional billing apart from delivery, ratings, income and payment', () => {
+  const doc=read('docs/module-specs/commission-simplification-20261014.md');
+  for(const phrase of ['原第2—8题是撮合费分支，不适用','未知正式服务费不填0','通知失败/结果未知','不能直接变成真实完成数','仅点击同意也不能保证条款有效','没有真实计时、用户实验','初始低价，实际加价没登记'])assert(doc.includes(phrase),phrase);
+  assert(doc.includes('gdca.miit.gov.cn'));
+  const questions=read('docs/module-specs/commission-simplification-questions-20261014.md');
+  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('不是既有出账后72小时缴款期限'));
+  const offered=[...questions.matchAll(/^\| [1-8]（(CS\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'CS'+String(i+1).padStart(2,'0')));
+  assert.equal(Object.hasOwn(records,'commissionSimplificationDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'commissionSimplificationDecisionBatches'),false);
+  assert.equal(Object.hasOwn(records,'idleRequestDecisionBatches'),false);
+  assert.equal(handoff.items.find(x=>x.id==='HD02').confirmed.business,'跑腿');
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
+    const text=read('docs/ui-development-handoff/'+name);
+    assert(text.includes('仅RP01B'));
+    assert(text.includes('commission-simplification-20261014.md'));
+    assert(text.includes('commission-simplification-questions-20261014.md'));
+  }
 });
 
 test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {

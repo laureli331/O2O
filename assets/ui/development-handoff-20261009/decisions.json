@@ -1670,6 +1670,75 @@
       "readyForImplementation": false
     }
   ],
+  "offlineTransactionReplanDecisionBatches": [
+    {
+      "id": "offline-replan-direction-20261014",
+      "date": "2026-10-14",
+      "userReply": "B",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/offline-transaction-replan-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "RP01",
+          "answer": "B",
+          "selectedOption": "保留比例佣金，接受线下结果仍有盲区并简化流程"
+        }
+      ],
+      "notApplicableQuestionIds": [
+        "RP02",
+        "RP03",
+        "RP04",
+        "RP05",
+        "RP06",
+        "RP07",
+        "RP08"
+      ]
+    }
+  ],
+  "commissionSimplificationDirection": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "offline-replan-direction-20261014",
+    "model": "percentage-commission",
+    "acceptOfflineBlindSpots": true,
+    "simplifyFlow": true,
+    "ratesAndCapsChanged": false,
+    "fixedMatchingFeeSelected": false,
+    "customerPlatformPaymentsSelected": false,
+    "automaticBillingMechanismApproved": false,
+    "currentRulesReplaced": false,
+    "pilotScopeConfirmed": false,
+    "readyForImplementation": false
+  },
+  "commissionSimplificationProposals": [
+    {
+      "date": "2026-10-14",
+      "status": "proposal",
+      "recommendedMechanism": "preagreed-timed-provisional-commission",
+      "candidatePilotScope": [
+        "闲置"
+      ],
+      "candidateObjectionWindowHours": 72,
+      "windowConfirmed": false,
+      "needsKnownMutualEffectivePrice": true,
+      "needsMutualTimeAndRuleAgreement": true,
+      "missingFactsPermitAutomaticCharge": false,
+      "unresolvedIssuePermitsAutomaticCharge": false,
+      "unknownNotificationPermitsAutomaticCharge": false,
+      "definesActualDeliveryCompleted": false,
+      "createsRatingQualification": false,
+      "createsPersonalIncome": false,
+      "automaticDebit": false,
+      "enabled": false,
+      "legalApplicabilityVerified": false,
+      "stateMigrationConfirmed": false,
+      "readyForImplementation": false
+    }
+  ],
   "items": [
     {
       "id": "HD01",
