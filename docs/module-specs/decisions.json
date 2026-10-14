@@ -1280,6 +1280,139 @@
       "document": "docs/module-specs/commission-cap-assessment-20261014.md"
     }
   ],
+  "commissionConfirmationDecisionBatches": [
+    {
+      "id": "commission-confirmation-round-18-20261014",
+      "date": "2026-10-14",
+      "userReply": "全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/commission-confirmation-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "CT01",
+          "answer": "A",
+          "selectedOption": "维修30元、闲置20元、其它20元"
+        },
+        {
+          "questionId": "CT02",
+          "answer": "A",
+          "selectedOption": "发布者成功选定接单员时"
+        },
+        {
+          "questionId": "CT03",
+          "answer": "A",
+          "selectedOption": "发布者成功确认选择报价方案时"
+        },
+        {
+          "questionId": "CT04",
+          "answer": "A",
+          "selectedOption": "卖家发起，买家确认后生效"
+        },
+        {
+          "questionId": "CT05",
+          "answer": "A",
+          "selectedOption": "交易确认前填入双方约定的明确金额，再确认交易"
+        },
+        {
+          "questionId": "CT06",
+          "answer": "A",
+          "selectedOption": "新次服务独立锁定并独立封顶"
+        },
+        {
+          "questionId": "CT07",
+          "answer": "A",
+          "selectedOption": "展示按当前已确认计佣依据计算的预估变化，不重复知悉"
+        },
+        {
+          "questionId": "CT08",
+          "answer": "A",
+          "selectedOption": "方案正式启用后30天评估"
+        }
+      ]
+    }
+  ],
+  "commissionConfirmationRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "commission-confirmation-round-18-20261014",
+    "businessConfiguration": {
+      "跑腿": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "none"
+        }
+      },
+      "维修": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 3000,
+          "unit": "entire-service"
+        }
+      },
+      "闲置": {
+        "rateBasisPoints": 500,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "single-transaction"
+        }
+      },
+      "其它": {
+        "rateBasisPoints": 1000,
+        "trial": true,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "entire-service"
+        }
+      }
+    },
+    "rateAndCapLock": {
+      "repairAndOther": "successful-publisher-worker-selection",
+      "errand": "successful-publisher-quote-selection",
+      "idle": "successful-buyer-confirmation-of-seller-request",
+      "payerDisclosureRequiredBefore": true,
+      "locksUnknownServiceFee": false
+    },
+    "idleAgreement": {
+      "initiator": "seller",
+      "confirmationBy": "buyer",
+      "explicitAmountBeforeConfirmation": true,
+      "contactApprovalIsTransaction": false,
+      "meansDeliveryCompleted": false,
+      "provesPayment": false,
+      "completeWorkflowConfirmed": false
+    },
+    "cancelReopenService": {
+      "newServiceIndependentSnapshot": true,
+      "newServiceIndependentCap": true,
+      "restoresOldApplication": false,
+      "restoresOldContactPermission": false,
+      "oldFeesAutomaticallyEffective": false
+    },
+    "estimatedCommissionChanges": {
+      "show": true,
+      "basedOnApprovedCommissionBasis": true,
+      "repeatAcknowledgmentRequired": false,
+      "replacesMutualFeeConfirmation": false,
+      "unverifiedRealPriceReductionReducesEstimate": false,
+      "provesCommissionPayment": false
+    },
+    "trialReview": {
+      "afterFormalEnablementDays": 30,
+      "startsAt": "actual-scheme-enablement",
+      "enabled": false,
+      "automaticFeeChange": false,
+      "automaticWaiverAtReview": false,
+      "detailedMeasurementConfirmed": false
+    },
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "MP01",

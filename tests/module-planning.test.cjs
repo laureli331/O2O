@@ -1442,7 +1442,7 @@ test('cap rule integrity preserves shared service caps, snapshot timing, approve
   }
 });
 
-test('cap advice and adjustment examples use exact money math while eighteenth-round decisions stay pending', () => {
+test('cap advice and adjustment examples remain historical after eighteenth-round approval', () => {
   // 仅检验建议和验收数字，不提供生产接口，也不使建议配置生效。
   const rounded = (base, rate) => (base * rate + 5000n) / 10000n;
   const capped = (base, rate, cap) => {const raw=rounded(base,rate);return raw < cap ? raw : cap;};
@@ -1465,11 +1465,90 @@ test('cap advice and adjustment examples use exact money math while eighteenth-r
   assert(advice.includes('尚未获用户确认'));
   assert(advice.includes('不是行业标准'));
   const questions=read('docs/module-specs/commission-confirmation-questions-20261014.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('本轮8题全部A'));
   assert.equal([...questions.matchAll(/^\| [1-8]（CT\d{2}） /gm)].length,8);
-  assert.equal(Object.hasOwn(records,'commissionConfirmationDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'commissionConfirmationDecisionBatches'),false);
+  assert.equal(records.commissionConfirmationDecisionBatches.length,1);
+  assert.deepEqual(handoff.commissionConfirmationDecisionBatches,records.commissionConfirmationDecisionBatches);
   for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']) assert(read('docs/ui-development-handoff/'+name).includes('第4—8题A'));
+});
+
+test('eighteenth-round all-A answers approve amounts now without backdating earlier recommendation history', () => {
+  const [batch]=records.commissionConfirmationDecisionBatches;
+  assert.equal(batch.id,'commission-confirmation-round-18-20261014');
+  assert.equal(batch.date,'2026-10-14');
+  assert.equal(batch.userReply,'全A');
+  assert.deepEqual(batch.scope,['跑腿','维修','闲置','其它']);
+  const offered=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(CT\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(batch.answers.map(x=>x.questionId),offered.map(x=>x[1]));
+  assert.deepEqual(batch.answers.map(x=>x.answer),Array(8).fill('A'));
+  batch.answers.forEach((x,i)=>assert.equal(x.selectedOption,offered[i][3].trim()));
+  assert.deepEqual(handoff.commissionConfirmationDecisionBatches,records.commissionConfirmationDecisionBatches);
+  assert.equal(records.commissionCapRecommendations[0].userApproved,false);
+  assert.deepEqual(records.commissionCapRules.caps.amountsCents,{'维修':null,'闲置':null,'其它':null});
+  assert(read('docs/module-specs/commission-cap-assessment-20261014.md').includes('以下保留批准前建议历史'));
+});
+
+test('current confirmation rules preserve cap amounts, distinct agreement facts, new-service snapshots and inactive trial gates', () => {
+  const expected={
+    confirmedAt:'2026-10-14',sourceBatch:'commission-confirmation-round-18-20261014',
+    businessConfiguration:{'跑腿':{rateBasisPoints:1500,cap:{kind:'none'}},'维修':{rateBasisPoints:1500,cap:{kind:'fixed',amountCents:3000,unit:'entire-service'}},'闲置':{rateBasisPoints:500,cap:{kind:'fixed',amountCents:2000,unit:'single-transaction'}},'其它':{rateBasisPoints:1000,trial:true,cap:{kind:'fixed',amountCents:2000,unit:'entire-service'}}},
+    rateAndCapLock:{repairAndOther:'successful-publisher-worker-selection',errand:'successful-publisher-quote-selection',idle:'successful-buyer-confirmation-of-seller-request',payerDisclosureRequiredBefore:true,locksUnknownServiceFee:false},
+    idleAgreement:{initiator:'seller',confirmationBy:'buyer',explicitAmountBeforeConfirmation:true,contactApprovalIsTransaction:false,meansDeliveryCompleted:false,provesPayment:false,completeWorkflowConfirmed:false},
+    cancelReopenService:{newServiceIndependentSnapshot:true,newServiceIndependentCap:true,restoresOldApplication:false,restoresOldContactPermission:false,oldFeesAutomaticallyEffective:false},
+    estimatedCommissionChanges:{show:true,basedOnApprovedCommissionBasis:true,repeatAcknowledgmentRequired:false,replacesMutualFeeConfirmation:false,unverifiedRealPriceReductionReducesEstimate:false,provesCommissionPayment:false},
+    trialReview:{afterFormalEnablementDays:30,startsAt:'actual-scheme-enablement',enabled:false,automaticFeeChange:false,automaticWaiverAtReview:false,detailedMeasurementConfirmed:false},
+    readyForImplementation:false
+  };
+  const verifyCurrent=data=>assert.deepEqual(data,expected);
+  verifyCurrent(records.commissionConfirmationRules);
+  verifyCurrent(handoff.commissionConfirmationRules);
+  for(const mutate of [
+    r=>{r.businessConfiguration['维修'].cap.amountCents=2000;},
+    r=>{r.businessConfiguration['跑腿'].cap={kind:'fixed',amountCents:2000};},
+    r=>{r.rateAndCapLock.errand='quote-submission';},
+    r=>{r.rateAndCapLock.locksUnknownServiceFee=true;},
+    r=>{r.idleAgreement.explicitAmountBeforeConfirmation=false;},
+    r=>{r.idleAgreement.contactApprovalIsTransaction=true;},
+    r=>{r.idleAgreement.meansDeliveryCompleted=true;},
+    r=>{r.idleAgreement.provesPayment=true;},
+    r=>{r.cancelReopenService.newServiceIndependentCap=false;},
+    r=>{r.cancelReopenService.restoresOldContactPermission=true;},
+    r=>{r.cancelReopenService.oldFeesAutomaticallyEffective=true;},
+    r=>{r.estimatedCommissionChanges.repeatAcknowledgmentRequired=true;},
+    r=>{r.estimatedCommissionChanges.unverifiedRealPriceReductionReducesEstimate=true;},
+    r=>{r.trialReview.enabled=true;},
+    r=>{r.trialReview.automaticFeeChange=true;},
+    r=>{r.trialReview.startsAt='document-confirmation';},
+    r=>{r.readyForImplementation=true;}
+  ]) {const changed=structuredClone(records.commissionConfirmationRules);mutate(changed);assert.throws(()=>verifyCurrent(changed));}
+});
+
+test('approved cap examples match current configuration and new idle workflow questions remain proposals', () => {
+  const config=records.commissionConfirmationRules.businessConfiguration;
+  const fee=(business,baseCents)=>{const row=config[business];const raw=(BigInt(baseCents)*BigInt(row.rateBasisPoints)+5000n)/10000n;return row.cap.kind==='none'?raw:raw>BigInt(row.cap.amountCents)?BigInt(row.cap.amountCents):raw;};
+  assert.equal(fee('维修',25000),3000n);
+  assert.equal(fee('其它',25000),2000n);
+  assert.equal(fee('闲置',80000),2000n);
+  assert.equal(fee('闲置',60000),2000n);
+  assert.equal(fee('闲置',30000)-fee('闲置',80000),-500n);
+  assert.equal(fee('跑腿',25000),3750n);
+  const rules=read('docs/module-specs/commission-confirmation-rules.md');
+  for(const phrase of ['不产生未确认服务费金额','草选、提交报价或失败/未知结果','评分资格','不重复知悉','不从文档确认日计时','没有实现或验证真实交易']) assert(rules.includes(phrase),phrase);
+  const questions=read('docs/module-specs/idle-transaction-questions-20261014.md');
+  assert(questions.includes('8题全部待答'));
+  const offered=[...questions.matchAll(/^\| [1-8]（(IT\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'IT'+String(i+1).padStart(2,'0')));
+  assert.equal(Object.hasOwn(records,'idleTransactionDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'idleTransactionDecisionBatches'),false);
+  assert.equal(handoff.items.find(x=>x.id==='HD02').confirmed.business,'跑腿');
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
+    const text=read('docs/ui-development-handoff/'+name);
+    assert(text.includes('第十八轮实际回复“全A”'));
+    assert(text.includes('commission-confirmation-rules.md'));
+    assert(text.includes('idle-transaction-questions-20261014.md'));
+  }
 });
 
 test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {
