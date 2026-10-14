@@ -1739,6 +1739,125 @@
       "readyForImplementation": false
     }
   ],
+  "commissionSimplificationDecisionBatches": [
+    {
+      "id": "commission-simplification-round-1-20261014",
+      "date": "2026-10-14",
+      "userReply": "2B, 全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/commission-simplification-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "CS01",
+          "answer": "A",
+          "selectedOption": "事先约定规则和时间，无异议形成暂定计佣记录"
+        },
+        {
+          "questionId": "CS02",
+          "answer": "B",
+          "selectedOption": "四类业务一起调整"
+        },
+        {
+          "questionId": "CS03",
+          "answer": "A",
+          "selectedOption": "双方约定的预计交付结束时点"
+        },
+        {
+          "questionId": "CS04",
+          "answer": "A",
+          "selectedOption": "72小时"
+        },
+        {
+          "questionId": "CS05",
+          "answer": "A",
+          "selectedOption": "仅采用双方已确认有效金额，未知不自动计佣"
+        },
+        {
+          "questionId": "CS06",
+          "answer": "A",
+          "selectedOption": "未成交/未完成暂停整笔；仅金额异议暂停争议部分"
+        },
+        {
+          "questionId": "CS07",
+          "answer": "A",
+          "selectedOption": "保留自愿真实交付确认入口，按原条件评分；暂定计佣不产生资格"
+        },
+        {
+          "questionId": "CS08",
+          "answer": "A",
+          "selectedOption": "双方确认交易且知悉计佣规则之后"
+        }
+      ]
+    }
+  ],
+  "commissionSimplificationRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "commission-simplification-round-1-20261014",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "mechanism": "preagreed-timed-provisional-commission",
+    "automaticProvisionalRecordApproved": true,
+    "enabled": false,
+    "ratesAndCapsChanged": false,
+    "objectionWindow": {
+      "durationHours": 72,
+      "hoursConfirmed": true,
+      "startsAt": "mutually-agreed-estimated-delivery-end",
+      "distinctFromBillPaymentDeadline": true,
+      "distinctFromRUN11": true,
+      "preciseBoundaryConfirmed": false,
+      "resumptionConfirmed": false
+    },
+    "amountBasis": {
+      "kind": "mutually-confirmed-effective-amount",
+      "unverifiedReductionEligible": false,
+      "unknownPermitsAutomaticBilling": false,
+      "estimateOrBudgetEligible": false,
+      "implicitZero": false,
+      "explicitFreeZeroIsKnown": true,
+      "businessAmountRulesRemain": true,
+      "repairOtherPhaseBillingPolicyConfirmed": false
+    },
+    "exceptions": {
+      "noDealOrNoCompletion": "pause-entire-transaction",
+      "amountOnly": "pause-disputed-part",
+      "verificationWorkflowConfirmed": false,
+      "unresolvedNotificationsPermitProvisionalBilling": false
+    },
+    "ratings": {
+      "voluntaryActualDeliveryConfirmationRetained": true,
+      "provisionalRecordCreatesQualification": false,
+      "existingLegitimateQualificationsPreserved": true,
+      "moderationPreserved": true
+    },
+    "idleContactDisclosure": {
+      "contactApprovalAloneUnlocks": false,
+      "successfulTransactionAndRuleAcknowledgmentRequired": true,
+      "newChatOrSearchApproved": false,
+      "actualAuthorizationChanged": false
+    },
+    "provisionalRecord": {
+      "provesActualCompletion": false,
+      "provesPayment": false,
+      "createsPersonalIncome": false,
+      "automaticDebit": false
+    },
+    "billingMonthMappingConfirmed": false,
+    "errandLegacyReplacementConfirmed": false,
+    "archivePolicyConfirmed": false,
+    "oldTransactionsMigrationConfirmed": false,
+    "qualificationVerified": false,
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "MP01",

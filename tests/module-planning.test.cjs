@@ -1794,18 +1794,18 @@ test('percentage simplification proposals preserve unknown-price, unresolved-iss
   assert.equal(records.idleTransactionRules.deliveryCompletion.automaticCompletion,false);
 });
 
-test('commission simplification requires a new decision and keeps provisional billing apart from delivery, ratings, income and payment', () => {
+test('commission simplification approval is traceable and provisional billing remains separate from delivery, ratings, income and payment', () => {
   const doc=read('docs/module-specs/commission-simplification-20261014.md');
   for(const phrase of ['原第2—8题是撮合费分支，不适用','未知正式服务费不填0','通知失败/结果未知','不能直接变成真实完成数','仅点击同意也不能保证条款有效','没有真实计时、用户实验','初始低价，实际加价没登记'])assert(doc.includes(phrase),phrase);
   assert(doc.includes('gdca.miit.gov.cn'));
   const questions=read('docs/module-specs/commission-simplification-questions-20261014.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('第2题B，其余A'));
   assert(questions.includes('不是既有出账后72小时缴款期限'));
   const offered=[...questions.matchAll(/^\| [1-8]（(CS\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length,8);
   assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'CS'+String(i+1).padStart(2,'0')));
-  assert.equal(Object.hasOwn(records,'commissionSimplificationDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'commissionSimplificationDecisionBatches'),false);
+  assert.equal(records.commissionSimplificationDecisionBatches.length,1);
+  assert.deepEqual(handoff.commissionSimplificationDecisionBatches,records.commissionSimplificationDecisionBatches);
   assert.equal(Object.hasOwn(records,'idleRequestDecisionBatches'),false);
   assert.equal(handoff.items.find(x=>x.id==='HD02').confirmed.business,'跑腿');
   for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
@@ -1813,6 +1813,79 @@ test('commission simplification requires a new decision and keeps provisional bi
     assert(text.includes('仅RP01B'));
     assert(text.includes('commission-simplification-20261014.md'));
     assert(text.includes('commission-simplification-questions-20261014.md'));
+  }
+});
+
+test('simplification first-round reply expands all four businesses with only the second answer B and preserves earlier direction history', () => {
+  const [batch]=records.commissionSimplificationDecisionBatches;
+  assert.equal(batch.id,'commission-simplification-round-1-20261014');
+  assert.equal(batch.date,'2026-10-14');
+  assert.equal(batch.userReply,'2B, 全A');
+  assert.deepEqual(batch.scope,['跑腿','维修','闲置','其它']);
+  const rows=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(CS\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);
+  assert.deepEqual(batch.answers.map(x=>x.questionId),rows.map(x=>x[1]));
+  assert.deepEqual(batch.answers.map(x=>x.answer),['A','B','A','A','A','A','A','A']);
+  batch.answers.forEach((answer,i)=>assert.equal(answer.selectedOption,rows[i][i===1?4:3].trim()));
+  assert.deepEqual(handoff.commissionSimplificationDecisionBatches,records.commissionSimplificationDecisionBatches);
+  assert.equal(records.offlineTransactionReplanDecisionBatches[0].answers.length,1);
+  assert.equal(records.offlineTransactionReplanDecisionBatches[0].answers[0].answer,'B');
+  assert.equal(records.commissionSimplificationDirection.automaticBillingMechanismApproved,false);
+  assert.equal(records.commissionSimplificationProposals[0].windowConfirmed,false);
+});
+
+test('approved simplification retains known-price and rating barriers while activating only a design decision for the 72-hour mechanism', () => {
+  const expected={confirmedAt:'2026-10-14',sourceBatch:'commission-simplification-round-1-20261014',scope:['跑腿','维修','闲置','其它'],mechanism:'preagreed-timed-provisional-commission',automaticProvisionalRecordApproved:true,enabled:false,ratesAndCapsChanged:false,
+    objectionWindow:{durationHours:72,hoursConfirmed:true,startsAt:'mutually-agreed-estimated-delivery-end',distinctFromBillPaymentDeadline:true,distinctFromRUN11:true,preciseBoundaryConfirmed:false,resumptionConfirmed:false},
+    amountBasis:{kind:'mutually-confirmed-effective-amount',unverifiedReductionEligible:false,unknownPermitsAutomaticBilling:false,estimateOrBudgetEligible:false,implicitZero:false,explicitFreeZeroIsKnown:true,businessAmountRulesRemain:true,repairOtherPhaseBillingPolicyConfirmed:false},
+    exceptions:{noDealOrNoCompletion:'pause-entire-transaction',amountOnly:'pause-disputed-part',verificationWorkflowConfirmed:false,unresolvedNotificationsPermitProvisionalBilling:false},
+    ratings:{voluntaryActualDeliveryConfirmationRetained:true,provisionalRecordCreatesQualification:false,existingLegitimateQualificationsPreserved:true,moderationPreserved:true},
+    idleContactDisclosure:{contactApprovalAloneUnlocks:false,successfulTransactionAndRuleAcknowledgmentRequired:true,newChatOrSearchApproved:false,actualAuthorizationChanged:false},
+    provisionalRecord:{provesActualCompletion:false,provesPayment:false,createsPersonalIncome:false,automaticDebit:false},
+    billingMonthMappingConfirmed:false,errandLegacyReplacementConfirmed:false,archivePolicyConfirmed:false,oldTransactionsMigrationConfirmed:false,qualificationVerified:false,readyForImplementation:false};
+  const verifyCurrent=data=>assert.deepEqual(data,expected);
+  verifyCurrent(records.commissionSimplificationRules);verifyCurrent(handoff.commissionSimplificationRules);
+  for(const mutate of [
+    r=>{r.scope=['闲置'];},
+    r=>{r.enabled=true;},
+    r=>{r.objectionWindow.durationHours=24;},
+    r=>{r.objectionWindow.startsAt='transaction-confirmation';},
+    r=>{r.amountBasis.unverifiedReductionEligible=true;},
+    r=>{r.amountBasis.unknownPermitsAutomaticBilling=true;},
+    r=>{r.amountBasis.implicitZero=true;},
+    r=>{r.exceptions.noDealOrNoCompletion='pause-disputed-part';},
+    r=>{r.exceptions.unresolvedNotificationsPermitProvisionalBilling=true;},
+    r=>{r.ratings.provisionalRecordCreatesQualification=true;},
+    r=>{r.idleContactDisclosure.contactApprovalAloneUnlocks=true;},
+    r=>{r.idleContactDisclosure.actualAuthorizationChanged=true;},
+    r=>{r.provisionalRecord.provesActualCompletion=true;},
+    r=>{r.provisionalRecord.createsPersonalIncome=true;},
+    r=>{r.provisionalRecord.automaticDebit=true;},
+    r=>{r.errandLegacyReplacementConfirmed=true;},
+    r=>{r.oldTransactionsMigrationConfirmed=true;},
+    r=>{r.readyForImplementation=true;}
+  ]){const changed=structuredClone(records.commissionSimplificationRules);mutate(changed);assert.throws(()=>verifyCurrent(changed));}
+});
+
+test('approved window examples start from the agreed end time and unresolved second-round mappings cannot be guessed', () => {
+  const rule=records.commissionSimplificationRules;
+  assert.equal(Date.parse('2026-11-01T10:00:00+08:00')+rule.objectionWindow.durationHours*3600000,Date.parse('2026-11-04T10:00:00+08:00'));
+  assert.equal(records.commissionBillingRules.paymentDeadline.startsAt,'actual-successful-bill-issuance');
+  const doc=read('docs/module-specs/commission-simplification-rules.md');
+  for(const text of ['1A、2B、3A、4A、5A、6A、7A、8A','2026-11-04 10:00:00','未经批准的真实降价不直接减佣','旧RUN11尚未决定取消或保留','仅联系申请获准仍打码','没有实现或验证真实计时'])assert(doc.includes(text),text);
+  assert(read('CONTEXT.md').includes('**暂定计佣记录**'));
+  const questions=read('docs/module-specs/commission-simplification-boundaries-questions-20261014.md');
+  assert(questions.includes('8题全部待答'));
+  const rows=[...questions.matchAll(/^\| [1-8]（(SB\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);
+  assert.deepEqual(rows.map(x=>x[1]),Array.from({length:8},(_,i)=>'SB'+String(i+1).padStart(2,'0')));
+  assert.equal(Object.hasOwn(records,'commissionSimplificationBoundaryDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'commissionSimplificationBoundaryDecisionBatches'),false);
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
+    const text=read('docs/ui-development-handoff/'+name);
+    assert(text.includes('简化第一轮实际回复“2B, 全A”'));
+    assert(text.includes('commission-simplification-rules.md'));
+    assert(text.includes('commission-simplification-boundaries-questions-20261014.md'));
   }
 });
 
