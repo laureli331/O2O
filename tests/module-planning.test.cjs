@@ -9,6 +9,102 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+test('sixth-round all-A reply answers exactly DX01 to DX08 and resolves DO02 without rewriting its history', () => {
+  const batches=records.deadlineCompletionClarificationDecisionBatches;
+  assert.equal(batches.length,1);
+  const [batch]=batches;
+  assert.equal(batch.id,'deadline-completion-round-6-20261014');
+  assert.equal(batch.userReply,'全A, 以后都直白点\n还有多少条问题?');
+  const rows=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(DX\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);
+  assert.deepEqual(batch.answers.map(a=>a.questionId),Array.from({length:8},(_,i)=>`DX${String(i+1).padStart(2,'0')}`));
+  batch.answers.forEach((a,i)=>{assert.equal(a.answer,'A');assert.equal(a.selectedOption,rows[i][3].trim());});
+  assert.deepEqual(batch.resolves,[{questionId:'DO02',throughQuestionId:'DX01',answer:'A',preserveOriginalUnansweredReply:true}]);
+  assert.deepEqual(records.deadlineCompletionOperationDecisionBatches[0].unanswered,[{questionId:'DO02',userReply:'没听懂',status:'clarification-required'}]);
+  assert.equal(records.deadlineCompletionOperationDecisionBatches[0].answers.length,7);
+  assert.equal(records.deadlineCompletionOperationRules.timeReacceptanceEntry.confirmed,false);
+  assert.deepEqual(handoff.deadlineCompletionClarificationDecisionBatches,batches);
+  assert.equal(records.discussionFormat.plainLanguageRequested,true);
+  assert.equal(records.discussionFormat.languageUserReply,'以后都直白点');
+  assert.equal(records.discussionFormat.questionsPerRound,8);
+  assert.equal(records.discussionFormat.presentation,'table');
+});
+
+test('sixth-round time limits use elapsed hours and the previous expected end instead of the extension confirmation or old cutoff', () => {
+  const r=records.deadlineCompletionClarificationRules;
+  assert.deepEqual(handoff.deadlineCompletionClarificationRules,r);
+  assert.equal(r.horizon.initialAnchor,'transaction-confirmation');
+  assert.equal(r.horizon.initialMaxHours,r.horizon.initialMaxDays*24);
+  assert.equal(r.horizon.initialMaxHours,720);
+  assert.equal(r.horizon.extensionAnchor,'previous-effective-expected-end');
+  assert.equal(r.horizon.extensionMaxHours,r.horizon.extensionMaxDays*24);
+  assert.equal(r.horizon.extensionMaxHours,168);
+  assert.equal(r.horizon.extensionMustBeLater,true);
+  assert.equal(r.horizon.usesAutomaticCompletionCutoffAsAnchor,false);
+  assert.equal(r.horizon.fixedDurationRequired,false);
+  assert.equal(r.horizon.changesOther72HourWindows,false);
+  const hour=60*60*1000;
+  const confirmed=Date.parse('2026-10-14T10:00:00+08:00');
+  const firstLatest=confirmed+r.horizon.initialMaxHours*hour;
+  const extendedLatest=firstLatest+r.horizon.extensionMaxHours*hour;
+  assert.equal(firstLatest,Date.parse('2026-11-13T10:00:00+08:00'));
+  assert.equal(extendedLatest,Date.parse('2026-11-20T10:00:00+08:00'));
+  assert.equal(extendedLatest+72*hour,Date.parse('2026-11-23T10:00:00+08:00'));
+  const earlierExtensionConfirmation=Date.parse('2026-10-20T10:00:00+08:00');
+  assert.notEqual(extendedLatest,earlierExtensionConfirmation+168*hour);
+  assert.notEqual(extendedLatest,firstLatest+72*hour+168*hour);
+  assert.deepEqual(r.timeReacceptanceEntry,{scope:'errand-before-selection',mode:'accept-new-time-on-existing-quote',quoteAmountUnchanged:true,currentTimeVersionExplicitAcceptanceRequired:true,addsPostSelectionWorkerAcceptance:false,resolvesOriginalQuestion:'DO02',sourceQuestion:'DX01'});
+  const doc=read('docs/module-specs/deadline-completion-clarification-rules.md');
+  for(const text of ['11月13日10:00','11月20日10:00','11月23日10:00','不是每次都必须延七天','在期限之后成功处理']) assert(doc.includes(text),text);
+  assert(read('CONTEXT.md').includes('最多720小时'));
+  assert(read('CONTEXT.md').includes('最多从该原时点延后连续168小时'));
+});
+
+test('issue submission and clearance preserve mutual agreement, pause on refusal, one outcome, history and truthful factual boundaries', () => {
+  const r=records.deadlineCompletionClarificationRules;
+  assert.deepEqual(r.issuePause,{appliesBeforeNormalAutomaticCompletion:true,submittedBy:'either-valid-transaction-party',categories:['not-completed','not-traded','cancellation-dispute'],explanationRequired:true,validSubmissionRequired:true,counterpartyAcknowledgmentRequired:false,submissionProvesClaim:false,preciseEvidenceFieldsConfirmed:false,postCompletionAutomaticRollback:false});
+  assert.deepEqual(r.clearance,{pendingLimitPerIssue:1,proposedBy:'either-party',counterpartyExplicitSameVersionConfirmationRequired:true,initiatorMayWithdrawPending:true,editRequiresWithdrawalAndResubmission:true,successfulClearanceMayBeWithdrawn:false,refusalReasonRequired:false,refusalReasonMaxLength:300,refusalClosesRequest:true,refusalKeepsOriginalIssuePause:true,operationPriority:'first-server-successful-valid-operation',clientClickPriority:false,lateOperationRollsBackSuccess:false,singleSuccessfulClearance:true,restartAt:'max-clearance-success-and-current-effective-expected-end-plus-72h',repeatedRequestRestartsWindow:false,retainHistoryAndEvidence:true,operatorServiceAdjudicationGranted:false});
+  for(const name of ['enabled','incomeRatingSoldAndRatesChanged','automaticDebit','provesCustomerPayment','readyForImplementation']) assert.equal(r[name],false,name);
+  const doc=read('docs/module-specs/deadline-completion-clarification-rules.md');
+  for(const text of ['不必等另一方承认有争议','提交成功不证明说法已核实','理由选填，最多300字','原异议继续暂停自动完成','后来的操作不推翻已成功结果','重复确认不能再增加一轮72小时','运营没有获得代双方裁决交付的权限']) assert(doc.includes(text),text);
+});
+
+test('remaining-question audit cannot fabricate a total, count technical checks as user questions or silently approve paused proposals', () => {
+  const audit=records.remainingPlanningAudit;
+  assert.deepEqual(handoff.remainingPlanningAudit,audit);
+  assert.equal(audit.remainingQuestionCount,null);
+  assert.equal(audit.totalVerified,false);
+  assert.equal(audit.categoryCountIsQuestionCount,false);
+  assert.equal(audit.newQuestionsPresented,false);
+  assert.equal(audit.planningComplete,false);
+  assert.equal(audit.userApprovedMissingAnswers,false);
+  for(const name of ['excludeResolvedQuestions','excludeTechnicalTasks','excludeExternalEvidenceChecks','excludeSecondReleaseScope']) assert.equal(audit[name],true);
+  const doc=read(audit.document);
+  const groups=[...doc.matchAll(/^\| ([1-8])\. /gm)];
+  assert.equal(groups.length,audit.knownGapCategoryCount);
+  assert.equal(groups.length,8);
+  assert(doc.includes('不是八道题'));
+  assert(doc.includes('剩余题目总数暂不能准确给出'));
+  assert(doc.includes('不能直接相加'));
+  assert(doc.includes('仍未答'));
+  const focus=records.currentPlanningFocus;
+  assert.deepEqual(handoff.currentPlanningFocus,focus);
+  assert.equal(focus.sourceBatch,'deadline-completion-round-6-20261014');
+  assert.equal(focus.ruleDocument,'docs/module-specs/deadline-completion-clarification-rules.md');
+  assert.equal(focus.backlogDocument,audit.document);
+  assert.deepEqual(focus.pendingQuestionIds,[]);
+  assert.deepEqual(focus.unresolvedOriginalQuestionIds,[]);
+  assert.equal(focus.remainingQuestionCount,null);
+  assert.equal(focus.planningComplete,false);
+  assert.equal(focus.implementationEnabled,false);
+  for(const f of ['docs/module-specs/deadline-completion-clarification-rules.md',audit.document]) {
+    for(const match of read(f).matchAll(/\]\(([^)]+)\)/g)) assert(fs.existsSync(path.resolve(root,path.dirname(f),match[1])),`${f}: ${match[1]}`);
+  }
+  for(const f of ['docs/module-specs/README.md','docs/ui-development-handoff/README.md','docs/ui-development-handoff/business-addendum.md','docs/ui-development-handoff/page-spec.md','docs/ui-development-handoff/decisions-and-gaps.md']) {
+    const text=read(f);assert(text.includes('结束期限第六轮确认：'));assert(text.includes('deadline-completion-clarification-rules.md'));assert(text.includes('remaining-planning-audit-20261014.md'));
+  }
+});
+
 const expectedCommissionDetails = {
   confirmedAt: '2026-10-13', scope: ['跑腿', '维修', '闲置', '其它'], sourceBatch: 'commission-detail-round-14-20261013',
   rateConfiguration: { mode: 'per-business', numericRatesConfirmed: false },
@@ -2553,14 +2649,14 @@ test('misunderstood time-entry explanation and sixth-round questions remain revi
   const doc=read('docs/module-specs/deadline-completion-operation-rules.md');
   for(const text of ['DO02未选、需解释','没听懂','下午5点','下午3点','原报价金额保留','接单员明确接受新时间','不执行或固化DO02','延期最大七天，起算点','不倒填窗口月份']) assert(doc.includes(text),text);
   const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-operation-rules.md',sourceBatch:'deadline-completion-round-5-20261014',questionDocument:'docs/module-specs/deadline-completion-clarification-questions-20261014.md',status:'fifth-round-partial-time-entry-clarification-required',pendingQuestionIds:['DX01','DX02','DX03','DX04','DX05','DX06','DX07','DX08'],unresolvedOriginalQuestionIds:['DO02'],priorQuestionSetPaused:true,implementationEnabled:false};
-  assert.deepEqual(records.currentPlanningFocus,focus);assert.deepEqual(handoff.currentPlanningFocus,focus);
-  assert.equal(records.planningFocusHistory.length,5);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
+  assert.deepEqual(records.planningFocusHistory[5],focus);assert.deepEqual(handoff.planningFocusHistory[5],focus);
+  assert.equal(records.planningFocusHistory.length,6);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
   const questions=read(focus.questionDocument);
-  assert(questions.includes('8题全部待答'));assert(questions.includes('重述尚未选的原DO02'));
+  assert(questions.includes('8题全部选择A'));assert(questions.includes('重述尚未选的原DO02'));
   const rows=[...questions.matchAll(/^\| [1-8]（(DX\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(rows.length,8);assert.deepEqual(rows.map(row=>row[1]),focus.pendingQuestionIds);
-  assert.equal(Object.hasOwn(records,'deadlineCompletionClarificationDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'deadlineCompletionClarificationDecisionBatches'),false);
+  assert.equal(records.deadlineCompletionClarificationDecisionBatches.length,1);
+  assert.deepEqual(handoff.deadlineCompletionClarificationDecisionBatches,records.deadlineCompletionClarificationDecisionBatches);
   for(const text of ['在原报价旁直接点','初次30天、延期七天','从原有效预计结束时间起','不将资料提交成功当争议事实已核实','不回退已成功的撤回或拒绝']) assert(questions.includes(text),text);
   const glossary=read('CONTEXT.md');assert(glossary.includes('**初次可选范围**'));assert(glossary.includes('**延期可选范围**'));assert(glossary.includes('仅作设计历史，不作为当前实施范围'));
   for(const file of ['docs/module-specs/README.md','docs/module-specs/deadline-completion-request-20261014.md','docs/module-specs/deadline-completion-rules.md','docs/module-specs/deadline-completion-boundaries-rules.md','docs/module-specs/deadline-completion-entry-rules.md','docs/module-specs/deadline-completion-detail-rules.md','docs/module-specs/commission-simplification-rules.md','docs/module-specs/commission-simplification-boundaries-rules.md','docs/module-specs/planning-stage-clarification-20261014.md','docs/ui-development-handoff/README.md','docs/ui-development-handoff/business-addendum.md','docs/ui-development-handoff/page-spec.md','docs/ui-development-handoff/decisions-and-gaps.md']){

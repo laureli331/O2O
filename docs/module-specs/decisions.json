@@ -3,7 +3,16 @@
   "date": "2026-10-10",
   "updatedAt": "2026-10-14",
   "source": "human replies in this chat",
-  "discussionFormat": {"date":"2026-10-11","questionsPerRound":8,"userReply":"一次问我八个问题, 否则进度太慢了","updatedAt":"2026-10-12","presentation":"table","formatUserReply":"问题和选项以表格的形式问我"},
+  "discussionFormat": {
+    "date": "2026-10-11",
+    "questionsPerRound": 8,
+    "userReply": "一次问我八个问题, 否则进度太慢了",
+    "updatedAt": "2026-10-14",
+    "presentation": "table",
+    "formatUserReply": "问题和选项以表格的形式问我",
+    "plainLanguageRequested": true,
+    "languageUserReply": "以后都直白点"
+  },
   "feeDecisionBatches": [
     {
       "id": "fee-round-1-20261011",
@@ -2084,25 +2093,17 @@
     "phase": "first-release-business-planning",
     "direction": "deadline-automatic-completion",
     "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
-    "ruleDocument": "docs/module-specs/deadline-completion-operation-rules.md",
-    "sourceBatch": "deadline-completion-round-5-20261014",
+    "ruleDocument": "docs/module-specs/deadline-completion-clarification-rules.md",
+    "sourceBatch": "deadline-completion-round-6-20261014",
     "questionDocument": "docs/module-specs/deadline-completion-clarification-questions-20261014.md",
-    "status": "fifth-round-partial-time-entry-clarification-required",
-    "pendingQuestionIds": [
-      "DX01",
-      "DX02",
-      "DX03",
-      "DX04",
-      "DX05",
-      "DX06",
-      "DX07",
-      "DX08"
-    ],
-    "unresolvedOriginalQuestionIds": [
-      "DO02"
-    ],
+    "status": "sixth-round-confirmed-remaining-inventory-required",
+    "pendingQuestionIds": [],
+    "unresolvedOriginalQuestionIds": [],
     "priorQuestionSetPaused": true,
-    "implementationEnabled": false
+    "implementationEnabled": false,
+    "backlogDocument": "docs/module-specs/remaining-planning-audit-20261014.md",
+    "remainingQuestionCount": null,
+    "planningComplete": false
   },
   "planningFocusHistory": [
     {
@@ -2209,6 +2210,31 @@
         "DO06",
         "DO07",
         "DO08"
+      ],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false
+    },
+    {
+      "date": "2026-10-14",
+      "phase": "first-release-business-planning",
+      "direction": "deadline-automatic-completion",
+      "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
+      "ruleDocument": "docs/module-specs/deadline-completion-operation-rules.md",
+      "sourceBatch": "deadline-completion-round-5-20261014",
+      "questionDocument": "docs/module-specs/deadline-completion-clarification-questions-20261014.md",
+      "status": "fifth-round-partial-time-entry-clarification-required",
+      "pendingQuestionIds": [
+        "DX01",
+        "DX02",
+        "DX03",
+        "DX04",
+        "DX05",
+        "DX06",
+        "DX07",
+        "DX08"
+      ],
+      "unresolvedOriginalQuestionIds": [
+        "DO02"
       ],
       "priorQuestionSetPaused": true,
       "implementationEnabled": false
@@ -2931,6 +2957,160 @@
     "automaticDebit": false,
     "provesCustomerPayment": false,
     "readyForImplementation": false
+  },
+  "deadlineCompletionClarificationDecisionBatches": [
+    {
+      "id": "deadline-completion-round-6-20261014",
+      "date": "2026-10-14",
+      "userReply": "全A, 以后都直白点\n还有多少条问题?",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/deadline-completion-clarification-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "DX01",
+          "answer": "A",
+          "selectedOption": "在原报价旁直接点“接受新时间”，价格不变，你再选择该报价"
+        },
+        {
+          "questionId": "DX02",
+          "answer": "A",
+          "selectedOption": "按连续24小时计算一天"
+        },
+        {
+          "questionId": "DX03",
+          "answer": "A",
+          "selectedOption": "从原有效预计结束时间起，最多再延后七天"
+        },
+        {
+          "questionId": "DX04",
+          "answer": "A",
+          "selectedOption": "交易当事方明确提出未完成/未成交/取消争议并说明，符合资料要求且提交成功即可暂停"
+        },
+        {
+          "questionId": "DX05",
+          "answer": "A",
+          "selectedOption": "最多1份"
+        },
+        {
+          "questionId": "DX06",
+          "answer": "A",
+          "selectedOption": "发起方可在待确认时撤回；修改先撤回重提，解除成功不能撤回"
+        },
+        {
+          "questionId": "DX07",
+          "answer": "A",
+          "selectedOption": "选填，最多300字；关闭解除请求，原异议继续暂停"
+        },
+        {
+          "questionId": "DX08",
+          "answer": "A",
+          "selectedOption": "按服务端先成功的有效操作，保留结果；迟到请求不回退"
+        }
+      ],
+      "replyInterpretation": "all-A-for-DX01-to-DX08-only",
+      "resolves": [
+        {
+          "questionId": "DO02",
+          "throughQuestionId": "DX01",
+          "answer": "A",
+          "preserveOriginalUnansweredReply": true
+        }
+      ]
+    }
+  ],
+  "deadlineCompletionClarificationRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "deadline-completion-round-6-20261014",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "enabled": false,
+    "timeReacceptanceEntry": {
+      "scope": "errand-before-selection",
+      "mode": "accept-new-time-on-existing-quote",
+      "quoteAmountUnchanged": true,
+      "currentTimeVersionExplicitAcceptanceRequired": true,
+      "addsPostSelectionWorkerAcceptance": false,
+      "resolvesOriginalQuestion": "DO02",
+      "sourceQuestion": "DX01"
+    },
+    "horizon": {
+      "dayHours": 24,
+      "initialMaxDays": 30,
+      "initialMaxHours": 720,
+      "initialAnchor": "transaction-confirmation",
+      "extensionMaxDays": 7,
+      "extensionMaxHours": 168,
+      "extensionAnchor": "previous-effective-expected-end",
+      "extensionMustBeLater": true,
+      "usesAutomaticCompletionCutoffAsAnchor": false,
+      "fixedDurationRequired": false,
+      "changesOther72HourWindows": false
+    },
+    "issuePause": {
+      "appliesBeforeNormalAutomaticCompletion": true,
+      "submittedBy": "either-valid-transaction-party",
+      "categories": [
+        "not-completed",
+        "not-traded",
+        "cancellation-dispute"
+      ],
+      "explanationRequired": true,
+      "validSubmissionRequired": true,
+      "counterpartyAcknowledgmentRequired": false,
+      "submissionProvesClaim": false,
+      "preciseEvidenceFieldsConfirmed": false,
+      "postCompletionAutomaticRollback": false
+    },
+    "clearance": {
+      "pendingLimitPerIssue": 1,
+      "proposedBy": "either-party",
+      "counterpartyExplicitSameVersionConfirmationRequired": true,
+      "initiatorMayWithdrawPending": true,
+      "editRequiresWithdrawalAndResubmission": true,
+      "successfulClearanceMayBeWithdrawn": false,
+      "refusalReasonRequired": false,
+      "refusalReasonMaxLength": 300,
+      "refusalClosesRequest": true,
+      "refusalKeepsOriginalIssuePause": true,
+      "operationPriority": "first-server-successful-valid-operation",
+      "clientClickPriority": false,
+      "lateOperationRollsBackSuccess": false,
+      "singleSuccessfulClearance": true,
+      "restartAt": "max-clearance-success-and-current-effective-expected-end-plus-72h",
+      "repeatedRequestRestartsWindow": false,
+      "retainHistoryAndEvidence": true,
+      "operatorServiceAdjudicationGranted": false
+    },
+    "incomeRatingSoldAndRatesChanged": false,
+    "automaticDebit": false,
+    "provesCustomerPayment": false,
+    "readyForImplementation": false
+  },
+  "remainingPlanningAudit": {
+    "date": "2026-10-14",
+    "sourceUserReply": "全A, 以后都直白点\n还有多少条问题?",
+    "document": "docs/module-specs/remaining-planning-audit-20261014.md",
+    "status": "known-gap-categories-audited-total-question-inventory-incomplete",
+    "knownGapCategoryCount": 8,
+    "remainingQuestionCount": null,
+    "totalVerified": false,
+    "categoryCountIsQuestionCount": false,
+    "newQuestionsPresented": false,
+    "planningComplete": false,
+    "userApprovedMissingAnswers": false,
+    "excludeResolvedQuestions": true,
+    "excludeTechnicalTasks": true,
+    "excludeExternalEvidenceChecks": true,
+    "excludeSecondReleaseScope": true
   },
   "items": [
     {
