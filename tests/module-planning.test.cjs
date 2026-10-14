@@ -9,6 +9,106 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+test('twenty-question request supersedes batch size only and does not turn continue into approval of options', () => {
+  assert.deepEqual(handoff.discussionFormat,records.discussionFormat);
+  assert.deepEqual(handoff.discussionFormatHistory,records.discussionFormatHistory);
+  assert.equal(records.discussionFormat.questionsPerRound,20);
+  assert.equal(records.discussionFormat.supersedesQuestionsPerRound,8);
+  assert.equal(records.discussionFormat.userReply,'继续, 直到问完\n每轮20题, 语句直白点');
+  assert.equal(records.discussionFormat.languageUserReply,'语句直白点');
+  assert.equal(records.discussionFormat.presentation,'table');
+  assert.equal(records.discussionFormatHistory[0].questionsPerRound,8);
+  assert.equal(records.discussionFormatHistory[0].languageUserReply,'以后都直白点');
+  const [set]=records.businessCloseoutQuestionSets;
+  assert.equal(set.previousAllAApplies,false);
+  assert.equal(set.status,'awaiting-user-answers');
+  assert.deepEqual(set.answers,[]);
+  for(const q of set.questions) assert.equal(q.selected,null);
+  assert.equal(records.deadlineCompletionClarificationDecisionBatches[0].answers.length,8);
+  assert.equal(records.deadlineCompletionClarificationRules.enabled,false);
+  assert.equal(records.currentPlanningFocus.implementationEnabled,false);
+});
+
+test('finite closeout inventory has forty unique sourced business questions in two batches without counting paused IR twice', () => {
+  const inventory=records.businessCloseoutQuestionInventory;
+  assert.deepEqual(handoff.businessCloseoutQuestionInventory,inventory);
+  assert.equal(inventory.totalQuestions,40);
+  assert.equal(inventory.remainingQuestions,40);
+  assert.equal(inventory.answeredQuestions,0);
+  assert.equal(inventory.questionsPerRound,20);
+  assert.equal(inventory.plannedRounds,2);
+  assert.equal(inventory.answersApproved,false);
+  assert.equal(inventory.implementationEnabled,false);
+  assert.equal(inventory.scopeExpansionMayAddQuestions,true);
+  assert.equal(inventory.clarificationsMustStateReason,true);
+  assert.equal(new Set(inventory.questions.map(q=>q.id)).size,40);
+  const rows=[...read(inventory.document).matchAll(/^\| (CQ\d{2}) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,40);
+  inventory.questions.forEach((q,i)=>{
+    assert.equal(q.id,`CQ${String(i+1).padStart(2,'0')}`);
+    assert.equal(q.number,i+1);
+    assert.equal(q.question,rows[i][2].trim());
+    assert.equal(q.round,i<20?1:2);
+    assert.equal(q.status,i<20?'pending':'queued');
+    assert(q.sources.length>0);
+    for(const source of q.sources) assert(fs.existsSync(path.resolve(root,source.document)),`${q.id}: ${source.document}`);
+    assert.equal(Object.hasOwn(q,'answer'),false);
+  });
+  for(const field of ['technicalTasksExcluded','externalEvidenceExcluded','secondReleaseExcluded']) assert.equal(inventory[field],true);
+  const audit=records.remainingPlanningAudit;
+  assert.deepEqual(handoff.remainingPlanningAudit,audit);
+  assert.equal(audit.remainingQuestionCount,inventory.remainingQuestions);
+  assert.equal(audit.presentedQuestionCount,20);
+  assert.equal(audit.queuedQuestionCount,20);
+  assert.equal(audit.planningComplete,false);
+  assert.equal(audit.userApprovedMissingAnswers,false);
+  assert(read('docs/module-specs/idle-request-questions-20261014.md').includes('不把IR重复计入额外八题'));
+});
+
+test('first closeout table presents exactly twenty complete A/B proposals and preserves their current fee and deadline scopes', () => {
+  assert.equal(records.businessCloseoutQuestionSets.length,1);
+  const [set]=records.businessCloseoutQuestionSets;
+  assert.deepEqual(handoff.businessCloseoutQuestionSets,records.businessCloseoutQuestionSets);
+  const doc=read(set.document);
+  const rows=[...doc.matchAll(/^\| (\d+)（(CQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,20);
+  set.questions.forEach((q,i)=>{
+    assert.equal(q.number,i+1);assert.equal(q.id,rows[i][2]);
+    assert.equal(q.question,rows[i][3].trim());
+    assert.equal(q.options.A,rows[i][4].trim());assert.equal(q.options.B,rows[i][5].trim());
+    assert.equal(q.recommended,'A');assert.equal(q.selected,null);
+  });
+  assert.deepEqual(set.presentedQuestionIds,rows.map(r=>r[2]));
+  assert.deepEqual(records.currentPlanningFocus.pendingQuestionIds,set.presentedQuestionIds);
+  assert.equal(records.currentPlanningFocus.questionDocument,set.document);
+  assert.equal(records.currentPlanningFocus.ruleDocument,'docs/module-specs/deadline-completion-clarification-rules.md');
+  assert.equal(records.currentPlanningFocus.sourceBatch,'deadline-completion-round-6-20261014');
+  assert.equal(records.currentPlanningFocus.remainingQuestionCount,40);
+  assert.equal(records.currentPlanningFocus.planningComplete,false);
+  for(const phrase of ['CQ01—CQ20全部待答','第二轮尚未开始','不重复问','仅问普通改价','首次未知费用和真实争议分别保留','不能回填IR08为已答','每份最多一份待确认解除请求','不按手机点击补时','不刷新无争议部分','不扩展用户明确完成后的普通改费权限','反复点击不重复刷新']) assert(doc.includes(phrase),phrase);
+  assert.equal(records.deadlineCompletionOperationRules.horizon.extensionMaxDays,7);
+  assert.equal(records.deadlineCompletionClarificationRules.horizon.extensionMaxHours,168);
+  assert.equal(records.deadlineCompletionClarificationRules.clearance.counterpartyExplicitSameVersionConfirmationRequired,true);
+});
+
+test('closeout references and handoff pointers resolve while old incomplete audit remains a dated snapshot', () => {
+  for(const f of ['docs/module-specs/business-closeout-plan-20261014.md','docs/module-specs/business-closeout-round-1-questions-20261014.md']) {
+    for(const m of read(f).matchAll(/\]\(([^)]+)\)/g)) {
+      if(/^https:\/\//.test(m[1])) continue;
+      assert(fs.existsSync(path.resolve(root,path.dirname(f),m[1])),`${f}: ${m[1]}`);
+    }
+  }
+  for(const f of ['docs/module-specs/README.md','docs/module-specs/remaining-planning-audit-20261014.md','docs/ui-development-handoff/README.md','docs/ui-development-handoff/business-addendum.md','docs/ui-development-handoff/decisions-and-gaps.md']) {
+    const text=read(f);assert(text.includes('收口清单更新：'));assert(text.includes('business-closeout-plan-20261014.md'));assert(text.includes('business-closeout-round-1-questions-20261014.md'));
+  }
+  assert.equal(records.remainingPlanningAuditHistory[0].remainingQuestionCount,null);
+  assert.equal(records.remainingPlanningAuditHistory[0].newQuestionsPresented,false);
+  assert.deepEqual(records.remainingPlanningAuditHistory,handoff.remainingPlanningAuditHistory);
+  assert.deepEqual(records.currentPlanningFocus,handoff.currentPlanningFocus);
+  assert.deepEqual(records.planningFocusHistory,handoff.planningFocusHistory);
+  assert.deepEqual(records.planningFocusHistory[6].pendingQuestionIds,[]);
+});
+
 test('sixth-round all-A reply answers exactly DX01 to DX08 and resolves DO02 without rewriting its history', () => {
   const batches=records.deadlineCompletionClarificationDecisionBatches;
   assert.equal(batches.length,1);
@@ -25,8 +125,8 @@ test('sixth-round all-A reply answers exactly DX01 to DX08 and resolves DO02 wit
   assert.equal(records.deadlineCompletionOperationRules.timeReacceptanceEntry.confirmed,false);
   assert.deepEqual(handoff.deadlineCompletionClarificationDecisionBatches,batches);
   assert.equal(records.discussionFormat.plainLanguageRequested,true);
-  assert.equal(records.discussionFormat.languageUserReply,'以后都直白点');
-  assert.equal(records.discussionFormat.questionsPerRound,8);
+  assert.equal(records.discussionFormatHistory[0].languageUserReply,'以后都直白点');
+  assert.equal(records.discussionFormatHistory[0].questionsPerRound,8);
   assert.equal(records.discussionFormat.presentation,'table');
 });
 
@@ -70,8 +170,8 @@ test('issue submission and clearance preserve mutual agreement, pause on refusal
 });
 
 test('remaining-question audit cannot fabricate a total, count technical checks as user questions or silently approve paused proposals', () => {
-  const audit=records.remainingPlanningAudit;
-  assert.deepEqual(handoff.remainingPlanningAudit,audit);
+  const audit=records.remainingPlanningAuditHistory[0];
+  assert.deepEqual(handoff.remainingPlanningAuditHistory[0],audit);
   assert.equal(audit.remainingQuestionCount,null);
   assert.equal(audit.totalVerified,false);
   assert.equal(audit.categoryCountIsQuestionCount,false);
@@ -87,8 +187,8 @@ test('remaining-question audit cannot fabricate a total, count technical checks 
   assert(doc.includes('剩余题目总数暂不能准确给出'));
   assert(doc.includes('不能直接相加'));
   assert(doc.includes('仍未答'));
-  const focus=records.currentPlanningFocus;
-  assert.deepEqual(handoff.currentPlanningFocus,focus);
+  const focus=records.planningFocusHistory[6];
+  assert.deepEqual(handoff.planningFocusHistory[6],focus);
   assert.equal(focus.sourceBatch,'deadline-completion-round-6-20261014');
   assert.equal(focus.ruleDocument,'docs/module-specs/deadline-completion-clarification-rules.md');
   assert.equal(focus.backlogDocument,audit.document);
@@ -644,8 +744,8 @@ test('phased confirmation precedes each charge stage without inventing prepaymen
 });
 
 test('fee batch all-A reply is mapped to exactly the eight offered options and synchronized to handoff', () => {
-  assert.equal(records.discussionFormat.questionsPerRound, 8);
-  assert.equal(records.discussionFormat.userReply, '一次问我八个问题, 否则进度太慢了');
+  assert.equal(records.discussionFormatHistory[0].questionsPerRound,8);
+  assert.equal(records.discussionFormatHistory[0].userReply, '一次问我八个问题, 否则进度太慢了');
   const questions = read('docs/module-specs/fee-questions-20261011.md');
   assert(questions.includes('8题全部选择A'));
   assert.deepEqual([...questions.matchAll(/（(FQ\d{2})）/g)].map(match => match[1]), Array.from({length: 8}, (_, index) => `FQ${String(index + 1).padStart(2, '0')}`));
@@ -857,10 +957,10 @@ test('seventh-round mixed answers preserve the cancellation exception and the ne
   });
   assert.deepEqual(handoff.closingDecisionBatches, records.closingDecisionBatches);
   assert.deepEqual(handoff.discussionFormat, records.discussionFormat);
-  assert.equal(records.discussionFormat.questionsPerRound, 8);
+  assert.equal(records.discussionFormatHistory[0].questionsPerRound,8);
   assert.equal(records.discussionFormat.presentation, 'table');
   assert.equal(records.discussionFormat.formatUserReply, '问题和选项以表格的形式问我');
-  assert.equal(records.discussionFormat.userReply, '一次问我八个问题, 否则进度太慢了');
+  assert.equal(records.discussionFormatHistory[0].userReply, '一次问我八个问题, 否则进度太慢了');
   for (const id of ['HD01', 'HD04']) {
     assert(handoff.items.find(x => x.id === id).confirmed.includes('费用收尾与履约申请第七轮1A、2B、3A、4A、5A、6A、7A、8A'));
   }
@@ -2650,7 +2750,7 @@ test('misunderstood time-entry explanation and sixth-round questions remain revi
   for(const text of ['DO02未选、需解释','没听懂','下午5点','下午3点','原报价金额保留','接单员明确接受新时间','不执行或固化DO02','延期最大七天，起算点','不倒填窗口月份']) assert(doc.includes(text),text);
   const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-operation-rules.md',sourceBatch:'deadline-completion-round-5-20261014',questionDocument:'docs/module-specs/deadline-completion-clarification-questions-20261014.md',status:'fifth-round-partial-time-entry-clarification-required',pendingQuestionIds:['DX01','DX02','DX03','DX04','DX05','DX06','DX07','DX08'],unresolvedOriginalQuestionIds:['DO02'],priorQuestionSetPaused:true,implementationEnabled:false};
   assert.deepEqual(records.planningFocusHistory[5],focus);assert.deepEqual(handoff.planningFocusHistory[5],focus);
-  assert.equal(records.planningFocusHistory.length,6);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
+  assert.equal(records.planningFocusHistory.length,7);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
   const questions=read(focus.questionDocument);
   assert(questions.includes('8题全部选择A'));assert(questions.includes('重述尚未选的原DO02'));
   const rows=[...questions.matchAll(/^\| [1-8]（(DX\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
