@@ -1925,10 +1925,9 @@
     ],
     "enabled": false,
     "ratesAndCapsChanged": false,
-    "legacyErrandRule": {
-      "RUN11AutomaticCompletionForNewSchemeTransactions": false,
-      "oldTransactionsAndEndFactsPreserved": true,
-      "actualLegacyTimerRemoved": false
+    "errandCompletion": {
+      "automaticCompletionAfter24Hours": false,
+      "actualCompletionRequiresExplicitConfirmation": true
     },
     "earlyActualDelivery": {
       "recordMayFormBeforeWindow": true,
@@ -1997,9 +1996,35 @@
     "personalIncomeFromProvisionalRecord": false,
     "ratingFromProvisionalRecord": false,
     "automaticDebit": false,
-    "oldTransactionsApplicabilityConfirmed": false,
     "qualificationVerified": false,
     "readyForImplementation": false
+  },
+  "planningStageClarification": {
+    "confirmedAt": "2026-10-14",
+    "userReply": "现在还没写代码, 不存在旧机制新机制",
+    "annotationQuestion": "那如果用户懒得确认怎么办?",
+    "document": "docs/module-specs/planning-stage-clarification-20261014.md",
+    "phase": "first-release-business-planning",
+    "operationalLegacyMechanismExists": false,
+    "existingTransactionMigrationRequired": false,
+    "priorDocumentsAreDesignHistory": true,
+    "currentBoundaryRules": "commissionSimplificationBoundaryRules",
+    "withdrawnQuestionIds": [
+      "SO01"
+    ],
+    "withdrawalIsAnAnswer": false,
+    "pendingQuestionIds": [
+      "SO02",
+      "SO03",
+      "SO04",
+      "SO05",
+      "SO06",
+      "SO07",
+      "SO08"
+    ],
+    "missingCompletionClickAloneBlocksProvisionalCommission": false,
+    "actualCompletionIncomeAndRatingRulesChanged": false,
+    "enablesProductImplementation": false
   },
   "items": [
     {

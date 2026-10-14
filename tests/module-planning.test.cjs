@@ -1906,9 +1906,9 @@ test('simplification second-round all-A answers map to their original options wi
   assert.equal(records.commissionDetailRules.errandEligibility.conditionalAutomaticCompletion,true);
 });
 
-test('approved boundary rules reject legacy double billing, backdated months, unconfirmed extensions, repeated caps and false archive facts', () => {
+test('approved first-release boundary rules reject 24-hour automatic completion, double billing, unconfirmed extensions and false archive facts', () => {
   const expected={confirmedAt:'2026-10-14',sourceBatch:'commission-simplification-round-2-20261014',scope:['跑腿','维修','闲置','其它'],enabled:false,ratesAndCapsChanged:false,
-    legacyErrandRule:{RUN11AutomaticCompletionForNewSchemeTransactions:false,oldTransactionsAndEndFactsPreserved:true,actualLegacyTimerRemoved:false},
+    errandCompletion:{automaticCompletionAfter24Hours:false,actualCompletionRequiresExplicitConfirmation:true},
     earlyActualDelivery:{recordMayFormBeforeWindow:true,effectiveAmountRequired:true,pendingPriceChangeBlocks:true,updatesExistingPrimaryRecord:true,pendingExtensionCancellationHandlingConfirmed:false},
     primaryRecord:{onePerTransaction:true,firstSuccessfulFormationTimePreserved:true,identifierAndConcurrencyConfirmed:false},
     recordMonth:{basis:'first-successful-primary-record-formation',timezone:'Asia/Shanghai',useExpectedEndMonth:false,lateProcessingPolicyConfirmed:false},
@@ -1917,13 +1917,13 @@ test('approved boundary rules reject legacy double billing, backdated months, un
     phaseBilling:{scope:['维修','其它'],effectiveServiceFeeSum:true,perStageBilling:false,at:'final-estimated-end-followed-by-window-or-valid-earlier-delivery',oneServiceCap:true,useCurrentEffectiveVersions:true,materialExpensesIncluded:false,unknownFutureCostDefaultsZero:false,preciseFieldsConfirmed:false},
     archive:{automaticOnProvisionalRecord:true,onlyWhileActualDeliveryUnconfirmed:true,label:'交付未确认',retainsDisputeAccess:true,doesNotEndActualObligations:true,idleHiddenFromForSale:true,idleMarkedActuallySold:false,contactPermissionPolicyConfirmed:false},
     consent:{sameScreen:true,bothExplicitRequired:true,retainRuleVersion:true,defaultChecked:false,singlePartyCoversOther:false,fieldsConfirmed:false},
-    actualCompletionOrPaymentFromProvisionalRecord:false,personalIncomeFromProvisionalRecord:false,ratingFromProvisionalRecord:false,automaticDebit:false,oldTransactionsApplicabilityConfirmed:false,qualificationVerified:false,readyForImplementation:false};
+    actualCompletionOrPaymentFromProvisionalRecord:false,personalIncomeFromProvisionalRecord:false,ratingFromProvisionalRecord:false,automaticDebit:false,qualificationVerified:false,readyForImplementation:false};
   const verifyRules=data=>assert.deepEqual(data,expected);
   verifyRules(records.commissionSimplificationBoundaryRules);verifyRules(handoff.commissionSimplificationBoundaryRules);
   for(const mutate of [
     r=>{r.enabled=true;},
-    r=>{r.legacyErrandRule.RUN11AutomaticCompletionForNewSchemeTransactions=true;},
-    r=>{r.legacyErrandRule.oldTransactionsAndEndFactsPreserved=false;},
+    r=>{r.errandCompletion.automaticCompletionAfter24Hours=true;},
+    r=>{r.errandCompletion.actualCompletionRequiresExplicitConfirmation=false;},
     r=>{r.primaryRecord.onePerTransaction=false;},
     r=>{r.primaryRecord.firstSuccessfulFormationTimePreserved=false;},
     r=>{r.recordMonth.useExpectedEndMonth=true;},
@@ -1957,13 +1957,13 @@ test('boundary time and month scenarios are exact and unresolved third-round saf
   assert.equal(raw,3750n);
   assert.equal(raw>3000n?3000n:raw,3000n);
   const rules=read('docs/module-specs/commission-simplification-boundaries-rules.md');
-  for(const phrase of ['不回溯','首次成功形成时点保留','统一进入72小时窗口','11月6日12:00','11月8日18:00','没有实现或验证真实订单'])assert(rules.includes(phrase),phrase);
+  for(const phrase of ['首发业务规则规划','不规划存量交易迁移','首次成功形成时点保留','统一进入72小时窗口','11月6日12:00','11月8日18:00','没有实现或验证真实订单'])assert(rules.includes(phrase),phrase);
   assert(read('CONTEXT.md').includes('**暂定计佣归档**'));
   const questions=read('docs/module-specs/commission-simplification-operation-questions-20261014.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('SO02—SO08共7题仍待答'));
   const rows=[...questions.matchAll(/^\| [1-8]（(SO\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
-  assert.equal(rows.length,8);
-  assert.deepEqual(rows.map(x=>x[1]),Array.from({length:8},(_,i)=>'SO'+String(i+1).padStart(2,'0')));
+  assert.equal(rows.length,7);
+  assert.deepEqual(rows.map(x=>x[1]),Array.from({length:7},(_,i)=>'SO'+String(i+2).padStart(2,'0')));
   assert(questions.includes('已有明确金额/时间后'));
   assert(questions.includes('不套用首次费用未知'));
   assert.equal(Object.hasOwn(records,'commissionSimplificationOperationDecisionBatches'),false);
@@ -1973,6 +1973,75 @@ test('boundary time and month scenarios are exact and unresolved third-round saf
     assert(text.includes('衔接第二轮实际回复“全A”'));
     assert(text.includes('commission-simplification-boundaries-rules.md'));
     assert(text.includes('commission-simplification-operation-questions-20261014.md'));
+  }
+});
+
+test('first-release clarification withdraws migration question without inventing answers or changing income and rating eligibility', () => {
+  const expected = {
+    confirmedAt:'2026-10-14',
+    userReply:'现在还没写代码, 不存在旧机制新机制',
+    annotationQuestion:'那如果用户懒得确认怎么办?',
+    document:'docs/module-specs/planning-stage-clarification-20261014.md',
+    phase:'first-release-business-planning',
+    operationalLegacyMechanismExists:false,
+    existingTransactionMigrationRequired:false,
+    priorDocumentsAreDesignHistory:true,
+    currentBoundaryRules:'commissionSimplificationBoundaryRules',
+    withdrawnQuestionIds:['SO01'],
+    withdrawalIsAnAnswer:false,
+    pendingQuestionIds:['SO02','SO03','SO04','SO05','SO06','SO07','SO08'],
+    missingCompletionClickAloneBlocksProvisionalCommission:false,
+    actualCompletionIncomeAndRatingRulesChanged:false,
+    enablesProductImplementation:false
+  };
+  const validate = data => {
+    assert.deepEqual(data.planningStageClarification, expected);
+    assert.equal(Object.hasOwn(data,'commissionSimplificationOperationDecisionBatches'),false);
+    const boundary = data[expected.currentBoundaryRules];
+    assert.equal(Object.hasOwn(boundary,'legacyErrandRule'),false);
+    assert.equal(Object.hasOwn(boundary,'oldTransactionsApplicabilityConfirmed'),false);
+    assert.deepEqual(boundary.errandCompletion,{automaticCompletionAfter24Hours:false,actualCompletionRequiresExplicitConfirmation:true});
+    assert.equal(boundary.archive.automaticOnProvisionalRecord,true);
+    assert.equal(boundary.archive.label,'交付未确认');
+    assert.equal(boundary.personalIncomeFromProvisionalRecord,false);
+    assert.equal(boundary.ratingFromProvisionalRecord,false);
+    assert.equal(data.commissionSimplificationRules.objectionWindow.durationHours,72);
+    assert.equal(data.commissionSimplificationRules.amountBasis.unknownPermitsAutomaticBilling,false);
+    assert.equal(data.commissionSimplificationRules.exceptions.noDealOrNoCompletion,'pause-entire-transaction');
+  };
+  validate(records); validate(handoff);
+  for (const mutate of [
+    data => { data.planningStageClarification.existingTransactionMigrationRequired = true; },
+    data => { data.planningStageClarification.withdrawalIsAnAnswer = true; },
+    data => { data.commissionSimplificationOperationDecisionBatches = [{userReply:'全A'}]; },
+    data => { data.planningStageClarification.missingCompletionClickAloneBlocksProvisionalCommission = true; },
+    data => { data.commissionSimplificationBoundaryRules.personalIncomeFromProvisionalRecord = true; },
+    data => { data.commissionSimplificationBoundaryRules.ratingFromProvisionalRecord = true; },
+    data => { data.commissionSimplificationRules.amountBasis.unknownPermitsAutomaticBilling = true; }
+  ]) {
+    const changed = structuredClone(records); mutate(changed); assert.throws(() => validate(changed));
+  }
+  const doc = read(expected.document);
+  for (const text of [expected.userReply,expected.annotationQuestion,'原PRD、各轮问题和实际回复是可追溯的设计历史','不需要用户再次点击完成','连续72小时','个人收入','排除垫付款','本次不代用户决定','SO02—SO08仍未作答']) assert(doc.includes(text),text);
+  const pending = read('docs/module-specs/commission-simplification-operation-questions-20261014.md');
+  assert(pending.includes('SO01仅为提问追溯保留，不是待答项，也没有A/B选择结果'));
+  const rules = read('docs/module-specs/commission-simplification-boundaries-rules.md');
+  assert(rules.includes('无需等待用户点击完成才能有条件暂定计佣'));
+  assert(rules.includes('未知费用、未确认调整或有效未解决异议'));
+  for (const file of [
+    'docs/module-specs/README.md',
+    'docs/module-specs/commission-simplification-rules.md',
+    'docs/module-specs/commission-simplification-20261014.md',
+    'docs/module-specs/commission-simplification-questions-20261014.md',
+    'docs/module-specs/commission-simplification-boundaries-questions-20261014.md',
+    'docs/ui-development-handoff/README.md',
+    'docs/ui-development-handoff/business-addendum.md',
+    'docs/ui-development-handoff/page-spec.md',
+    'docs/ui-development-handoff/decisions-and-gaps.md'
+  ]) {
+    const text = read(file);
+    assert(text.includes('首发阶段纠偏：2026-10-14'),file);
+    assert(text.includes('planning-stage-clarification-20261014.md'),file);
   }
 });
 
