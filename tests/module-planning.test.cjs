@@ -2069,7 +2069,7 @@ test('deadline completion direction snapshot remains unchanged while first-round
   const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:expected.document,questionDocument:'docs/module-specs/deadline-completion-questions-20261014.md',status:'direction-confirmed-details-pending',pendingQuestionIds:['AF01','AF02','AF03','AF04','AF05','AF06','AF07','AF08'],priorQuestionSetPaused:true,implementationEnabled:false};
   const validate=data=>{
     assert.deepEqual(data.automaticDeadlineCompletionRequests,[expected]);
-    assert.deepEqual(data.planningFocusHistory,[focus]);
+    assert.deepEqual(data.planningFocusHistory[0],focus);
     assert.equal(data.currentPlanningFocus.implementationEnabled,false);
     assert.equal(data.deadlineCompletionDecisionBatches[0].userReply,'7B, 全A');
     assert.equal(data.commissionSimplificationOperationQuestionSet.choicesApproved,false);
@@ -2180,15 +2180,15 @@ test('deadline acceptance examples and pending boundary questions separate compl
   const doc=read('docs/module-specs/deadline-completion-rules.md');
   for(const text of ['1A、2A、3A、4A、5A、6A、7B、8A','正常自动完成','不能把完成月份冒充记录形成月份','不按未知金额或待确认方案计佣','没有费用值时不展示伪造0元','评价资格也不证明已付款','2026-10-21 18:00','只使用一次封顶','当前仅检查文档']) assert(doc.includes(text),text);
   const expectedFocus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-rules.md',sourceBatch:'deadline-completion-round-1-20261014',questionDocument:'docs/module-specs/deadline-completion-boundaries-questions-20261014.md',status:'first-round-confirmed-boundaries-pending',pendingQuestionIds:['DA01','DA02','DA03','DA04','DA05','DA06','DA07','DA08'],priorQuestionSetPaused:true,implementationEnabled:false};
-  assert.deepEqual(records.currentPlanningFocus,expectedFocus);
-  assert.deepEqual(handoff.currentPlanningFocus,expectedFocus);
+  assert.deepEqual(records.planningFocusHistory[1],expectedFocus);
+  assert.deepEqual(handoff.planningFocusHistory[1],expectedFocus);
   const questions=read(expectedFocus.questionDocument);
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('对应1B、2A、3A、4A、5A、6A、7A、8A'));
   const offered=[...questions.matchAll(/^\| [1-8]（(DA\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length,8);
   assert.deepEqual(offered.map(row=>row[1]),expectedFocus.pendingQuestionIds);
-  assert.equal(Object.hasOwn(records,'deadlineCompletionBoundaryDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'deadlineCompletionBoundaryDecisionBatches'),false);
+  assert.equal(records.deadlineCompletionBoundaryDecisionBatches[0].userReply,'1B, 全A');
+  assert.deepEqual(handoff.deadlineCompletionBoundaryDecisionBatches,records.deadlineCompletionBoundaryDecisionBatches);
   assert(questions.includes('不覆盖已有有效计佣记录的后续加价/降价更正'));
   assert(questions.includes('不自动开放原费用凭据或新增运营查看权限'));
   const glossary=read('CONTEXT.md');
@@ -2198,6 +2198,101 @@ test('deadline acceptance examples and pending boundary questions separate compl
   assert(!glossary.includes('无人回应保持待确认，不自动完成'));
   for(const file of ['docs/module-specs/README.md','docs/module-specs/deadline-completion-request-20261014.md','docs/module-specs/commission-simplification-rules.md','docs/module-specs/commission-simplification-boundaries-rules.md','docs/module-specs/planning-stage-clarification-20261014.md','docs/ui-development-handoff/README.md','docs/ui-development-handoff/business-addendum.md','docs/ui-development-handoff/page-spec.md','docs/ui-development-handoff/decisions-and-gaps.md']){
     const text=read(file);assert(text.includes('结束期限第一轮确认：'));assert(text.includes('deadline-completion-rules.md'));assert(text.includes('deadline-completion-boundaries-questions-20261014.md'));
+  }
+});
+
+test('deadline boundary reply maps only DA01 to B and preserves prior income and completion choices', () => {
+  assert.equal(records.deadlineCompletionBoundaryDecisionBatches.length,1);
+  const [batch]=records.deadlineCompletionBoundaryDecisionBatches;
+  assert.equal(batch.id,'deadline-completion-round-2-20261014');
+  assert.equal(batch.date,'2026-10-14');
+  assert.equal(batch.userReply,'1B, 全A');
+  assert.deepEqual(batch.scope,['跑腿','维修','闲置','其它']);
+  const rows=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(DA\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);
+  assert.deepEqual(batch.answers.map(answer=>answer.questionId),rows.map(row=>row[1]));
+  assert.deepEqual(batch.answers.map(answer=>answer.answer),['B','A','A','A','A','A','A','A']);
+  batch.answers.forEach((answer,i)=>assert.equal(answer.selectedOption,rows[i][i===0?4:3].trim()));
+  assert.deepEqual(handoff.deadlineCompletionBoundaryDecisionBatches,records.deadlineCompletionBoundaryDecisionBatches);
+  assert.equal(records.deadlineCompletionDecisionBatches[0].userReply,'7B, 全A');
+  assert.equal(records.deadlineCompletionRules.deadline.proposalActorConfirmed,false);
+  assert.equal(records.deadlineCompletionRules.income.automaticCompletionAloneIncluded,false);
+  assert.equal(records.deadlineCompletionRules.ratings.automaticCompletionOpensVoluntaryEntryWithoutUnresolvedValidDeliveryDispute,true);
+  assert.equal(records.deadlineCompletionRules.contactPermissionAfterAutomaticCompletionConfirmed,false);
+  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolution.answer,'B');
+});
+
+test('approved deadline boundaries reject unilateral time changes, silent cancellations, early completion and unearned billing or private access', () => {
+  const expected={
+    confirmedAt:'2026-10-14',sourceBatch:'deadline-completion-round-2-20261014',scope:['跑腿','维修','闲置','其它'],enabled:false,
+    timeProposal:{by:'customer',explicitCounterpartyAcceptanceRequired:true,usedAtTransactionConfirmation:true,secondWorkerAcceptanceAfterSelectionRequired:false,perBusinessEntryConfirmed:false},
+    timeValidation:{at:'server-side-transaction-confirmation',pastExpectedEnd:'reject-and-reagree-future',silentTimeShift:false,equalMomentPolicyConfirmed:false},
+    extensionRequest:{maxPendingPerTransaction:1,edit:'withdraw-before-resubmit',preserveHistory:true,combinedWithFeeOrCancelLimit:false,withdrawActorsConfirmed:false},
+    deadlineBoundary:{clock:'server-effective-receipt',validIssueReceivedExactlyAtDeadlineAccepted:true,automaticCompletionPermittedAtDeadline:false,automaticCompletionRequiresStrictlyAfterDeadline:true,lateAppealsRetained:true,fullConcurrencyPolicyConfirmed:false},
+    pendingCancellation:{aloneBlocksAutomaticCompletion:false,silenceIsAgreement:false,validDisputePauses:true,alreadyCancelledCanAutomaticallyComplete:false},
+    lateFeeCommission:{scope:'automatically-completed-without-primary-record-first-formal-fee-unknown-or-pending',startsAt:'formal-fee-effective',windowHours:72,requiresNoEffectiveBlocker:true,reopensFlow:false,unknownDefaultsZero:false,appliesToExistingRecordChanges:false,firstFormationMonthRetained:true,exactBoundaryConfirmed:false,repricingWithinWindowPolicyConfirmed:false},
+    requestClosure:{onSuccessfulNormalAutomaticCompletion:true,pendingExtensionsClosed:true,pendingCancellationsClosed:true,preserveHistory:true,closureMeansAgreement:false,pendingFeesRetained:true,validIssuesAutoResolved:false},
+    contact:{maskCounterpartyAfterAutomaticCompletion:true,closeCounterpartyPrivateAddressAccess:true,preserveFeeAndIssueEntries:true,preserveOwnNecessaryHistoryAndManagement:true,recoveryWorkflowConfirmed:false,receiptPermissionsExpanded:false,automaticReceiptClosurePolicyConfirmed:false,operatorAccessGranted:false,realAuthorizationChanged:false},
+    firstRoundIncomeAndRatingRulesChanged:false,ratesAndCapsChanged:false,automaticDebit:false,provesCustomerPayment:false,readyForImplementation:false
+  };
+  const validate=rules=>assert.deepEqual(rules,expected);
+  validate(records.deadlineCompletionBoundaryRules);validate(handoff.deadlineCompletionBoundaryRules);
+  for(const mutate of [
+    rules=>{rules.enabled=true;},
+    rules=>{rules.timeProposal.by='provider';},
+    rules=>{rules.timeProposal.explicitCounterpartyAcceptanceRequired=false;},
+    rules=>{rules.timeProposal.secondWorkerAcceptanceAfterSelectionRequired=true;},
+    rules=>{rules.timeValidation.silentTimeShift=true;},
+    rules=>{rules.extensionRequest.maxPendingPerTransaction=2;},
+    rules=>{rules.extensionRequest.edit='edit-in-place';},
+    rules=>{rules.deadlineBoundary.clock='client-clock';},
+    rules=>{rules.deadlineBoundary.automaticCompletionPermittedAtDeadline=true;},
+    rules=>{rules.deadlineBoundary.validIssueReceivedExactlyAtDeadlineAccepted=false;},
+    rules=>{rules.pendingCancellation.aloneBlocksAutomaticCompletion=true;},
+    rules=>{rules.pendingCancellation.silenceIsAgreement=true;},
+    rules=>{rules.lateFeeCommission.startsAt='automatic-completion';},
+    rules=>{rules.lateFeeCommission.windowHours=0;},
+    rules=>{rules.lateFeeCommission.reopensFlow=true;},
+    rules=>{rules.lateFeeCommission.unknownDefaultsZero=true;},
+    rules=>{rules.lateFeeCommission.appliesToExistingRecordChanges=true;},
+    rules=>{rules.requestClosure.pendingFeesRetained=false;},
+    rules=>{rules.requestClosure.closureMeansAgreement=true;},
+    rules=>{rules.requestClosure.validIssuesAutoResolved=true;},
+    rules=>{rules.contact.maskCounterpartyAfterAutomaticCompletion=false;},
+    rules=>{rules.contact.closeCounterpartyPrivateAddressAccess=false;},
+    rules=>{rules.contact.receiptPermissionsExpanded=true;},
+    rules=>{rules.firstRoundIncomeAndRatingRulesChanged=true;},
+    rules=>{rules.readyForImplementation=true;}
+  ]){const changed=structuredClone(expected);mutate(changed);assert.throws(()=>validate(changed));}
+  assert.equal(records.commissionBillingRules.paymentDeadline.startsAt,'actual-successful-bill-issuance');
+  assert.equal(records.deadlineCompletionRules.commission.onePrimaryRecordPerTransaction,true);
+  assert.equal(records.commissionConfirmationRules.businessConfiguration['维修'].cap.amountCents,3000);
+});
+
+test('deadline boundary examples keep exact cutoff and late fee clocks separate while third-round entry choices remain unanswered', () => {
+  const rule=records.deadlineCompletionBoundaryRules;
+  const cutoff=Date.parse('2026-10-21T18:00:00+08:00');
+  assert.equal(rule.deadlineBoundary.automaticCompletionRequiresStrictlyAfterDeadline,true);
+  assert.equal(Date.parse('2026-10-21T18:00:00+08:00')>cutoff,false);
+  assert.equal(Date.parse('2026-10-21T18:00:00.001+08:00')>cutoff,true);
+  assert.equal(rule.deadlineBoundary.validIssueReceivedExactlyAtDeadlineAccepted,true);
+  assert.equal(Date.parse('2026-11-01T09:00:00+08:00')+rule.lateFeeCommission.windowHours*3600000,Date.parse('2026-11-04T09:00:00+08:00'));
+  assert.equal(rule.lateFeeCommission.exactBoundaryConfirmed,false);
+  const doc=read('docs/module-specs/deadline-completion-boundaries-rules.md');
+  for(const text of ['1B、2A、3A、4A、5A、6A、7A、8A','不以沉默同意','不增加选人后的接单员二次接单','超过截止时点后才可自动完成','不重开流程','不倒填完成月份','不新增费用凭据或运营权限','2026-11-04 09:00','个人页仍执行AF07/B']) assert(doc.includes(text),text);
+  const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-boundaries-rules.md',sourceBatch:'deadline-completion-round-2-20261014',questionDocument:'docs/module-specs/deadline-completion-entry-questions-20261014.md',status:'second-round-confirmed-entries-pending',pendingQuestionIds:['DC01','DC02','DC03','DC04','DC05','DC06','DC07','DC08'],priorQuestionSetPaused:true,implementationEnabled:false};
+  assert.deepEqual(records.currentPlanningFocus,focus);assert.deepEqual(handoff.currentPlanningFocus,focus);
+  assert.equal(records.planningFocusHistory.length,2);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
+  const questions=read(focus.questionDocument);
+  assert(questions.includes('8题全部待答'));
+  const rows=[...questions.matchAll(/^\| [1-8]（(DC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);assert.deepEqual(rows.map(row=>row[1]),focus.pendingQuestionIds);
+  assert.equal(Object.hasOwn(records,'deadlineCompletionEntryDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'deadlineCompletionEntryDecisionBatches'),false);
+  for(const phrase of ['不新增接单员二次接单','不把空金额强制为0','不自动解码联系方式或新增聊天','仅针对该帖已获准买家','不改已存在主记录的更正流程','不授予一方自行解除']) assert(questions.includes(phrase),phrase);
+  const glossary=read('CONTEXT.md');assert(glossary.includes('**补计佣申报窗口**'));assert(glossary.includes('由客户先提出、对方明确接受'));
+  for(const file of ['docs/module-specs/README.md','docs/module-specs/deadline-completion-request-20261014.md','docs/module-specs/deadline-completion-rules.md','docs/module-specs/commission-simplification-rules.md','docs/module-specs/commission-simplification-boundaries-rules.md','docs/module-specs/planning-stage-clarification-20261014.md','docs/ui-development-handoff/README.md','docs/ui-development-handoff/business-addendum.md','docs/ui-development-handoff/page-spec.md','docs/ui-development-handoff/decisions-and-gaps.md']){
+    const text=read(file);assert(text.includes('结束期限第二轮确认：'));assert(text.includes('deadline-completion-boundaries-rules.md'));assert(text.includes('deadline-completion-entry-questions-20261014.md'));
   }
 });
 

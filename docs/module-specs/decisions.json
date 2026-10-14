@@ -2084,19 +2084,19 @@
     "phase": "first-release-business-planning",
     "direction": "deadline-automatic-completion",
     "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
-    "ruleDocument": "docs/module-specs/deadline-completion-rules.md",
-    "sourceBatch": "deadline-completion-round-1-20261014",
-    "questionDocument": "docs/module-specs/deadline-completion-boundaries-questions-20261014.md",
-    "status": "first-round-confirmed-boundaries-pending",
+    "ruleDocument": "docs/module-specs/deadline-completion-boundaries-rules.md",
+    "sourceBatch": "deadline-completion-round-2-20261014",
+    "questionDocument": "docs/module-specs/deadline-completion-entry-questions-20261014.md",
+    "status": "second-round-confirmed-entries-pending",
     "pendingQuestionIds": [
-      "DA01",
-      "DA02",
-      "DA03",
-      "DA04",
-      "DA05",
-      "DA06",
-      "DA07",
-      "DA08"
+      "DC01",
+      "DC02",
+      "DC03",
+      "DC04",
+      "DC05",
+      "DC06",
+      "DC07",
+      "DC08"
     ],
     "priorQuestionSetPaused": true,
     "implementationEnabled": false
@@ -2118,6 +2118,28 @@
         "AF06",
         "AF07",
         "AF08"
+      ],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false
+    },
+    {
+      "date": "2026-10-14",
+      "phase": "first-release-business-planning",
+      "direction": "deadline-automatic-completion",
+      "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
+      "ruleDocument": "docs/module-specs/deadline-completion-rules.md",
+      "sourceBatch": "deadline-completion-round-1-20261014",
+      "questionDocument": "docs/module-specs/deadline-completion-boundaries-questions-20261014.md",
+      "status": "first-round-confirmed-boundaries-pending",
+      "pendingQuestionIds": [
+        "DA01",
+        "DA02",
+        "DA03",
+        "DA04",
+        "DA05",
+        "DA06",
+        "DA07",
+        "DA08"
       ],
       "priorQuestionSetPaused": true,
       "implementationEnabled": false
@@ -2262,6 +2284,144 @@
     },
     "contactPermissionAfterAutomaticCompletionConfirmed": false,
     "externalQualificationVerified": false,
+    "readyForImplementation": false
+  },
+  "deadlineCompletionBoundaryDecisionBatches": [
+    {
+      "id": "deadline-completion-round-2-20261014",
+      "date": "2026-10-14",
+      "userReply": "1B, 全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/deadline-completion-boundaries-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "DA01",
+          "answer": "B",
+          "selectedOption": "客户先填，对方明确接受后用于交易确认"
+        },
+        {
+          "questionId": "DA02",
+          "answer": "A",
+          "selectedOption": "不允许确认，提示双方重新约定未来时间"
+        },
+        {
+          "questionId": "DA03",
+          "answer": "A",
+          "selectedOption": "最多1份待确认，修改先撤回重提，历史保留"
+        },
+        {
+          "questionId": "DA04",
+          "answer": "A",
+          "selectedOption": "仍有效并暂停；超过截止时间后才可自动完成"
+        },
+        {
+          "questionId": "DA05",
+          "answer": "A",
+          "selectedOption": "不单独暂停，真正的取消/履约争议按已确认异常规则处理"
+        },
+        {
+          "questionId": "DA06",
+          "answer": "A",
+          "selectedOption": "从正式费用生效后再留72小时申报窗口，无有效阻断才形成记录；不重开流程"
+        },
+        {
+          "questionId": "DA07",
+          "answer": "A",
+          "selectedOption": "关闭并保留历史，不视为双方同意；待处理费用继续保留"
+        },
+        {
+          "questionId": "DA08",
+          "answer": "A",
+          "selectedOption": "重新打码并关闭对方私密地址权限；保留费用/异议入口，必要联系恢复另议"
+        }
+      ]
+    }
+  ],
+  "deadlineCompletionBoundaryRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "deadline-completion-round-2-20261014",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "enabled": false,
+    "timeProposal": {
+      "by": "customer",
+      "explicitCounterpartyAcceptanceRequired": true,
+      "usedAtTransactionConfirmation": true,
+      "secondWorkerAcceptanceAfterSelectionRequired": false,
+      "perBusinessEntryConfirmed": false
+    },
+    "timeValidation": {
+      "at": "server-side-transaction-confirmation",
+      "pastExpectedEnd": "reject-and-reagree-future",
+      "silentTimeShift": false,
+      "equalMomentPolicyConfirmed": false
+    },
+    "extensionRequest": {
+      "maxPendingPerTransaction": 1,
+      "edit": "withdraw-before-resubmit",
+      "preserveHistory": true,
+      "combinedWithFeeOrCancelLimit": false,
+      "withdrawActorsConfirmed": false
+    },
+    "deadlineBoundary": {
+      "clock": "server-effective-receipt",
+      "validIssueReceivedExactlyAtDeadlineAccepted": true,
+      "automaticCompletionPermittedAtDeadline": false,
+      "automaticCompletionRequiresStrictlyAfterDeadline": true,
+      "lateAppealsRetained": true,
+      "fullConcurrencyPolicyConfirmed": false
+    },
+    "pendingCancellation": {
+      "aloneBlocksAutomaticCompletion": false,
+      "silenceIsAgreement": false,
+      "validDisputePauses": true,
+      "alreadyCancelledCanAutomaticallyComplete": false
+    },
+    "lateFeeCommission": {
+      "scope": "automatically-completed-without-primary-record-first-formal-fee-unknown-or-pending",
+      "startsAt": "formal-fee-effective",
+      "windowHours": 72,
+      "requiresNoEffectiveBlocker": true,
+      "reopensFlow": false,
+      "unknownDefaultsZero": false,
+      "appliesToExistingRecordChanges": false,
+      "firstFormationMonthRetained": true,
+      "exactBoundaryConfirmed": false,
+      "repricingWithinWindowPolicyConfirmed": false
+    },
+    "requestClosure": {
+      "onSuccessfulNormalAutomaticCompletion": true,
+      "pendingExtensionsClosed": true,
+      "pendingCancellationsClosed": true,
+      "preserveHistory": true,
+      "closureMeansAgreement": false,
+      "pendingFeesRetained": true,
+      "validIssuesAutoResolved": false
+    },
+    "contact": {
+      "maskCounterpartyAfterAutomaticCompletion": true,
+      "closeCounterpartyPrivateAddressAccess": true,
+      "preserveFeeAndIssueEntries": true,
+      "preserveOwnNecessaryHistoryAndManagement": true,
+      "recoveryWorkflowConfirmed": false,
+      "receiptPermissionsExpanded": false,
+      "automaticReceiptClosurePolicyConfirmed": false,
+      "operatorAccessGranted": false,
+      "realAuthorizationChanged": false
+    },
+    "firstRoundIncomeAndRatingRulesChanged": false,
+    "ratesAndCapsChanged": false,
+    "automaticDebit": false,
+    "provesCustomerPayment": false,
     "readyForImplementation": false
   },
   "items": [
