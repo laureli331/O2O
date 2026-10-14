@@ -1858,6 +1858,149 @@
     "qualificationVerified": false,
     "readyForImplementation": false
   },
+  "commissionSimplificationBoundaryDecisionBatches": [
+    {
+      "id": "commission-simplification-round-2-20261014",
+      "date": "2026-10-14",
+      "userReply": "全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/commission-simplification-boundaries-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "SB01",
+          "answer": "A",
+          "selectedOption": "取消该自动完成，真实完成保留明确确认；计佣采用新机制"
+        },
+        {
+          "questionId": "SB02",
+          "answer": "A",
+          "selectedOption": "即可形成可计佣记录，不再等窗口，后续不重复新增"
+        },
+        {
+          "questionId": "SB03",
+          "answer": "A",
+          "selectedOption": "按记录首次成功形成的月份"
+        },
+        {
+          "questionId": "SB04",
+          "answer": "A",
+          "selectedOption": "任一方提出、另一方确认新预计结束时点；待确认延期暂停暂定计佣"
+        },
+        {
+          "questionId": "SB05",
+          "answer": "A",
+          "selectedOption": "重新给72小时；若预计结束在未来，从该未来时点起算"
+        },
+        {
+          "questionId": "SB06",
+          "answer": "A",
+          "selectedOption": "整次服务有效服务费合计，在最终预计结束节点统一计佣、只封顶一次"
+        },
+        {
+          "questionId": "SB07",
+          "answer": "A",
+          "selectedOption": "归档并标交付未确认，保留异议；闲置暂停售展示，不标真实已售"
+        },
+        {
+          "questionId": "SB08",
+          "answer": "A",
+          "selectedOption": "在交易/费用确认时同屏展示关键项，明确确认并留规则版本"
+        }
+      ]
+    }
+  ],
+  "commissionSimplificationBoundaryRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "commission-simplification-round-2-20261014",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "enabled": false,
+    "ratesAndCapsChanged": false,
+    "legacyErrandRule": {
+      "RUN11AutomaticCompletionForNewSchemeTransactions": false,
+      "oldTransactionsAndEndFactsPreserved": true,
+      "actualLegacyTimerRemoved": false
+    },
+    "earlyActualDelivery": {
+      "recordMayFormBeforeWindow": true,
+      "effectiveAmountRequired": true,
+      "pendingPriceChangeBlocks": true,
+      "updatesExistingPrimaryRecord": true,
+      "pendingExtensionCancellationHandlingConfirmed": false
+    },
+    "primaryRecord": {
+      "onePerTransaction": true,
+      "firstSuccessfulFormationTimePreserved": true,
+      "identifierAndConcurrencyConfirmed": false
+    },
+    "recordMonth": {
+      "basis": "first-successful-primary-record-formation",
+      "timezone": "Asia/Shanghai",
+      "useExpectedEndMonth": false,
+      "lateProcessingPolicyConfirmed": false
+    },
+    "extension": {
+      "proposedBy": "either-party",
+      "requiresOtherPartyConfirmation": true,
+      "pendingBlocksProvisionalBilling": true,
+      "requestDetailsConfirmed": false
+    },
+    "issueResumption": {
+      "requiresVerifiedClearance": true,
+      "startAt": "later-of-effective-clearance-and-current-agreed-estimated-end",
+      "durationHours": 72,
+      "useOldRemainingTime": false,
+      "partialIssueHandlingConfirmed": false
+    },
+    "phaseBilling": {
+      "scope": [
+        "维修",
+        "其它"
+      ],
+      "effectiveServiceFeeSum": true,
+      "perStageBilling": false,
+      "at": "final-estimated-end-followed-by-window-or-valid-earlier-delivery",
+      "oneServiceCap": true,
+      "useCurrentEffectiveVersions": true,
+      "materialExpensesIncluded": false,
+      "unknownFutureCostDefaultsZero": false,
+      "preciseFieldsConfirmed": false
+    },
+    "archive": {
+      "automaticOnProvisionalRecord": true,
+      "onlyWhileActualDeliveryUnconfirmed": true,
+      "label": "交付未确认",
+      "retainsDisputeAccess": true,
+      "doesNotEndActualObligations": true,
+      "idleHiddenFromForSale": true,
+      "idleMarkedActuallySold": false,
+      "contactPermissionPolicyConfirmed": false
+    },
+    "consent": {
+      "sameScreen": true,
+      "bothExplicitRequired": true,
+      "retainRuleVersion": true,
+      "defaultChecked": false,
+      "singlePartyCoversOther": false,
+      "fieldsConfirmed": false
+    },
+    "actualCompletionOrPaymentFromProvisionalRecord": false,
+    "personalIncomeFromProvisionalRecord": false,
+    "ratingFromProvisionalRecord": false,
+    "automaticDebit": false,
+    "oldTransactionsApplicabilityConfirmed": false,
+    "qualificationVerified": false,
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "MP01",

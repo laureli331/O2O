@@ -1867,7 +1867,7 @@ test('approved simplification retains known-price and rating barriers while acti
   ]){const changed=structuredClone(records.commissionSimplificationRules);mutate(changed);assert.throws(()=>verifyCurrent(changed));}
 });
 
-test('approved window examples start from the agreed end time and unresolved second-round mappings cannot be guessed', () => {
+test('approved window examples retain their source while second-round mappings are confirmed separately', () => {
   const rule=records.commissionSimplificationRules;
   assert.equal(Date.parse('2026-11-01T10:00:00+08:00')+rule.objectionWindow.durationHours*3600000,Date.parse('2026-11-04T10:00:00+08:00'));
   assert.equal(records.commissionBillingRules.paymentDeadline.startsAt,'actual-successful-bill-issuance');
@@ -1875,17 +1875,104 @@ test('approved window examples start from the agreed end time and unresolved sec
   for(const text of ['1A、2B、3A、4A、5A、6A、7A、8A','2026-11-04 10:00:00','未经批准的真实降价不直接减佣','旧RUN11尚未决定取消或保留','仅联系申请获准仍打码','没有实现或验证真实计时'])assert(doc.includes(text),text);
   assert(read('CONTEXT.md').includes('**暂定计佣记录**'));
   const questions=read('docs/module-specs/commission-simplification-boundaries-questions-20261014.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('本轮8题全部A'));
   const rows=[...questions.matchAll(/^\| [1-8]（(SB\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(rows.length,8);
   assert.deepEqual(rows.map(x=>x[1]),Array.from({length:8},(_,i)=>'SB'+String(i+1).padStart(2,'0')));
-  assert.equal(Object.hasOwn(records,'commissionSimplificationBoundaryDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'commissionSimplificationBoundaryDecisionBatches'),false);
+  assert.equal(records.commissionSimplificationBoundaryDecisionBatches.length,1);
+  assert.deepEqual(handoff.commissionSimplificationBoundaryDecisionBatches,records.commissionSimplificationBoundaryDecisionBatches);
   for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
     const text=read('docs/ui-development-handoff/'+name);
     assert(text.includes('简化第一轮实际回复“2B, 全A”'));
     assert(text.includes('commission-simplification-rules.md'));
     assert(text.includes('commission-simplification-boundaries-questions-20261014.md'));
+  }
+});
+
+test('simplification second-round all-A answers map to their original options without backdating first-round pending boundaries', () => {
+  const [batch]=records.commissionSimplificationBoundaryDecisionBatches;
+  assert.equal(batch.id,'commission-simplification-round-2-20261014');
+  assert.equal(batch.date,'2026-10-14');
+  assert.equal(batch.userReply,'全A');
+  assert.deepEqual(batch.scope,['跑腿','维修','闲置','其它']);
+  const offered=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(SB\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(batch.answers.map(x=>x.questionId),offered.map(x=>x[1]));
+  assert.deepEqual(batch.answers.map(x=>x.answer),Array(8).fill('A'));
+  batch.answers.forEach((answer,i)=>assert.equal(answer.selectedOption,offered[i][3].trim()));
+  assert.deepEqual(handoff.commissionSimplificationBoundaryDecisionBatches,records.commissionSimplificationBoundaryDecisionBatches);
+  assert.equal(records.commissionSimplificationRules.errandLegacyReplacementConfirmed,false);
+  assert.equal(records.commissionSimplificationRules.archivePolicyConfirmed,false);
+  assert.equal(records.commissionDetailRules.errandEligibility.conditionalAutomaticCompletion,true);
+});
+
+test('approved boundary rules reject legacy double billing, backdated months, unconfirmed extensions, repeated caps and false archive facts', () => {
+  const expected={confirmedAt:'2026-10-14',sourceBatch:'commission-simplification-round-2-20261014',scope:['跑腿','维修','闲置','其它'],enabled:false,ratesAndCapsChanged:false,
+    legacyErrandRule:{RUN11AutomaticCompletionForNewSchemeTransactions:false,oldTransactionsAndEndFactsPreserved:true,actualLegacyTimerRemoved:false},
+    earlyActualDelivery:{recordMayFormBeforeWindow:true,effectiveAmountRequired:true,pendingPriceChangeBlocks:true,updatesExistingPrimaryRecord:true,pendingExtensionCancellationHandlingConfirmed:false},
+    primaryRecord:{onePerTransaction:true,firstSuccessfulFormationTimePreserved:true,identifierAndConcurrencyConfirmed:false},
+    recordMonth:{basis:'first-successful-primary-record-formation',timezone:'Asia/Shanghai',useExpectedEndMonth:false,lateProcessingPolicyConfirmed:false},
+    extension:{proposedBy:'either-party',requiresOtherPartyConfirmation:true,pendingBlocksProvisionalBilling:true,requestDetailsConfirmed:false},
+    issueResumption:{requiresVerifiedClearance:true,startAt:'later-of-effective-clearance-and-current-agreed-estimated-end',durationHours:72,useOldRemainingTime:false,partialIssueHandlingConfirmed:false},
+    phaseBilling:{scope:['维修','其它'],effectiveServiceFeeSum:true,perStageBilling:false,at:'final-estimated-end-followed-by-window-or-valid-earlier-delivery',oneServiceCap:true,useCurrentEffectiveVersions:true,materialExpensesIncluded:false,unknownFutureCostDefaultsZero:false,preciseFieldsConfirmed:false},
+    archive:{automaticOnProvisionalRecord:true,onlyWhileActualDeliveryUnconfirmed:true,label:'交付未确认',retainsDisputeAccess:true,doesNotEndActualObligations:true,idleHiddenFromForSale:true,idleMarkedActuallySold:false,contactPermissionPolicyConfirmed:false},
+    consent:{sameScreen:true,bothExplicitRequired:true,retainRuleVersion:true,defaultChecked:false,singlePartyCoversOther:false,fieldsConfirmed:false},
+    actualCompletionOrPaymentFromProvisionalRecord:false,personalIncomeFromProvisionalRecord:false,ratingFromProvisionalRecord:false,automaticDebit:false,oldTransactionsApplicabilityConfirmed:false,qualificationVerified:false,readyForImplementation:false};
+  const verifyRules=data=>assert.deepEqual(data,expected);
+  verifyRules(records.commissionSimplificationBoundaryRules);verifyRules(handoff.commissionSimplificationBoundaryRules);
+  for(const mutate of [
+    r=>{r.enabled=true;},
+    r=>{r.legacyErrandRule.RUN11AutomaticCompletionForNewSchemeTransactions=true;},
+    r=>{r.legacyErrandRule.oldTransactionsAndEndFactsPreserved=false;},
+    r=>{r.primaryRecord.onePerTransaction=false;},
+    r=>{r.primaryRecord.firstSuccessfulFormationTimePreserved=false;},
+    r=>{r.recordMonth.useExpectedEndMonth=true;},
+    r=>{r.extension.requiresOtherPartyConfirmation=false;},
+    r=>{r.extension.pendingBlocksProvisionalBilling=false;},
+    r=>{r.issueResumption.requiresVerifiedClearance=false;},
+    r=>{r.issueResumption.useOldRemainingTime=true;},
+    r=>{r.phaseBilling.perStageBilling=true;},
+    r=>{r.phaseBilling.materialExpensesIncluded=true;},
+    r=>{r.phaseBilling.unknownFutureCostDefaultsZero=true;},
+    r=>{r.archive.idleMarkedActuallySold=true;},
+    r=>{r.archive.retainsDisputeAccess=false;},
+    r=>{r.consent.defaultChecked=true;},
+    r=>{r.consent.singlePartyCoversOther=true;},
+    r=>{r.ratingFromProvisionalRecord=true;},
+    r=>{r.automaticDebit=true;},
+    r=>{r.readyForImplementation=true;}
+  ]){const changed=structuredClone(records.commissionSimplificationBoundaryRules);mutate(changed);assert.throws(()=>verifyRules(changed));}
+});
+
+test('boundary time and month scenarios are exact and unresolved third-round safeguards remain proposals', () => {
+  const hours=records.commissionSimplificationBoundaryRules.issueResumption.durationHours;
+  const resumed=(clearance,end)=>Math.max(Date.parse(clearance),Date.parse(end))+hours*3600000;
+  assert.equal(resumed('2026-11-03T12:00:00+08:00','2026-11-02T12:00:00+08:00'),Date.parse('2026-11-06T12:00:00+08:00'));
+  assert.equal(resumed('2026-11-03T12:00:00+08:00','2026-11-05T18:00:00+08:00'),Date.parse('2026-11-08T18:00:00+08:00'));
+  assert.equal(Date.parse('2026-10-31T23:00:00+08:00')+72*3600000,Date.parse('2026-11-03T23:00:00+08:00'));
+  const month=iso=>{const p=Object.fromEntries(new Intl.DateTimeFormat('en',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit'}).formatToParts(new Date(iso)).filter(x=>x.type==='year'||x.type==='month').map(x=>[x.type,x.value]));return `${p.year}-${p.month}`;};
+  assert.equal(month('2026-11-01T00:01:00+08:00'),'2026-11');
+  assert.equal(month('2026-10-30T18:00:00+08:00'),'2026-10');
+  const raw=((10000n+15000n)*1500n+5000n)/10000n;
+  assert.equal(raw,3750n);
+  assert.equal(raw>3000n?3000n:raw,3000n);
+  const rules=read('docs/module-specs/commission-simplification-boundaries-rules.md');
+  for(const phrase of ['不回溯','首次成功形成时点保留','统一进入72小时窗口','11月6日12:00','11月8日18:00','没有实现或验证真实订单'])assert(rules.includes(phrase),phrase);
+  assert(read('CONTEXT.md').includes('**暂定计佣归档**'));
+  const questions=read('docs/module-specs/commission-simplification-operation-questions-20261014.md');
+  assert(questions.includes('8题全部待答'));
+  const rows=[...questions.matchAll(/^\| [1-8]（(SO\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,8);
+  assert.deepEqual(rows.map(x=>x[1]),Array.from({length:8},(_,i)=>'SO'+String(i+1).padStart(2,'0')));
+  assert(questions.includes('已有明确金额/时间后'));
+  assert(questions.includes('不套用首次费用未知'));
+  assert.equal(Object.hasOwn(records,'commissionSimplificationOperationDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'commissionSimplificationOperationDecisionBatches'),false);
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
+    const text=read('docs/ui-development-handoff/'+name);
+    assert(text.includes('衔接第二轮实际回复“全A”'));
+    assert(text.includes('commission-simplification-boundaries-rules.md'));
+    assert(text.includes('commission-simplification-operation-questions-20261014.md'));
   }
 });
 
