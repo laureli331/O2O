@@ -2084,20 +2084,185 @@
     "phase": "first-release-business-planning",
     "direction": "deadline-automatic-completion",
     "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
-    "questionDocument": "docs/module-specs/deadline-completion-questions-20261014.md",
-    "status": "direction-confirmed-details-pending",
+    "ruleDocument": "docs/module-specs/deadline-completion-rules.md",
+    "sourceBatch": "deadline-completion-round-1-20261014",
+    "questionDocument": "docs/module-specs/deadline-completion-boundaries-questions-20261014.md",
+    "status": "first-round-confirmed-boundaries-pending",
     "pendingQuestionIds": [
-      "AF01",
-      "AF02",
-      "AF03",
-      "AF04",
-      "AF05",
-      "AF06",
-      "AF07",
-      "AF08"
+      "DA01",
+      "DA02",
+      "DA03",
+      "DA04",
+      "DA05",
+      "DA06",
+      "DA07",
+      "DA08"
     ],
     "priorQuestionSetPaused": true,
     "implementationEnabled": false
+  },
+  "planningFocusHistory": [
+    {
+      "date": "2026-10-14",
+      "phase": "first-release-business-planning",
+      "direction": "deadline-automatic-completion",
+      "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
+      "questionDocument": "docs/module-specs/deadline-completion-questions-20261014.md",
+      "status": "direction-confirmed-details-pending",
+      "pendingQuestionIds": [
+        "AF01",
+        "AF02",
+        "AF03",
+        "AF04",
+        "AF05",
+        "AF06",
+        "AF07",
+        "AF08"
+      ],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false
+    }
+  ],
+  "deadlineCompletionDecisionBatches": [
+    {
+      "id": "deadline-completion-round-1-20261014",
+      "date": "2026-10-14",
+      "userReply": "7B, 全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/deadline-completion-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "AF01",
+          "answer": "A",
+          "selectedOption": "确认交易时双方一并确定，精确到分钟"
+        },
+        {
+          "questionId": "AF02",
+          "answer": "A",
+          "selectedOption": "预计结束时间后保留72小时，再到最终期限自动完成；两个时间明确展示"
+        },
+        {
+          "questionId": "AF03",
+          "answer": "A",
+          "selectedOption": "暂停自动完成，按确认后的异常解除规则恢复"
+        },
+        {
+          "questionId": "AF04",
+          "answer": "A",
+          "selectedOption": "自动完成流程，费用转待处理；不默认0、不按未知金额计佣"
+        },
+        {
+          "questionId": "AF05",
+          "answer": "A",
+          "selectedOption": "未经双方确认不改变既有结束期限；真正的履约争议按第3项处理"
+        },
+        {
+          "questionId": "AF06",
+          "answer": "A",
+          "selectedOption": "正式金额有效且无计佣阻断时，一并形成计佣记录；条件不齐则待处理"
+        },
+        {
+          "questionId": "AF07",
+          "answer": "B",
+          "selectedOption": "保留“赚了…”和明确交付确认口径，自动完成部分在详情单列"
+        },
+        {
+          "questionId": "AF08",
+          "answer": "A",
+          "selectedOption": "无有效未解决交付争议时开放自愿评价入口，不自动生成评分"
+        }
+      ]
+    }
+  ],
+  "deadlineCompletionRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "deadline-completion-round-1-20261014",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "enabled": false,
+    "deadline": {
+      "mutualAgreementAt": "transaction-confirmation",
+      "expectedEndPrecision": "minute",
+      "automaticAt": "agreed-expected-end-plus-72-hours",
+      "windowHours": 72,
+      "displayBothTimes": true,
+      "repeatWindow": false,
+      "proposalActorConfirmed": false,
+      "pastTimePolicyConfirmed": false
+    },
+    "completion": {
+      "automatic": true,
+      "requiresReturnClick": false,
+      "automaticProvesUserAcknowledgedDelivery": false,
+      "knownFeeRequired": false,
+      "unresolvedValidDeliverySaleOrCancellationDispute": "pause",
+      "deadlineInstantPriorityConfirmed": false,
+      "pendingCancellationAlonePolicyConfirmed": false,
+      "pendingRequestClosureConfirmed": false,
+      "provesPayment": false
+    },
+    "fees": {
+      "unknownOrPending": "pending-after-automatic-completion",
+      "implicitZero": false,
+      "pendingAutoConsent": false,
+      "mutualHandlingAfterAutomaticCompletion": true,
+      "postAutomaticCompletionEditScopeConfirmed": false,
+      "laterEffectiveFeeCommissionTimingConfirmed": false,
+      "explicitCompletionPendingFeeBarrierRetained": true
+    },
+    "extension": {
+      "requiresMutualConfirmation": true,
+      "pendingChangesDeadline": false,
+      "pendingAloneBlocksAutomaticCompletion": false,
+      "pendingAloneBlocksCommission": false,
+      "requestLimitConfirmed": false,
+      "confirmedExtensionTimingPolicyConfirmed": false
+    },
+    "commission": {
+      "atAutomaticCompletionWhenEligible": true,
+      "effectiveAmountRequired": true,
+      "unknownOrPendingPermitsBilling": false,
+      "unverifiedReductionEligible": false,
+      "onePrimaryRecordPerTransaction": true,
+      "firstFormationMonthPreserved": true,
+      "phaseCapOnce": true,
+      "automaticDebit": false,
+      "provesCustomerPayment": false
+    },
+    "income": {
+      "business": "跑腿",
+      "subject": "provider",
+      "copyRetained": true,
+      "explicitDeliveryAcknowledgmentRequired": true,
+      "automaticCompletionAloneIncluded": false,
+      "automaticCompletionListedSeparately": true,
+      "advancesIncluded": false,
+      "netAfterCommission": false,
+      "representsReceivedMoney": false,
+      "duplicateOnLaterDeliveryAcknowledgment": false,
+      "detailFieldsConfirmed": false
+    },
+    "ratings": {
+      "automaticCompletionOpensVoluntaryEntryWithoutUnresolvedValidDeliveryDispute": true,
+      "effectiveTransactionPartiesOnly": true,
+      "autoGeneratesStars": false,
+      "provesActualDelivery": false,
+      "cancellationCreatesQualification": false,
+      "existingDimensionsAndModerationPreserved": true,
+      "postCompletionDisputeHandlingConfirmed": false
+    },
+    "contactPermissionAfterAutomaticCompletionConfirmed": false,
+    "externalQualificationVerified": false,
+    "readyForImplementation": false
   },
   "items": [
     {
@@ -2153,8 +2318,17 @@
         "disclosure": "非到账金额",
         "wallet": false
       },
+      "completionIncomeResolution": {
+        "topic": "自动完成计入口径",
+        "sourceBatch": "deadline-completion-round-1-20261014",
+        "questionId": "AF07",
+        "answer": "B",
+        "explicitDeliveryAcknowledgmentRequired": true,
+        "automaticCompletionAloneIncluded": false,
+        "automaticCompletionListedSeparately": true
+      },
       "pending": [
-        "自动完成计入口径",
+        "自动完成明细与后续交付确认/更正衔接",
         "费用更正排除",
         "累计周期",
         "数据合同"
