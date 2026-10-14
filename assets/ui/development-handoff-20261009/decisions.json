@@ -1514,6 +1514,113 @@
     "completeWorkflowConfirmed": false,
     "readyForImplementation": false
   },
+  "idleChangeDecisionBatches": [
+    {
+      "id": "idle-change-round-20-20261014",
+      "date": "2026-10-14",
+      "userReply": "全A",
+      "scope": [
+        "闲置"
+      ],
+      "questionDocument": "docs/module-specs/idle-change-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "IC01",
+          "answer": "A",
+          "selectedOption": "买卖双方任一方申请，另一方确认后取消"
+        },
+        {
+          "questionId": "IC02",
+          "answer": "A",
+          "selectedOption": "保持待确认，不自动取消，原交易继续"
+        },
+        {
+          "questionId": "IC03",
+          "answer": "A",
+          "selectedOption": "必填1—300字，请求结束并留历史，交易继续"
+        },
+        {
+          "questionId": "IC04",
+          "answer": "A",
+          "selectedOption": "任一方提出，另一方确认后生效"
+        },
+        {
+          "questionId": "IC05",
+          "answer": "A",
+          "selectedOption": "最多1份待确认方案"
+        },
+        {
+          "questionId": "IC06",
+          "answer": "A",
+          "selectedOption": "须先处理待确认改价，再确认完成"
+        },
+        {
+          "questionId": "IC07",
+          "answer": "A",
+          "selectedOption": "自动标已售、退出在售并恢复联系方式打码"
+        },
+        {
+          "questionId": "IC08",
+          "answer": "A",
+          "selectedOption": "直接开启，不再重复确认实际经历"
+        }
+      ]
+    }
+  ],
+  "idleChangeRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "idle-change-round-20-20261014",
+    "cancellation": {
+      "requestBy": "either-party",
+      "requiresOtherPartyConfirmation": true,
+      "noResponse": "keep-pending",
+      "automaticCancellation": false,
+      "automaticExpiry": false,
+      "transactionContinuesBeforeConfirmation": true,
+      "refusal": {
+        "reasonRequired": true,
+        "minLength": 1,
+        "maxLength": 300,
+        "endsRequest": true,
+        "preserveHistory": true,
+        "transactionContinues": true
+      },
+      "provesRefundOrSettlement": false
+    },
+    "priceChange": {
+      "proposedBy": "either-party",
+      "requiresOtherPartyConfirmation": true,
+      "maxPendingPerTransaction": 1,
+      "realReductionRequiresMutualConfirmation": true,
+      "reducedCommissionBasisRequiresOperatorApproval": true,
+      "overwriteInitialPrice": false,
+      "pendingChangeBlocksDeliveryConfirmation": true,
+      "processingMayConfirmRefuseOrWithdraw": true,
+      "pendingOperatorApprovalBlocksCompletionConfirmed": false
+    },
+    "completedListing": {
+      "automaticMarkSold": true,
+      "removeFromForSale": true,
+      "remaskContactInformation": true,
+      "preserveHistory": true,
+      "provesPayment": false,
+      "allPrivatePermissionsClosureConfirmed": false
+    },
+    "newFlowRatingQualification": {
+      "trigger": "seller-delivery-request-and-buyer-confirmation",
+      "mutual": true,
+      "additionalExperienceConfirmationRequired": false,
+      "contactApprovalCreatesQualification": false,
+      "unilateralSoldCreatesQualification": false,
+      "pendingCompletionCreatesQualification": false,
+      "cancellationCreatesQualification": false,
+      "preserveExistingLegitimateQualificationsAndRatings": true,
+      "otherBusinessRulesUnaffected": true,
+      "publicTextBypassesModeration": false
+    },
+    "completeWorkflowConfirmed": false,
+    "readyForImplementation": false
+  },
   "items": [
     {
       "id": "HD01",

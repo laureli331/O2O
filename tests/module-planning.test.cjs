@@ -1605,7 +1605,7 @@ test('idle transaction integrity rejects optional refusal reasons, public target
   ]) {const changed=structuredClone(records.idleTransactionRules);mutate(changed);assert.throws(()=>verifyIdle(changed));}
 });
 
-test('idle refusal limits and no-response boundaries are explicit while cancellation and rating choices remain pending', () => {
+test('idle refusal limits and no-response boundaries retain their source while twentieth-round choices are approved separately', () => {
   const rules=read('docs/module-specs/idle-transaction-rules.md');
   for(const phrase of ['1A、2A、3A、4A、5B、6A、7A、8A','理由必填1—300字','0字或301字','满24小时也不自动同意/关闭','无回应超过24小时仍待确认','评分衔接继续待定','没有实现或验证真实交易']) assert(rules.includes(phrase),phrase);
   const range=records.idleTransactionRules.refusal;
@@ -1614,12 +1614,12 @@ test('idle refusal limits and no-response boundaries are explicit while cancella
     assert.equal(value.length>=range.minLength&&value.length<=range.maxLength,valid);
   }
   const questions=read('docs/module-specs/idle-change-questions-20261014.md');
-  assert(questions.includes('8题全部待答'));
+  assert(questions.includes('本轮8题全部A'));
   const offered=[...questions.matchAll(/^\| [1-8]（(IC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(offered.length,8);
   assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'IC'+String(i+1).padStart(2,'0')));
-  assert.equal(Object.hasOwn(records,'idleChangeDecisionBatches'),false);
-  assert.equal(Object.hasOwn(handoff,'idleChangeDecisionBatches'),false);
+  assert.equal(records.idleChangeDecisionBatches.length,1);
+  assert.deepEqual(handoff.idleChangeDecisionBatches,records.idleChangeDecisionBatches);
   assert(read('docs/module-specs/commission-confirmation-rules.md').includes('idle-transaction-rules.md'));
   for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']) {
     const text=read('docs/ui-development-handoff/'+name);
@@ -1627,6 +1627,82 @@ test('idle refusal limits and no-response boundaries are explicit while cancella
     assert(text.includes('idle-transaction-rules.md'));
     assert(text.includes('idle-change-questions-20261014.md'));
   }
+});
+
+test('twentieth-round all-A reply maps exactly to cancellation, repricing and completed-rating options without overwriting nineteenth-round B', () => {
+  const [batch]=records.idleChangeDecisionBatches;
+  assert.equal(batch.id,'idle-change-round-20-20261014');
+  assert.equal(batch.date,'2026-10-14');
+  assert.equal(batch.userReply,'全A');
+  assert.deepEqual(batch.scope,['闲置']);
+  const offered=[...read(batch.questionDocument).matchAll(/^\| [1-8]（(IC\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(batch.answers.map(x=>x.questionId),offered.map(x=>x[1]));
+  assert.deepEqual(batch.answers.map(x=>x.answer),Array(8).fill('A'));
+  batch.answers.forEach((answer,i)=>assert.equal(answer.selectedOption,offered[i][3].trim()));
+  assert.deepEqual(handoff.idleChangeDecisionBatches,records.idleChangeDecisionBatches);
+  assert.equal(records.idleTransactionDecisionBatches[0].answers[4].answer,'B');
+  assert.equal(records.idleTransactionRules.deliveryCompletion.ratingLinkConfirmed,false);
+  assert.equal(records.idleChangeRules.newFlowRatingQualification.additionalExperienceConfirmationRequired,false);
+});
+
+test('idle change integrity rejects unilateral endings, auto expiry, duplicate prices, completion bypasses and premature ratings', () => {
+  const expected={
+    confirmedAt:'2026-10-14',sourceBatch:'idle-change-round-20-20261014',
+    cancellation:{requestBy:'either-party',requiresOtherPartyConfirmation:true,noResponse:'keep-pending',automaticCancellation:false,automaticExpiry:false,transactionContinuesBeforeConfirmation:true,refusal:{reasonRequired:true,minLength:1,maxLength:300,endsRequest:true,preserveHistory:true,transactionContinues:true},provesRefundOrSettlement:false},
+    priceChange:{proposedBy:'either-party',requiresOtherPartyConfirmation:true,maxPendingPerTransaction:1,realReductionRequiresMutualConfirmation:true,reducedCommissionBasisRequiresOperatorApproval:true,overwriteInitialPrice:false,pendingChangeBlocksDeliveryConfirmation:true,processingMayConfirmRefuseOrWithdraw:true,pendingOperatorApprovalBlocksCompletionConfirmed:false},
+    completedListing:{automaticMarkSold:true,removeFromForSale:true,remaskContactInformation:true,preserveHistory:true,provesPayment:false,allPrivatePermissionsClosureConfirmed:false},
+    newFlowRatingQualification:{trigger:'seller-delivery-request-and-buyer-confirmation',mutual:true,additionalExperienceConfirmationRequired:false,contactApprovalCreatesQualification:false,unilateralSoldCreatesQualification:false,pendingCompletionCreatesQualification:false,cancellationCreatesQualification:false,preserveExistingLegitimateQualificationsAndRatings:true,otherBusinessRulesUnaffected:true,publicTextBypassesModeration:false},
+    completeWorkflowConfirmed:false,readyForImplementation:false
+  };
+  const verifyCurrent=data=>assert.deepEqual(data,expected);
+  verifyCurrent(records.idleChangeRules);verifyCurrent(handoff.idleChangeRules);
+  for(const mutate of [
+    r=>{r.cancellation.requiresOtherPartyConfirmation=false;},
+    r=>{r.cancellation.automaticCancellation=true;},
+    r=>{r.cancellation.automaticExpiry=true;},
+    r=>{r.cancellation.refusal.reasonRequired=false;},
+    r=>{r.cancellation.refusal.minLength=0;},
+    r=>{r.cancellation.refusal.maxLength=500;},
+    r=>{r.cancellation.refusal.transactionContinues=false;},
+    r=>{r.cancellation.provesRefundOrSettlement=true;},
+    r=>{r.priceChange.proposedBy='seller-only';},
+    r=>{r.priceChange.maxPendingPerTransaction=2;},
+    r=>{r.priceChange.reducedCommissionBasisRequiresOperatorApproval=false;},
+    r=>{r.priceChange.pendingChangeBlocksDeliveryConfirmation=false;},
+    r=>{r.priceChange.pendingOperatorApprovalBlocksCompletionConfirmed=true;},
+    r=>{r.completedListing.automaticMarkSold=false;},
+    r=>{r.completedListing.remaskContactInformation=false;},
+    r=>{r.newFlowRatingQualification.additionalExperienceConfirmationRequired=true;},
+    r=>{r.newFlowRatingQualification.unilateralSoldCreatesQualification=true;},
+    r=>{r.newFlowRatingQualification.cancellationCreatesQualification=true;},
+    r=>{r.newFlowRatingQualification.preserveExistingLegitimateQualificationsAndRatings=false;},
+    r=>{r.newFlowRatingQualification.publicTextBypassesModeration=true;},
+    r=>{r.completeWorkflowConfirmed=true;},
+    r=>{r.readyForImplementation=true;}
+  ]){const changed=structuredClone(records.idleChangeRules);mutate(changed);assert.throws(()=>verifyCurrent(changed));}
+});
+
+test('idle change refusal and completion dependencies are documented without selecting next-round concurrency or reopening defaults', () => {
+  const rules=read('docs/module-specs/idle-change-rules.md');
+  for(const phrase of ['八题全部A','理由必填1—300字','0字或301字','不强制同意','原双向三维体系','评分资格不表示图文立即公开','没有实现或验证真实取消'])assert(rules.includes(phrase),phrase);
+  const refusal=records.idleChangeRules.cancellation.refusal;
+  for(const [length,expected] of [[0,false],[1,true],[300,true],[301,false]])assert.equal(length>=refusal.minLength&&length<=refusal.maxLength,expected);
+  const questions=read('docs/module-specs/idle-request-questions-20261014.md');
+  assert(questions.includes('8题全部待答'));
+  const offered=[...questions.matchAll(/^\| [1-8]（(IR\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(offered.length,8);
+  assert.deepEqual(offered.map(x=>x[1]),Array.from({length:8},(_,i)=>'IR'+String(i+1).padStart(2,'0')));
+  assert.equal(Object.hasOwn(records,'idleRequestDecisionBatches'),false);
+  assert.equal(Object.hasOwn(handoff,'idleRequestDecisionBatches'),false);
+  assert(read('docs/module-specs/idle-transaction-rules.md').includes('idle-change-rules.md'));
+  for(const name of ['business-addendum.md','page-spec.md','decisions-and-gaps.md']){
+    const text=read('docs/ui-development-handoff/'+name);
+    assert(text.includes('第二十轮实际回复“全A”'));
+    assert(text.includes('idle-change-rules.md'));
+    assert(text.includes('idle-request-questions-20261014.md'));
+  }
+  assert.equal(handoff.items.find(x=>x.id==='HD02').confirmed.business,'跑腿');
 });
 
 test('exception batch preserves the fourth and fifth B answers and per-question business scope', () => {
