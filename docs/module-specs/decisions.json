@@ -2084,19 +2084,19 @@
     "phase": "first-release-business-planning",
     "direction": "deadline-automatic-completion",
     "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
-    "ruleDocument": "docs/module-specs/deadline-completion-entry-rules.md",
-    "sourceBatch": "deadline-completion-round-3-20261014",
-    "questionDocument": "docs/module-specs/deadline-completion-detail-questions-20261014.md",
-    "status": "third-round-confirmed-details-pending",
+    "ruleDocument": "docs/module-specs/deadline-completion-detail-rules.md",
+    "sourceBatch": "deadline-completion-round-4-20261014",
+    "questionDocument": "docs/module-specs/deadline-completion-operation-questions-20261014.md",
+    "status": "fourth-round-confirmed-clock-definition-pending",
     "pendingQuestionIds": [
-      "DT01",
-      "DT02",
-      "DT03",
-      "DT04",
-      "DT05",
-      "DT06",
-      "DT07",
-      "DT08"
+      "DO01",
+      "DO02",
+      "DO03",
+      "DO04",
+      "DO05",
+      "DO06",
+      "DO07",
+      "DO08"
     ],
     "priorQuestionSetPaused": true,
     "implementationEnabled": false
@@ -2162,6 +2162,28 @@
         "DC06",
         "DC07",
         "DC08"
+      ],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false
+    },
+    {
+      "date": "2026-10-14",
+      "phase": "first-release-business-planning",
+      "direction": "deadline-automatic-completion",
+      "directionDocument": "docs/module-specs/deadline-completion-request-20261014.md",
+      "ruleDocument": "docs/module-specs/deadline-completion-entry-rules.md",
+      "sourceBatch": "deadline-completion-round-3-20261014",
+      "questionDocument": "docs/module-specs/deadline-completion-detail-questions-20261014.md",
+      "status": "third-round-confirmed-details-pending",
+      "pendingQuestionIds": [
+        "DT01",
+        "DT02",
+        "DT03",
+        "DT04",
+        "DT05",
+        "DT06",
+        "DT07",
+        "DT08"
       ],
       "priorQuestionSetPaused": true,
       "implementationEnabled": false
@@ -2586,6 +2608,146 @@
       "otherClockMappingConfirmed": false
     },
     "initialIncomeAndRatingRulesChanged": false,
+    "ratesAndCapsChanged": false,
+    "automaticDebit": false,
+    "provesCustomerPayment": false,
+    "readyForImplementation": false
+  },
+  "deadlineCompletionDetailDecisionBatches": [
+    {
+      "id": "deadline-completion-round-4-20261014",
+      "date": "2026-10-14",
+      "userReply": "1B, 2设三天长期服务再由双方延期, 3B, 全A",
+      "scope": [
+        "跑腿",
+        "维修",
+        "闲置",
+        "其它"
+      ],
+      "questionDocument": "docs/module-specs/deadline-completion-detail-questions-20261014.md",
+      "answers": [
+        {
+          "questionId": "DT01",
+          "answer": "B",
+          "selectedOption": "等于时允许，已经过去才阻止"
+        },
+        {
+          "questionId": "DT02",
+          "answer": "CUSTOM",
+          "userCustomValue": "三天，长期服务再由双方延期",
+          "selectedOption": "初次/延期预计结束时间最远设三天，长期服务再由双方延期"
+        },
+        {
+          "questionId": "DT03",
+          "answer": "B",
+          "selectedOption": "保留报价金额，选定前须重新明确接受新时间"
+        },
+        {
+          "questionId": "DT04",
+          "answer": "A",
+          "selectedOption": "已获准联系保留；买家更新时间，旧待确认交易先撤回，卖家重新发起"
+        },
+        {
+          "questionId": "DT05",
+          "answer": "A",
+          "selectedOption": "仅发起方撤回，对方可同意或不同意"
+        },
+        {
+          "questionId": "DT06",
+          "answer": "A",
+          "selectedOption": "只允许向后延长，提前完成走明确交付确认"
+        },
+        {
+          "questionId": "DT07",
+          "answer": "A",
+          "selectedOption": "提交成功后24小时未确认就关闭调整，原有效费用保留；真正金额异议另处"
+        },
+        {
+          "questionId": "DT08",
+          "answer": "A",
+          "selectedOption": "双方明确同意解除后恢复；运营只记录，不代为裁决"
+        }
+      ]
+    }
+  ],
+  "deadlineCompletionDetailRules": {
+    "confirmedAt": "2026-10-14",
+    "sourceBatch": "deadline-completion-round-4-20261014",
+    "scope": [
+      "跑腿",
+      "维修",
+      "闲置",
+      "其它"
+    ],
+    "enabled": false,
+    "equality": {
+      "at": "server-side-confirmation",
+      "equalExpectedEndAllowed": true,
+      "pastExpectedEndAllowed": false,
+      "minuteSecondNormalizationConfirmed": false
+    },
+    "horizon": {
+      "maxDays": 3,
+      "appliesTo": [
+        "initial",
+        "extension"
+      ],
+      "anchor": "confirmation",
+      "fixedDurationRequired": false,
+      "longServicesUseMutualExtensions": true,
+      "dayInterpretationConfirmed": false,
+      "maxDurationHours": null,
+      "changesObjectionWindow": false
+    },
+    "errandChangedTime": {
+      "retainQuoteAmount": true,
+      "explicitCurrentTimeAcceptanceBeforeSelectionRequired": true,
+      "oldAcceptanceAppliesToNewTime": false,
+      "workerSecondAcceptanceAfterSelectionRequired": false,
+      "changesAlreadySelectedFee": false,
+      "acceptanceEntryConfirmed": false,
+      "sortEffectConfirmed": false
+    },
+    "idleExpiredTime": {
+      "scope": "approved-contact-before-effective-transaction",
+      "approvedRelationshipPreserved": true,
+      "buyerUpdatesTime": true,
+      "withdrawOldPendingTransactionBeforeNew": true,
+      "sellerReinitiates": true,
+      "sameNewVersionConfirmationRequired": true,
+      "contactPermissionExpanded": false,
+      "preserveHistory": true
+    },
+    "extension": {
+      "pendingWithdrawalBy": "initiator-only",
+      "counterpartyMayAcceptOrRefuse": true,
+      "effectiveExtensionCanBeWithdrawn": false,
+      "onlyLaterThanCurrentExpectedEnd": true,
+      "sameTimeRefreshAllowed": false,
+      "earlierCompletionUsesExplicitDeliveryAcknowledgment": true,
+      "refusalReasonPolicyConfirmed": false
+    },
+    "ordinaryRepricingTimeout": {
+      "scope": "late-fee-window-without-primary-record-with-existing-effective-amount",
+      "durationHours": 24,
+      "startsAt": "successful-request-effectiveness",
+      "closesUnconfirmedAdjustment": true,
+      "preservesPreviousEffectiveFee": true,
+      "meansAutoConsent": false,
+      "firstUnknownFeeExcluded": true,
+      "realUnresolvedAmountDeliveryOrSaleIssuesExcluded": true,
+      "exactCutoffPriorityConfirmed": false,
+      "latePrimaryRecordResumptionConfirmed": false
+    },
+    "deliveryClearance": {
+      "bothExplicitAgreementRequired": true,
+      "singlePartyOrSilenceClears": false,
+      "operatorRecordOnly": true,
+      "operatorServiceAdjudicationGranted": false,
+      "amountVerificationAuthorityChanged": false,
+      "actionModelConfirmed": false
+    },
+    "incomeRatingAndSoldRulesChanged": false,
     "ratesAndCapsChanged": false,
     "automaticDebit": false,
     "provesCustomerPayment": false,
