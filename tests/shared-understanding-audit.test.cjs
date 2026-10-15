@@ -169,7 +169,7 @@ test('current technology approval uses one shared account while preserving the i
   assert.equal(active.sourceDocument, records.operatorAccountRules.document);
   assert.equal(active.managementAccountCount, records.operatorAccountRules.managementAccountCount);
   assert.equal(active.operations, 'miniapp-shared-owner-management-account');
-  const plan = read('docs/development-plan.md');
+  const plan = read('docs/development-plan-archive-20261015.md');
   assert.equal(validateDevelopmentRecord(technology, plan), true);
   for (const [key, value] of [['managementAccountCount', 2], ['separatePartnerAccountRequired', true], ['actualHumanOperatorAttribution', true], ['productionAccountConfigured', true]]) {
     const changed = structuredClone(technology); changed.currentOperationsApproval[key] = value;

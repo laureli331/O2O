@@ -6,7 +6,8 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const decode = new TextDecoder('utf-8', { fatal: true });
 const read = file => decode.decode(fs.readFileSync(path.join(root, file)));
-const plan = read('docs/development-plan.md');
+// The registration document's historical seven-phase table remains a legacy contract.
+const plan = read('docs/development-plan-archive-20261015.md');
 const record = JSON.parse(read('docs/development-decisions.json'));
 function expand(expression, prefix) {
   const result=[];

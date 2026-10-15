@@ -9,7 +9,8 @@ const { validateDevelopmentRecord } = require('./helpers/development-record-vali
 const repo = path.resolve(__dirname, '..');
 const decoder = new TextDecoder('utf-8', { fatal: true });
 const read = relative => decoder.decode(fs.readFileSync(path.join(repo, relative)));
-const plan = read('docs/development-plan.md');
+// Original progress/approval invariants are checked against the preserved 48-task plan.
+const plan = read('docs/development-plan-archive-20261015.md');
 const record = JSON.parse(read('docs/development-decisions.json'));
 const technical = read('docs/technical-decision.md');
 const evidence = read('docs/external-evidence.md');

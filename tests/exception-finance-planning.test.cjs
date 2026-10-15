@@ -113,14 +113,14 @@ test('53 approved choices and 74 acceptance cases preserve the original fifty an
   for (const [prefix, count] of [['M', 14], ['F', 21], ['V', 22]]) assert.equal([...prd.matchAll(new RegExp('^\\| ' + prefix + '\\d{2} \\|', 'gm'))].length, count);
 });
 
-test('legacy plan validation names its historical archive and cannot certify full current implementation coverage', () => {
+test('remapped documents preserve all three exceptions while legacy validation names its historical archives', () => {
   for (const file of ['docs/development-plan.md', 'docs/structured-design.md']) {
     const text = read(file);
-    for (const term of ['PRD 2.1', '须按新版重新映射', 'EA01—EA03', 'BX13', 'BX18']) assert(text.includes(term), file + ': ' + term);
+    for (const term of ['PRD 2.1', '文档重映射', 'EA01—EA03', 'BX13', 'BX18']) assert(text.includes(term), file + ': ' + term);
   }
   for (const file of ['tests/validate-development-plan.ps1', 'tests/validate-structured-design.ps1']) {
     const text = read(file); assert(text.includes('prd-v1.5-archive-20261015.md'));
-    assert(text.includes('版本：2.1')); assert(text.includes('须按新版重新映射'));
+    assert(text.includes('版本：2.1')); assert(text.includes('文档重映射'));
   }
 });
 

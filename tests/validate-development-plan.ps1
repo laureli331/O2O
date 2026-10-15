@@ -1,5 +1,5 @@
 ﻿param(
-    [string]$DocumentPath = (Join-Path (Split-Path -Parent $PSScriptRoot) 'docs\development-plan.md')
+    [string]$DocumentPath = (Join-Path (Split-Path -Parent $PSScriptRoot) 'docs\development-plan-archive-20261015.md')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -28,11 +28,12 @@ Assert-Plan (Test-Path -LiteralPath $DocumentPath) 'Development plan exists'
 $planDecoder = New-Object System.Text.UTF8Encoding($false, $true)
 $planText = $planDecoder.GetString([IO.File]::ReadAllBytes($DocumentPath))
 $planCurrentPrd = $planDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $planDocDirectory 'prd.md')))
+$planCurrentText = $planDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $planDocDirectory 'development-plan.md')))
 # The retained 48-task table is a historical v1.5 plan, explicitly awaiting remapping.
 $planPrd = $planDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $planDocDirectory 'prd-v1.5-archive-20261015.md')))
 Assert-Plan ($planText.StartsWith('# 永兴乡镇生活服务小程序开发计划')) 'Plan is strict UTF-8 and identifies the deliverable'
 Assert-Plan ($planText.Contains('PRD v1.5') -and $planPrd.Contains('版本：1.5')) 'Retained task plan uses its explicit historical PRD v1.5 archive'
-Assert-Plan ($planCurrentPrd.Contains('版本：2.1') -and $planText.Contains('PRD 2.1') -and $planText.Contains('须按新版重新映射')) 'Current baseline is 2.1 and legacy tasks are not certified as current coverage'
+Assert-Plan ($planCurrentPrd.Contains('版本：2.1') -and $planCurrentText.Contains('PRD 2.1') -and $planCurrentText.Contains('文档重映射')) 'Current baseline is 2.1; remapped current coverage is validated separately'
 Assert-Plan ($planText.Contains('尚未选定，先列技术方案确认任务')) 'Actual user decision on technology is recorded'
 Assert-Plan ($planText.IndexOf('## 1. 先确定验证方案') -lt $planText.IndexOf('## 4. 可领取的48项执行任务')) 'Validation is defined before the multi-step task plan'
 

@@ -60,7 +60,7 @@ function validateCurrent(text) {
   const gates = new Map([...family(text, 'E'), ...family(text, 'QG'), ...family(text, 'AG'), ...family(text, 'DG')]);
   assert.deepEqual([...gates.keys()].sort(), ['AG01', 'DG01', 'E01', 'E02', 'E03', 'E04', 'E05', 'E06', 'QG01']);
   terms(gates.get('E04'), ['佣金', 'Banner'], 'Actual payment gate');
-  terms(text, ['所有九项条件仍未验证通过', '旧开发计划48任务', '须按当前M01—M14、F01—F21、V01—V22及验收重新映射'], 'Implementation boundary');
+  terms(text, ['所有九项条件仍未验证通过', '旧开发计划48任务', '已完成当前M01—M14、F01—F21、V01—V22及74项验收的文档重映射'], 'Implementation boundary');
   for (const forbidden of ['平台不代收、不代结算、不抽跑腿佣金', '完成申请满24小时且无确认/异议才自动完成', '接单员提交完成，发布者确认后完成']) assert(!text.includes(forbidden), 'Obsolete operative rule: ' + forbidden);
 
   const expected = new Map(records.businessCloseoutQuestionInventory.questions.map(q => [q.id, q.recordedAnswer]));

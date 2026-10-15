@@ -8,8 +8,8 @@ const { validateDevelopmentRecord } = require('./helpers/development-record-vali
 const root = path.resolve(__dirname,'..');
 const read = p => new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(path.join(root,p)));
 // This suite preserves the originally approved v1.5 contract and its regression mutations.
-// Current v2.0 coverage and unchanged AI safeguards are validated in prd-v2.test.cjs.
-const paths = {prd:'docs/prd-v1.5-archive-20261015.md', design:'docs/structured-design.md', plan:'docs/development-plan.md', execution:'docs/post-registration-development.md', decisions:'docs/ai-feature-decisions.md', evidence:'docs/external-evidence.md'};
+// Current PRD and remapped plan/design are checked by prd-v2 and development-remapping.
+const paths = {prd:'docs/prd-v1.5-archive-20261015.md', design:'docs/structured-design-archive-20261015.md', plan:'docs/development-plan-archive-20261015.md', execution:'docs/post-registration-development.md', decisions:'docs/ai-feature-decisions.md', evidence:'docs/external-evidence.md'};
 function bundle() {
   return {...Object.fromEntries(Object.entries(paths).map(([key,p]) => [key,read(p)])), record:JSON.parse(read('docs/development-decisions.json'))};
 }

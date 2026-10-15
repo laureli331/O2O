@@ -2097,7 +2097,7 @@
     "ruleDocument": "docs/module-specs/exception-finance-confirmed-20261015.md",
     "sourceBatch": "exception-finance-reply-1-20261015",
     "questionDocument": null,
-    "status": "identified-fifty-three-business-questions-confirmed-handoff-remapping-pending",
+    "status": "identified-fifty-three-confirmed-document-remapping-complete-prerequisites-pending",
     "pendingQuestionIds": [],
     "unresolvedOriginalQuestionIds": [],
     "priorQuestionSetPaused": true,
@@ -2463,6 +2463,30 @@
       "sourceBatch": "shared-understanding-reply-1-20261015",
       "questionDocument": null,
       "status": "identified-fifty-business-questions-confirmed-handoff-validation-pending",
+      "pendingQuestionIds": [],
+      "unresolvedOriginalQuestionIds": [],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false,
+      "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
+      "remainingQuestionCount": 0,
+      "planningComplete": false,
+      "questionSetId": null,
+      "blockingInterpretationIds": [],
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "transactionQuestionsComplete": true,
+      "priorIdentifiedTransactionQuestionsComplete": true
+    },
+    {
+      "date": "2026-10-15",
+      "phase": "developer-handoff-consolidation",
+      "direction": "service-expiry-without-customer-completion-confirmation",
+      "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "ruleDocument": "docs/module-specs/exception-finance-confirmed-20261015.md",
+      "sourceBatch": "exception-finance-reply-1-20261015",
+      "questionDocument": null,
+      "status": "identified-fifty-three-business-questions-confirmed-handoff-remapping-pending",
       "pendingQuestionIds": [],
       "unresolvedOriginalQuestionIds": [],
       "priorQuestionSetPaused": true,
@@ -9124,7 +9148,8 @@
     "sharedUnderstandingAudit": "sharedUnderstandingAudit",
     "auditResolution": "sharedUnderstandingRules",
     "formalPrd": "prdConsolidation",
-    "exceptionFinance": "exceptionFinanceRules"
+    "exceptionFinance": "exceptionFinanceRules",
+    "developmentRemapping": "developmentRemapping"
   },
   "businessCloseoutFinalPartialRules": {
     "document": "docs/module-specs/business-closeout-confirmed-20261015.md",
@@ -9732,7 +9757,7 @@
     "sharedBusinessUnderstanding": true,
     "pendingIdentifiedBusinessChoices": 0,
     "bannerCommercialTermsDeferred": true,
-    "oldTaskPlanRequiresRemapping": true,
+    "oldTaskPlanRequiresRemapping": false,
     "productImplemented": false,
     "realServicesEnabled": false,
     "sourceDocuments": [
@@ -9745,7 +9770,8 @@
     ],
     "archiveSourceCommit": "1b8ed680849f204cc92dfc2ea578ad949c45f53b",
     "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93",
-    "previousFormalPrdCommit": "17559c0f9dd5139a7cb5e1a7b45ebcc5c87eef8c"
+    "previousFormalPrdCommit": "17559c0f9dd5139a7cb5e1a7b45ebcc5c87eef8c",
+    "remappingRecord": "docs/development-remapping-20261015.json"
   },
   "items": [
     {
@@ -9941,5 +9967,24 @@
       "archiveSourceCommit": "1b8ed680849f204cc92dfc2ea578ad949c45f53b",
       "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93"
     }
-  ]
+  ],
+  "developmentRemapping": {
+    "date": "2026-10-15",
+    "record": "docs/development-remapping-20261015.json",
+    "document": "docs/development-plan.md",
+    "designDocument": "docs/structured-design.md",
+    "documentationRemappingComplete": true,
+    "taskCount": 57,
+    "activeTaskCount": 51,
+    "deferredTaskIds": [
+      "DP30",
+      "DP31",
+      "DP32",
+      "DP33",
+      "DP34",
+      "DP35"
+    ],
+    "productImplemented": false,
+    "realServicesEnabled": false
+  }
 }

@@ -1,5 +1,5 @@
 ﻿param(
-    [string]$DocumentPath = (Join-Path (Split-Path -Parent $PSScriptRoot) 'docs\structured-design.md')
+    [string]$DocumentPath = (Join-Path (Split-Path -Parent $PSScriptRoot) 'docs\structured-design-archive-20261015.md')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -17,6 +17,7 @@ Assert-Design (Test-Path -LiteralPath $DocumentPath) 'Structured design document
 $designDecoder = New-Object System.Text.UTF8Encoding($false, $true)
 $designText = $designDecoder.GetString([IO.File]::ReadAllBytes($DocumentPath))
 $designCurrentPrd = $designDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $designRepo 'docs\prd.md')))
+$designCurrentText = $designDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $designRepo 'docs\structured-design.md')))
 # Legacy V/F tables remain a v1.5 artifact; current 2.1 overrides and remapping are explicit.
 $designPrd = $designDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $designRepo 'docs\prd-v1.5-archive-20261015.md')))
 $designSelection = Get-Content -LiteralPath (Join-Path $designRepo 'assets\ui\approved-selection.json') -Raw -Encoding UTF8 | ConvertFrom-Json
@@ -24,7 +25,7 @@ $designTokens = Get-Content -LiteralPath (Join-Path $designRepo 'assets\ui\v2\de
 $designDocDir = Split-Path -Parent $DocumentPath
 
 Assert-Design ($designText.StartsWith('# 结构化设计说明')) 'Document is valid UTF-8 and identifies the requested deliverable'
-Assert-Design ($designCurrentPrd.Contains('版本：2.1') -and $designText.Contains('PRD 2.1') -and $designText.Contains('须按新版重新映射')) 'Current 2.1 precedence and incomplete historical design remapping are explicit'
+Assert-Design ($designCurrentPrd.Contains('版本：2.1') -and $designCurrentText.Contains('PRD 2.1') -and $designCurrentText.Contains('文档重映射')) 'Current 2.1 remapping is validated separately from the retained historical design'
 $designLocalLinks = @([regex]::Matches($designText, '\]\(([^)]+)\)') | Where-Object { $_.Groups[1].Value -notmatch '^(https?://|#)' })
 $designMissingLinks = @($designLocalLinks | Where-Object {
     $designTarget = $_.Groups[1].Value.Split('#')[0]

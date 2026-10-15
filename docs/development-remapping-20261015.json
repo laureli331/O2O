@@ -1,0 +1,547 @@
+{
+  "date": "2026-10-15",
+  "prdVersion": "2.1",
+  "document": "docs/development-plan.md",
+  "designDocument": "docs/structured-design.md",
+  "sourceCommit": "54f224a2c12fe82783fd5b48a500dd10458b6fa2",
+  "documentationRemappingComplete": true,
+  "productImplemented": false,
+  "realServicesEnabled": false,
+  "taskCount": 57,
+  "activeTaskCount": 51,
+  "deferredTaskIds": [
+    "DP30",
+    "DP31",
+    "DP32",
+    "DP33",
+    "DP34",
+    "DP35"
+  ],
+  "coverage": {
+    "modules": 14,
+    "extensions": 8,
+    "fields": 21,
+    "pageGroups": 22,
+    "notifications": 9,
+    "acceptanceCases": 74
+  },
+  "archives": [
+    {
+      "path": "docs/development-plan-archive-20261015.md",
+      "sha256": "AE640796BF7744D1266177021224B2B1BE96A21C805EB7C8A24A652518C8DE9B",
+      "sha256LfNormalized": "8F0DBAAF2E32C43F77B7EFBC29F86179F8704F80427B1161F7AD37C70C6B48CB"
+    },
+    {
+      "path": "docs/structured-design-archive-20261015.md",
+      "sha256": "82DB213B228F9E008D68838EF29E0A8381B2368205927BF353B23F69F414476E",
+      "sha256LfNormalized": "DBECCB1CC4DA62B211F589B65DA34A880627257DC66DDEA292C7A1B2CDFF8160"
+    }
+  ],
+  "tasks": {
+    "DP01": {
+      "phase": "A",
+      "dependencies": [],
+      "status": "执行中",
+      "productAcceptancePassed": false
+    },
+    "DP02": {
+      "phase": "A",
+      "dependencies": [],
+      "status": "资料准备中",
+      "productAcceptancePassed": false
+    },
+    "DP03": {
+      "phase": "A",
+      "dependencies": [
+        "DP02",
+        "DP41"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP04": {
+      "phase": "A",
+      "dependencies": [
+        "DP02"
+      ],
+      "status": "资料准备中",
+      "productAcceptancePassed": false
+    },
+    "DP05": {
+      "phase": "A",
+      "dependencies": [
+        "DP01",
+        "DP04"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP06": {
+      "phase": "A",
+      "dependencies": [
+        "DP01",
+        "DP02",
+        "DP03",
+        "DP04",
+        "DP05"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP07": {
+      "phase": "B",
+      "dependencies": [
+        "DP01",
+        "DP03",
+        "DP04"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP08": {
+      "phase": "B",
+      "dependencies": [
+        "DP07"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP09": {
+      "phase": "B",
+      "dependencies": [
+        "DP08"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP10": {
+      "phase": "B",
+      "dependencies": [
+        "DP08"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP11": {
+      "phase": "B",
+      "dependencies": [
+        "DP08"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP12": {
+      "phase": "B",
+      "dependencies": [
+        "DP09",
+        "DP10",
+        "DP11"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP13": {
+      "phase": "C",
+      "dependencies": [
+        "DP09",
+        "DP10",
+        "DP11",
+        "DP12"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP14": {
+      "phase": "C",
+      "dependencies": [
+        "DP13"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP15": {
+      "phase": "C",
+      "dependencies": [
+        "DP14"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP16": {
+      "phase": "C",
+      "dependencies": [
+        "DP05",
+        "DP15"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP17": {
+      "phase": "C",
+      "dependencies": [
+        "DP15"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP18": {
+      "phase": "C",
+      "dependencies": [
+        "DP16",
+        "DP17"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP19": {
+      "phase": "C",
+      "dependencies": [
+        "DP16",
+        "DP17",
+        "DP18"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP20": {
+      "phase": "D",
+      "dependencies": [
+        "DP19",
+        "DP51"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP21": {
+      "phase": "D",
+      "dependencies": [
+        "DP20",
+        "DP53"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP22": {
+      "phase": "D",
+      "dependencies": [
+        "DP21"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP23": {
+      "phase": "D",
+      "dependencies": [
+        "DP22",
+        "DP49",
+        "DP50",
+        "DP52",
+        "DP57"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP24": {
+      "phase": "D",
+      "dependencies": [
+        "DP23"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP25": {
+      "phase": "E",
+      "dependencies": [
+        "DP19",
+        "DP12"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP26": {
+      "phase": "E",
+      "dependencies": [
+        "DP24",
+        "DP25"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP27": {
+      "phase": "E",
+      "dependencies": [
+        "DP26"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP28": {
+      "phase": "E",
+      "dependencies": [
+        "DP27",
+        "DP10",
+        "DP12"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP29": {
+      "phase": "E",
+      "dependencies": [
+        "DP28"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP30": {
+      "phase": "F",
+      "dependencies": [],
+      "status": "延后",
+      "productAcceptancePassed": false
+    },
+    "DP31": {
+      "phase": "F",
+      "dependencies": [],
+      "status": "延后",
+      "productAcceptancePassed": false
+    },
+    "DP32": {
+      "phase": "F",
+      "dependencies": [],
+      "status": "延后",
+      "productAcceptancePassed": false
+    },
+    "DP33": {
+      "phase": "F",
+      "dependencies": [],
+      "status": "延后",
+      "productAcceptancePassed": false
+    },
+    "DP34": {
+      "phase": "F",
+      "dependencies": [],
+      "status": "延后",
+      "productAcceptancePassed": false
+    },
+    "DP35": {
+      "phase": "F",
+      "dependencies": [],
+      "status": "延后",
+      "productAcceptancePassed": false
+    },
+    "DP36": {
+      "phase": "G",
+      "dependencies": [
+        "DP02",
+        "DP03",
+        "DP29",
+        "DP48",
+        "DP56"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP37": {
+      "phase": "G",
+      "dependencies": [
+        "DP36"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP38": {
+      "phase": "G",
+      "dependencies": [
+        "DP37",
+        "DP05"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP39": {
+      "phase": "G",
+      "dependencies": [
+        "DP38",
+        "DP04",
+        "DP06"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP40": {
+      "phase": "G",
+      "dependencies": [
+        "DP39"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP41": {
+      "phase": "A",
+      "dependencies": [
+        "DP01",
+        "DP02"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP42": {
+      "phase": "B",
+      "dependencies": [
+        "DP08",
+        "DP41"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP43": {
+      "phase": "D",
+      "dependencies": [
+        "DP42",
+        "DP13",
+        "DP17",
+        "DP20"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP44": {
+      "phase": "D",
+      "dependencies": [
+        "DP43"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP45": {
+      "phase": "D",
+      "dependencies": [
+        "DP24",
+        "DP15",
+        "DP16",
+        "DP43",
+        "DP54",
+        "DP55",
+        "DP56"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP46": {
+      "phase": "F",
+      "dependencies": [
+        "DP45",
+        "DP11"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP47": {
+      "phase": "F",
+      "dependencies": [
+        "DP46",
+        "DP12",
+        "DP05"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP48": {
+      "phase": "F",
+      "dependencies": [
+        "DP44",
+        "DP47"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP49": {
+      "phase": "D",
+      "dependencies": [
+        "DP13",
+        "DP51",
+        "DP53"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP50": {
+      "phase": "D",
+      "dependencies": [
+        "DP15",
+        "DP51",
+        "DP53"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP51": {
+      "phase": "D",
+      "dependencies": [
+        "DP08",
+        "DP11",
+        "DP13"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP52": {
+      "phase": "D",
+      "dependencies": [
+        "DP49",
+        "DP10",
+        "DP11"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP53": {
+      "phase": "D",
+      "dependencies": [
+        "DP08",
+        "DP12"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP54": {
+      "phase": "D",
+      "dependencies": [
+        "DP23",
+        "DP53",
+        "DP11"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP55": {
+      "phase": "D",
+      "dependencies": [
+        "DP54",
+        "DP12",
+        "DP52"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP56": {
+      "phase": "D",
+      "dependencies": [
+        "DP54",
+        "DP55"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP57": {
+      "phase": "D",
+      "dependencies": [
+        "DP11",
+        "DP12",
+        "DP51"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    }
+  }
+}

@@ -24,7 +24,7 @@ function validate(b) {
   assert.equal(b.record.featurePlanning.merchantTransactionCommissionPlanned,false,'No third-party transaction commission');
   assert.equal(b.record.featurePlanning.merchantPermissionVerified,false,'Merchant permission is not verified');
   assert.equal(b.record.featurePlanning.userRestrictionCorrection,'third-party-transaction-entry-and-commission-not-all-payment','Payment versus commission correction');
-  assert.equal(ids(b.plan,'DP').length,48,'First-version task count is unchanged');
+  assert.equal(ids(b.plan,'DP').length,57,'Current plan remaps first-version work without implementing the second-version scope');
   assert.equal(ids(b.prd,'M').length,14,'PRD 2.0 modules include other business and commission');
   assert.equal(ids(b.prd,'F').length,21,'PRD 2.0 fields include time, staged fees and commission');
   assert.equal(ids(b.prd,'V').length,22,'PRD 2.0 page groups include commission billing');
