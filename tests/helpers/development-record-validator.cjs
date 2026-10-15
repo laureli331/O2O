@@ -24,6 +24,15 @@ function validateDevelopmentRecord(record, plan) {
     assert.equal(record.approval[choice], expected, `Approved choice changed: ${choice}`);
   }
 
+  // The initial adoption stays historical; explicit later approval is the active operations policy.
+  const activeOperations = record.currentOperationsApproval;
+  assert.equal(activeOperations?.operations, 'miniapp-shared-owner-management-account', 'Current operations override missing or changed');
+  assert.equal(activeOperations.managementAccountCount, 1, 'Current operations account count');
+  assert.equal(activeOperations.separatePartnerAccountRequired, false, 'Current operations must not require a partner account');
+  assert.equal(activeOperations.actualHumanOperatorAttribution, false, 'Shared login cannot identify the actual human operator');
+  assert.equal(activeOperations.productionAccountConfigured, false, 'Current operations approval is not actual configuration');
+  assert.equal(activeOperations.previousApprovalIsHistorical, true, 'Initial operations approval must remain historical');
+
   if (record.resources.appIdValue !== null) {
     assert.match(record.resources.appIdValue, /^wx[0-9a-f]{16}$/, 'Invalid WeChat AppID format');
     assert.equal(record.resources.appIdExists, true, 'Configured AppID conflicts with resource record');

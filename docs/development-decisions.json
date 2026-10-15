@@ -13,6 +13,17 @@
     "developmentScope": "local-and-controlled-tests",
     "purchasePolicy": "confirm-cost-before-purchase"
   },
+  "currentOperationsApproval": {
+    "date": "2026-10-15",
+    "sourceUserReply": "我的另一个运营伙伴, 用的是我的账号管理, 所以不用那么麻烦\na",
+    "sourceDocument": "docs/module-specs/business-closeout-confirmed-20261015.md",
+    "operations": "miniapp-shared-owner-management-account",
+    "managementAccountCount": 1,
+    "separatePartnerAccountRequired": false,
+    "actualHumanOperatorAttribution": false,
+    "previousApprovalIsHistorical": true,
+    "productionAccountConfigured": false
+  },
   "resources": {
     "appIdExists": true,
     "appIdValue": "wx358290e451cb06e7",

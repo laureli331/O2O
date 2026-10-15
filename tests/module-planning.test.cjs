@@ -47,8 +47,8 @@ test('all forty-five transaction questions are confirmed while deferred commerci
   assert.equal(records.businessCloseoutInventoryHistory[3].remainingQuestions,1);
   const c=records.businessPlanningClosure;assert.equal(c.transactionQuestionSetResolved,true);assert.equal(c.allProductPlanningComplete,false);
   assert.equal(c.implementationAuthorizedByThisReply,false);assert.equal(c.productionEnabled,false);assert.deepEqual(c.deferredWorkstreamIds,['merchant-banner-commercial-planning']);
-  assert.deepEqual(records.currentPlanningFocus.pendingQuestionIds,[]);assert.equal(records.currentPlanningFocus.remainingQuestionCount,0);assert.equal(records.currentPlanningFocus.planningComplete,false);
-  assert.equal(records.remainingPlanningAudit.answeredQuestionCount,45);assert.equal(records.remainingPlanningAudit.currentTransactionQuestionSetResolved,true);
+  assert.deepEqual(records.planningFocusHistory[11].pendingQuestionIds,[]);assert.equal(records.planningFocusHistory[11].remainingQuestionCount,0);assert.equal(records.planningFocusHistory[11].planningComplete,false);
+  assert.equal(records.remainingPlanningAudit.answeredQuestionCount,45);assert.equal(records.remainingPlanningAuditHistory[5].currentTransactionQuestionSetResolved,true);
   const r=records.businessCloseoutFinalPartialRules.commissionReview;
   assert.deepEqual(r.focus,{answer:'A',questionId:'CQ37',metrics:['transaction-volume','cancellations-and-issues','commission-arrears','actual-commission-received'],automaticAdjustment:false});
   assert.equal(r.unansweredQuestionId,null);assert.equal(r.activationOccurred,false);assert.equal(r.chargesStopAfter30Days,false);assert.equal(r.merchantBannerIncluded,false);
@@ -3096,7 +3096,7 @@ test('misunderstood time-entry explanation and sixth-round questions remain revi
   for(const text of ['DO02未选、需解释','没听懂','下午5点','下午3点','原报价金额保留','接单员明确接受新时间','不执行或固化DO02','延期最大七天，起算点','不倒填窗口月份']) assert(doc.includes(text),text);
   const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-operation-rules.md',sourceBatch:'deadline-completion-round-5-20261014',questionDocument:'docs/module-specs/deadline-completion-clarification-questions-20261014.md',status:'fifth-round-partial-time-entry-clarification-required',pendingQuestionIds:['DX01','DX02','DX03','DX04','DX05','DX06','DX07','DX08'],unresolvedOriginalQuestionIds:['DO02'],priorQuestionSetPaused:true,implementationEnabled:false};
   assert.deepEqual(records.planningFocusHistory[5],focus);assert.deepEqual(handoff.planningFocusHistory[5],focus);
-  assert.equal(records.planningFocusHistory.length,11);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
+  assert.equal(records.planningFocusHistory.length,12);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
   const questions=read(focus.questionDocument);
   assert(questions.includes('8题全部选择A'));assert(questions.includes('重述尚未选的原DO02'));
   const rows=[...questions.matchAll(/^\| [1-8]（(DX\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];

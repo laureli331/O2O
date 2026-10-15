@@ -2094,23 +2094,30 @@
     "phase": "first-release-business-planning",
     "direction": "service-expiry-without-customer-completion-confirmation",
     "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
-    "ruleDocument": "docs/module-specs/business-closeout-confirmed-20261015.md",
+    "ruleDocument": "docs/module-specs/current-development-basis-20261015.md",
     "sourceBatch": "business-closeout-reply-4-final-20261015",
-    "questionDocument": null,
-    "status": "identified-transaction-questions-confirmed-document-consolidation",
-    "pendingQuestionIds": [],
+    "questionDocument": "docs/module-specs/shared-understanding-questions-20261015.md",
+    "status": "shared-understanding-audit-five-omitted-boundaries-pending",
+    "pendingQuestionIds": [
+      "UA01",
+      "UA02",
+      "UA03",
+      "UA04",
+      "UA05"
+    ],
     "unresolvedOriginalQuestionIds": [],
     "priorQuestionSetPaused": true,
     "implementationEnabled": false,
     "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
-    "remainingQuestionCount": 0,
+    "remainingQuestionCount": 5,
     "planningComplete": false,
-    "questionSetId": null,
+    "questionSetId": "shared-understanding-audit-20261015",
     "blockingInterpretationIds": [],
     "deferredWorkstreamIds": [
       "merchant-banner-commercial-planning"
     ],
-    "transactionQuestionsComplete": true
+    "transactionQuestionsComplete": false,
+    "priorIdentifiedTransactionQuestionsComplete": true
   },
   "planningFocusHistory": [
     {
@@ -2399,6 +2406,29 @@
       "deferredWorkstreamIds": [
         "merchant-banner-commercial-planning"
       ]
+    },
+    {
+      "date": "2026-10-15",
+      "phase": "first-release-business-planning",
+      "direction": "service-expiry-without-customer-completion-confirmation",
+      "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "ruleDocument": "docs/module-specs/business-closeout-confirmed-20261015.md",
+      "sourceBatch": "business-closeout-reply-4-final-20261015",
+      "questionDocument": null,
+      "status": "identified-transaction-questions-confirmed-document-consolidation",
+      "pendingQuestionIds": [],
+      "unresolvedOriginalQuestionIds": [],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false,
+      "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
+      "remainingQuestionCount": 0,
+      "planningComplete": false,
+      "questionSetId": null,
+      "blockingInterpretationIds": [],
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "transactionQuestionsComplete": true
     }
   ],
   "deadlineCompletionDecisionBatches": [
@@ -3259,16 +3289,16 @@
   "remainingPlanningAudit": {
     "date": "2026-10-15",
     "sourceUserReply": "我的另一个运营伙伴, 用的是我的账号管理, 所以不用那么麻烦\na",
-    "document": "docs/module-specs/business-closeout-plan-20261014.md",
-    "status": "identified-forty-five-transaction-questions-confirmed-banner-commercial-deferred",
+    "document": "docs/module-specs/shared-understanding-audit-20261015.md",
+    "status": "original-forty-five-confirmed-five-source-backed-omissions-pending",
     "knownGapCategoryCount": 8,
-    "totalQuestionCount": 45,
-    "remainingQuestionCount": 0,
+    "totalQuestionCount": 50,
+    "remainingQuestionCount": 5,
     "totalVerified": true,
-    "verificationScope": "forty-original-plus-five-explicit-expiry-questions",
+    "verificationScope": "original-forty-five-plus-five-source-backed-audit-omissions",
     "categoryCountIsQuestionCount": false,
-    "newQuestionsPresented": false,
-    "presentedQuestionCount": 0,
+    "newQuestionsPresented": true,
+    "presentedQuestionCount": 5,
     "queuedQuestionCount": 0,
     "planningComplete": false,
     "userApprovedMissingAnswers": false,
@@ -3283,7 +3313,9 @@
       "merchant-banner-commercial-planning"
     ],
     "allFirstReleaseBusinessResolved": false,
-    "currentTransactionQuestionSetResolved": true
+    "currentTransactionQuestionSetResolved": false,
+    "newlyIdentifiedQuestionCount": 5,
+    "originalQuestionSetResolved": true
   },
   "discussionFormatHistory": [
     {
@@ -3415,6 +3447,35 @@
         "merchant-banner-commercial-planning"
       ],
       "allFirstReleaseBusinessResolved": false
+    },
+    {
+      "date": "2026-10-15",
+      "sourceUserReply": "我的另一个运营伙伴, 用的是我的账号管理, 所以不用那么麻烦\na",
+      "document": "docs/module-specs/business-closeout-plan-20261014.md",
+      "status": "identified-forty-five-transaction-questions-confirmed-banner-commercial-deferred",
+      "knownGapCategoryCount": 8,
+      "totalQuestionCount": 45,
+      "remainingQuestionCount": 0,
+      "totalVerified": true,
+      "verificationScope": "forty-original-plus-five-explicit-expiry-questions",
+      "categoryCountIsQuestionCount": false,
+      "newQuestionsPresented": false,
+      "presentedQuestionCount": 0,
+      "queuedQuestionCount": 0,
+      "planningComplete": false,
+      "userApprovedMissingAnswers": false,
+      "excludeResolvedQuestions": true,
+      "excludeTechnicalTasks": true,
+      "excludeExternalEvidenceChecks": true,
+      "excludeSecondReleaseScope": true,
+      "answeredQuestionCount": 45,
+      "addedQuestionCount": 5,
+      "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "allFirstReleaseBusinessResolved": false,
+      "currentTransactionQuestionSetResolved": true
     }
   ],
   "businessCloseoutQuestionInventory": {
@@ -8946,7 +9007,9 @@
     "mainIncome": "businessCloseoutRound2Rules.mainIncome",
     "merchantAdvertising": "merchantBannerDirection",
     "operatorAndCommissionGovernance": "businessCloseoutFinalPartialRules",
-    "operatorAccount": "operatorAccountRules"
+    "operatorAccount": "operatorAccountRules",
+    "developmentReadingEntry": "docs/module-specs/current-development-basis-20261015.md",
+    "sharedUnderstandingAudit": "sharedUnderstandingAudit"
   },
   "businessCloseoutFinalPartialRules": {
     "document": "docs/module-specs/business-closeout-confirmed-20261015.md",
@@ -9165,9 +9228,110 @@
       "external-enablement-evidence"
     ]
   },
+  "sharedUnderstandingAudit": {
+    "id": "shared-understanding-audit-20261015",
+    "date": "2026-10-15",
+    "userRequest": "还有需要确认的问题吗? 我们达到共享理解了吗? 如果没有, 那么继续",
+    "document": "docs/module-specs/shared-understanding-audit-20261015.md",
+    "guideDocument": "docs/module-specs/current-development-basis-20261015.md",
+    "questionDocument": "docs/module-specs/shared-understanding-questions-20261015.md",
+    "coreBusinessAligned": true,
+    "developerReady": false,
+    "previousQuestionSet": {
+      "total": 45,
+      "answered": 45,
+      "reopened": false
+    },
+    "newlyIdentifiedQuestionCount": 5,
+    "reason": "复核发现原45题清单漏掉的既有边界；不是扩大业务、复问已答题或虚构新答案",
+    "questions": [
+      {
+        "id": "UA01",
+        "number": 1,
+        "question": "维修/其它服务双方取消后，发布者重新开放，首页“最新”怎么排？",
+        "options": {
+          "A": "按重新开放成功的时间排序；原发布时间保留",
+          "B": "仍按原发布时间排序"
+        },
+        "source": "docs/module-specs/application-reopen-rules.md",
+        "sourceAnchor": "本轮重开规则仅用于尚未选人关闭的需求",
+        "gap": "原AR04/B只批准未选人关闭后重开排序，原文明确不自动覆盖已选服务取消后重开",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA02",
+        "number": 2,
+        "question": "还没选人就关闭需求，填写的关闭理由给谁看？",
+        "options": {
+          "A": "发布者和受影响的申请者可看，其他用户不看",
+          "B": "只给发布者看；申请者只收到需求已关闭的通知"
+        },
+        "source": "docs/module-specs/application-reopen-rules.md",
+        "sourceAnchor": "具体通知内容和理由可见范围待定",
+        "gap": "原AR06/A只批准理由选填、最多300字，未批准可见范围；必要运营处置权限不因本题扩大",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA03",
+        "number": 3,
+        "question": "首版需要单独的“申请返修/质保”流程吗？",
+        "options": {
+          "A": "先不单独做；保留原交易的服务异议、投诉和申诉入口",
+          "B": "需要单独做，再补返修申请、处理和结束规则"
+        },
+        "source": "docs/module-specs/fulfillment-rules.md",
+        "sourceAnchor": "返修/质保",
+        "gap": "履约规则将返修/质保列为未确认，原45题没有确认首版是否独立建设该流程",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA04",
+        "number": 4,
+        "question": "用户申请注销时，还有没用完的佣金抵扣金额，怎么处理？",
+        "options": {
+          "A": "交运营核对并及时处理余额和注销；不直接清零、不强制放弃",
+          "B": "这项先保留待定，核实退款渠道和注销要求后再讨论"
+        },
+        "source": "docs/module-specs/commission-billing-rules.md",
+        "sourceAnchor": "账户注销",
+        "gap": "CQ18/A只批准同账户跨业务抵扣和先抵较早到期款，没有决定注销时余额如何衔接",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA05",
+        "number": 5,
+        "question": "同一次维修/其它服务，多次收费阶段能用相同名字吗？",
+        "options": {
+          "A": "能；用阶段编号和建立顺序区分，同名也分别累计",
+          "B": "不能重名；按建立顺序显示"
+        },
+        "source": "docs/module-specs/closing-rules.md",
+        "sourceAnchor": "两个同名阶段是否允许",
+        "gap": "阶段按当前有效版本累计已确认，但同名允许性与阶段排序在原文仍待确认",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      }
+    ],
+    "answers": [],
+    "deferredWorkstreamIds": [
+      "merchant-banner-commercial-planning"
+    ],
+    "technicalAndExternalWorkExcludedFromQuestionCount": true,
+    "wholeProductPlanningComplete": false,
+    "implementationEnabled": false
+  },
   "items": [
     {
-      "id": "HD01",
+      "id": "HD01", "recordSemantics": {"confirmedAndPendingText":"historical-chronological-not-current-unanswered-question-list","currentDevelopmentBasis":"docs/module-specs/current-development-basis-20261015.md","currentAudit":"sharedUnderstandingAudit","noRuntimeMigrationRequired":true},
       "status": "scope-approved-rules-pending",
       "userReply": "扩展维修接单流程，另行讨论并补齐业务规则",
       "confirmed": "维修扩展接单；先申请再选1位，申请人数不设产品上限；申请时不强制报价；同一人对同一需求最多1份有效申请，选定前可修改或撤回，重复点击不新增记录；选定成功后仅发布者和选中的接单员互看完整联系方式，其他申请者仍打码；协商后费用在小程序内记录，每个收费阶段开始前由双方确认，服务费和材料/配件/商品等实际支出分开，页面显示合计；检查费/上门费归服务费并单列，双方可发起且提交认可该版本、另一方确认后生效；新增或修改费用需双方确认新版本，确认前原版本有效；每需求最多1份待确认费用方案，无回应不自动同意，可提醒或由发起方撤回；可先双方确认取消服务，已发生费用另议，取消不代表结清；支出票据/照片选填；可自愿垫付，双方事先确认是否垫付和上限；申请与选人第二轮：发布者成功确认选择即生效，无需接单员再次确认，其余申请结束并通知、不自动递补；主动撤回后需求仍可申请时允许立即重申；不设单独拒绝申请；选填300字说明及预估服务费，未报价显示待协商，预估价不算正式费用约定；维修和其它均不设同时接单上限；发布时详细地址选填私密保存，仅向选中的接单员开放；选人前修改服务内容/区域/时间使原申请失效，通知重新申请；履约第三轮8题全部A：选人后服务内容/区域变更须双方确认，确认前原内容有效；预约选填，双方确认记录且改期也需双方确认；接单员提交完成、发布者确认后完成，无回应保持待确认不自动完成，可提醒或提出异议；任一方申请取消、另一方确认后取消，无回应不自动取消；已确认取消后发布者主动重开同一需求，重新申请选人，旧申请不恢复且保留历史服务费用；完成/取消后联系方式重新打码，关闭接单员完整地址权限，发布者仍可管理本人地址；异常与评价第四轮4B/5B、其余A：完成/取消/异议说明必填1—500字，附件选填0—9；可明确不同意完成/取消，理由必填且不结束服务；完成与取消可同时待确认，先确认生效的一种结束服务，另一种关闭留历史；只记录服务异议、双方协商，运营不介入服务调解，原举报/评价申诉职责不取消；新维修完成确认直接开启双方评分，其它加入既有双向三维体系并按业务/角色分别统计；取消不新增评分资格，历史合法资格评分保留；费用录入第五轮8题全部A：垫付条件与费用方案一起确认；服务费允许明确0元表示免费，未填仍待协商，未知支出不强填0；选人成功后仅发布者或选中的接单员发起正式费用；每项名称1—30字、类别服务费/实际支出、该项金额必填，备注选填最多300字，每份1—20项；本阶段金额确定后提交，未知后续费用分阶段补充；修改待确认方案先撤回再提交，保留历史且新约定确认前原有效约定保留；不同意方案理由选填，仅结束本次待确认方案，可重协商，不取消服务或否认历史费用；费用边界第六轮1B、2B、3B、4A、5B、6B、7A、8B：阶段可选上门检查/服务处理/补充费用或自定义1—30字；完成后费用只读，取消后已发生费用仍可协商；愿意垫付时上限必填可为0，0不能实际垫付、空值不代表不限额；超限先协商新方案与上限并由双方确认，未确认可暂停该项、不自动取消服务；每支出项目凭据选填最多3张JPEG/PNG，每张不超过5MB；凭据仅服务进行中供双方查看，结束后双方均不可再查看且费用文字历史保留，不新增运营查看权限；每项及每份方案合计均不超过99,999.99元；重开可复制旧方案为新草稿，须重新提交并由新双方确认，不继承旧约定/垫付授权或旧凭据权限；费用收尾与履约申请第七轮1A、2B、3A、4A、5A、6A、7A、8A：待确认费用须先确认/不同意/撤回后才能确认完成；取消时仅已发生费用方案继续待确认，含未发生费用的方案关闭留历史可重协商，不阻止取消或自动认可金额；实际支出允许确定为0，未知金额不强填0；各阶段独立约定，修改只替换该阶段，累计各阶段当前有效版本、不重复旧版/待确认项；整次服务累计上限99,999.99元；同一次服务最多1份完成申请及1份取消申请，可并存但只有一个有效结束；发起方待确认且服务未结束时可撤回，修改须先撤回再提交，已确认结果不能撤回、保留历史；不同意完成/取消结束该申请并留历史，服务继续，可协商后重提且理由必填；费用表单与预约基础第八轮8题全部A：取消时双方一致认为方案全部已发生才保留待确认，有分歧或未明确关闭留历史可重协商，不阻止取消且不认可金额；重开后新服务双方中原本有权查看旧方案者可复制；只复制阶段/费用项目文字/金额/备注，垫付条件重填、不复制旧凭据；不垫付隐藏并清除当前表单上限，不改历史约定；不同意完成/取消理由必填1—500字；完成/取消/异议附件为JPEG/PNG、每张不超过5MB，仍选填0—9张；选人成功且服务未结束时双方均可提出预约或改期、另一方确认；同次服务预约/改期合计最多1份待确认，未确认新时间不替换原预约；预约细则第九轮8题全部A：单一开始时间精确到分钟，只允许晚于服务端当前时间的未来预约；待确认未来预约到点自动关闭并留历史，不影响原预约/服务状态；发起方可撤回，修改先撤回再提交；不同意预约/改期理由选填最多300字，结束该申请留历史、原预约不变；清除已确认预约须双方确认，不取消服务；完成/取消后未确认预约及内容/区域变更关闭留历史，不视为同意，但完成前仍须处理待确认费用；已确认预约时间过后仅作过时标记，不自动提醒/完成/取消，不新设逾时收费处罚；清除预约与内容变更第十轮8题全部A：预约/改期/清除共用同次服务最多1份待确认；清除无回应保持待确认，原预约保留，不自动清除或关闭；发起方可撤回、修改先撤回重提，不同意理由选填最多300字、结束该请求留历史；双方可提出内容/区域变更、另一方确认，内容/区域同次服务合计最多1份待确认；发起方可撤回、修改先撤回再提交；不同意理由选填最多300字、结束方案留历史，原内容有效、服务继续；内容变更无回应保持待确认，不自动同意或关闭，原内容仍有效；申请展示与历史第十一轮8题全部A：申请说明及预估报价由发布者看全部、申请者只看自己的，其他人不可看，不扩大联系或地址权限；候选列表显示说明/预估服务费/申请时间，空说明不占行、未报价显示待协商；按有效申请时间先申请在前；未选人需求不设自动到期，由发布者主动关闭；有申请但未选人可关闭，结束有效申请并通知、保留历史；修改申请保留各次提交版本，发布者与本人可查看；修改有效申请通知发布者，列表标记已修改；因内容变更失效后仍开放可立即重申，旧记录保留但不能选中；申请排序与关闭重开第十二轮1A、2A、3A、4B、5A、6A、7A、8A：修改有效申请保留该次首次有效提交时间，重申按本次成功时间排序；未选人关闭后发布者可重开同一需求，须重新申请、不恢复旧申请；首页最新按重开成功时间重新排序，原始发布时间保留、普通编辑不置顶；不设该类重开次数上限，每次留记录；关闭理由选填最多300字；选人前标题/描述/图片/公开区域/服务时间任一变化使旧申请失效，不新增必填项；关闭与选人以服务端先成功操作为准，另一操作不执行并提示刷新，不回退成功结果；新增调价下限已留原话，基准/范围及闲置确认流程仍待确认，不能据此开发",
@@ -9304,7 +9468,7 @@
       "legacyPaidPreferredTermsInherited": false
     },
     {
-      "id": "HD04",
+      "id": "HD04", "recordSemantics": {"confirmedAndPendingText":"historical-chronological-not-current-unanswered-question-list","currentDevelopmentBasis":"docs/module-specs/current-development-basis-20261015.md","currentAudit":"sharedUnderstandingAudit","noRuntimeMigrationRequired":true},
       "status": "public-business-approved-rules-pending",
       "userReply": "业务还包括\"其它\"",
       "confirmed": "其它作为业务模块，归集维修/跑腿/闲置之外需求，为后续更新迭代提供依据；允许公开发布并申请接单，先申请再由发布者选人，每条需求选1位，申请人数不设产品上限；申请时不强制填写服务费报价，金额后续协商；同一人对同一需求最多1份有效申请，选定前可修改或撤回，重复点击不新增记录；选定成功后仅发布者和选中的接单员互看完整联系方式，其他申请者仍打码；协商后费用在小程序内记录，每个收费阶段开始前由双方确认，服务费和材料/配件/商品等实际支出分开，页面显示合计；检查费/上门费归服务费并单列，双方可发起且提交认可该版本、另一方确认后生效；新增或修改费用需双方确认新版本，确认前原版本有效；每需求最多1份待确认费用方案，无回应不自动同意，可提醒或由发起方撤回；可先双方确认取消服务，已发生费用另议，取消不代表结清；支出票据/照片选填；可自愿垫付，双方事先确认是否垫付和上限；申请与选人第二轮：发布者成功确认选择即生效，无需接单员再次确认，其余申请结束并通知、不自动递补；主动撤回后需求仍可申请时允许立即重申；不设单独拒绝申请；选填300字说明及预估服务费，未报价显示待协商，预估价不算正式费用约定；维修和其它均不设同时接单上限；发布时详细地址选填私密保存，仅向选中的接单员开放；选人前修改服务内容/区域/时间使原申请失效，通知重新申请；履约第三轮8题全部A：选人后服务内容/区域变更须双方确认，确认前原内容有效；预约选填，双方确认记录且改期也需双方确认；接单员提交完成、发布者确认后完成，无回应保持待确认不自动完成，可提醒或提出异议；任一方申请取消、另一方确认后取消，无回应不自动取消；已确认取消后发布者主动重开同一需求，重新申请选人，旧申请不恢复且保留历史服务费用；完成/取消后联系方式重新打码，关闭接单员完整地址权限，发布者仍可管理本人地址；异常与评价第四轮4B/5B、其余A：完成/取消/异议说明必填1—500字，附件选填0—9；可明确不同意完成/取消，理由必填且不结束服务；完成与取消可同时待确认，先确认生效的一种结束服务，另一种关闭留历史；只记录服务异议、双方协商，运营不介入服务调解，原举报/评价申诉职责不取消；新维修完成确认直接开启双方评分，其它加入既有双向三维体系并按业务/角色分别统计；取消不新增评分资格，历史合法资格评分保留；费用录入第五轮8题全部A：垫付条件与费用方案一起确认；服务费允许明确0元表示免费，未填仍待协商，未知支出不强填0；选人成功后仅发布者或选中的接单员发起正式费用；每项名称1—30字、类别服务费/实际支出、该项金额必填，备注选填最多300字，每份1—20项；本阶段金额确定后提交，未知后续费用分阶段补充；修改待确认方案先撤回再提交，保留历史且新约定确认前原有效约定保留；不同意方案理由选填，仅结束本次待确认方案，可重协商，不取消服务或否认历史费用；费用边界第六轮1B、2B、3B、4A、5B、6B、7A、8B：阶段可选上门检查/服务处理/补充费用或自定义1—30字；完成后费用只读，取消后已发生费用仍可协商；愿意垫付时上限必填可为0，0不能实际垫付、空值不代表不限额；超限先协商新方案与上限并由双方确认，未确认可暂停该项、不自动取消服务；每支出项目凭据选填最多3张JPEG/PNG，每张不超过5MB；凭据仅服务进行中供双方查看，结束后双方均不可再查看且费用文字历史保留，不新增运营查看权限；每项及每份方案合计均不超过99,999.99元；重开可复制旧方案为新草稿，须重新提交并由新双方确认，不继承旧约定/垫付授权或旧凭据权限；费用收尾与履约申请第七轮1A、2B、3A、4A、5A、6A、7A、8A：待确认费用须先确认/不同意/撤回后才能确认完成；取消时仅已发生费用方案继续待确认，含未发生费用的方案关闭留历史可重协商，不阻止取消或自动认可金额；实际支出允许确定为0，未知金额不强填0；各阶段独立约定，修改只替换该阶段，累计各阶段当前有效版本、不重复旧版/待确认项；整次服务累计上限99,999.99元；同一次服务最多1份完成申请及1份取消申请，可并存但只有一个有效结束；发起方待确认且服务未结束时可撤回，修改须先撤回再提交，已确认结果不能撤回、保留历史；不同意完成/取消结束该申请并留历史，服务继续，可协商后重提且理由必填；费用表单与预约基础第八轮8题全部A：取消时双方一致认为方案全部已发生才保留待确认，有分歧或未明确关闭留历史可重协商，不阻止取消且不认可金额；重开后新服务双方中原本有权查看旧方案者可复制；只复制阶段/费用项目文字/金额/备注，垫付条件重填、不复制旧凭据；不垫付隐藏并清除当前表单上限，不改历史约定；不同意完成/取消理由必填1—500字；完成/取消/异议附件为JPEG/PNG、每张不超过5MB，仍选填0—9张；选人成功且服务未结束时双方均可提出预约或改期、另一方确认；同次服务预约/改期合计最多1份待确认，未确认新时间不替换原预约；预约细则第九轮8题全部A：单一开始时间精确到分钟，只允许晚于服务端当前时间的未来预约；待确认未来预约到点自动关闭并留历史，不影响原预约/服务状态；发起方可撤回，修改先撤回再提交；不同意预约/改期理由选填最多300字，结束该申请留历史、原预约不变；清除已确认预约须双方确认，不取消服务；完成/取消后未确认预约及内容/区域变更关闭留历史，不视为同意，但完成前仍须处理待确认费用；已确认预约时间过后仅作过时标记，不自动提醒/完成/取消，不新设逾时收费处罚；清除预约与内容变更第十轮8题全部A：预约/改期/清除共用同次服务最多1份待确认；清除无回应保持待确认，原预约保留，不自动清除或关闭；发起方可撤回、修改先撤回重提，不同意理由选填最多300字、结束该请求留历史；双方可提出内容/区域变更、另一方确认，内容/区域同次服务合计最多1份待确认；发起方可撤回、修改先撤回再提交；不同意理由选填最多300字、结束方案留历史，原内容有效、服务继续；内容变更无回应保持待确认，不自动同意或关闭，原内容仍有效；申请展示与历史第十一轮8题全部A：申请说明及预估报价由发布者看全部、申请者只看自己的，其他人不可看，不扩大联系或地址权限；候选列表显示说明/预估服务费/申请时间，空说明不占行、未报价显示待协商；按有效申请时间先申请在前；未选人需求不设自动到期，由发布者主动关闭；有申请但未选人可关闭，结束有效申请并通知、保留历史；修改申请保留各次提交版本，发布者与本人可查看；修改有效申请通知发布者，列表标记已修改；因内容变更失效后仍开放可立即重申，旧记录保留但不能选中；申请排序与关闭重开第十二轮1A、2A、3A、4B、5A、6A、7A、8A：修改有效申请保留该次首次有效提交时间，重申按本次成功时间排序；未选人关闭后发布者可重开同一需求，须重新申请、不恢复旧申请；首页最新按重开成功时间重新排序，原始发布时间保留、普通编辑不置顶；不设该类重开次数上限，每次留记录；关闭理由选填最多300字；选人前标题/描述/图片/公开区域/服务时间任一变化使旧申请失效，不新增必填项；关闭与选人以服务端先成功操作为准，另一操作不执行并提示刷新，不回退成功结果；新增调价下限已留原话，基准/范围及闲置确认流程仍待确认，不能据此开发",

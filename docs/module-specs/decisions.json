@@ -2094,23 +2094,30 @@
     "phase": "first-release-business-planning",
     "direction": "service-expiry-without-customer-completion-confirmation",
     "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
-    "ruleDocument": "docs/module-specs/business-closeout-confirmed-20261015.md",
+    "ruleDocument": "docs/module-specs/current-development-basis-20261015.md",
     "sourceBatch": "business-closeout-reply-4-final-20261015",
-    "questionDocument": null,
-    "status": "identified-transaction-questions-confirmed-document-consolidation",
-    "pendingQuestionIds": [],
+    "questionDocument": "docs/module-specs/shared-understanding-questions-20261015.md",
+    "status": "shared-understanding-audit-five-omitted-boundaries-pending",
+    "pendingQuestionIds": [
+      "UA01",
+      "UA02",
+      "UA03",
+      "UA04",
+      "UA05"
+    ],
     "unresolvedOriginalQuestionIds": [],
     "priorQuestionSetPaused": true,
     "implementationEnabled": false,
     "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
-    "remainingQuestionCount": 0,
+    "remainingQuestionCount": 5,
     "planningComplete": false,
-    "questionSetId": null,
+    "questionSetId": "shared-understanding-audit-20261015",
     "blockingInterpretationIds": [],
     "deferredWorkstreamIds": [
       "merchant-banner-commercial-planning"
     ],
-    "transactionQuestionsComplete": true
+    "transactionQuestionsComplete": false,
+    "priorIdentifiedTransactionQuestionsComplete": true
   },
   "planningFocusHistory": [
     {
@@ -2399,6 +2406,29 @@
       "deferredWorkstreamIds": [
         "merchant-banner-commercial-planning"
       ]
+    },
+    {
+      "date": "2026-10-15",
+      "phase": "first-release-business-planning",
+      "direction": "service-expiry-without-customer-completion-confirmation",
+      "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "ruleDocument": "docs/module-specs/business-closeout-confirmed-20261015.md",
+      "sourceBatch": "business-closeout-reply-4-final-20261015",
+      "questionDocument": null,
+      "status": "identified-transaction-questions-confirmed-document-consolidation",
+      "pendingQuestionIds": [],
+      "unresolvedOriginalQuestionIds": [],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false,
+      "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
+      "remainingQuestionCount": 0,
+      "planningComplete": false,
+      "questionSetId": null,
+      "blockingInterpretationIds": [],
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "transactionQuestionsComplete": true
     }
   ],
   "deadlineCompletionDecisionBatches": [
@@ -3259,16 +3289,16 @@
   "remainingPlanningAudit": {
     "date": "2026-10-15",
     "sourceUserReply": "我的另一个运营伙伴, 用的是我的账号管理, 所以不用那么麻烦\na",
-    "document": "docs/module-specs/business-closeout-plan-20261014.md",
-    "status": "identified-forty-five-transaction-questions-confirmed-banner-commercial-deferred",
+    "document": "docs/module-specs/shared-understanding-audit-20261015.md",
+    "status": "original-forty-five-confirmed-five-source-backed-omissions-pending",
     "knownGapCategoryCount": 8,
-    "totalQuestionCount": 45,
-    "remainingQuestionCount": 0,
+    "totalQuestionCount": 50,
+    "remainingQuestionCount": 5,
     "totalVerified": true,
-    "verificationScope": "forty-original-plus-five-explicit-expiry-questions",
+    "verificationScope": "original-forty-five-plus-five-source-backed-audit-omissions",
     "categoryCountIsQuestionCount": false,
-    "newQuestionsPresented": false,
-    "presentedQuestionCount": 0,
+    "newQuestionsPresented": true,
+    "presentedQuestionCount": 5,
     "queuedQuestionCount": 0,
     "planningComplete": false,
     "userApprovedMissingAnswers": false,
@@ -3283,7 +3313,9 @@
       "merchant-banner-commercial-planning"
     ],
     "allFirstReleaseBusinessResolved": false,
-    "currentTransactionQuestionSetResolved": true
+    "currentTransactionQuestionSetResolved": false,
+    "newlyIdentifiedQuestionCount": 5,
+    "originalQuestionSetResolved": true
   },
   "discussionFormatHistory": [
     {
@@ -3415,6 +3447,35 @@
         "merchant-banner-commercial-planning"
       ],
       "allFirstReleaseBusinessResolved": false
+    },
+    {
+      "date": "2026-10-15",
+      "sourceUserReply": "我的另一个运营伙伴, 用的是我的账号管理, 所以不用那么麻烦\na",
+      "document": "docs/module-specs/business-closeout-plan-20261014.md",
+      "status": "identified-forty-five-transaction-questions-confirmed-banner-commercial-deferred",
+      "knownGapCategoryCount": 8,
+      "totalQuestionCount": 45,
+      "remainingQuestionCount": 0,
+      "totalVerified": true,
+      "verificationScope": "forty-original-plus-five-explicit-expiry-questions",
+      "categoryCountIsQuestionCount": false,
+      "newQuestionsPresented": false,
+      "presentedQuestionCount": 0,
+      "queuedQuestionCount": 0,
+      "planningComplete": false,
+      "userApprovedMissingAnswers": false,
+      "excludeResolvedQuestions": true,
+      "excludeTechnicalTasks": true,
+      "excludeExternalEvidenceChecks": true,
+      "excludeSecondReleaseScope": true,
+      "answeredQuestionCount": 45,
+      "addedQuestionCount": 5,
+      "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "allFirstReleaseBusinessResolved": false,
+      "currentTransactionQuestionSetResolved": true
     }
   ],
   "businessCloseoutQuestionInventory": {
@@ -8946,7 +9007,9 @@
     "mainIncome": "businessCloseoutRound2Rules.mainIncome",
     "merchantAdvertising": "merchantBannerDirection",
     "operatorAndCommissionGovernance": "businessCloseoutFinalPartialRules",
-    "operatorAccount": "operatorAccountRules"
+    "operatorAccount": "operatorAccountRules",
+    "developmentReadingEntry": "docs/module-specs/current-development-basis-20261015.md",
+    "sharedUnderstandingAudit": "sharedUnderstandingAudit"
   },
   "businessCloseoutFinalPartialRules": {
     "document": "docs/module-specs/business-closeout-confirmed-20261015.md",
@@ -9165,9 +9228,110 @@
       "external-enablement-evidence"
     ]
   },
+  "sharedUnderstandingAudit": {
+    "id": "shared-understanding-audit-20261015",
+    "date": "2026-10-15",
+    "userRequest": "还有需要确认的问题吗? 我们达到共享理解了吗? 如果没有, 那么继续",
+    "document": "docs/module-specs/shared-understanding-audit-20261015.md",
+    "guideDocument": "docs/module-specs/current-development-basis-20261015.md",
+    "questionDocument": "docs/module-specs/shared-understanding-questions-20261015.md",
+    "coreBusinessAligned": true,
+    "developerReady": false,
+    "previousQuestionSet": {
+      "total": 45,
+      "answered": 45,
+      "reopened": false
+    },
+    "newlyIdentifiedQuestionCount": 5,
+    "reason": "复核发现原45题清单漏掉的既有边界；不是扩大业务、复问已答题或虚构新答案",
+    "questions": [
+      {
+        "id": "UA01",
+        "number": 1,
+        "question": "维修/其它服务双方取消后，发布者重新开放，首页“最新”怎么排？",
+        "options": {
+          "A": "按重新开放成功的时间排序；原发布时间保留",
+          "B": "仍按原发布时间排序"
+        },
+        "source": "docs/module-specs/application-reopen-rules.md",
+        "sourceAnchor": "本轮重开规则仅用于尚未选人关闭的需求",
+        "gap": "原AR04/B只批准未选人关闭后重开排序，原文明确不自动覆盖已选服务取消后重开",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA02",
+        "number": 2,
+        "question": "还没选人就关闭需求，填写的关闭理由给谁看？",
+        "options": {
+          "A": "发布者和受影响的申请者可看，其他用户不看",
+          "B": "只给发布者看；申请者只收到需求已关闭的通知"
+        },
+        "source": "docs/module-specs/application-reopen-rules.md",
+        "sourceAnchor": "具体通知内容和理由可见范围待定",
+        "gap": "原AR06/A只批准理由选填、最多300字，未批准可见范围；必要运营处置权限不因本题扩大",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA03",
+        "number": 3,
+        "question": "首版需要单独的“申请返修/质保”流程吗？",
+        "options": {
+          "A": "先不单独做；保留原交易的服务异议、投诉和申诉入口",
+          "B": "需要单独做，再补返修申请、处理和结束规则"
+        },
+        "source": "docs/module-specs/fulfillment-rules.md",
+        "sourceAnchor": "返修/质保",
+        "gap": "履约规则将返修/质保列为未确认，原45题没有确认首版是否独立建设该流程",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA04",
+        "number": 4,
+        "question": "用户申请注销时，还有没用完的佣金抵扣金额，怎么处理？",
+        "options": {
+          "A": "交运营核对并及时处理余额和注销；不直接清零、不强制放弃",
+          "B": "这项先保留待定，核实退款渠道和注销要求后再讨论"
+        },
+        "source": "docs/module-specs/commission-billing-rules.md",
+        "sourceAnchor": "账户注销",
+        "gap": "CQ18/A只批准同账户跨业务抵扣和先抵较早到期款，没有决定注销时余额如何衔接",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      },
+      {
+        "id": "UA05",
+        "number": 5,
+        "question": "同一次维修/其它服务，多次收费阶段能用相同名字吗？",
+        "options": {
+          "A": "能；用阶段编号和建立顺序区分，同名也分别累计",
+          "B": "不能重名；按建立顺序显示"
+        },
+        "source": "docs/module-specs/closing-rules.md",
+        "sourceAnchor": "两个同名阶段是否允许",
+        "gap": "阶段按当前有效版本累计已确认，但同名允许性与阶段排序在原文仍待确认",
+        "recommended": "A",
+        "selected": null,
+        "status": "pending"
+      }
+    ],
+    "answers": [],
+    "deferredWorkstreamIds": [
+      "merchant-banner-commercial-planning"
+    ],
+    "technicalAndExternalWorkExcludedFromQuestionCount": true,
+    "wholeProductPlanningComplete": false,
+    "implementationEnabled": false
+  },
   "items": [
     {
-      "id": "MP01",
+      "id": "MP01", "recordSemantics": {"confirmedAndPendingText":"historical-chronological-not-current-unanswered-question-list","currentDevelopmentBasis":"docs/module-specs/current-development-basis-20261015.md","currentAudit":"sharedUnderstandingAudit","noRuntimeMigrationRequired":true},
       "topic": "其它业务范围",
       "userReply": "业务还包括\"其它\"",
       "confirmed": {
@@ -9203,7 +9367,7 @@
       "handoffDecision": "HD04"
     },
     {
-      "id": "MP02",
+      "id": "MP02", "recordSemantics": {"confirmedAndPendingText":"historical-chronological-not-current-unanswered-question-list","currentDevelopmentBasis":"docs/module-specs/current-development-basis-20261015.md","currentAudit":"sharedUnderstandingAudit","noRuntimeMigrationRequired":true},
       "topic": "维修选人模式",
       "userReply": "A",
       "selectedOption": "先申请，再由发布者选人：申请时不强制报维修价格；价格如何确定下一步讨论",
