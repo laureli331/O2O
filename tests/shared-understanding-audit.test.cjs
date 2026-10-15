@@ -8,7 +8,83 @@ const root = path.resolve(__dirname, '..');
 const read = p => fs.readFileSync(path.join(root, p), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
-const audit = records.sharedUnderstandingAudit;
+const audit = records.sharedUnderstandingAuditHistory[0];
+
+test('explicit all-A answer applies to all five questions and preserves the request to explain independent rework without building it', () => {
+  const current = records.sharedUnderstandingAudit;
+  const batch = records.sharedUnderstandingDecisionBatches[0];
+  assert.equal(batch.userReply, '全a');
+  assert.deepEqual(batch.answers.map(a => [a.questionId, a.answer]), ['UA01', 'UA02', 'UA03', 'UA04', 'UA05'].map(id => [id, 'A']));
+  assert.deepEqual(current.answers, batch.answers);
+  current.questions.forEach((q, i) => {
+    assert.equal(q.selected, 'A'); assert.equal(q.status, 'answered');
+    assert.equal(batch.answers[i].selectedOption, audit.questions[i].options.A);
+  });
+  assert.equal(batch.annotations.length, 1);
+  const note = batch.annotations[0];
+  assert.equal(note.index, 1); assert.equal(note.questionId, 'UA03');
+  assert.equal(note.selectedText, '独立的“申请返修／质保”');
+  assert.equal(note.userComment, '这是什么意思');
+  assert(note.meaning.includes('仅用于解释B'));
+  assert.equal(records.sharedUnderstandingRules.afterSales.dedicatedFirstReleaseReworkWorkflow, false);
+  assert.equal(records.sharedUnderstandingRules.afterSales.existingServiceIssueComplaintAndAppealEntriesRetained, true);
+  assert.equal(records.sharedUnderstandingRules.afterSales.contactRulesChanged, false);
+  assert.equal(records.sharedUnderstandingRules.afterSales.endedTradeReopened, false);
+  assert.equal(records.sharedUnderstandingRules.afterSales.uniformWarrantyDays, null);
+  assert.equal(records.sharedUnderstandingRules.afterSales.freeReworkAutomaticallyPromised, false);
+  assert.equal(records.sharedUnderstandingRules.afterSales.automaticFeeWaiver, false);
+});
+
+test('newly confirmed boundaries preserve separate same-name fee stages, current versions, one whole-service cap and restricted closure reasons', () => {
+  const r = records.sharedUnderstandingRules;
+  assert.deepEqual(handoff.sharedUnderstandingRules, r);
+  assert.equal(r.cancelledReopen.latestSortAnchor, 'successful-reopen-time');
+  assert.equal(r.cancelledReopen.originalPublicationTimeRetained, true);
+  for (const field of ['ordinaryEditRefreshesSort', 'oldApplicationsRestored', 'oldContactOrAddressGrantRestored', 'oldFeesOrCommissionSnapshotReused']) assert.equal(r.cancelledReopen[field], false);
+  assert.deepEqual(r.unselectedClosureReason.viewers, ['publisher', 'affected-applicants']);
+  assert.equal(r.unselectedClosureReason.optional, true); assert.equal(r.unselectedClosureReason.maxLength, 300);
+  assert.equal(r.unselectedClosureReason.publiclyVisible, false);
+  assert.equal(r.unselectedClosureReason.privateContactOrAddressDisclosureAllowed, false);
+  const stage = r.feeStages;
+  assert.equal(stage.duplicateNamesAllowed, true); assert.equal(stage.mergeByName, false);
+  assert.equal(stage.sort, 'creation-sequence-ascending');
+  assert.equal(stage.currentEffectiveVersionPerStageOnly, true);
+  assert.equal(stage.pendingAndOldVersionsIncluded, false);
+  assert.equal(stage.commissionCapPerStage, false); assert.equal(stage.totalAgreedFeeLimit, 99999.99);
+  // Contract examples use cents; same label must not overwrite another stage or add pending versions.
+  const examples = [
+    { stages: [{ name: '上门检查', effective: 10000, pending: 12000 }, { name: '上门检查', effective: 15000 }], expectedTotal: 25000 },
+    { stages: [{ name: '上门检查', effective: 12000 }, { name: '上门检查', effective: 15000 }], expectedTotal: 27000 },
+  ];
+  for (const e of examples) {
+    const cents = e.stages.reduce((sum, s) => sum + s.effective, 0);
+    assert.equal(cents, e.expectedTotal);
+    assert.equal(Math.min(Math.round(cents * 15 / 100), 3000), 3000);
+  }
+  const credit = r.accountClosureCredit;
+  assert.equal(credit.manualOperatorReview, true); assert.equal(credit.requestAcceptedWithCredit, true);
+  for (const field of ['automaticForfeiture', 'forcedWaiver', 'indefiniteDelayBecauseOfCredit', 'everyCreditAutomaticallyRedeemableForCash', 'actualRefundVerified', 'duplicateRefundAllowed']) assert.equal(credit[field], false, field);
+  assert.equal(credit.refundChannel, null); assert.deepEqual(credit.necessaryRetentionAndNoticeGates, ['E02', 'E03']);
+});
+
+test('all fifty identified business questions now have answers without declaring implementation, Banner commerce or external evidence complete', () => {
+  const current = records.sharedUnderstandingAudit, focus = records.currentPlanningFocus, a = records.remainingPlanningAudit;
+  assert.equal(current.remainingBusinessQuestions, 0); assert.equal(current.transactionBusinessAligned, true);
+  assert.equal(a.totalQuestionCount, 50); assert.equal(a.answeredQuestionCount, 50); assert.equal(a.remainingQuestionCount, 0);
+  assert.equal(a.currentTransactionQuestionSetResolved, true);
+  assert.deepEqual(focus.pendingQuestionIds, []); assert.equal(focus.remainingQuestionCount, 0);
+  assert.equal(focus.transactionQuestionsComplete, true); assert.equal(focus.planningComplete, false);
+  assert.equal(current.developerReady, false); assert.equal(current.implementationEnabled, false);
+  assert.equal(records.sharedUnderstandingRules.enabled, false);
+  assert.equal(records.sharedUnderstandingRules.wholeProductPlanningComplete, false);
+  assert.equal(records.merchantBannerDirection.commercialRulesConfirmed, false);
+  assert.equal(records.sharedUnderstandingAuditHistory[0].questions.filter(q => q.status === 'pending').length, 5);
+  assert.equal(records.remainingPlanningAuditHistory[6].remainingQuestionCount, 5);
+  for (const key of ['sharedUnderstandingDecisionBatches', 'sharedUnderstandingAuditHistory', 'sharedUnderstandingAudit', 'currentPlanningFocus', 'remainingPlanningAudit']) assert.deepEqual(handoff[key], records[key], key);
+  const doc = read(current.resolutionDocument);
+  assert(doc.includes('用户明确回复“全a”')); assert(doc.includes('50项业务决定全部确认'));
+  for (const m of doc.matchAll(/\]\(([^)]+)\)/g)) assert(fs.existsSync(path.resolve(root, path.dirname(current.resolutionDocument), m[1])), m[1]);
+});
 
 test('five additional boundaries have explicit original sources and no fabricated user answer', () => {
   assert.equal(audit.previousQuestionSet.total, 45);
@@ -36,8 +112,8 @@ test('five additional boundaries have explicit original sources and no fabricate
   assert.equal(audit.implementationEnabled, false);
 });
 
-test('current audit counts the omissions transparently while preserving the completed original question set', () => {
-  const p = records.currentPlanningFocus, a = records.remainingPlanningAudit;
+test('previous audit counts the omissions transparently while preserving the completed original question set', () => {
+  const p = records.planningFocusHistory[12], a = records.remainingPlanningAuditHistory[6];
   assert.deepEqual(p.pendingQuestionIds, audit.questions.map(q => q.id));
   assert.equal(p.remainingQuestionCount, 5); assert.equal(p.questionDocument, audit.questionDocument);
   assert.equal(p.planningComplete, false); assert.equal(p.implementationEnabled, false);
