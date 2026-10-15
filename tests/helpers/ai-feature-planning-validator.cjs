@@ -51,7 +51,7 @@ function validateAiFeaturePlanning(bundle) {
   requireTerms(ai.get('AI12'), ['不能再次调用','不为恢复而暗中重调模型'], 'Idempotency boundary');
   requireTerms(ai.get('AI14'), ['旧结果不得覆盖新表单','所属用户、业务、请求状态和版本'], 'Ownership and stale result boundary');
   requireTerms(ai.get('AI15'), ['最后一次明确采用','同一发布最多1次','不继承旧AI关联'], 'Last-adopted attribution');
-  requireTerms(bs.get('BS01'), ['仅两位独立同权运营者','不增加村社区/细分分类筛选'], 'Dashboard access');
+  requireTerms(bs.get('BS01'), ['仅获授权的本人管理账号','不增加村社区/细分分类筛选'], 'Dashboard access');
   requireTerms(bs.get('BS02'), ['Asia/Shanghai','前一自然日','同一截止/汇总版本','不把失败清零'], 'Daily cutoff');
   requireTerms(bs.get('BS05'), ['首次成功发布时间','获申请率A/P、承接率H/P、已承接完成比例C/H','不是不同日期事件数相除'], 'Cohort denominator');
   requireTerms(bs.get('BS07'), ['不重复加C','不证明居民货款或服务费结清'], 'Completion is not settlement');

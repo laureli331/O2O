@@ -17,6 +17,7 @@ test('approved scope, fields, pages, gates and acceptance agree across all docum
   assert.equal(validateDevelopmentRecord(b.record,b.plan),true);
 });
 const mutations = [
+  ['granting public dashboard access', 'prd', 'V21仅获授权的本人管理账号可读汇总', 'V21所有普通用户可读汇总', /Dashboard access/],
   ['restoring history', 'prd', '不读取历史发布、地址簿、旧草稿', '读取历史发布、地址簿、旧草稿', /No historical/],
   ['sending images in v1', 'prd', '第一版图片不进入模型', '第一版图片进入模型', /image reference/],
   ['changing the input bound', 'prd', '本次输入去首尾空白后1—1000字符', '本次输入去首尾空白后1—2000字符', /Input bound/],

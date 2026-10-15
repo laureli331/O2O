@@ -9,12 +9,60 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+test('latest reply approves only clarified CQ37 A and explicitly replaces independent operator accounts with owner account sharing', () => {
+  const b=records.businessCloseoutDecisionBatches[3];
+  assert.equal(b.userReply,'我的另一个运营伙伴, 用的是我的账号管理, 所以不用那么麻烦\na');
+  assert.equal(b.answers.length,1);assert.equal(b.answers[0].questionId,'CQ37');assert.equal(b.answers[0].answer,'A');
+  assert.equal(b.operatorAccountDirection,'owner-account-shared-with-operating-partner');
+  const s=records.businessCloseoutQuestionSets[2];assert.equal(s.answers.length,5);assert.equal(s.questions.find(q=>q.id==='CQ37').selected,'A');
+  assert.equal(s.questions.find(q=>q.id==='CQ37').clarificationRequired,false);
+  const rows=[...read(b.questionDocument).matchAll(/^\| (\d+)（(CQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,1);assert.equal(rows[0][2],b.answers[0].questionId);assert.equal(rows[0][4].trim(),b.answers[0].selectedOption);
+  assert.deepEqual(handoff.businessCloseoutDecisionBatches,records.businessCloseoutDecisionBatches);
+});
+
+test('one shared owner account retains authorization and account logs without claiming actual-person attribution or two-person review', () => {
+  const a=records.operatorAccountRules;assert.deepEqual(handoff.operatorAccountRules,a);
+  assert.equal(a.managementAccountCount,1);assert.equal(a.partnerUsesOwnerAccount,true);assert.equal(a.separatePartnerAccountRequired,false);
+  assert.equal(a.memberManagementRequired,false);assert.equal(a.operatorRolesRequired,false);assert.equal(a.anotherOperatorApprovalRequired,false);
+  assert.equal(a.publicManagementAccess,false);assert.equal(a.accountLevelAuthorizationRequired,true);
+  assert.equal(a.audit.retained,true);assert.equal(a.audit.identifiesActualHumanOperator,false);assert.equal(a.audit.mandatoryHumanOperatorPicker,false);
+  assert.deepEqual(a.audit.fields,['management-account','time','object','before-and-after','reason-when-required']);
+  assert.equal(a.productionAccountConfigured,false);assert.equal(a.enabled,false);
+  const r=records.businessCloseoutFinalPartialRules;assert.equal(r.operationsDashboard.audience,'owner-management-account-shared-with-partner');
+  assert.equal(r.operationsDashboard.publicAccess,false);assert.equal(r.commissionConfiguration.anotherOperatorReviewRequired,false);
+  assert.equal(r.commissionConfiguration.oldTradeRateSnapshotsChanged,false);assert.equal(r.commissionConfiguration.requiredAnnouncementProcedureRetained,true);
+  assert.deepEqual(r.repeatedBillIssue,records.businessCloseoutFinalPartialRulesHistory[0].repeatedBillIssue);
+  assert.deepEqual(r.reducedCommissionBasis,records.businessCloseoutFinalPartialRulesHistory[0].reducedCommissionBasis);
+  const prd=read('docs/prd.md'),design=read('docs/structured-design.md'),plan=read('docs/development-plan.md');
+  assert(prd.includes('- OPS05 本人及运营伙伴共用本人的一个管理账号'));assert(prd.includes('不声称区分实际自然人操作者'));
+  for(const text of [prd,design]){const bs=text.match(/^\| BS01 \|[^\r\n]+/m);if(bs)assert(bs[0].includes('仅获授权的本人管理账号'));}
+  for(const id of ['DP04','DP12']){const row=plan.match(new RegExp('^\| '+id+' \|[^\r\n]+','m'))[0];assert(!row.includes('两人同权独立账号'));assert(!row.includes('操作归人'));}
+});
+
+test('all forty-five transaction questions are confirmed while deferred commercial and real enablement work remain incomplete', () => {
+  const inv=records.businessCloseoutQuestionInventory;assert.equal(inv.totalQuestions,45);assert.equal(inv.answeredQuestions,45);assert.equal(inv.remainingQuestions,0);
+  assert.equal(inv.questions.filter(q=>q.status==='answered').length,45);assert.equal(inv.approvedAnswerCount,45);assert.equal(inv.answersApproved,true);
+  assert.equal(inv.questions.find(q=>q.id==='CQ37').recordedAnswer,'A');assert.equal(inv.questions.find(q=>q.id==='CQ37').clarificationRequired,false);
+  assert.equal(records.businessCloseoutInventoryHistory[3].remainingQuestions,1);
+  const c=records.businessPlanningClosure;assert.equal(c.transactionQuestionSetResolved,true);assert.equal(c.allProductPlanningComplete,false);
+  assert.equal(c.implementationAuthorizedByThisReply,false);assert.equal(c.productionEnabled,false);assert.deepEqual(c.deferredWorkstreamIds,['merchant-banner-commercial-planning']);
+  assert.deepEqual(records.currentPlanningFocus.pendingQuestionIds,[]);assert.equal(records.currentPlanningFocus.remainingQuestionCount,0);assert.equal(records.currentPlanningFocus.planningComplete,false);
+  assert.equal(records.remainingPlanningAudit.answeredQuestionCount,45);assert.equal(records.remainingPlanningAudit.currentTransactionQuestionSetResolved,true);
+  const r=records.businessCloseoutFinalPartialRules.commissionReview;
+  assert.deepEqual(r.focus,{answer:'A',questionId:'CQ37',metrics:['transaction-volume','cancellations-and-issues','commission-arrears','actual-commission-received'],automaticAdjustment:false});
+  assert.equal(r.unansweredQuestionId,null);assert.equal(r.activationOccurred,false);assert.equal(r.chargesStopAfter30Days,false);assert.equal(r.merchantBannerIncluded,false);
+  for(const key of ['businessPlanningClosure','businessCloseoutFinalPartialRules','currentPlanningFocus','remainingPlanningAudit','businessCloseoutQuestionInventory'])assert.deepEqual(handoff[key],records[key],key);
+  const doc=read(c.document);assert(doc.includes('45道交易规则问题全部确认'));assert(doc.includes('实际是哪位自然人操作'));
+  for(const m of doc.matchAll(/\]\(([^)]+)\)/g))assert(fs.existsSync(path.resolve(root,path.dirname(c.document),m[1])),m[1]);
+});
+
 test('final partial reply records four explicit choices without treating the question about thirty days as consent', () => {
   const b=records.businessCloseoutDecisionBatches[2];
   assert.equal(b.userReply,'1. 运营看板是给谁看的?给我看的话, 那可以\n2. "收费试运行30天"是什么意思?收哪里的费?为什么只收30天?\n3. 不需要\n4. a\n5. a');
   assert.deepEqual(b.answers.map(a=>[a.questionId,a.answer]),[['CQ36','A'],['CQ38','B'],['CQ39','A'],['CQ40','A']]);
   assert(b.answers[0].condition.includes('不对普通用户公开'));
-  const s=records.businessCloseoutQuestionSets[2];
+  const s=records.businessCloseoutQuestionSetHistory[3];
   for(const a of b.answers){const q=s.questions.find(q=>q.id===a.questionId);assert.equal(q.selected,a.answer);assert.equal(a.selectedOption,q.options[a.answer]);}
   assert.deepEqual(s.answers,b.answers);assert.equal(s.questions.find(q=>q.id==='CQ37').selected,null);
   assert.equal(b.unanswered.length,1);assert.equal(b.unanswered[0].questionId,'CQ37');
@@ -23,7 +71,7 @@ test('final partial reply records four explicit choices without treating the que
 });
 
 test('confirmed final governance protects private dashboard, historical rates, new evidence and optional supporting images', () => {
-  const r=records.businessCloseoutFinalPartialRules;assert.deepEqual(handoff.businessCloseoutFinalPartialRules,r);
+  const r=records.businessCloseoutFinalPartialRulesHistory[0];assert.deepEqual(handoff.businessCloseoutFinalPartialRulesHistory[0],r);
   assert.equal(r.enabled,false);assert.equal(r.readyForImplementation,false);
   const o=r.operationsDashboard;assert.equal(o.audience,'existing-two-independent-equal-operators');assert.equal(o.publicAccess,false);
   assert.deepEqual(o.businesses,['跑腿','维修','闲置','其它']);assert.equal(o.automaticCompletionProvesActualDelivery,false);
@@ -39,7 +87,7 @@ test('confirmed final governance protects private dashboard, historical rates, n
 });
 
 test('thirty-day review clarification neither ends charging nor selects a review priority or enables merchant advertising', () => {
-  const r=records.businessCloseoutFinalPartialRules.commissionReview;
+  const r=records.businessCloseoutFinalPartialRulesHistory[0].commissionReview;
   assert.equal(r.existingApproval,'CT08/A');assert.equal(r.reviewAfterActualActivationDays,30);
   assert.equal(r.activationOccurred,false);assert.equal(r.startsFromDocumentDate,false);assert.equal(r.chargesStopAfter30Days,false);
   assert.equal(r.automaticallyChangesRates,false);assert.equal(r.merchantBannerIncluded,false);assert.equal(r.focus,null);
@@ -48,14 +96,14 @@ test('thirty-day review clarification neither ends charging nor selects a review
   assert.equal(rows.length,1);assert.equal(rows[0][2],'CQ37');assert(doc.includes('不是只收30天'));assert(doc.includes('不增加业务题数'));
 });
 
-test('current audit has forty-four answered and only original CQ37 pending while preserving the prior five-question snapshot', () => {
-  const inv=records.businessCloseoutQuestionInventory;
+test('previous audit has forty-four answered and only original CQ37 pending while preserving the prior five-question snapshot', () => {
+  const inv=records.businessCloseoutInventoryHistory[3];
   assert.equal(inv.totalQuestions,45);assert.equal(inv.answeredQuestions,44);assert.equal(inv.approvedAnswerCount,44);assert.equal(inv.remainingQuestions,1);
   assert.equal(inv.questions.filter(q=>q.status==='answered').length,44);
   assert.deepEqual(inv.questions.filter(q=>q.status==='pending').map(q=>q.id),['CQ37']);
   assert.equal(inv.questions.find(q=>q.id==='CQ37').recordedAnswer,undefined);
-  const focus=records.currentPlanningFocus;assert.deepEqual(focus.pendingQuestionIds,['CQ37']);assert.equal(focus.remainingQuestionCount,1);assert.equal(focus.planningComplete,false);
-  assert.equal(records.remainingPlanningAudit.answeredQuestionCount,44);assert.equal(records.remainingPlanningAudit.presentedQuestionCount,1);
+  const focus=records.planningFocusHistory[10];assert.deepEqual(focus.pendingQuestionIds,['CQ37']);assert.equal(focus.remainingQuestionCount,1);assert.equal(focus.planningComplete,false);
+  assert.equal(records.remainingPlanningAuditHistory[4].answeredQuestionCount,44);assert.equal(records.remainingPlanningAuditHistory[4].presentedQuestionCount,1);
   assert.deepEqual(focus.deferredWorkstreamIds,['merchant-banner-commercial-planning']);
   assert.equal(records.businessCloseoutInventoryHistory[2].remainingQuestions,5);
   assert.equal(records.remainingPlanningAuditHistory[3].remainingQuestionCount,5);
@@ -3048,7 +3096,7 @@ test('misunderstood time-entry explanation and sixth-round questions remain revi
   for(const text of ['DO02未选、需解释','没听懂','下午5点','下午3点','原报价金额保留','接单员明确接受新时间','不执行或固化DO02','延期最大七天，起算点','不倒填窗口月份']) assert(doc.includes(text),text);
   const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-operation-rules.md',sourceBatch:'deadline-completion-round-5-20261014',questionDocument:'docs/module-specs/deadline-completion-clarification-questions-20261014.md',status:'fifth-round-partial-time-entry-clarification-required',pendingQuestionIds:['DX01','DX02','DX03','DX04','DX05','DX06','DX07','DX08'],unresolvedOriginalQuestionIds:['DO02'],priorQuestionSetPaused:true,implementationEnabled:false};
   assert.deepEqual(records.planningFocusHistory[5],focus);assert.deepEqual(handoff.planningFocusHistory[5],focus);
-  assert.equal(records.planningFocusHistory.length,10);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
+  assert.equal(records.planningFocusHistory.length,11);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
   const questions=read(focus.questionDocument);
   assert(questions.includes('8题全部选择A'));assert(questions.includes('重述尚未选的原DO02'));
   const rows=[...questions.matchAll(/^\| [1-8]（(DX\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];

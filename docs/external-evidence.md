@@ -1,5 +1,7 @@
 # 外部证据台账与待发送咨询草稿
 
+当前决定（2026-10-15）：[45题确认及管理账号安排](module-specs/business-closeout-confirmed-20261015.md)优先。CQ37选A，当前已列45道交易问题全部确认、0待答；本人及伙伴共用本人的一个管理账号，不要求两个独立运营账号或双人复核，日志只归登录账号，不声称识别实际自然人。以下此前“独立同权运营者”“操作归人”“剩余1/5题”等按历史及本次覆盖关系读取。商家Banner商业方案仍延后，未实现产品或启用真实权限/收费。
+
 ## 最新规划扩展：第一版AI发布与平台运营看板（2026-10-08）
 
 用户明确“你认为还有需要讨论的地方吗? 没有的话, 就A选项”，授权同步已确认内容。当前[PRD v1.4](prd.md)、[48项开发计划](development-plan.md)、[结构化设计v1.1](structured-design.md)、[新账号开发执行文档](post-registration-development.md)及[AI功能确认记录](ai-feature-decisions.md)为当前依据，下面旧版本/状态按日期保留为历史。
@@ -61,7 +63,7 @@
 | E02 | 不刷脸、二要素及满16岁规则已确认 | 二要素服务开通资格、16—17岁适用、年龄判断、手机号/通知权限、内容检测接口权限和真实失败结果 | [二要素接入条件](https://cloud.tencent.com/document/product/1007/45893)、[二要素接口](https://cloud.tencent.com/document/product/1007/33188)、[手机号](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html)、[订阅消息](https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/subscribe-message.html)、[内容安全](https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/sec-check/security.msgSecCheck.html) | 用户完成授权后的服务开通；开发核实接口/限额并做真实测试；人员待定 | 有实际适用资格与成功/失败证据；此前仅合成核验/通知/检测测试，不以手填代替验证 |
 | E03 | 不保存原始完整姓名/身份证、最小必要与权限规则已有 | 逐字段目的、提供对象、保存期限、删除/注销触发、必要保留依据；供应商留存与隐私授权文本 | [PRD数据要求](prd.md)、[个人信息保护法](https://www.cac.gov.cn/2021-08/20/c_1631050028355286.htm) | 开发按字段提出方案与待核点；用户确认目的/运营需要；供应商提供处理说明；人员待定 | 具体方案有依据并经确认；此前不处理生产个人信息或真实证件 |
 | E04 | 推广先审后付、实际展示起算及费用规则已确认 | 真实权益分类、个人/个体主体适用、开通权限、查询/关闭/回调/退款、iOS流程和费用 | [微信虚拟支付](https://developers.weixin.qq.com/miniprogram/dev/platform-capabilities/business-capabilities/virtual-payment.html) | 用户提供实际后台及授权资料；开发核实订单/权益/异常接口；人员待定 | 项目适用与真实交付/退款验收通过；此前不得真实收款/退款，不接居民交易支付 |
-| E05 | 两位运营者同权、小程序内入口确认 | 真正乡镇/村社区、细分分类、初始供给、账号、交接时段、预算用量和指标 | [PRD经营与成本边界](prd.md) | 用户提供真实配置、投入和预算；开发据实估算并留痕；人员待定 | 经营资料、费用、预算、指标获确认；此前不得用合成资料开展正式经营 |
+| E05 | 本人及伙伴共用本人管理账号、小程序内入口确认 | 真正乡镇/村社区、细分分类、初始供给、账号、交接时段、预算用量和指标 | [PRD经营与成本边界](prd.md) | 用户提供真实配置、投入和预算；开发据实估算并留痕；人员待定 | 经营资料、费用、预算、指标获确认；此前不得用合成资料开展正式经营 |
 | E06 | 云开发架构已确认；本地Node/npm存在 | 实际环境、数据库模式/运行版本/依赖锁定；安全与并发实测；备份、恢复及实际所需域名/备案 | [CloudBase文档](https://docs.cloudbase.net/)、[云函数配置](https://docs.cloudbase.net/cli-v1/functions/configs) | 开发准备工具、验证环境与恢复；用户确认有费用/风险的动作；人员待定 | 实际配置、环境、安全和恢复检查通过并有上线授权；此前不称生产部署或恢复已完成 |
 | QG01 | 全业务双向数值/图文/一次回应规则已确认 | 各业务六角色评分、双方图文/回应的实际类目与管理条件、检测权限和运营流程 | [微信类目](https://developers.weixin.qq.com/miniprogram/product/material.html)、[PRD评分启用条件](prd.md) | 开发区分数值、图文和回应并提出咨询；用户审阅及授权发送；人员待定 | 分别取得适用依据并通过真实检测/管理验证；此前不能默认数值免准入或公开真实评价 |
 | AG01 | 第一版AI文字/两业务、无历史参考、免费及人工确认规则已确认 | 实际模型/渠道/账户协议、结构化能力与费率版本、Token/思考/缓存计费，额度预算/并发/超时/输出上限、供应商处理与适用、版本评测标准及结果 | [CloudBase AI说明](https://docs.cloudbase.net/en/ai/model/overview)、[CloudBase资源点计价](https://cloud.tencent.com/document/product/876/127357)、[TokenHub计价](https://cloud.tencent.com/document/product/1823/130055) | DP41准备具体对比与配置；用户确认关键数值/费用；开发验证已授权通道 | 项目适用、配置和评测实际通过；此前不启用真实AI，官方报价不是实际费用或开通证据 |
