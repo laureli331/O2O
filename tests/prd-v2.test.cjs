@@ -8,6 +8,7 @@ const root = path.resolve(__dirname, '..');
 const read = p => new TextDecoder('utf-8', { fatal: true }).decode(fs.readFileSync(path.join(root, p)));
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const prd = read('docs/prd.md');
+const monetization = JSON.parse(read('docs/monetization-decisions-20261015.json'));
 const archived = read(records.prdConsolidation.archive);
 const normalize = s => s.replaceAll('二手', '闲置').replaceAll('承接者', '接单员').replaceAll('期望完成时间', '服务到期时间').replaceAll('第15.2节', '第12.2节');
 const family = (text, prefix) => {
@@ -26,8 +27,8 @@ const terms = (text, expected, label) => { for (const term of expected) assert(t
 
 function validateCurrent(text) {
   assert(text.startsWith('# 湘邻湘友微信小程序 PRD'));
-  terms(text, ['版本：2.1', '2026-10-15', '没有产品实现', '商家Banner商业方案仍按用户要求延后'], 'Current baseline');
-  for (const [prefix, count] of [['M', 14], ['R', 8], ['F', 21], ['V', 22], ['T', 18], ['RT', 16], ['AT', 12], ['DT', 10], ['BX', 18], ['AI', 16], ['AM', 8], ['VP', 5]]) {
+  terms(text, ['版本：2.1', '2026-10-15', '没有产品实现', '具体价格/额度/交付细则仍待确认'], 'Current baseline');
+  for (const [prefix, count] of [['M', 14], ['R', 8], ['F', 21], ['V', 22], ['T', 18], ['RT', 16], ['AT', 12], ['DT', 10], ['BX', 18], ['AI', 16], ['AM', 8], ['VP', 7]]) {
     const rows = family(text, prefix);
     assert.equal(rows.size, count, prefix + ' current coverage');
     for (let i = 1; i <= count; i++) assert(rows.has(prefix + String(i).padStart(2, '0')));
@@ -47,7 +48,7 @@ function validateCurrent(text) {
   const fees = section(text, '## 7.', '## 8.');
   terms(fees, ['服务费与材料/配件/商品等实际支出分开', '允许同名', '旧版本和待确认不重复加', '99,999.99元', '首份正式费用生效后留72小时', '窗口内改价不重置原截止', '不重开交易、不重锁费率/封顶、不二次封顶'], 'Fee contract');
   const commission = section(text, '## 8.', '## 9.');
-  for (const [business, config] of Object.entries(records.commissionConfirmationRules.businessConfiguration)) {
+  for (const [business, config] of Object.entries(monetization.commission.currentConfiguration)) {
     const row = commission.split('\n').find(l => l.startsWith('| ' + business + ' |'));
     assert(row, business + ' fee row'); assert(row.includes((config.rateBasisPoints / 100) + '%'), 'Rate ' + business);
     assert(row.includes(config.cap.kind === 'none' ? '不封顶' : (config.cap.amountCents / 100) + '元'), 'Cap ' + business);

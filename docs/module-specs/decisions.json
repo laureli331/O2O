@@ -1,4 +1,11 @@
 {
+  "monetizationSupplement": {
+    "date": "2026-10-15",
+    "record": "docs/monetization-decisions-20261015.json",
+    "document": "docs/monetization-decisions-20261015.md",
+    "originalDecisionsRetained": true,
+    "commercialDetailsComplete": false
+  },
   "schemaVersion": 1,
   "date": "2026-10-10",
   "updatedAt": "2026-10-15",

@@ -47,7 +47,7 @@ function validateRemapping(b){
  ensureTerms(b.design,['四业务八角色','无完成上报或收到确认按钮','不额外72小时','720连续小时','最多168小时','恢复验收成功时点＋24小时','先四舍五入到分','仅争议部分暂停','无需缴纳','轻微按压/回弹','只有可核对成功标已退','未知/无数据/未采集/0不同'],'Current design');
  ensureTerms(tasks.get('DP23')[2],['四类服务到期','无阻断','自动结束'],'Automatic close');
  ensureTerms(tasks.get('DP29')[2],['八组被评角色'],'Rating roles');
- ensureTerms(tasks.get('DP53')[2],['跑腿15%无封顶','维修15%整次30','闲置5%每笔20','其它10%整次20'],'Commission snapshot');
+ ensureTerms(tasks.get('DP53')[2],['跑腿15%无封顶','维修15%整次30','闲置1%每笔20','其它10%整次20'],'Commission snapshot');
  ensureTerms(tasks.get('DP57')[2],['恢复验收','较晚者'],'Outage');
  assert.equal(b.tech.productionEnabled,false);assert(b.tech.externalGates.every(g=>g.status!=='已完成'),'External conditions remain unverified');assert.deepEqual(b.tech.currentDevelopmentPlan,meta,'Technology current plan');
  return true;

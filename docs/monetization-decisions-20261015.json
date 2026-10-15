@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-15",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "55915bdaddc4748277c8c5277bd31c0be5991ade",
+  "document": "docs/monetization-decisions-20261015.md",
+  "status": "directions-and-bundle-confirmed-details-pending",
+  "commission": {
+    "currentConfiguration": {
+      "跑腿": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "none"
+        }
+      },
+      "维修": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 3000,
+          "unit": "entire-service"
+        }
+      },
+      "闲置": {
+        "rateBasisPoints": 100,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "single-transaction"
+        }
+      },
+      "其它": {
+        "rateBasisPoints": 1000,
+        "trial": true,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "entire-service"
+        }
+      }
+    },
+    "previousIdleRateBasisPoints": 500,
+    "sourceApproval": "PF01",
+    "reviewDaysAfterActualActivation": 30,
+    "existingLockedSnapshotsRetained": true,
+    "customerFundsCollected": false
+  },
+  "bundle": {
+    "kind": "tools-membership-with-optional-purchases",
+    "sourceApproval": "PF08",
+    "included": [
+      "basic-tools",
+      "basic-campaign-tools",
+      "defined-ai-allowance"
+    ],
+    "nonmemberSinglePurchase": true,
+    "exposurePurchasedSeparately": true,
+    "includedEntitlementsChargedAgain": false,
+    "automaticAdditionalPurchase": false,
+    "membershipPriceCents": null,
+    "billingCycle": null,
+    "aiAllowance": null,
+    "extraAiPriceCents": null,
+    "singlePurchasePrices": null,
+    "exposurePrices": null,
+    "entitlementDetailsComplete": false
+  },
+  "marketingAi": {
+    "mode": "self-service",
+    "release": "v2",
+    "sourceApproval": "PF03",
+    "v1ResidentAiChargingChanged": false,
+    "manualCustomizationApproved": false
+  },
+  "exposure": {
+    "billing": "display-period",
+    "actualReport": true,
+    "sourceApproval": "PF04",
+    "slotRelease": null,
+    "deliveryRulesComplete": false
+  },
+  "campaign": {
+    "release": "v2",
+    "sourceApproval": "PF05",
+    "features": [
+      "activity-page",
+      "free-coupon-claim",
+      "in-store-redemption"
+    ],
+    "merchantFundedDiscount": true,
+    "consumerPaidCouponsApproved": false
+  },
+  "publisherAds": {
+    "release": "v2",
+    "sourceApproval": "PF06",
+    "mode": "limited-display-ad-trial",
+    "rewardedVideoApproved": false,
+    "coreFlowAdGate": false,
+    "actualIncomeForecast": null
+  },
+  "secondVersionScope": [
+    "VP01",
+    "VP02",
+    "VP03",
+    "VP04",
+    "VP05",
+    "VP06",
+    "VP07"
+  ],
+  "saas": {
+    "status": "long-term-reserve",
+    "sourceApproval": "PF07",
+    "document": "docs/saas-reserve.md",
+    "excludedReleases": [
+      "v1",
+      "v2"
+    ],
+    "startDate": null,
+    "pilotAuthorized": false
+  },
+  "execution": {
+    "productImplemented": false,
+    "realServicesEnabled": false,
+    "merchantPermissionVerified": false,
+    "realFeesVerified": false,
+    "reminderConfigurationUpdated": false,
+    "technicalDetailingResumed": false,
+    "visualDesignResumed": false
+  },
+  "approvals": [
+    {
+      "id": "PF01",
+      "context": "闲置佣金5%改为1%、每笔封顶20元，其它标准及启用满30天评估保留",
+      "userReply": "我同意你的建议"
+    },
+    {
+      "id": "PF02",
+      "context": "A工具会员／B推广会员／C混合会员",
+      "userReply": "a"
+    },
+    {
+      "id": "PF03",
+      "context": "A自助制作／B人工代做／C同时提供",
+      "userReply": "a"
+    },
+    {
+      "id": "PF04",
+      "context": "A按展示时段／B有效曝光／C有效点击收费",
+      "userReply": "a"
+    },
+    {
+      "id": "PF05",
+      "context": "A活动页面＋免费领券核销／B仅活动页面／C再加集点",
+      "userReply": "a, 这个留到第二版吧"
+    },
+    {
+      "id": "PF06",
+      "context": "A第二版少量展示广告试运行／B同时研究激励视频／C暂不纳入",
+      "userReply": "a"
+    },
+    {
+      "id": "PF07",
+      "context": "对外SaaS版本归属与单独保留",
+      "userReply": "这里单独做个保留, 有机会再上线, 先不纳入第一版和第二版"
+    },
+    {
+      "id": "PF08",
+      "context": "A打包并保留非会员按次入口的利弊分析及最终推荐",
+      "userReply": "没问题"
+    }
+  ]
+}

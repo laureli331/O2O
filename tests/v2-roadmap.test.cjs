@@ -12,10 +12,11 @@ function ids(text,prefix) {
   return [...text.matchAll(new RegExp('^\\| ('+prefix+'\\d{2}) \\|','gm'))].map(m=>m[1]);
 }
 function validate(b) {
-  const scope=['VP01','VP02','VP03','VP04','VP05'];
+  const legacyScope=['VP01','VP02','VP03','VP04','VP05'];
+  const scope=JSON.parse(read('docs/monetization-decisions-20261015.json')).secondVersionScope;
   assert.deepEqual(ids(b.prd,'VP'),scope,'PRD second-version scope');
   assert.deepEqual(ids(b.roadmap,'VP'),scope,'Roadmap second-version scope');
-  assert.deepEqual(b.record.featurePlanning.v2Scope,scope,'Recorded second-version scope');
+  assert.deepEqual(b.record.featurePlanning.v2Scope,legacyScope,'Original feature-planning scope is retained as history');
   assert.equal(b.record.featurePlanning.merchantSquareRelease,'v2','Merchant square must be second version');
   assert.equal(b.record.featurePlanning.merchantSquareMainPosts,'merchants-only','Only merchants publish square main posts');
   assert.deepEqual(b.record.featurePlanning.merchantSquareCustomerActions,['comment','favorite','wechat-share'],'Customer square actions');
@@ -35,7 +36,7 @@ function validate(b) {
   assert.equal(r.target,'current-thread','Reminder target');
   assert.equal(r.timezone,'Asia/Shanghai','Reminder timezone');
   assert.equal(r.localCheckTime,'20:00','Verified reminder time');
-  assert.deepEqual(r.scope,scope,'Reminder includes all second-version items');
+  assert.deepEqual(r.scope,legacyScope,'Original saved reminder scope is retained without claiming an app update');
   assert.equal(r.fullLaunchAcceptanceRequired,true,'Full real launch acceptance required');
   assert.equal(r.continuousStableDaysRequired,14,'Fourteen stable days required');
   assert.equal(r.stableEvidenceRequired,true,'Stable evidence required');
