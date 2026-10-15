@@ -2094,10 +2094,10 @@
     "phase": "developer-handoff-consolidation",
     "direction": "service-expiry-without-customer-completion-confirmation",
     "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
-    "ruleDocument": "docs/module-specs/shared-understanding-confirmed-20261015.md",
-    "sourceBatch": "shared-understanding-reply-1-20261015",
+    "ruleDocument": "docs/module-specs/exception-finance-confirmed-20261015.md",
+    "sourceBatch": "exception-finance-reply-1-20261015",
     "questionDocument": null,
-    "status": "identified-fifty-business-questions-confirmed-handoff-validation-pending",
+    "status": "identified-fifty-three-business-questions-confirmed-handoff-remapping-pending",
     "pendingQuestionIds": [],
     "unresolvedOriginalQuestionIds": [],
     "priorQuestionSetPaused": true,
@@ -2452,6 +2452,30 @@
         "merchant-banner-commercial-planning"
       ],
       "transactionQuestionsComplete": false,
+      "priorIdentifiedTransactionQuestionsComplete": true
+    },
+    {
+      "date": "2026-10-15",
+      "phase": "developer-handoff-consolidation",
+      "direction": "service-expiry-without-customer-completion-confirmation",
+      "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "ruleDocument": "docs/module-specs/shared-understanding-confirmed-20261015.md",
+      "sourceBatch": "shared-understanding-reply-1-20261015",
+      "questionDocument": null,
+      "status": "identified-fifty-business-questions-confirmed-handoff-validation-pending",
+      "pendingQuestionIds": [],
+      "unresolvedOriginalQuestionIds": [],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false,
+      "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
+      "remainingQuestionCount": 0,
+      "planningComplete": false,
+      "questionSetId": null,
+      "blockingInterpretationIds": [],
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "transactionQuestionsComplete": true,
       "priorIdentifiedTransactionQuestionsComplete": true
     }
   ],
@@ -3312,14 +3336,14 @@
   },
   "remainingPlanningAudit": {
     "date": "2026-10-15",
-    "sourceUserReply": "全a",
-    "document": "docs/module-specs/shared-understanding-audit-20261015.md",
-    "status": "identified-fifty-business-questions-confirmed-no-business-answer-pending",
+    "sourceUserReply": "全A",
+    "document": "docs/module-specs/exception-finance-confirmed-20261015.md",
+    "status": "identified-fifty-three-business-questions-confirmed-no-business-answer-pending",
     "knownGapCategoryCount": 8,
-    "totalQuestionCount": 50,
+    "totalQuestionCount": 53,
     "remainingQuestionCount": 0,
     "totalVerified": true,
-    "verificationScope": "original-forty-five-plus-five-source-backed-audit-omissions",
+    "verificationScope": "original-fifty-plus-three-exception-questions",
     "categoryCountIsQuestionCount": false,
     "newQuestionsPresented": false,
     "presentedQuestionCount": 0,
@@ -3330,17 +3354,17 @@
     "excludeTechnicalTasks": true,
     "excludeExternalEvidenceChecks": true,
     "excludeSecondReleaseScope": true,
-    "answeredQuestionCount": 50,
-    "addedQuestionCount": 5,
+    "answeredQuestionCount": 53,
+    "addedQuestionCount": 3,
     "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md",
     "deferredWorkstreamIds": [
       "merchant-banner-commercial-planning"
     ],
     "allFirstReleaseBusinessResolved": false,
     "currentTransactionQuestionSetResolved": true,
-    "newlyIdentifiedQuestionCount": 5,
+    "newlyIdentifiedQuestionCount": 3,
     "originalQuestionSetResolved": true,
-    "confirmedAuditBatch": "shared-understanding-reply-1-20261015"
+    "confirmedAuditBatch": "exception-finance-reply-1-20261015"
   },
   "discussionFormatHistory": [
     {
@@ -3532,6 +3556,38 @@
       "currentTransactionQuestionSetResolved": false,
       "newlyIdentifiedQuestionCount": 5,
       "originalQuestionSetResolved": true
+    },
+    {
+      "date": "2026-10-15",
+      "sourceUserReply": "全a",
+      "document": "docs/module-specs/shared-understanding-audit-20261015.md",
+      "status": "identified-fifty-business-questions-confirmed-no-business-answer-pending",
+      "knownGapCategoryCount": 8,
+      "totalQuestionCount": 50,
+      "remainingQuestionCount": 0,
+      "totalVerified": true,
+      "verificationScope": "original-forty-five-plus-five-source-backed-audit-omissions",
+      "categoryCountIsQuestionCount": false,
+      "newQuestionsPresented": false,
+      "presentedQuestionCount": 0,
+      "queuedQuestionCount": 0,
+      "planningComplete": false,
+      "userApprovedMissingAnswers": false,
+      "excludeResolvedQuestions": true,
+      "excludeTechnicalTasks": true,
+      "excludeExternalEvidenceChecks": true,
+      "excludeSecondReleaseScope": true,
+      "answeredQuestionCount": 50,
+      "addedQuestionCount": 5,
+      "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "allFirstReleaseBusinessResolved": false,
+      "currentTransactionQuestionSetResolved": true,
+      "newlyIdentifiedQuestionCount": 5,
+      "originalQuestionSetResolved": true,
+      "confirmedAuditBatch": "shared-understanding-reply-1-20261015"
     }
   ],
   "businessCloseoutQuestionInventory": {
@@ -9067,7 +9123,8 @@
     "developmentReadingEntry": "docs/module-specs/current-development-basis-20261015.md",
     "sharedUnderstandingAudit": "sharedUnderstandingAudit",
     "auditResolution": "sharedUnderstandingRules",
-    "formalPrd": "prdConsolidation"
+    "formalPrd": "prdConsolidation",
+    "exceptionFinance": "exceptionFinanceRules"
   },
   "businessCloseoutFinalPartialRules": {
     "document": "docs/module-specs/business-closeout-confirmed-20261015.md",
@@ -9659,7 +9716,7 @@
     ]
   },
   "prdConsolidation": {
-    "version": "2.0",
+    "version": "2.1",
     "date": "2026-10-15",
     "document": "docs/prd.md",
     "archive": "docs/prd-v1.5-archive-20261015.md",
@@ -9668,8 +9725,9 @@
       "modules": 14,
       "fields": 21,
       "pageGroups": 22,
-      "acceptanceCases": 68,
-      "closeoutDecisions": 50
+      "acceptanceCases": 74,
+      "closeoutDecisions": 53,
+      "originalCloseoutDecisions": 50
     },
     "sharedBusinessUnderstanding": true,
     "pendingIdentifiedBusinessChoices": 0,
@@ -9682,14 +9740,22 @@
       "docs/module-specs/shared-understanding-confirmed-20261015.md",
       "docs/module-specs/business-closeout-round-1-rules-20261015.md",
       "docs/module-specs/business-closeout-round-2-rules-20261015.md",
-      "docs/module-specs/business-closeout-confirmed-20261015.md"
+      "docs/module-specs/business-closeout-confirmed-20261015.md",
+      "docs/module-specs/exception-finance-confirmed-20261015.md"
     ],
     "archiveSourceCommit": "1b8ed680849f204cc92dfc2ea578ad949c45f53b",
-    "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93"
+    "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93",
+    "previousFormalPrdCommit": "17559c0f9dd5139a7cb5e1a7b45ebcc5c87eef8c"
   },
   "items": [
     {
-      "id": "HD01", "recordSemantics": {"confirmedAndPendingText":"historical-chronological-not-current-unanswered-question-list","currentDevelopmentBasis":"docs/module-specs/current-development-basis-20261015.md","currentAudit":"sharedUnderstandingAudit","noRuntimeMigrationRequired":true},
+      "id": "HD01",
+      "recordSemantics": {
+        "confirmedAndPendingText": "historical-chronological-not-current-unanswered-question-list",
+        "currentDevelopmentBasis": "docs/module-specs/current-development-basis-20261015.md",
+        "currentAudit": "sharedUnderstandingAudit",
+        "noRuntimeMigrationRequired": true
+      },
       "status": "scope-approved-rules-pending",
       "userReply": "扩展维修接单流程，另行讨论并补齐业务规则",
       "confirmed": "维修扩展接单；先申请再选1位，申请人数不设产品上限；申请时不强制报价；同一人对同一需求最多1份有效申请，选定前可修改或撤回，重复点击不新增记录；选定成功后仅发布者和选中的接单员互看完整联系方式，其他申请者仍打码；协商后费用在小程序内记录，每个收费阶段开始前由双方确认，服务费和材料/配件/商品等实际支出分开，页面显示合计；检查费/上门费归服务费并单列，双方可发起且提交认可该版本、另一方确认后生效；新增或修改费用需双方确认新版本，确认前原版本有效；每需求最多1份待确认费用方案，无回应不自动同意，可提醒或由发起方撤回；可先双方确认取消服务，已发生费用另议，取消不代表结清；支出票据/照片选填；可自愿垫付，双方事先确认是否垫付和上限；申请与选人第二轮：发布者成功确认选择即生效，无需接单员再次确认，其余申请结束并通知、不自动递补；主动撤回后需求仍可申请时允许立即重申；不设单独拒绝申请；选填300字说明及预估服务费，未报价显示待协商，预估价不算正式费用约定；维修和其它均不设同时接单上限；发布时详细地址选填私密保存，仅向选中的接单员开放；选人前修改服务内容/区域/时间使原申请失效，通知重新申请；履约第三轮8题全部A：选人后服务内容/区域变更须双方确认，确认前原内容有效；预约选填，双方确认记录且改期也需双方确认；接单员提交完成、发布者确认后完成，无回应保持待确认不自动完成，可提醒或提出异议；任一方申请取消、另一方确认后取消，无回应不自动取消；已确认取消后发布者主动重开同一需求，重新申请选人，旧申请不恢复且保留历史服务费用；完成/取消后联系方式重新打码，关闭接单员完整地址权限，发布者仍可管理本人地址；异常与评价第四轮4B/5B、其余A：完成/取消/异议说明必填1—500字，附件选填0—9；可明确不同意完成/取消，理由必填且不结束服务；完成与取消可同时待确认，先确认生效的一种结束服务，另一种关闭留历史；只记录服务异议、双方协商，运营不介入服务调解，原举报/评价申诉职责不取消；新维修完成确认直接开启双方评分，其它加入既有双向三维体系并按业务/角色分别统计；取消不新增评分资格，历史合法资格评分保留；费用录入第五轮8题全部A：垫付条件与费用方案一起确认；服务费允许明确0元表示免费，未填仍待协商，未知支出不强填0；选人成功后仅发布者或选中的接单员发起正式费用；每项名称1—30字、类别服务费/实际支出、该项金额必填，备注选填最多300字，每份1—20项；本阶段金额确定后提交，未知后续费用分阶段补充；修改待确认方案先撤回再提交，保留历史且新约定确认前原有效约定保留；不同意方案理由选填，仅结束本次待确认方案，可重协商，不取消服务或否认历史费用；费用边界第六轮1B、2B、3B、4A、5B、6B、7A、8B：阶段可选上门检查/服务处理/补充费用或自定义1—30字；完成后费用只读，取消后已发生费用仍可协商；愿意垫付时上限必填可为0，0不能实际垫付、空值不代表不限额；超限先协商新方案与上限并由双方确认，未确认可暂停该项、不自动取消服务；每支出项目凭据选填最多3张JPEG/PNG，每张不超过5MB；凭据仅服务进行中供双方查看，结束后双方均不可再查看且费用文字历史保留，不新增运营查看权限；每项及每份方案合计均不超过99,999.99元；重开可复制旧方案为新草稿，须重新提交并由新双方确认，不继承旧约定/垫付授权或旧凭据权限；费用收尾与履约申请第七轮1A、2B、3A、4A、5A、6A、7A、8A：待确认费用须先确认/不同意/撤回后才能确认完成；取消时仅已发生费用方案继续待确认，含未发生费用的方案关闭留历史可重协商，不阻止取消或自动认可金额；实际支出允许确定为0，未知金额不强填0；各阶段独立约定，修改只替换该阶段，累计各阶段当前有效版本、不重复旧版/待确认项；整次服务累计上限99,999.99元；同一次服务最多1份完成申请及1份取消申请，可并存但只有一个有效结束；发起方待确认且服务未结束时可撤回，修改须先撤回再提交，已确认结果不能撤回、保留历史；不同意完成/取消结束该申请并留历史，服务继续，可协商后重提且理由必填；费用表单与预约基础第八轮8题全部A：取消时双方一致认为方案全部已发生才保留待确认，有分歧或未明确关闭留历史可重协商，不阻止取消且不认可金额；重开后新服务双方中原本有权查看旧方案者可复制；只复制阶段/费用项目文字/金额/备注，垫付条件重填、不复制旧凭据；不垫付隐藏并清除当前表单上限，不改历史约定；不同意完成/取消理由必填1—500字；完成/取消/异议附件为JPEG/PNG、每张不超过5MB，仍选填0—9张；选人成功且服务未结束时双方均可提出预约或改期、另一方确认；同次服务预约/改期合计最多1份待确认，未确认新时间不替换原预约；预约细则第九轮8题全部A：单一开始时间精确到分钟，只允许晚于服务端当前时间的未来预约；待确认未来预约到点自动关闭并留历史，不影响原预约/服务状态；发起方可撤回，修改先撤回再提交；不同意预约/改期理由选填最多300字，结束该申请留历史、原预约不变；清除已确认预约须双方确认，不取消服务；完成/取消后未确认预约及内容/区域变更关闭留历史，不视为同意，但完成前仍须处理待确认费用；已确认预约时间过后仅作过时标记，不自动提醒/完成/取消，不新设逾时收费处罚；清除预约与内容变更第十轮8题全部A：预约/改期/清除共用同次服务最多1份待确认；清除无回应保持待确认，原预约保留，不自动清除或关闭；发起方可撤回、修改先撤回重提，不同意理由选填最多300字、结束该请求留历史；双方可提出内容/区域变更、另一方确认，内容/区域同次服务合计最多1份待确认；发起方可撤回、修改先撤回再提交；不同意理由选填最多300字、结束方案留历史，原内容有效、服务继续；内容变更无回应保持待确认，不自动同意或关闭，原内容仍有效；申请展示与历史第十一轮8题全部A：申请说明及预估报价由发布者看全部、申请者只看自己的，其他人不可看，不扩大联系或地址权限；候选列表显示说明/预估服务费/申请时间，空说明不占行、未报价显示待协商；按有效申请时间先申请在前；未选人需求不设自动到期，由发布者主动关闭；有申请但未选人可关闭，结束有效申请并通知、保留历史；修改申请保留各次提交版本，发布者与本人可查看；修改有效申请通知发布者，列表标记已修改；因内容变更失效后仍开放可立即重申，旧记录保留但不能选中；申请排序与关闭重开第十二轮1A、2A、3A、4B、5A、6A、7A、8A：修改有效申请保留该次首次有效提交时间，重申按本次成功时间排序；未选人关闭后发布者可重开同一需求，须重新申请、不恢复旧申请；首页最新按重开成功时间重新排序，原始发布时间保留、普通编辑不置顶；不设该类重开次数上限，每次留记录；关闭理由选填最多300字；选人前标题/描述/图片/公开区域/服务时间任一变化使旧申请失效，不新增必填项；关闭与选人以服务端先成功操作为准，另一操作不执行并提示刷新，不回退成功结果；新增调价下限已留原话，基准/范围及闲置确认流程仍待确认，不能据此开发",
@@ -9699,13 +9765,41 @@
           "userReply": "A",
           "selectedOption": "先申请，再由发布者选人；申请时不强制报维修价格；价格如何确定下一步讨论"
         },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求不设产品申请人数上限；允许多人申请，发布者最终选1位" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它同一人对同一需求只保留1份有效申请；选定前可修改或撤回；重复点击申请不新增记录" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它选定成功后，发布者与选中的接单员互看完整联系方式；其他申请者仍看打码信息" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它协商后的费用在小程序内记录并由双方确认；记录金额不代表已经付款；费用明细和确认时点另议" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它费用分项记录：服务费与材料、配件、商品等实际支出分开，页面同时显示合计；检查费、上门费等具体归类另议" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它分阶段、收费前确认费用；上门检查若收费先确认该费用，诊断后再确认维修和配件费用" }
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它每条需求不设产品申请人数上限；允许多人申请，发布者最终选1位"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它同一人对同一需求只保留1份有效申请；选定前可修改或撤回；重复点击申请不新增记录"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它选定成功后，发布者与选中的接单员互看完整联系方式；其他申请者仍看打码信息"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它协商后的费用在小程序内记录并由双方确认；记录金额不代表已经付款；费用明细和确认时点另议"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它费用分项记录：服务费与材料、配件、商品等实际支出分开，页面同时显示合计；检查费、上门费等具体归类另议"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它分阶段、收费前确认费用；上门检查若收费先确认该费用，诊断后再确认维修和配件费用"
+        }
       ],
       "pending": [
         "申请同时间排序/历史展示/关闭理由可见范围及通知保存",
@@ -9826,22 +9920,71 @@
       "legacyPaidPreferredTermsInherited": false
     },
     {
-      "id": "HD04", "recordSemantics": {"confirmedAndPendingText":"historical-chronological-not-current-unanswered-question-list","currentDevelopmentBasis":"docs/module-specs/current-development-basis-20261015.md","currentAudit":"sharedUnderstandingAudit","noRuntimeMigrationRequired":true},
+      "id": "HD04",
+      "recordSemantics": {
+        "confirmedAndPendingText": "historical-chronological-not-current-unanswered-question-list",
+        "currentDevelopmentBasis": "docs/module-specs/current-development-basis-20261015.md",
+        "currentAudit": "sharedUnderstandingAudit",
+        "noRuntimeMigrationRequired": true
+      },
       "status": "public-business-approved-rules-pending",
       "userReply": "业务还包括\"其它\"",
       "confirmed": "其它作为业务模块，归集维修/跑腿/闲置之外需求，为后续更新迭代提供依据；允许公开发布并申请接单，先申请再由发布者选人，每条需求选1位，申请人数不设产品上限；申请时不强制填写服务费报价，金额后续协商；同一人对同一需求最多1份有效申请，选定前可修改或撤回，重复点击不新增记录；选定成功后仅发布者和选中的接单员互看完整联系方式，其他申请者仍打码；协商后费用在小程序内记录，每个收费阶段开始前由双方确认，服务费和材料/配件/商品等实际支出分开，页面显示合计；检查费/上门费归服务费并单列，双方可发起且提交认可该版本、另一方确认后生效；新增或修改费用需双方确认新版本，确认前原版本有效；每需求最多1份待确认费用方案，无回应不自动同意，可提醒或由发起方撤回；可先双方确认取消服务，已发生费用另议，取消不代表结清；支出票据/照片选填；可自愿垫付，双方事先确认是否垫付和上限；申请与选人第二轮：发布者成功确认选择即生效，无需接单员再次确认，其余申请结束并通知、不自动递补；主动撤回后需求仍可申请时允许立即重申；不设单独拒绝申请；选填300字说明及预估服务费，未报价显示待协商，预估价不算正式费用约定；维修和其它均不设同时接单上限；发布时详细地址选填私密保存，仅向选中的接单员开放；选人前修改服务内容/区域/时间使原申请失效，通知重新申请；履约第三轮8题全部A：选人后服务内容/区域变更须双方确认，确认前原内容有效；预约选填，双方确认记录且改期也需双方确认；接单员提交完成、发布者确认后完成，无回应保持待确认不自动完成，可提醒或提出异议；任一方申请取消、另一方确认后取消，无回应不自动取消；已确认取消后发布者主动重开同一需求，重新申请选人，旧申请不恢复且保留历史服务费用；完成/取消后联系方式重新打码，关闭接单员完整地址权限，发布者仍可管理本人地址；异常与评价第四轮4B/5B、其余A：完成/取消/异议说明必填1—500字，附件选填0—9；可明确不同意完成/取消，理由必填且不结束服务；完成与取消可同时待确认，先确认生效的一种结束服务，另一种关闭留历史；只记录服务异议、双方协商，运营不介入服务调解，原举报/评价申诉职责不取消；新维修完成确认直接开启双方评分，其它加入既有双向三维体系并按业务/角色分别统计；取消不新增评分资格，历史合法资格评分保留；费用录入第五轮8题全部A：垫付条件与费用方案一起确认；服务费允许明确0元表示免费，未填仍待协商，未知支出不强填0；选人成功后仅发布者或选中的接单员发起正式费用；每项名称1—30字、类别服务费/实际支出、该项金额必填，备注选填最多300字，每份1—20项；本阶段金额确定后提交，未知后续费用分阶段补充；修改待确认方案先撤回再提交，保留历史且新约定确认前原有效约定保留；不同意方案理由选填，仅结束本次待确认方案，可重协商，不取消服务或否认历史费用；费用边界第六轮1B、2B、3B、4A、5B、6B、7A、8B：阶段可选上门检查/服务处理/补充费用或自定义1—30字；完成后费用只读，取消后已发生费用仍可协商；愿意垫付时上限必填可为0，0不能实际垫付、空值不代表不限额；超限先协商新方案与上限并由双方确认，未确认可暂停该项、不自动取消服务；每支出项目凭据选填最多3张JPEG/PNG，每张不超过5MB；凭据仅服务进行中供双方查看，结束后双方均不可再查看且费用文字历史保留，不新增运营查看权限；每项及每份方案合计均不超过99,999.99元；重开可复制旧方案为新草稿，须重新提交并由新双方确认，不继承旧约定/垫付授权或旧凭据权限；费用收尾与履约申请第七轮1A、2B、3A、4A、5A、6A、7A、8A：待确认费用须先确认/不同意/撤回后才能确认完成；取消时仅已发生费用方案继续待确认，含未发生费用的方案关闭留历史可重协商，不阻止取消或自动认可金额；实际支出允许确定为0，未知金额不强填0；各阶段独立约定，修改只替换该阶段，累计各阶段当前有效版本、不重复旧版/待确认项；整次服务累计上限99,999.99元；同一次服务最多1份完成申请及1份取消申请，可并存但只有一个有效结束；发起方待确认且服务未结束时可撤回，修改须先撤回再提交，已确认结果不能撤回、保留历史；不同意完成/取消结束该申请并留历史，服务继续，可协商后重提且理由必填；费用表单与预约基础第八轮8题全部A：取消时双方一致认为方案全部已发生才保留待确认，有分歧或未明确关闭留历史可重协商，不阻止取消且不认可金额；重开后新服务双方中原本有权查看旧方案者可复制；只复制阶段/费用项目文字/金额/备注，垫付条件重填、不复制旧凭据；不垫付隐藏并清除当前表单上限，不改历史约定；不同意完成/取消理由必填1—500字；完成/取消/异议附件为JPEG/PNG、每张不超过5MB，仍选填0—9张；选人成功且服务未结束时双方均可提出预约或改期、另一方确认；同次服务预约/改期合计最多1份待确认，未确认新时间不替换原预约；预约细则第九轮8题全部A：单一开始时间精确到分钟，只允许晚于服务端当前时间的未来预约；待确认未来预约到点自动关闭并留历史，不影响原预约/服务状态；发起方可撤回，修改先撤回再提交；不同意预约/改期理由选填最多300字，结束该申请留历史、原预约不变；清除已确认预约须双方确认，不取消服务；完成/取消后未确认预约及内容/区域变更关闭留历史，不视为同意，但完成前仍须处理待确认费用；已确认预约时间过后仅作过时标记，不自动提醒/完成/取消，不新设逾时收费处罚；清除预约与内容变更第十轮8题全部A：预约/改期/清除共用同次服务最多1份待确认；清除无回应保持待确认，原预约保留，不自动清除或关闭；发起方可撤回、修改先撤回重提，不同意理由选填最多300字、结束该请求留历史；双方可提出内容/区域变更、另一方确认，内容/区域同次服务合计最多1份待确认；发起方可撤回、修改先撤回再提交；不同意理由选填最多300字、结束方案留历史，原内容有效、服务继续；内容变更无回应保持待确认，不自动同意或关闭，原内容仍有效；申请展示与历史第十一轮8题全部A：申请说明及预估报价由发布者看全部、申请者只看自己的，其他人不可看，不扩大联系或地址权限；候选列表显示说明/预估服务费/申请时间，空说明不占行、未报价显示待协商；按有效申请时间先申请在前；未选人需求不设自动到期，由发布者主动关闭；有申请但未选人可关闭，结束有效申请并通知、保留历史；修改申请保留各次提交版本，发布者与本人可查看；修改有效申请通知发布者，列表标记已修改；因内容变更失效后仍开放可立即重申，旧记录保留但不能选中；申请排序与关闭重开第十二轮1A、2A、3A、4B、5A、6A、7A、8A：修改有效申请保留该次首次有效提交时间，重申按本次成功时间排序；未选人关闭后发布者可重开同一需求，须重新申请、不恢复旧申请；首页最新按重开成功时间重新排序，原始发布时间保留、普通编辑不置顶；不设该类重开次数上限，每次留记录；关闭理由选填最多300字；选人前标题/描述/图片/公开区域/服务时间任一变化使旧申请失效，不新增必填项；关闭与选人以服务端先成功操作为准，另一操作不执行并提示刷新，不回退成功结果；新增调价下限已留原话，基准/范围及闲置确认流程仍待确认，不能据此开发",
       "followUp": [
-        { "date": "2026-10-10", "userReply": "除了\"维修、跑腿、闲置\", 方便为后续更新迭代整理数据" },
-        { "date": "2026-10-10", "userReply": "A", "selectedOption": "公开发布并允许申请接单：用户可以实际找到人处理需求，同时积累分类数据" },
-        { "date": "2026-10-10", "userReply": "A", "selectedOption": "先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它每条需求不设产品申请人数上限；允许多人申请，发布者最终选1位" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "其它申请时不强制填写服务费报价；允许先申请，金额后续协商" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它同一人对同一需求只保留1份有效申请；选定前可修改或撤回；重复点击申请不新增记录" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它选定成功后，发布者与选中的接单员互看完整联系方式；其他申请者仍看打码信息" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它协商后的费用在小程序内记录并由双方确认；记录金额不代表已经付款；费用明细和确认时点另议" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它费用分项记录：服务费与材料、配件、商品等实际支出分开，页面同时显示合计；检查费、上门费等具体归类另议" },
-        { "date": "2026-10-11", "userReply": "A", "selectedOption": "维修和其它分阶段、收费前确认费用；上门检查若收费先确认该费用，诊断后再确认维修和配件费用" }
+        {
+          "date": "2026-10-10",
+          "userReply": "除了\"维修、跑腿、闲置\", 方便为后续更新迭代整理数据"
+        },
+        {
+          "date": "2026-10-10",
+          "userReply": "A",
+          "selectedOption": "公开发布并允许申请接单：用户可以实际找到人处理需求，同时积累分类数据"
+        },
+        {
+          "date": "2026-10-10",
+          "userReply": "A",
+          "selectedOption": "先申请，发布者再选人：发布者比较申请者后决定，与维修的选人方向一致；报价规则另议"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它每条需求各选1位接单员；完成、取消和评价对应明确的服务对象；申请人数另行讨论"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它每条需求不设产品申请人数上限；允许多人申请，发布者最终选1位"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "其它申请时不强制填写服务费报价；允许先申请，金额后续协商"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它同一人对同一需求只保留1份有效申请；选定前可修改或撤回；重复点击申请不新增记录"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它选定成功后，发布者与选中的接单员互看完整联系方式；其他申请者仍看打码信息"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它协商后的费用在小程序内记录并由双方确认；记录金额不代表已经付款；费用明细和确认时点另议"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它费用分项记录：服务费与材料、配件、商品等实际支出分开，页面同时显示合计；检查费、上门费等具体归类另议"
+        },
+        {
+          "date": "2026-10-11",
+          "userReply": "A",
+          "selectedOption": "维修和其它分阶段、收费前确认费用；上门检查若收费先确认该费用，诊断后再确认维修和配件费用"
+        }
       ],
       "pending": [
         "申请同时间排序/历史展示/关闭理由可见范围、取消后重开排序及并发实现",
@@ -9912,6 +10055,144 @@
       ],
       "prd": [],
       "productionAllowed": false
+    }
+  ],
+  "exceptionFinanceDecisionBatches": [
+    {
+      "id": "exception-finance-reply-1-20261015",
+      "date": "2026-10-15",
+      "userReply": "全A",
+      "document": "docs/module-specs/exception-finance-confirmed-20261015.md",
+      "questions": [
+        {
+          "id": "EA01",
+          "question": "服务已经交付，但客户拖欠款项，平台佣金怎么处理？",
+          "options": {
+            "A": "允许纳入现有账单异议，争议部分暂缓催缴和欠费限制；核验结束后，需要缴纳的余额按既有补缴72小时规则处理。不自动免佣，客户欠款仍由交易双方解决。",
+            "B": "客户拖欠本身不暂停平台佣金，仍按有效约定金额和原期限缴纳；计费错误等其他申诉照常受理。"
+          },
+          "selected": "A"
+        },
+        {
+          "id": "EA02",
+          "question": "平台故障导致用户无法及时提出异议，怎么保护受影响交易？",
+          "options": {
+            "A": "暂停受影响交易的自动结束和计佣。恢复验收通过后，至少保留24小时提交异议；原有效到期更晚时仍等原到期。双方实际服务约定不改。",
+            "B": "只将受影响交易的自动收尾时间顺延经核实的故障持续时长，不额外保留24小时。"
+          },
+          "selected": "A"
+        },
+        {
+          "id": "EA03",
+          "question": "佣金是否允许分次缴纳，以及多收款怎么处理？",
+          "options": {
+            "A": "允许分次缴纳，先抵最早到期应缴款；剩余逾期款仍适用欠费限制。多缴或重复实际收款核对后退回，不自动变为抵扣余额；应缴为0显示“无需缴纳”。",
+            "B": "只允许一次缴清当前有效应缴款，不支持分次；多收款核对后退回，应缴为0无需支付。"
+          },
+          "selected": "A"
+        }
+      ],
+      "answers": [
+        {
+          "questionId": "EA01",
+          "answer": "A",
+          "selectedOption": "允许纳入现有账单异议，争议部分暂缓催缴和欠费限制；核验结束后，需要缴纳的余额按既有补缴72小时规则处理。不自动免佣，客户欠款仍由交易双方解决。"
+        },
+        {
+          "questionId": "EA02",
+          "answer": "A",
+          "selectedOption": "暂停受影响交易的自动结束和计佣。恢复验收通过后，至少保留24小时提交异议；原有效到期更晚时仍等原到期。双方实际服务约定不改。"
+        },
+        {
+          "questionId": "EA03",
+          "answer": "A",
+          "selectedOption": "允许分次缴纳，先抵最早到期应缴款；剩余逾期款仍适用欠费限制。多缴或重复实际收款核对后退回，不自动变为抵扣余额；应缴为0显示“无需缴纳”。"
+        }
+      ],
+      "implementationEnabled": false
+    }
+  ],
+  "exceptionFinanceRules": {
+    "sourceBatch": "exception-finance-reply-1-20261015",
+    "document": "docs/module-specs/exception-finance-confirmed-20261015.md",
+    "enabled": false,
+    "customerArrears": {
+      "allowedAsCommissionBillIssue": true,
+      "pauseScope": "disputed-commission-only",
+      "uncontestedDeadlineUnchanged": true,
+      "automaticWaiver": false,
+      "repaymentClock": "balance-determined-and-supplemental-notice-created",
+      "repaymentHours": 72,
+      "customerDebtAdjudication": false,
+      "customerPaymentTotalCollection": false
+    },
+    "platformOutage": {
+      "requiresVerifiedPlatformLogs": true,
+      "affectedObjectsOnly": true,
+      "affectedFunctions": [
+        "login",
+        "delivery-issue-submission"
+      ],
+      "userOfflineEligible": false,
+      "wechatNotificationFailureEligible": false,
+      "pauseAutomaticCompletion": true,
+      "pauseMainCommissionFormation": true,
+      "recoveryRequiresPassedAcceptance": true,
+      "minRecoveryProtectionHours": 24,
+      "closeNotBefore": "max-effective-service-deadline-and-recovery-acceptance-plus-24-hours",
+      "strictlyAfterProtectionDeadline": true,
+      "issueAtDeadlineTimely": true,
+      "originalServiceTimeChanged": false,
+      "duplicateEventRefreshesDeadline": false,
+      "unrelatedBillClockChanged": false
+    },
+    "payments": {
+      "partialPaymentAllowed": true,
+      "allocation": "earliest-due-current-payable-first",
+      "suspendedDisputeAutomaticallyAllocated": false,
+      "partialClearsAllArrears": false,
+      "remainingDeadlineReset": false,
+      "duplicateCallbackIsNewMoney": false,
+      "actualExcess": "verified-refund",
+      "excessAutomaticallyBecomesCredit": false,
+      "unknownRefundIsSuccessful": false,
+      "zeroDueLabel": "无需缴纳",
+      "zeroDuePaymentCreated": false,
+      "zeroDueClearsHistoricalArrears": false,
+      "refundChannel": null,
+      "realRefundVerified": false,
+      "approvedCommissionCreditsSeparate": true
+    }
+  },
+  "prdConsolidationHistory": [
+    {
+      "version": "2.0",
+      "date": "2026-10-15",
+      "document": "docs/prd.md",
+      "archive": "docs/prd-v1.5-archive-20261015.md",
+      "archiveSha256": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93",
+      "counts": {
+        "modules": 14,
+        "fields": 21,
+        "pageGroups": 22,
+        "acceptanceCases": 68,
+        "closeoutDecisions": 50
+      },
+      "sharedBusinessUnderstanding": true,
+      "pendingIdentifiedBusinessChoices": 0,
+      "bannerCommercialTermsDeferred": true,
+      "oldTaskPlanRequiresRemapping": true,
+      "productImplemented": false,
+      "realServicesEnabled": false,
+      "sourceDocuments": [
+        "docs/module-specs/current-development-basis-20261015.md",
+        "docs/module-specs/shared-understanding-confirmed-20261015.md",
+        "docs/module-specs/business-closeout-round-1-rules-20261015.md",
+        "docs/module-specs/business-closeout-round-2-rules-20261015.md",
+        "docs/module-specs/business-closeout-confirmed-20261015.md"
+      ],
+      "archiveSourceCommit": "1b8ed680849f204cc92dfc2ea578ad949c45f53b",
+      "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93"
     }
   ]
 }

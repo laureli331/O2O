@@ -16,12 +16,15 @@ function Assert-Design([bool]$Condition, [string]$Message) {
 Assert-Design (Test-Path -LiteralPath $DocumentPath) 'Structured design document exists'
 $designDecoder = New-Object System.Text.UTF8Encoding($false, $true)
 $designText = $designDecoder.GetString([IO.File]::ReadAllBytes($DocumentPath))
-$designPrd = $designDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $designRepo 'docs\prd.md')))
+$designCurrentPrd = $designDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $designRepo 'docs\prd.md')))
+# Legacy V/F tables remain a v1.5 artifact; current 2.1 overrides and remapping are explicit.
+$designPrd = $designDecoder.GetString([IO.File]::ReadAllBytes((Join-Path $designRepo 'docs\prd-v1.5-archive-20261015.md')))
 $designSelection = Get-Content -LiteralPath (Join-Path $designRepo 'assets\ui\approved-selection.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $designTokens = Get-Content -LiteralPath (Join-Path $designRepo 'assets\ui\v2\design-tokens.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $designDocDir = Split-Path -Parent $DocumentPath
 
 Assert-Design ($designText.StartsWith('# 结构化设计说明')) 'Document is valid UTF-8 and identifies the requested deliverable'
+Assert-Design ($designCurrentPrd.Contains('版本：2.1') -and $designText.Contains('PRD 2.1') -and $designText.Contains('须按新版重新映射')) 'Current 2.1 precedence and incomplete historical design remapping are explicit'
 $designLocalLinks = @([regex]::Matches($designText, '\]\(([^)]+)\)') | Where-Object { $_.Groups[1].Value -notmatch '^(https?://|#)' })
 $designMissingLinks = @($designLocalLinks | Where-Object {
     $designTarget = $_.Groups[1].Value.Split('#')[0]
@@ -90,7 +93,7 @@ foreach ($designFieldId in $designPrdFieldRows.Keys) {
     Assert-Design ($designFieldRows.ContainsKey($designFieldId) -and $designFieldRows[$designFieldId] -ceq $designPrdFieldRows[$designFieldId]) "Field constraints and visibility match the PRD verbatim: $designFieldId"
 }
 $designReferencedIds = @([regex]::Matches($designText, '(?<![A-Z0-9])(?:AT|DT|AI|BS|AM|AG|DG|VP|QG|V|F|RT|T|M|R|N|S|E)\d{2}(?![A-Z0-9])') | ForEach-Object { $_.Value } | Select-Object -Unique)
-$designSourceIds = @([regex]::Matches($designPrd, '(?m)^(?:\| |\- )((?:AT|DT|AI|BS|AM|AG|DG|VP|QG|V|F|RT|T|M|R|N|S|E)\d{2})(?: \|| )') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
+$designSourceIds = @([regex]::Matches(($designPrd + "`n" + $designCurrentPrd), '(?m)^(?:\| |\- )((?:AT|DT|AI|BS|AM|AG|DG|VP|QG|V|F|RT|T|M|R|N|S|E)\d{2})(?: \|| )') | ForEach-Object { $_.Groups[1].Value } | Select-Object -Unique)
 $designUnknownIds = @($designReferencedIds | Where-Object { $_ -notin $designSourceIds })
 Assert-Design ($designUnknownIds.Count -eq 0) 'All PRD references name existing requirements'
 foreach ($designFamily in @(@('M',12), @('R',8), @('N',9), @('S',4), @('T',18), @('RT',16), @('AT',12), @('DT',10), @('AI',16), @('BS',12), @('AM',8), @('AG',1), @('DG',1), @('E',6))) {
@@ -139,4 +142,4 @@ foreach ($designLine in ($designText -split '\r?\n')) {
     } else { $designPreviousColumns = 0 }
 }
 Assert-Design ($designBadTables.Count -eq 0) 'Every Markdown table has consistent columns'
-Write-Output "Structured design validation passed: $designChecks checks."
+Write-Output "Historical structured design and current-baseline notice validation passed: $designChecks checks. Current 2.1 completeness is checked separately."

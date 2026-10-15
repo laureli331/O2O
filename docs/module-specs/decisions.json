@@ -2094,10 +2094,10 @@
     "phase": "developer-handoff-consolidation",
     "direction": "service-expiry-without-customer-completion-confirmation",
     "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
-    "ruleDocument": "docs/module-specs/shared-understanding-confirmed-20261015.md",
-    "sourceBatch": "shared-understanding-reply-1-20261015",
+    "ruleDocument": "docs/module-specs/exception-finance-confirmed-20261015.md",
+    "sourceBatch": "exception-finance-reply-1-20261015",
     "questionDocument": null,
-    "status": "identified-fifty-business-questions-confirmed-handoff-validation-pending",
+    "status": "identified-fifty-three-business-questions-confirmed-handoff-remapping-pending",
     "pendingQuestionIds": [],
     "unresolvedOriginalQuestionIds": [],
     "priorQuestionSetPaused": true,
@@ -2452,6 +2452,30 @@
         "merchant-banner-commercial-planning"
       ],
       "transactionQuestionsComplete": false,
+      "priorIdentifiedTransactionQuestionsComplete": true
+    },
+    {
+      "date": "2026-10-15",
+      "phase": "developer-handoff-consolidation",
+      "direction": "service-expiry-without-customer-completion-confirmation",
+      "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "ruleDocument": "docs/module-specs/shared-understanding-confirmed-20261015.md",
+      "sourceBatch": "shared-understanding-reply-1-20261015",
+      "questionDocument": null,
+      "status": "identified-fifty-business-questions-confirmed-handoff-validation-pending",
+      "pendingQuestionIds": [],
+      "unresolvedOriginalQuestionIds": [],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false,
+      "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
+      "remainingQuestionCount": 0,
+      "planningComplete": false,
+      "questionSetId": null,
+      "blockingInterpretationIds": [],
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "transactionQuestionsComplete": true,
       "priorIdentifiedTransactionQuestionsComplete": true
     }
   ],
@@ -3312,14 +3336,14 @@
   },
   "remainingPlanningAudit": {
     "date": "2026-10-15",
-    "sourceUserReply": "全a",
-    "document": "docs/module-specs/shared-understanding-audit-20261015.md",
-    "status": "identified-fifty-business-questions-confirmed-no-business-answer-pending",
+    "sourceUserReply": "全A",
+    "document": "docs/module-specs/exception-finance-confirmed-20261015.md",
+    "status": "identified-fifty-three-business-questions-confirmed-no-business-answer-pending",
     "knownGapCategoryCount": 8,
-    "totalQuestionCount": 50,
+    "totalQuestionCount": 53,
     "remainingQuestionCount": 0,
     "totalVerified": true,
-    "verificationScope": "original-forty-five-plus-five-source-backed-audit-omissions",
+    "verificationScope": "original-fifty-plus-three-exception-questions",
     "categoryCountIsQuestionCount": false,
     "newQuestionsPresented": false,
     "presentedQuestionCount": 0,
@@ -3330,17 +3354,17 @@
     "excludeTechnicalTasks": true,
     "excludeExternalEvidenceChecks": true,
     "excludeSecondReleaseScope": true,
-    "answeredQuestionCount": 50,
-    "addedQuestionCount": 5,
+    "answeredQuestionCount": 53,
+    "addedQuestionCount": 3,
     "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md",
     "deferredWorkstreamIds": [
       "merchant-banner-commercial-planning"
     ],
     "allFirstReleaseBusinessResolved": false,
     "currentTransactionQuestionSetResolved": true,
-    "newlyIdentifiedQuestionCount": 5,
+    "newlyIdentifiedQuestionCount": 3,
     "originalQuestionSetResolved": true,
-    "confirmedAuditBatch": "shared-understanding-reply-1-20261015"
+    "confirmedAuditBatch": "exception-finance-reply-1-20261015"
   },
   "discussionFormatHistory": [
     {
@@ -3532,6 +3556,38 @@
       "currentTransactionQuestionSetResolved": false,
       "newlyIdentifiedQuestionCount": 5,
       "originalQuestionSetResolved": true
+    },
+    {
+      "date": "2026-10-15",
+      "sourceUserReply": "全a",
+      "document": "docs/module-specs/shared-understanding-audit-20261015.md",
+      "status": "identified-fifty-business-questions-confirmed-no-business-answer-pending",
+      "knownGapCategoryCount": 8,
+      "totalQuestionCount": 50,
+      "remainingQuestionCount": 0,
+      "totalVerified": true,
+      "verificationScope": "original-forty-five-plus-five-source-backed-audit-omissions",
+      "categoryCountIsQuestionCount": false,
+      "newQuestionsPresented": false,
+      "presentedQuestionCount": 0,
+      "queuedQuestionCount": 0,
+      "planningComplete": false,
+      "userApprovedMissingAnswers": false,
+      "excludeResolvedQuestions": true,
+      "excludeTechnicalTasks": true,
+      "excludeExternalEvidenceChecks": true,
+      "excludeSecondReleaseScope": true,
+      "answeredQuestionCount": 50,
+      "addedQuestionCount": 5,
+      "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "deferredWorkstreamIds": [
+        "merchant-banner-commercial-planning"
+      ],
+      "allFirstReleaseBusinessResolved": false,
+      "currentTransactionQuestionSetResolved": true,
+      "newlyIdentifiedQuestionCount": 5,
+      "originalQuestionSetResolved": true,
+      "confirmedAuditBatch": "shared-understanding-reply-1-20261015"
     }
   ],
   "businessCloseoutQuestionInventory": {
@@ -9067,7 +9123,8 @@
     "developmentReadingEntry": "docs/module-specs/current-development-basis-20261015.md",
     "sharedUnderstandingAudit": "sharedUnderstandingAudit",
     "auditResolution": "sharedUnderstandingRules",
-    "formalPrd": "prdConsolidation"
+    "formalPrd": "prdConsolidation",
+    "exceptionFinance": "exceptionFinanceRules"
   },
   "businessCloseoutFinalPartialRules": {
     "document": "docs/module-specs/business-closeout-confirmed-20261015.md",
@@ -9659,7 +9716,7 @@
     ]
   },
   "prdConsolidation": {
-    "version": "2.0",
+    "version": "2.1",
     "date": "2026-10-15",
     "document": "docs/prd.md",
     "archive": "docs/prd-v1.5-archive-20261015.md",
@@ -9668,8 +9725,9 @@
       "modules": 14,
       "fields": 21,
       "pageGroups": 22,
-      "acceptanceCases": 68,
-      "closeoutDecisions": 50
+      "acceptanceCases": 74,
+      "closeoutDecisions": 53,
+      "originalCloseoutDecisions": 50
     },
     "sharedBusinessUnderstanding": true,
     "pendingIdentifiedBusinessChoices": 0,
@@ -9682,10 +9740,12 @@
       "docs/module-specs/shared-understanding-confirmed-20261015.md",
       "docs/module-specs/business-closeout-round-1-rules-20261015.md",
       "docs/module-specs/business-closeout-round-2-rules-20261015.md",
-      "docs/module-specs/business-closeout-confirmed-20261015.md"
+      "docs/module-specs/business-closeout-confirmed-20261015.md",
+      "docs/module-specs/exception-finance-confirmed-20261015.md"
     ],
     "archiveSourceCommit": "1b8ed680849f204cc92dfc2ea578ad949c45f53b",
-    "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93"
+    "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93",
+    "previousFormalPrdCommit": "17559c0f9dd5139a7cb5e1a7b45ebcc5c87eef8c"
   },
   "items": [
     {
@@ -9742,6 +9802,144 @@
       "pending": ["申请同时间排序/历史展示/关闭理由可见范围及通知保存", "选人/关闭/重开并发实现、取消后重开公开排序", "费用字段映射/阶段标识与排序/已发生判定入口/复制映射及凭据保存/并发及异议", "详细地址格式与联系变更/撤销规则", "预约及清除并发/诊断/结束衔接细则/异议协商关闭", "旧维修资格迁移/跨入口去重与新评分字段衔接", "原维修求助联系流程迁移", "服务内容变更字段/公开展示/费用影响/版本与并发", "文字与附件计数/撤回与重提记录及并发、文件保存"],
       "fullWorkflowReady": false,
       "handoffDecision": "HD01"
+    }
+  ],
+  "exceptionFinanceDecisionBatches": [
+    {
+      "id": "exception-finance-reply-1-20261015",
+      "date": "2026-10-15",
+      "userReply": "全A",
+      "document": "docs/module-specs/exception-finance-confirmed-20261015.md",
+      "questions": [
+        {
+          "id": "EA01",
+          "question": "服务已经交付，但客户拖欠款项，平台佣金怎么处理？",
+          "options": {
+            "A": "允许纳入现有账单异议，争议部分暂缓催缴和欠费限制；核验结束后，需要缴纳的余额按既有补缴72小时规则处理。不自动免佣，客户欠款仍由交易双方解决。",
+            "B": "客户拖欠本身不暂停平台佣金，仍按有效约定金额和原期限缴纳；计费错误等其他申诉照常受理。"
+          },
+          "selected": "A"
+        },
+        {
+          "id": "EA02",
+          "question": "平台故障导致用户无法及时提出异议，怎么保护受影响交易？",
+          "options": {
+            "A": "暂停受影响交易的自动结束和计佣。恢复验收通过后，至少保留24小时提交异议；原有效到期更晚时仍等原到期。双方实际服务约定不改。",
+            "B": "只将受影响交易的自动收尾时间顺延经核实的故障持续时长，不额外保留24小时。"
+          },
+          "selected": "A"
+        },
+        {
+          "id": "EA03",
+          "question": "佣金是否允许分次缴纳，以及多收款怎么处理？",
+          "options": {
+            "A": "允许分次缴纳，先抵最早到期应缴款；剩余逾期款仍适用欠费限制。多缴或重复实际收款核对后退回，不自动变为抵扣余额；应缴为0显示“无需缴纳”。",
+            "B": "只允许一次缴清当前有效应缴款，不支持分次；多收款核对后退回，应缴为0无需支付。"
+          },
+          "selected": "A"
+        }
+      ],
+      "answers": [
+        {
+          "questionId": "EA01",
+          "answer": "A",
+          "selectedOption": "允许纳入现有账单异议，争议部分暂缓催缴和欠费限制；核验结束后，需要缴纳的余额按既有补缴72小时规则处理。不自动免佣，客户欠款仍由交易双方解决。"
+        },
+        {
+          "questionId": "EA02",
+          "answer": "A",
+          "selectedOption": "暂停受影响交易的自动结束和计佣。恢复验收通过后，至少保留24小时提交异议；原有效到期更晚时仍等原到期。双方实际服务约定不改。"
+        },
+        {
+          "questionId": "EA03",
+          "answer": "A",
+          "selectedOption": "允许分次缴纳，先抵最早到期应缴款；剩余逾期款仍适用欠费限制。多缴或重复实际收款核对后退回，不自动变为抵扣余额；应缴为0显示“无需缴纳”。"
+        }
+      ],
+      "implementationEnabled": false
+    }
+  ],
+  "exceptionFinanceRules": {
+    "sourceBatch": "exception-finance-reply-1-20261015",
+    "document": "docs/module-specs/exception-finance-confirmed-20261015.md",
+    "enabled": false,
+    "customerArrears": {
+      "allowedAsCommissionBillIssue": true,
+      "pauseScope": "disputed-commission-only",
+      "uncontestedDeadlineUnchanged": true,
+      "automaticWaiver": false,
+      "repaymentClock": "balance-determined-and-supplemental-notice-created",
+      "repaymentHours": 72,
+      "customerDebtAdjudication": false,
+      "customerPaymentTotalCollection": false
+    },
+    "platformOutage": {
+      "requiresVerifiedPlatformLogs": true,
+      "affectedObjectsOnly": true,
+      "affectedFunctions": [
+        "login",
+        "delivery-issue-submission"
+      ],
+      "userOfflineEligible": false,
+      "wechatNotificationFailureEligible": false,
+      "pauseAutomaticCompletion": true,
+      "pauseMainCommissionFormation": true,
+      "recoveryRequiresPassedAcceptance": true,
+      "minRecoveryProtectionHours": 24,
+      "closeNotBefore": "max-effective-service-deadline-and-recovery-acceptance-plus-24-hours",
+      "strictlyAfterProtectionDeadline": true,
+      "issueAtDeadlineTimely": true,
+      "originalServiceTimeChanged": false,
+      "duplicateEventRefreshesDeadline": false,
+      "unrelatedBillClockChanged": false
+    },
+    "payments": {
+      "partialPaymentAllowed": true,
+      "allocation": "earliest-due-current-payable-first",
+      "suspendedDisputeAutomaticallyAllocated": false,
+      "partialClearsAllArrears": false,
+      "remainingDeadlineReset": false,
+      "duplicateCallbackIsNewMoney": false,
+      "actualExcess": "verified-refund",
+      "excessAutomaticallyBecomesCredit": false,
+      "unknownRefundIsSuccessful": false,
+      "zeroDueLabel": "无需缴纳",
+      "zeroDuePaymentCreated": false,
+      "zeroDueClearsHistoricalArrears": false,
+      "refundChannel": null,
+      "realRefundVerified": false,
+      "approvedCommissionCreditsSeparate": true
+    }
+  },
+  "prdConsolidationHistory": [
+    {
+      "version": "2.0",
+      "date": "2026-10-15",
+      "document": "docs/prd.md",
+      "archive": "docs/prd-v1.5-archive-20261015.md",
+      "archiveSha256": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93",
+      "counts": {
+        "modules": 14,
+        "fields": 21,
+        "pageGroups": 22,
+        "acceptanceCases": 68,
+        "closeoutDecisions": 50
+      },
+      "sharedBusinessUnderstanding": true,
+      "pendingIdentifiedBusinessChoices": 0,
+      "bannerCommercialTermsDeferred": true,
+      "oldTaskPlanRequiresRemapping": true,
+      "productImplemented": false,
+      "realServicesEnabled": false,
+      "sourceDocuments": [
+        "docs/module-specs/current-development-basis-20261015.md",
+        "docs/module-specs/shared-understanding-confirmed-20261015.md",
+        "docs/module-specs/business-closeout-round-1-rules-20261015.md",
+        "docs/module-specs/business-closeout-round-2-rules-20261015.md",
+        "docs/module-specs/business-closeout-confirmed-20261015.md"
+      ],
+      "archiveSourceCommit": "1b8ed680849f204cc92dfc2ea578ad949c45f53b",
+      "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93"
     }
   ]
 }

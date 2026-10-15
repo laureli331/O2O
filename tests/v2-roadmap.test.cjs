@@ -28,7 +28,7 @@ function validate(b) {
   assert.equal(ids(b.prd,'M').length,14,'PRD 2.0 modules include other business and commission');
   assert.equal(ids(b.prd,'F').length,21,'PRD 2.0 fields include time, staged fees and commission');
   assert.equal(ids(b.prd,'V').length,22,'PRD 2.0 page groups include commission billing');
-  assert.equal(['T','RT','AT','DT','BX'].reduce((n,p)=>n+ids(b.prd,p).length,0),68,'PRD 2.0 acceptance includes cross-module boundaries');
+  assert.equal(['T','RT','AT','DT','BX'].reduce((n,p)=>n+ids(b.prd,p).length,0),74,'PRD 2.1 acceptance includes three confirmed exception rules');
   const r=b.record.versionTwoReminder;
   assert.equal(r.kind,'heartbeat','Reminder is attached to the current chat');
   assert.equal(r.status,'ACTIVE','Reminder must be active');

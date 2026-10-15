@@ -68,10 +68,10 @@ test('newly confirmed boundaries preserve separate same-name fee stages, current
   assert.deepEqual(credit.gateReferenceCorrection.from, ['E02', 'E03']);
 });
 
-test('all fifty identified business questions now have answers without declaring implementation, Banner commerce or external evidence complete', () => {
+test('the original fifty and three exception questions now have answers without declaring implementation, Banner commerce or external evidence complete', () => {
   const current = records.sharedUnderstandingAudit, focus = records.currentPlanningFocus, a = records.remainingPlanningAudit;
   assert.equal(current.remainingBusinessQuestions, 0); assert.equal(current.transactionBusinessAligned, true);
-  assert.equal(a.totalQuestionCount, 50); assert.equal(a.answeredQuestionCount, 50); assert.equal(a.remainingQuestionCount, 0);
+  assert.equal(a.totalQuestionCount, 53); assert.equal(a.answeredQuestionCount, 53); assert.equal(a.remainingQuestionCount, 0);
   assert.equal(a.currentTransactionQuestionSetResolved, true);
   assert.deepEqual(focus.pendingQuestionIds, []); assert.equal(focus.remainingQuestionCount, 0);
   assert.equal(focus.transactionQuestionsComplete, true); assert.equal(focus.planningComplete, false);

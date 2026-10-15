@@ -9,7 +9,7 @@ const read = p => new TextDecoder('utf-8', { fatal: true }).decode(fs.readFileSy
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const prd = read('docs/prd.md');
 const archived = read(records.prdConsolidation.archive);
-const normalize = s => s.replaceAll('二手', '闲置').replaceAll('承接者', '接单员').replaceAll('期望完成时间', '服务到期时间');
+const normalize = s => s.replaceAll('二手', '闲置').replaceAll('承接者', '接单员').replaceAll('期望完成时间', '服务到期时间').replaceAll('第15.2节', '第12.2节');
 const family = (text, prefix) => {
   const result = new Map();
   for (const m of text.matchAll(new RegExp('^\\| (' + prefix + '\\d{2}) \\|[^\\r\\n]+', 'gm'))) {
@@ -26,8 +26,8 @@ const terms = (text, expected, label) => { for (const term of expected) assert(t
 
 function validateCurrent(text) {
   assert(text.startsWith('# 湘邻湘友微信小程序 PRD'));
-  terms(text, ['版本：2.0', '2026-10-15', '没有产品实现', '商家Banner商业方案仍按用户要求延后'], 'Current baseline');
-  for (const [prefix, count] of [['M', 14], ['R', 8], ['F', 21], ['V', 22], ['T', 18], ['RT', 16], ['AT', 12], ['DT', 10], ['BX', 12], ['AI', 16], ['AM', 8], ['VP', 5]]) {
+  terms(text, ['版本：2.1', '2026-10-15', '没有产品实现', '商家Banner商业方案仍按用户要求延后'], 'Current baseline');
+  for (const [prefix, count] of [['M', 14], ['R', 8], ['F', 21], ['V', 22], ['T', 18], ['RT', 16], ['AT', 12], ['DT', 10], ['BX', 18], ['AI', 16], ['AM', 8], ['VP', 5]]) {
     const rows = family(text, prefix);
     assert.equal(rows.size, count, prefix + ' current coverage');
     for (let i = 1; i <= count; i++) assert(rows.has(prefix + String(i).padStart(2, '0')));
@@ -64,10 +64,11 @@ function validateCurrent(text) {
   for (const forbidden of ['平台不代收、不代结算、不抽跑腿佣金', '完成申请满24小时且无确认/异议才自动完成', '接单员提交完成，发布者确认后完成']) assert(!text.includes(forbidden), 'Obsolete operative rule: ' + forbidden);
 
   const expected = new Map(records.businessCloseoutQuestionInventory.questions.map(q => [q.id, q.recordedAnswer]));
+  for (const q of records.exceptionFinanceDecisionBatches[0].questions) expected.set(q.id, q.selected);
   for (const q of records.sharedUnderstandingAudit.questions) expected.set(q.id, q.selected);
-  const decisions = [...text.matchAll(/^\| DEC-((?:CQ|NE|UA)\d{2}) \| ([A-Z]+) \|/gm)];
-  assert.equal(decisions.length, 50, 'Decision trace count');
-  assert.equal(new Set(decisions.map(m => m[1])).size, 50);
+  const decisions = [...text.matchAll(/^\| DEC-((?:CQ|NE|UA|EA)\d{2}) \| ([A-Z]+) \|/gm)];
+  assert.equal(decisions.length, 53, 'Decision trace count');
+  assert.equal(new Set(decisions.map(m => m[1])).size, 53);
   for (const m of decisions) assert.equal(m[2], expected.get(m[1]), 'Actual choice ' + m[1]);
   return true;
 }
@@ -109,8 +110,8 @@ const mutations = [
   ['turning review into fee expiry', '不是只收费30天', '只收费30天', /Commission contract/],
   ['netting commissions from income', '不先扣佣金', '先扣佣金', /Personal income/],
   ['adding an errand pre-expiry notice', '跑腿只在自动结束后通知双方一次', '跑腿到期前后都通知双方', /Notification exception/],
-  ['dropping the other module', /^\| M13 \|[^\r\n]+\n/m, '', /M current coverage/],
-  ['dropping commission page coverage', /^\| V22 \|[^\r\n]+\n/m, '', /V current coverage/],
+  ['dropping the other module', /^\| M13 \|[^\r\n]+\r?\n/m, '', /M current coverage/],
+  ['dropping commission page coverage', /^\| V22 \|[^\r\n]+\r?\n/m, '', /V current coverage/],
 ];
 for (const [name, from, to, error] of mutations) test(name + ' is rejected by current PRD validation', () => {
   const changed = prd.replace(from, to); assert.notEqual(changed, prd, 'Mutation changed the fixture');

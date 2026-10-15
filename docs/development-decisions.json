@@ -515,5 +515,16 @@
     "stableEvidence": [],
     "lastRepairAcceptanceAt": null,
     "reminderDeliveredAt": null
+  },
+  "currentBusinessPrd": {
+    "version": "2.1",
+    "document": "docs/prd.md",
+    "rulesDocument": "docs/module-specs/exception-finance-confirmed-20261015.md",
+    "originalConfirmedDecisions": 50,
+    "additionalConfirmedDecisions": 3,
+    "totalConfirmedDecisions": 53,
+    "acceptanceCases": 74,
+    "implementationEnabled": false,
+    "actualPaymentAndRefundVerified": false
   }
 }
