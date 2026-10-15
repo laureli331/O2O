@@ -7,11 +7,13 @@ const { validateAiFeaturePlanning } = require('./helpers/ai-feature-planning-val
 const { validateDevelopmentRecord } = require('./helpers/development-record-validator.cjs');
 const root = path.resolve(__dirname,'..');
 const read = p => new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(path.join(root,p)));
-const paths = {prd:'docs/prd.md', design:'docs/structured-design.md', plan:'docs/development-plan.md', execution:'docs/post-registration-development.md', decisions:'docs/ai-feature-decisions.md', evidence:'docs/external-evidence.md'};
+// This suite preserves the originally approved v1.5 contract and its regression mutations.
+// Current v2.0 coverage and unchanged AI safeguards are validated in prd-v2.test.cjs.
+const paths = {prd:'docs/prd-v1.5-archive-20261015.md', design:'docs/structured-design.md', plan:'docs/development-plan.md', execution:'docs/post-registration-development.md', decisions:'docs/ai-feature-decisions.md', evidence:'docs/external-evidence.md'};
 function bundle() {
   return {...Object.fromEntries(Object.entries(paths).map(([key,p]) => [key,read(p)])), record:JSON.parse(read('docs/development-decisions.json'))};
 }
-test('approved scope, fields, pages, gates and acceptance agree across all documents', () => {
+test('archived v1.5 scope, fields, pages, gates and acceptance remain consistent with its original design and plan', () => {
   const b = bundle();
   assert.equal(validateAiFeaturePlanning(b),true);
   assert.equal(validateDevelopmentRecord(b.record,b.plan),true);

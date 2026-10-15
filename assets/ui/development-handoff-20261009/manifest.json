@@ -198,13 +198,13 @@
     },
     {
       "path": "coverage.json",
-      "bytes": 7309,
-      "sha256": "3425B8856595A6D71F7700A0D346AF45812AC5AA03F67E0CA0258A7B109852F9"
+      "bytes": 8505,
+      "sha256": "879F838C108B98B51CF346A3C5FC728DD0594DD7B6AD8D82A1ACA0A3235AD59D"
     },
     {
       "path": "decisions.json",
-      "bytes": 360492,
-      "sha256": "9B225E7C6DE4994A64BBE4DD8055131CB9F9658E50EAE501DA00429D683305C2"
+      "bytes": 362004,
+      "sha256": "D256C9913E57588400E8633FD732BE65430EC585F4765C9413C07ADD6EEE2076"
     },
     {
       "path": "design-tokens.json",

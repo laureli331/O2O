@@ -718,7 +718,7 @@ test('commission evaluation keeps the old baseline, operational limitations and 
   assert(doc.includes('不确认实际资格或替用户选择支付方式'));
   assert(doc.includes('https://pay.wechatpay.cn/doc/v3/partner/4012072582'));
   assert(doc.includes('第十三轮8题'));
-  assert(read('docs/prd.md').includes('平台不代收、不代结算、不抽跑腿佣金'));
+  assert(read('docs/prd-v1.5-archive-20261015.md').includes('平台不代收、不代结算、不抽跑腿佣金')); // Historical baseline only; current monthly commission is in PRD 2.0.
   assert.equal(handoff.items.find(x => x.id === 'HD02').confirmed.business, '跑腿');
   for (const item of records.items) assert.equal(item.fullWorkflowReady, false);
 });

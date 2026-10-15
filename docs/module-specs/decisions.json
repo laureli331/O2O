@@ -9066,7 +9066,8 @@
     "operatorAccount": "operatorAccountRules",
     "developmentReadingEntry": "docs/module-specs/current-development-basis-20261015.md",
     "sharedUnderstandingAudit": "sharedUnderstandingAudit",
-    "auditResolution": "sharedUnderstandingRules"
+    "auditResolution": "sharedUnderstandingRules",
+    "formalPrd": "prdConsolidation"
   },
   "businessCloseoutFinalPartialRules": {
     "document": "docs/module-specs/business-closeout-confirmed-20261015.md",
@@ -9621,10 +9622,21 @@
       "actualRefundVerified": false,
       "duplicateRefundAllowed": false,
       "necessaryRetentionAndNoticeGates": [
-        "E02",
-        "E03"
+        "E03",
+        "E04"
       ],
-      "unnecessaryPrivateAccessRestored": false
+      "unnecessaryPrivateAccessRestored": false,
+      "gateReferenceCorrection": {
+        "from": [
+          "E02",
+          "E03"
+        ],
+        "to": [
+          "E03",
+          "E04"
+        ],
+        "reason": "E03是数据/注销，E04是实际支付退款；E02是身份/手机号，不改变已确认人工处理原则"
+      }
     },
     "feeStages": {
       "businesses": [
@@ -9645,6 +9657,35 @@
     "deferredWorkstreamIds": [
       "merchant-banner-commercial-planning"
     ]
+  },
+  "prdConsolidation": {
+    "version": "2.0",
+    "date": "2026-10-15",
+    "document": "docs/prd.md",
+    "archive": "docs/prd-v1.5-archive-20261015.md",
+    "archiveSha256": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93",
+    "counts": {
+      "modules": 14,
+      "fields": 21,
+      "pageGroups": 22,
+      "acceptanceCases": 68,
+      "closeoutDecisions": 50
+    },
+    "sharedBusinessUnderstanding": true,
+    "pendingIdentifiedBusinessChoices": 0,
+    "bannerCommercialTermsDeferred": true,
+    "oldTaskPlanRequiresRemapping": true,
+    "productImplemented": false,
+    "realServicesEnabled": false,
+    "sourceDocuments": [
+      "docs/module-specs/current-development-basis-20261015.md",
+      "docs/module-specs/shared-understanding-confirmed-20261015.md",
+      "docs/module-specs/business-closeout-round-1-rules-20261015.md",
+      "docs/module-specs/business-closeout-round-2-rules-20261015.md",
+      "docs/module-specs/business-closeout-confirmed-20261015.md"
+    ],
+    "archiveSourceCommit": "1b8ed680849f204cc92dfc2ea578ad949c45f53b",
+    "archiveSha256LfNormalized": "C481758A2692AAB63398936C9AF9A4326E9B06D57B58A1148C8F69F2A9FB8A93"
   },
   "items": [
     {

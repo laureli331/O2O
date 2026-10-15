@@ -25,10 +25,10 @@ function validate(b) {
   assert.equal(b.record.featurePlanning.merchantPermissionVerified,false,'Merchant permission is not verified');
   assert.equal(b.record.featurePlanning.userRestrictionCorrection,'third-party-transaction-entry-and-commission-not-all-payment','Payment versus commission correction');
   assert.equal(ids(b.plan,'DP').length,48,'First-version task count is unchanged');
-  assert.equal(ids(b.prd,'M').length,12,'First-version modules are unchanged');
-  assert.equal(ids(b.prd,'F').length,18,'First-version fields are unchanged');
-  assert.equal(ids(b.prd,'V').length,21,'First-version page groups are unchanged');
-  assert.equal(['T','RT','AT','DT'].reduce((n,p)=>n+ids(b.prd,p).length,0),56,'First-version acceptance count is unchanged');
+  assert.equal(ids(b.prd,'M').length,14,'PRD 2.0 modules include other business and commission');
+  assert.equal(ids(b.prd,'F').length,21,'PRD 2.0 fields include time, staged fees and commission');
+  assert.equal(ids(b.prd,'V').length,22,'PRD 2.0 page groups include commission billing');
+  assert.equal(['T','RT','AT','DT','BX'].reduce((n,p)=>n+ids(b.prd,p).length,0),68,'PRD 2.0 acceptance includes cross-module boundaries');
   const r=b.record.versionTwoReminder;
   assert.equal(r.kind,'heartbeat','Reminder is attached to the current chat');
   assert.equal(r.status,'ACTIVE','Reminder must be active');

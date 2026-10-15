@@ -64,7 +64,8 @@ test('newly confirmed boundaries preserve separate same-name fee stages, current
   const credit = r.accountClosureCredit;
   assert.equal(credit.manualOperatorReview, true); assert.equal(credit.requestAcceptedWithCredit, true);
   for (const field of ['automaticForfeiture', 'forcedWaiver', 'indefiniteDelayBecauseOfCredit', 'everyCreditAutomaticallyRedeemableForCash', 'actualRefundVerified', 'duplicateRefundAllowed']) assert.equal(credit[field], false, field);
-  assert.equal(credit.refundChannel, null); assert.deepEqual(credit.necessaryRetentionAndNoticeGates, ['E02', 'E03']);
+  assert.equal(credit.refundChannel, null); assert.deepEqual(credit.necessaryRetentionAndNoticeGates, ['E03', 'E04']);
+  assert.deepEqual(credit.gateReferenceCorrection.from, ['E02', 'E03']);
 });
 
 test('all fifty identified business questions now have answers without declaring implementation, Banner commerce or external evidence complete', () => {
