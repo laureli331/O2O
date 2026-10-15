@@ -9,8 +9,62 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+test('final partial reply records four explicit choices without treating the question about thirty days as consent', () => {
+  const b=records.businessCloseoutDecisionBatches[2];
+  assert.equal(b.userReply,'1. 运营看板是给谁看的?给我看的话, 那可以\n2. "收费试运行30天"是什么意思?收哪里的费?为什么只收30天?\n3. 不需要\n4. a\n5. a');
+  assert.deepEqual(b.answers.map(a=>[a.questionId,a.answer]),[['CQ36','A'],['CQ38','B'],['CQ39','A'],['CQ40','A']]);
+  assert(b.answers[0].condition.includes('不对普通用户公开'));
+  const s=records.businessCloseoutQuestionSets[2];
+  for(const a of b.answers){const q=s.questions.find(q=>q.id===a.questionId);assert.equal(q.selected,a.answer);assert.equal(a.selectedOption,q.options[a.answer]);}
+  assert.deepEqual(s.answers,b.answers);assert.equal(s.questions.find(q=>q.id==='CQ37').selected,null);
+  assert.equal(b.unanswered.length,1);assert.equal(b.unanswered[0].questionId,'CQ37');
+  assert(b.unanswered[0].userQuestion.includes('为什么只收30天'));
+  assert.deepEqual(handoff.businessCloseoutDecisionBatches,records.businessCloseoutDecisionBatches);
+});
+
+test('confirmed final governance protects private dashboard, historical rates, new evidence and optional supporting images', () => {
+  const r=records.businessCloseoutFinalPartialRules;assert.deepEqual(handoff.businessCloseoutFinalPartialRules,r);
+  assert.equal(r.enabled,false);assert.equal(r.readyForImplementation,false);
+  const o=r.operationsDashboard;assert.equal(o.audience,'existing-two-independent-equal-operators');assert.equal(o.publicAccess,false);
+  assert.deepEqual(o.businesses,['跑腿','维修','闲置','其它']);assert.equal(o.automaticCompletionProvesActualDelivery,false);
+  assert.equal(o.customerOfflinePaymentTotalCollected,false);assert.equal(o.realNewStatisticsGate,'DG01');assert.equal(o.merchantBannerReportsIncluded,false);
+  const c=r.commissionConfiguration;assert.equal(c.anotherOperatorReviewRequired,false);assert.equal(c.equalExistingPermissionsRetained,true);
+  assert.equal(c.requiredAnnouncementProcedureRetained,true);assert.equal(c.oldTradeRateSnapshotsChanged,false);assert.equal(c.saveAutomaticallyEnablesCharging,false);
+  const i=r.repeatedBillIssue;assert.equal(i.sameReviewedReasonAndEvidencePausesAgain,false);assert.equal(i.newEvidenceAcceptedByOperatorMayPauseDisputedPart,true);
+  assert.equal(i.appealEntryClosed,false);assert.equal(i.undisputedOriginalDeadlineRetained,true);assert.equal(i.operatorDecidesServiceDelivery,false);
+  const p=r.reducedCommissionBasis;assert.equal(p.reasonRequired,true);assert.equal(p.reasonMinLength,1);assert.equal(p.reasonMaxLength,500);
+  assert.deepEqual(p.attachments,{required:false,minCount:0,maxCount:9,formats:['JPEG','PNG'],maxSizeMB:5});
+  assert.equal(p.actualNewPriceRequiresBothParties,true);assert.equal(p.commissionReductionRequiresOperatorVerification,true);
+  assert.equal(p.oldReceiptAccessRestored,false);assert.equal(p.attachmentProvesPayment,false);assert.equal(p.necessaryRetentionPolicyRetained,true);
+});
+
+test('thirty-day review clarification neither ends charging nor selects a review priority or enables merchant advertising', () => {
+  const r=records.businessCloseoutFinalPartialRules.commissionReview;
+  assert.equal(r.existingApproval,'CT08/A');assert.equal(r.reviewAfterActualActivationDays,30);
+  assert.equal(r.activationOccurred,false);assert.equal(r.startsFromDocumentDate,false);assert.equal(r.chargesStopAfter30Days,false);
+  assert.equal(r.automaticallyChangesRates,false);assert.equal(r.merchantBannerIncluded,false);assert.equal(r.focus,null);
+  assert.equal(r.unansweredQuestionId,'CQ37');
+  const doc=read(r.clarificationDocument);const rows=[...doc.matchAll(/^\| (\d+)（(CQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,1);assert.equal(rows[0][2],'CQ37');assert(doc.includes('不是只收30天'));assert(doc.includes('不增加业务题数'));
+});
+
+test('current audit has forty-four answered and only original CQ37 pending while preserving the prior five-question snapshot', () => {
+  const inv=records.businessCloseoutQuestionInventory;
+  assert.equal(inv.totalQuestions,45);assert.equal(inv.answeredQuestions,44);assert.equal(inv.approvedAnswerCount,44);assert.equal(inv.remainingQuestions,1);
+  assert.equal(inv.questions.filter(q=>q.status==='answered').length,44);
+  assert.deepEqual(inv.questions.filter(q=>q.status==='pending').map(q=>q.id),['CQ37']);
+  assert.equal(inv.questions.find(q=>q.id==='CQ37').recordedAnswer,undefined);
+  const focus=records.currentPlanningFocus;assert.deepEqual(focus.pendingQuestionIds,['CQ37']);assert.equal(focus.remainingQuestionCount,1);assert.equal(focus.planningComplete,false);
+  assert.equal(records.remainingPlanningAudit.answeredQuestionCount,44);assert.equal(records.remainingPlanningAudit.presentedQuestionCount,1);
+  assert.deepEqual(focus.deferredWorkstreamIds,['merchant-banner-commercial-planning']);
+  assert.equal(records.businessCloseoutInventoryHistory[2].remainingQuestions,5);
+  assert.equal(records.remainingPlanningAuditHistory[3].remainingQuestionCount,5);
+  for(const k of ['currentPlanningFocus','remainingPlanningAudit','businessCloseoutQuestionInventory','businessCloseoutQuestionSetHistory','businessCloseoutInventoryHistory','currentPolicyReferences'])assert.deepEqual(handoff[k],records[k],k);
+  for(const f of [focus.ruleDocument,focus.questionDocument])for(const m of read(f).matchAll(/\]\(([^)]+)\)/g))assert(fs.existsSync(path.resolve(root,path.dirname(f),m[1])),f+':'+m[1]);
+});
+
 test('second reply records CQ30 as custom and CQ32 as A with an errand-only exception rather than blindly assigning all A', () => {
-  assert.equal(records.businessCloseoutDecisionBatches.length,2);
+  assert.equal(records.businessCloseoutDecisionBatches.filter(b=>b.id==='business-closeout-reply-2-20261015').length,1);
   const batch=records.businessCloseoutDecisionBatches[1];
   assert.equal(batch.userReply,'15优选改为banner广告位, 给商家, 盈利模式稍后细聊\n17可以, 跑腿为只在自动结束后通知双方一次\n全A');
   assert.equal(batch.answers.length,20);
@@ -115,26 +169,26 @@ test('merchant Banner replaces preferred-card scope without inventing packages, 
 });
 
 test('exactly five final sourced questions remain unapproved after forty answers, with merchant commercial questions deferred rather than padded', () => {
-  const inv=records.businessCloseoutQuestionInventory;
+  const inv=records.businessCloseoutInventoryHistory[2];
   assert.equal(inv.totalQuestions,45);assert.equal(inv.answeredQuestions,40);assert.equal(inv.remainingQuestions,5);
   assert.equal(inv.questions.filter(q=>q.status==='answered').length,40);
   assert.equal(inv.questions.filter(q=>q.status==='pending').length,5);
   assert.equal(inv.questions.filter(q=>q.status==='queued').length,0);
   assert.equal(records.businessCloseoutQuestionSets.length,3);
-  const last=records.businessCloseoutQuestionSets[2];
+  const last=records.businessCloseoutQuestionSetHistory[2];
   assert.deepEqual(last.presentedQuestionIds,['CQ36','CQ37','CQ38','CQ39','CQ40']);
   assert.deepEqual(last.answers,[]);assert.equal(last.previousAllAApplies,false);
   assert.equal(last.finalShortRound,true);assert.equal(last.noPadding,true);
   const rows=[...read(last.document).matchAll(/^\| (\d+)（(CQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(rows.length,5);
   last.questions.forEach((q,i)=>{assert.equal(q.selected,null);assert.equal(q.number,i+1);assert.equal(q.question,rows[i][3].trim());assert.equal(q.options.A,rows[i][4].trim());assert.equal(q.options.B,rows[i][5].trim());});
-  assert.equal(records.currentPlanningFocus.remainingQuestionCount,5);
-  assert.equal(records.currentPlanningFocus.planningComplete,false);
-  assert.deepEqual(records.currentPlanningFocus.blockingInterpretationIds,[]);
-  assert.deepEqual(records.currentPlanningFocus.pendingQuestionIds,last.presentedQuestionIds);
+  assert.equal(records.planningFocusHistory[9].remainingQuestionCount,5);
+  assert.equal(records.planningFocusHistory[9].planningComplete,false);
+  assert.deepEqual(records.planningFocusHistory[9].blockingInterpretationIds,[]);
+  assert.deepEqual(records.planningFocusHistory[9].pendingQuestionIds,last.presentedQuestionIds);
   assert.equal(records.remainingPlanningAudit.allFirstReleaseBusinessResolved,false);
   assert.deepEqual(handoff.currentPlanningFocus,records.currentPlanningFocus);
-  assert.deepEqual(handoff.businessCloseoutQuestionInventory,inv);
+  assert.deepEqual(handoff.businessCloseoutInventoryHistory[2],inv);
   for(const f of ['docs/module-specs/business-closeout-round-2-rules-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md',last.document]){
     for(const m of read(f).matchAll(/\]\(([^)]+)\)/g))assert(fs.existsSync(path.resolve(root,path.dirname(f),m[1])),`${f}: ${m[1]}`);
   }
@@ -2994,7 +3048,7 @@ test('misunderstood time-entry explanation and sixth-round questions remain revi
   for(const text of ['DO02未选、需解释','没听懂','下午5点','下午3点','原报价金额保留','接单员明确接受新时间','不执行或固化DO02','延期最大七天，起算点','不倒填窗口月份']) assert(doc.includes(text),text);
   const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-operation-rules.md',sourceBatch:'deadline-completion-round-5-20261014',questionDocument:'docs/module-specs/deadline-completion-clarification-questions-20261014.md',status:'fifth-round-partial-time-entry-clarification-required',pendingQuestionIds:['DX01','DX02','DX03','DX04','DX05','DX06','DX07','DX08'],unresolvedOriginalQuestionIds:['DO02'],priorQuestionSetPaused:true,implementationEnabled:false};
   assert.deepEqual(records.planningFocusHistory[5],focus);assert.deepEqual(handoff.planningFocusHistory[5],focus);
-  assert.equal(records.planningFocusHistory.length,9);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
+  assert.equal(records.planningFocusHistory.length,10);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
   const questions=read(focus.questionDocument);
   assert(questions.includes('8题全部选择A'));assert(questions.includes('重述尚未选的原DO02'));
   const rows=[...questions.matchAll(/^\| [1-8]（(DX\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
