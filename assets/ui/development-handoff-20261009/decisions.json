@@ -2094,45 +2094,27 @@
     "phase": "first-release-business-planning",
     "direction": "service-expiry-without-customer-completion-confirmation",
     "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
-    "ruleDocument": "docs/module-specs/business-closeout-round-1-rules-20261015.md",
-    "sourceBatch": "business-closeout-reply-1-20261015",
-    "questionDocument": "docs/module-specs/business-closeout-round-2-questions-20261015.md",
-    "status": "expiry-interpretation-and-second-closeout-round-pending",
+    "ruleDocument": "docs/module-specs/business-closeout-round-2-rules-20261015.md",
+    "sourceBatch": "business-closeout-reply-2-20261015",
+    "questionDocument": "docs/module-specs/business-closeout-final-questions-20261015.md",
+    "status": "expiry-rules-confirmed-final-five-pending-banner-commercial-deferred",
     "pendingQuestionIds": [
-      "NE01",
-      "NE02",
-      "NE03",
-      "NE04",
-      "NE05",
-      "CQ21",
-      "CQ22",
-      "CQ23",
-      "CQ24",
-      "CQ25",
-      "CQ26",
-      "CQ27",
-      "CQ28",
-      "CQ29",
-      "CQ30",
-      "CQ31",
-      "CQ32",
-      "CQ33",
-      "CQ34",
-      "CQ35"
+      "CQ36",
+      "CQ37",
+      "CQ38",
+      "CQ39",
+      "CQ40"
     ],
     "unresolvedOriginalQuestionIds": [],
     "priorQuestionSetPaused": true,
     "implementationEnabled": false,
     "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
-    "remainingQuestionCount": 25,
+    "remainingQuestionCount": 5,
     "planningComplete": false,
-    "questionSetId": "business-closeout-round-2-20261015",
-    "blockingInterpretationIds": [
-      "NE01",
-      "NE02",
-      "NE03",
-      "NE04",
-      "NE05"
+    "questionSetId": "business-closeout-final-20261015",
+    "blockingInterpretationIds": [],
+    "deferredWorkstreamIds": [
+      "merchant-banner-commercial-planning"
     ]
   },
   "planningFocusHistory": [
@@ -2324,6 +2306,52 @@
       "remainingQuestionCount": 40,
       "planningComplete": false,
       "questionSetId": "business-closeout-round-1-20261014"
+    },
+    {
+      "date": "2026-10-15",
+      "phase": "first-release-business-planning",
+      "direction": "service-expiry-without-customer-completion-confirmation",
+      "directionDocument": "docs/module-specs/service-expiry-request-20261015.md",
+      "ruleDocument": "docs/module-specs/business-closeout-round-1-rules-20261015.md",
+      "sourceBatch": "business-closeout-reply-1-20261015",
+      "questionDocument": "docs/module-specs/business-closeout-round-2-questions-20261015.md",
+      "status": "expiry-interpretation-and-second-closeout-round-pending",
+      "pendingQuestionIds": [
+        "NE01",
+        "NE02",
+        "NE03",
+        "NE04",
+        "NE05",
+        "CQ21",
+        "CQ22",
+        "CQ23",
+        "CQ24",
+        "CQ25",
+        "CQ26",
+        "CQ27",
+        "CQ28",
+        "CQ29",
+        "CQ30",
+        "CQ31",
+        "CQ32",
+        "CQ33",
+        "CQ34",
+        "CQ35"
+      ],
+      "unresolvedOriginalQuestionIds": [],
+      "priorQuestionSetPaused": true,
+      "implementationEnabled": false,
+      "backlogDocument": "docs/module-specs/business-closeout-plan-20261014.md",
+      "remainingQuestionCount": 25,
+      "planningComplete": false,
+      "questionSetId": "business-closeout-round-2-20261015",
+      "blockingInterpretationIds": [
+        "NE01",
+        "NE02",
+        "NE03",
+        "NE04",
+        "NE05"
+      ]
     }
   ],
   "deadlineCompletionDecisionBatches": [
@@ -3183,27 +3211,31 @@
   },
   "remainingPlanningAudit": {
     "date": "2026-10-15",
-    "sourceUserReply": "全A\n取消\"确认完成/收到\", 新增\"服务到期时间\", 到时自动完成, 新增\"延长到期\"\n这样不需要用户多一步操作(因为他们线下完成交易之后, 也不想在小程序上确认)\n在发布需求的时候, 让用户填写\"服务时间\", \"有效期\"让他们自己填个时间\n你认为呢?",
+    "sourceUserReply": "15优选改为banner广告位, 给商家, 盈利模式稍后细聊\n17可以, 跑腿为只在自动结束后通知双方一次\n全A",
     "document": "docs/module-specs/business-closeout-plan-20261014.md",
-    "status": "first-twenty-answered-five-expiry-clarifications-added",
+    "status": "forty-answered-final-five-pending-banner-commercial-workstream-deferred",
     "knownGapCategoryCount": 8,
     "totalQuestionCount": 45,
-    "remainingQuestionCount": 25,
+    "remainingQuestionCount": 5,
     "totalVerified": true,
     "verificationScope": "forty-original-plus-five-explicit-expiry-questions",
     "categoryCountIsQuestionCount": false,
     "newQuestionsPresented": true,
-    "presentedQuestionCount": 20,
-    "queuedQuestionCount": 5,
+    "presentedQuestionCount": 5,
+    "queuedQuestionCount": 0,
     "planningComplete": false,
     "userApprovedMissingAnswers": false,
     "excludeResolvedQuestions": true,
     "excludeTechnicalTasks": true,
     "excludeExternalEvidenceChecks": true,
     "excludeSecondReleaseScope": true,
-    "answeredQuestionCount": 20,
+    "answeredQuestionCount": 40,
     "addedQuestionCount": 5,
-    "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md"
+    "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md",
+    "deferredWorkstreamIds": [
+      "merchant-banner-commercial-planning"
+    ],
+    "allFirstReleaseBusinessResolved": false
   },
   "discussionFormatHistory": [
     {
@@ -3255,6 +3287,30 @@
       "excludeTechnicalTasks": true,
       "excludeExternalEvidenceChecks": true,
       "excludeSecondReleaseScope": true
+    },
+    {
+      "date": "2026-10-15",
+      "sourceUserReply": "全A\n取消\"确认完成/收到\", 新增\"服务到期时间\", 到时自动完成, 新增\"延长到期\"\n这样不需要用户多一步操作(因为他们线下完成交易之后, 也不想在小程序上确认)\n在发布需求的时候, 让用户填写\"服务时间\", \"有效期\"让他们自己填个时间\n你认为呢?",
+      "document": "docs/module-specs/business-closeout-plan-20261014.md",
+      "status": "first-twenty-answered-five-expiry-clarifications-added",
+      "knownGapCategoryCount": 8,
+      "totalQuestionCount": 45,
+      "remainingQuestionCount": 25,
+      "totalVerified": true,
+      "verificationScope": "forty-original-plus-five-explicit-expiry-questions",
+      "categoryCountIsQuestionCount": false,
+      "newQuestionsPresented": true,
+      "presentedQuestionCount": 20,
+      "queuedQuestionCount": 5,
+      "planningComplete": false,
+      "userApprovedMissingAnswers": false,
+      "excludeResolvedQuestions": true,
+      "excludeTechnicalTasks": true,
+      "excludeExternalEvidenceChecks": true,
+      "excludeSecondReleaseScope": true,
+      "answeredQuestionCount": 20,
+      "addedQuestionCount": 5,
+      "additionReasonDocument": "docs/module-specs/service-expiry-request-20261015.md"
     }
   ],
   "businessCloseoutQuestionInventory": {
@@ -3264,11 +3320,11 @@
     "document": "docs/module-specs/business-closeout-plan-20261014.md",
     "scope": "identified-first-release-business-gaps",
     "totalQuestions": 45,
-    "answeredQuestions": 20,
-    "remainingQuestions": 25,
+    "answeredQuestions": 40,
+    "remainingQuestions": 5,
     "questionsPerRound": 20,
     "plannedRounds": 3,
-    "status": "round-2-awaiting-answers-expiry-interpretation-pending",
+    "status": "final-five-pending-banner-commercial-workstream-deferred",
     "answersApproved": false,
     "scopeExpansionMayAddQuestions": true,
     "clarificationsMustStateReason": true,
@@ -3575,202 +3631,224 @@
         "number": 21,
         "question": "其它需求的细分类由发布者填写还是运营整理",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/README.md"
           }
         ],
-        "sourceNote": "模块MP01“分类判断”；用户希望为迭代整理数据，见模块规划"
+        "sourceNote": "模块MP01“分类判断”；用户希望为迭代整理数据，见模块规划",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ22",
         "number": 22,
         "question": "其它首期是否排除需要专业许可的服务",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/decisions.json"
           }
         ],
-        "sourceNote": "模块MP01禁止范围细则；原PRD跑腿禁止范围不因其它开放而取消"
+        "sourceNote": "模块MP01禁止范围细则；原PRD跑腿禁止范围不因其它开放而取消",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ23",
         "number": 23,
         "question": "维修/其它选人后的内容变更是否同步公开原帖",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/change-rules.md"
           }
         ],
-        "sourceNote": "CH04具体字段/公开展示待补"
+        "sourceNote": "CH04具体字段/公开展示待补",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ24",
         "number": 24,
         "question": "内容变更同时影响费用时，两份约定怎样一起生效",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/change-rules.md"
           }
         ],
-        "sourceNote": "内容变更与费用影响待补"
+        "sourceNote": "内容变更与费用影响待补",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ25",
         "number": 25,
         "question": "预约开始时间与预计结束时间冲突时怎样处理",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/appointment-rules.md"
           }
         ],
-        "sourceNote": "预约显示/范围待补与新增结束期限"
+        "sourceNote": "预约显示/范围待补与新增结束期限",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ26",
         "number": 26,
         "question": "维修/其它选人后修改已验证联系方式，怎样更新对方权限",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/change-rules.md"
           }
         ],
-        "sourceNote": "联系变更待补；普通联系CT06与跑腿CT09是不同范围"
+        "sourceNote": "联系变更待补；普通联系CT06与跑腿CT09是不同范围",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ27",
         "number": 27,
         "question": "交易结束后，为处理费用是否允许双方同意临时恢复电话",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/deadline-completion-boundaries-rules.md"
           }
         ],
-        "sourceNote": "必要联系恢复待定"
+        "sourceNote": "必要联系恢复待定",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ28",
         "number": 28,
         "question": "服务结束后协商费用，能否上传并临时查看新凭据",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/fee-boundary-rules.md"
           }
         ],
-        "sourceNote": "取消后新增凭据待定；不恢复旧凭据"
+        "sourceNote": "取消后新增凭据待定；不恢复旧凭据",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ29",
         "number": 29,
         "question": "已结束凭据满足必要保留条件后，是立即删除还是额外短期保留",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/fee-boundary-rules.md"
           }
         ],
-        "sourceNote": "凭据用途/保存期限待定；先查依法必要保留，不以选择任意删法定材料"
+        "sourceNote": "凭据用途/保存期限待定；先查依法必要保留，不以选择任意删法定材料",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ30",
         "number": 30,
         "question": "优选付费识别用“推广”还是“广告”，放在哪里",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/ui-development-handoff/decisions-and-gaps.md"
           }
         ],
-        "sourceNote": "交接HD03；不是再次问优选是否付费"
+        "sourceNote": "交接HD03；不是再次问优选是否付费",
+        "recordedAnswer": "CUSTOM",
+        "applicationScope": "banner-direction-confirmed-commercial-rules-deferred"
       },
       {
         "id": "CQ31",
         "number": 31,
         "question": "其它是否加入免费服务目录和付费优选分类",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/prd.md"
           }
         ],
-        "sourceNote": "原PRD M05/M06首期仅维修/跑腿；新增其它范围须明确，不自动复制推广权限"
+        "sourceNote": "原PRD M05/M06首期仅维修/跑腿；新增其它范围须明确，不自动复制推广权限",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ32",
         "number": 32,
         "question": "预计结束/自动完成前后，各提醒哪些人、几次",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/deadline-completion-entry-rules.md"
           }
         ],
-        "sourceNote": "原PRD N04与期限通知待补；原24小时通知不是当前批准方案"
+        "sourceNote": "原PRD N04与期限通知待补；原24小时通知不是当前批准方案",
+        "recordedAnswer": "A",
+        "businessOverride": {
+          "business": "跑腿",
+          "scope": "expiry-notifications-only",
+          "preExpiryReminder": false,
+          "automaticCompletionNoticeToBothOnce": true
+        }
       },
       {
         "id": "CQ33",
         "number": 33,
         "question": "等待对方回复时，主动提醒的间隔",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/change-rules.md"
           }
         ],
-        "sourceNote": "通知渠道/频率待补与各业务可主动提醒原则"
+        "sourceNote": "通知渠道/频率待补与各业务可主动提醒原则",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ34",
         "number": 34,
         "question": "用户能否关闭非结果类的提醒",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/prd.md"
           }
         ],
-        "sourceNote": "原PRD第6节与新增期限/缴佣提醒范围；消息事件记录和提醒偏好分开"
+        "sourceNote": "原PRD第6节与新增期限/缴佣提醒范围；消息事件记录和提醒偏好分开",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ35",
         "number": 35,
         "question": "AI整理跑腿文字时，是否提取明确写出的预计结束时间",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/ai-feature-decisions.md"
           }
         ],
-        "sourceNote": "原文字AI字段范围与新增预计结束字段；不让AI编时间"
+        "sourceNote": "原文字AI字段范围与新增预计结束字段；不让AI编时间",
+        "recordedAnswer": "A"
       },
       {
         "id": "CQ36",
         "number": 36,
         "question": "运营看板是否加入四类交易和计佣数据，并分开明确完成/自动完成",
         "round": 3,
-        "status": "queued",
+        "status": "pending",
         "sources": [
           {
             "document": "docs/prd.md"
@@ -3783,7 +3861,7 @@
         "number": 37,
         "question": "30天收费试运行重点看哪些结果",
         "round": 3,
-        "status": "queued",
+        "status": "pending",
         "sources": [
           {
             "document": "docs/module-specs/commission-confirmation-rules.md"
@@ -3796,7 +3874,7 @@
         "number": 38,
         "question": "新佣金配置是否需要两位运营者相互复核",
         "round": 3,
-        "status": "queued",
+        "status": "pending",
         "sources": [
           {
             "document": "docs/module-specs/commission-confirmation-rules.md"
@@ -3809,7 +3887,7 @@
         "number": 39,
         "question": "同一佣金异议已有核验结果后，重复提交何时再次暂停催缴",
         "round": 3,
-        "status": "queued",
+        "status": "pending",
         "sources": [
           {
             "document": "docs/module-specs/commission-operation-rules.md"
@@ -3822,7 +3900,7 @@
         "number": 40,
         "question": "申请减少计佣基数时，原因和证明怎样填写",
         "round": 3,
-        "status": "queued",
+        "status": "pending",
         "sources": [
           {
             "document": "docs/module-specs/commission-operation-rules.md"
@@ -3835,70 +3913,75 @@
         "number": 41,
         "question": "“服务时间”填什么？",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/service-expiry-request-20261015.md"
           }
         ],
-        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项",
+        "recordedAnswer": "A"
       },
       {
         "id": "NE02",
         "number": 42,
         "question": "你说的“有效期”指什么？",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/service-expiry-request-20261015.md"
           }
         ],
-        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项",
+        "recordedAnswer": "A"
       },
       {
         "id": "NE03",
         "number": 43,
         "question": "正常到期、或异议解除后，要额外等72小时吗？",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/service-expiry-request-20261015.md"
           }
         ],
-        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项",
+        "recordedAnswer": "A"
       },
       {
         "id": "NE04",
         "number": 44,
         "question": "取消人工完成后，个人页“赚了多少”怎么算？",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/service-expiry-request-20261015.md"
           }
         ],
-        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项",
+        "recordedAnswer": "A"
       },
       {
         "id": "NE05",
         "number": 45,
         "question": "接单员的“提交完成/已办完”也去掉吗？",
         "round": 2,
-        "status": "pending",
+        "status": "answered",
         "sources": [
           {
             "document": "docs/module-specs/service-expiry-request-20261015.md"
           }
         ],
-        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项",
+        "recordedAnswer": "A"
       }
     ],
     "updatedAt": "2026-10-15",
-    "approvedAnswerCount": 20,
-    "activeRound": 2,
+    "approvedAnswerCount": 40,
+    "activeRound": 3,
     "addedQuestionCount": 5,
     "scopeChanges": [
       {
@@ -4286,7 +4369,7 @@
       "date": "2026-10-15",
       "document": "docs/module-specs/business-closeout-round-2-questions-20261015.md",
       "inventoryId": "business-closeout-20261014",
-      "status": "awaiting-user-answers",
+      "status": "answered-with-explicit-custom-and-business-override",
       "presentedQuestionIds": [
         "NE01",
         "NE02",
@@ -4309,7 +4392,118 @@
         "CQ34",
         "CQ35"
       ],
-      "answers": [],
+      "answers": [
+        {
+          "questionId": "NE01",
+          "answer": "A",
+          "selectedOption": "服务开始的日期和时间"
+        },
+        {
+          "questionId": "NE02",
+          "answer": "A",
+          "selectedOption": "服务什么时候到期；页面统一叫“服务到期时间”，不重复填"
+        },
+        {
+          "questionId": "NE03",
+          "answer": "A",
+          "selectedOption": "都不再等；无有效异议且已到期，就自动结束"
+        },
+        {
+          "questionId": "NE04",
+          "answer": "A",
+          "selectedOption": "按正常到期且费用已确认的跑腿服务费累计；有交付异议的先单列，注明系统统计、非到账"
+        },
+        {
+          "questionId": "NE05",
+          "answer": "A",
+          "selectedOption": "一起去掉；只保留到期收尾、延长、取消和异议"
+        },
+        {
+          "questionId": "CQ21",
+          "answer": "A",
+          "selectedOption": "首期不强制；运营后面整理分类"
+        },
+        {
+          "questionId": "CQ22",
+          "answer": "A",
+          "selectedOption": "首期不接；现有禁止任务也不能改选“其它”绕过"
+        },
+        {
+          "questionId": "CQ23",
+          "answer": "A",
+          "selectedOption": "只更新双方交易详情；公开原帖保留原内容、更新状态"
+        },
+        {
+          "questionId": "CQ24",
+          "answer": "A",
+          "selectedOption": "内容和费用关联，双方都同意后一起生效"
+        },
+        {
+          "questionId": "CQ25",
+          "answer": "A",
+          "selectedOption": "选人前重约未来服务时间，让对方接受后再选"
+        },
+        {
+          "questionId": "CQ26",
+          "answer": "A",
+          "selectedOption": "更新该交易对方可看的已验证电话，并通知对方"
+        },
+        {
+          "questionId": "CQ27",
+          "answer": "A",
+          "selectedOption": "双方同意后仅恢复原交易双方电话24小时；不恢复地址或旧凭据"
+        },
+        {
+          "questionId": "CQ28",
+          "answer": "A",
+          "selectedOption": "能；只供本次费用处理双方查看，处理结束关闭访问，旧凭据不开放"
+        },
+        {
+          "questionId": "CQ29",
+          "answer": "A",
+          "selectedOption": "到可以删除时就删，不额外延长"
+        },
+        {
+          "questionId": "CQ30",
+          "answer": "CUSTOM",
+          "selectedOption": "原优选改为面向商家的Banner广告位；盈利模式稍后讨论",
+          "userCustomValue": "优选改为banner广告位, 给商家, 盈利模式稍后细聊"
+        },
+        {
+          "questionId": "CQ31",
+          "answer": "A",
+          "selectedOption": "首期不加；这两块仍只开维修、跑腿",
+          "affectedByCustomQuestion": "CQ30",
+          "effectiveScope": "免费目录仍维修/跑腿；商家Banner分类不由旧优选范围推定"
+        },
+        {
+          "questionId": "CQ32",
+          "answer": "A",
+          "selectedOption": "最终到期前24小时提醒双方一次，自动结束后通知双方一次",
+          "userCustomValue": "可以, 跑腿为只在自动结束后通知双方一次",
+          "businessOverride": {
+            "business": "跑腿",
+            "scope": "expiry-notifications-only",
+            "preExpiryReminder": false,
+            "automaticCompletionNoticeToBothOnce": true
+          }
+        },
+        {
+          "questionId": "CQ33",
+          "answer": "A",
+          "selectedOption": "同一请求每24小时最多一次，处理完就停"
+        },
+        {
+          "questionId": "CQ34",
+          "answer": "A",
+          "selectedOption": "能关闭提醒；交易结果、账单及必要处理记录仍保留"
+        },
+        {
+          "questionId": "CQ35",
+          "answer": "A",
+          "selectedOption": "原文明确写出的服务时间/到期时间可提为候选，让用户确认；不确定就留空"
+        }
+      ],
       "previousAllAApplies": false,
       "questions": [
         {
@@ -4321,7 +4515,7 @@
             "B": "一段服务时间，填写开始和结束"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "NE02",
@@ -4332,7 +4526,7 @@
             "B": "这条需求最晚什么时候还能接；另外填服务到期时间"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "NE03",
@@ -4343,7 +4537,7 @@
             "B": "保留原72小时缓冲，异议解除后也按原规则重新算"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "NE04",
@@ -4354,7 +4548,7 @@
             "B": "暂不显示主累计，只在交易详情显示费用"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "NE05",
@@ -4365,7 +4559,7 @@
             "B": "接单员可选报“已办完”，客户不用确认，仍按到期收尾"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ21",
@@ -4376,7 +4570,7 @@
             "B": "发布者必须再选细分类，分类表另确认"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ22",
@@ -4387,7 +4581,7 @@
             "B": "取得所需资格并经运营审核后再开放相应服务"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ23",
@@ -4398,7 +4592,7 @@
             "B": "公开原帖也同步双方已确认的公开内容"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ24",
@@ -4409,7 +4603,7 @@
             "B": "分开确认；新费用未确认前仍按原有效费用"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ25",
@@ -4420,7 +4614,7 @@
             "B": "只要服务还没到期，对方明确同意就能选定"
           },
           "recommended": "A",
-          "selected": null,
+          "selected": "A",
           "rephrasedForRequest": "service-expiry-20261015"
         },
         {
@@ -4432,7 +4626,7 @@
             "B": "先重新打码，由对方申请恢复查看"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ27",
@@ -4443,7 +4637,7 @@
             "B": "不恢复；保留费用处理入口，双方自行用已有联系方式沟通"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ28",
@@ -4454,7 +4648,7 @@
             "B": "不能；仅通过文字处理费用"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ29",
@@ -4465,7 +4659,7 @@
             "B": "为已告知的申诉用途额外留90天，再删除"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ30",
@@ -4476,7 +4670,8 @@
             "B": "卡片右上角小字“广告”"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "CUSTOM",
+          "customSelection": "原优选改为面向商家的Banner广告位；盈利模式稍后讨论"
         },
         {
           "id": "CQ31",
@@ -4487,7 +4682,7 @@
             "B": "加入，另补该分类资料、资格和推广规则"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ32",
@@ -4498,7 +4693,13 @@
             "B": "只在自动结束后通知双方一次"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A",
+          "businessOverride": {
+            "business": "跑腿",
+            "scope": "expiry-notifications-only",
+            "preExpiryReminder": false,
+            "automaticCompletionNoticeToBothOnce": true
+          }
         },
         {
           "id": "CQ33",
@@ -4509,7 +4710,7 @@
             "B": "每天最多三次，相邻至少4小时"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ34",
@@ -4520,7 +4721,7 @@
             "B": "站内提醒不能关闭；微信提醒仍由用户授权"
           },
           "recommended": "A",
-          "selected": null
+          "selected": "A"
         },
         {
           "id": "CQ35",
@@ -4529,6 +4730,84 @@
           "options": {
             "A": "原文明确写出的服务时间/到期时间可提为候选，让用户确认；不确定就留空",
             "B": "时间都由用户手填，AI只提醒缺失"
+          },
+          "recommended": "A",
+          "selected": "A"
+        }
+      ],
+      "answeredAt": "2026-10-15",
+      "userReply": "15优选改为banner广告位, 给商家, 盈利模式稍后细聊\n17可以, 跑腿为只在自动结束后通知双方一次\n全A",
+      "sourceDecisionBatch": "business-closeout-reply-2-20261015"
+    },
+    {
+      "id": "business-closeout-final-20261015",
+      "date": "2026-10-15",
+      "document": "docs/module-specs/business-closeout-final-questions-20261015.md",
+      "inventoryId": "business-closeout-20261014",
+      "status": "awaiting-user-answers",
+      "presentedQuestionIds": [
+        "CQ36",
+        "CQ37",
+        "CQ38",
+        "CQ39",
+        "CQ40"
+      ],
+      "answers": [],
+      "previousAllAApplies": false,
+      "finalShortRound": true,
+      "noPadding": true,
+      "questions": [
+        {
+          "id": "CQ36",
+          "number": 1,
+          "question": "运营看板要加入四类交易和佣金情况吗？",
+          "options": {
+            "A": "加入：接单/交易数、自动完成、取消、异议，以及平台佣金应缴/实缴，分别统计",
+            "B": "首期保持原看板范围，新增交易和佣金先只查明细"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ37",
+          "number": 2,
+          "question": "收费试运行30天，重点看什么？",
+          "options": {
+            "A": "一起看交易量、取消/异议、欠费和实缴佣金，再决定要不要调整",
+            "B": "重点看实缴佣金和欠费，其它只作参考"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ38",
+          "number": 3,
+          "question": "修改佣金比例或封顶，需要另一位运营复核吗？",
+          "options": {
+            "A": "需要；一人提出、另一人复核，再按公示流程对新交易生效",
+            "B": "不需要；任一运营可独立提出并按公示流程生效"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ39",
+          "number": 4,
+          "question": "同一账单异议已经核验过，重复提交还暂停催缴吗？",
+          "options": {
+            "A": "同理由、同材料不再暂停；有新材料经运营受理后才暂停争议部分",
+            "B": "每次合格提交都先暂停争议部分，再核验"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ40",
+          "number": 5,
+          "question": "申请减少计佣基数，原因和证明怎么填？",
+          "options": {
+            "A": "原因必填1—500字，证明图片选填；双方确认后交运营核验",
+            "B": "原因必填1—500字，至少一张证明图片；双方确认后交运营核验"
           },
           "recommended": "A",
           "selected": null
@@ -5087,6 +5366,664 @@
           "sourceNote": "真实降价与核验；双方真实新价、计佣减少批准分别记录"
         }
       ]
+    },
+    {
+      "id": "business-closeout-20261014",
+      "date": "2026-10-14",
+      "userRequest": "继续, 直到问完\n每轮20题, 语句直白点",
+      "document": "docs/module-specs/business-closeout-plan-20261014.md",
+      "scope": "identified-first-release-business-gaps",
+      "totalQuestions": 45,
+      "answeredQuestions": 20,
+      "remainingQuestions": 25,
+      "questionsPerRound": 20,
+      "plannedRounds": 3,
+      "status": "round-2-awaiting-answers-expiry-interpretation-pending",
+      "answersApproved": false,
+      "scopeExpansionMayAddQuestions": true,
+      "clarificationsMustStateReason": true,
+      "technicalTasksExcluded": true,
+      "externalEvidenceExcluded": true,
+      "secondReleaseExcluded": true,
+      "implementationEnabled": false,
+      "questions": [
+        {
+          "id": "CQ01",
+          "number": 1,
+          "question": "闲置完成申请和取消申请能否同时等待回复",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR01",
+          "recordedAnswer": "A",
+          "applicationReviewRequest": "service-expiry-20261015"
+        },
+        {
+          "id": "CQ02",
+          "number": 2,
+          "question": "闲置普通改价一直没人回复时，是否关闭请求",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR02；不重复补费场景的24小时规则",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ03",
+          "number": 3,
+          "question": "闲置待回复改价怎样撤回和修改",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR03",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ04",
+          "number": 4,
+          "question": "闲置不同意改价时，理由是否必填",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR04",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ05",
+          "number": 5,
+          "question": "闲置完成/取消申请怎样撤回和修改",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR05",
+          "recordedAnswer": "A",
+          "applicationReviewRequest": "service-expiry-20261015"
+        },
+        {
+          "id": "CQ06",
+          "number": 6,
+          "question": "买家说还没交付时，原完成申请关闭还是继续等待",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            },
+            {
+              "document": "docs/module-specs/deadline-completion-clarification-rules.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR06与异议暂停",
+          "recordedAnswer": "A",
+          "applicationReviewRequest": "service-expiry-20261015"
+        },
+        {
+          "id": "CQ07",
+          "number": 7,
+          "question": "闲置双方取消后，卖家是否须主动重新开放帖子",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR07；不是已售后再出售",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ08",
+          "number": 8,
+          "question": "闲置双方取消后，原联系权限是否关闭",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/idle-request-questions-20261014.md"
+            }
+          ],
+          "sourceNote": "闲置未答IR08",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ09",
+          "number": 9,
+          "question": "四类业务单独提未完成/未成交/取消异议时，说明的长度",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/deadline-completion-clarification-rules.md"
+            }
+          ],
+          "sourceNote": "DX04资料要求待补",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ10",
+          "number": 10,
+          "question": "四类业务上述异议的图片要求是否统一",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/deadline-completion-clarification-rules.md"
+            },
+            {
+              "document": "docs/module-specs/exception-rating-rules.md"
+            }
+          ],
+          "sourceNote": "DX04资料要求待补与维修/其它原字段",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ11",
+          "number": 11,
+          "question": "一笔交易的多项未完成异议是合并记录还是分别处理",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/deadline-completion-clarification-rules.md"
+            }
+          ],
+          "sourceNote": "有效异议与解除边界；每个异议最多一份解除申请已定",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ12",
+          "number": 12,
+          "question": "首次补费72小时窗口截止这一刻能否提交有效费用异议",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/deadline-completion-boundaries-rules.md"
+            }
+          ],
+          "sourceNote": "补费精确截止待定",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ13",
+          "number": 13,
+          "question": "自动完成后出现交付异议，未提交评分的暂停与恢复期限",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/deadline-completion-entry-rules.md"
+            }
+          ],
+          "sourceNote": "评价争议待补与原PRD第14节；不自动删已有合法评分",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ14",
+          "number": 14,
+          "question": "已明确实际完成跑腿服务的费用更正，是否同步更新个人累计金额",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/ui-development-handoff/decisions-and-gaps.md"
+            }
+          ],
+          "sourceNote": "交接HD02“费用更正排除”；个人金额原口径",
+          "recordedAnswer": "A",
+          "applicationReviewRequest": "service-expiry-20261015"
+        },
+        {
+          "id": "CQ15",
+          "number": 15,
+          "question": "提佣金账单异议时必须指出哪些内容",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-operation-rules.md"
+            }
+          ],
+          "sourceNote": "CO07分项受理待补",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ16",
+          "number": 16,
+          "question": "佣金争议核验后，争议部分的缴款期限如何恢复",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-operation-rules.md"
+            }
+          ],
+          "sourceNote": "CO07解决后期限待补",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ17",
+          "number": 17,
+          "question": "欠佣金限制四类新接单/卖出交易，还是只限制欠费所属业务",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-billing-rules.md"
+            }
+          ],
+          "sourceNote": "CB07具体动作/跨业务待补",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ18",
+          "number": 18,
+          "question": "已核准的抵扣余额能否跨本人不同业务抵扣",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-billing-rules.md"
+            }
+          ],
+          "sourceNote": "CB04跨业务抵扣待补",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ19",
+          "number": 19,
+          "question": "逾期欠佣金提醒的次数和间隔",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-operation-rules.md"
+            }
+          ],
+          "sourceNote": "CB07/CO06提醒细则待补",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ20",
+          "number": 20,
+          "question": "自动完成后，维修/其它已确认费用是否还允许补录遗漏项目",
+          "round": 1,
+          "status": "answered",
+          "sources": [
+            {
+              "document": "docs/module-specs/fee-boundary-rules.md"
+            },
+            {
+              "document": "docs/module-specs/deadline-completion-boundaries-rules.md"
+            }
+          ],
+          "sourceNote": "FQ18完成后只读与自动完成后费用入口的衔接",
+          "recordedAnswer": "A"
+        },
+        {
+          "id": "CQ21",
+          "number": 21,
+          "question": "其它需求的细分类由发布者填写还是运营整理",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/README.md"
+            }
+          ],
+          "sourceNote": "模块MP01“分类判断”；用户希望为迭代整理数据，见模块规划"
+        },
+        {
+          "id": "CQ22",
+          "number": 22,
+          "question": "其它首期是否排除需要专业许可的服务",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/decisions.json"
+            }
+          ],
+          "sourceNote": "模块MP01禁止范围细则；原PRD跑腿禁止范围不因其它开放而取消"
+        },
+        {
+          "id": "CQ23",
+          "number": 23,
+          "question": "维修/其它选人后的内容变更是否同步公开原帖",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/change-rules.md"
+            }
+          ],
+          "sourceNote": "CH04具体字段/公开展示待补"
+        },
+        {
+          "id": "CQ24",
+          "number": 24,
+          "question": "内容变更同时影响费用时，两份约定怎样一起生效",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/change-rules.md"
+            }
+          ],
+          "sourceNote": "内容变更与费用影响待补"
+        },
+        {
+          "id": "CQ25",
+          "number": 25,
+          "question": "预约开始时间与预计结束时间冲突时怎样处理",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/appointment-rules.md"
+            }
+          ],
+          "sourceNote": "预约显示/范围待补与新增结束期限"
+        },
+        {
+          "id": "CQ26",
+          "number": 26,
+          "question": "维修/其它选人后修改已验证联系方式，怎样更新对方权限",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/change-rules.md"
+            }
+          ],
+          "sourceNote": "联系变更待补；普通联系CT06与跑腿CT09是不同范围"
+        },
+        {
+          "id": "CQ27",
+          "number": 27,
+          "question": "交易结束后，为处理费用是否允许双方同意临时恢复电话",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/deadline-completion-boundaries-rules.md"
+            }
+          ],
+          "sourceNote": "必要联系恢复待定"
+        },
+        {
+          "id": "CQ28",
+          "number": 28,
+          "question": "服务结束后协商费用，能否上传并临时查看新凭据",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/fee-boundary-rules.md"
+            }
+          ],
+          "sourceNote": "取消后新增凭据待定；不恢复旧凭据"
+        },
+        {
+          "id": "CQ29",
+          "number": 29,
+          "question": "已结束凭据满足必要保留条件后，是立即删除还是额外短期保留",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/fee-boundary-rules.md"
+            }
+          ],
+          "sourceNote": "凭据用途/保存期限待定；先查依法必要保留，不以选择任意删法定材料"
+        },
+        {
+          "id": "CQ30",
+          "number": 30,
+          "question": "优选付费识别用“推广”还是“广告”，放在哪里",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/ui-development-handoff/decisions-and-gaps.md"
+            }
+          ],
+          "sourceNote": "交接HD03；不是再次问优选是否付费"
+        },
+        {
+          "id": "CQ31",
+          "number": 31,
+          "question": "其它是否加入免费服务目录和付费优选分类",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/prd.md"
+            }
+          ],
+          "sourceNote": "原PRD M05/M06首期仅维修/跑腿；新增其它范围须明确，不自动复制推广权限"
+        },
+        {
+          "id": "CQ32",
+          "number": 32,
+          "question": "预计结束/自动完成前后，各提醒哪些人、几次",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/deadline-completion-entry-rules.md"
+            }
+          ],
+          "sourceNote": "原PRD N04与期限通知待补；原24小时通知不是当前批准方案"
+        },
+        {
+          "id": "CQ33",
+          "number": 33,
+          "question": "等待对方回复时，主动提醒的间隔",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/change-rules.md"
+            }
+          ],
+          "sourceNote": "通知渠道/频率待补与各业务可主动提醒原则"
+        },
+        {
+          "id": "CQ34",
+          "number": 34,
+          "question": "用户能否关闭非结果类的提醒",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/prd.md"
+            }
+          ],
+          "sourceNote": "原PRD第6节与新增期限/缴佣提醒范围；消息事件记录和提醒偏好分开"
+        },
+        {
+          "id": "CQ35",
+          "number": 35,
+          "question": "AI整理跑腿文字时，是否提取明确写出的预计结束时间",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/ai-feature-decisions.md"
+            }
+          ],
+          "sourceNote": "原文字AI字段范围与新增预计结束字段；不让AI编时间"
+        },
+        {
+          "id": "CQ36",
+          "number": 36,
+          "question": "运营看板是否加入四类交易和计佣数据，并分开明确完成/自动完成",
+          "round": 3,
+          "status": "queued",
+          "sources": [
+            {
+              "document": "docs/prd.md"
+            }
+          ],
+          "sourceNote": "原PRD M12及统计范围；不把自动完成当真实交付或客户款到账"
+        },
+        {
+          "id": "CQ37",
+          "number": 37,
+          "question": "30天收费试运行重点看哪些结果",
+          "round": 3,
+          "status": "queued",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-confirmation-rules.md"
+            }
+          ],
+          "sourceNote": "CT08样本/指标待补；不自动调费率"
+        },
+        {
+          "id": "CQ38",
+          "number": 38,
+          "question": "新佣金配置是否需要两位运营者相互复核",
+          "round": 3,
+          "status": "queued",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-confirmation-rules.md"
+            }
+          ],
+          "sourceNote": "收费配置/生效流程待补；两人仍同权，不新增管理员角色"
+        },
+        {
+          "id": "CQ39",
+          "number": 39,
+          "question": "同一佣金异议已有核验结果后，重复提交何时再次暂停催缴",
+          "round": 3,
+          "status": "queued",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-operation-rules.md"
+            }
+          ],
+          "sourceNote": "CO07重复异议待补"
+        },
+        {
+          "id": "CQ40",
+          "number": 40,
+          "question": "申请减少计佣基数时，原因和证明怎样填写",
+          "round": 3,
+          "status": "queued",
+          "sources": [
+            {
+              "document": "docs/module-specs/commission-operation-rules.md"
+            }
+          ],
+          "sourceNote": "真实降价与核验；双方真实新价、计佣减少批准分别记录"
+        },
+        {
+          "id": "NE01",
+          "number": 41,
+          "question": "“服务时间”填什么？",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/service-expiry-request-20261015.md"
+            }
+          ],
+          "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        },
+        {
+          "id": "NE02",
+          "number": 42,
+          "question": "你说的“有效期”指什么？",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/service-expiry-request-20261015.md"
+            }
+          ],
+          "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        },
+        {
+          "id": "NE03",
+          "number": 43,
+          "question": "正常到期、或异议解除后，要额外等72小时吗？",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/service-expiry-request-20261015.md"
+            }
+          ],
+          "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        },
+        {
+          "id": "NE04",
+          "number": 44,
+          "question": "取消人工完成后，个人页“赚了多少”怎么算？",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/service-expiry-request-20261015.md"
+            }
+          ],
+          "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        },
+        {
+          "id": "NE05",
+          "number": 45,
+          "question": "接单员的“提交完成/已办完”也去掉吗？",
+          "round": 2,
+          "status": "pending",
+          "sources": [
+            {
+              "document": "docs/module-specs/service-expiry-request-20261015.md"
+            }
+          ],
+          "sourceNote": "2026-10-15用户新增到期收尾要求；含义待明确，未默认选项"
+        }
+      ],
+      "updatedAt": "2026-10-15",
+      "approvedAnswerCount": 20,
+      "activeRound": 2,
+      "addedQuestionCount": 5,
+      "scopeChanges": [
+        {
+          "requestId": "service-expiry-20261015",
+          "document": "docs/module-specs/service-expiry-request-20261015.md",
+          "addedQuestionIds": [
+            "NE01",
+            "NE02",
+            "NE03",
+            "NE04",
+            "NE05"
+          ],
+          "reason": "取消人工完成并新增用户填写的服务时间/有效期，需要明确五处含义与衔接"
+        }
+      ]
     }
   ],
   "businessCloseoutQuestionSetHistory": [
@@ -5342,6 +6279,260 @@
           "selected": null
         }
       ]
+    },
+    {
+      "id": "business-closeout-round-2-20261015",
+      "date": "2026-10-15",
+      "document": "docs/module-specs/business-closeout-round-2-questions-20261015.md",
+      "inventoryId": "business-closeout-20261014",
+      "status": "awaiting-user-answers",
+      "presentedQuestionIds": [
+        "NE01",
+        "NE02",
+        "NE03",
+        "NE04",
+        "NE05",
+        "CQ21",
+        "CQ22",
+        "CQ23",
+        "CQ24",
+        "CQ25",
+        "CQ26",
+        "CQ27",
+        "CQ28",
+        "CQ29",
+        "CQ30",
+        "CQ31",
+        "CQ32",
+        "CQ33",
+        "CQ34",
+        "CQ35"
+      ],
+      "answers": [],
+      "previousAllAApplies": false,
+      "questions": [
+        {
+          "id": "NE01",
+          "number": 1,
+          "question": "“服务时间”填什么？",
+          "options": {
+            "A": "服务开始的日期和时间",
+            "B": "一段服务时间，填写开始和结束"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "NE02",
+          "number": 2,
+          "question": "你说的“有效期”指什么？",
+          "options": {
+            "A": "服务什么时候到期；页面统一叫“服务到期时间”，不重复填",
+            "B": "这条需求最晚什么时候还能接；另外填服务到期时间"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "NE03",
+          "number": 3,
+          "question": "正常到期、或异议解除后，要额外等72小时吗？",
+          "options": {
+            "A": "都不再等；无有效异议且已到期，就自动结束",
+            "B": "保留原72小时缓冲，异议解除后也按原规则重新算"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "NE04",
+          "number": 4,
+          "question": "取消人工完成后，个人页“赚了多少”怎么算？",
+          "options": {
+            "A": "按正常到期且费用已确认的跑腿服务费累计；有交付异议的先单列，注明系统统计、非到账",
+            "B": "暂不显示主累计，只在交易详情显示费用"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "NE05",
+          "number": 5,
+          "question": "接单员的“提交完成/已办完”也去掉吗？",
+          "options": {
+            "A": "一起去掉；只保留到期收尾、延长、取消和异议",
+            "B": "接单员可选报“已办完”，客户不用确认，仍按到期收尾"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ21",
+          "number": 6,
+          "question": "“其它”要不要让发布者再选细分类？",
+          "options": {
+            "A": "首期不强制；运营后面整理分类",
+            "B": "发布者必须再选细分类，分类表另确认"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ22",
+          "number": 7,
+          "question": "“其它”首期接不接需要专业许可的服务？",
+          "options": {
+            "A": "首期不接；现有禁止任务也不能改选“其它”绕过",
+            "B": "取得所需资格并经运营审核后再开放相应服务"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ23",
+          "number": 8,
+          "question": "维修/其它选人后，双方改了内容，要改公开原帖吗？",
+          "options": {
+            "A": "只更新双方交易详情；公开原帖保留原内容、更新状态",
+            "B": "公开原帖也同步双方已确认的公开内容"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ24",
+          "number": 9,
+          "question": "改服务内容还要改价，两件事怎么确认？",
+          "options": {
+            "A": "内容和费用关联，双方都同意后一起生效",
+            "B": "分开确认；新费用未确认前仍按原有效费用"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ25",
+          "number": 10,
+          "question": "还没选人，填写的服务开始时间已经过了，怎么办？",
+          "options": {
+            "A": "选人前重约未来服务时间，让对方接受后再选",
+            "B": "只要服务还没到期，对方明确同意就能选定"
+          },
+          "recommended": "A",
+          "selected": null,
+          "rephrasedForRequest": "service-expiry-20261015"
+        },
+        {
+          "id": "CQ26",
+          "number": 11,
+          "question": "维修/其它接单后，一方换了已验证电话怎么办？",
+          "options": {
+            "A": "更新该交易对方可看的已验证电话，并通知对方",
+            "B": "先重新打码，由对方申请恢复查看"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ27",
+          "number": 12,
+          "question": "交易结束后，为处理费用能临时恢复电话吗？",
+          "options": {
+            "A": "双方同意后仅恢复原交易双方电话24小时；不恢复地址或旧凭据",
+            "B": "不恢复；保留费用处理入口，双方自行用已有联系方式沟通"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ28",
+          "number": 13,
+          "question": "服务结束后协商费用，能补新凭据图片吗？",
+          "options": {
+            "A": "能；只供本次费用处理双方查看，处理结束关闭访问，旧凭据不开放",
+            "B": "不能；仅通过文字处理费用"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ29",
+          "number": 14,
+          "question": "结束后的凭据，满足必要保留要求后还留吗？",
+          "options": {
+            "A": "到可以删除时就删，不额外延长",
+            "B": "为已告知的申诉用途额外留90天，再删除"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ30",
+          "number": 15,
+          "question": "“优选”的付费标识怎么放？",
+          "options": {
+            "A": "卡片右上角小字“推广”",
+            "B": "卡片右上角小字“广告”"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ31",
+          "number": 16,
+          "question": "“其它”加入免费服务目录和付费优选吗？",
+          "options": {
+            "A": "首期不加；这两块仍只开维修、跑腿",
+            "B": "加入，另补该分类资料、资格和推广规则"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ32",
+          "number": 17,
+          "question": "服务快到期及自动结束时怎么提醒？",
+          "options": {
+            "A": "最终到期前24小时提醒双方一次，自动结束后通知双方一次",
+            "B": "只在自动结束后通知双方一次"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ33",
+          "number": 18,
+          "question": "等对方回复时，发起人多久能主动提醒一次？",
+          "options": {
+            "A": "同一请求每24小时最多一次，处理完就停",
+            "B": "每天最多三次，相邻至少4小时"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ34",
+          "number": 19,
+          "question": "用户能关闭“快到期/催回复”这类提醒吗？",
+          "options": {
+            "A": "能关闭提醒；交易结果、账单及必要处理记录仍保留",
+            "B": "站内提醒不能关闭；微信提醒仍由用户授权"
+          },
+          "recommended": "A",
+          "selected": null
+        },
+        {
+          "id": "CQ35",
+          "number": 20,
+          "question": "AI整理跑腿描述时，要提取时间吗？",
+          "options": {
+            "A": "原文明确写出的服务时间/到期时间可提为候选，让用户确认；不确定就留空",
+            "B": "时间都由用户手填，AI只提醒缺失"
+          },
+          "recommended": "A",
+          "selected": null
+        }
+      ]
     }
   ],
   "businessCloseoutDecisionBatches": [
@@ -5462,6 +6653,127 @@
           "selectedOption": "允许双方确认补录已发生费用，留历史，按计佣更正规则处理"
         }
       ]
+    },
+    {
+      "id": "business-closeout-reply-2-20261015",
+      "date": "2026-10-15",
+      "questionSetId": "business-closeout-round-2-20261015",
+      "questionDocument": "docs/module-specs/business-closeout-round-2-questions-20261015.md",
+      "userReply": "15优选改为banner广告位, 给商家, 盈利模式稍后细聊\n17可以, 跑腿为只在自动结束后通知双方一次\n全A",
+      "replyInterpretation": "CQ30-custom-CQ32-A-with-errand-exception-others-A",
+      "answers": [
+        {
+          "questionId": "NE01",
+          "answer": "A",
+          "selectedOption": "服务开始的日期和时间"
+        },
+        {
+          "questionId": "NE02",
+          "answer": "A",
+          "selectedOption": "服务什么时候到期；页面统一叫“服务到期时间”，不重复填"
+        },
+        {
+          "questionId": "NE03",
+          "answer": "A",
+          "selectedOption": "都不再等；无有效异议且已到期，就自动结束"
+        },
+        {
+          "questionId": "NE04",
+          "answer": "A",
+          "selectedOption": "按正常到期且费用已确认的跑腿服务费累计；有交付异议的先单列，注明系统统计、非到账"
+        },
+        {
+          "questionId": "NE05",
+          "answer": "A",
+          "selectedOption": "一起去掉；只保留到期收尾、延长、取消和异议"
+        },
+        {
+          "questionId": "CQ21",
+          "answer": "A",
+          "selectedOption": "首期不强制；运营后面整理分类"
+        },
+        {
+          "questionId": "CQ22",
+          "answer": "A",
+          "selectedOption": "首期不接；现有禁止任务也不能改选“其它”绕过"
+        },
+        {
+          "questionId": "CQ23",
+          "answer": "A",
+          "selectedOption": "只更新双方交易详情；公开原帖保留原内容、更新状态"
+        },
+        {
+          "questionId": "CQ24",
+          "answer": "A",
+          "selectedOption": "内容和费用关联，双方都同意后一起生效"
+        },
+        {
+          "questionId": "CQ25",
+          "answer": "A",
+          "selectedOption": "选人前重约未来服务时间，让对方接受后再选"
+        },
+        {
+          "questionId": "CQ26",
+          "answer": "A",
+          "selectedOption": "更新该交易对方可看的已验证电话，并通知对方"
+        },
+        {
+          "questionId": "CQ27",
+          "answer": "A",
+          "selectedOption": "双方同意后仅恢复原交易双方电话24小时；不恢复地址或旧凭据"
+        },
+        {
+          "questionId": "CQ28",
+          "answer": "A",
+          "selectedOption": "能；只供本次费用处理双方查看，处理结束关闭访问，旧凭据不开放"
+        },
+        {
+          "questionId": "CQ29",
+          "answer": "A",
+          "selectedOption": "到可以删除时就删，不额外延长"
+        },
+        {
+          "questionId": "CQ30",
+          "answer": "CUSTOM",
+          "selectedOption": "原优选改为面向商家的Banner广告位；盈利模式稍后讨论",
+          "userCustomValue": "优选改为banner广告位, 给商家, 盈利模式稍后细聊"
+        },
+        {
+          "questionId": "CQ31",
+          "answer": "A",
+          "selectedOption": "首期不加；这两块仍只开维修、跑腿",
+          "affectedByCustomQuestion": "CQ30",
+          "effectiveScope": "免费目录仍维修/跑腿；商家Banner分类不由旧优选范围推定"
+        },
+        {
+          "questionId": "CQ32",
+          "answer": "A",
+          "selectedOption": "最终到期前24小时提醒双方一次，自动结束后通知双方一次",
+          "userCustomValue": "可以, 跑腿为只在自动结束后通知双方一次",
+          "businessOverride": {
+            "business": "跑腿",
+            "scope": "expiry-notifications-only",
+            "preExpiryReminder": false,
+            "automaticCompletionNoticeToBothOnce": true
+          }
+        },
+        {
+          "questionId": "CQ33",
+          "answer": "A",
+          "selectedOption": "同一请求每24小时最多一次，处理完就停"
+        },
+        {
+          "questionId": "CQ34",
+          "answer": "A",
+          "selectedOption": "能关闭提醒；交易结果、账单及必要处理记录仍保留"
+        },
+        {
+          "questionId": "CQ35",
+          "answer": "A",
+          "selectedOption": "原文明确写出的服务时间/到期时间可提为候选，让用户确认；不确定就留空"
+        }
+      ],
+      "commercialModelDeferred": true
     }
   ],
   "businessCloseoutRound1Rules": {
@@ -5642,6 +6954,235 @@
       "readyForImplementation": false
     }
   ],
+  "serviceExpiryRules": {
+    "confirmedAt": "2026-10-15",
+    "sourceBatch": "business-closeout-reply-2-20261015",
+    "sourceQuestions": [
+      "NE01",
+      "NE02",
+      "NE03",
+      "NE04",
+      "NE05"
+    ],
+    "serviceTime": {
+      "meaning": "start-date-and-time",
+      "demandPublicationBusinesses": [
+        "跑腿",
+        "维修",
+        "其它"
+      ],
+      "idleRetainsPreviouslyApprovedTimeAgreementEntry": true,
+      "duplicateRequiredAppointmentField": false,
+      "pastAtSelection": "reagree-future-time-counterparty-accept-before-selection",
+      "applicantAndQuoteVersionRulesRetained": true
+    },
+    "expiry": {
+      "label": "服务到期时间",
+      "validityMeans": "service-expiry-not-post-listing-expiry",
+      "duplicateValidityField": false,
+      "additionalNormalCompletionGraceHours": 0,
+      "additionalPostIssueClearanceGraceHours": 0,
+      "validIssueAtExactExpiryAccepted": true,
+      "normalCompletionRequiresStrictlyAfterExpiry": true,
+      "unresolvedValidDeliveryIssuePauses": true,
+      "clearanceBeforeExpiry": "wait-current-effective-expiry",
+      "clearanceAfterExpiry": "eligible-to-complete-without-extra-72-hours",
+      "duplicateCompletionAllowed": false,
+      "cancelledTradeMayComplete": false
+    },
+    "manualCompletion": {
+      "customerConfirmationEnabled": false,
+      "workerCompletionReportEnabled": false,
+      "preTransactionAgreementRetained": true,
+      "feeAgreementCancellationAndIssueClearanceAgreementRetained": true
+    },
+    "extension": {
+      "requiresBothParties": true,
+      "pendingLimit": 1,
+      "initialMaxHours": 720,
+      "extensionMaxHours": 168,
+      "anchor": "previous-effective-service-expiry",
+      "unconfirmedRequestChangesExpiry": false,
+      "confirmedNewExpiryAdds72Hours": false
+    },
+    "other72HourWindowsRetained": [
+      "first-late-fee-objection",
+      "issued-commission-bill-payment",
+      "resolved-bill-issue-payment"
+    ],
+    "enabled": false,
+    "readyForImplementation": false
+  },
+  "businessCloseoutRound2Rules": {
+    "confirmedAt": "2026-10-15",
+    "sourceBatch": "business-closeout-reply-2-20261015",
+    "document": "docs/module-specs/business-closeout-round-2-rules-20261015.md",
+    "enabled": false,
+    "readyForImplementation": false,
+    "serviceExpiryPolicy": "serviceExpiryRules",
+    "mainIncome": {
+      "business": "跑腿",
+      "subject": "provider",
+      "completionSource": "normal-service-expiry",
+      "effectiveMutuallyConfirmedFeeRequired": true,
+      "validDeliveryIssueExcludesFromMainTotal": true,
+      "disputedAutomaticAmountListedSeparately": true,
+      "restoreOnlyCurrentlyEligibleAmountAfterClearance": true,
+      "explicitDeliveryAcknowledgmentRequired": false,
+      "amountBasis": "current-mutually-effective-service-fee",
+      "advancesGoodsAndOwnCustomerSpendingExcluded": true,
+      "netAfterCommission": false,
+      "period": "cumulative",
+      "disclosures": [
+        "按到期订单统计",
+        "非到账金额"
+      ],
+      "duplicateInclusionAllowed": false,
+      "unknownFeeTreatedAsZero": false,
+      "provesCustomerPayment": false
+    },
+    "otherBusiness": {
+      "mandatoryPublisherSubcategory": false,
+      "operatorLaterClassification": true,
+      "licensedProfessionalServicesOpen": false,
+      "prohibitedTasksMayUseOtherToBypass": false,
+      "privateContentForAiTrainingApproved": false
+    },
+    "selectedRepairOtherChanges": {
+      "publicPostContent": "original-public-content-retained-status-only-updated",
+      "currentTradeDetailsUseEffectiveAgreedContent": true,
+      "contentAndFeeRelatedChangesRequireBothCurrentVersionsToBeMutuallyAccepted": true,
+      "relatedChangesApplyTogether": true,
+      "oldEffectiveVersionsUntilBothAgreed": true
+    },
+    "selectedRepairOtherPhone": {
+      "requiresOwnVerifiedNewNumber": true,
+      "updatesVisibleNumberForCurrentCounterparty": true,
+      "notifyCounterparty": true,
+      "unselectedApplicantsGainAccess": false,
+      "otherBusinessesContactRulesChanged": false
+    },
+    "endedFeeContact": {
+      "requiresBothOriginalPartiesAgreement": true,
+      "phoneAccessHours": 24,
+      "addressAccessRestored": false,
+      "oldReceiptsRestored": false,
+      "tradeReopened": false,
+      "automaticRenewal": false
+    },
+    "endedFeeReceipts": {
+      "newReceiptsAllowed": true,
+      "viewers": "original-parties-for-this-fee-handling-only",
+      "closeAccessWhenHandlingEnds": true,
+      "oldReceiptsReopened": false,
+      "operatorOldReceiptAccessGranted": false,
+      "maxCountPerExpenseItem": 3,
+      "formats": [
+        "JPEG",
+        "PNG"
+      ],
+      "maxSizeMB": 5
+    },
+    "receiptRetention": {
+      "deleteWhenLawfulAndNecessaryRetentionEnds": true,
+      "extraRetentionDays": 0,
+      "legalAndOpenNecessaryHandlingPreserved": true,
+      "physicalDeletionPerformed": false
+    },
+    "freeDirectory": {
+      "businesses": [
+        "维修",
+        "跑腿"
+      ],
+      "otherAdded": false,
+      "legacyPaidPreferredCategoryRuleSupersededByBanner": true
+    },
+    "expiryNotifications": {
+      "scope": "expiry-reminders-and-automatic-completion-result-only",
+      "跑腿": {
+        "preExpiryReminder": false,
+        "completionNoticeToBothOnce": true
+      },
+      "维修": {
+        "preExpiryReminderHours": 24,
+        "preExpiryReminderToBothOnce": true,
+        "completionNoticeToBothOnce": true
+      },
+      "闲置": {
+        "preExpiryReminderHours": 24,
+        "preExpiryReminderToBothOnce": true,
+        "completionNoticeToBothOnce": true
+      },
+      "其它": {
+        "preExpiryReminderHours": 24,
+        "preExpiryReminderToBothOnce": true,
+        "completionNoticeToBothOnce": true
+      },
+      "missed24HourReminderBackfilled": false,
+      "requestFeeAndIssueNotificationsUnchanged": true,
+      "guaranteesWechatDelivery": false
+    },
+    "pendingRequestReminder": {
+      "minIntervalHours": 24,
+      "stopWhenResolved": true
+    },
+    "notificationPreferences": {
+      "nonResultRemindersMayBeDisabled": true,
+      "tradeResultsBillsAndNecessaryRecordsRetained": true,
+      "disablingMeansReadOrConsent": false,
+      "approvedOverdueCollectionPolicyChanged": false
+    },
+    "aiTimeExtraction": {
+      "scope": "existing-errand-text-assistant-only",
+      "explicitOriginalTimesOnly": true,
+      "proposeCandidatesRequiresUserConfirmation": true,
+      "ambiguousTimesRemainEmpty": true,
+      "automaticallyPublishes": false,
+      "expandsToRepairOther": false
+    },
+    "bannerPolicy": "merchantBannerDirection",
+    "commissionRatesCapsAndCustomerDirectPaymentChanged": false
+  },
+  "merchantBannerDirection": {
+    "confirmedAt": "2026-10-15",
+    "sourceBatch": "business-closeout-reply-2-20261015",
+    "sourceQuestion": "CQ30",
+    "userReply": "15优选改为banner广告位, 给商家, 盈利模式稍后细聊\n17可以, 跑腿为只在自动结束后通知双方一次\n全A",
+    "document": "docs/module-specs/merchant-banner-direction-20261015.md",
+    "replaces": "home-preferred-paid-promotion-area",
+    "audience": "merchants",
+    "presentation": "banner-ad-slot",
+    "commercialModelDeferredByUser": true,
+    "commercialRulesConfirmed": false,
+    "price": null,
+    "duration": null,
+    "capacity": null,
+    "merchantCategories": null,
+    "clickDestination": null,
+    "legacyPricesPackagesCapacityAndCategoryLimitsInherited": false,
+    "advertisingIdentificationRequirementRemoved": false,
+    "advertisingLabelAndPositionChosen": false,
+    "selectedReferenceImageModified": false,
+    "enabled": false,
+    "readyForImplementation": false
+  },
+  "deferredPlanningWorkstreams": [
+    {
+      "id": "merchant-banner-commercial-planning",
+      "sourceBatch": "business-closeout-reply-2-20261015",
+      "userExplicitlyDeferred": true,
+      "document": "docs/module-specs/merchant-banner-direction-20261015.md",
+      "status": "await-later-human-discussion",
+      "commercialRulesConfirmed": false,
+      "notIncludedInCurrentFiveQuestions": true,
+      "enabled": false
+    }
+  ],
+  "currentPolicyReferences": {
+    "formalTradeLifecycle": "serviceExpiryRules",
+    "mainIncome": "businessCloseoutRound2Rules.mainIncome",
+    "merchantAdvertising": "merchantBannerDirection"
+  },
   "items": [
     {
       "id": "HD01",
@@ -5683,33 +7224,34 @@
     },
     {
       "id": "HD02",
-      "status": "principle-approved-details-pending",
+      "status": "expiry-based-income-rule-approved-implementation-pending",
       "userReply": "按已确认完成的跑腿服务费累计，排除垫付款，注明非到账金额",
       "confirmed": {
         "business": "跑腿",
-        "include": "本人提供服务且已确认完成的服务费",
+        "include": "本人提供服务且正常到期、服务费已确认、无有效交付异议的跑腿服务费",
         "exclude": [
           "垫付款",
           "商品/门店费用",
           "本人发单支出"
         ],
         "disclosure": "非到账金额",
-        "wallet": false
+        "wallet": false,
+        "completionSource": "自动到期",
+        "systemStatisticsDisclosure": "按到期订单统计"
       },
       "completionIncomeResolution": {
         "topic": "自动完成计入口径",
-        "sourceBatch": "deadline-completion-round-1-20261014",
-        "questionId": "AF07",
-        "answer": "B",
-        "explicitDeliveryAcknowledgmentRequired": true,
+        "sourceBatch": "business-closeout-reply-2-20261015",
+        "questionId": "NE04",
+        "answer": "A",
+        "explicitDeliveryAcknowledgmentRequired": false,
         "automaticCompletionAloneIncluded": false,
-        "automaticCompletionListedSeparately": true
+        "automaticCompletionWithEffectiveFeeAndNoDeliveryIssueIncluded": true,
+        "automaticCompletionSourceRetained": true
       },
       "pending": [
-        "自动完成明细与后续交付确认/更正衔接",
-        "费用更正排除",
-        "累计周期",
-        "数据合同"
+        "统计数据合同与真实来源校验",
+        "补费/更正与异议状态映射"
       ],
       "prd": [
         "M04",
@@ -5718,15 +7260,48 @@
         "RUN11",
         "RUN12"
       ],
-      "productionAllowed": false
+      "productionAllowed": false,
+      "confirmedHistory": [
+        {
+          "business": "跑腿",
+          "include": "本人提供服务且已确认完成的服务费",
+          "exclude": [
+            "垫付款",
+            "商品/门店费用",
+            "本人发单支出"
+          ],
+          "disclosure": "非到账金额",
+          "wallet": false
+        }
+      ],
+      "completionIncomeResolutionHistory": [
+        {
+          "topic": "自动完成计入口径",
+          "sourceBatch": "deadline-completion-round-1-20261014",
+          "questionId": "AF07",
+          "answer": "B",
+          "explicitDeliveryAcknowledgmentRequired": true,
+          "automaticCompletionAloneIncluded": false,
+          "automaticCompletionListedSeparately": true
+        }
+      ],
+      "pendingHistory": [
+        [
+          "自动完成明细与后续交付确认/更正衔接",
+          "费用更正排除",
+          "累计周期",
+          "数据合同"
+        ]
+      ]
     },
     {
       "id": "HD03",
-      "status": "paid-nature-approved-label-pending",
+      "status": "merchant-banner-direction-approved-commercial-rules-deferred",
       "userReply": "优选就是付费推广",
-      "confirmed": "优选属于M06付费推广",
+      "confirmed": "原优选替换为面向商家的Banner广告位；盈利模式稍后讨论",
       "pending": [
-        "付费推广识别文案与位置"
+        "商家Banner商业方案（用户明确延后）",
+        "Banner素材/尺寸/广告标识及点击行为（随后续方案）"
       ],
       "prd": [
         "M06",
@@ -5734,7 +7309,17 @@
         "AD01",
         "AD03"
       ],
-      "productionAllowed": false
+      "productionAllowed": false,
+      "confirmedHistory": [
+        "优选属于M06付费推广"
+      ],
+      "pendingHistory": [
+        [
+          "付费推广识别文案与位置"
+        ]
+      ],
+      "currentSourceBatch": "business-closeout-reply-2-20261015",
+      "legacyPaidPreferredTermsInherited": false
     },
     {
       "id": "HD04",
@@ -5781,7 +7366,13 @@
         "V02",
         "F02"
       ],
-      "productionAllowed": true
+      "productionAllowed": true,
+      "currentResolution": {
+        "sourceBatch": "business-closeout-reply-2-20261015",
+        "questionId": "NE01",
+        "serviceTimeMeaning": "开始日期和时间",
+        "priorLabelOnlyDecisionIsHistorical": true
+      }
     },
     {
       "id": "HD06",

@@ -9,9 +9,140 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+test('second reply records CQ30 as custom and CQ32 as A with an errand-only exception rather than blindly assigning all A', () => {
+  assert.equal(records.businessCloseoutDecisionBatches.length,2);
+  const batch=records.businessCloseoutDecisionBatches[1];
+  assert.equal(batch.userReply,'15优选改为banner广告位, 给商家, 盈利模式稍后细聊\n17可以, 跑腿为只在自动结束后通知双方一次\n全A');
+  assert.equal(batch.answers.length,20);
+  assert.equal(batch.answers.filter(a=>a.answer==='A').length,19);
+  const custom=batch.answers.find(a=>a.questionId==='CQ30');
+  assert.equal(custom.answer,'CUSTOM');assert(custom.selectedOption.includes('商家'));assert(custom.selectedOption.includes('稍后讨论'));
+  const n=batch.answers.find(a=>a.questionId==='CQ32');
+  assert.equal(n.answer,'A');assert.deepEqual(n.businessOverride,{business:'跑腿',scope:'expiry-notifications-only',preExpiryReminder:false,automaticCompletionNoticeToBothOnce:true});
+  const set=records.businessCloseoutQuestionSets[1];
+  assert.deepEqual(set.answers,batch.answers);assert.equal(set.status,'answered-with-explicit-custom-and-business-override');
+  const rows=[...read(set.document).matchAll(/^\| (\d+)（((?:NE|CQ)\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  batch.answers.forEach((a,i)=>{assert.equal(a.questionId,rows[i][2]);if(a.answer==='A')assert.equal(a.selectedOption,rows[i][4].trim());});
+  assert.deepEqual(handoff.businessCloseoutDecisionBatches,records.businessCloseoutDecisionBatches);
+  assert.deepEqual(handoff.businessCloseoutQuestionSets,records.businessCloseoutQuestionSets);
+  assert.equal(records.businessCloseoutDecisionBatches[0].answers.length,20);
+  assert.equal(records.businessCloseoutQuestionSetHistory[1].answers.length,0);
+});
+
+test('confirmed expiry policy removes both completion actions and both completion buffers without deleting independent financial windows', () => {
+  const r=records.serviceExpiryRules;
+  assert.deepEqual(handoff.serviceExpiryRules,r);
+  assert.equal(r.serviceTime.meaning,'start-date-and-time');
+  assert.equal(r.expiry.label,'服务到期时间');
+  assert.equal(r.expiry.validityMeans,'service-expiry-not-post-listing-expiry');
+  assert.equal(r.expiry.duplicateValidityField,false);
+  assert.equal(r.expiry.additionalNormalCompletionGraceHours,0);
+  assert.equal(r.expiry.additionalPostIssueClearanceGraceHours,0);
+  assert.equal(r.expiry.validIssueAtExactExpiryAccepted,true);
+  assert.equal(r.expiry.normalCompletionRequiresStrictlyAfterExpiry,true);
+  assert.equal(r.expiry.unresolvedValidDeliveryIssuePauses,true);
+  assert.equal(r.expiry.clearanceBeforeExpiry,'wait-current-effective-expiry');
+  assert.equal(r.expiry.clearanceAfterExpiry,'eligible-to-complete-without-extra-72-hours');
+  assert.equal(r.expiry.duplicateCompletionAllowed,false);
+  assert.equal(r.expiry.cancelledTradeMayComplete,false);
+  assert.equal(r.manualCompletion.customerConfirmationEnabled,false);
+  assert.equal(r.manualCompletion.workerCompletionReportEnabled,false);
+  assert.equal(r.manualCompletion.preTransactionAgreementRetained,true);
+  assert.equal(r.manualCompletion.feeAgreementCancellationAndIssueClearanceAgreementRetained,true);
+  assert.equal(r.extension.initialMaxHours,720);assert.equal(r.extension.extensionMaxHours,168);
+  assert.equal(r.extension.requiresBothParties,true);assert.equal(r.extension.confirmedNewExpiryAdds72Hours,false);
+  assert.deepEqual(r.other72HourWindowsRetained,['first-late-fee-objection','issued-commission-bill-payment','resolved-bill-issue-payment']);
+  assert.equal(records.businessCloseoutRound1Rules.billIssue.afterVerificationDueBalanceHours,72);
+  assert.equal(records.deadlineCompletionClarificationRules.horizon.initialMaxHours,720);
+  const expiry=Date.parse('2026-10-16T18:00:00+08:00');
+  assert.equal(expiry+r.expiry.additionalNormalCompletionGraceHours*3600000,expiry);
+  assert.notEqual(expiry,Date.parse('2026-10-19T18:00:00+08:00'));
+  assert.equal(r.enabled,false);assert.equal(r.readyForImplementation,false);
+});
+
+test('expiry-based income and notification exceptions are consistent across handoff and protect actual-payment and privacy boundaries', () => {
+  const r=records.businessCloseoutRound2Rules;
+  assert.deepEqual(handoff.businessCloseoutRound2Rules,r);
+  assert.equal(r.mainIncome.business,'跑腿');assert.equal(r.mainIncome.completionSource,'normal-service-expiry');
+  assert.equal(r.mainIncome.effectiveMutuallyConfirmedFeeRequired,true);
+  assert.equal(r.mainIncome.validDeliveryIssueExcludesFromMainTotal,true);
+  assert.equal(r.mainIncome.explicitDeliveryAcknowledgmentRequired,false);
+  assert.equal(r.mainIncome.advancesGoodsAndOwnCustomerSpendingExcluded,true);
+  assert.equal(r.mainIncome.netAfterCommission,false);
+  assert.equal(r.mainIncome.unknownFeeTreatedAsZero,false);
+  assert.equal(r.mainIncome.provesCustomerPayment,false);
+  assert.equal(r.mainIncome.duplicateInclusionAllowed,false);
+  const inc=handoff.items.find(i=>i.id==='HD02');
+  assert.equal(inc.completionIncomeResolution.answer,'A');assert.equal(inc.completionIncomeResolution.questionId,'NE04');
+  assert.equal(inc.completionIncomeResolution.explicitDeliveryAcknowledgmentRequired,false);
+  assert.equal(inc.completionIncomeResolution.automaticCompletionWithEffectiveFeeAndNoDeliveryIssueIncluded,true);
+  assert.equal(inc.completionIncomeResolutionHistory[0].answer,'B');
+  assert.equal(inc.confirmed.wallet,false);assert.equal(inc.confirmed.disclosure,'非到账金额');
+  assert.deepEqual(r.expiryNotifications.跑腿,{preExpiryReminder:false,completionNoticeToBothOnce:true});
+  for(const business of ['维修','闲置','其它'])assert.deepEqual(r.expiryNotifications[business],{preExpiryReminderHours:24,preExpiryReminderToBothOnce:true,completionNoticeToBothOnce:true});
+  assert.equal(r.expiryNotifications.scope,'expiry-reminders-and-automatic-completion-result-only');
+  assert.equal(r.expiryNotifications.requestFeeAndIssueNotificationsUnchanged,true);
+  assert.equal(r.expiryNotifications.guaranteesWechatDelivery,false);
+  assert.equal(r.notificationPreferences.nonResultRemindersMayBeDisabled,true);
+  assert.equal(r.notificationPreferences.approvedOverdueCollectionPolicyChanged,false);
+  assert.equal(r.selectedRepairOtherChanges.contentAndFeeRelatedChangesRequireBothCurrentVersionsToBeMutuallyAccepted,true);
+  assert.equal(r.endedFeeContact.phoneAccessHours,24);assert.equal(r.endedFeeContact.addressAccessRestored,false);
+  assert.equal(r.endedFeeReceipts.operatorOldReceiptAccessGranted,false);
+  assert.equal(r.receiptRetention.extraRetentionDays,0);assert.equal(r.receiptRetention.physicalDeletionPerformed,false);
+  assert.equal(r.aiTimeExtraction.automaticallyPublishes,false);
+  assert.equal(r.aiTimeExtraction.expandsToRepairOther,false);
+});
+
+test('merchant Banner replaces preferred-card scope without inventing packages, prices, slots or current commercial approval', () => {
+  const b=records.merchantBannerDirection;
+  assert.deepEqual(handoff.merchantBannerDirection,b);
+  assert.equal(b.audience,'merchants');assert.equal(b.presentation,'banner-ad-slot');
+  assert.equal(b.commercialModelDeferredByUser,true);assert.equal(b.commercialRulesConfirmed,false);
+  for(const field of ['price','duration','capacity','merchantCategories','clickDestination'])assert.equal(b[field],null,field);
+  assert.equal(b.legacyPricesPackagesCapacityAndCategoryLimitsInherited,false);
+  assert.equal(b.advertisingIdentificationRequirementRemoved,false);
+  assert.equal(b.advertisingLabelAndPositionChosen,false);
+  assert.equal(b.selectedReferenceImageModified,false);assert.equal(b.enabled,false);assert.equal(b.readyForImplementation,false);
+  assert.deepEqual(records.businessCloseoutRound2Rules.freeDirectory.businesses,['维修','跑腿']);
+  assert.equal(records.businessCloseoutRound2Rules.freeDirectory.legacyPaidPreferredCategoryRuleSupersededByBanner,true);
+  const ad=handoff.items.find(i=>i.id==='HD03');
+  assert.equal(ad.status,'merchant-banner-direction-approved-commercial-rules-deferred');
+  assert.equal(ad.confirmedHistory[0],'优选属于M06付费推广');assert.equal(ad.legacyPaidPreferredTermsInherited,false);
+  assert.equal(records.deferredPlanningWorkstreams.length,1);
+  assert.equal(records.deferredPlanningWorkstreams[0].userExplicitlyDeferred,true);
+  assert.equal(records.deferredPlanningWorkstreams[0].notIncludedInCurrentFiveQuestions,true);
+  assert.equal(records.deferredPlanningWorkstreams[0].enabled,false);
+});
+
+test('exactly five final sourced questions remain unapproved after forty answers, with merchant commercial questions deferred rather than padded', () => {
+  const inv=records.businessCloseoutQuestionInventory;
+  assert.equal(inv.totalQuestions,45);assert.equal(inv.answeredQuestions,40);assert.equal(inv.remainingQuestions,5);
+  assert.equal(inv.questions.filter(q=>q.status==='answered').length,40);
+  assert.equal(inv.questions.filter(q=>q.status==='pending').length,5);
+  assert.equal(inv.questions.filter(q=>q.status==='queued').length,0);
+  assert.equal(records.businessCloseoutQuestionSets.length,3);
+  const last=records.businessCloseoutQuestionSets[2];
+  assert.deepEqual(last.presentedQuestionIds,['CQ36','CQ37','CQ38','CQ39','CQ40']);
+  assert.deepEqual(last.answers,[]);assert.equal(last.previousAllAApplies,false);
+  assert.equal(last.finalShortRound,true);assert.equal(last.noPadding,true);
+  const rows=[...read(last.document).matchAll(/^\| (\d+)（(CQ\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
+  assert.equal(rows.length,5);
+  last.questions.forEach((q,i)=>{assert.equal(q.selected,null);assert.equal(q.number,i+1);assert.equal(q.question,rows[i][3].trim());assert.equal(q.options.A,rows[i][4].trim());assert.equal(q.options.B,rows[i][5].trim());});
+  assert.equal(records.currentPlanningFocus.remainingQuestionCount,5);
+  assert.equal(records.currentPlanningFocus.planningComplete,false);
+  assert.deepEqual(records.currentPlanningFocus.blockingInterpretationIds,[]);
+  assert.deepEqual(records.currentPlanningFocus.pendingQuestionIds,last.presentedQuestionIds);
+  assert.equal(records.remainingPlanningAudit.allFirstReleaseBusinessResolved,false);
+  assert.deepEqual(handoff.currentPlanningFocus,records.currentPlanningFocus);
+  assert.deepEqual(handoff.businessCloseoutQuestionInventory,inv);
+  for(const f of ['docs/module-specs/business-closeout-round-2-rules-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md',last.document]){
+    for(const m of read(f).matchAll(/\]\(([^)]+)\)/g))assert(fs.existsSync(path.resolve(root,path.dirname(f),m[1])),`${f}: ${m[1]}`);
+  }
+});
+
 test('first twenty A answers are recorded exactly, while the later explicit expiry request overrides manual customer acknowledgment', () => {
   const [batch]=records.businessCloseoutDecisionBatches;
-  assert.equal(records.businessCloseoutDecisionBatches.length,1);
+  assert.equal(records.businessCloseoutDecisionBatches.filter(b=>b.id==='business-closeout-reply-1-20261015').length,1);
   assert.equal(batch.date,'2026-10-15');
   assert.equal(batch.answerShorthand,'全A');
   assert.equal(batch.answers.length,20);
@@ -74,8 +205,8 @@ test('five expiry meanings stay unselected and the next twenty-question round ne
   const request=records.serviceExpiryPlanningRequests[0];
   assert.deepEqual(request.pendingInterpretations,{serviceTimeShape:null,validityMeaning:null,additionalCompletion72HourPolicy:null,mainIncomeEligibility:null,workerCompletionReport:null});
   assert.equal(request.enabled,false);assert.equal(request.readyForImplementation,false);
-  assert.equal(records.businessCloseoutQuestionSets.length,2);
-  const set=records.businessCloseoutQuestionSets[1];
+  assert.equal(records.businessCloseoutQuestionSetHistory.filter(q=>q.id==='business-closeout-round-2-20261015').length,1);
+  const set=records.businessCloseoutQuestionSetHistory[1];
   const expected=[...Array.from({length:5},(_,i)=>`NE${String(i+1).padStart(2,'0')}`),...Array.from({length:15},(_,i)=>`CQ${String(i+21).padStart(2,'0')}`)];
   const rows=[...read(set.document).matchAll(/^\| (\d+)（((?:NE|CQ)\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];
   assert.equal(rows.length,20);assert.deepEqual(rows.map(r=>r[2]),expected);
@@ -83,19 +214,19 @@ test('five expiry meanings stay unselected and the next twenty-question round ne
   assert.equal(set.previousAllAApplies,false);assert.deepEqual(set.answers,[]);
   assert.equal(set.status,'awaiting-user-answers');
   set.questions.forEach((q,i)=>{assert.equal(q.number,i+1);assert.equal(q.id,expected[i]);assert.equal(q.selected,null);assert.equal(q.question,rows[i][3].trim());assert.equal(q.options.A,rows[i][4].trim());assert.equal(q.options.B,rows[i][5].trim());});
-  assert.deepEqual(records.currentPlanningFocus.pendingQuestionIds,expected);
-  assert.deepEqual(records.currentPlanningFocus.blockingInterpretationIds,expected.slice(0,5));
-  assert.equal(records.currentPlanningFocus.date,'2026-10-15');
-  assert.equal(records.currentPlanningFocus.directionDocument,request.document);
-  assert.equal(records.currentPlanningFocus.implementationEnabled,false);
+  assert.deepEqual(records.planningFocusHistory[8].pendingQuestionIds,expected);
+  assert.deepEqual(records.planningFocusHistory[8].blockingInterpretationIds,expected.slice(0,5));
+  assert.equal(records.planningFocusHistory[8].date,'2026-10-15');
+  assert.equal(records.planningFocusHistory[8].directionDocument,request.document);
+  assert.equal(records.planningFocusHistory[8].implementationEnabled,false);
   const qdoc=read(set.document);
   for(const phrase of ['20题全部待答','原第一轮的“全A”不适用于本表','不改变费用后来首次确认的补费申报72小时','全部待答','不代表真实资格已通过','不能通过本题擅自全停或加密催缴']) assert(qdoc.includes(phrase),phrase);
   assert(read('CONTEXT.md').includes('**客户完成确认**'));
 });
 
 test('new expiry direction adds exactly five explained questions and preserves original forty-question history and source links', () => {
-  const inventory=records.businessCloseoutQuestionInventory;
-  assert.deepEqual(handoff.businessCloseoutQuestionInventory,inventory);
+  const inventory=records.businessCloseoutInventoryHistory[1];
+  assert.deepEqual(handoff.businessCloseoutInventoryHistory[1],inventory);
   assert.equal(inventory.totalQuestions,45);assert.equal(inventory.answeredQuestions,20);assert.equal(inventory.remainingQuestions,25);
   assert.equal(inventory.totalQuestions-inventory.answeredQuestions,inventory.remainingQuestions);
   assert.equal(inventory.questions.length,45);assert.equal(new Set(inventory.questions.map(q=>q.id)).size,45);
@@ -109,11 +240,11 @@ test('new expiry direction adds exactly five explained questions and preserves o
   assert.equal(records.businessCloseoutQuestionSetHistory[0].answers.length,0);
   assert.deepEqual(handoff.businessCloseoutInventoryHistory,records.businessCloseoutInventoryHistory);
   assert.deepEqual(handoff.businessCloseoutQuestionSetHistory,records.businessCloseoutQuestionSetHistory);
-  assert.equal(records.remainingPlanningAudit.remainingQuestionCount,25);
-  assert.equal(records.remainingPlanningAudit.queuedQuestionCount,5);
+  assert.equal(records.remainingPlanningAuditHistory[2].remainingQuestionCount,25);
+  assert.equal(records.remainingPlanningAuditHistory[2].queuedQuestionCount,5);
   assert.equal(records.remainingPlanningAuditHistory[1].remainingQuestionCount,40);
-  assert.equal(records.currentPlanningFocus.remainingQuestionCount,25);
-  assert.equal(records.currentPlanningFocus.planningComplete,false);
+  assert.equal(records.planningFocusHistory[8].remainingQuestionCount,25);
+  assert.equal(records.planningFocusHistory[8].planningComplete,false);
   for(const f of ['docs/module-specs/business-closeout-round-1-rules-20261015.md','docs/module-specs/service-expiry-request-20261015.md','docs/module-specs/business-closeout-round-2-questions-20261015.md']) {
     for(const m of read(f).matchAll(/\]\(([^)]+)\)/g)) assert(fs.existsSync(path.resolve(root,path.dirname(f),m[1])),`${f}: ${m[1]}`);
   }
@@ -179,7 +310,7 @@ test('finite closeout inventory has forty unique sourced business questions in t
 });
 
 test('first closeout table presents exactly twenty complete A/B proposals and preserves their current fee and deadline scopes', () => {
-  assert.equal(records.businessCloseoutQuestionSetHistory.length,1);
+  assert.equal(records.businessCloseoutQuestionSetHistory.filter(q=>q.id==='business-closeout-round-1-20261014').length,1);
   const [set]=records.businessCloseoutQuestionSetHistory;
   assert.deepEqual(handoff.businessCloseoutQuestionSetHistory,records.businessCloseoutQuestionSetHistory);
   const doc=read(set.document);
@@ -354,10 +485,10 @@ test('fourteenth-round reply maps fourth B and other A answers without altering 
   assert.deepEqual(handoff.commissionDetailRules, expectedCommissionDetails);
   assert.deepEqual(records.commissionDesignApprovals[0].approvedRules.scope, ['跑腿', '维修', '闲置']);
   const income = handoff.items.find(x => x.id === 'HD02');
-  assert.equal(income.confirmed.include, '本人提供服务且已确认完成的服务费');
-  assert.equal(income.completionIncomeResolution.topic,'自动完成计入口径');
-  assert.equal(income.completionIncomeResolution.automaticCompletionAloneIncluded,false);
-  assert(income.pending.includes('自动完成明细与后续交付确认/更正衔接'));
+  assert.equal(income.confirmedHistory[0].include, '本人提供服务且已确认完成的服务费');
+  assert.equal(income.completionIncomeResolutionHistory[0].topic,'自动完成计入口径');
+  assert.equal(income.completionIncomeResolutionHistory[0].automaticCompletionAloneIncluded,false);
+  assert(income.pendingHistory[0].includes('自动完成明细与后续交付确认/更正衔接'));
   assert.equal(income.confirmed.disclosure, '非到账金额');
   const doc = read('docs/module-specs/monthly-commission-detail-rules.md');
   assert(doc.includes('不从发布/期望时间/午夜起算'));
@@ -2475,7 +2606,7 @@ test('approved deadline rules keep 72 hours, allow fee-pending flow completion a
   ]){const changed=structuredClone(expected);mutate(changed);assert.throws(()=>validate(changed));}
   assert.equal(handoff.items.find(item=>item.id==='HD02').confirmed.disclosure,'非到账金额');
   assert.equal(handoff.items.find(item=>item.id==='HD02').confirmed.business,'跑腿');
-  assert.deepEqual(handoff.items.find(item=>item.id==='HD02').completionIncomeResolution,{topic:'自动完成计入口径',sourceBatch:'deadline-completion-round-1-20261014',questionId:'AF07',answer:'B',explicitDeliveryAcknowledgmentRequired:true,automaticCompletionAloneIncluded:false,automaticCompletionListedSeparately:true});
+  assert.deepEqual(handoff.items.find(item=>item.id==='HD02').completionIncomeResolutionHistory[0],{topic:'自动完成计入口径',sourceBatch:'deadline-completion-round-1-20261014',questionId:'AF07',answer:'B',explicitDeliveryAcknowledgmentRequired:true,automaticCompletionAloneIncluded:false,automaticCompletionListedSeparately:true});
   assert.equal(records.commissionConfirmationRules.businessConfiguration['维修'].cap.amountCents,3000);
   assert.equal(records.commissionConfirmationRules.businessConfiguration['闲置'].cap.amountCents,2000);
   assert.equal(records.commissionConfirmationRules.businessConfiguration['其它'].cap.amountCents,2000);
@@ -2528,7 +2659,7 @@ test('deadline boundary reply maps only DA01 to B and preserves prior income and
   assert.equal(records.deadlineCompletionRules.income.automaticCompletionAloneIncluded,false);
   assert.equal(records.deadlineCompletionRules.ratings.automaticCompletionOpensVoluntaryEntryWithoutUnresolvedValidDeliveryDispute,true);
   assert.equal(records.deadlineCompletionRules.contactPermissionAfterAutomaticCompletionConfirmed,false);
-  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolution.answer,'B');
+  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolutionHistory[0].answer,'B');
 });
 
 test('approved deadline boundaries reject unilateral time changes, silent cancellations, early completion and unearned billing or private access', () => {
@@ -2620,7 +2751,7 @@ test('deadline entry reply maps only DC05 to B and preserves both prior replies 
   assert.deepEqual(handoff.deadlineCompletionEntryDecisionBatches,records.deadlineCompletionEntryDecisionBatches);
   assert.equal(records.deadlineCompletionBoundaryDecisionBatches[0].userReply,'1B, 全A');
   assert.equal(records.deadlineCompletionDecisionBatches[0].userReply,'7B, 全A');
-  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolution.answer,'B');
+  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolutionHistory[0].answer,'B');
   assert.equal(records.deadlineCompletionBoundaryRules.contact.automaticReceiptClosurePolicyConfirmed,false);
   assert.equal(records.deadlineCompletionEntryRules.receipts.afterAutomaticCompletion,'neither-party');
 });
@@ -2716,7 +2847,7 @@ test('fourth deadline reply preserves two B answers and the custom three-day ans
   assert.equal(records.deadlineCompletionBoundaryDecisionBatches[0].userReply,'1B, 全A');
   assert.equal(records.deadlineCompletionDetailRules.horizon.maxDays,3);
   assert.equal(records.deadlineCompletionDetailRules.horizon.maxDurationHours,null);
-  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolution.answer,'B');
+  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolutionHistory[0].answer,'B');
 });
 
 test('approved fourth-round rules reject guessed day arithmetic, selecting stale time acceptance and silently clearing real disputes', () => {
@@ -2855,7 +2986,7 @@ test('fifth-round rules forbid guessing day algorithms or DO02 consent and retai
   ]){const changed=structuredClone(expected);mutate(changed);assert.throws(()=>validate(changed));}
   assert.equal(records.deadlineCompletionRules.deadline.windowHours,72);
   assert.equal(records.commissionBillingRules.paymentDeadline.startsAt,'actual-successful-bill-issuance');
-  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolution.automaticCompletionAloneIncluded,false);
+  assert.equal(handoff.items.find(item=>item.id==='HD02').completionIncomeResolutionHistory[0].automaticCompletionAloneIncluded,false);
 });
 
 test('misunderstood time-entry explanation and sixth-round questions remain reviewable without importing the prior all-A reply', () => {
@@ -2863,7 +2994,7 @@ test('misunderstood time-entry explanation and sixth-round questions remain revi
   for(const text of ['DO02未选、需解释','没听懂','下午5点','下午3点','原报价金额保留','接单员明确接受新时间','不执行或固化DO02','延期最大七天，起算点','不倒填窗口月份']) assert(doc.includes(text),text);
   const focus={date:'2026-10-14',phase:'first-release-business-planning',direction:'deadline-automatic-completion',directionDocument:'docs/module-specs/deadline-completion-request-20261014.md',ruleDocument:'docs/module-specs/deadline-completion-operation-rules.md',sourceBatch:'deadline-completion-round-5-20261014',questionDocument:'docs/module-specs/deadline-completion-clarification-questions-20261014.md',status:'fifth-round-partial-time-entry-clarification-required',pendingQuestionIds:['DX01','DX02','DX03','DX04','DX05','DX06','DX07','DX08'],unresolvedOriginalQuestionIds:['DO02'],priorQuestionSetPaused:true,implementationEnabled:false};
   assert.deepEqual(records.planningFocusHistory[5],focus);assert.deepEqual(handoff.planningFocusHistory[5],focus);
-  assert.equal(records.planningFocusHistory.length,8);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
+  assert.equal(records.planningFocusHistory.length,9);assert.deepEqual(handoff.planningFocusHistory,records.planningFocusHistory);
   const questions=read(focus.questionDocument);
   assert(questions.includes('8题全部选择A'));assert(questions.includes('重述尚未选的原DO02'));
   const rows=[...questions.matchAll(/^\| [1-8]（(DX\d{2})） \| ([^|]+) \| ([^|]+) \| ([^|]+) \|\r?$/gm)];

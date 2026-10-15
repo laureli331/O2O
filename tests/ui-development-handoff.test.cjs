@@ -50,7 +50,7 @@ function validateDecisions(value) {
   }
   assert.equal(byId.get('HD02').confirmed.wallet, false);
   assert.equal(byId.get('HD02').confirmed.disclosure, '非到账金额');
-  assert(byId.get('HD03').pending.includes('付费推广识别文案与位置'));
+  assert(byId.get('HD03').pendingHistory[0].includes('付费推广识别文案与位置'));
 }
 
 function luminance(color) {
