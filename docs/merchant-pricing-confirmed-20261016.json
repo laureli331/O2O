@@ -36,7 +36,33 @@
     "postLimit": null,
     "entitlementDetailsComplete": false,
     "billingUnit": "single-store-or-independent-provider-profile",
-    "entitlementOwner": "business-profile"
+    "entitlementOwner": "business-profile",
+    "lifecycle": {
+      "activation": {
+        "requiresQualificationApproved": true,
+        "requiresPaymentSucceeded": true,
+        "requiresEntitlementsActuallyEnabled": true,
+        "start": "actual-entitlement-enablement-after-qualification-and-payment",
+        "failedActivationConsumesTime": false
+      },
+      "expiry": {
+        "approvedPosts": "retain-public-visibility",
+        "canUnpublish": true,
+        "newMainPostsAllowed": false,
+        "exclusiveToolsAllowed": false,
+        "separatelyPurchasedPromotions": "own-validity-period",
+        "postEditingRule": null,
+        "existingCampaignRule": null,
+        "issuedCouponRule": null
+      }
+    },
+    "aiAllowancePolicy": {
+      "includedUnusedExpiry": "end-of-current-allowance-period",
+      "carryForward": false,
+      "discloseBeforePurchase": true,
+      "grantCycle": null,
+      "extraPurchasedValidity": null
+    }
   },
   "contentHeating": {
     "release": "v2",
@@ -226,6 +252,28 @@
         "id": "quarter-discount-scope",
         "selected": "A",
         "context": "3：仅工具会员提供季付九折，Banner和内容加热起步只提供30天；佣金及AI增购不参与"
+      }
+    ]
+  },
+  "membershipLifecycleDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "a304f3d8070dde6f339878e839f216946cb29616",
+    "userReply": "全A",
+    "choices": [
+      {
+        "id": "membership-activation",
+        "selected": "A",
+        "context": "1：资格审核通过、付款成功且权益实际开通后起算；开通失败不消耗期限"
+      },
+      {
+        "id": "membership-expiry",
+        "selected": "A",
+        "context": "2：已审核通过的帖子继续展示，允许主动下架；暂停新增主帖和会员专属工具；已单购推广按自身期限处理"
+      },
+      {
+        "id": "included-ai-expiry",
+        "selected": "A",
+        "context": "3：会员包含的未用AI额度本期结束失效，购买前明确告知；另购额度有效期另定"
       }
     ]
   }

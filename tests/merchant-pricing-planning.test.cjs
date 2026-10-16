@@ -29,6 +29,10 @@ function validate(b){
  assert.equal(r.membership.postLimit,null,'Post limit pending');
  assert.equal(r.membership.billingUnit,'single-store-or-independent-provider-profile','Membership billing unit');
  assert.equal(r.membership.entitlementOwner,'business-profile','Rights attach to the business profile');
+ assert.deepEqual(r.membership.lifecycle,{activation:{requiresQualificationApproved:true,requiresPaymentSucceeded:true,requiresEntitlementsActuallyEnabled:true,start:'actual-entitlement-enablement-after-qualification-and-payment',failedActivationConsumesTime:false},expiry:{approvedPosts:'retain-public-visibility',canUnpublish:true,newMainPostsAllowed:false,exclusiveToolsAllowed:false,separatelyPurchasedPromotions:'own-validity-period',postEditingRule:null,existingCampaignRule:null,issuedCouponRule:null}},'Approved membership activation and expiry');
+ assert.deepEqual(r.membership.aiAllowancePolicy,{includedUnusedExpiry:'end-of-current-allowance-period',carryForward:false,discloseBeforePurchase:true,grantCycle:null,extraPurchasedValidity:null},'Included AI expiry and separate purchased quota');
+ assert.equal(r.membershipLifecycleDecision.userReply,'全A','Actual membership lifecycle reply');
+ assert.deepEqual(r.membershipLifecycleDecision.choices.map(x=>[x.id,x.selected]),[['membership-activation','A'],['membership-expiry','A'],['included-ai-expiry','A']]);
  assert.deepEqual(r.servicePeriods,{unit:'continuous-days',monthlyDays:30,quarterlyDays:90,purchasePageDisplaysDays:true,products:{membership:[30,90],banner:[30],contentHeating:[30]},activationRule:null},'Approved service periods, offers and pending activation');
  assert.equal(r.periodAndDiscountDecision.userReply,'全a','Actual period and discount reply');
  assert.deepEqual(r.periodAndDiscountDecision.choices.map(x=>[x.id,x.selected]),[['membership-billing-unit','A'],['service-period','A'],['quarter-discount-scope','A']]);
@@ -80,6 +84,19 @@ const changes=[
  ['Banner quarterly offer enabled',b=>b.r.servicePeriods.products.banner=[30,90],/Approved service periods/],
  ['heating quarterly offer enabled',b=>b.r.servicePeriods.products.contentHeating=[30,90],/Approved service periods/],
  ['activation inferred from payment',b=>b.r.servicePeriods.activationRule='payment-success',/Approved service periods/],
+ ['membership starts without qualification approval',b=>b.r.membership.lifecycle.activation.requiresQualificationApproved=false,/membership activation/],
+ ['membership starts without confirmed payment',b=>b.r.membership.lifecycle.activation.requiresPaymentSucceeded=false,/membership activation/],
+ ['payment alone starts membership',b=>b.r.membership.lifecycle.activation.requiresEntitlementsActuallyEnabled=false,/membership activation/],
+ ['failed activation consumes membership time',b=>b.r.membership.lifecycle.activation.failedActivationConsumesTime=true,/membership activation/],
+ ['membership expiry hides approved posts',b=>b.r.membership.lifecycle.expiry.approvedPosts='hide',/membership activation/],
+ ['expired member can create main posts',b=>b.r.membership.lifecycle.expiry.newMainPostsAllowed=true,/membership activation/],
+ ['expiry prevents unpublishing',b=>b.r.membership.lifecycle.expiry.canUnpublish=false,/membership activation/],
+ ['expired member can use exclusive tools',b=>b.r.membership.lifecycle.expiry.exclusiveToolsAllowed=true,/membership activation/],
+ ['separate promotions expire with membership',b=>b.r.membership.lifecycle.expiry.separatelyPurchasedPromotions='membership-expiry',/membership activation/],
+ ['unused included AI rolls forward',b=>b.r.membership.aiAllowancePolicy.carryForward=true,/Included AI expiry/],
+ ['included AI expiry not disclosed before purchase',b=>b.r.membership.aiAllowancePolicy.discloseBeforePurchase=false,/Included AI expiry/],
+ ['purchased AI expiry inferred from included quota',b=>b.r.membership.aiAllowancePolicy.extraPurchasedValidity='membership-expiry',/Included AI expiry/],
+ ['quarterly AI grant cycle invented',b=>b.r.membership.aiAllowancePolicy.grantCycle=30,/Included AI expiry/],
  ['discount extended to Banner',b=>b.r.discounts.eligibleProducts.push('banner'),/Quarter discount/],
  ['discount extended to heating',b=>b.r.discounts.eligibleProducts.push('contentHeating'),/Quarter discount/],
  ['membership required to advertise',b=>b.r.banner.requiresMembership=true,/membership/],
@@ -118,7 +135,7 @@ test('Banner release approval changes only the prior pending release and preserv
 });
 
 test('three A choices change only their approved fields and retain every other pricing decision',()=>{
- const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.periodAndDiscountDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const live=bundle().r,r=JSON.parse(cp.execFileSync('git',['show',live.membershipLifecycleDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'})),prior=JSON.parse(cp.execFileSync('git',['show',r.periodAndDiscountDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  const expected=structuredClone(prior);
  expected.banner.monthDefinition='30-continuous-days';
  expected.membership.billingUnit='single-store-or-independent-provider-profile';
@@ -136,7 +153,23 @@ test('current document entry points state the approved unit, days and membership
   assert(!/月计法[/、]优惠|适用商品[仍未待]/.test(s),file+': no stale pending period or discount scope');
  }
  const doc=read('docs/merchant-pricing-confirmed-20261016.md');
- assert(doc.includes('267.30元／90天')&&doc.includes('不确定实际启用起点'),'Price calculation remains candidate and activation remains pending');
+ assert(doc.includes('267.30元／90天')&&doc.includes('广告实际排期另行确认'),'Candidate price and advertising activation remain separate');
+});
+
+test('membership lifecycle approval preserves every prior price, period, original reply and release decision',()=>{
+ const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipLifecycleDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const current=structuredClone(r);delete current.membershipLifecycleDecision;delete current.membership.lifecycle;delete current.membership.aiAllowancePolicy;
+ assert.deepEqual(current,prior,'Only the approved membership lifecycle and included AI policy are added');
+});
+
+test('membership lifecycle appears in current documents without silently setting editing, coupons or AI grants',()=>{
+ for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','CONTEXT.md']){
+  const s=read(file);
+  for(const phrase of ['资格审核通过、付款成功且权益实际开通后起算','开通失败不消耗期限','已审核通过的帖子继续展示','单购推广按自身期限','会员赠送AI额度当期有效、不结转'])assert(s.includes(phrase),file+': '+phrase);
+ }
+ const s=read('docs/merchant-pricing-confirmed-20261016.md');
+ for(const phrase of ['季度会员的额度发放周期','旧帖编辑','已发券的兑现与核销'])assert(s.includes(phrase),'Unresolved detail: '+phrase);
+ assert(!s.includes('不确定实际启用起点'),'Membership activation no longer left wholly pending');
 });
 test('current documents have consistent field contracts and valid supplement links',()=>{
  const b=bundle();
