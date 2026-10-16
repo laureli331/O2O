@@ -82,3 +82,41 @@ test('current completion, permission, finance and deferred-scope boundaries stay
     assert(!/^(提交完成|已办完|确认完成|确认收到|收到)$/.test(action[1]), action[1]);
   }
 });
+
+function screen(id) {
+  const start = document.indexOf('### ' + id + ' ');
+  assert(start >= 0, id);
+  const end = document.indexOf('\n### ', start + 1);
+  const section = document.slice(start, end < 0 ? undefined : end);
+  return section.match(/```text\n([\s\S]*?)\n```/)[1];
+}
+
+test('homepage and search share explicit multi-category filtering without a redundant section heading', () => {
+  const home = screen('V01-A');
+  assert(!home.includes('最新需求'));
+  for (const category of ['维修', '跑腿', '闲置', '其它']) assert(home.includes('[ ]' + category));
+  assert(screen('V01-B').includes('分类多选'));
+  for (const source of [prd, read('docs/structured-design.md')]) {
+    for (const term of ['多选', '按“或”匹配', '关键词', '村社区', '点击“全部”清除分类勾选', '全部取消勾选']) {
+      assert(source.includes(term), term);
+    }
+  }
+  assert(document.includes('首页与搜索使用同一规则'));
+});
+
+test('public contact rows and review links remain separate on every affected detail page', () => {
+  for (const id of ['V02-A', 'V02-B', 'V02-C', 'V02-D', 'V10-B']) {
+    const lines = screen(id).split('\n');
+    const phone = lines.findIndex(line => line.includes('电话：'));
+    const wechat = lines.findIndex(line => line.includes('微信：'));
+    assert(phone >= 0 && wechat === phone + 1, id + ' phone and WeChat use adjacent separate rows');
+    assert(!lines[phone].includes('微信：'), id);
+    if (id !== 'V10-B') {
+      const review = lines.findIndex(line => /\[(?:对方的评价|卖方评价) >\]/.test(line));
+      assert.equal(review, wechat + 1, id + ' review gets its own row below contact fields');
+      assert(!/昵称|公开信息|核验/.test(lines[review]), id + ' no crowded identity row');
+    }
+  }
+  assert(prd.includes('需求发布填写“服务时间”（开始日期/时间）与“服务到期时间”'));
+  assert(document.includes('本轮尚未替换开始时间或取消其填写规则'));
+});
