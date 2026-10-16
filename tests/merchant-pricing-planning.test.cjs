@@ -21,11 +21,17 @@ function validate(b){
  assert.equal(r.bannerReleaseDecision.release,'v2');
  assert.equal(r.banner.rotationSeconds,null,'Rotation remains unconfirmed');
  assert.equal(r.banner.maxAdvertisersPerTier,null,'Capacity remains unconfirmed');
+ assert.equal(r.banner.monthDefinition,'30-continuous-days','Banner period is 30 days');
  assert.equal(r.membership.candidateMonthlyPriceCents,9900);
  assert.equal(r.membership.release,'v2','Membership release');
  assert.deepEqual(r.membership.includedDirections,['discovery-posting','basic-tools','basic-campaign-tools','defined-ai-allowance']);
  assert.equal(r.membership.aiAllowance,null,'AI allowance pending');
  assert.equal(r.membership.postLimit,null,'Post limit pending');
+ assert.equal(r.membership.billingUnit,'single-store-or-independent-provider-profile','Membership billing unit');
+ assert.equal(r.membership.entitlementOwner,'business-profile','Rights attach to the business profile');
+ assert.deepEqual(r.servicePeriods,{unit:'continuous-days',monthlyDays:30,quarterlyDays:90,purchasePageDisplaysDays:true,products:{membership:[30,90],banner:[30],contentHeating:[30]},activationRule:null},'Approved service periods, offers and pending activation');
+ assert.equal(r.periodAndDiscountDecision.userReply,'全a','Actual period and discount reply');
+ assert.deepEqual(r.periodAndDiscountDecision.choices.map(x=>[x.id,x.selected]),[['membership-billing-unit','A'],['service-period','A'],['quarter-discount-scope','A']]);
  assert.equal(r.contentHeating.release,'v2');
  assert.deepEqual(r.contentHeating.candidateMonthlyPricesCents,[4900],'Single initial heating tier');
  assert.equal(r.contentHeating.pool,'shared');
@@ -40,7 +46,7 @@ function validate(b){
  assert.equal(r.discounts.quarterMultiplier,0.9);
  assert.equal(r.discounts.halfYearOffered,false,'Half-year deferred');
  assert.equal(r.discounts.yearOffered,false,'Year deferred');
- assert.equal(r.discounts.eligibleProducts,null,'Discount applicability pending');
+ assert.deepEqual(r.discounts.eligibleProducts,['membership'],'Quarter discount only for membership');
  assert.equal(r.discounts.autoApplyToCommission,false);
  assert.equal(r.discounts.autoApplyToAiOverage,false);
  assert.deepEqual(r.billing,{month:'previous-calendar-month',scheduledDay:1,scheduledTime:'00:10',timezone:'Asia/Shanghai',paymentHours:72,start:'actual-bill-issued-successfully',customerFundsCollected:false,notificationStartsClock:false,scopeChanged:false},'Retained billing contract');
@@ -67,6 +73,15 @@ const changes=[
  ['carousel replaced with independent areas',b=>b.r.banner.independentSimultaneousAreas=true,/simultaneous/],
  ['unknown rotation invented',b=>b.r.banner.rotationSeconds=5,/Rotation/],
  ['capacity invented',b=>b.r.banner.maxAdvertisersPerTier=1,/Capacity/],
+ ['calendar month replaces continuous days',b=>b.r.banner.monthDefinition='calendar-month',/Banner period/],
+ ['all stores share one membership',b=>b.r.membership.billingUnit='all-stores-under-entity',/Membership billing unit/],
+ ['rights attach to the person instead of business profile',b=>b.r.membership.entitlementOwner='user-account',/Rights attach/],
+ ['quarter changes to calendar months',b=>b.r.servicePeriods.quarterlyDays=null,/Approved service periods/],
+ ['Banner quarterly offer enabled',b=>b.r.servicePeriods.products.banner=[30,90],/Approved service periods/],
+ ['heating quarterly offer enabled',b=>b.r.servicePeriods.products.contentHeating=[30,90],/Approved service periods/],
+ ['activation inferred from payment',b=>b.r.servicePeriods.activationRule='payment-success',/Approved service periods/],
+ ['discount extended to Banner',b=>b.r.discounts.eligibleProducts.push('banner'),/Quarter discount/],
+ ['discount extended to heating',b=>b.r.discounts.eligibleProducts.push('contentHeating'),/Quarter discount/],
  ['membership required to advertise',b=>b.r.banner.requiresMembership=true,/membership/],
  ['candidate prices treated as effective sales',b=>b.r.execution.formalSalePricesApproved=true,/formal sale/],
  ['membership moved to first release',b=>b.r.membership.release='v1',/Membership release/],
@@ -96,10 +111,32 @@ test('retained billing, dispute, arrears and cancellation-credit contracts are u
 test('Banner release approval changes only the prior pending release and preserves the proposal',()=>{
  const b=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',b.r.bannerReleaseDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  assert.equal(prior.banner.release,null);
- const current=structuredClone(b.r);delete current.bannerReleaseDecision;current.banner.release=null;
+ const current=JSON.parse(cp.execFileSync('git',['show',b.r.periodAndDiscountDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));delete current.bannerReleaseDecision;current.banner.release=null;
  assert.deepEqual(current,prior);
  for(const text of [b.prd,b.plan,b.design,b.doc,read('docs/v2-roadmap.md')])assert(text.includes('Banner放到第二版'),'Explicit release scope');
  assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
+});
+
+test('three A choices change only their approved fields and retain every other pricing decision',()=>{
+ const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.periodAndDiscountDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const expected=structuredClone(prior);
+ expected.banner.monthDefinition='30-continuous-days';
+ expected.membership.billingUnit='single-store-or-independent-provider-profile';
+ expected.membership.entitlementOwner='business-profile';
+ expected.discounts.eligibleProducts=['membership'];
+ expected.servicePeriods={unit:'continuous-days',monthlyDays:30,quarterlyDays:90,purchasePageDisplaysDays:true,products:{membership:[30,90],banner:[30],contentHeating:[30]},activationRule:null};
+ const current=structuredClone(r);delete current.periodAndDiscountDecision;
+ assert.deepEqual(current,expected,'Only approved billing unit, periods and discount scope change');
+});
+
+test('current document entry points state the approved unit, days and membership-only discount',()=>{
+ for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','docs/ascii-design-prd-2.1.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md','CONTEXT.md']){
+  const s=read(file);
+  for(const phrase of ['单个门店或独立服务者经营档案','连续30天','连续90天','季付九折仅适用于工具会员','Banner与内容加热起步只提供30天'])assert(s.includes(phrase),file+': '+phrase);
+  assert(!/月计法[/、]优惠|适用商品[仍未待]/.test(s),file+': no stale pending period or discount scope');
+ }
+ const doc=read('docs/merchant-pricing-confirmed-20261016.md');
+ assert(doc.includes('267.30元／90天')&&doc.includes('不确定实际启用起点'),'Price calculation remains candidate and activation remains pending');
 });
 test('current documents have consistent field contracts and valid supplement links',()=>{
  const b=bundle();

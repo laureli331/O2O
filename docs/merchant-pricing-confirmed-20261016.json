@@ -21,7 +21,7 @@
     "rotationSeconds": null,
     "maxAdvertisersPerTier": null,
     "deliveryRulesComplete": false,
-    "monthDefinition": null
+    "monthDefinition": "30-continuous-days"
   },
   "membership": {
     "release": "v2",
@@ -34,7 +34,9 @@
     ],
     "aiAllowance": null,
     "postLimit": null,
-    "entitlementDetailsComplete": false
+    "entitlementDetailsComplete": false,
+    "billingUnit": "single-store-or-independent-provider-profile",
+    "entitlementOwner": "business-profile"
   },
   "contentHeating": {
     "release": "v2",
@@ -59,7 +61,9 @@
     "quarterMultiplier": 0.9,
     "halfYearOffered": false,
     "yearOffered": false,
-    "eligibleProducts": null,
+    "eligibleProducts": [
+      "membership"
+    ],
     "autoApplyToCommission": false,
     "autoApplyToAiOverage": false
   },
@@ -183,5 +187,46 @@
     "userReply": "a",
     "previousRelease": null,
     "release": "v2"
+  },
+  "servicePeriods": {
+    "unit": "continuous-days",
+    "monthlyDays": 30,
+    "quarterlyDays": 90,
+    "purchasePageDisplaysDays": true,
+    "products": {
+      "membership": [
+        30,
+        90
+      ],
+      "banner": [
+        30
+      ],
+      "contentHeating": [
+        30
+      ]
+    },
+    "activationRule": null
+  },
+  "periodAndDiscountDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "144494f9edc65de4573a63de8ca5a845cdb2d87b",
+    "userReply": "全a",
+    "choices": [
+      {
+        "id": "membership-billing-unit",
+        "selected": "A",
+        "context": "1：单个门店或独立服务者经营档案各计一份会员，权益归属该经营对象"
+      },
+      {
+        "id": "service-period",
+        "selected": "A",
+        "context": "2：一个月按连续30天、季度按连续90天，购买页明确标注天数；佣金自然月账期不变"
+      },
+      {
+        "id": "quarter-discount-scope",
+        "selected": "A",
+        "context": "3：仅工具会员提供季付九折，Banner和内容加热起步只提供30天；佣金及AI增购不参与"
+      }
+    ]
   }
 }
