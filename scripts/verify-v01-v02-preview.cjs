@@ -31,8 +31,7 @@ async function verify(){
     await page.locator('#home-scroll').evaluate(el=>el.scrollTop=0);
   }
   async function assertMasonry(){
-    await page.locator('[data-layout="masonry"]').click();
-    await page.waitForFunction(()=>document.getElementById('cards').classList.contains('masonry')&&document.getElementById('cards').style.height!=='');
+    await page.waitForFunction(()=>document.getElementById('cards').style.height!=='');
     const rects=await page.locator('#cards .listing').evaluateAll(cards=>cards.map(card=>({left:card.offsetLeft,top:card.offsetTop,width:card.offsetWidth,height:card.offsetHeight})));
     for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){
       const a=rects[i],b=rects[j];assert(a.left+a.width<=b.left+1||b.left+b.width<=a.left+1||a.top+a.height<=b.top+1||b.top+b.height<=a.top+1,'masonry cards never overlap');
@@ -48,9 +47,14 @@ async function verify(){
     await page.locator('#reset-filters').click();assert.equal(await page.locator('[data-item]').count(),8);
     await page.locator('[data-category="repair"]').click();assert.equal(await page.locator('[data-item]').count(),2);
     await page.locator('[data-category="all"]').click();
-    await page.locator('[data-layout="grid"]').click();assert.equal(await page.locator('#cards').evaluate(el=>getComputedStyle(el).display),'grid');
-    assert.equal(await page.locator('#cards').evaluate(el=>el.style.height),'');
+    assert.equal(await page.locator('[data-layout]').count(),0,'no grid toggle remains');
+    assert.equal(await page.locator('#cards').evaluate(el=>getComputedStyle(el).display),'block');
     await page.locator('#home-scroll').evaluate(el=>el.scrollTop=0);
+    const viewport=page.viewportSize();
+    await page.setViewportSize({width:viewport.width===1280?700:375,height:viewport.height});
+    await page.waitForFunction(()=>{const box=document.getElementById('cards'),card=box.children[1];return Math.abs(card.offsetLeft-(box.clientWidth+12)/2)<2;});
+    await page.setViewportSize(viewport);
+    await page.waitForFunction(()=>{const box=document.getElementById('cards'),card=box.children[1];return Math.abs(card.offsetLeft-(box.clientWidth+12)/2)<2;});
   }
   try{
     await page.goto(url);await page.locator('[data-item]').first().waitFor();

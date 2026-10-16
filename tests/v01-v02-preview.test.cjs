@@ -29,6 +29,10 @@ test('waterfall appends each card to the shorter column and gives empty results 
   assert.deepEqual(JSON.parse(JSON.stringify(model.masonryLayout([],160))),{positions:[],height:0});
   const equal=JSON.parse(JSON.stringify(model.masonryLayout([100,100,100,100],160)));
   assert.deepEqual(equal.positions.map(p=>p.left),[0,172,0,172]);
+  assert(!html.includes('data-layout='),'no layout switch remains');
+  assert(!html.includes('layout-controls'));
+  assert(!html.includes("layout:'grid'"));
+  assert(html.includes('.cards{display:block;position:relative}'));
 });
 test('unknown fees stay distinct from a quoted price and idle negotiation',()=>{
   assert.equal(model.priceText(model.items.find(i=>i.id==='washer')),'费用待协商');
