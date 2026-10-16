@@ -29,8 +29,11 @@ function validate(b){
  assert.equal(r.membership.postLimit,null,'Post limit pending');
  assert.equal(r.membership.billingUnit,'single-store-or-independent-provider-profile','Membership billing unit');
  assert.equal(r.membership.entitlementOwner,'business-profile','Rights attach to the business profile');
- assert.deepEqual(r.membership.lifecycle,{activation:{requiresQualificationApproved:true,requiresPaymentSucceeded:true,requiresEntitlementsActuallyEnabled:true,start:'actual-entitlement-enablement-after-qualification-and-payment',failedActivationConsumesTime:false},expiry:{approvedPosts:'retain-public-visibility',canUnpublish:true,newMainPostsAllowed:false,exclusiveToolsAllowed:false,separatelyPurchasedPromotions:'own-validity-period',postEditingRule:null,existingCampaignRule:null,issuedCouponRule:null}},'Approved membership activation and expiry');
- assert.deepEqual(r.membership.aiAllowancePolicy,{includedUnusedExpiry:'end-of-current-allowance-period',carryForward:false,discloseBeforePurchase:true,grantCycle:null,extraPurchasedValidity:null},'Included AI expiry and separate purchased quota');
+ assert.deepEqual(r.membership.lifecycle,{activation:{requiresQualificationApproved:true,requiresPaymentSucceeded:true,requiresEntitlementsActuallyEnabled:true,start:'actual-entitlement-enablement-after-qualification-and-payment',failedActivationConsumesTime:false},expiry:{approvedPosts:'retain-public-visibility',canUnpublish:true,newMainPostsAllowed:false,exclusiveToolsAllowed:false,separatelyPurchasedPromotions:'own-validity-period',postEditingRule:null,existingCampaignRule:{newCampaignsAllowed:false,newCouponClaimsAllowed:false,existingActivityPageDisplay:null},issuedCouponRule:{validity:'original-coupon-term',necessaryRedemptionAllowed:true,complaintHandlingRetained:true}}},'Approved membership activation and expiry');
+ assert.deepEqual(r.membership.aiAllowancePolicy,{includedUnusedExpiry:'end-of-current-allowance-period',carryForward:false,discloseBeforePurchase:true,grantCycle:{unit:'continuous-days',days:30,grantsPerQuarter:3,unusedExpiry:'end-of-each-30-day-period'},extraPurchasedValidity:null},'Included AI expiry and separate purchased quota');
+ assert.deepEqual(r.membership.renewal,{mode:'manual-purchase',earlyRenewalAllowed:true,activeMembershipStart:'after-current-paid-term',expiredMembershipStart:'actual-reenablement-after-qualification-and-payment'},'Approved manual renewal and term continuity');
+ assert.equal(r.membershipContinuationDecision.userReply,'全A','Actual membership continuation reply');
+ assert.deepEqual(r.membershipContinuationDecision.choices.map(x=>[x.id,x.selected]),[['quarterly-ai-grants','A'],['early-renewal','A'],['campaign-coupon-expiry','A']]);
  assert.equal(r.membershipLifecycleDecision.userReply,'全A','Actual membership lifecycle reply');
  assert.deepEqual(r.membershipLifecycleDecision.choices.map(x=>[x.id,x.selected]),[['membership-activation','A'],['membership-expiry','A'],['included-ai-expiry','A']]);
  assert.deepEqual(r.servicePeriods,{unit:'continuous-days',monthlyDays:30,quarterlyDays:90,purchasePageDisplaysDays:true,products:{membership:[30,90],banner:[30],contentHeating:[30]},activationRule:null},'Approved service periods, offers and pending activation');
@@ -96,7 +99,19 @@ const changes=[
  ['unused included AI rolls forward',b=>b.r.membership.aiAllowancePolicy.carryForward=true,/Included AI expiry/],
  ['included AI expiry not disclosed before purchase',b=>b.r.membership.aiAllowancePolicy.discloseBeforePurchase=false,/Included AI expiry/],
  ['purchased AI expiry inferred from included quota',b=>b.r.membership.aiAllowancePolicy.extraPurchasedValidity='membership-expiry',/Included AI expiry/],
- ['quarterly AI grant cycle invented',b=>b.r.membership.aiAllowancePolicy.grantCycle=30,/Included AI expiry/],
+ ['quarterly AI grants frontloaded',b=>b.r.membership.aiAllowancePolicy.grantCycle.grantsPerQuarter=1,/Included AI expiry/],
+ ['AI grant windows changed to calendar months',b=>b.r.membership.aiAllowancePolicy.grantCycle.unit='calendar-months',/Included AI expiry/],
+ ['AI grant cycle left pending',b=>b.r.membership.aiAllowancePolicy.grantCycle=null,/Included AI expiry/],
+ ['batch allowance stays valid for 90 days',b=>b.r.membership.aiAllowancePolicy.grantCycle.unusedExpiry='end-of-90-day-term',/Included AI expiry/],
+ ['early renewal disallowed',b=>b.r.membership.renewal.earlyRenewalAllowed=false,/Approved manual renewal/],
+ ['early purchase overlaps current term',b=>b.r.membership.renewal.activeMembershipStart='payment-success',/Approved manual renewal/],
+ ['lapsed membership backdated',b=>b.r.membership.renewal.expiredMembershipStart='old-term-end',/Approved manual renewal/],
+ ['campaign creation continues after membership expiry',b=>b.r.membership.lifecycle.expiry.existingCampaignRule.newCampaignsAllowed=true,/membership activation/],
+ ['new coupon claims continue after expiry',b=>b.r.membership.lifecycle.expiry.existingCampaignRule.newCouponClaimsAllowed=true,/membership activation/],
+ ['issued coupons expire with membership',b=>b.r.membership.lifecycle.expiry.issuedCouponRule.validity='membership-expiry',/membership activation/],
+ ['necessary coupon redemption blocked after expiry',b=>b.r.membership.lifecycle.expiry.issuedCouponRule.necessaryRedemptionAllowed=false,/membership activation/],
+ ['coupon complaints blocked after expiry',b=>b.r.membership.lifecycle.expiry.issuedCouponRule.complaintHandlingRetained=false,/membership activation/],
+ ['automatic membership debit enabled',b=>b.r.prepaidServices.automaticDebit=true,/Expected values/],
  ['discount extended to Banner',b=>b.r.discounts.eligibleProducts.push('banner'),/Quarter discount/],
  ['discount extended to heating',b=>b.r.discounts.eligibleProducts.push('contentHeating'),/Quarter discount/],
  ['membership required to advertise',b=>b.r.banner.requiresMembership=true,/membership/],
@@ -157,19 +172,37 @@ test('current document entry points state the approved unit, days and membership
 });
 
 test('membership lifecycle approval preserves every prior price, period, original reply and release decision',()=>{
- const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipLifecycleDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const live=bundle().r,r=JSON.parse(cp.execFileSync('git',['show',live.membershipContinuationDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'})),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipLifecycleDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  const current=structuredClone(r);delete current.membershipLifecycleDecision;delete current.membership.lifecycle;delete current.membership.aiAllowancePolicy;
  assert.deepEqual(current,prior,'Only the approved membership lifecycle and included AI policy are added');
 });
 
-test('membership lifecycle appears in current documents without silently setting editing, coupons or AI grants',()=>{
+test('membership lifecycle appears in current documents and retains unconfirmed editing and AI quantities',()=>{
  for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','CONTEXT.md']){
   const s=read(file);
   for(const phrase of ['资格审核通过、付款成功且权益实际开通后起算','开通失败不消耗期限','已审核通过的帖子继续展示','单购推广按自身期限','会员赠送AI额度当期有效、不结转'])assert(s.includes(phrase),file+': '+phrase);
  }
  const s=read('docs/merchant-pricing-confirmed-20261016.md');
- for(const phrase of ['季度会员的额度发放周期','旧帖编辑','已发券的兑现与核销'])assert(s.includes(phrase),'Unresolved detail: '+phrase);
+ for(const phrase of ['每期数量和计量单位仍待','旧帖编辑','已发券的兑现与核销'])assert(s.includes(phrase),'Retained detail: '+phrase);
  assert(!s.includes('不确定实际启用起点'),'Membership activation no longer left wholly pending');
+});
+
+test('continuation decisions change only approved grant cycle, renewal and campaign expiry fields',()=>{
+ const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipContinuationDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const current=structuredClone(r);delete current.membershipContinuationDecision;delete current.membership.renewal;
+ current.membership.aiAllowancePolicy.grantCycle=null;
+ current.membership.lifecycle.expiry.existingCampaignRule=null;
+ current.membership.lifecycle.expiry.issuedCouponRule=null;
+ assert.deepEqual(current,prior,'All prior prices, replies, releases and unresolved decisions preserved');
+});
+
+test('current documents explain grants, renewal and necessary coupon exceptions together',()=>{
+ for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','docs/ascii-design-prd-2.1.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md','CONTEXT.md']){
+  const s=read(file);
+  for(const phrase of ['每连续30天发放一次，共三次','新期限接在已购有效期之后','到期后停止创建活动及新领券','已领券按原定期限有效','保留必要核销和投诉处理'])assert(s.includes(phrase),file+': '+phrase);
+  assert(!s.includes('季度会员的额度发放周期、每期数量和计量单位仍待'),'Grant cycle no longer pending');
+ }
+ assert.equal(bundle().r.membership.aiAllowance,null,'No quantity invented');
 });
 test('current documents have consistent field contracts and valid supplement links',()=>{
  const b=bundle();

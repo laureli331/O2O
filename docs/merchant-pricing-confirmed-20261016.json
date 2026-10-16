@@ -52,16 +52,35 @@
         "exclusiveToolsAllowed": false,
         "separatelyPurchasedPromotions": "own-validity-period",
         "postEditingRule": null,
-        "existingCampaignRule": null,
-        "issuedCouponRule": null
+        "existingCampaignRule": {
+          "newCampaignsAllowed": false,
+          "newCouponClaimsAllowed": false,
+          "existingActivityPageDisplay": null
+        },
+        "issuedCouponRule": {
+          "validity": "original-coupon-term",
+          "necessaryRedemptionAllowed": true,
+          "complaintHandlingRetained": true
+        }
       }
     },
     "aiAllowancePolicy": {
       "includedUnusedExpiry": "end-of-current-allowance-period",
       "carryForward": false,
       "discloseBeforePurchase": true,
-      "grantCycle": null,
+      "grantCycle": {
+        "unit": "continuous-days",
+        "days": 30,
+        "grantsPerQuarter": 3,
+        "unusedExpiry": "end-of-each-30-day-period"
+      },
       "extraPurchasedValidity": null
+    },
+    "renewal": {
+      "mode": "manual-purchase",
+      "earlyRenewalAllowed": true,
+      "activeMembershipStart": "after-current-paid-term",
+      "expiredMembershipStart": "actual-reenablement-after-qualification-and-payment"
     }
   },
   "contentHeating": {
@@ -274,6 +293,28 @@
         "id": "included-ai-expiry",
         "selected": "A",
         "context": "3：会员包含的未用AI额度本期结束失效，购买前明确告知；另购额度有效期另定"
+      }
+    ]
+  },
+  "membershipContinuationDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "73e416bd3209731e65e9a6deeef7b0aac6b8d572",
+    "userReply": "全A",
+    "choices": [
+      {
+        "id": "quarterly-ai-grants",
+        "selected": "A",
+        "context": "1：90天会员每30天发放一次赠送AI额度，共三次；每次未用完部分在该30天结束时失效，具体额度待成本核实"
+      },
+      {
+        "id": "early-renewal",
+        "selected": "A",
+        "context": "2：允许主动提前续费，新期限接在旧期限之后；已到期从再次实际开通时起算，不自动扣款"
+      },
+      {
+        "id": "campaign-coupon-expiry",
+        "selected": "A",
+        "context": "3：会员到期停止创建活动及新领券；已领取的券按原定期限继续有效，保留必要核销和投诉处理"
       }
     ]
   }
