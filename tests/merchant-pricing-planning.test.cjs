@@ -29,6 +29,11 @@ function validate(b){
  assert.equal(r.membership.postLimit,null,'Post limit pending');
  assert.equal(r.membership.billingUnit,'single-store-or-independent-provider-profile','Membership billing unit');
  assert.equal(r.membership.entitlementOwner,'business-profile','Rights attach to the business profile');
+ assert.deepEqual(r.membership.toolsScope,{included:['business-publicity-profile-management','main-post-drafts-and-publication-management','campaign-management','coupon-management'],assetLibrary:'deferred',reuploadMaterialsPerPublication:true},'Approved tools exclude a material library');
+ assert.deepEqual(r.membership.aiServiceScope,{included:['promotional-copy','real-photo-optimization','template-campaign-posters'],allowanceAccess:'included-member-allowance',usageCostPerService:null,copySource:'merchant-provided-factual-information',photoMustPreserve:['product-subject','quantity','key-characteristics'],posterPriceAndTermsConfirmedByMerchant:true,supplierAndEffectVerified:false},'Approved AI services and pending costs');
+ assert.deepEqual(r.membership.basicEffectStats,{summaryPanelIncluded:true,scope:'own-content-and-campaigns',metrics:['views','favorites','coupon-claims','coupon-redemptions'],historicalRecordsReadableAfterExpiry:true,purchasedPromotionReportsReadableAfterExpiry:true,queryFeeCents:0,countsRepresentNewSales:false,metricDefinitions:null,dataRetention:null},'Approved basic effect statistics');
+ assert.equal(r.membershipBenefitsDecision.userReply,'1b\n2a\n3a','Actual B A A reply');
+ assert.deepEqual(r.membershipBenefitsDecision.choices.map(x=>[x.id,x.selected]),[['basic-tools-scope','B'],['included-ai-services','A'],['basic-effect-statistics','A']]);
  assert.deepEqual(r.membership.lifecycle,{activation:{requiresQualificationApproved:true,requiresPaymentSucceeded:true,requiresEntitlementsActuallyEnabled:true,start:'actual-entitlement-enablement-after-qualification-and-payment',failedActivationConsumesTime:false},expiry:{approvedPosts:'retain-public-visibility',canUnpublish:true,newMainPostsAllowed:false,exclusiveToolsAllowed:false,separatelyPurchasedPromotions:'own-validity-period',postEditingRule:null,existingCampaignRule:{newCampaignsAllowed:false,newCouponClaimsAllowed:false,existingActivityPageDisplay:null},issuedCouponRule:{validity:'original-coupon-term',necessaryRedemptionAllowed:true,complaintHandlingRetained:true}}},'Approved membership activation and expiry');
  assert.deepEqual(r.membership.aiAllowancePolicy,{includedUnusedExpiry:'end-of-current-allowance-period',carryForward:false,discloseBeforePurchase:true,grantCycle:{unit:'continuous-days',days:30,grantsPerQuarter:3,unusedExpiry:'end-of-each-30-day-period'},extraPurchasedValidity:null},'Included AI expiry and separate purchased quota');
  assert.deepEqual(r.membership.renewal,{mode:'manual-purchase',earlyRenewalAllowed:true,activeMembershipStart:'after-current-paid-term',expiredMembershipStart:'actual-reenablement-after-qualification-and-payment'},'Approved manual renewal and term continuity');
@@ -75,6 +80,19 @@ function validate(b){
 }
 test('approved merchant trial pricing, carousel, package, discounts and retained billing agree',()=>assert.equal(validate(bundle()),true));
 const changes=[
+ ['material library silently included',b=>b.r.membership.toolsScope.assetLibrary='included',/tools exclude/],
+ ['campaign management dropped from basic tools',b=>b.r.membership.toolsScope.included.splice(2,1),/tools exclude/],
+ ['real photo optimization sold only as an extra',b=>b.r.membership.aiServiceScope.included.splice(1,1),/Approved AI services/],
+ ['AI generation unit costs invented',b=>b.r.membership.aiServiceScope.usageCostPerService={image:1},/Approved AI services/],
+ ['AI promotional information freely invented',b=>b.r.membership.aiServiceScope.copySource='model-invented',/Approved AI services/],
+ ['AI supplier and quality treated as verified',b=>b.r.membership.aiServiceScope.supplierAndEffectVerified=true,/Approved AI services/],
+ ['summary statistics postponed',b=>b.r.membership.basicEffectStats.summaryPanelIncluded=false,/basic effect statistics/],
+ ['other merchants statistics exposed',b=>b.r.membership.basicEffectStats.scope='all-merchants',/basic effect statistics/],
+ ['history inaccessible after membership expiry',b=>b.r.membership.basicEffectStats.historicalRecordsReadableAfterExpiry=false,/basic effect statistics/],
+ ['purchased promotion reports inaccessible after expiry',b=>b.r.membership.basicEffectStats.purchasedPromotionReportsReadableAfterExpiry=false,/basic effect statistics/],
+ ['basic statistics queries charged separately',b=>b.r.membership.basicEffectStats.queryFeeCents=100,/basic effect statistics/],
+ ['coupon redemptions reported as new sales',b=>b.r.membership.basicEffectStats.countsRepresentNewSales=true,/basic effect statistics/],
+ ['statistics data retention period invented',b=>b.r.membership.basicEffectStats.dataRetention=365,/basic effect statistics/],
  ['Banner moved to first release',b=>b.r.banner.release='v1',/Banner release/],
  ['Banner release left unconfirmed',b=>b.r.banner.release=null,/Banner release/],
  ['carousel replaced with independent areas',b=>b.r.banner.independentSimultaneousAreas=true,/simultaneous/],
@@ -188,12 +206,26 @@ test('membership lifecycle appears in current documents and retains unconfirmed 
 });
 
 test('continuation decisions change only approved grant cycle, renewal and campaign expiry fields',()=>{
- const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipContinuationDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const live=bundle().r,r=JSON.parse(cp.execFileSync('git',['show',live.membershipBenefitsDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'})),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipContinuationDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  const current=structuredClone(r);delete current.membershipContinuationDecision;delete current.membership.renewal;
  current.membership.aiAllowancePolicy.grantCycle=null;
  current.membership.lifecycle.expiry.existingCampaignRule=null;
  current.membership.lifecycle.expiry.issuedCouponRule=null;
  assert.deepEqual(current,prior,'All prior prices, replies, releases and unresolved decisions preserved');
+});
+
+test('B A A benefits approval adds only scoped tools, AI services, statistics and provenance',()=>{
+ const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipBenefitsDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const current=structuredClone(r);delete current.membershipBenefitsDecision;delete current.membership.toolsScope;delete current.membership.aiServiceScope;delete current.membership.basicEffectStats;
+ assert.deepEqual(current,prior,'Prior rates, billing, quota uncertainties and releases preserved');
+});
+
+test('current documents consistently state B A A benefits without reviving the library or treating counts as sales',()=>{
+ for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','docs/ascii-design-prd-2.1.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md','CONTEXT.md']){
+  const s=read(file);
+  for(const phrase of ['素材库暂缓，每次发布自行上传','宣传文案、实拍图片优化、模板式活动海报','浏览、收藏、领券和核销','已有历史记录和已购推广报告到期后仍可查看','不另收查询费','不把浏览、点击或核销写成新增成交额'])assert(s.includes(phrase),file+': '+phrase);
+ }
+ assert.equal(bundle().r.membership.entitlementDetailsComplete,false,'Limits and delivery rules still pending');
 });
 
 test('current documents explain grants, renewal and necessary coupon exceptions together',()=>{

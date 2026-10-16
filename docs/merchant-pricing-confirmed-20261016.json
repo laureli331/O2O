@@ -81,6 +81,49 @@
       "earlyRenewalAllowed": true,
       "activeMembershipStart": "after-current-paid-term",
       "expiredMembershipStart": "actual-reenablement-after-qualification-and-payment"
+    },
+    "toolsScope": {
+      "included": [
+        "business-publicity-profile-management",
+        "main-post-drafts-and-publication-management",
+        "campaign-management",
+        "coupon-management"
+      ],
+      "assetLibrary": "deferred",
+      "reuploadMaterialsPerPublication": true
+    },
+    "aiServiceScope": {
+      "included": [
+        "promotional-copy",
+        "real-photo-optimization",
+        "template-campaign-posters"
+      ],
+      "allowanceAccess": "included-member-allowance",
+      "usageCostPerService": null,
+      "copySource": "merchant-provided-factual-information",
+      "photoMustPreserve": [
+        "product-subject",
+        "quantity",
+        "key-characteristics"
+      ],
+      "posterPriceAndTermsConfirmedByMerchant": true,
+      "supplierAndEffectVerified": false
+    },
+    "basicEffectStats": {
+      "summaryPanelIncluded": true,
+      "scope": "own-content-and-campaigns",
+      "metrics": [
+        "views",
+        "favorites",
+        "coupon-claims",
+        "coupon-redemptions"
+      ],
+      "historicalRecordsReadableAfterExpiry": true,
+      "purchasedPromotionReportsReadableAfterExpiry": true,
+      "queryFeeCents": 0,
+      "countsRepresentNewSales": false,
+      "metricDefinitions": null,
+      "dataRetention": null
     }
   },
   "contentHeating": {
@@ -315,6 +358,28 @@
         "id": "campaign-coupon-expiry",
         "selected": "A",
         "context": "3：会员到期停止创建活动及新领券；已领取的券按原定期限继续有效，保留必要核销和投诉处理"
+      }
+    ]
+  },
+  "membershipBenefitsDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "14d74dee6bb44cf8f513c926b6ea9cd7e088c828",
+    "userReply": "1b\n2a\n3a",
+    "choices": [
+      {
+        "id": "basic-tools-scope",
+        "selected": "B",
+        "context": "1B：经营宣传资料维护、主帖草稿与发布管理、活动与优惠券管理；素材库暂缓，每次发布自行上传"
+      },
+      {
+        "id": "included-ai-services",
+        "selected": "A",
+        "context": "2A：宣传文案、实拍图片优化、模板式活动海报均可使用会员额度；不同服务消耗分别核算，数量、成本和实际能力待验证"
+      },
+      {
+        "id": "basic-effect-statistics",
+        "selected": "A",
+        "context": "3A：本人内容浏览/收藏及活动领券/核销基础统计；已有历史记录和已购推广报告到期后仍可查看，不另收查询费，不将统计当新增成交额"
       }
     ]
   }
