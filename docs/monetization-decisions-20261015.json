@@ -1,4 +1,11 @@
 {
+  "pricingSupplement": {
+    "date": "2026-10-16",
+    "record": "docs/merchant-pricing-confirmed-20261016.json",
+    "document": "docs/merchant-pricing-confirmed-20261016.md",
+    "candidatePricesApproved": true,
+    "formalSalePricesApproved": false
+  },
   "schemaVersion": 1,
   "date": "2026-10-15",
   "timezone": "Asia/Shanghai",

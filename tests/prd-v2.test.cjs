@@ -27,7 +27,7 @@ const terms = (text, expected, label) => { for (const term of expected) assert(t
 
 function validateCurrent(text) {
   assert(text.startsWith('# 湘邻湘友微信小程序 PRD'));
-  terms(text, ['版本：2.1', '2026-10-15', '没有产品实现', '具体价格/额度/交付细则仍待确认'], 'Current baseline');
+  terms(text, ['版本：2.1', '2026-10-16', '没有产品实现', '正式收费标准、额度与交付细则仍待确认'], 'Current baseline');
   for (const [prefix, count] of [['M', 14], ['R', 8], ['F', 21], ['V', 22], ['T', 18], ['RT', 16], ['AT', 12], ['DT', 10], ['BX', 18], ['AI', 16], ['AM', 8], ['VP', 7]]) {
     const rows = family(text, prefix);
     assert.equal(rows.size, count, prefix + ' current coverage');

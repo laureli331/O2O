@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "5ac265d522a0790483ac49d7d1a7aecd080ed374",
+  "document": "docs/merchant-pricing-confirmed-20261016.md",
+  "status": "candidate-prices-and-directions-approved-details-pending",
+  "approvalReply": "按你的建议来",
+  "bannerClarification": "banner是在首页的轮播图",
+  "banner": {
+    "surface": "home-carousel",
+    "independentSimultaneousAreas": false,
+    "candidateMonthlyPricesCents": [
+      29900,
+      24900,
+      19900
+    ],
+    "defaultSlide": "first",
+    "requiresMembership": false,
+    "release": null,
+    "rotationSeconds": null,
+    "maxAdvertisersPerTier": null,
+    "deliveryRulesComplete": false,
+    "monthDefinition": null
+  },
+  "membership": {
+    "release": "v2",
+    "candidateMonthlyPriceCents": 9900,
+    "includedDirections": [
+      "discovery-posting",
+      "basic-tools",
+      "basic-campaign-tools",
+      "defined-ai-allowance"
+    ],
+    "aiAllowance": null,
+    "postLimit": null,
+    "entitlementDetailsComplete": false
+  },
+  "contentHeating": {
+    "release": "v2",
+    "candidateMonthlyPricesCents": [
+      4900
+    ],
+    "pool": "shared",
+    "densityPolicy": "unified",
+    "globalOrganicInterval": null,
+    "perMerchantFixedIntervalPromised": false,
+    "targetSurface": null,
+    "rotationRulesComplete": false
+  },
+  "searchHeating": {
+    "status": "deferred-v2-candidate",
+    "priceCents": null,
+    "implementationCommitted": false
+  },
+  "discounts": {
+    "monthMultiplier": 1,
+    "quarterMonths": 3,
+    "quarterMultiplier": 0.9,
+    "halfYearOffered": false,
+    "yearOffered": false,
+    "eligibleProducts": null,
+    "autoApplyToCommission": false,
+    "autoApplyToAiOverage": false
+  },
+  "billing": {
+    "month": "previous-calendar-month",
+    "scheduledDay": 1,
+    "scheduledTime": "00:10",
+    "timezone": "Asia/Shanghai",
+    "paymentHours": 72,
+    "start": "actual-bill-issued-successfully",
+    "customerFundsCollected": false,
+    "notificationStartsClock": false,
+    "scopeChanged": false
+  },
+  "prepaidServices": {
+    "mode": "per-purchase-period-prepayment",
+    "reviewPaymentOrder": null,
+    "automaticDebit": false
+  },
+  "execution": {
+    "formalSalePricesApproved": false,
+    "realSalesEnabled": false,
+    "paidDemandVerified": false,
+    "merchantPermissionVerified": false,
+    "technicalDetailingResumed": false,
+    "visualDesignResumed": false,
+    "automationChanged": false
+  },
+  "originalProposal": {
+    "banner": [
+      {
+        "position": "first",
+        "monthlyPriceCents": 29900,
+        "default": true
+      },
+      {
+        "position": "second",
+        "monthlyPriceCents": 24900
+      },
+      {
+        "position": "last",
+        "monthlyPriceCents": 19900
+      }
+    ],
+    "merchantAdmission": {
+      "monthlyPriceCents": 9900,
+      "statedEntitlement": "discovery-posting"
+    },
+    "contentHeating": [
+      {
+        "label": "体验",
+        "monthlyPriceCents": 4900,
+        "statedInterval": 9
+      },
+      {
+        "label": "标准",
+        "monthlyPriceCents": 9900,
+        "statedInterval": 5
+      },
+      {
+        "label": "强力",
+        "monthlyPriceCents": 14900,
+        "statedInterval": 3
+      }
+    ],
+    "searchHeating": {
+      "release": "v2",
+      "priceCents": null
+    },
+    "discounts": {
+      "monthMultiplier": 1,
+      "quarterMultiplier": 0.9,
+      "halfYearMultiplier": 0.8,
+      "yearMultiplier": 0.6
+    },
+    "commissions": {
+      "跑腿": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "none"
+        }
+      },
+      "维修": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 3000,
+          "unit": "entire-service"
+        }
+      },
+      "闲置": {
+        "rateBasisPoints": 100,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "single-transaction"
+        }
+      },
+      "其它": {
+        "rateBasisPoints": 1000,
+        "trial": true,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "entire-service"
+        }
+      }
+    },
+    "billing": {
+      "statedMonthlyDay": 25,
+      "reminder": "popup",
+      "overdueHours": 48,
+      "timeOriginUnspecified": true
+    }
+  }
+}
