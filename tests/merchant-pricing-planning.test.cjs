@@ -14,7 +14,11 @@ function validate(b){
  assert.deepEqual(r.banner.candidateMonthlyPricesCents,[29900,24900,19900],'Candidate Banner prices');
  assert.equal(r.banner.defaultSlide,'first');
  assert.equal(r.banner.requiresMembership,false,'No forced membership');
- assert.equal(r.banner.release,null,'Banner release remains unconfirmed');
+ assert.equal(r.banner.release,'v2','Banner release is second version');
+ assert.equal(r.bannerReleaseDecision.userReply,'a','Actual release choice');
+ assert.equal(r.bannerReleaseDecision.selected,'A');
+ assert.equal(r.bannerReleaseDecision.previousRelease,null);
+ assert.equal(r.bannerReleaseDecision.release,'v2');
  assert.equal(r.banner.rotationSeconds,null,'Rotation remains unconfirmed');
  assert.equal(r.banner.maxAdvertisersPerTier,null,'Capacity remains unconfirmed');
  assert.equal(r.membership.candidateMonthlyPriceCents,9900);
@@ -58,6 +62,8 @@ function validate(b){
 }
 test('approved merchant trial pricing, carousel, package, discounts and retained billing agree',()=>assert.equal(validate(bundle()),true));
 const changes=[
+ ['Banner moved to first release',b=>b.r.banner.release='v1',/Banner release/],
+ ['Banner release left unconfirmed',b=>b.r.banner.release=null,/Banner release/],
  ['carousel replaced with independent areas',b=>b.r.banner.independentSimultaneousAreas=true,/simultaneous/],
  ['unknown rotation invented',b=>b.r.banner.rotationSeconds=5,/Rotation/],
  ['capacity invented',b=>b.r.banner.maxAdvertisersPerTier=1,/Capacity/],
@@ -86,6 +92,14 @@ test('retained billing, dispute, arrears and cancellation-credit contracts are u
  const b=bundle(),prior=cp.execFileSync('git',['show',b.r.sourceCommit+':docs/prd.md'],{cwd:root,encoding:'utf8'});
  const billing=s=>s.replace(/\r\n/g,'\n').match(/### 8\.3[\s\S]*?(?=### 8\.6)/)[0];
  assert.equal(billing(b.prd),billing(prior));
+});
+test('Banner release approval changes only the prior pending release and preserves the proposal',()=>{
+ const b=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',b.r.bannerReleaseDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ assert.equal(prior.banner.release,null);
+ const current=structuredClone(b.r);delete current.bannerReleaseDecision;current.banner.release=null;
+ assert.deepEqual(current,prior);
+ for(const text of [b.prd,b.plan,b.design,b.doc,read('docs/v2-roadmap.md')])assert(text.includes('Banner放到第二版'),'Explicit release scope');
+ assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
 });
 test('current documents have consistent field contracts and valid supplement links',()=>{
  const b=bundle();

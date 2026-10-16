@@ -17,7 +17,7 @@
     ],
     "defaultSlide": "first",
     "requiresMembership": false,
-    "release": null,
+    "release": "v2",
     "rotationSeconds": null,
     "maxAdvertisersPerTier": null,
     "deliveryRulesComplete": false,
@@ -174,5 +174,14 @@
       "overdueHours": 48,
       "timeOriginUnspecified": true
     }
+  },
+  "bannerReleaseDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "0608e3fc35ed24b686e43e5de95cd49ec07b152e",
+    "context": "Banner上线版本：A放第二版，B纳入第一版",
+    "selected": "A",
+    "userReply": "a",
+    "previousRelease": null,
+    "release": "v2"
   }
 }
