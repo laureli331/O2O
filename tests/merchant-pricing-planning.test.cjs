@@ -3,6 +3,8 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const root=path.resolve(__dirname,'..');
 const read=p=>new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(path.join(root,p)));
 const recordPath='docs/merchant-pricing-confirmed-20261016.json';
+const expectedAddOnValidity={unit:'continuous-days',days:180,start:'payment-succeeded-and-allowance-actually-usable',perPackage:true,repurchaseResetsOldExpiry:false,membershipExpiryAffects:false,stopNewUsageAtExpiry:true,unusedAtExpiryTreatedAsConsumed:false};
+const expectedAddOnRefund={unusedPortionRefundable:true,partiallyUsedPackagesEligible:true,expiredPackagesEligible:true,feeCents:0,basis:'actual-package-payment',formula:'actual-paid-cents*remaining-units/original-purchased-units',rounding:'nearest-cent-half-up',totalRefundCap:'actual-package-payment',revokeRefundedUnits:true,refundSameUnitsMoreThanOnce:false,usedUnitsRepriced:false,nonconformingDeliveryHandledSeparately:true,paymentChannel:null,processingTimeLimit:null};
 function bundle(){return {r:JSON.parse(read(recordPath)),doc:read('docs/merchant-pricing-confirmed-20261016.md'),prd:read('docs/prd.md'),plan:read('docs/development-plan.md'),design:read('docs/structured-design.md')};}
 function validate(b){
  const r=b.r;
@@ -35,13 +37,15 @@ function validate(b){
  assert.equal(r.membershipBenefitsDecision.userReply,'1b\n2a\n3a','Actual B A A reply');
  assert.deepEqual(r.membershipBenefitsDecision.choices.map(x=>[x.id,x.selected]),[['basic-tools-scope','B'],['included-ai-services','A'],['basic-effect-statistics','A']]);
  assert.deepEqual(r.membership.aiTrial,{status:'approved-trial-pending-validation',candidateAllowance:{periodDays:30,textGenerations:100,standardImageOutputs:30},posterProduction:{mode:'template-layout-with-on-demand-ai-assets',ordinaryEditsAndExportConsumeAiAllowance:false,newCopyUsesTextAllowance:true,newImageUsesImageAllowance:true,extraPosterGenerationAllowance:false},imageMetering:{unit:'successfully-returned-image',deductPerImage:1,technicalFailureDeducts:false,userRequestedRegenerationDeducts:true,noticeBeforeRegeneration:true,technicalOutcomeBoundary:null},supplier:null,textLimits:{inputMaxVisibleCharacters:1000,setsPerRequest:1,outputMaxVisibleCharacters:{title:30,body:300,posterTagline:30},counting:'visible-characters-including-text-digits-and-punctuation'},effectVerified:false,fullCostVerified:false,finalAllowanceApproved:false,paidEvaluationAuthorized:false,textMetering:{unit:'complete-successful-set',deductPerSet:1,technicalFailureDeducts:false,userRequestedRegenerationDeducts:true,noticeBeforeRegeneration:true,technicalOutcomeBoundary:null},standardImageSpec:{inputImagesPerRequest:1,inputFormats:['JPEG','PNG'],inputMaxSizeMB:5,outputImagesPerRequest:1,outputFormat:'PNG',sizes:{square:[1024,1024],portrait:[960,1280],landscape:[1280,960]}}},'Approved AI trial, poster production and image metering');
- assert.deepEqual(r.aiAddOnPackages,{release:'v2',products:[{kind:'text',textGenerations:100,priceCents:null},{kind:'standard-images',standardImageOutputs:10,priceCents:null}],nonMembersMayPurchaseAndUse:true,includes:'corresponding-ai-production-only',includesMainPosting:false,includesCampaignTools:false,includesAdvertisingExposure:false,validity:null,refundRule:null,realSalesEnabled:false},'Approved standalone AI package sizes and entitlement boundary');
+ assert.deepEqual(r.aiAddOnPackages,{release:'v2',products:[{kind:'text',textGenerations:100,priceCents:null,candidatePriceCents:490},{kind:'standard-images',standardImageOutputs:10,priceCents:null,candidatePriceCents:990}],nonMembersMayPurchaseAndUse:true,includes:'corresponding-ai-production-only',includesMainPosting:false,includesCampaignTools:false,includesAdvertisingExposure:false,validity:expectedAddOnValidity,refundRule:expectedAddOnRefund,realSalesEnabled:false},'Approved standalone AI package sizes and entitlement boundary');
+ assert.equal(r.aiAddOnCommercialDecision.userReply,'全A','Actual add-on commercial reply');
+ assert.deepEqual(r.aiAddOnCommercialDecision.choices.map(x=>[x.id,x.selected]),[['add-on-trial-prices','A'],['purchased-allowance-validity','A'],['unused-allowance-refunds','A']]);
  assert.equal(r.aiOutputAndAddOnDecision.userReply,'全a','Actual output and package reply');
  assert.deepEqual(r.aiOutputAndAddOnDecision.choices.map(x=>[x.id,x.selected]),[['text-generation-unit','A'],['standard-image-specification','A'],['ai-add-on-package-form','A']]);
  assert.equal(r.merchantAiTrialDecision.userReply,'全A','Actual AI trial reply');
  assert.deepEqual(r.merchantAiTrialDecision.choices.map(x=>[x.id,x.selected]),[['poster-production','A'],['candidate-ai-allowance','A'],['image-allowance-metering','A']]);
  assert.deepEqual(r.membership.lifecycle,{activation:{requiresQualificationApproved:true,requiresPaymentSucceeded:true,requiresEntitlementsActuallyEnabled:true,start:'actual-entitlement-enablement-after-qualification-and-payment',failedActivationConsumesTime:false},expiry:{approvedPosts:'retain-public-visibility',canUnpublish:true,newMainPostsAllowed:false,exclusiveToolsAllowed:false,separatelyPurchasedPromotions:'own-validity-period',postEditingRule:null,existingCampaignRule:{newCampaignsAllowed:false,newCouponClaimsAllowed:false,existingActivityPageDisplay:null},issuedCouponRule:{validity:'original-coupon-term',necessaryRedemptionAllowed:true,complaintHandlingRetained:true}}},'Approved membership activation and expiry');
- assert.deepEqual(r.membership.aiAllowancePolicy,{includedUnusedExpiry:'end-of-current-allowance-period',carryForward:false,discloseBeforePurchase:true,grantCycle:{unit:'continuous-days',days:30,grantsPerQuarter:3,unusedExpiry:'end-of-each-30-day-period'},extraPurchasedValidity:null},'Included AI expiry and separate purchased quota');
+ assert.deepEqual(r.membership.aiAllowancePolicy,{includedUnusedExpiry:'end-of-current-allowance-period',carryForward:false,discloseBeforePurchase:true,grantCycle:{unit:'continuous-days',days:30,grantsPerQuarter:3,unusedExpiry:'end-of-each-30-day-period'},extraPurchasedValidity:{record:'aiAddOnPackages.validity'}},'Included AI expiry and separate purchased quota');
  assert.deepEqual(r.membership.renewal,{mode:'manual-purchase',earlyRenewalAllowed:true,activeMembershipStart:'after-current-paid-term',expiredMembershipStart:'actual-reenablement-after-qualification-and-payment'},'Approved manual renewal and term continuity');
  assert.equal(r.membershipContinuationDecision.userReply,'全A','Actual membership continuation reply');
  assert.deepEqual(r.membershipContinuationDecision.choices.map(x=>[x.id,x.selected]),[['quarterly-ai-grants','A'],['early-renewal','A'],['campaign-coupon-expiry','A']]);
@@ -86,6 +90,25 @@ function validate(b){
 }
 test('approved merchant trial pricing, carousel, package, discounts and retained billing agree',()=>assert.equal(validate(bundle()),true));
 const changes=[
+ ['add-on candidate text price silently raised',b=>b.r.aiAddOnPackages.products[0].candidatePriceCents=990,/standalone AI package/],
+ ['add-on candidate image price silently raised',b=>b.r.aiAddOnPackages.products[1].candidatePriceCents=1490,/standalone AI package/],
+ ['paid quota expires after 365 days',b=>b.r.aiAddOnPackages.validity.days=365,/standalone AI package/],
+ ['paid quota expires after the gifted 30-day period',b=>b.r.aiAddOnPackages.validity.days=30,/standalone AI package/],
+ ['payment alone starts add-on expiry clock',b=>b.r.aiAddOnPackages.validity.start='payment-succeeded',/standalone AI package/],
+ ['repurchase refreshes earlier package expiry',b=>b.r.aiAddOnPackages.validity.repurchaseResetsOldExpiry=true,/standalone AI package/],
+ ['membership expiry invalidates purchased allowance',b=>b.r.aiAddOnPackages.validity.membershipExpiryAffects=true,/standalone AI package/],
+ ['expired allowance treated as consumed',b=>b.r.aiAddOnPackages.validity.unusedAtExpiryTreatedAsConsumed=true,/standalone AI package/],
+ ['partially used packages barred from refunds',b=>b.r.aiAddOnPackages.refundRule.partiallyUsedPackagesEligible=false,/standalone AI package/],
+ ['expired packages barred from refunds',b=>b.r.aiAddOnPackages.refundRule.expiredPackagesEligible=false,/standalone AI package/],
+ ['refund handling fee invented',b=>b.r.aiAddOnPackages.refundRule.feeCents=50,/standalone AI package/],
+ ['refund uses public list price instead of actual payment',b=>b.r.aiAddOnPackages.refundRule.basis='list-price',/standalone AI package/],
+ ['refund cents rounded down',b=>b.r.aiAddOnPackages.refundRule.rounding='floor',/standalone AI package/],
+ ['refund exceeds original actual payment',b=>b.r.aiAddOnPackages.refundRule.totalRefundCap=null,/standalone AI package/],
+ ['refunded units remain usable',b=>b.r.aiAddOnPackages.refundRule.revokeRefundedUnits=false,/standalone AI package/],
+ ['same units may be refunded twice',b=>b.r.aiAddOnPackages.refundRule.refundSameUnitsMoreThanOnce=true,/standalone AI package/],
+ ['used units repriced at a higher single-use rate',b=>b.r.aiAddOnPackages.refundRule.usedUnitsRepriced=true,/standalone AI package/],
+ ['nonconforming delivery excluded from separate review',b=>b.r.aiAddOnPackages.refundRule.nonconformingDeliveryHandledSeparately=false,/standalone AI package/],
+ ['refund processing time silently promised',b=>b.r.aiAddOnPackages.refundRule.processingTimeLimit=7,/standalone AI package/],
  ['text input expanded beyond 1000 characters',b=>b.r.membership.aiTrial.textLimits.inputMaxVisibleCharacters=2000,/Approved AI trial/],
  ['single text request returns three sets',b=>b.r.membership.aiTrial.textLimits.setsPerRequest=3,/Approved AI trial/],
  ['body length exceeds 300 characters',b=>b.r.membership.aiTrial.textLimits.outputMaxVisibleCharacters.body=500,/Approved AI trial/],
@@ -268,7 +291,7 @@ test('AI trial approval adds only the approved trial contract and its actual rep
 });
 
 test('output and add-on choices change only approved text, image and package definitions',()=>{
- const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.aiOutputAndAddOnDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const live=bundle().r,r=JSON.parse(cp.execFileSync('git',['show',live.aiAddOnCommercialDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'})),prior=JSON.parse(cp.execFileSync('git',['show',r.aiOutputAndAddOnDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  const current=structuredClone(r);delete current.aiOutputAndAddOnDecision;delete current.aiAddOnPackages;
  current.membership.aiTrial.textLimits=null;delete current.membership.aiTrial.textMetering;delete current.membership.aiTrial.standardImageSpec;
  assert.deepEqual(current,prior,'Earlier choices, candidate prices, formal quota, rates and schedules preserved');
@@ -277,9 +300,34 @@ test('output and add-on choices change only approved text, image and package def
 test('current documents state the exact approved output sizes and independent package scope',()=>{
  for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','docs/ascii-design-prd-2.1.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md','CONTEXT.md']){
   const s=read(file);
-  for(const phrase of ['输入≤1000个可见字符','标题≤30＋正文≤300＋海报短句≤30','完整成功返回扣1次','JPEG/PNG且≤5MB','1024×1024、竖图960×1280、横图1280×960','100次文案包和10张标准图片包','非会员可单独购买并使用对应AI服务','不附带主帖发布、活动工具或广告曝光权益','价格与另购额度有效期仍待确认'])assert(s.includes(phrase),file+': '+phrase);
+  for(const phrase of ['输入≤1000个可见字符','标题≤30＋正文≤300＋海报短句≤30','完整成功返回扣1次','JPEG/PNG且≤5MB','1024×1024、竖图960×1280、横图1280×960','100次文案包和10张标准图片包','非会员可单独购买并使用对应AI服务','不附带主帖发布、活动工具或广告曝光权益'])assert(s.includes(phrase),file+': '+phrase);
  }
- assert.equal(bundle().r.membership.aiAllowancePolicy.extraPurchasedValidity,null,'No expiry inferred from included allowance');
+ assert.deepEqual(bundle().r.membership.aiAllowancePolicy.extraPurchasedValidity,{record:'aiAddOnPackages.validity'},'Purchased expiry points to its separate approved contract');
+});
+
+test('add-on pricing, validity and refunds leave every earlier decision unchanged',()=>{
+ const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.aiAddOnCommercialDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const current=structuredClone(r);delete current.aiAddOnCommercialDecision;
+ for(const p of current.aiAddOnPackages.products)delete p.candidatePriceCents;
+ current.aiAddOnPackages.validity=null;current.aiAddOnPackages.refundRule=null;current.membership.aiAllowancePolicy.extraPurchasedValidity=null;
+ assert.deepEqual(current,prior,'Earlier replies, package units, membership allowance and billing preserved');
+});
+
+test('current documents explain candidate package prices, independent expiry and proportional refunds',()=>{
+ for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','docs/ascii-design-prd-2.1.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md','CONTEXT.md']){
+  const s=read(file);
+  for(const phrase of ['100次文案包候选4.90元','10张标准图片包候选9.90元','付款成功且额度实际可用后连续180天','复购不刷新旧包期限','部分使用或到期后仍可申请退未用部分','不收退款手续费','累计退款不超过该包实付','退款通道和处理时限仍待确认'])assert(s.includes(phrase),file+': '+phrase);
+  assert(!s.includes('价格与另购额度有效期仍待确认'),'Superseded pending status: '+file);
+ }
+});
+
+test('refund examples use actual fen and round once to the nearest cent',()=>{
+ const s=read('docs/merchant-pricing-confirmed-20261016.md');
+ const roundFraction=(paid,total,remaining)=>Number((2n*BigInt(paid)*BigInt(remaining)+BigInt(total))/(2n*BigInt(total)));
+ assert.equal(roundFraction(990,10,7),693);
+ assert.equal(roundFraction(490,100,1),5);
+ assert.equal(roundFraction(490,100,99),485);
+ for(const phrase of ['6.93元','0.05元','4.85元','该包实付金额×剩余次数÷该包购买总次数','不把赠送额度当作实付款','不是对99元工具会员退款规则的确认'])assert(s.includes(phrase),phrase);
 });
 
 test('current documents state the approved trial and the poster quota boundary',()=>{

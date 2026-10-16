@@ -74,7 +74,9 @@
         "grantsPerQuarter": 3,
         "unusedExpiry": "end-of-each-30-day-period"
       },
-      "extraPurchasedValidity": null
+      "extraPurchasedValidity": {
+        "record": "aiAddOnPackages.validity"
+      }
     },
     "renewal": {
       "mode": "manual-purchase",
@@ -481,12 +483,14 @@
       {
         "kind": "text",
         "textGenerations": 100,
-        "priceCents": null
+        "priceCents": null,
+        "candidatePriceCents": 490
       },
       {
         "kind": "standard-images",
         "standardImageOutputs": 10,
-        "priceCents": null
+        "priceCents": null,
+        "candidatePriceCents": 990
       }
     ],
     "nonMembersMayPurchaseAndUse": true,
@@ -494,8 +498,32 @@
     "includesMainPosting": false,
     "includesCampaignTools": false,
     "includesAdvertisingExposure": false,
-    "validity": null,
-    "refundRule": null,
+    "validity": {
+      "unit": "continuous-days",
+      "days": 180,
+      "start": "payment-succeeded-and-allowance-actually-usable",
+      "perPackage": true,
+      "repurchaseResetsOldExpiry": false,
+      "membershipExpiryAffects": false,
+      "stopNewUsageAtExpiry": true,
+      "unusedAtExpiryTreatedAsConsumed": false
+    },
+    "refundRule": {
+      "unusedPortionRefundable": true,
+      "partiallyUsedPackagesEligible": true,
+      "expiredPackagesEligible": true,
+      "feeCents": 0,
+      "basis": "actual-package-payment",
+      "formula": "actual-paid-cents*remaining-units/original-purchased-units",
+      "rounding": "nearest-cent-half-up",
+      "totalRefundCap": "actual-package-payment",
+      "revokeRefundedUnits": true,
+      "refundSameUnitsMoreThanOnce": false,
+      "usedUnitsRepriced": false,
+      "nonconformingDeliveryHandledSeparately": true,
+      "paymentChannel": null,
+      "processingTimeLimit": null
+    },
     "realSalesEnabled": false
   },
   "aiOutputAndAddOnDecision": {
@@ -517,6 +545,28 @@
         "id": "ai-add-on-package-form",
         "selected": "A",
         "context": "3：100次文案包与10张标准图片包可独立购买，非会员可购买使用对应AI服务；只含AI制作，不含主帖发布、活动工具或曝光；价格及有效期待定"
+      }
+    ]
+  },
+  "aiAddOnCommercialDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "33983736f3c5b84f83f3a94986bf16ca1373c4e1",
+    "userReply": "全A",
+    "choices": [
+      {
+        "id": "add-on-trial-prices",
+        "selected": "A",
+        "context": "1：100次文案包4.90元、10张标准图片包9.90元，均为待验证候选试价"
+      },
+      {
+        "id": "purchased-allowance-validity",
+        "selected": "A",
+        "context": "2：付款成功且额度实际可用后连续180天，每包独立计时；复购不刷新旧包，会员到期不影响；到期停止新调用，未用不算已消费"
+      },
+      {
+        "id": "unused-allowance-refunds",
+        "selected": "A",
+        "context": "3：未用部分按该包实付比例可退，包括部分使用或已到期；不收手续费，四舍五入到分，累计退款不超过该包实付，对应退款额度失效；不按高价重算已用，不符合约定的交付另行核验，通道和处理时限待定"
       }
     ]
   }
