@@ -102,6 +102,13 @@ test('homepage and search share explicit multi-category filtering without a redu
     }
   }
   assert(document.includes('首页与搜索使用同一规则'));
+  assert(home.includes('以下两行滚动吸顶'));
+  assert(home.includes('[维修] 图片标签'));
+  assert(home.includes('[跑腿] 图片标签'));
+  assert(home.includes('最新发布'));
+  assert(!home.includes('[最新 v]'));
+  assert(screen('V01-B').includes('双列瀑布流结果'));
+  assert(!screen('V01-B').includes('[最新]'));
 });
 
 test('public contact rows and review links remain separate on every affected detail page', () => {
