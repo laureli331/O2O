@@ -148,11 +148,52 @@
         "technicalOutcomeBoundary": null
       },
       "supplier": null,
-      "textLimits": null,
+      "textLimits": {
+        "inputMaxVisibleCharacters": 1000,
+        "setsPerRequest": 1,
+        "outputMaxVisibleCharacters": {
+          "title": 30,
+          "body": 300,
+          "posterTagline": 30
+        },
+        "counting": "visible-characters-including-text-digits-and-punctuation"
+      },
       "effectVerified": false,
       "fullCostVerified": false,
       "finalAllowanceApproved": false,
-      "paidEvaluationAuthorized": false
+      "paidEvaluationAuthorized": false,
+      "textMetering": {
+        "unit": "complete-successful-set",
+        "deductPerSet": 1,
+        "technicalFailureDeducts": false,
+        "userRequestedRegenerationDeducts": true,
+        "noticeBeforeRegeneration": true,
+        "technicalOutcomeBoundary": null
+      },
+      "standardImageSpec": {
+        "inputImagesPerRequest": 1,
+        "inputFormats": [
+          "JPEG",
+          "PNG"
+        ],
+        "inputMaxSizeMB": 5,
+        "outputImagesPerRequest": 1,
+        "outputFormat": "PNG",
+        "sizes": {
+          "square": [
+            1024,
+            1024
+          ],
+          "portrait": [
+            960,
+            1280
+          ],
+          "landscape": [
+            1280,
+            960
+          ]
+        }
+      }
     }
   },
   "contentHeating": {
@@ -431,6 +472,51 @@
         "id": "image-allowance-metering",
         "selected": "A",
         "context": "3：每成功返回一张扣一张，技术失败不扣；商家主动重新生成提前提示后另扣"
+      }
+    ]
+  },
+  "aiAddOnPackages": {
+    "release": "v2",
+    "products": [
+      {
+        "kind": "text",
+        "textGenerations": 100,
+        "priceCents": null
+      },
+      {
+        "kind": "standard-images",
+        "standardImageOutputs": 10,
+        "priceCents": null
+      }
+    ],
+    "nonMembersMayPurchaseAndUse": true,
+    "includes": "corresponding-ai-production-only",
+    "includesMainPosting": false,
+    "includesCampaignTools": false,
+    "includesAdvertisingExposure": false,
+    "validity": null,
+    "refundRule": null,
+    "realSalesEnabled": false
+  },
+  "aiOutputAndAddOnDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "d5c67ef025d8334058ae2b3fcdd09d30897aee1d",
+    "userReply": "全a",
+    "choices": [
+      {
+        "id": "text-generation-unit",
+        "selected": "A",
+        "context": "1：输入最多1000可见字符；每次一套标题≤30、正文≤300、海报短句≤30，完整成功返回扣1次，技术失败不扣；主动再次生成提前提示后另扣"
+      },
+      {
+        "id": "standard-image-specification",
+        "selected": "A",
+        "context": "2：每次上传1张JPEG/PNG原图且≤5MB，返回1张PNG；方图1024×1024、竖图960×1280、横图1280×960，成功返回扣1张"
+      },
+      {
+        "id": "ai-add-on-package-form",
+        "selected": "A",
+        "context": "3：100次文案包与10张标准图片包可独立购买，非会员可购买使用对应AI服务；只含AI制作，不含主帖发布、活动工具或曝光；价格及有效期待定"
       }
     ]
   }

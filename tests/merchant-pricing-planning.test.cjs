@@ -34,7 +34,10 @@ function validate(b){
  assert.deepEqual(r.membership.basicEffectStats,{summaryPanelIncluded:true,scope:'own-content-and-campaigns',metrics:['views','favorites','coupon-claims','coupon-redemptions'],historicalRecordsReadableAfterExpiry:true,purchasedPromotionReportsReadableAfterExpiry:true,queryFeeCents:0,countsRepresentNewSales:false,metricDefinitions:null,dataRetention:null},'Approved basic effect statistics');
  assert.equal(r.membershipBenefitsDecision.userReply,'1b\n2a\n3a','Actual B A A reply');
  assert.deepEqual(r.membershipBenefitsDecision.choices.map(x=>[x.id,x.selected]),[['basic-tools-scope','B'],['included-ai-services','A'],['basic-effect-statistics','A']]);
- assert.deepEqual(r.membership.aiTrial,{status:'approved-trial-pending-validation',candidateAllowance:{periodDays:30,textGenerations:100,standardImageOutputs:30},posterProduction:{mode:'template-layout-with-on-demand-ai-assets',ordinaryEditsAndExportConsumeAiAllowance:false,newCopyUsesTextAllowance:true,newImageUsesImageAllowance:true,extraPosterGenerationAllowance:false},imageMetering:{unit:'successfully-returned-image',deductPerImage:1,technicalFailureDeducts:false,userRequestedRegenerationDeducts:true,noticeBeforeRegeneration:true,technicalOutcomeBoundary:null},supplier:null,textLimits:null,effectVerified:false,fullCostVerified:false,finalAllowanceApproved:false,paidEvaluationAuthorized:false},'Approved AI trial, poster production and image metering');
+ assert.deepEqual(r.membership.aiTrial,{status:'approved-trial-pending-validation',candidateAllowance:{periodDays:30,textGenerations:100,standardImageOutputs:30},posterProduction:{mode:'template-layout-with-on-demand-ai-assets',ordinaryEditsAndExportConsumeAiAllowance:false,newCopyUsesTextAllowance:true,newImageUsesImageAllowance:true,extraPosterGenerationAllowance:false},imageMetering:{unit:'successfully-returned-image',deductPerImage:1,technicalFailureDeducts:false,userRequestedRegenerationDeducts:true,noticeBeforeRegeneration:true,technicalOutcomeBoundary:null},supplier:null,textLimits:{inputMaxVisibleCharacters:1000,setsPerRequest:1,outputMaxVisibleCharacters:{title:30,body:300,posterTagline:30},counting:'visible-characters-including-text-digits-and-punctuation'},effectVerified:false,fullCostVerified:false,finalAllowanceApproved:false,paidEvaluationAuthorized:false,textMetering:{unit:'complete-successful-set',deductPerSet:1,technicalFailureDeducts:false,userRequestedRegenerationDeducts:true,noticeBeforeRegeneration:true,technicalOutcomeBoundary:null},standardImageSpec:{inputImagesPerRequest:1,inputFormats:['JPEG','PNG'],inputMaxSizeMB:5,outputImagesPerRequest:1,outputFormat:'PNG',sizes:{square:[1024,1024],portrait:[960,1280],landscape:[1280,960]}}},'Approved AI trial, poster production and image metering');
+ assert.deepEqual(r.aiAddOnPackages,{release:'v2',products:[{kind:'text',textGenerations:100,priceCents:null},{kind:'standard-images',standardImageOutputs:10,priceCents:null}],nonMembersMayPurchaseAndUse:true,includes:'corresponding-ai-production-only',includesMainPosting:false,includesCampaignTools:false,includesAdvertisingExposure:false,validity:null,refundRule:null,realSalesEnabled:false},'Approved standalone AI package sizes and entitlement boundary');
+ assert.equal(r.aiOutputAndAddOnDecision.userReply,'全a','Actual output and package reply');
+ assert.deepEqual(r.aiOutputAndAddOnDecision.choices.map(x=>[x.id,x.selected]),[['text-generation-unit','A'],['standard-image-specification','A'],['ai-add-on-package-form','A']]);
  assert.equal(r.merchantAiTrialDecision.userReply,'全A','Actual AI trial reply');
  assert.deepEqual(r.merchantAiTrialDecision.choices.map(x=>[x.id,x.selected]),[['poster-production','A'],['candidate-ai-allowance','A'],['image-allowance-metering','A']]);
  assert.deepEqual(r.membership.lifecycle,{activation:{requiresQualificationApproved:true,requiresPaymentSucceeded:true,requiresEntitlementsActuallyEnabled:true,start:'actual-entitlement-enablement-after-qualification-and-payment',failedActivationConsumesTime:false},expiry:{approvedPosts:'retain-public-visibility',canUnpublish:true,newMainPostsAllowed:false,exclusiveToolsAllowed:false,separatelyPurchasedPromotions:'own-validity-period',postEditingRule:null,existingCampaignRule:{newCampaignsAllowed:false,newCouponClaimsAllowed:false,existingActivityPageDisplay:null},issuedCouponRule:{validity:'original-coupon-term',necessaryRedemptionAllowed:true,complaintHandlingRetained:true}}},'Approved membership activation and expiry');
@@ -83,6 +86,27 @@ function validate(b){
 }
 test('approved merchant trial pricing, carousel, package, discounts and retained billing agree',()=>assert.equal(validate(bundle()),true));
 const changes=[
+ ['text input expanded beyond 1000 characters',b=>b.r.membership.aiTrial.textLimits.inputMaxVisibleCharacters=2000,/Approved AI trial/],
+ ['single text request returns three sets',b=>b.r.membership.aiTrial.textLimits.setsPerRequest=3,/Approved AI trial/],
+ ['body length exceeds 300 characters',b=>b.r.membership.aiTrial.textLimits.outputMaxVisibleCharacters.body=500,/Approved AI trial/],
+ ['visible characters counted as tokens',b=>b.r.membership.aiTrial.textLimits.counting='tokens',/Approved AI trial/],
+ ['technical text failure deducts quota',b=>b.r.membership.aiTrial.textMetering.technicalFailureDeducts=true,/Approved AI trial/],
+ ['partial text output billed as a complete set',b=>b.r.membership.aiTrial.textMetering.unit='any-partial-output',/Approved AI trial/],
+ ['text regeneration lacks advance notice',b=>b.r.membership.aiTrial.textMetering.noticeBeforeRegeneration=false,/Approved AI trial/],
+ ['multiple original photos accepted per request',b=>b.r.membership.aiTrial.standardImageSpec.inputImagesPerRequest=3,/Approved AI trial/],
+ ['image input limit silently becomes 10MB',b=>b.r.membership.aiTrial.standardImageSpec.inputMaxSizeMB=10,/Approved AI trial/],
+ ['four candidates returned for a single image request',b=>b.r.membership.aiTrial.standardImageSpec.outputImagesPerRequest=4,/Approved AI trial/],
+ ['standard square resolution doubled',b=>b.r.membership.aiTrial.standardImageSpec.sizes.square=[2048,2048],/Approved AI trial/],
+ ['standard image output silently changes format',b=>b.r.membership.aiTrial.standardImageSpec.outputFormat='JPEG',/Approved AI trial/],
+ ['nonmembers barred from purchased AI services',b=>b.r.aiAddOnPackages.nonMembersMayPurchaseAndUse=false,/standalone AI package/],
+ ['text add-on becomes a 20-use pack',b=>b.r.aiAddOnPackages.products[0].textGenerations=20,/standalone AI package/],
+ ['image add-on becomes a 30-output pack',b=>b.r.aiAddOnPackages.products[1].standardImageOutputs=30,/standalone AI package/],
+ ['add-on price invented',b=>b.r.aiAddOnPackages.products[1].priceCents=990,/standalone AI package/],
+ ['add-on expires with the 30-day allowance',b=>b.r.aiAddOnPackages.validity='membership-period-end',/standalone AI package/],
+ ['AI purchase grants posting rights',b=>b.r.aiAddOnPackages.includesMainPosting=true,/standalone AI package/],
+ ['AI purchase grants campaign tools',b=>b.r.aiAddOnPackages.includesCampaignTools=true,/standalone AI package/],
+ ['AI purchase grants advertising exposure',b=>b.r.aiAddOnPackages.includesAdvertisingExposure=true,/standalone AI package/],
+ ['add-on sales enabled from the scope decision',b=>b.r.aiAddOnPackages.realSalesEnabled=true,/standalone AI package/],
  ['trial treated as production-ready quota',b=>b.r.membership.aiTrial.finalAllowanceApproved=true,/Approved AI trial/],
  ['AI allowance trial extended beyond 30 days',b=>b.r.membership.aiTrial.candidateAllowance.periodDays=90,/Approved AI trial/],
  ['trial text quota silently increased',b=>b.r.membership.aiTrial.candidateAllowance.textGenerations=200,/Approved AI trial/],
@@ -238,9 +262,24 @@ test('B A A benefits approval adds only scoped tools, AI services, statistics an
 });
 
 test('AI trial approval adds only the approved trial contract and its actual reply',()=>{
- const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.merchantAiTrialDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const live=bundle().r,r=JSON.parse(cp.execFileSync('git',['show',live.aiOutputAndAddOnDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'})),prior=JSON.parse(cp.execFileSync('git',['show',r.merchantAiTrialDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  const current=structuredClone(r);delete current.merchantAiTrialDecision;delete current.membership.aiTrial;
  assert.deepEqual(current,prior,'Prior replies, candidate prices, releases, formal quota and billing retained');
+});
+
+test('output and add-on choices change only approved text, image and package definitions',()=>{
+ const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.aiOutputAndAddOnDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const current=structuredClone(r);delete current.aiOutputAndAddOnDecision;delete current.aiAddOnPackages;
+ current.membership.aiTrial.textLimits=null;delete current.membership.aiTrial.textMetering;delete current.membership.aiTrial.standardImageSpec;
+ assert.deepEqual(current,prior,'Earlier choices, candidate prices, formal quota, rates and schedules preserved');
+});
+
+test('current documents state the exact approved output sizes and independent package scope',()=>{
+ for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','docs/ascii-design-prd-2.1.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md','CONTEXT.md']){
+  const s=read(file);
+  for(const phrase of ['输入≤1000个可见字符','标题≤30＋正文≤300＋海报短句≤30','完整成功返回扣1次','JPEG/PNG且≤5MB','1024×1024、竖图960×1280、横图1280×960','100次文案包和10张标准图片包','非会员可单独购买并使用对应AI服务','不附带主帖发布、活动工具或广告曝光权益','价格与另购额度有效期仍待确认'])assert(s.includes(phrase),file+': '+phrase);
+ }
+ assert.equal(bundle().r.membership.aiAllowancePolicy.extraPurchasedValidity,null,'No expiry inferred from included allowance');
 });
 
 test('current documents state the approved trial and the poster quota boundary',()=>{
