@@ -63,3 +63,10 @@ test('reviewed helper paragraphs are removed and the selection caption is center
   assert(!html.includes('当前填值来自演示用户 A 已有申请'));
   assert(html.includes('#selection-caption{text-align:center}'));
 });
+
+test('latest V03 helper removal and centered selection hint are synchronized across design documents',()=>{
+  for(const file of ['docs/prd.md','docs/structured-design.md','docs/ascii-design-prd-2.1.md']){
+    const content=fs.readFileSync(path.join(__dirname,'..',file),'utf8');
+    assert(content.includes('候选列表不展示草选及联系方式说明，申请表后不展示演示填值说明；底部选人提示居中。'),file);
+  }
+});
