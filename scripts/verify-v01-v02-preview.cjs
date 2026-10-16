@@ -17,6 +17,19 @@ async function verify(){
     for(const m of metrics){assert(m.gap>=0&&m.gap<=7,m.id+' compact title/price gap');assert(m.metaGap>=0&&m.metaGap<=6,m.id+' compact metadata gap');assert(!m.priceOverflow,m.id+' price fits');assert(Math.abs(m.titleHeight/m.lineHeight-Math.round(m.titleHeight/m.lineHeight))<.05,m.id+' natural complete title lines');}
     return metrics;
   }
+  async function assertStickyFilters(){
+    await page.locator('#home-scroll').evaluate(el=>el.scrollTop=420);
+    await page.waitForFunction(()=>Math.abs(document.getElementById('sticky-filters').getBoundingClientRect().top-document.getElementById('home-scroll').getBoundingClientRect().top)<2);
+    const first=await page.locator('#sticky-filters').boundingBox();
+    await page.locator('#home-scroll').evaluate(el=>el.scrollTop=650);
+    await page.waitForFunction(()=>Math.abs(document.getElementById('sticky-filters').getBoundingClientRect().top-document.getElementById('home-scroll').getBoundingClientRect().top)<2);
+    const second=await page.locator('#sticky-filters').boundingBox();assert(Math.abs(first.y-second.y)<2,'both filter rows stay pinned during list scrolling');
+    assert(await page.locator('#open-region').evaluate(el=>{const r=el.getBoundingClientRect();return el.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2));}),'region filter remains above scrolled cards and clickable');
+    assert.equal(await page.locator('#sticky-filters').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(252, 251, 247)','opaque backing prevents list text showing through filters');
+    await page.locator('#open-region').click();assert(await page.locator('#region-modal').isVisible());await page.keyboard.press('Escape');
+    await page.screenshot({path:path.join(outDir,'sticky-filters.png'),fullPage:true});
+    await page.locator('#home-scroll').evaluate(el=>el.scrollTop=0);
+  }
   try{
     await page.goto(url);await page.locator('[data-item]').first().waitFor();
     assert.equal(await page.locator('[data-item]').count(),8);
@@ -34,6 +47,7 @@ async function verify(){
     assert(hierarchy.titleFont>hierarchy.priceFont,'negotiable text is subordinate to title');
     assert.equal(await page.locator('[data-item="parcel"] .price-number small').textContent(),'¥');
     await page.screenshot({path:path.join(outDir,'desktop.png'),fullPage:true});
+    await assertStickyFilters();
     await page.locator('[data-category="repair"]').click();await page.locator('[data-category="errands"]').click();
     assert.equal(await page.locator('[data-item]').count(),4);
     assert.equal(await page.locator('[data-category="repair"]').getAttribute('aria-pressed'),'true');
@@ -60,6 +74,7 @@ async function verify(){
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 375px page overflow');
     assert(await page.evaluate(()=>[...document.querySelectorAll('.phone,.scroll')].every(x=>x.scrollWidth<=x.clientWidth+1)),'no inner horizontal overflow');
     await assertCompactCards();
+    await assertStickyFilters();
     await page.screenshot({path:path.join(outDir,'mobile.png'),fullPage:true});
     await page.locator('[data-item="parcel"]').click();assert.equal(await page.locator('#detail-title').textContent(),'帮忙代取一个快递');
     await page.setViewportSize({width:320,height:800});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 320px overflow');
