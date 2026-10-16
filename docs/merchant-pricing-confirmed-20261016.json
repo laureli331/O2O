@@ -522,7 +522,19 @@
       "usedUnitsRepriced": false,
       "nonconformingDeliveryHandledSeparately": true,
       "paymentChannel": null,
-      "processingTimeLimit": null
+      "processingTimeLimit": {
+        "unit": "continuous-hours",
+        "firstResponseHours": 24,
+        "firstResponseStart": "request-received",
+        "incompleteRequestAction": "state-necessary-missing-materials",
+        "reviewAndInitiateHours": 72,
+        "reviewAndInitiateStart": "complete-valid-application-submitted-successfully",
+        "initiateOnlyIfEligible": true,
+        "arrivalTimeGuaranteed": false,
+        "arrivalTimeLimit": null,
+        "exceptionUpdate": "reason-and-progress-within-original-deadline-and-continue-handling",
+        "unknownResultMeansCompleted": false
+      }
     },
     "realSalesEnabled": false
   },
@@ -569,5 +581,43 @@
         "context": "3：未用部分按该包实付比例可退，包括部分使用或已到期；不收手续费，四舍五入到分，累计退款不超过该包实付，对应退款额度失效；不按高价重算已用，不符合约定的交付另行核验，通道和处理时限待定"
       }
     ]
+  },
+  "aiAllowanceConsumption": {
+    "separatePools": [
+      "text",
+      "standard-images"
+    ],
+    "eligible": "currently-valid-and-available",
+    "primaryOrder": "earliest-expiry-first",
+    "sameExpirySourceOrder": [
+      "included-or-gift",
+      "purchased"
+    ],
+    "sameExpiryPurchasedOrder": "earlier-activation-first",
+    "remainingTieBreak": null
+  },
+  "aiAllowanceAndRefundHandlingDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "662684009d2aab7be7fe9ff883a374eea3edcf7b",
+    "userReply": "全a",
+    "choices": [
+      {
+        "id": "allowance-consumption-order",
+        "selected": "A",
+        "context": "1：文案/图片分别按可用额度最早到期优先；同到期先会员包含或赠送额度，再按付费包较早开通顺序使用"
+      },
+      {
+        "id": "refund-handling-time",
+        "selected": "A",
+        "context": "2：收到退款申请24连续小时内首次回应并告知必要缺失资料；完整有效申请成功提交后72连续小时内完成审核并对符合条件的申请发起退款；不承诺到账时刻，异常在原期限内说明原因与进度并继续处理，未知不得当成功"
+      },
+      {
+        "id": "membership-refund-proposal-only",
+        "selected": "A",
+        "context": "3：仅批准设计按时间提供工具权益、按次数提供AI权益的退款方案，展示完整公式和30/90天实例后再确认；不批准任何额外扣费或退款公式"
+      }
+    ],
+    "membershipRefundFormulaApproved": false,
+    "membershipRefundProposal": "docs/merchant-membership-refund-proposal-20261016.md"
   }
 }

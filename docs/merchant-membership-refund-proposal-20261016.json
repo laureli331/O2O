@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "timezone": "Asia/Shanghai",
+  "status": "draft-awaiting-user-review",
+  "sourceCommit": "662684009d2aab7be7fe9ff883a374eea3edcf7b",
+  "document": "docs/merchant-membership-refund-proposal-20261016.md",
+  "authorization": {
+    "userReply": "全a",
+    "choice": "membership-refund-proposal-only",
+    "designOnly": true,
+    "formulaApproved": false,
+    "extraChargesApproved": false
+  },
+  "scope": "proposed-voluntary-early-termination-of-platform-owned-v2-membership",
+  "basis": {
+    "membershipMonthlyPriceCents": 9900,
+    "batchDays": 30,
+    "textUnitsPerBatch": 100,
+    "imageUnitsPerBatch": 30,
+    "textPackagePriceCents": 490,
+    "textPackageUnits": 100,
+    "imagePackagePriceCents": 990,
+    "imagePackageUnits": 10,
+    "allocationType": "proposed-contract-apportionment-not-api-cost",
+    "formalPricesVerified": false,
+    "fullCostsVerified": false
+  },
+  "candidateTerms": [
+    {"days": 30, "actualPaidCents": 9900, "toolAllocationCents": 6440, "aiAllocationCents": 3460, "aiAllocationPerBatchCents": 3460},
+    {"days": 90, "actualPaidCents": 26730, "toolAllocationCents": 17388, "aiAllocationCents": 9342, "aiAllocationPerBatchCents": 3114}
+  ],
+  "proposedCalculation": {
+    "scale": "actual-paid-cents/(9900*number-of-30-day-batches)",
+    "toolRefundCents": "actual-paid-cents*6440*remaining-seconds/(9900*total-term-seconds)",
+    "aiRefundCents": "scale*(49*eligible-unused-text-units+990*eligible-unused-image-units)/10",
+    "eligibleUnusedAi": "current-valid-batch-and-all-future-unstarted-batches",
+    "pastExpiredUnusedAiRefundableUnderVoluntaryPolicy": false,
+    "expiredUnusedUnitsCountAsActuallyGenerated": false,
+    "beforeActivation": "full-actual-payment-for-that-unstarted-purchase-period",
+    "cutoff": "user-confirms-immediate-termination-and-complete-valid-application-submission-succeeds",
+    "timingUnit": "actual-seconds",
+    "rounding": "sum-exact-rational-components-then-nearest-cent-half-up-once",
+    "feeCents": 0,
+    "totalRefundCap": "actual-payment-for-that-purchase-period",
+    "repriceUsedUnits": false,
+    "unknownUsage": "verify-records-before-calculating-not-zero",
+    "repeatedRefundAllowed": false
+  },
+  "proposedDisclosure": {
+    "ifAdoptedDescribeAs": "membership-includes-defined-ai-allowance",
+    "discloseAllocationAndRefundExamplesBeforePurchase": true,
+    "retroactiveGiftClawback": false,
+    "canonicalGiftWordingChangedNow": false,
+    "purchaseSnapshotRequiredIfAdopted": true
+  },
+  "examples": [
+    {"id": "unstarted-month", "days": 30, "actualPaidCents": 9900, "elapsedSeconds": 0, "usedByBatch": [{"text": 0, "images": 0}], "expectedRefundCents": 9900},
+    {"id": "unstarted-quarter", "days": 90, "actualPaidCents": 26730, "elapsedSeconds": 0, "usedByBatch": [{"text": 0, "images": 0}, {"text": 0, "images": 0}, {"text": 0, "images": 0}], "expectedRefundCents": 26730},
+    {"id": "month-day-1-ai-exhausted", "days": 30, "actualPaidCents": 9900, "elapsedSeconds": 86400, "usedByBatch": [{"text": 100, "images": 30}], "expectedRefundCents": 6225},
+    {"id": "month-day-10-used-20-text-6-images", "days": 30, "actualPaidCents": 9900, "elapsedSeconds": 864000, "usedByBatch": [{"text": 20, "images": 6}], "expectedRefundCents": 7061},
+    {"id": "month-day-10-no-ai-used", "days": 30, "actualPaidCents": 9900, "elapsedSeconds": 864000, "usedByBatch": [{"text": 0, "images": 0}], "expectedRefundCents": 7753},
+    {"id": "quarter-day-10-used-20-text-6-images", "days": 90, "actualPaidCents": 26730, "elapsedSeconds": 864000, "usedByBatch": [{"text": 20, "images": 6}, {"text": 0, "images": 0}, {"text": 0, "images": 0}], "expectedRefundCents": 24175},
+    {"id": "quarter-day-45-first-batch-exhausted", "days": 90, "actualPaidCents": 26730, "elapsedSeconds": 3888000, "usedByBatch": [{"text": 100, "images": 30}, {"text": 20, "images": 6}, {"text": 0, "images": 0}], "expectedRefundCents": 14299},
+    {"id": "quarter-day-45-first-batch-unused", "days": 90, "actualPaidCents": 26730, "elapsedSeconds": 3888000, "usedByBatch": [{"text": 0, "images": 0}, {"text": 20, "images": 6}, {"text": 0, "images": 0}], "expectedRefundCents": 14299},
+    {"id": "quarter-day-30-boundary-unused-first-batch", "days": 90, "actualPaidCents": 26730, "elapsedSeconds": 2592000, "usedByBatch": [{"text": 0, "images": 0}, {"text": 0, "images": 0}, {"text": 0, "images": 0}], "expectedRefundCents": 17820},
+    {"id": "month-completed", "days": 30, "actualPaidCents": 9900, "elapsedSeconds": 2592000, "usedByBatch": [{"text": 0, "images": 0}], "expectedRefundCents": 0},
+    {"id": "quarter-completed", "days": 90, "actualPaidCents": 26730, "elapsedSeconds": 7776000, "usedByBatch": [{"text": 0, "images": 0}, {"text": 0, "images": 0}, {"text": 0, "images": 0}], "expectedRefundCents": 0}
+  ],
+  "requiresExplicitReview": [
+    "tool-and-ai-payment-allocation",
+    "current-future-versus-expired-ai-refund-boundary",
+    "immediate-termination-cutoff-and-entitlement-consequences",
+    "prepurchase-included-ai-wording-instead-of-free-gift-clawback"
+  ],
+  "unchangedContracts": [
+    "purchased-ai-pack-180-day-validity-and-unused-proportional-refund",
+    "issued-coupons-and-necessary-redemption-and-complaints",
+    "free-access-to-existing-history-and-purchased-promotion-reports",
+    "separately-purchased-advertising-and-other-membership-periods",
+    "commission-billing-and-resident-transaction-money"
+  ],
+  "legalApplicabilityVerified": false,
+  "nonconformingDeliveryHandledSeparately": true,
+  "implementationAuthorized": false,
+  "realSalesEnabled": false,
+  "realRefundsExecuted": false
+}
