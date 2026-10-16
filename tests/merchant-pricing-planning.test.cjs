@@ -25,7 +25,7 @@ function validate(b){
  assert.equal(r.membership.candidateMonthlyPriceCents,9900);
  assert.equal(r.membership.release,'v2','Membership release');
  assert.deepEqual(r.membership.includedDirections,['discovery-posting','basic-tools','basic-campaign-tools','defined-ai-allowance']);
- assert.equal(r.membership.aiAllowance,null,'AI allowance pending');
+ assert.equal(r.membership.aiAllowance,null,'Formal AI allowance still pending validation');
  assert.equal(r.membership.postLimit,null,'Post limit pending');
  assert.equal(r.membership.billingUnit,'single-store-or-independent-provider-profile','Membership billing unit');
  assert.equal(r.membership.entitlementOwner,'business-profile','Rights attach to the business profile');
@@ -34,6 +34,9 @@ function validate(b){
  assert.deepEqual(r.membership.basicEffectStats,{summaryPanelIncluded:true,scope:'own-content-and-campaigns',metrics:['views','favorites','coupon-claims','coupon-redemptions'],historicalRecordsReadableAfterExpiry:true,purchasedPromotionReportsReadableAfterExpiry:true,queryFeeCents:0,countsRepresentNewSales:false,metricDefinitions:null,dataRetention:null},'Approved basic effect statistics');
  assert.equal(r.membershipBenefitsDecision.userReply,'1b\n2a\n3a','Actual B A A reply');
  assert.deepEqual(r.membershipBenefitsDecision.choices.map(x=>[x.id,x.selected]),[['basic-tools-scope','B'],['included-ai-services','A'],['basic-effect-statistics','A']]);
+ assert.deepEqual(r.membership.aiTrial,{status:'approved-trial-pending-validation',candidateAllowance:{periodDays:30,textGenerations:100,standardImageOutputs:30},posterProduction:{mode:'template-layout-with-on-demand-ai-assets',ordinaryEditsAndExportConsumeAiAllowance:false,newCopyUsesTextAllowance:true,newImageUsesImageAllowance:true,extraPosterGenerationAllowance:false},imageMetering:{unit:'successfully-returned-image',deductPerImage:1,technicalFailureDeducts:false,userRequestedRegenerationDeducts:true,noticeBeforeRegeneration:true,technicalOutcomeBoundary:null},supplier:null,textLimits:null,effectVerified:false,fullCostVerified:false,finalAllowanceApproved:false,paidEvaluationAuthorized:false},'Approved AI trial, poster production and image metering');
+ assert.equal(r.merchantAiTrialDecision.userReply,'全A','Actual AI trial reply');
+ assert.deepEqual(r.merchantAiTrialDecision.choices.map(x=>[x.id,x.selected]),[['poster-production','A'],['candidate-ai-allowance','A'],['image-allowance-metering','A']]);
  assert.deepEqual(r.membership.lifecycle,{activation:{requiresQualificationApproved:true,requiresPaymentSucceeded:true,requiresEntitlementsActuallyEnabled:true,start:'actual-entitlement-enablement-after-qualification-and-payment',failedActivationConsumesTime:false},expiry:{approvedPosts:'retain-public-visibility',canUnpublish:true,newMainPostsAllowed:false,exclusiveToolsAllowed:false,separatelyPurchasedPromotions:'own-validity-period',postEditingRule:null,existingCampaignRule:{newCampaignsAllowed:false,newCouponClaimsAllowed:false,existingActivityPageDisplay:null},issuedCouponRule:{validity:'original-coupon-term',necessaryRedemptionAllowed:true,complaintHandlingRetained:true}}},'Approved membership activation and expiry');
  assert.deepEqual(r.membership.aiAllowancePolicy,{includedUnusedExpiry:'end-of-current-allowance-period',carryForward:false,discloseBeforePurchase:true,grantCycle:{unit:'continuous-days',days:30,grantsPerQuarter:3,unusedExpiry:'end-of-each-30-day-period'},extraPurchasedValidity:null},'Included AI expiry and separate purchased quota');
  assert.deepEqual(r.membership.renewal,{mode:'manual-purchase',earlyRenewalAllowed:true,activeMembershipStart:'after-current-paid-term',expiredMembershipStart:'actual-reenablement-after-qualification-and-payment'},'Approved manual renewal and term continuity');
@@ -80,6 +83,20 @@ function validate(b){
 }
 test('approved merchant trial pricing, carousel, package, discounts and retained billing agree',()=>assert.equal(validate(bundle()),true));
 const changes=[
+ ['trial treated as production-ready quota',b=>b.r.membership.aiTrial.finalAllowanceApproved=true,/Approved AI trial/],
+ ['AI allowance trial extended beyond 30 days',b=>b.r.membership.aiTrial.candidateAllowance.periodDays=90,/Approved AI trial/],
+ ['trial text quota silently increased',b=>b.r.membership.aiTrial.candidateAllowance.textGenerations=200,/Approved AI trial/],
+ ['trial image quota silently increased',b=>b.r.membership.aiTrial.candidateAllowance.standardImageOutputs=50,/Approved AI trial/],
+ ['poster-only extra AI quota gifted',b=>b.r.membership.aiTrial.posterProduction.extraPosterGenerationAllowance=true,/Approved AI trial/],
+ ['ordinary price edits deduct AI allowance again',b=>b.r.membership.aiTrial.posterProduction.ordinaryEditsAndExportConsumeAiAllowance=true,/Approved AI trial/],
+ ['new poster copy bypasses text quota',b=>b.r.membership.aiTrial.posterProduction.newCopyUsesTextAllowance=false,/Approved AI trial/],
+ ['new poster image bypasses image quota',b=>b.r.membership.aiTrial.posterProduction.newImageUsesImageAllowance=false,/Approved AI trial/],
+ ['technical failure deducts image quota',b=>b.r.membership.aiTrial.imageMetering.technicalFailureDeducts=true,/Approved AI trial/],
+ ['successful requested regeneration is free',b=>b.r.membership.aiTrial.imageMetering.userRequestedRegenerationDeducts=false,/Approved AI trial/],
+ ['regeneration deduction lacks advance notice',b=>b.r.membership.aiTrial.imageMetering.noticeBeforeRegeneration=false,/Approved AI trial/],
+ ['supplier selected from the pricing example',b=>b.r.membership.aiTrial.supplier='aliyun',/Approved AI trial/],
+ ['full costs verified from API prices alone',b=>b.r.membership.aiTrial.fullCostVerified=true,/Approved AI trial/],
+ ['paid evaluation silently authorized',b=>b.r.membership.aiTrial.paidEvaluationAuthorized=true,/Approved AI trial/],
  ['material library silently included',b=>b.r.membership.toolsScope.assetLibrary='included',/tools exclude/],
  ['campaign management dropped from basic tools',b=>b.r.membership.toolsScope.included.splice(2,1),/tools exclude/],
  ['real photo optimization sold only as an extra',b=>b.r.membership.aiServiceScope.included.splice(1,1),/Approved AI services/],
@@ -135,7 +152,7 @@ const changes=[
  ['membership required to advertise',b=>b.r.banner.requiresMembership=true,/membership/],
  ['candidate prices treated as effective sales',b=>b.r.execution.formalSalePricesApproved=true,/formal sale/],
  ['membership moved to first release',b=>b.r.membership.release='v1',/Membership release/],
- ['AI allowance invented',b=>b.r.membership.aiAllowance=100,/AI allowance/],
+ ['formal AI allowance activated from the trial',b=>b.r.membership.aiAllowance=100,/Formal AI allowance/],
  ['three heating tiers enabled',b=>b.r.contentHeating.candidateMonthlyPricesCents=[4900,9900,14900],/Single initial/],
  ['individual fixed cadence promised',b=>b.r.contentHeating.perMerchantFixedIntervalPromised=true,/fixed cadence/],
  ['global interval silently defaults to nine',b=>b.r.contentHeating.globalOrganicInterval=9,/inferred interval/],
@@ -215,9 +232,32 @@ test('continuation decisions change only approved grant cycle, renewal and campa
 });
 
 test('B A A benefits approval adds only scoped tools, AI services, statistics and provenance',()=>{
- const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipBenefitsDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const live=bundle().r,r=JSON.parse(cp.execFileSync('git',['show',live.merchantAiTrialDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'})),prior=JSON.parse(cp.execFileSync('git',['show',r.membershipBenefitsDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  const current=structuredClone(r);delete current.membershipBenefitsDecision;delete current.membership.toolsScope;delete current.membership.aiServiceScope;delete current.membership.basicEffectStats;
  assert.deepEqual(current,prior,'Prior rates, billing, quota uncertainties and releases preserved');
+});
+
+test('AI trial approval adds only the approved trial contract and its actual reply',()=>{
+ const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.merchantAiTrialDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const current=structuredClone(r);delete current.merchantAiTrialDecision;delete current.membership.aiTrial;
+ assert.deepEqual(current,prior,'Prior replies, candidate prices, releases, formal quota and billing retained');
+});
+
+test('current documents state the approved trial and the poster quota boundary',()=>{
+ for(const file of ['docs/merchant-pricing-confirmed-20261016.md','docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/v2-roadmap.md','docs/ascii-design-prd-2.1.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/merchant-banner-direction-20261015.md','CONTEXT.md']){
+  const s=read(file);
+  for(const phrase of ['每连续30天100次文案＋30张标准图片输出','模板排版＋商家照片＋可修改文字','普通改价/日期/排版及导出不重复扣AI额度','技术失败不扣','主动重新生成须提前提示并另扣','实测达标后再定稿'])assert(s.includes(phrase),file+': '+phrase);
+ }
+});
+
+test('cost illustration retains token units and separates API-only costs from actual profitability',()=>{
+ const s=read('docs/merchant-pricing-confirmed-20261016.md');
+ const costPerCopy=(2000*0.15+1000*1.5)/1000000;
+ assert.equal(costPerCopy,0.0018);
+ assert.equal(Number((100*costPerCopy+30*0.2).toFixed(2)),6.18);
+ assert.equal(Number((100*costPerCopy+30*0.5).toFixed(2)),15.18);
+ for(const phrase of ['0.0018元','6.18元','15.18元','不是实测平均用量','不是净利润','不是30张满意成片','不计新人免费额度','尚未采购或付费调用'])assert(s.includes(phrase),phrase);
+ for(const url of ['https://help.aliyun.com/zh/model-studio/model-pricing','https://console.volcengine.com/ark/region:cn-beijing/docs/model-pricing','https://cloud.tencent.cn/document/product/1668/90896','https://help.aliyun.com/zh/model-studio/bailian-service-notes'])assert(s.includes(url),'Evidence '+url);
 });
 
 test('current documents consistently state B A A benefits without reviving the library or treating counts as sales',()=>{

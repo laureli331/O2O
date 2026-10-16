@@ -124,6 +124,35 @@
       "countsRepresentNewSales": false,
       "metricDefinitions": null,
       "dataRetention": null
+    },
+    "aiTrial": {
+      "status": "approved-trial-pending-validation",
+      "candidateAllowance": {
+        "periodDays": 30,
+        "textGenerations": 100,
+        "standardImageOutputs": 30
+      },
+      "posterProduction": {
+        "mode": "template-layout-with-on-demand-ai-assets",
+        "ordinaryEditsAndExportConsumeAiAllowance": false,
+        "newCopyUsesTextAllowance": true,
+        "newImageUsesImageAllowance": true,
+        "extraPosterGenerationAllowance": false
+      },
+      "imageMetering": {
+        "unit": "successfully-returned-image",
+        "deductPerImage": 1,
+        "technicalFailureDeducts": false,
+        "userRequestedRegenerationDeducts": true,
+        "noticeBeforeRegeneration": true,
+        "technicalOutcomeBoundary": null
+      },
+      "supplier": null,
+      "textLimits": null,
+      "effectVerified": false,
+      "fullCostVerified": false,
+      "finalAllowanceApproved": false,
+      "paidEvaluationAuthorized": false
     }
   },
   "contentHeating": {
@@ -380,6 +409,28 @@
         "id": "basic-effect-statistics",
         "selected": "A",
         "context": "3A：本人内容浏览/收藏及活动领券/核销基础统计；已有历史记录和已购推广报告到期后仍可查看，不另收查询费，不将统计当新增成交额"
+      }
+    ]
+  },
+  "merchantAiTrialDecision": {
+    "date": "2026-10-16",
+    "sourceCommit": "fbf39f3aa05906d1045fc5056d6eac7f040349b0",
+    "userReply": "全A",
+    "choices": [
+      {
+        "id": "poster-production",
+        "selected": "A",
+        "context": "1：模板排版＋商家照片＋可修改文字，按需AI文案/优化照片；普通修改价格/日期/排版及导出不重复扣AI额度"
+      },
+      {
+        "id": "candidate-ai-allowance",
+        "selected": "A",
+        "context": "2：每30天100次文案＋30张标准图片输出作为试验方案；海报新文案/图片分别计入两个额度，实测成本和效果达标后再定稿"
+      },
+      {
+        "id": "image-allowance-metering",
+        "selected": "A",
+        "context": "3：每成功返回一张扣一张，技术失败不扣；商家主动重新生成提前提示后另扣"
       }
     ]
   }
