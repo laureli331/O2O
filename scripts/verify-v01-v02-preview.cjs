@@ -14,7 +14,7 @@ async function verify(){
       const title=card.querySelector('h3'),price=card.querySelector('.price'),meta=card.querySelector('.card-meta');
       return {id:card.dataset.item,titleHeight:title.getBoundingClientRect().height,lineHeight:parseFloat(getComputedStyle(title).lineHeight),gap:price.getBoundingClientRect().top-title.getBoundingClientRect().bottom,priceOverflow:price.scrollWidth>price.clientWidth+1,metaGap:meta.getBoundingClientRect().top-price.getBoundingClientRect().bottom};
     }));
-    for(const m of metrics){assert(Math.abs(m.gap-m.lineHeight)<=1,m.id+' one line of whitespace between title and price');assert(m.metaGap>=0&&m.metaGap<=6,m.id+' compact metadata gap');assert(!m.priceOverflow,m.id+' price fits');assert(Math.abs(m.titleHeight/m.lineHeight-Math.round(m.titleHeight/m.lineHeight))<.05,m.id+' natural complete title lines');}
+    for(const m of metrics){assert(m.gap>=0&&m.gap<=7,m.id+' compact title/price gap');assert(m.metaGap>=0&&m.metaGap<=6,m.id+' compact metadata gap');assert(!m.priceOverflow,m.id+' price fits');assert(Math.abs(m.titleHeight/m.lineHeight-Math.round(m.titleHeight/m.lineHeight))<.05,m.id+' natural complete title lines');}
     return metrics;
   }
   try{
