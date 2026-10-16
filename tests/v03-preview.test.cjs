@@ -35,7 +35,7 @@ test('single-file V03 remains offline, clearly synthetic and syntactically valid
   for(const match of markup.matchAll(/<use[^>]+href="#([^"]+)"/g))assert(ids.includes(match[1]),match[1]);
   for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
   assert(!/src="https?:|href="https?:|fetch\(|XMLHttpRequest|localStorage|sessionStorage|tel:/.test(html));
-  for(const phrase of ['本地演示 · 全部为合成数据','V03-A','V03-B','V03-C / D','点选只作草选','查询当前结果','不会发送真实申请','未新增第二份申请']){
+  for(const phrase of ['本地演示 · 全部为合成数据','V03-A','V03-B','V03-C / D','查询当前结果','未新增第二份申请']){
     assert(html.includes(phrase),phrase);
   }
   assert(!html.includes('SHARED_PREVIEW_STYLE'));assert(!html.includes('SHARED_PREVIEW_ICONS'));
@@ -56,4 +56,10 @@ test('review comments are reflected without changing the errand commission cap r
   const ascii=read('docs/ascii-design-prd-2.1.md');
   const section=ascii.slice(ascii.indexOf('### V03-B '),ascii.indexOf('### V03-C '));
   assert(section.includes('发布者金额，只读'));assert(!section.includes('[撤回报价]'));
+});
+
+test('reviewed helper paragraphs are removed and the selection caption is centered',()=>{
+  assert(!html.includes('点选只作草选，确认成功才正式选定。未选中的申请者仍看不到完整联系方式。'));
+  assert(!html.includes('当前填值来自演示用户 A 已有申请'));
+  assert(html.includes('#selection-caption{text-align:center}'));
 });

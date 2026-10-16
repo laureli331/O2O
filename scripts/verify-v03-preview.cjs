@@ -9,7 +9,7 @@ async function verify(){
   async function choose(id='a'){await page.locator('input[name="candidate"][value="'+id+'"]').check();await page.locator('#open-confirm').click();assert(await page.locator('#confirm-modal').isVisible());}
   async function reset(kind='errands',scenario='normal'){await page.locator('[data-business="'+kind+'"]').click();await page.locator('#scenario').selectOption(scenario);}
   try{
-    await page.goto(url);await page.locator('.candidate').first().waitFor();assert.equal(await page.locator('.candidate').count(),3);assert(await page.locator('#open-confirm').isDisabled());assert(await page.locator('input[name="candidate"][value="c"]').isDisabled());
+    await page.goto(url);assert.equal(await page.locator('#selection-caption').evaluate(el=>getComputedStyle(el).textAlign),'center');assert(!(await page.locator('body').textContent()).includes('点选只作草选'));assert(!(await page.locator('body').textContent()).includes('当前填值来自演示用户 A 已有申请'));await page.locator('.candidate').first().waitFor();assert.equal(await page.locator('.candidate').count(),3);assert(await page.locator('#open-confirm').isDisabled());assert(await page.locator('input[name="candidate"][value="c"]').isDisabled());
     await page.screenshot({path:path.join(outDir,'v03-desktop.png'),fullPage:true,animations:'disabled'});
     assert.equal(await page.locator('#form-title').textContent(),'修改申请');
     assert(await page.locator('#amount').evaluate(el=>el.readOnly));
