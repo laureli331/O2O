@@ -42,3 +42,15 @@ test('standalone HTML has unique element IDs, resolves SVG icons and compiles sc
   for(const m of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(m[1]);
   assert(html.includes('prefers-reduced-motion'));assert(html.includes('focus-visible'));assert(html.includes('aria-modal="true"'));
 });
+
+test('reviewed cards prioritize imagery and title while sort and detail labels stay honest',()=>{
+  const sort=html.match(/<span class="sort-label">([\s\S]*?)<\/span>/)[1];
+  assert.equal(sort,'最新发布');
+  assert(!html.includes('id="price-label"'));
+  assert(!html.includes("$('price-label')"));
+  assert(!html.includes('发布者填写 · 接单前可见'));
+  assert(html.includes('<h3 class="panel-title">时间要求</h3>'));
+  assert(html.includes('.listing .art{height:auto;aspect-ratio:4/5}'));
+  assert(html.includes('price-text'));assert(html.includes('price-number'));
+  assert(html.includes('<span class="kind">'));
+});

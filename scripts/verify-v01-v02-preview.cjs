@@ -12,6 +12,18 @@ async function verify(){
   try{
     await page.goto(url);await page.locator('[data-item]').first().waitFor();
     assert.equal(await page.locator('[data-item]').count(),8);
+    assert.equal(await page.locator('.sort-label').textContent(),'最新发布');
+    assert.equal(await page.locator('.sort-label svg').count(),0,'no fake sort dropdown');
+    assert.equal(await page.locator('#price-label').count(),0);
+    assert.equal(await page.locator('#schedule-panel .panel-title').textContent(),'时间要求');
+    const hierarchy=await page.locator('[data-item="washer"]').evaluate(card=>{
+      const image=card.querySelector('.art'),tag=card.querySelector('.kind'),title=card.querySelector('h3'),price=card.querySelector('.price');
+      return {image:image.getBoundingClientRect().height,card:card.getBoundingClientRect().height,tagParent:tag.parentElement.classList.contains('art'),tagBackground:getComputedStyle(tag).backgroundColor,titleFont:parseFloat(getComputedStyle(title).fontSize),priceFont:parseFloat(getComputedStyle(price).fontSize)};
+    });
+    assert(hierarchy.image/hierarchy.card>.58,'imagery is the dominant card region');
+    assert(hierarchy.tagParent&&hierarchy.tagBackground!=='rgba(0, 0, 0, 0)','category is a visible image tag');
+    assert(hierarchy.titleFont>hierarchy.priceFont,'negotiable text is subordinate to title');
+    assert.equal(await page.locator('[data-item="parcel"] .price-number small').textContent(),'¥');
     await page.screenshot({path:path.join(outDir,'desktop.png'),fullPage:true});
     await page.locator('[data-category="repair"]').click();await page.locator('[data-category="errands"]').click();
     assert.equal(await page.locator('[data-item]').count(),4);
@@ -41,6 +53,7 @@ async function verify(){
     await page.screenshot({path:path.join(outDir,'mobile.png'),fullPage:true});
     await page.locator('[data-item="parcel"]').click();assert.equal(await page.locator('#detail-title').textContent(),'帮忙代取一个快递');
     await page.setViewportSize({width:320,height:800});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 320px overflow');
+    assert(await page.evaluate(()=>[...document.querySelectorAll('.phone,.scroll,.listing')].every(x=>x.scrollWidth<=x.clientWidth+1)),'no 320px card or inner overflow');
     await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.locator('.primary').first().evaluate(x=>getComputedStyle(x).transitionDuration),'0s');
     assert.deepEqual(errors,[],'no browser errors');
     const result={passed:true,checks:['desktop render','category union','keyword and region conjunction','empty/reset','four details','idle privacy and no scheduling','favorite persistence','review role and Escape','no transaction side effects','contact rows','footer layout','375px and 320px overflow','reduced motion','browser error log'],screenshots:['desktop.png','detail-contacts.png','mobile.png']};
