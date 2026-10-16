@@ -4,9 +4,9 @@ const html=fs.readFileSync(path.join(__dirname,'../previews/v03.html'),'utf8');
 const context=vm.createContext({});vm.runInContext(html.match(/<script id="v03-model">([\s\S]*?)<\/script>/)[1],context);const model=context.V03Model;
 const base={amount:'12',advance:'no',limit:'',note:'',time:true,rules:true};
 const plain=value=>JSON.parse(JSON.stringify(value));
-test('errand quotation requires an explicit positive amount and advance choice',()=>{
+test('errand applicants accept the publisher fee and cannot replace it through form values',()=>{
   assert.deepEqual(plain(model.validate('errands',base).errors),{});
-  for(const amount of ['', '0', '-1','12.345','100000','1e2'])assert(model.validate('errands',{...base,amount}).errors.amount,amount);
+  for(const amount of ['', '0', '-1','12.345','100000','1e2','99'])assert.equal(model.validate('errands',{...base,amount}).amount,1200,'publisher fee must override untrusted applicant amount');
   assert(model.validate('errands',{...base,advance:''}).errors.advance);
   assert(model.validate('errands',{...base,advance:'yes',limit:'0'}).errors.advance);
   assert.equal(model.validate('errands',{...base,advance:'yes',limit:'50'}).limit,5000);
@@ -39,4 +39,20 @@ test('single-file V03 remains offline, clearly synthetic and syntactically valid
     assert(html.includes(phrase),phrase);
   }
   assert(!html.includes('SHARED_PREVIEW_STYLE'));assert(!html.includes('SHARED_PREVIEW_ICONS'));
+});
+
+test('review comments are reflected without changing the errand commission cap rule',()=>{
+  assert.equal(model.business.errands.cap,null);
+  assert(!html.includes('不封顶'));
+  assert(html.includes('还未确认新时间，暂不能选'));
+  assert(html.includes('candidate-avatar'));
+  assert(html.indexOf('id="application-status"')>html.indexOf('</form>'));
+  assert(html.includes('<h2>${item.title}</h2><span class="badge">${item.name}</span>'));
+  const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
+  assert(read('docs/prd.md').includes('不允许自行报价或修改服务费'));
+  assert(read('docs/structured-design.md').includes('申请者不得自行报价/改价'));
+  assert(read('docs/development-plan.md').includes('发布者定价，申请者只读接受'));
+  const ascii=read('docs/ascii-design-prd-2.1.md');
+  const section=ascii.slice(ascii.indexOf('### V03-B '),ascii.indexOf('### V03-C '));
+  assert(section.includes('发布者金额，只读'));assert(!section.includes('[撤回报价]'));
 });

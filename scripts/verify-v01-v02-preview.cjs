@@ -87,7 +87,7 @@ async function verify(){
     await page.locator('#favorite').click();assert.equal(await page.locator('#favorite').getAttribute('aria-pressed'),'true');
     await page.locator('#preview-switcher [data-kind="repair"]').click();await page.locator('#preview-switcher [data-kind="idle"]').click();assert.equal(await page.locator('#favorite').getAttribute('aria-pressed'),'true','favorite survives switching');
     await page.locator('#open-reviews').click();assert(await page.locator('#review-modal').isVisible());assert((await page.locator('#review-role').textContent()).includes('闲置卖方'));await page.keyboard.press('Escape');assert(await page.locator('#review-modal').isHidden());
-    for(const [kind,button] of [['repair','申请接单'],['errands','去报价'],['other','申请接单']]){
+    for(const [kind,button] of [['repair','申请接单'],['errands','申请接单'],['other','申请接单']]){
       await page.locator(`#preview-switcher [data-kind="${kind}"]`).click();assert(await page.locator('#schedule-panel').isVisible());assert.equal(await page.locator('#primary-action').textContent(),button);assert((await page.locator('#published-time').textContent()).startsWith('发布时间：'));
     }
     await page.locator('#primary-action').click();assert((await page.locator('#action-message').textContent()).includes('未提交申请'));await page.keyboard.press('Escape');

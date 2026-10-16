@@ -42,7 +42,7 @@ test('unknown fees stay distinct from a quoted price and idle negotiation',()=>{
 });
 test('V02 original publication and requested service times are separate and idle has no scheduling fields',()=>{
   for(const item of model.items){assert(item.published);if(item.kind==='idle'){assert.equal(item.expected,undefined);assert.equal(item.expiry,undefined);}else{assert(item.expected>item.published);assert(item.expiry>item.expected);}}
-  for(const term of ['发布时间：','期望服务时间','服务到期时间','schedule-panel','联系申请获准后仍打码','未提交申请','未提交报价','本地演示 · 全部为合成数据'])assert(html.includes(term),term);
+  for(const term of ['发布时间：','期望服务时间','服务到期时间','schedule-panel','联系申请获准后仍打码','未提交申请','接受发布者服务费','本地演示 · 全部为合成数据'])assert(html.includes(term),term);
   assert(!html.includes('最新需求'));
   assert(!/href="https?:|src="https?:|fetch\(|XMLHttpRequest|localStorage|sessionStorage|tel:|mailto:/.test(html),'standalone offline preview, without network or real contact actions');
 });
