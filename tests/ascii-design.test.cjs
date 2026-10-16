@@ -117,6 +117,34 @@ test('public contact rows and review links remain separate on every affected det
       assert(!/昵称|公开信息|核验/.test(lines[review]), id + ' no crowded identity row');
     }
   }
-  assert(prd.includes('需求发布填写“服务时间”（开始日期/时间）与“服务到期时间”'));
-  assert(document.includes('本轮尚未替换开始时间或取消其填写规则'));
+});
+
+test('publication metadata and requested service time remain distinct and visible before applying', () => {
+  for (const id of ['V02-A', 'V02-B', 'V02-C', 'V02-D']) {
+    const drawing = screen(id);
+    assert(drawing.includes('发布时间：<系统记录的原始发布时间>'), id);
+    if (id === 'V02-D') {
+      assert(!drawing.includes('期望服务时间'), 'idle listing must not inherit demand scheduling');
+      continue;
+    }
+    assert(drawing.indexOf('发布时间：') < drawing.indexOf('-- 时间要求'), id);
+    const lines = drawing.split('\n');
+    const requested = lines.findIndex(line => line.includes('期望服务时间：'));
+    assert(requested > 0 && lines[requested + 1].includes('服务到期时间：'), id);
+    assert(!lines[requested].includes('发布时间：'), id);
+  }
+  for (const id of ['V04-B', 'V04-C', 'V04-D']) {
+    assert(screen(id).includes('期望服务时间(*)：<开始日期/时间>'), id);
+    assert(screen(id).includes('不是发布时间'), id);
+    assert(!screen(id).includes('发布时间(*)'), id);
+  }
+  assert(!screen('V04-E').includes('期望服务时间(*)'));
+  assert(screen('V03-B').includes('期望服务时间：<当前开始日期/时间>'));
+  for (const source of [prd, read('docs/structured-design.md')]) {
+    for (const term of ['原始发布时间', '时间要求', '期望服务时间', '申请', '720小时', '168小时']) {
+      assert(source.includes(term), term);
+    }
+  }
+  assert(prd.includes('需求发布由发布者填写“期望服务时间”'));
+  assert(!document.includes('本轮尚未替换开始时间或取消其填写规则'));
 });
