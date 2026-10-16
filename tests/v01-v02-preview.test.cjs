@@ -22,6 +22,14 @@ test('V01 toggles and all reset allow zero or several selected categories',()=>{
   assert.deepEqual(Array.from(model.toggleCategory(selected,'idle')),[]);
   assert.deepEqual(Array.from(model.toggleCategory(selected,'unknown')),['idle']);
 });
+
+test('waterfall appends each card to the shorter column and gives empty results zero height',()=>{
+  const layout=JSON.parse(JSON.stringify(model.masonryLayout([100,200,150,90],160)));
+  assert.deepEqual(layout,{positions:[{left:0,top:0},{left:172,top:0},{left:0,top:112},{left:172,top:212}],height:302});
+  assert.deepEqual(JSON.parse(JSON.stringify(model.masonryLayout([],160))),{positions:[],height:0});
+  const equal=JSON.parse(JSON.stringify(model.masonryLayout([100,100,100,100],160)));
+  assert.deepEqual(equal.positions.map(p=>p.left),[0,172,0,172]);
+});
 test('unknown fees stay distinct from a quoted price and idle negotiation',()=>{
   assert.equal(model.priceText(model.items.find(i=>i.id==='washer')),'费用待协商');
   assert.equal(model.priceText(model.items.find(i=>i.id==='lamp')),'面议');

@@ -30,6 +30,28 @@ async function verify(){
     await page.screenshot({path:path.join(outDir,'sticky-filters.png'),fullPage:true});
     await page.locator('#home-scroll').evaluate(el=>el.scrollTop=0);
   }
+  async function assertMasonry(){
+    await page.locator('[data-layout="masonry"]').click();
+    await page.waitForFunction(()=>document.getElementById('cards').classList.contains('masonry')&&document.getElementById('cards').style.height!=='');
+    const rects=await page.locator('#cards .listing').evaluateAll(cards=>cards.map(card=>({left:card.offsetLeft,top:card.offsetTop,width:card.offsetWidth,height:card.offsetHeight})));
+    for(let i=0;i<rects.length;i++)for(let j=i+1;j<rects.length;j++){
+      const a=rects[i],b=rects[j];assert(a.left+a.width<=b.left+1||b.left+b.width<=a.left+1||a.top+a.height<=b.top+1||b.top+b.height<=a.top+1,'masonry cards never overlap');
+    }
+    for(const left of [...new Set(rects.map(r=>r.left))]){
+      const column=rects.filter(r=>r.left===left).sort((a,b)=>a.top-b.top);assert.equal(column[0].top,0);
+      for(let i=1;i<column.length;i++)assert(Math.abs(column[i].top-column[i-1].top-column[i-1].height-12)<2,'masonry has no unused row gaps');
+    }
+    assert(rects[2].top!==rects[3].top,'different image ratios produce visibly staggered rows');
+    await page.locator('#home-scroll').evaluate(el=>el.scrollTop=330);
+    await page.screenshot({path:path.join(outDir,'masonry-'+page.viewportSize().width+'.png'),fullPage:true});
+    await page.locator('#search-input').fill('不存在的关键词');assert(await page.locator('#empty').isVisible());assert.equal(await page.locator('#cards').evaluate(el=>el.clientHeight),0);
+    await page.locator('#reset-filters').click();assert.equal(await page.locator('[data-item]').count(),8);
+    await page.locator('[data-category="repair"]').click();assert.equal(await page.locator('[data-item]').count(),2);
+    await page.locator('[data-category="all"]').click();
+    await page.locator('[data-layout="grid"]').click();assert.equal(await page.locator('#cards').evaluate(el=>getComputedStyle(el).display),'grid');
+    assert.equal(await page.locator('#cards').evaluate(el=>el.style.height),'');
+    await page.locator('#home-scroll').evaluate(el=>el.scrollTop=0);
+  }
   try{
     await page.goto(url);await page.locator('[data-item]').first().waitFor();
     assert.equal(await page.locator('[data-item]').count(),8);
@@ -48,6 +70,7 @@ async function verify(){
     assert.equal(await page.locator('[data-item="parcel"] .price-number small').textContent(),'¥');
     await page.screenshot({path:path.join(outDir,'desktop.png'),fullPage:true});
     await assertStickyFilters();
+    await assertMasonry();
     await page.locator('[data-category="repair"]').click();await page.locator('[data-category="errands"]').click();
     assert.equal(await page.locator('[data-item]').count(),4);
     assert.equal(await page.locator('[data-category="repair"]').getAttribute('aria-pressed'),'true');
@@ -80,6 +103,7 @@ async function verify(){
     await page.setViewportSize({width:320,height:800});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 320px overflow');
     assert(await page.evaluate(()=>[...document.querySelectorAll('.phone,.scroll,.listing')].every(x=>x.scrollWidth<=x.clientWidth+1)),'no 320px card or inner overflow');
     const narrowTitles=await assertCompactCards();assert(narrowTitles.some(m=>m.titleHeight>m.lineHeight*1.5),'two-line titles remain naturally wrapped on narrow screens');
+    await assertMasonry();
     await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.locator('.primary').first().evaluate(x=>getComputedStyle(x).transitionDuration),'0s');
     assert.deepEqual(errors,[],'no browser errors');
     const result={passed:true,checks:['desktop render','category union','keyword and region conjunction','empty/reset','four details','idle privacy and no scheduling','favorite persistence','review role and Escape','no transaction side effects','contact rows','footer layout','375px and 320px overflow','reduced motion','browser error log'],screenshots:['desktop.png','detail-contacts.png','mobile.png']};
