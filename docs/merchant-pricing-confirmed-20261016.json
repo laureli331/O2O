@@ -62,9 +62,10 @@
       "faultCompensation": null,
       "manualPauseVisibilityPriority": null,
       "placeholderContentSpecification": null,
-      "advertisingDetailFields": null,
-      "advertisingDetailContactDisclosure": null,
-      "advertisingCooperationPageDetails": null
+      "advertisingCooperationPageDetails": null,
+      "advertisingDetailFieldSpecifications": null,
+      "advertisingContactAuthorizationInteraction": null,
+      "advertisingDetailReviewAndUpdateRule": null
     },
     "reservation": {
       "unit": "continuous-hours",
@@ -98,6 +99,32 @@
         "reviewRequired": true,
         "clickEnabled": false
       }
+    },
+    "advertisingDetail": {
+      "requiredFields": [
+        "business-name",
+        "advertising-title",
+        "promotional-description",
+        "business-or-service-area"
+      ],
+      "optionalFields": [
+        "business-hours",
+        "detailed-store-address",
+        "supplementary-images",
+        "business-phone"
+      ],
+      "showApprovedHomeMainImage": true,
+      "businessPhone": {
+        "separatelyProvidedByAdvertiser": true,
+        "requiresSeparatePublicAuthorization": true,
+        "viewRequiresLogin": false,
+        "clickToCall": true
+      },
+      "detailedStoreAddress": {
+        "requiresPublicAuthorization": true
+      },
+      "residentContactMaskingChanged": false,
+      "privateVerificationDataMayBeReused": false
     }
   },
   "membership": {
@@ -787,6 +814,29 @@
       }
     ],
     "scope": "banner-placeholder-content-and-destination-only",
+    "realSalesAuthorized": false
+  },
+  "bannerDetailAndContactDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "887828aeff13ccbc9bcf3f68ee75a31dcc045e14",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_184232447b9c46b3bf637b93d67cd1ff\",0]",
+        "id": "banner-advertising-detail-field-scope",
+        "selected": "A",
+        "question": "上一组第2题：付费Banner点击后的独立广告详情页，起步提供哪些宣传内容？这里只确认字段范围，字数、图片数量和尺寸后续细化。",
+        "answer": "A（推荐）：必填经营名称、广告标题、宣传说明、经营／服务区域；可选营业时间、门店详细地址及补充图片。首页已审核主图同时展示在详情页。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_184232447b9c46b3bf637b93d67cd1ff\",1]",
+        "id": "banner-authorized-public-business-contact",
+        "selected": "A",
+        "question": "上一组第3题：广告详情页是否直接展示商家联系方式？仅限商家另行授权公开的经营联系方式，不改变居民交易联系方式打码规则，也不使用私下提交的实名核验资料。",
+        "answer": "A（推荐）：商家可另行填写并明确授权公开经营联系电话，访客无需登录即可查看和点击拨号；门店详细地址仅在上一题选择提供该字段且商家授权公开时展示。"
+      }
+    ],
+    "scope": "banner-advertising-detail-fields-and-authorized-public-business-contacts",
     "realSalesAuthorized": false
   }
 }
