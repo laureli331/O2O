@@ -4,7 +4,7 @@
   "timezone": "Asia/Shanghai",
   "sourceCommit": "519c2425a38c28cadda4b4d790145bce56e29765",
   "document": "docs/content-heating-refund-confirmed-20261017.md",
-  "status": "six-business-decisions-approved-execution-details-pending",
+  "status": "seven-business-decisions-approved-execution-details-pending",
   "responseType": "structured-question-replies",
   "responses": [
     {
@@ -103,6 +103,18 @@
       "enabledAtLaunch": false,
       "manualAppealAllowed": true,
       "manualRemedyDecided": false
+    },
+    "capacityReleaseAndResale": {
+      "requiresVerifiedOriginalPayment": true,
+      "requiresVerifiedEffectiveTermination": true,
+      "requiresConfirmedPromotionStopped": true,
+      "releaseScope": "requested-purchase-period-business-profile-slot-and-whole-pool-capacity-occupancy",
+      "waitForRefundArrival": false,
+      "continueOriginalRefundApplication": true,
+      "newSaleRequiresFull30DayDeliveryConfirmation": true,
+      "newSaleMustRespectProfileAndPoolLimits": true,
+      "protectOtherEffectivePromotionsAndConfirmedSchedules": true,
+      "paymentUnknown": "verify-first-do-not-release-or-resell"
     }
   },
   "examplesAreHypothetical": true,
@@ -252,11 +264,11 @@
     "paymentChannel": null,
     "arrivalTimeLimit": null,
     "manualAppealRemedy": null,
-    "capacityReleaseAndResale": null,
     "faultEvidenceAndOtherLiability": null,
     "timestampAndSubsecondPolicy": null,
     "repeatedAndConcurrentRefundHandling": null,
-    "qualificationOrViolationCancellation": null
+    "qualificationOrViolationCancellation": null,
+    "capacityReleaseAndResaleExecution": null
   },
   "execution": {
     "formalSalePricesApproved": false,
@@ -294,6 +306,23 @@
       }
     ],
     "scope": "content-heating-refund-processing-failed-or-unknown-and-self-service-withdrawal-only",
+    "realRefundsAuthorized": false
+  },
+  "capacityReleaseDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "93f6406698f6c494f2e0ca5a55ac8147a5f8a3d4",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_f9ef53adfae14a21a0db3750726ed1ec\",0]",
+        "id": "content-heating-capacity-release-and-resale",
+        "selected": "A",
+        "question": "内容加热退订后，原经营档案名额和全池容量占用何时释放？新售仍须确认可交付完整30天、符合名额及全池上限，不挤占他人有效投放或已确认排期。",
+        "answer": "A（推荐）：核实原付款、退订生效且该期推广已停止后，释放原购买期占用，不等待退款到账，原退款继续办理；原付款未知时先核实，不释放重售。"
+      }
+    ],
+    "scope": "content-heating-capacity-release-and-resale-only",
+    "realSalesAuthorized": false,
     "realRefundsAuthorized": false
   }
 }

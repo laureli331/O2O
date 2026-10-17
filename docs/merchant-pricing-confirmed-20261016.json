@@ -469,7 +469,9 @@
         "timeScope": "overlapping-effective-promotion-periods",
         "maxEffectiveSlots": 1,
         "stackingOffered": false,
-        "renewalContinuityRule": null
+        "renewalContinuityRule": {
+          "record": "contentHeating.advanceRenewal"
+        }
       }
     },
     "deliveryCommitment": {
@@ -540,6 +542,34 @@
       "record": "docs/content-heating-refund-confirmed-20261017.json",
       "businessRulesApproved": true,
       "executionReady": false
+    },
+    "advanceRenewal": {
+      "allowedWhileCurrentPeriodValid": true,
+      "nextPeriodDays": 30,
+      "reviewAndFutureDeliverableScheduleBeforePayment": true,
+      "start": "confirmed-schedule-subject-to-existing-actual-activation-conditions",
+      "advancePaymentStartsClock": false,
+      "automaticDebit": false,
+      "protectOtherEffectivePromotionsAndConfirmedSchedules": true,
+      "priorityFromAdvancePurchase": false,
+      "generalWaitlistSchedulingAuthorized": false,
+      "scheduleExecutionDetails": null
+    },
+    "reportPolicy": {
+      "metrics": [
+        "promotion-card-impressions",
+        "promotion-card-click-through-to-corresponding-main-post"
+      ],
+      "separateOrganicAndPromotionTraffic": true,
+      "clickMeansStoreVisitOrTransaction": false,
+      "reportOnlyVerifiedData": true,
+      "unknownDataReplacedByZero": false,
+      "expiredPurchaseReportsRemainAccessible": true,
+      "queryFeeCents": 0,
+      "impressionDefinition": null,
+      "deduplicationRule": null,
+      "updateFrequency": null,
+      "retentionPeriod": null
     }
   },
   "searchHeating": {
@@ -1330,5 +1360,37 @@
       "A"
     ],
     "record": "docs/content-heating-refund-confirmed-20261017.json"
+  },
+  "contentHeatingReleaseRenewalReportDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "93f6406698f6c494f2e0ca5a55ac8147a5f8a3d4",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_f9ef53adfae14a21a0db3750726ed1ec\",0]",
+        "id": "content-heating-capacity-release-and-resale",
+        "selected": "A",
+        "question": "内容加热退订后，原经营档案名额和全池容量占用何时释放？新售仍须确认可交付完整30天、符合名额及全池上限，不挤占他人有效投放或已确认排期。",
+        "answer": "A（推荐）：核实原付款、退订生效且该期推广已停止后，释放原购买期占用，不等待退款到账，原退款继续办理；原付款未知时先核实，不释放重售。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_f9ef53adfae14a21a0db3750726ed1ec\",1]",
+        "id": "content-heating-manual-advance-next-period-purchase",
+        "selected": "A",
+        "question": "内容加热当前购买期仍有效时，是否允许主动提前购买下一期30天？本题不启用自动扣费、真实续购或一般候补排期。",
+        "answer": "A（推荐）：允许；先审核并确认未来可交付排期，再付款。拟接续时间以确认排期为准，提前付款不提前起算，也不享有挤占他人有效投放或已确认排期的优先权。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_f9ef53adfae14a21a0db3750726ed1ec\",2]",
+        "id": "content-heating-basic-report-scope",
+        "selected": "A",
+        "question": "内容加热的基础推广报告是否采用以下范围？自然流量与推广流量分开，不把点击等同到店或成交；已购报告到期后仍可查看且不另收查询费的原规则保持。",
+        "answer": "A（推荐）：提供推广卡片展示次数、点击进入对应主帖的次数；只展示可核实数据，未知不补成0。具体曝光判定、去重、更新频率和保存期限随后确认。"
+      }
+    ],
+    "scope": "v2-content-heating-capacity-release-manual-advance-renewal-and-basic-promotion-report",
+    "refundRecord": "docs/content-heating-refund-confirmed-20261017.json",
+    "realSalesAuthorized": false,
+    "realRefundsAuthorized": false
   }
 }
