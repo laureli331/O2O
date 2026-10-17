@@ -89,13 +89,16 @@ test('previous PRD remains byte-identical and preserves old decisions only as an
   assert.deepEqual(JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json')).prdConsolidation, meta);
 });
 
-test('unchanged AI safeguards and AI metric definitions survive the consolidation, including every original rule', () => {
+test('AI safeguards and metric definitions survive consolidation with the approved four-business scope', () => {
   for (const prefix of ['AI', 'AM']) {
     const prior = family(archived, prefix), current = family(prd, prefix);
     assert.deepEqual([...current.keys()], [...prior.keys()]);
-    for (const [id, row] of prior) assert.equal(current.get(id), normalize(row), id);
+    for (const [id, row] of prior) {
+      if(id==='AI01'){terms(current.get(id), ['四类发布表单均提供','未登录','受限账号'], 'Updated AI scope');continue;}
+      assert.equal(current.get(id), normalize(row), id);
+    }
   }
-  terms(prd, ['明确的跑腿服务开始/到期时间', '原文不明确就留空', '不扩大到维修/其它'], 'New accepted time extraction');
+  terms(prd, ['明确的跑腿服务开始/到期时间', '原文不明确就留空', '维修/其它本轮开放标题、说明整理，时间仍由用户填写'], 'New accepted time extraction');
 });
 
 const mutations = [

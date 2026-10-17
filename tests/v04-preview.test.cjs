@@ -32,3 +32,19 @@ test('reposting excludes private credentials, old time and fixed fee; demo AI ne
  assert(m.privacy('取件码：合成凭据'));assert(m.privacy('电话13800000000'));assert.equal(m.candidate('repair',m.sample.errands),null);assert.equal(m.candidate('idle','卖一个东西'),null);
  const generated=m.candidate('errands',m.sample.errands);assert.equal(generated.fee,'12');assert(!('pickup' in generated));assert(!('start' in generated));assert(!('region' in generated));
 });
+
+test('all four businesses offer grounded AI samples and concise validation messages',()=>{
+ for(const kind of Object.keys(m.kinds)){
+  const result=m.candidate(kind,m.sample[kind]);assert(result,kind);assert(result.title&&result.note,kind);
+  if(['repair','other'].includes(kind)){assert(!('fee' in result));assert(!('start' in result));}
+ }
+ for(const message of m.validate('errands',{...base,title:'',note:'',region:'',fee:'',start:'',end:'',pickup:'',delivery:''},now))assert(Array.from(message).length<=24,message);
+ assert(html.includes('class="issue-list"'));assert(!html.includes('待补充 / 核对：'));
+ const prior=fs.readFileSync(path.join(__dirname,'../previews/v01-v02.html'),'utf8');
+ for(const icon of ['home','bag','plus','message','user']){
+  const symbol=prior.match(new RegExp('<symbol id="i-'+icon+'".*?</symbol>'))[0];assert(html.includes(symbol),icon);
+ }
+ for(const file of ['docs/prd.md','docs/structured-design.md','docs/development-plan.md']){
+  const text=fs.readFileSync(path.join(__dirname,'..',file),'utf8');assert(text.includes('四类'),file);assert(!text.includes('维修/其它无AI'),file);
+ }
+});
