@@ -196,6 +196,11 @@
           ]
         }
       }
+    },
+    "refundRule": {
+      "record": "docs/merchant-membership-refund-confirmed-20261017.json",
+      "businessRulesApproved": true,
+      "executionReady": false
     }
   },
   "contentHeating": {
@@ -619,5 +624,16 @@
     ],
     "membershipRefundFormulaApproved": false,
     "membershipRefundProposal": "docs/merchant-membership-refund-proposal-20261016.md"
+  },
+  "membershipRefundDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "5bd0f7ee901d2632fcf993ceb73652ac1592965c",
+    "responseType": "structured-question-replies",
+    "selected": [
+      "A",
+      "A",
+      "A"
+    ],
+    "record": "docs/merchant-membership-refund-confirmed-20261017.json"
   }
 }

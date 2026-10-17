@@ -7,7 +7,7 @@ const proposalPath='docs/merchant-membership-refund-proposal-20261016.json';
 const get=()=>JSON.parse(read(proposalPath));
 const pricing=()=>JSON.parse(read('docs/merchant-pricing-confirmed-20261016.json'));
 function validateDraft(p){
- assert.equal(p.status,'draft-awaiting-user-review','Draft status');
+ assert.equal(p.status,'historical-draft-three-decisions-confirmed-separately','Draft status');
  assert.deepEqual(p.authorization,{userReply:'全a',choice:'membership-refund-proposal-only',designOnly:true,formulaApproved:false,extraChargesApproved:false},'Design authorization only');
  assert.equal(p.scope,'proposed-voluntary-early-termination-of-platform-owned-v2-membership');
  assert.deepEqual(p.basis,{membershipMonthlyPriceCents:9900,batchDays:30,textUnitsPerBatch:100,imageUnitsPerBatch:30,textPackagePriceCents:490,textPackageUnits:100,imagePackagePriceCents:990,imagePackageUnits:10,allocationType:'proposed-contract-apportionment-not-api-cost',formalPricesVerified:false,fullCostsVerified:false},'Candidate inputs only');
@@ -54,11 +54,13 @@ function exactRefund(example){
  return Number(rounded>p?p:rounded);
 }
 
-test('membership refund allocation is a separate draft with no approved formula',()=>{
+test('original design authorization stays historical while selected rules are confirmed separately',()=>{
  const p=get(),r=pricing();validateDraft(p);
  assert.equal(r.aiAllowanceAndRefundHandlingDecision.membershipRefundFormulaApproved,false);
  assert.equal(r.aiAllowanceAndRefundHandlingDecision.membershipRefundProposal,p.document);
- assert.equal(Object.hasOwn(r.membership,'refundRule'),false);
+ assert.equal(r.membership.refundRule.record,'docs/merchant-membership-refund-confirmed-20261017.json');
+ assert.equal(p.followUpConfirmation.record,r.membership.refundRule.record);
+ assert.equal(p.followUpConfirmation.allDraftDetailsApproved,false);
  assert.equal(r.membership.aiAllowance,null);
  assert.equal(r.membership.aiTrial.finalAllowanceApproved,false);
  assert.equal(r.aiAddOnPackages.refundRule.expiredPackagesEligible,true,'Separate paid packages retain expired-unused refunds');

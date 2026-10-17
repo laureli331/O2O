@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-16",
   "timezone": "Asia/Shanghai",
-  "status": "draft-awaiting-user-review",
+  "status": "historical-draft-three-decisions-confirmed-separately",
   "sourceCommit": "662684009d2aab7be7fe9ff883a374eea3edcf7b",
   "document": "docs/merchant-membership-refund-proposal-20261016.md",
   "authorization": {
@@ -84,5 +84,11 @@
   "nonconformingDeliveryHandledSeparately": true,
   "implementationAuthorized": false,
   "realSalesEnabled": false,
-  "realRefundsExecuted": false
+  "realRefundsExecuted": false,
+  "followUpConfirmation": {
+    "date": "2026-10-17",
+    "record": "docs/merchant-membership-refund-confirmed-20261017.json",
+    "originalDesignAuthorizationPreserved": true,
+    "allDraftDetailsApproved": false
+  }
 }

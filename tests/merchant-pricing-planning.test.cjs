@@ -44,7 +44,7 @@ function validate(b){
  assert.equal(r.aiAllowanceAndRefundHandlingDecision.userReply,'全a','Actual consumption and refund reply');
  assert.deepEqual(r.aiAllowanceAndRefundHandlingDecision.choices.map(x=>[x.id,x.selected]),[['allowance-consumption-order','A'],['refund-handling-time','A'],['membership-refund-proposal-only','A']]);
  assert.equal(r.aiAllowanceAndRefundHandlingDecision.membershipRefundFormulaApproved,false,'Membership formula remains a draft');
- assert.equal(Object.hasOwn(r.membership,'refundRule'),false,'No approved membership refund formula');
+ assert.deepEqual(r.membership.refundRule,{record:'docs/merchant-membership-refund-confirmed-20261017.json',businessRulesApproved:true,executionReady:false},'Approved scoped membership refund record');
  assert.equal(r.aiAddOnCommercialDecision.userReply,'全A','Actual add-on commercial reply');
  assert.deepEqual(r.aiAddOnCommercialDecision.choices.map(x=>[x.id,x.selected]),[['add-on-trial-prices','A'],['purchased-allowance-validity','A'],['unused-allowance-refunds','A']]);
  assert.equal(r.aiOutputAndAddOnDecision.userReply,'全a','Actual output and package reply');
@@ -101,7 +101,7 @@ const changes=[
  ['paid quota wins same-expiry tie',b=>b.r.aiAllowanceConsumption.sameExpirySourceOrder.reverse(),/consumption order/],
  ['future quota selected before activation',b=>b.r.aiAllowanceConsumption.eligible='all-quotas',/consumption order/],
  ['draft membership formula treated as approved',b=>b.r.aiAllowanceAndRefundHandlingDecision.membershipRefundFormulaApproved=true,/remains a draft/],
- ['membership formula silently activated',b=>b.r.membership.refundRule={formula:'draft'},/No approved membership/],
+ ['membership formula replaced without approval',b=>b.r.membership.refundRule={formula:'draft'},/Approved scoped membership/],
  ['first response target extended',b=>b.r.aiAddOnPackages.refundRule.processingTimeLimit.firstResponseHours=48,/standalone AI package/],
  ['review uses working hours',b=>b.r.aiAddOnPackages.refundRule.processingTimeLimit.unit='working-hours',/standalone AI package/],
  ['refund arrival guaranteed from handling SLA',b=>b.r.aiAddOnPackages.refundRule.processingTimeLimit.arrivalTimeGuaranteed=true,/standalone AI package/],
@@ -390,14 +390,14 @@ test('current documents have consistent field contracts and valid supplement lin
 });
 
 test('consumption and handling choices add no unapproved membership formula or earlier changes',()=>{
- const {r}=bundle(),prior=JSON.parse(cp.execFileSync('git',['show',r.aiAllowanceAndRefundHandlingDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
+ const live=bundle().r,r=JSON.parse(cp.execFileSync('git',['show',live.membershipRefundDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'})),prior=JSON.parse(cp.execFileSync('git',['show',r.aiAllowanceAndRefundHandlingDecision.sourceCommit+':'+recordPath],{cwd:root,encoding:'utf8'}));
  const current=structuredClone(r);delete current.aiAllowanceAndRefundHandlingDecision;delete current.aiAllowanceConsumption;current.aiAddOnPackages.refundRule.processingTimeLimit=null;
  assert.deepEqual(current,prior,'Only approved consumption, handling and proposal authorization change');
 });
 test('entry points distinguish approved handling from the pending membership formula',()=>{
  for(const file of ["docs/merchant-pricing-confirmed-20261016.md","docs/prd.md","docs/development-plan.md","docs/structured-design.md","docs/v2-roadmap.md","docs/ascii-design-prd-2.1.md","docs/module-specs/current-development-basis-20261015.md","docs/module-specs/merchant-banner-direction-20261015.md","CONTEXT.md"]){
-  const s=read(file);for(const phrase of ['按最早到期优先','同到期先会员包含或赠送额度','24连续小时内首次回应','72连续小时内完成审核','不等于保证到账','异常须在原期限内','第三项仅批准设计会员退款草案，未批准公式或额外扣费','现有会员规则与赠送额度表述尚未因此改为按价值扣费'])assert(s.includes(phrase),file+': '+phrase);
+  const s=read(file);for(const phrase of ['按最早到期优先','同到期先会员包含或赠送额度','24连续小时内首次回应','72连续小时内完成审核','不等于保证到账','异常须在原期限内','第三项仅批准设计会员退款草案，未批准公式或额外扣费','该2026-10-16授权时点尚未修改会员规则或赠送表述'])assert(s.includes(phrase),file+': '+phrase);
   assert(!s.includes('退款通道和处理时限仍待确认'),file+': superseded handling uncertainty');
  }
- const s=bundle().doc;for(const phrase of ['24与72均非工作小时','补资料不能重置原申请的首次回应期限','同类、同到期且同开通时刻','主记录不启用会员退款规则'])assert(s.includes(phrase),phrase);
+ const s=bundle().doc;for(const phrase of ['24与72均非工作小时','补资料不能重置原申请的首次回应期限','同类、同到期且同开通时刻','当时主记录尚未启用会员退款规则'])assert(s.includes(phrase),phrase);
 });
