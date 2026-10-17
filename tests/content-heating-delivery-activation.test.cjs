@@ -22,7 +22,7 @@ test('only the two approved commercial rules and undecided unit record change ea
 });
 test('nine current entries preserve mixed reply status, honest delivery and actual activation boundaries',()=>{
  for(const p of entries){const s=read(p),line=s.split(/\r?\n/).find(x=>x.startsWith('内容加热交付及起算两项确认'));
- for(const phrase of ['第一题要求比较方案，未选择计费单位','第2、3题分别选择A','30天正常参与共享池轮换','不承诺固定排名、保底曝光量或成交量','实际曝光/点击如实记录，统计口径另定','先通过推广审核、确认可投放，再付款','付款成功且推广实际生效、可正常参与轮换后起算','不等首次访客看到广告','不因仅付款就起算','计费单位该组当时未选，现按后续B确认；并行数量与换帖细则仍待确认'])assert(line&&line.includes(phrase),p+': '+phrase);
+ for(const phrase of ['第一题要求比较方案，未选择计费单位','第2、3题分别选择A','30天正常参与共享池轮换','不承诺固定排名、保底曝光量或成交量','实际曝光/点击如实记录，统计口径另定','先通过推广审核、确认可投放，再付款','付款成功且推广实际生效、可正常参与轮换后起算','不等首次访客看到广告','不因仅付款就起算','计费单位该组当时未选，现按后续B确认；并行上限与换帖业务规则按后续三项确认'])assert(line&&line.includes(phrase),p+': '+phrase);
  const target=line.match(/\[内容加热确认第4\.2节\]\(([^)]+)\)/)[1];assert(fs.existsSync(path.resolve(root,path.dirname(p),target)),p+': source link');
  }
  const s=read('docs/merchant-pricing-confirmed-20261016.md');for(const x of expectedResponses){assert(s.includes(x.question));assert(s.includes(x.answer));}
