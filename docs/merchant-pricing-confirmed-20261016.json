@@ -1319,5 +1319,16 @@
       "A"
     ],
     "record": "docs/content-heating-refund-confirmed-20261017.json"
+  },
+  "contentHeatingRefundExecutionDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "fb3caf39d9df372097b3e778090996da81172ee5",
+    "responseType": "structured-question-replies",
+    "selected": [
+      "A",
+      "A",
+      "A"
+    ],
+    "record": "docs/content-heating-refund-confirmed-20261017.json"
   }
 }

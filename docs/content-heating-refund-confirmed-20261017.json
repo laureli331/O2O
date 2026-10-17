@@ -4,7 +4,7 @@
   "timezone": "Asia/Shanghai",
   "sourceCommit": "519c2425a38c28cadda4b4d790145bce56e29765",
   "document": "docs/content-heating-refund-confirmed-20261017.md",
-  "status": "three-business-decisions-approved-execution-details-pending",
+  "status": "six-business-decisions-approved-execution-details-pending",
   "responseType": "structured-question-replies",
   "responses": [
     {
@@ -77,7 +77,33 @@
     "membershipRefundPolicyChanged": false,
     "separatePurchasedAiPackPolicyChanged": false,
     "bannerRefundPolicyChanged": false,
-    "transactionBillingPolicyChanged": false
+    "transactionBillingPolicyChanged": false,
+    "processingTimeLimit": {
+      "unit": "continuous-hours",
+      "firstResponseHours": 24,
+      "firstResponseStart": "request-received",
+      "incompleteRequestAction": "state-necessary-missing-materials",
+      "reviewAndInitiateHours": 72,
+      "reviewAndInitiateStart": "complete-valid-application-submitted-successfully",
+      "initiateOnlyIfEligible": true,
+      "arrivalTimeGuaranteed": false,
+      "arrivalTimeLimit": null,
+      "exceptionUpdate": "reason-and-progress-within-original-deadline-and-continue-handling"
+    },
+    "failedOrUnknownRefundHandling": {
+      "keepTerminationEffective": true,
+      "autoRestorePromotion": false,
+      "termTimeConsumed": false,
+      "continueRefundHandling": true,
+      "unknownOutcomeRequiresVerification": true,
+      "blindDuplicateRefundAllowed": false,
+      "unverifiedRefundMeansComplete": false
+    },
+    "selfServiceWithdrawal": {
+      "enabledAtLaunch": false,
+      "manualAppealAllowed": true,
+      "manualRemedyDecided": false
+    }
   },
   "examplesAreHypothetical": true,
   "examples": [
@@ -223,11 +249,8 @@
     }
   ],
   "unconfirmed": {
-    "processingTimeLimit": null,
     "paymentChannel": null,
     "arrivalTimeLimit": null,
-    "failedOrUnknownRefundHandling": null,
-    "selfServiceWithdrawal": null,
     "manualAppealRemedy": null,
     "capacityReleaseAndResale": null,
     "faultEvidenceAndOtherLiability": null,
@@ -242,5 +265,35 @@
     "automaticRefundExecutionAllowed": false,
     "technicalDetailingResumed": false,
     "deploymentAuthorized": false
+  },
+  "refundExecutionDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "fb3caf39d9df372097b3e778090996da81172ee5",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_b232decd00de49c78684257e143e67db\",0]",
+        "id": "content-heating-refund-processing-target",
+        "selected": "A",
+        "question": "内容加热退款是否采用以下处理目标？收到申请后24连续小时内首次回应，资料不全时告知必要补充项；完整有效申请提交成功后72连续小时内完成审核，并对符合条件者发起退款。异常须在原期限内说明原因、进度并继续处理；这不保证退款到账时间。",
+        "answer": "A（推荐）：采用，与会员、AI增购和Banner的运营处理目标一致；本题明确批准用于内容加热。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_b232decd00de49c78684257e143e67db\",1]",
+        "id": "content-heating-failed-or-unknown-refund-handling",
+        "selected": "A",
+        "question": "内容加热的退订已经生效，但退款失败或结果未知时，是否采用以下原则？本题不决定名额释放、人工补救或自行撤回。",
+        "answer": "A（推荐）：保持退订生效，不自动恢复推广或继续消耗该期时长；继续核实办理退款，未知结果先查证，避免盲目重复退款，未核实的退款不标为完成。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_b232decd00de49c78684257e143e67db\",2]",
+        "id": "content-heating-no-self-service-withdrawal-at-launch",
+        "selected": "A",
+        "question": "内容加热退订生效后，起步是否采用以下撤回安排？提交前展示终止影响和退款金额并二次确认的规则保持。",
+        "answer": "A（推荐）：起步不提供用户自行撤回入口；误操作可提出人工申诉，具体补救另行确认。"
+      }
+    ],
+    "scope": "content-heating-refund-processing-failed-or-unknown-and-self-service-withdrawal-only",
+    "realRefundsAuthorized": false
   }
 }
