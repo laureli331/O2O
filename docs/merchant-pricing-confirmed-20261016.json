@@ -57,7 +57,6 @@
       "materialCountPerAdvertiser": null,
       "deliveryMetricDefinitions": null,
       "expiryAndRenewalRule": null,
-      "faultCompensation": null,
       "manualPauseVisibilityPriority": null,
       "placeholderContentSpecification": null,
       "advertisingCooperationPageDetails": null,
@@ -68,9 +67,10 @@
       "latePaymentAndReservationConcurrency": null,
       "initialAdvertisingDetailReviewRule": null,
       "materialChangeReviewDetails": null,
-      "materialChangeQuotaAndFees": null,
       "exceptionalUnpublishAndAuthorizationWithdrawal": null,
-      "refundExecutionDetails": null
+      "refundExecutionDetails": null,
+      "faultEvidenceAndOtherLiability": null,
+      "materialChangeQuotaAndFrequency": null
     },
     "reservation": {
       "unit": "continuous-hours",
@@ -169,6 +169,19 @@
       "record": "docs/merchant-banner-refund-confirmed-20261017.json",
       "businessRulesApproved": true,
       "executionReady": false
+    },
+    "ordinaryMaterialServices": {
+      "includedInBannerFee": [
+        "ordinary-material-review",
+        "initial-publication",
+        "advertiser-provided-material-changes-and-replacement"
+      ],
+      "extraFeeCents": 0,
+      "advertiserMayProvideOwnMaterials": true,
+      "requiredPurchaseOfProductionService": false,
+      "decidesChangeCountOrFrequency": false,
+      "decidesReviewTimeLimit": false,
+      "decidesProductionServiceAvailabilityAndPricing": false
     }
   },
   "membership": {
@@ -927,6 +940,17 @@
   "bannerRefundExecutionDecision": {
     "date": "2026-10-17",
     "sourceCommit": "9e214cdb10193310eb2a8eba8c27b32371a5f2db",
+    "responseType": "structured-question-replies",
+    "selected": [
+      "A",
+      "A",
+      "A"
+    ],
+    "record": "docs/merchant-banner-refund-confirmed-20261017.json"
+  },
+  "bannerReleaseFaultAndFeeDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "85691f920a90f810a2c6a290fb4b3916f4b3f23c",
     "responseType": "structured-question-replies",
     "selected": [
       "A",
