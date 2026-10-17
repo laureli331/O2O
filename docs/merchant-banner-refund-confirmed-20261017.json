@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-17",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "bc429ffc01279f5070587ed5dd4719f449ae2894",
+  "document": "docs/merchant-banner-refund-confirmed-20261017.md",
+  "status": "three-business-decisions-approved-execution-details-pending",
+  "responseType": "structured-question-replies",
+  "responses": [
+    {
+      "questionItemId": "[\"request_user_input_async\",\"call_09aa40afe5214593bb8c0332b118fde2\",0]",
+      "id": "banner-unstarted-purchase-period-full-refund",
+      "selected": "A",
+      "question": "Banner已核实付款，但对应购买期尚未实际开始投放，商家主动取消时采用什么商业政策？包括提前买好的未来购买期；平台违约及依法应退款等情况另行处理。",
+      "answer": "A（推荐）：允许取消申请指明的购买期，退该期全部实付，不扣手续费，不连带取消其他已购期。降低首次试投顾虑。"
+    },
+    {
+      "questionItemId": "[\"request_user_input_async\",\"call_09aa40afe5214593bb8c0332b118fde2\",1]",
+      "id": "banner-started-purchase-period-prorated-refund",
+      "selected": "A",
+      "question": "Banner已经按约开始投放，且不存在交付故障或违规争议，商家因自身原因希望提前终止，采用什么商业退款政策？平台未按约交付的退款／补偿另行确认。",
+      "answer": "A（推荐）：允许提前终止。退款＝本购买期实付×终止生效时剩余秒数÷该购买期总秒数，最终四舍五入到分；不收手续费、不重算已投时段单价。"
+    },
+    {
+      "questionItemId": "[\"request_user_input_async\",\"call_09aa40afe5214593bb8c0332b118fde2\",2]",
+      "id": "banner-immediate-termination-cutoff",
+      "selected": "A",
+      "question": "对允许自愿取消或提前终止的Banner购买期，从何时停止投放、确定退款计算时刻？本题不决定退款处理时限、到账时间或原位置何时重新售卖。",
+      "answer": "A（推荐）：提交前展示终止影响和退款金额并二次确认；用户确认立即终止，且完整有效申请提交成功时生效，以该时刻计算退款，审核期间不继续消耗该期时长。"
+    }
+  ],
+  "scope": "voluntary-cancellation-of-corresponding-platform-owned-v2-banner-purchase-period",
+  "rules": {
+    "unstartedPurchasePeriod": {
+      "verifiedActualPaymentRequired": true,
+      "includesFutureUnstartedPeriods": true,
+      "cancelRequestedPeriod": true,
+      "amount": "full-verified-actual-payment-for-requested-period",
+      "feeCents": 0,
+      "cancelOtherPurchasedPeriods": false
+    },
+    "startedPurchasePeriod": {
+      "voluntaryEarlyTerminationAllowed": true,
+      "scope": "normal-conforming-delivery-without-delivery-fault-or-violation-dispute",
+      "refundCents": "actual-paid-cents*remaining-seconds-at-effective-termination/total-purchase-period-seconds",
+      "timingUnit": "actual-seconds",
+      "rounding": "nearest-cent-half-up-once-on-final-refund",
+      "feeCents": 0,
+      "repriceDeliveredTime": false,
+      "refundCap": "actual-payment-for-requested-purchase-period"
+    },
+    "termination": {
+      "cutoff": "user-confirms-immediate-termination-and-complete-valid-application-submission-succeeds",
+      "preSubmissionDisclosure": [
+        "termination-consequences",
+        "refund-amount"
+      ],
+      "secondConfirmationRequired": true,
+      "previewOnlyTerminates": false,
+      "incompleteSubmissionTerminates": false,
+      "failedSubmissionTerminates": false,
+      "advertisingContinuesDuringReview": false,
+      "termTimeConsumedDuringReview": false,
+      "refundUsesReviewApprovalTime": false,
+      "stopsOnlyRequestedPurchasePeriod": true
+    },
+    "membershipRefundPolicyChanged": false,
+    "separatePurchasedAiPackPolicyChanged": false,
+    "transactionBillingPolicyChanged": false,
+    "nonconformingDeliveryAndStatutoryRefundHandledSeparately": true
+  },
+  "examples": [
+    {
+      "id": "unstarted-299",
+      "phase": "unstarted",
+      "actualPaidCents": 29900,
+      "expectedRefundCents": 29900
+    },
+    {
+      "id": "future-unstarted-249",
+      "phase": "unstarted",
+      "actualPaidCents": 24900,
+      "expectedRefundCents": 24900
+    },
+    {
+      "id": "started-299-20-days-remain",
+      "phase": "started",
+      "actualPaidCents": 29900,
+      "totalSeconds": 2592000,
+      "remainingSeconds": 1728000,
+      "expectedRefundCents": 19933
+    },
+    {
+      "id": "started-249-15-days-remain",
+      "phase": "started",
+      "actualPaidCents": 24900,
+      "totalSeconds": 2592000,
+      "remainingSeconds": 1296000,
+      "expectedRefundCents": 12450
+    },
+    {
+      "id": "started-199-18-hours-remain-half-cent",
+      "phase": "started",
+      "actualPaidCents": 19900,
+      "totalSeconds": 2592000,
+      "remainingSeconds": 64800,
+      "expectedRefundCents": 498
+    },
+    {
+      "id": "started-299-exact-start",
+      "phase": "started",
+      "actualPaidCents": 29900,
+      "totalSeconds": 2592000,
+      "remainingSeconds": 2592000,
+      "expectedRefundCents": 29900
+    },
+    {
+      "id": "started-299-one-second-remain",
+      "phase": "started",
+      "actualPaidCents": 29900,
+      "totalSeconds": 2592000,
+      "remainingSeconds": 1,
+      "expectedRefundCents": 0
+    },
+    {
+      "id": "started-299-zero-seconds-remain",
+      "phase": "started",
+      "actualPaidCents": 29900,
+      "totalSeconds": 2592000,
+      "remainingSeconds": 0,
+      "expectedRefundCents": 0
+    }
+  ],
+  "unconfirmed": {
+    "processingTimeLimit": null,
+    "paymentChannel": null,
+    "arrivalTimeLimit": null,
+    "failedOrUnknownRefundHandling": null,
+    "repeatedAndConcurrentRefundHandling": null,
+    "positionReleaseAndResale": null,
+    "selfServiceWithdrawalAndManualAppeal": null,
+    "platformFaultRefundAndCompensation": null,
+    "qualificationOrViolationCancellation": null,
+    "timestampAndSubsecondPolicy": null
+  },
+  "legalBoundary": {
+    "commercialPolicyOnly": true,
+    "prepaidConsumerInterpretationAutomaticallyApplicable": false,
+    "merchantAdvertisingApplicability": "requires-verification",
+    "reference": "https://www.court.gov.cn/zixun/xiangqing/459321.html"
+  },
+  "execution": {
+    "formalSalePricesApproved": false,
+    "realSalesEnabled": false,
+    "realRefundsEnabled": false,
+    "automaticRefundExecutionAllowed": false,
+    "technicalDetailingResumed": false,
+    "deploymentAuthorized": false
+  }
+}

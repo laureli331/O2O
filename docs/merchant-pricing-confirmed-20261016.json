@@ -51,7 +51,6 @@
       "reviewAloneStartsClock": false
     },
     "pendingDetails": {
-      "refundRule": null,
       "paymentChannel": null,
       "initialDefaultTrigger": null,
       "materialSpecification": null,
@@ -70,7 +69,8 @@
       "initialAdvertisingDetailReviewRule": null,
       "materialChangeReviewDetails": null,
       "materialChangeQuotaAndFees": null,
-      "exceptionalUnpublishAndAuthorizationWithdrawal": null
+      "exceptionalUnpublishAndAuthorizationWithdrawal": null,
+      "refundExecutionDetails": null
     },
     "reservation": {
       "unit": "continuous-hours",
@@ -164,6 +164,11 @@
         "withdraw-public-contact-authorization",
         "violation-handling"
       ]
+    },
+    "refundRule": {
+      "record": "docs/merchant-banner-refund-confirmed-20261017.json",
+      "businessRulesApproved": true,
+      "executionReady": false
     }
   },
   "membership": {
@@ -907,5 +912,16 @@
     ],
     "scope": "banner-business-entity-position-limit-effective-reservation-priority-and-reviewed-changes",
     "realSalesAuthorized": false
+  },
+  "bannerRefundDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "bc429ffc01279f5070587ed5dd4719f449ae2894",
+    "responseType": "structured-question-replies",
+    "selected": [
+      "A",
+      "A",
+      "A"
+    ],
+    "record": "docs/merchant-banner-refund-confirmed-20261017.json"
   }
 }
