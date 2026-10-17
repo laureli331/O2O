@@ -31,7 +31,7 @@ test('latest three approvals retain exact questions, replies, scope and provenan
  assert.equal(Object.hasOwn(d,'userReply'),false);
 });
 test('this approval preserves all earlier prices, raw answers, privacy, billing and execution gates',()=>{
- const r=load(),prior=JSON.parse(at(r.bannerChangeReviewAndRenewalDecision.sourceCommit,recordPath));
+ const live=load(),r=JSON.parse(at(live.contentHeatingScopeDecision.sourceCommit,recordPath)),prior=JSON.parse(at(r.bannerChangeReviewAndRenewalDecision.sourceCommit,recordPath));
  delete r.bannerChangeReviewAndRenewalDecision;
  for(const key of ['materialChangeSubmission','ordinaryMaterialReviewTarget','advanceRenewal'])delete r.banner[key];
  r.banner.pendingDetails=structuredClone(prior.banner.pendingDetails);assert.deepEqual(r,prior);
