@@ -4,7 +4,7 @@
   "timezone": "Asia/Shanghai",
   "sourceCommit": "5bd0f7ee901d2632fcf993ceb73652ac1592965c",
   "document": "docs/merchant-membership-refund-confirmed-20261017.md",
-  "status": "three-business-decisions-approved-execution-details-pending",
+  "status": "six-business-decisions-approved-execution-details-pending",
   "responseType": "structured-question-replies",
   "responses": [
     {
@@ -91,15 +91,48 @@
       "authorized-existing-history-and-purchased-promotion-report-query"
     ],
     "separatePurchasedAiPackPolicyChanged": false,
-    "nonconformingDeliveryHandledSeparately": true
+    "nonconformingDeliveryHandledSeparately": true,
+    "processingTimeLimit": {
+      "unit": "continuous-hours",
+      "firstResponseHours": 24,
+      "firstResponseStart": "request-received",
+      "incompleteRequestAction": "state-necessary-missing-materials",
+      "reviewAndInitiateHours": 72,
+      "reviewAndInitiateStart": "complete-valid-application-submitted-successfully",
+      "initiateOnlyIfEligible": true,
+      "arrivalTimeGuaranteed": false,
+      "arrivalTimeLimit": null,
+      "exceptionUpdate": "reason-and-progress-within-original-deadline-and-continue-handling",
+      "unknownResultMeansCompleted": false
+    },
+    "unstartedPurchasePeriodRefundRule": {
+      "verifiedActualPaymentRequired": true,
+      "eligiblePeriods": [
+        "not-actually-activated",
+        "early-renewal-period-not-started"
+      ],
+      "scope": "application-specified-purchase-period",
+      "amount": "full-verified-actual-payment-for-that-period",
+      "cancelRequestedPeriod": true,
+      "cancelOtherPurchasedPeriods": false
+    },
+    "failedOrUnknownRefundHandling": {
+      "keepTerminationEffective": true,
+      "autoRestoreOrdinaryRights": false,
+      "termTimeConsumed": false,
+      "aiConsumed": false,
+      "continueRefundHandling": true,
+      "unknownOutcomeRequiresVerification": true,
+      "blindDuplicateRefundAllowed": false,
+      "failureMeansRefundSucceeded": false,
+      "unknownMeansRefundSucceeded": false,
+      "decidesWithdrawal": false
+    }
   },
   "unconfirmed": {
-    "unstartedPurchasePeriodRefundRule": null,
     "withdrawalAndReinstatement": null,
     "invalidApplicationHandling": null,
-    "failedOrUnknownRefundHandling": null,
     "crossPurchasedPeriodContinuity": null,
-    "processingTimeLimit": null,
     "paymentChannel": null,
     "arrivalTimeLimit": null,
     "concurrentUsageAndRefundHandling": null
@@ -261,6 +294,40 @@
         }
       ],
       "expectedRefundCents": 0
+    },
+    {
+      "id": "unstarted-month",
+      "days": 30,
+      "actualPaidCents": 9900,
+      "elapsedSeconds": 0,
+      "usedByBatch": [
+        {
+          "text": 0,
+          "images": 0
+        }
+      ],
+      "expectedRefundCents": 9900
+    },
+    {
+      "id": "unstarted-quarter",
+      "days": 90,
+      "actualPaidCents": 26730,
+      "elapsedSeconds": 0,
+      "usedByBatch": [
+        {
+          "text": 0,
+          "images": 0
+        },
+        {
+          "text": 0,
+          "images": 0
+        },
+        {
+          "text": 0,
+          "images": 0
+        }
+      ],
+      "expectedRefundCents": 26730
     }
   ],
   "execution": {
@@ -275,5 +342,35 @@
     "technicalDetailingResumed": false,
     "visualDesignResumed": false,
     "automationChanged": false
+  },
+  "refundExecutionDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "548d4d4e28070f227e14db8728082c8fe1427a0b",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_956c0f5d8811433594283df5774d48d3\",0]",
+        "id": "membership-refund-processing-target",
+        "selected": "A",
+        "question": "会员退款的处理时限选哪种？两种方案均要求收到申请后24连续小时内首次回应，资料不全时告知必要补充项；以下时限是审核及发起退款的目标，不代表保证到账，异常须在原期限内说明原因和进度并继续处理。",
+        "answer": "A（推荐）：完整有效申请成功提交后72连续小时内完成审核，并对符合条件的申请发起退款，与AI增购处理目标一致。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_956c0f5d8811433594283df5774d48d3\",1]",
+        "id": "unstarted-purchase-period-refund",
+        "selected": "A",
+        "question": "已经付款，但会员尚未实际开通，或提前续购的购买期尚未开始时，如何退款？",
+        "answer": "A（推荐）：核实实际付款后，允许取消申请中指明的购买期并退全部实付；不连带取消其他已购期。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_956c0f5d8811433594283df5774d48d3\",2]",
+        "id": "failed-or-unknown-refund-continuity",
+        "selected": "A",
+        "question": "已生效的会员退订遇到退款失败或结果未知时，如何处理？这一步不决定是否允许撤回退订申请。",
+        "answer": "A（推荐）：保持退订生效，不自动恢复普通权益或继续消耗该期时间、AI；继续核实办理退款，结果未知先查证，避免重复退款。"
+      }
+    ],
+    "withdrawalDecisionIncluded": false,
+    "realExecutionAuthorized": false
   }
 }
