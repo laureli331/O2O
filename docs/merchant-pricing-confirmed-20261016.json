@@ -62,9 +62,9 @@
       "faultCompensation": null,
       "manualPauseVisibilityPriority": null,
       "placeholderContentSpecification": null,
-      "placeholderClickTarget": null,
       "advertisingDetailFields": null,
-      "advertisingDetailContactDisclosure": null
+      "advertisingDetailContactDisclosure": null,
+      "advertisingCooperationPageDetails": null
     },
     "reservation": {
       "unit": "continuous-hours",
@@ -88,6 +88,16 @@
       "reviewRequired": true,
       "maxPaidMainImages": 3,
       "clickTarget": "in-mini-program-independent-advertising-detail"
+    },
+    "placeholder": {
+      "defaultKind": "merchant-advertising-cooperation",
+      "defaultLabel": "本地商家广告合作",
+      "defaultClickTarget": "in-mini-program-advertising-cooperation-information",
+      "publicInterestReplacement": {
+        "operatorMayReplace": true,
+        "reviewRequired": true,
+        "clickEnabled": false
+      }
     }
   },
   "membership": {
@@ -761,6 +771,22 @@
       }
     ],
     "scope": "banner-payment-reservation-empty-position-fill-and-main-image-destination",
+    "realSalesAuthorized": false
+  },
+  "bannerPlaceholderDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "32713225699de04bba6a5bfc35b645f9dfe953d9",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_98364233402946afbc4f5e09ea5d77c4\",0]",
+        "id": "banner-placeholder-content-and-destination",
+        "selected": "A",
+        "question": "下一步确认占位图：首页未售出的Banner位置，默认展示什么、点击去哪里？以下均保留固定3张结构，不调整已购位置的顺序。",
+        "answer": "A（推荐）：默认展示“本地商家广告合作”招商图，点击进入本小程序的广告合作说明页；运营可替换为经审核的公益图，公益图暂不提供点击跳转。"
+      }
+    ],
+    "scope": "banner-placeholder-content-and-destination-only",
     "realSalesAuthorized": false
   }
 }
