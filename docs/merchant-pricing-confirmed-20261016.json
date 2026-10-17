@@ -431,6 +431,33 @@
       "includesNewMainPosting": false,
       "includesCampaignTools": false,
       "includesAiAllowance": false
+    },
+    "purchaseUnit": null,
+    "deliveryCommitment": {
+      "service": "normal-shared-pool-rotation-participation",
+      "periodDays": 30,
+      "fixedRankGuaranteed": false,
+      "minimumImpressionsGuaranteed": false,
+      "transactionsGuaranteed": false,
+      "actualImpressionsAndClicksRecordedTruthfully": true,
+      "metricDefinitions": null
+    },
+    "purchaseSequence": [
+      "promotion-review-approval",
+      "delivery-availability-confirmation",
+      "payment",
+      "actual-promotion-effectiveness-and-normal-rotation-availability"
+    ],
+    "activation": {
+      "requiresPromotionApproved": true,
+      "requiresDeliveryAvailabilityConfirmed": true,
+      "requiresPaymentSucceeded": true,
+      "requiresActuallyEffective": true,
+      "requiresNormalRotationEligibility": true,
+      "periodDays": 30,
+      "start": "actual-promotion-effectiveness-after-payment-and-normal-rotation-availability",
+      "firstVisitorImpressionRequired": false,
+      "paymentAloneStartsClock": false
     }
   },
   "searchHeating": {
@@ -1074,6 +1101,43 @@
       }
     ],
     "scope": "v2-content-heating-surface-eligible-posts-and-independent-purchase-after-membership-expiry",
+    "realSalesAuthorized": false
+  },
+  "contentHeatingDeliveryAndActivationDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "77c8da25a0ddb6b8ae8f41a0e23d39dcfdb7cf84",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_a4f468478d6a4c6c938bd5fce4acf101\",0]",
+        "id": "content-heating-purchase-unit",
+        "selected": null,
+        "question": "第二版内容加热的49元／30天候选价，按什么单位购买？共享池和统一推广密度的方向不变；本题不确定并行购买上限或换帖规则。",
+        "answer": "这部分, 我还有点纠结, 你给出几个方案并列出优劣吧"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_a4f468478d6a4c6c938bd5fce4acf101\",1]",
+        "id": "content-heating-delivery-commitment",
+        "selected": "A",
+        "question": "内容加热起步采用哪种交付承诺？当前没有真实流量数据，不能据此认定49元已经具有足够投放价值。",
+        "answer": "A（推荐）：提供30天正常参与共享池轮换的权益，披露不承诺固定排名、保底曝光量或成交量；实际曝光／点击如实记录，统计口径另定。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_a4f468478d6a4c6c938bd5fce4acf101\",2]",
+        "id": "content-heating-review-payment-activation",
+        "selected": "A",
+        "question": "内容加热的推广审核、付款和30天起算，采用哪种顺序？这里的“生效”指推广可正常参与共享池轮换，不以首次访客看到广告为起算条件；实际支付通道仍待核实。",
+        "answer": "A（推荐）：先通过推广审核、确认可投放，再付款；付款成功且推广实际生效、可正常参与轮换后起算30天。"
+      }
+    ],
+    "approvedResponseIds": [
+      "content-heating-delivery-commitment",
+      "content-heating-review-payment-activation"
+    ],
+    "pendingResponseIds": [
+      "content-heating-purchase-unit"
+    ],
+    "scope": "v2-content-heating-rotation-delivery-commitment-and-review-payment-activation-order-only",
     "realSalesAuthorized": false
   }
 }
