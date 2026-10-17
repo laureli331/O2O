@@ -30,11 +30,11 @@ test('only content heating scope and its separate approval change; all earlier c
 });
 test('all nine current entries agree on discovery only merchant post review and independent promotion rights',()=>{
  for(const p of entries){const line=read(p).split(/\r?\n/).find(x=>x.startsWith('内容加热范围及购买资格确认'));
- for(const phrase of ['逐题选择A、A、A','第二版','仅用于“发现页”商家帖子主信息流','不含首页轮播、搜索结果及居民跑腿/二手列表','当前合规且可展示的商家主帖','另经推广审核后加入共享池','居民交易信息和评论不入池','工具会员到期后','旧帖单独购买加热','不附带新增发帖、活动工具或AI额度','49元/连续30天','计费对象、穿插密度、轮换细节、容量与退款等尚待确认'])assert(line&&line.includes(phrase),p+': '+phrase);
+ for(const phrase of ['逐题选择A、A、A','第二版','仅用于“发现页”商家帖子主信息流','不含首页轮播、搜索结果及居民跑腿/二手列表','当前合规且可展示的商家主帖','另经推广审核后加入共享池','居民交易信息和评论不入池','工具会员到期后','旧帖单独购买加热','不附带新增发帖、活动工具或AI额度','49元/连续30天','计费对象现按后续单档案名额确认，穿插密度、轮换细节、容量与退款等尚待确认'])assert(line&&line.includes(phrase),p+': '+phrase);
  const target=line.match(/\[内容加热确认第4\.1节\]\(([^)]+)\)/)[1];assert(fs.existsSync(path.resolve(root,path.dirname(p),target)),p+': local confirmation link');
  }
  const doc=read('docs/merchant-pricing-confirmed-20261016.md');for(const x of expectedResponses){assert(doc.includes(x.question));assert(doc.includes(x.answer));}
- for(const phrase of ['#### 4.1','按单帖还是按经营档案计费','原帖审核通过不自动等于推广审核通过','不照搬Banner位置、24小时保留、审核目标或退款政策'])assert(doc.includes(phrase),phrase);
+ for(const phrase of ['#### 4.1','现按第4.3节确认单档案1个名额','原帖审核通过不自动等于推广审核通过','不照搬Banner位置、24小时保留、审核目标或退款政策'])assert(doc.includes(phrase),phrase);
  assert(!doc.includes('待确认：适用页面/内容、全站或分流的统计范围'));
 });
 test('PRD and roadmap record scope in VP05 while first release tasks and deferred work remain unchanged',()=>{

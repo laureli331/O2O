@@ -432,7 +432,16 @@
       "includesCampaignTools": false,
       "includesAiAllowance": false
     },
-    "purchaseUnit": null,
+    "purchaseUnit": {
+      "unit": "single-business-profile-promotion-slot",
+      "promotionSlotsPerPurchase": 1,
+      "maxSimultaneousPostsPerSlot": 1,
+      "limitedPostReplacementAllowed": true,
+      "postReplacementLimit": null,
+      "parallelPurchaseLimit": null,
+      "postReplacementReviewAndSwitchRule": null,
+      "postReplacementResetsPeriod": null
+    },
     "deliveryCommitment": {
       "service": "normal-shared-pool-rotation-participation",
       "periodDays": 30,
@@ -1138,6 +1147,24 @@
       "content-heating-purchase-unit"
     ],
     "scope": "v2-content-heating-rotation-delivery-commitment-and-review-payment-activation-order-only",
+    "realSalesAuthorized": false
+  },
+  "contentHeatingPurchaseModelDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "c183696b377b4b2321954b11054f2b7db50dc4e3",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_303348b2ab0a41df9f2bde133e034adb\",0]",
+        "id": "content-heating-purchase-model",
+        "selected": "B",
+        "question": "内容加热的计费模型，你倾向哪一种？以下49元／30天均为候选方案；本次只选择计费模型，换帖次数、并行购买和退款细则随后单独确认。",
+        "answer": "B（推荐）：按单个经营档案购买1个推广名额，同一时间推广1篇合格主帖，期内可有限次数换帖；更灵活，但需增加换帖审核和记录。"
+      }
+    ],
+    "scope": "v2-content-heating-single-business-profile-one-promotion-slot-with-limited-post-replacement-model-only",
+    "resolvesDecision": "contentHeatingDeliveryAndActivationDecision",
+    "resolvesResponseId": "content-heating-purchase-unit",
     "realSalesAuthorized": false
   }
 }
