@@ -51,7 +51,6 @@
       "reviewAloneStartsClock": false
     },
     "pendingDetails": {
-      "scheduleConflictRule": null,
       "refundRule": null,
       "paymentChannel": null,
       "initialDefaultTrigger": null,
@@ -65,7 +64,13 @@
       "advertisingCooperationPageDetails": null,
       "advertisingDetailFieldSpecifications": null,
       "advertisingContactAuthorizationInteraction": null,
-      "advertisingDetailReviewAndUpdateRule": null
+      "businessEntityIdentification": null,
+      "overlapAndScheduleBoundaryDetails": null,
+      "latePaymentAndReservationConcurrency": null,
+      "initialAdvertisingDetailReviewRule": null,
+      "materialChangeReviewDetails": null,
+      "materialChangeQuotaAndFees": null,
+      "exceptionalUnpublishAndAuthorizationWithdrawal": null
     },
     "reservation": {
       "unit": "continuous-hours",
@@ -125,6 +130,40 @@
       },
       "residentContactMaskingChanged": false,
       "privateVerificationDataMayBeReused": false
+    },
+    "positionLimit": {
+      "unit": "business-entity",
+      "scope": "overlapping-advertising-periods",
+      "maxPositions": 1,
+      "differentNonOverlappingPeriodsMayRepurchase": true
+    },
+    "scheduling": {
+      "priority": "successful-effective-reservation-creation-order",
+      "protectExistingEffectiveReservations": true,
+      "protectConfirmedPaidSchedules": true,
+      "laterApplicantMayChoose": [
+        "other-available-position",
+        "other-time"
+      ],
+      "replacementRequiresExplicitAdvertiserConfirmation": true,
+      "automaticPositionOrTimeSubstitution": false,
+      "unknownPayment": "verify-first"
+    },
+    "materialChanges": {
+      "allowed": true,
+      "scope": [
+        "home-main-image",
+        "advertising-detail-text",
+        "advertising-detail-images"
+      ],
+      "reviewBeforeReplacement": true,
+      "previousCompliantVersionVisibleDuringReview": true,
+      "restartsAdvertisingPeriod": false,
+      "excludedFromOrdinaryChangeRule": [
+        "voluntary-unpublish",
+        "withdraw-public-contact-authorization",
+        "violation-handling"
+      ]
     }
   },
   "membership": {
@@ -837,6 +876,36 @@
       }
     ],
     "scope": "banner-advertising-detail-fields-and-authorized-public-business-contacts",
+    "realSalesAuthorized": false
+  },
+  "bannerCapacityScheduleAndChangeDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "1eeae8a9ee147bb46ed0bcf2469ef402cc1c588a",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_cea0b71f085c4ad28bd8c8c024b0738c\",0]",
+        "id": "banner-business-entity-overlap-position-limit",
+        "selected": "A",
+        "question": "同一经营主体在重叠投放时间内，最多能购买几个首页Banner位置？此前“每位置1个广告主”尚未限制同一商家同时购买多个位置。",
+        "answer": "A（推荐）：最多1个位置，另外两个位置留给其他商家或使用占位图；不同时间段可再次购买。方便比较投放效果，也保留其他商家的展示机会。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_cea0b71f085c4ad28bd8c8c024b0738c\",1]",
+        "id": "banner-effective-reservation-priority",
+        "selected": "A",
+        "question": "两个商家申请同一位置、重叠时间段时，如何确定优先顺序？两种方案均不得挤占已有有效保留或已付款确认的排期，付款未知时仍先核实。",
+        "answer": "A（推荐）：以成功形成有效保留的先后顺序为准；后申请者可选择其他空位或其他时间，必须由其明确确认，不擅自换位、改期。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_cea0b71f085c4ad28bd8c8c024b0738c\",2]",
+        "id": "banner-reviewed-material-replacement",
+        "selected": "A",
+        "question": "广告开始展示后，商家修改主图或详情文字、图片，采用什么规则？本题不确定修改次数、额外收费或退款补偿；主动下架、撤回联系方式公开授权和违规处置另行处理。",
+        "answer": "A（推荐）：允许提交修改，修改内容审核通过后再替换；审核期间保留原先合规版本。本次修改不重新起算30天投放期。"
+      }
+    ],
+    "scope": "banner-business-entity-position-limit-effective-reservation-priority-and-reviewed-changes",
     "realSalesAuthorized": false
   }
 }
