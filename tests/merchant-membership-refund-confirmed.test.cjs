@@ -14,7 +14,7 @@ const approvedAnswers=[
 ];
 function validate(r){
  assert.equal(r.date,'2026-10-17');assert.equal(r.timezone,'Asia/Shanghai');
- assert.equal(r.status,'six-business-decisions-approved-execution-details-pending');
+ assert.equal(r.status,'nine-business-decisions-approved-execution-details-pending');
  assert.equal(r.responseType,'structured-question-replies');
  assert(!Object.hasOwn(r,'userReply'),'No invented aggregate reply');
  assert.deepEqual(r.responses.map(x=>x.selected),['A','A','A']);
@@ -39,7 +39,10 @@ function validate(r){
  assert.deepEqual(rule.retained,['issued-coupon-original-validity-and-fulfillment','necessary-redemption','complaint-handling','authorized-existing-history-and-purchased-promotion-report-query']);
  assert.equal(rule.separatePurchasedAiPackPolicyChanged,false);
  assert.equal(rule.nonconformingDeliveryHandledSeparately,true);
- assert.deepEqual(r.unconfirmed,{withdrawalAndReinstatement:null,invalidApplicationHandling:null,crossPurchasedPeriodContinuity:null,paymentChannel:null,arrivalTimeLimit:null,concurrentUsageAndRefundHandling:null},'Unasked rules stay pending');
+ assert.deepEqual(r.unconfirmed,{paymentChannel:null,arrivalTimeLimit:null,concurrentUsageAndRefundHandling:null,manualAppealRemedy:null},'Unasked rules stay pending');
+ assert.deepEqual(rule.selfServiceWithdrawal,{"enabledAtLaunch":false,"preSubmissionDisclosure":["termination-consequences","refund-amount"],"secondConfirmationRequired":true,"manualAppealAllowed":true,"manualRemedyDecided":false},'Approved self-service boundary');
+ assert.deepEqual(rule.applicationValidation,{"beforeSubmissionCheckFailure":{"takesEffect":false,"suspendsRights":false},"afterEffectiveInformationNeedsVerification":{"notifyReason":true,"continueVerification":true,"keepTerminationEffective":true,"autoResumeBilling":false,"unverifiedRefundMeansComplete":false},"securityIssues":"existing-security-rules"},'Approved application validation');
+ assert.deepEqual(rule.otherPurchasedPeriodSchedule,{"keepOriginalStart":true,"keepOriginalEnd":true,"advanceAiGrant":false,"cancelOtherPeriods":false,"refundScope":"application-specified-purchase-period"},'Approved other-period schedule');
  assert.deepEqual(rule.processingTimeLimit,{"unit":"continuous-hours","firstResponseHours":24,"firstResponseStart":"request-received","incompleteRequestAction":"state-necessary-missing-materials","reviewAndInitiateHours":72,"reviewAndInitiateStart":"complete-valid-application-submitted-successfully","initiateOnlyIfEligible":true,"arrivalTimeGuaranteed":false,"arrivalTimeLimit":null,"exceptionUpdate":"reason-and-progress-within-original-deadline-and-continue-handling","unknownResultMeansCompleted":false},'Approved membership handling target');
  assert.deepEqual(rule.unstartedPurchasePeriodRefundRule,{"verifiedActualPaymentRequired":true,"eligiblePeriods":["not-actually-activated","early-renewal-period-not-started"],"scope":"application-specified-purchase-period","amount":"full-verified-actual-payment-for-that-period","cancelRequestedPeriod":true,"cancelOtherPurchasedPeriods":false},'Approved unstarted purchase-period refunds');
  assert.deepEqual(rule.failedOrUnknownRefundHandling,{"keepTerminationEffective":true,"autoRestoreOrdinaryRights":false,"termTimeConsumed":false,"aiConsumed":false,"continueRefundHandling":true,"unknownOutcomeRequiresVerification":true,"blindDuplicateRefundAllowed":false,"failureMeansRefundSucceeded":false,"unknownMeansRefundSucceeded":false,"decidesWithdrawal":false},'Approved failed and unknown refund continuity');
@@ -62,7 +65,7 @@ for(const [name,mutate] of [
  ['coupon redemption removed',r=>r.rules.retained.splice(1,1)],
  ['past gifts clawed back',r=>r.rules.disclosure.retroactiveGiftClawback=true],
  ['extra payment charged',r=>r.rules.calculation.extraPaymentRequired=true],
- ['withdrawal policy silently assumed',r=>r.unconfirmed.withdrawalAndReinstatement='always-restore'],
+ ['manual remedy silently assumed',r=>r.unconfirmed.manualAppealRemedy='always-restore'],
  ['approved membership handling target extended',r=>r.rules.processingTimeLimit.reviewAndInitiateHours=120],
  ['refund channel invented',r=>r.unconfirmed.paymentChannel='wechat'],
  ['real sales enabled',r=>r.execution.realSalesEnabled=true],
@@ -114,7 +117,7 @@ test('current entries state the new confirmation ahead of historical gift and dr
 
 test('confirmed document distinguishes remaining execution choices from business approval',()=>{
  const s=read(load().document);
- for(const phrase of ['金额分摊与购买前说明','过期会员AI批次退款边界','退订的生效时刻','64.40×n×k×r','0.049×U文案＋0.99×U图片','最低0、累计不超过本购买期实付','不收退款手续费，不额外补款','其他已付购买期的衔接','会员也采用相同处理目标','实际通道与到账时效','142.992元','原草案“未开通购买期全退”现已通过第二组明确答复确认'])assert(s.includes(phrase),phrase);
+ for(const phrase of ['金额分摊与购买前说明','过期会员AI批次退款边界','退订的生效时刻','64.40×n×k×r','0.049×U文案＋0.99×U图片','最低0、累计不超过本购买期实付','不收退款手续费，不额外补款','人工申诉后的具体补救','会员也采用相同处理目标','实际通道与到账时效','142.992元','原草案“未开通购买期全退”现已通过第二组明确答复确认'])assert(s.includes(phrase),phrase);
  let width=0;for(const line of s.split(/\r?\n/)){if(!line.startsWith('|')){width=0;continue;}const count=(line.match(/\|/g)||[]).length;if(width)assert.equal(count,width);width=count;}
  for(const m of s.matchAll(/\]\(([^)]+)\)/g))assert(fs.existsSync(path.resolve(root,path.dirname(load().document),m[1])),'Confirmed doc link '+m[1]);
 });
@@ -160,14 +163,14 @@ test('second execution batch preserves exact questions and answers without decid
  assert.equal(Object.hasOwn(d,'userReply'),false);
 });
 test('execution approval changes only its three rules, examples, current status and provenance',()=>{
- const r=load(),prior=JSON.parse(at(r.refundExecutionDecision.sourceCommit,recordPath));
+ const live=load(),r=JSON.parse(at(live.refundBoundaryDecision.sourceCommit,recordPath)),prior=JSON.parse(at(r.refundExecutionDecision.sourceCommit,recordPath));
  const current=structuredClone(r);delete current.refundExecutionDecision;current.status='three-business-decisions-approved-execution-details-pending';
  for(const key of ['processingTimeLimit','unstartedPurchasePeriodRefundRule','failedOrUnknownRefundHandling']){delete current.rules[key];current.unconfirmed[key]=null;}
  current.examples=current.examples.filter(x=>!x.id.startsWith('unstarted-'));assert.deepEqual(current,prior);
 });
 test('all entry points put the current execution decisions ahead of historical pending status',()=>{
  for(const file of ["docs/merchant-pricing-confirmed-20261016.md","docs/prd.md","docs/development-plan.md","docs/structured-design.md","docs/v2-roadmap.md","docs/ascii-design-prd-2.1.md","docs/module-specs/current-development-basis-20261015.md","docs/module-specs/merchant-banner-direction-20261015.md","CONTEXT.md"]){
-  const s=read(file),first=s.split(/\r?\n/)[2];for(const phrase of ['会员退款执行三项确认（2026-10-17）','24连续小时内首次回应','72连续小时内完成审核','不代表保证到账','异常须在原期限内','不连带取消其他已购期','保持退订生效','未知先查证','本组不决定撤回申请'])assert(first.includes(phrase),file+': '+phrase);
+  const s=read(file),first=s.split(/\r?\n/).find(line=>line.startsWith('会员退款执行三项确认（2026-10-17）'));for(const phrase of ['会员退款执行三项确认（2026-10-17）','24连续小时内首次回应','72连续小时内完成审核','不代表保证到账','异常须在原期限内','不连带取消其他已购期','保持退订生效','未知先查证','该第二组当时不决定撤回申请'])assert(first.includes(phrase),file+': '+phrase);
   assert(!s.includes('未开通期退款、撤回/恢复、失败/未知、跨续购期衔接、会员退款处理时限与实际通道仍待确认'),file+': obsolete blanket pending status');
  }
 });
@@ -185,3 +188,60 @@ test('execution rule rejects unknown refund blindly repeated',()=>{const r=load(
 test('execution rule rejects unknown outcome recorded as refunded',()=>{const r=load();r.rules.failedOrUnknownRefundHandling.unknownMeansRefundSucceeded=true;assert.throws(()=>validate(r));});
 test('execution rule rejects failure stops refund handling',()=>{const r=load();r.rules.failedOrUnknownRefundHandling.continueRefundHandling=false;assert.throws(()=>validate(r));});
 test('execution rule rejects withdrawal assumed from failure decision',()=>{const r=load();r.rules.failedOrUnknownRefundHandling.decidesWithdrawal=true;assert.throws(()=>validate(r));});
+
+test('third batch preserves exact questions and answers without authorizing manual remedies',()=>{
+ const d=load().refundBoundaryDecision;assert.equal(d.date,'2026-10-17');assert.equal(d.responseType,'structured-question-replies');
+ assert.deepEqual(d.responses,[
+ {
+  "questionItemId": "[\"request_user_input_async\",\"call_c1713b5839d84400a9bc929254d1109a\",0]",
+  "id": "self-service-withdrawal-entry",
+  "selected": "A",
+  "question": "会员退订已经生效后，是否提供用户自行撤回的入口？这里先决定是否有自助入口，人工申诉后的补救规则仍单独确认。",
+  "answer": "A（推荐）：起步不提供自行撤回；提交前明确展示终止影响和退款金额并二次确认，误操作可提出人工申诉。实现简单，但操作灵活性较低。"
+ },
+ {
+  "questionItemId": "[\"request_user_input_async\",\"call_c1713b5839d84400a9bc929254d1109a\",1]",
+  "id": "application-validation-and-information-verification",
+  "selected": "A",
+  "question": "申请未通过必要校验，或退订生效后发现资料、付款信息仍需核实时，采用哪种处理原则？身份盗用等安全问题继续按已有安全规则处理。",
+  "answer": "A（推荐）：提交时未通过校验则不生效、不暂停权益；已生效后发现待核实问题则告知原因并继续核实，保持终止，不自动恢复计费，也不把未核实退款标为完成。"
+ },
+ {
+  "questionItemId": "[\"request_user_input_async\",\"call_c1713b5839d84400a9bc929254d1109a\",2]",
+  "id": "other-paid-renewal-period-schedule",
+  "selected": "A",
+  "question": "退订当前会员购买期后，其他已付款但尚未开始的续购期是否保持原排期？例如下一期原本还要十天才开始，这只是情境示例。",
+  "answer": "A（推荐）：保持其他购买期原定开始和结束时间，不提前发放AI，不连带取消；只处理本次申请指明的购买期。"
+ }
+]);
+ assert.equal(d.manualRemedyApproved,false);assert.equal(d.realExecutionAuthorized,false);assert.equal(Object.hasOwn(d,'userReply'),false);
+});
+test('third batch adds only the confirmed boundaries and preserves both earlier batches',()=>{
+ const r=load(),prior=JSON.parse(at(r.refundBoundaryDecision.sourceCommit,recordPath));
+ const current=structuredClone(r);delete current.refundBoundaryDecision;current.status='six-business-decisions-approved-execution-details-pending';
+ for(const key of ['selfServiceWithdrawal','applicationValidation','otherPurchasedPeriodSchedule'])delete current.rules[key];
+ delete current.unconfirmed.manualAppealRemedy;for(const key of ['withdrawalAndReinstatement','invalidApplicationHandling','crossPurchasedPeriodContinuity'])current.unconfirmed[key]=null;assert.deepEqual(current,prior);
+});
+test('current document entries state the third batch before earlier history',()=>{
+ for(const file of ["docs/merchant-pricing-confirmed-20261016.md","docs/prd.md","docs/development-plan.md","docs/structured-design.md","docs/v2-roadmap.md","docs/ascii-design-prd-2.1.md","docs/module-specs/current-development-basis-20261015.md","docs/module-specs/merchant-banner-direction-20261015.md","CONTEXT.md"]){
+  const first=read(file).split(/\r?\n/)[2];for(const phrase of ['会员退订边界三项确认（2026-10-17）','起步不提供生效退订的自行撤回入口','二次确认','人工补救仍待单独确认','不生效、不暂停权益','不自动恢复计费','不把未核实退款标为完成','身份盗用等按已有安全规则处理','保持原定起止时间','不提前发放AI、不连带取消'])assert(first.includes(phrase),file+': '+phrase);
+ }
+});
+test('confirmed record distinguishes appeal access from restoration or compensation approval',()=>{
+ const r=load();assert.equal(r.rules.selfServiceWithdrawal.manualAppealAllowed,true);assert.equal(r.unconfirmed.manualAppealRemedy,null);assert.equal(r.rules.selfServiceWithdrawal.manualRemedyDecided,false);
+ const s=read(r.document);for(const phrase of ['用户分三组','第2.2节','原本十天后开始','这是情境示例，不是真实排期','人工核实后是否恢复、顺延或补偿及具体金额仍待单独确认','不再整体列为待确认'])assert(s.includes(phrase),phrase);
+});
+test('refund boundary rejects self-service withdrawal enabled',()=>{const r=load();r.rules.selfServiceWithdrawal.enabledAtLaunch=true;assert.throws(()=>validate(r));});
+test('refund boundary rejects second confirmation removed',()=>{const r=load();r.rules.selfServiceWithdrawal.secondConfirmationRequired=false;assert.throws(()=>validate(r));});
+test('refund boundary rejects refund amount hidden before submission',()=>{const r=load();r.rules.selfServiceWithdrawal.preSubmissionDisclosure=['termination-consequences'];assert.throws(()=>validate(r));});
+test('refund boundary rejects manual appeal blocked',()=>{const r=load();r.rules.selfServiceWithdrawal.manualAppealAllowed=false;assert.throws(()=>validate(r));});
+test('refund boundary rejects manual remedy marked decided',()=>{const r=load();r.rules.selfServiceWithdrawal.manualRemedyDecided=true;assert.throws(()=>validate(r));});
+test('refund boundary rejects failed check stops membership',()=>{const r=load();r.rules.applicationValidation.beforeSubmissionCheckFailure.suspendsRights=true;assert.throws(()=>validate(r));});
+test('refund boundary rejects failed check takes effect',()=>{const r=load();r.rules.applicationValidation.beforeSubmissionCheckFailure.takesEffect=true;assert.throws(()=>validate(r));});
+test('refund boundary rejects verification issue resumes billing',()=>{const r=load();r.rules.applicationValidation.afterEffectiveInformationNeedsVerification.autoResumeBilling=true;assert.throws(()=>validate(r));});
+test('refund boundary rejects unverified refund marked complete',()=>{const r=load();r.rules.applicationValidation.afterEffectiveInformationNeedsVerification.unverifiedRefundMeansComplete=true;assert.throws(()=>validate(r));});
+test('refund boundary rejects security rules bypassed',()=>{const r=load();r.rules.applicationValidation.securityIssues='ignore-identity-theft';assert.throws(()=>validate(r));});
+test('refund boundary rejects other term start moved',()=>{const r=load();r.rules.otherPurchasedPeriodSchedule.keepOriginalStart=false;assert.throws(()=>validate(r));});
+test('refund boundary rejects other term end moved',()=>{const r=load();r.rules.otherPurchasedPeriodSchedule.keepOriginalEnd=false;assert.throws(()=>validate(r));});
+test('refund boundary rejects future AI granted early',()=>{const r=load();r.rules.otherPurchasedPeriodSchedule.advanceAiGrant=true;assert.throws(()=>validate(r));});
+test('refund boundary rejects other term cancelled',()=>{const r=load();r.rules.otherPurchasedPeriodSchedule.cancelOtherPeriods=true;assert.throws(()=>validate(r));});

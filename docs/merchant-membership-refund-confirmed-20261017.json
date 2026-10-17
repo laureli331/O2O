@@ -4,7 +4,7 @@
   "timezone": "Asia/Shanghai",
   "sourceCommit": "5bd0f7ee901d2632fcf993ceb73652ac1592965c",
   "document": "docs/merchant-membership-refund-confirmed-20261017.md",
-  "status": "six-business-decisions-approved-execution-details-pending",
+  "status": "nine-business-decisions-approved-execution-details-pending",
   "responseType": "structured-question-replies",
   "responses": [
     {
@@ -127,15 +127,44 @@
       "failureMeansRefundSucceeded": false,
       "unknownMeansRefundSucceeded": false,
       "decidesWithdrawal": false
+    },
+    "selfServiceWithdrawal": {
+      "enabledAtLaunch": false,
+      "preSubmissionDisclosure": [
+        "termination-consequences",
+        "refund-amount"
+      ],
+      "secondConfirmationRequired": true,
+      "manualAppealAllowed": true,
+      "manualRemedyDecided": false
+    },
+    "applicationValidation": {
+      "beforeSubmissionCheckFailure": {
+        "takesEffect": false,
+        "suspendsRights": false
+      },
+      "afterEffectiveInformationNeedsVerification": {
+        "notifyReason": true,
+        "continueVerification": true,
+        "keepTerminationEffective": true,
+        "autoResumeBilling": false,
+        "unverifiedRefundMeansComplete": false
+      },
+      "securityIssues": "existing-security-rules"
+    },
+    "otherPurchasedPeriodSchedule": {
+      "keepOriginalStart": true,
+      "keepOriginalEnd": true,
+      "advanceAiGrant": false,
+      "cancelOtherPeriods": false,
+      "refundScope": "application-specified-purchase-period"
     }
   },
   "unconfirmed": {
-    "withdrawalAndReinstatement": null,
-    "invalidApplicationHandling": null,
-    "crossPurchasedPeriodContinuity": null,
     "paymentChannel": null,
     "arrivalTimeLimit": null,
-    "concurrentUsageAndRefundHandling": null
+    "concurrentUsageAndRefundHandling": null,
+    "manualAppealRemedy": null
   },
   "examples": [
     {
@@ -371,6 +400,36 @@
       }
     ],
     "withdrawalDecisionIncluded": false,
+    "realExecutionAuthorized": false
+  },
+  "refundBoundaryDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "6f9e6b289aa6b766e9a74b1417adfa0cba524006",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_c1713b5839d84400a9bc929254d1109a\",0]",
+        "id": "self-service-withdrawal-entry",
+        "selected": "A",
+        "question": "会员退订已经生效后，是否提供用户自行撤回的入口？这里先决定是否有自助入口，人工申诉后的补救规则仍单独确认。",
+        "answer": "A（推荐）：起步不提供自行撤回；提交前明确展示终止影响和退款金额并二次确认，误操作可提出人工申诉。实现简单，但操作灵活性较低。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_c1713b5839d84400a9bc929254d1109a\",1]",
+        "id": "application-validation-and-information-verification",
+        "selected": "A",
+        "question": "申请未通过必要校验，或退订生效后发现资料、付款信息仍需核实时，采用哪种处理原则？身份盗用等安全问题继续按已有安全规则处理。",
+        "answer": "A（推荐）：提交时未通过校验则不生效、不暂停权益；已生效后发现待核实问题则告知原因并继续核实，保持终止，不自动恢复计费，也不把未核实退款标为完成。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_c1713b5839d84400a9bc929254d1109a\",2]",
+        "id": "other-paid-renewal-period-schedule",
+        "selected": "A",
+        "question": "退订当前会员购买期后，其他已付款但尚未开始的续购期是否保持原排期？例如下一期原本还要十天才开始，这只是情境示例。",
+        "answer": "A（推荐）：保持其他购买期原定开始和结束时间，不提前发放AI，不连带取消；只处理本次申请指明的购买期。"
+      }
+    ],
+    "manualRemedyApproved": false,
     "realExecutionAuthorized": false
   }
 }
