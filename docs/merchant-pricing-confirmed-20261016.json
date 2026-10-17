@@ -535,6 +535,11 @@
       "onFull": "pause-new-sales",
       "futureSchedulingRule": null,
       "validated": false
+    },
+    "refundRule": {
+      "record": "docs/content-heating-refund-confirmed-20261017.json",
+      "businessRulesApproved": true,
+      "executionReady": false
     }
   },
   "searchHeating": {
@@ -1303,5 +1308,16 @@
     ],
     "scope": "v2-content-heating-manual-five-to-nine-density-trial-fair-rotation-and-validated-whole-pool-capacity",
     "realSalesAuthorized": false
+  },
+  "contentHeatingRefundDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "519c2425a38c28cadda4b4d790145bce56e29765",
+    "responseType": "structured-question-replies",
+    "selected": [
+      "A",
+      "A",
+      "A"
+    ],
+    "record": "docs/content-heating-refund-confirmed-20261017.json"
   }
 }
