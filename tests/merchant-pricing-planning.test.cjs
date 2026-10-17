@@ -23,8 +23,8 @@ function validate(b){
  assert.equal(r.bannerReleaseDecision.selected,'A');
  assert.equal(r.bannerReleaseDecision.previousRelease,null);
  assert.equal(r.bannerReleaseDecision.release,'v2');
- assert.equal(r.banner.rotationSeconds,null,'Rotation remains unconfirmed');
- assert.equal(r.banner.maxAdvertisersPerTier,null,'Capacity remains unconfirmed');
+ assert.equal(r.banner.rotationSeconds,5,'Rotation interval is approved at five seconds');
+ assert.equal(r.banner.maxAdvertisersPerTier,1,'Capacity per position is one advertiser');
  assert.equal(r.banner.monthDefinition,'30-continuous-days','Banner period is 30 days');
  assert.equal(r.membership.candidateMonthlyPriceCents,9900);
  assert.equal(r.membership.release,'v2','Membership release');
@@ -176,8 +176,8 @@ const changes=[
  ['Banner moved to first release',b=>b.r.banner.release='v1',/Banner release/],
  ['Banner release left unconfirmed',b=>b.r.banner.release=null,/Banner release/],
  ['carousel replaced with independent areas',b=>b.r.banner.independentSimultaneousAreas=true,/simultaneous/],
- ['unknown rotation invented',b=>b.r.banner.rotationSeconds=5,/Rotation/],
- ['capacity invented',b=>b.r.banner.maxAdvertisersPerTier=1,/Capacity/],
+ ['rotation interval changed without approval',b=>b.r.banner.rotationSeconds=8,/Rotation/],
+ ['position shared without approval',b=>b.r.banner.maxAdvertisersPerTier=2,/Capacity/],
  ['calendar month replaces continuous days',b=>b.r.banner.monthDefinition='calendar-month',/Banner period/],
  ['all stores share one membership',b=>b.r.membership.billingUnit='all-stores-under-entity',/Membership billing unit/],
  ['rights attach to the person instead of business profile',b=>b.r.membership.entitlementOwner='user-account',/Rights attach/],

@@ -18,10 +18,53 @@
     "defaultSlide": "first",
     "requiresMembership": false,
     "release": "v2",
-    "rotationSeconds": null,
-    "maxAdvertisersPerTier": null,
+    "rotationSeconds": 5,
+    "maxAdvertisersPerTier": 1,
     "deliveryRulesComplete": false,
-    "monthDefinition": "30-continuous-days"
+    "monthDefinition": "30-continuous-days",
+    "positionCount": 3,
+    "carousel": {
+      "mode": "automatic-with-manual-controls",
+      "manualSwipe": true,
+      "pauseResumeControl": true,
+      "restartIntervalAfterManualSwipe": true,
+      "pauseWhenPageNotVisible": true,
+      "visibleReturnKeepsCurrentSlide": true,
+      "visibleReturnRestartsInterval": true,
+      "singleSlideAutoRotation": false
+    },
+    "purchaseSequence": [
+      "qualification-and-material-review",
+      "schedule-confirmation",
+      "payment",
+      "actual-display-availability"
+    ],
+    "activation": {
+      "requiresQualificationApproved": true,
+      "requiresMaterialApproved": true,
+      "requiresScheduleConfirmed": true,
+      "requiresPaymentSucceeded": true,
+      "requiresActuallyDisplayable": true,
+      "start": "confirmed-actual-advertising-start-after-payment-and-display-availability",
+      "periodDays": 30,
+      "paymentAloneStartsClock": false,
+      "reviewAloneStartsClock": false
+    },
+    "pendingDetails": {
+      "reservationRule": null,
+      "scheduleConflictRule": null,
+      "refundRule": null,
+      "paymentChannel": null,
+      "emptyPositionDisplayRule": null,
+      "initialDefaultTrigger": null,
+      "materialSpecification": null,
+      "materialCountPerAdvertiser": null,
+      "clickTarget": null,
+      "deliveryMetricDefinitions": null,
+      "expiryAndRenewalRule": null,
+      "faultCompensation": null,
+      "manualPauseVisibilityPriority": null
+    }
   },
   "membership": {
     "release": "v2",
@@ -635,5 +678,35 @@
       "A"
     ],
     "record": "docs/merchant-membership-refund-confirmed-20261017.json"
+  },
+  "bannerDeliveryDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "906b63f4525a044f5eea0e47753fd7346da0dd5c",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_e86bc0411b594ceb9592302995bee929\",0]",
+        "id": "banner-position-capacity",
+        "selected": "A",
+        "question": "接下来讨论首页Banner的商业交付。保留首图／次图／末图299／249／199元每30天的候选报价，起步同时售卖多少名额？本题不启用正式售卖。",
+        "answer": "A（推荐）：同一投放期间共3个位置，每个位置只对应1个广告主；首图默认展示。容易说明交付，也容易核对。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_e86bc0411b594ceb9592302995bee929\",1]",
+        "id": "banner-carousel-behavior",
+        "selected": "A",
+        "question": "首页Banner采用哪种轮播方式？这是拟议的展示规则，不代表保证每次访问都能看到全部广告。",
+        "answer": "A（推荐）：每5秒自动切换，可手动滑动及暂停／继续；手动切换后重新计时，页面不可见时暂停，恢复可见保留当前图重新计时，只有1张时不自动切换。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_e86bc0411b594ceb9592302995bee929\",2]",
+        "id": "banner-review-payment-activation-order",
+        "selected": "A",
+        "question": "Banner采用哪种审核、付款和投放起算顺序？本题只决定顺序，名额保留、广告退款与实际支付通道另行确认。",
+        "answer": "A（推荐）：先审核广告资格和素材、确认排期，再付款；付款成功且广告实际可展示后，才从确认的实际投放开始时刻计算连续30天。"
+      }
+    ],
+    "scope": "v2-home-carousel-capacity-behavior-and-purchase-order",
+    "realSalesAuthorized": false
   }
 }

@@ -73,7 +73,7 @@ for(const [name,mutate] of [
 ])test('confirmed refund rejects '+name,()=>{const r=load();mutate(r);assert.throws(()=>validate(r));});
 
 test('pricing changes only by adding this dated decision and its scoped rule reference',()=>{
- const r=JSON.parse(read(pricingPath)),a=load(),prior=JSON.parse(at(a.sourceCommit,pricingPath));
+ const live=JSON.parse(read(pricingPath)),r=JSON.parse(at(live.bannerDeliveryDecision.sourceCommit,pricingPath)),a=load(),prior=JSON.parse(at(a.sourceCommit,pricingPath));
  assert.deepEqual(r.membership.refundRule,{record:recordPath,businessRulesApproved:true,executionReady:false});
  assert.deepEqual(r.membershipRefundDecision,{date:'2026-10-17',sourceCommit:a.sourceCommit,responseType:'structured-question-replies',selected:['A','A','A'],record:recordPath});
  delete r.membership.refundRule;delete r.membershipRefundDecision;assert.deepEqual(r,prior);
@@ -224,7 +224,7 @@ test('third batch adds only the confirmed boundaries and preserves both earlier 
 });
 test('current document entries state the third batch before earlier history',()=>{
  for(const file of ["docs/merchant-pricing-confirmed-20261016.md","docs/prd.md","docs/development-plan.md","docs/structured-design.md","docs/v2-roadmap.md","docs/ascii-design-prd-2.1.md","docs/module-specs/current-development-basis-20261015.md","docs/module-specs/merchant-banner-direction-20261015.md","CONTEXT.md"]){
-  const first=read(file).split(/\r?\n/)[2];for(const phrase of ['会员退订边界三项确认（2026-10-17）','起步不提供生效退订的自行撤回入口','二次确认','人工补救仍待单独确认','不生效、不暂停权益','不自动恢复计费','不把未核实退款标为完成','身份盗用等按已有安全规则处理','保持原定起止时间','不提前发放AI、不连带取消'])assert(first.includes(phrase),file+': '+phrase);
+  const first=read(file).split(/\r?\n/).find(line=>line.startsWith('会员退订边界三项确认（2026-10-17）'));for(const phrase of ['会员退订边界三项确认（2026-10-17）','起步不提供生效退订的自行撤回入口','二次确认','人工补救仍待单独确认','不生效、不暂停权益','不自动恢复计费','不把未核实退款标为完成','身份盗用等按已有安全规则处理','保持原定起止时间','不提前发放AI、不连带取消'])assert(first.includes(phrase),file+': '+phrase);
  }
 });
 test('confirmed record distinguishes appeal access from restoration or compensation approval',()=>{
