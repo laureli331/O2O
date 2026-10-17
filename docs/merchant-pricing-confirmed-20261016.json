@@ -923,5 +923,16 @@
       "A"
     ],
     "record": "docs/merchant-banner-refund-confirmed-20261017.json"
+  },
+  "bannerRefundExecutionDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "9e214cdb10193310eb2a8eba8c27b32371a5f2db",
+    "responseType": "structured-question-replies",
+    "selected": [
+      "A",
+      "A",
+      "A"
+    ],
+    "record": "docs/merchant-banner-refund-confirmed-20261017.json"
   }
 }

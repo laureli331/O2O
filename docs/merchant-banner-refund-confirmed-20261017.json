@@ -4,7 +4,7 @@
   "timezone": "Asia/Shanghai",
   "sourceCommit": "bc429ffc01279f5070587ed5dd4719f449ae2894",
   "document": "docs/merchant-banner-refund-confirmed-20261017.md",
-  "status": "three-business-decisions-approved-execution-details-pending",
+  "status": "six-business-decisions-approved-execution-details-pending",
   "responseType": "structured-question-replies",
   "responses": [
     {
@@ -67,7 +67,33 @@
     "membershipRefundPolicyChanged": false,
     "separatePurchasedAiPackPolicyChanged": false,
     "transactionBillingPolicyChanged": false,
-    "nonconformingDeliveryAndStatutoryRefundHandledSeparately": true
+    "nonconformingDeliveryAndStatutoryRefundHandledSeparately": true,
+    "processingTimeLimit": {
+      "unit": "continuous-hours",
+      "firstResponseHours": 24,
+      "firstResponseStart": "request-received",
+      "incompleteRequestAction": "state-necessary-missing-materials",
+      "reviewAndInitiateHours": 72,
+      "reviewAndInitiateStart": "complete-valid-application-submitted-successfully",
+      "initiateOnlyIfEligible": true,
+      "arrivalTimeGuaranteed": false,
+      "arrivalTimeLimit": null,
+      "exceptionUpdate": "reason-and-progress-within-original-deadline-and-continue-handling"
+    },
+    "failedOrUnknownRefundHandling": {
+      "keepTerminationEffective": true,
+      "autoRestoreAdvertising": false,
+      "termTimeConsumed": false,
+      "continueRefundHandling": true,
+      "unknownOutcomeRequiresVerification": true,
+      "blindDuplicateRefundAllowed": false,
+      "unverifiedRefundMeansComplete": false
+    },
+    "selfServiceWithdrawal": {
+      "enabledAtLaunch": false,
+      "manualAppealAllowed": true,
+      "manualRemedyDecided": false
+    }
   },
   "examples": [
     {
@@ -132,16 +158,14 @@
     }
   ],
   "unconfirmed": {
-    "processingTimeLimit": null,
     "paymentChannel": null,
     "arrivalTimeLimit": null,
-    "failedOrUnknownRefundHandling": null,
     "repeatedAndConcurrentRefundHandling": null,
     "positionReleaseAndResale": null,
-    "selfServiceWithdrawalAndManualAppeal": null,
     "platformFaultRefundAndCompensation": null,
     "qualificationOrViolationCancellation": null,
-    "timestampAndSubsecondPolicy": null
+    "timestampAndSubsecondPolicy": null,
+    "manualAppealRemedy": null
   },
   "legalBoundary": {
     "commercialPolicyOnly": true,
@@ -156,5 +180,35 @@
     "automaticRefundExecutionAllowed": false,
     "technicalDetailingResumed": false,
     "deploymentAuthorized": false
+  },
+  "refundExecutionDecision": {
+    "date": "2026-10-17",
+    "sourceCommit": "9e214cdb10193310eb2a8eba8c27b32371a5f2db",
+    "responseType": "structured-question-replies",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_0aba8ef65c5d4c459404bd5ffd589ad0\",0]",
+        "id": "banner-refund-handling-time-targets",
+        "selected": "A",
+        "question": "Banner退款的处理时限采用哪种目标？两案均为收到申请后24连续小时内首次回应，资料不全时告知必要补充项；下述为审核及发起符合条件退款的目标，不保证到账。异常须在原期限内说明原因、进度并继续处理。",
+        "answer": "A（推荐）：完整有效申请成功提交后72连续小时内完成审核，并对符合条件的申请发起退款。与已确认的会员、AI增购运营口径一致，本题明确批准用于Banner。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_0aba8ef65c5d4c459404bd5ffd589ad0\",1]",
+        "id": "banner-failed-or-unknown-refund-handling",
+        "selected": "A",
+        "question": "对已生效的Banner退订，退款失败或结果未知时，是否采用以下处理原则？本题不决定人工申诉后的恢复或补偿方式，也不决定位置何时重新售卖。",
+        "answer": "A（推荐）：保持退订生效，不自动恢复投放或继续消耗该期时长；继续核实办理退款，结果未知先查证，避免盲目重复退款，未核实的退款不标为完成。"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_0aba8ef65c5d4c459404bd5ffd589ad0\",2]",
+        "id": "banner-no-self-service-withdrawal-at-launch",
+        "selected": "A",
+        "question": "Banner退订生效后，起步是否提供用户自行撤回的入口？此前已确认提交前展示终止影响和退款金额并二次确认；人工申诉后的具体补救仍可单独讨论。",
+        "answer": "A（推荐）：起步不提供自行撤回入口；误操作可提出人工申诉，补救规则另行确认。减少退款与排期恢复的冲突。"
+      }
+    ],
+    "scope": "banner-refund-processing-failed-or-unknown-outcomes-and-self-service-withdrawal",
+    "realRefundsAuthorized": false
   }
 }
