@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-18",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "3539430a616de3cbfb8c065a2498b96f2cd795e7",
+  "status": "public-source-research-and-proposal-pending-user-decision",
+  "document": "docs/v1-payment-access-research-20261018.md",
+  "sources": [
+    {
+      "id": "miniapp",
+      "url": "https://pay.weixin.qq.com/doc/v3/merchant/4012791894",
+      "title": "产品介绍_小程序支付|微信支付商户文档中心",
+      "httpStatus": 200,
+      "htmlSha256": "21af98abfd02a302f30c33c5ca6b3499f642ddcb965dc982d65ab53f77513c26",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "merchant-prep",
+      "url": "https://pay.weixin.qq.com/doc/v3/merchant/4015459512",
+      "title": "开发接入准备_小程序支付|微信支付商户文档中心",
+      "httpStatus": 200,
+      "htmlSha256": "a9a0681059198065993735baaf963be54fe4ea29716cf6f4f63ad9c45452a29a",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "merchant-subject",
+      "url": "https://pay.weixin.qq.com/doc/v3/merchant/4015459054",
+      "title": "各主体可申请的基础支付权限列表_小程序支付|微信支付商户文档中心",
+      "httpStatus": 200,
+      "htmlSha256": "5f2c01a46c7c98f7192c1486afe08e3d6ae01e331c1fabc2270fa23ffeb57cbb",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "virtual",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/platform-capabilities/business-capabilities/virtual-payment.html",
+      "title": "虚拟支付：企业、个体户 | 微信开放文档",
+      "httpStatus": 200,
+      "htmlSha256": "b5fd697f4a5f4a1d188b3ed7ab1cd3d55a1b1ac4313105dd90659fc0eccb5d0b",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "operation",
+      "url": "https://developers.weixin.qq.com/community/minihome/doc/00002cf077cd4810fee42f4b865c01",
+      "title": "微信开放社区",
+      "httpStatus": 200,
+      "htmlSha256": "5bc34565f3bfc650e6f102796c6efed74b10f04651824d37fad1671d8ced7f5b",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "virtual-fees",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/platform-capabilities/business-capabilities/virtual-payment/devplan.html",
+      "title": "技术服务费 | 微信开放文档",
+      "httpStatus": 200,
+      "htmlSha256": "418acb03c5e533ba91b09e174bf94d844b7dfefecc5c55d39d34d24d1b000c64",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "virtual-refund",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/server/API/VirtualPayment/api_refund_order",
+      "title": "启动订单退款任务 | 微信开放文档",
+      "httpStatus": 200,
+      "htmlSha256": "06f0948c7b42b8d845a6c9010623431cc7b208c9eda46ad2677577ded7c73cf7",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "virtual-client",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/payment/wx.requestVirtualPayment.html",
+      "title": "wx.requestVirtualPayment(Object object) | 微信开放文档",
+      "httpStatus": 200,
+      "htmlSha256": "a15e4cea3f43f7ec52f37ac01bfbdfce01fdb37817381396c6cfc4d70c4117bf",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "categories",
+      "url": "https://developers.weixin.qq.com/miniprogram/product/material/",
+      "title": "小程序开放的服务类目 | 微信开放文档",
+      "httpStatus": 200,
+      "htmlSha256": "87be6c88130b09b3c588242e5e323ef788471da90a7be13c1636da87ea736eb3",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "platform-collection",
+      "url": "https://pay.wechatpay.cn/static/partner_ability/business_payment.shtml",
+      "title": "微信支付合作工具箱 - 微信支付服务商平台",
+      "httpStatus": 200,
+      "htmlSha256": "8a71d54884dfa89c9808f9d79a67d7a54ec3389a6da0b147add90b0e16cfcd8b",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    },
+    {
+      "id": "ios",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/platform-capabilities/business-capabilities/virtual-payment/ios.html",
+      "title": "微信开放文档",
+      "httpStatus": 200,
+      "htmlSha256": "2df396e2281544a37c33acb700009db3be7fb098747c1d72f25f8f44c05345ef",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "projectVerified": false
+    }
+  ],
+  "ordinaryPayment": {
+    "soleProprietorListed": true,
+    "authenticatedMiniappRequired": true,
+    "appidBindingRequired": true,
+    "projectCommissionCategory": null,
+    "projectCommissionEligibilityVerified": false,
+    "actualRate": null
+  },
+  "virtualPayment": {
+    "soleProprietorListed": true,
+    "applicationEntry": "miniapp-admin-virtual-payment-new-merchant",
+    "terminals": [
+      "android",
+      "harmonyos",
+      "windows",
+      "ios"
+    ],
+    "iosRoute": "apple-payment",
+    "iosClientMinimum": "8.0.68",
+    "iosSystemMinimum": 15,
+    "iosMinimumPaymentCents": 100,
+    "iosSandboxSupported": false,
+    "aiPackClassification": "paid-digital-tool-candidate-pending-project-review",
+    "aiPackItem190CentsAccepted": null,
+    "projectEligibilityVerified": false
+  },
+  "publicFeeReference": {
+    "scope": "工具、社交、深度合成、文娱（非微短剧、互动微短剧、网络小说）及其他相应类目",
+    "oneOffNonIos": {
+      "standardBasisPoints": 1000,
+      "currentBasisPoints": 100
+    },
+    "ios": {
+      "standardBasisPoints": 1700,
+      "currentBasisPoints": 1200
+    },
+    "actualProjectRate": null,
+    "autoRenewalEnabled": false,
+    "feeRoundingRule": null
+  },
+  "refundFacts": {
+    "ordinaryVirtualApiMaxPaymentAgeDays": 365,
+    "ordinaryVirtualFeeReturnedWithinDays": 180,
+    "ordinaryVirtualRequiresFinalStatusQuery": true,
+    "iosDeveloperInitiatedRefund": false,
+    "iosCustomerAppleApplication": true,
+    "iosFinalDecision": "apple",
+    "businessRefundRulesChanged": false,
+    "unlimitedOriginalRouteRefundProven": false
+  },
+  "storedValue": {
+    "existingPlan": "own-platform-services-only-fiat-principal-refundable-no-expiry",
+    "officialPrepaidCategoryRequiresEvidence": true,
+    "projectPrepaidCategoryApplicability": null,
+    "projectPrepaidMaterialEligibility": null,
+    "virtualTokenEquivalenceToCurrentFiatBalanceVerified": false,
+    "crossProductUseVerified": false,
+    "productionEnabled": false
+  },
+  "commission": {
+    "direction": "provider-pays-own-platform-fee-after-offline-party-settlement",
+    "clientGoodsEscrow": false,
+    "platformSplitSettlement": false,
+    "independentFeeProvesUnderlyingCategoryEligibility": false,
+    "multiOperatorRunErrandCategoryReviewRequired": true,
+    "actualPaymentProduct": null,
+    "productionEnabled": false
+  },
+  "recommendation": {
+    "id": "check-commission-and-direct-ai-purchase-first-reserve-stored-value-until-verified",
+    "approvalStatus": "pending-user-decision",
+    "selected": null,
+    "existingBusinessScopeChanged": false
+  },
+  "projectGatesPassed": [],
+  "execution": {
+    "merchantApplication": false,
+    "cloudCreation": false,
+    "externalMessage": false,
+    "businessApiCalls": false,
+    "purchase": false,
+    "realCharge": false,
+    "refund": false,
+    "productCodeChange": false,
+    "automationChange": false
+  }
+}
