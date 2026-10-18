@@ -62,3 +62,9 @@ test('resident AI package and optional balance match confirmed commercial choice
  for(const copy of ['购买AI次数','选择支付方式','直接支付','余额支付','本次无充值赠金','充值本金长期有效','未消费部分可申请退回','没有发生真实支付或权益发放'])assert(html.includes(copy),copy);
  const prd=fs.readFileSync(path.join(__dirname,'../docs/prd.md'),'utf8');assert(prd.includes('居民每自然月免费3次'));assert(!prd.includes('不能以充值、看广告等未批准方案解锁'));
 });
+
+test('AI entry focuses on utility while purchase terms remain at the purchase decision',()=>{
+ assert(!html.includes('每月3次免费体验'));assert(html.includes('把一段话整理成标题和说明，核对后即可填入'));
+ const design=fs.readFileSync(path.join(__dirname,'../docs/ascii-design-prd-2.1.md'),'utf8');const entry=design.slice(design.indexOf('### V04-G'),design.indexOf('用户提示语：'));
+ assert(!entry.includes('用完可购买'));assert(!entry.includes('每月免费3次'));assert(html.includes('购买到账后${p.packDays}天有效'));
+});

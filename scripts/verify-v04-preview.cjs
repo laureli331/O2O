@@ -8,7 +8,7 @@ async function verify(){
  const scenario=value=>page.locator('#scenario').selectOption(value);
  const shot=name=>page.screenshot({path:path.join(outDir,name+'.png'),fullPage:true,animations:'disabled'});
  try{
-  await page.goto(url);assert.equal(await page.locator('.type-card').count(),4);assert.equal(await page.locator('#form-code').textContent(),'V04-D');await shot('v04-desktop');
+  await page.goto(url);await page.locator('#open-ai').click();assert(!/购买|充值|1\.90|免费.*次/.test(await page.locator('#flow-content').textContent()));await screen('A');assert.equal(await page.locator('.type-card').count(),4);assert.equal(await page.locator('#form-code').textContent(),'V04-D');await shot('v04-desktop');
   for(const [code,title] of [['B','维修'],['C','其它'],['D','跑腿'],['E','闲置']]){
    await screen(code);assert((await page.locator('#form-title').textContent()).includes(title));assert(await page.locator('#open-ai').isVisible());assert.equal(await page.locator('#f-start').count(),code==='E'?0:1);assert.equal(await page.locator('#f-category').count(),['B','E'].includes(code)?1:0);await shot('v04-'+code);
   }
