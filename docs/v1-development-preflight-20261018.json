@@ -335,7 +335,7 @@
       }
     ],
     "wechatPayMerchant": {
-      "applicationStatus": null,
+      "applicationStatus": "not-applied-user-reported",
       "explanationRequested": true,
       "actualProductEligibilityVerified": false
     },
@@ -367,5 +367,18 @@
       "purchase": false,
       "realPayments": false
     }
+  },
+  "merchantEnrollmentFollowup": {
+    "date": "2026-10-18",
+    "sourceCommit": "c42e9a09a72215d0ce73d3a295f043ecc0c689ab",
+    "questionItemId": "[\"request_user_input_async\",\"call_99662a8554474a38b245b170f6bad5bb\",0]",
+    "question": "“微信支付商户号”是经营者在微信支付里的商户账号编号，小程序微信认证与它分别办理。你是否曾为“永兴县渐循信息技术服务中心”办理微信支付商户入驻，向官方提交营业执照、经营者身份和结算账户等材料？只需状态，不需要发任何证件或账号信息。",
+    "answer": "未办理过",
+    "kind": "status-report",
+    "selected": null,
+    "previousApplicationStatus": null,
+    "currentApplicationStatus": "not-applied-user-reported",
+    "evidenceLevel": "user-report-not-live-platform-verification",
+    "applicationSubmissionAuthorized": false
   }
 }
