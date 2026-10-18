@@ -570,6 +570,22 @@
       "deduplicationRule": null,
       "updateFrequency": null,
       "retentionPeriod": null
+    },
+    "availability": {
+      "status": "observe-posting-data-first-v2-discretionary",
+      "observePostingDataFirst": true,
+      "availableInV1": false,
+      "committedForV2": false,
+      "priorDetailsArePlanningReference": true,
+      "requiresModelAndCommercialTermsReconfirmation": true,
+      "finalPromotionModel": null,
+      "observationPopulation": null,
+      "observationDataSource": null,
+      "observationMetrics": null,
+      "observationWindow": null,
+      "activationThreshold": null,
+      "automaticActivation": false,
+      "newV1DevelopmentOrInstrumentationAuthorized": false
     }
   },
   "searchHeating": {
@@ -1392,5 +1408,43 @@
     "refundRecord": "docs/content-heating-refund-confirmed-20261017.json",
     "realSalesAuthorized": false,
     "realRefundsAuthorized": false
+  },
+  "contentHeatingDeferralDecision": {
+    "date": "2026-10-18",
+    "sourceCommit": "115a7d747c0bba323e45ce37f104030d53b69ac4",
+    "responseType": "direct-user-message",
+    "userReply": "先观察发帖数据吧, 第二版再酌情加\"内容加热\"",
+    "document": "docs/content-heating-deferred-20261018.md",
+    "scope": "content-heating-only-observe-posting-data-and-reassess-optionally-in-v2",
+    "priorDiscussion": {
+      "responseType": "structured-question-replies",
+      "responses": [
+        {
+          "questionItemId": "[\"request_user_input_async\",\"call_8dfba160aaf14c969c9a1d0df9dba34a\",0]",
+          "selected": "A",
+          "question": "商家已有编辑权限时，修改正在加热的同一篇主帖，怎样处理？本题不增加会员到期后的编辑权限；主动下架、违规及授权撤回另议。",
+          "answer": "A（推荐）：修改后重新审核，通过后替换；待审期间保留仍合规、可展示且授权有效的旧版。同一篇帖子的修改不占2次换帖额度，也不重新起算推广期。"
+        },
+        {
+          "questionItemId": "[\"request_user_input_async\",\"call_8dfba160aaf14c969c9a1d0df9dba34a\",1]",
+          "selected": "A",
+          "question": "内容加热是否提供“暂停推广，并冻结剩余天数以后继续”的功能？",
+          "answer": "A（推荐）：起步不提供冻结暂停；商家可继续投放，或按已确认规则提前终止并申请剩余时间退款。"
+        },
+        {
+          "questionItemId": "[\"request_user_input_async\",\"call_8dfba160aaf14c969c9a1d0df9dba34a\",2]",
+          "selected": "A",
+          "question": "同一经营档案可以提前购买多少个尚未开始的30天内容加热购买期？所有方案均须先确认可交付排期，不自动扣费。",
+          "answer": "A（推荐）：起步最多保留1个尚未开始的已购期，减少资金占用和未来容量承诺；这是待验证的试行上限。"
+        }
+      ],
+      "clarification": "其实我一开始对\"内容加热\"的理解是, 商家的帖子都会获得热度. 但你给我的策略也还可以. 你把这两种的优劣多比给我吧",
+      "disposition": "preserve-confirmed-discussion-answers-for-future-model-fit-review",
+      "assistantSuggestedMerchantWideModelApproved": false
+    },
+    "realSalesAuthorized": false,
+    "realRefundsAuthorized": false,
+    "technicalDetailingResumed": false,
+    "automationChanged": false
   }
 }
