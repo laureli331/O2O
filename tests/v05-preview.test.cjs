@@ -68,5 +68,6 @@ test('mobile AI action has a full-width touch target and payment methods follow 
  assert(!html.includes('发布或接单时核验资格。'));
  const purchase=html.slice(html.indexOf('function aiPurchase()'),html.indexOf('function paymentSummary()'));
  assert(purchase.indexOf('value="balance"')>=0);
- assert(purchase.indexOf('value="balance"')<purchase.indexOf('value="direct"'));
+ assert(purchase.includes('>微信支付</label>'));assert(!purchase.includes('直接支付'));
+ assert(purchase.indexOf('value="direct"')<purchase.indexOf('value="balance"'));
 });

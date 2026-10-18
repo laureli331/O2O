@@ -33,7 +33,7 @@ async function verify(){
    const action=page.locator('.replenish-button');await action.scrollIntoViewIfNeeded();
    assert(await action.evaluate(el=>{const r=el.getBoundingClientRect(),p=el.parentElement,s=getComputedStyle(p);return r.height>=48&&parseFloat(getComputedStyle(el).fontSize)>=15&&Math.abs(r.width-(p.clientWidth-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight)))<2;}),'mobile replenish target '+width);
    if(width===375)await shot('v05-ai-action');await action.click();
-   const options=page.locator('input[name="pack-payment"]');assert.deepEqual(await options.evaluateAll(els=>els.map(el=>el.value)),['balance','direct']);
+   assert.deepEqual(await page.locator('.options label').allTextContents(),['微信支付','余额支付']);const options=page.locator('input[name="pack-payment"]');assert.deepEqual(await options.evaluateAll(els=>els.map(el=>el.value)),['direct','balance']);
    assert(await options.evaluateAll(els=>els[0].getBoundingClientRect().x<els[1].getBoundingClientRect().x));
    if(width===375)await shot('v05-payment-options');assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   }
