@@ -60,3 +60,13 @@ test('wallet forms use exact cents and withdrawal is bounded by available princi
  assert(!html.includes('cardbag-entry" data-private="cardbag"'));assert(html.includes('data-open="ai">查看详情'));assert(html.includes('data-open="topup">充值'));assert(html.includes('data-open="withdraw">提现'));
  assert(html.includes('尚未到账'));assert(html.includes('提现不包括跑腿服务费统计中的金额'));
 });
+
+test('mobile AI action has a full-width touch target and payment methods follow approved order',()=>{
+ assert(html.includes('class="primary replenish-button" data-open="buy-ai">补充次数</button>'));
+ assert(html.includes('.replenish-button{display:block;width:100%;min-height:48px;'));
+ assert(html.includes('padding:12px 18px;font-size:15px}'));
+ assert(!html.includes('发布或接单时核验资格。'));
+ const purchase=html.slice(html.indexOf('function aiPurchase()'),html.indexOf('function paymentSummary()'));
+ assert(purchase.indexOf('value="balance"')>=0);
+ assert(purchase.indexOf('value="balance"')<purchase.indexOf('value="direct"'));
+});
