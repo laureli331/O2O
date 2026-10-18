@@ -1,0 +1,26 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process');
+const root=path.resolve(__dirname,'..'),record='docs/v1-development-preflight-20261018.json',doc='docs/v1-development-preflight-20261018.md',sourceCommit='c5985461e7fe4629e712662aeeaa6002e1717ea8';
+const read=f=>new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(path.join(root,f))),load=()=>JSON.parse(read(record)),at=f=>cp.execFileSync('git',['show',sourceCommit+':'+f],{cwd:root,encoding:'utf8'}).replace(/\r\n/g,'\n');
+const questions=[
+ '新个体工商户主体是否已申请微信支付商户号？这与小程序微信认证是不同事项，只需当前状态，不需要商户号、密钥或证件信息。',
+ '新个体工商户主体的小程序是否已开通云开发环境（用于运行后端和保存数据）？这里询问新账号，旧个人账号的cloud1仍按原安排保留。',
+ '本项目的“姓名＋身份证号码核验、不刷脸”服务目前进展如何？只需申请或开通状态，不需要任何真实身份资料或密钥。'
+];
+function validate(d){
+ assert.equal(d.sourceCommit,sourceCommit);assert.equal(d.evidenceLevel,'user-reported-status-not-live-platform-verification');
+ assert.equal(d.responses.length,3);
+ for(let i=0;i<3;i++){assert.deepEqual(JSON.parse(d.responses[i].questionItemId),['request_user_input_async','call_957797a7f5e8472f91eebd724fb6521d',i]);assert.equal(d.responses[i].question,questions[i]);assert.equal(d.responses[i].selected,null);}
+ assert.deepEqual(d.responses.map(x=>x.answer),['这是什么?','尚未开通','尚未申请或联系供应商']);
+ assert.deepEqual(d.responses.map(x=>x.kind),['clarification-request','status-report','status-report']);
+ assert.deepEqual(d.wechatPayMerchant,{applicationStatus:null,explanationRequested:true,actualProductEligibilityVerified:false});
+ assert.deepEqual(d.newSubjectCloudDevelopment,{openingStatus:'not-opened-user-reported',actualEnvironmentVerified:false,oldPersonalCloud1:'retained-unchanged'});
+ assert.deepEqual(d.identityVerification,{applicationStatus:'not-applied-or-contacted-user-reported',supplier:null,actualProjectEligibilityVerified:false,age16To17ApplicabilityVerified:false});
+ assert.equal(d.officialReference.projectPaymentApplicabilityVerified,false);
+ for(const v of Object.values(d.execution))assert.equal(v,false);
+}
+test('records the exact merchant clarification and both actual unopened integration states',()=>{const d=load().integrationProgressUpdate;validate(d);assert.equal(d.date,'2026-10-18');for(const q of d.responses){assert(read(doc).includes(q.question));assert(read(doc).includes('答：'+q.answer));}});
+test('integration update preserves all prior commercial identity budget and production decisions',()=>{const r=load(),prior=JSON.parse(at(record));delete r.integrationProgressUpdate;assert.deepEqual(r,prior);const before=at(doc).trimEnd();assert(read(doc).replace(/\r\n/g,'\n').startsWith(before+'\n\n## 8.'));});
+test('official evidence supports the general account relationship without asserting project eligibility',()=>{const d=load().integrationProgressUpdate;assert.equal(d.officialReference.url,'https://pay.weixin.qq.com/static/applyment_guide/applyment_detail_miniapp.shtml');assert.equal(d.officialReference.retrieval,'direct-official-page-http-200');assert.equal(d.officialReference.checkedOn,'2026-10-18');assert.deepEqual(d.officialReference.facts,['guide-lists-sole-proprietor-application-materials','custom-payment-integration-requires-merchant-id-and-appid-binding']);const s=read(doc).split('## 8.')[1];for(const x of ['申请状态未知','不把不熟悉概念推断为未申请','旧个人账号cloud1保留不变','16—17岁适用','不承诺本项目的AI次数包、余额充值','没有代办进件','不作为商户进件、支付产品或项目收退款验收通过'])assert(s.includes(x),x);});
+test('updated markdown has balanced fences valid table widths and existing local links',()=>{const s=read(doc);assert.equal((s.match(/^```/gm)||[]).length%2,0);let width=0;for(const l of s.split(/\r?\n/)){if(!l.startsWith('|')){width=0;continue;}const w=(l.match(/\|/g)||[]).length;if(width)assert.equal(w,width,l);width=w;}for(const m of s.matchAll(/\]\(([^)]+)\)/g)){if(/^(https?:|#)/.test(m[1]))continue;assert(fs.existsSync(path.resolve(root,path.dirname(doc),m[1].split('#')[0])),m[1]);}});
+test('rejects inferred non-application selected suppliers environment activation or payment authority',()=>{for(const change of [d=>d.wechatPayMerchant.applicationStatus='not-applied',d=>d.wechatPayMerchant.actualProductEligibilityVerified=true,d=>d.responses[0].kind='status-report',d=>d.responses[0].answer='未申请',d=>d.responses[1].selected='A',d=>d.newSubjectCloudDevelopment.openingStatus='active',d=>d.newSubjectCloudDevelopment.oldPersonalCloud1='deleted',d=>d.identityVerification.supplier='tencent',d=>d.identityVerification.age16To17ApplicabilityVerified=true,d=>d.officialReference.projectPaymentApplicabilityVerified=true,d=>d.execution.cloudCreated=true,d=>d.execution.realPayments=true]){const d=structuredClone(load().integrationProgressUpdate);change(d);assert.throws(()=>validate(d));}});

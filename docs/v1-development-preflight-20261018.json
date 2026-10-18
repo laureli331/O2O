@@ -306,5 +306,66 @@
     "quota-concurrency-and-identity-lifecycle",
     "retention-and-final-privacy-text",
     "real-capabilities-cost-and-technical-parameters"
-  ]
+  ],
+  "integrationProgressUpdate": {
+    "date": "2026-10-18",
+    "sourceCommit": "c5985461e7fe4629e712662aeeaa6002e1717ea8",
+    "evidenceLevel": "user-reported-status-not-live-platform-verification",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_957797a7f5e8472f91eebd724fb6521d\",0]",
+        "question": "新个体工商户主体是否已申请微信支付商户号？这与小程序微信认证是不同事项，只需当前状态，不需要商户号、密钥或证件信息。",
+        "answer": "这是什么?",
+        "kind": "clarification-request",
+        "selected": null
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_957797a7f5e8472f91eebd724fb6521d\",1]",
+        "question": "新个体工商户主体的小程序是否已开通云开发环境（用于运行后端和保存数据）？这里询问新账号，旧个人账号的cloud1仍按原安排保留。",
+        "answer": "尚未开通",
+        "kind": "status-report",
+        "selected": null
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_957797a7f5e8472f91eebd724fb6521d\",2]",
+        "question": "本项目的“姓名＋身份证号码核验、不刷脸”服务目前进展如何？只需申请或开通状态，不需要任何真实身份资料或密钥。",
+        "answer": "尚未申请或联系供应商",
+        "kind": "status-report",
+        "selected": null
+      }
+    ],
+    "wechatPayMerchant": {
+      "applicationStatus": null,
+      "explanationRequested": true,
+      "actualProductEligibilityVerified": false
+    },
+    "newSubjectCloudDevelopment": {
+      "openingStatus": "not-opened-user-reported",
+      "actualEnvironmentVerified": false,
+      "oldPersonalCloud1": "retained-unchanged"
+    },
+    "identityVerification": {
+      "applicationStatus": "not-applied-or-contacted-user-reported",
+      "supplier": null,
+      "actualProjectEligibilityVerified": false,
+      "age16To17ApplicabilityVerified": false
+    },
+    "officialReference": {
+      "url": "https://pay.weixin.qq.com/static/applyment_guide/applyment_detail_miniapp.shtml",
+      "checkedOn": "2026-10-18",
+      "retrieval": "direct-official-page-http-200",
+      "facts": [
+        "guide-lists-sole-proprietor-application-materials",
+        "custom-payment-integration-requires-merchant-id-and-appid-binding"
+      ],
+      "projectPaymentApplicabilityVerified": false
+    },
+    "execution": {
+      "applicationSubmitted": false,
+      "cloudCreated": false,
+      "supplierContacted": false,
+      "purchase": false,
+      "realPayments": false
+    }
+  }
 }
