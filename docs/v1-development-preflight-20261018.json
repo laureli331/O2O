@@ -1,0 +1,273 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-18",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "7401b95bb3744457fd9d33bdca62f9b097439c6c",
+  "document": "docs/v1-development-preflight-20261018.md",
+  "status": "documentation-alignment-and-proposals-for-review",
+  "authorization": {
+    "userReply": "开始吧",
+    "scope": "v1-predevelopment-closeout-documents-and-public-source-research",
+    "v2DiscussionAuthorized": false
+  },
+  "scopeAlignment": {
+    "basisCommit": "e165b56f4c2d122f39340d1c0e1354057af967d5",
+    "basisDocument": "docs/v04-html-preview.md",
+    "businesses": [
+      "repair",
+      "errand",
+      "secondhand",
+      "other"
+    ],
+    "repairAndOtherFields": [
+      "title",
+      "description"
+    ],
+    "repairAndOtherTimeExtraction": false,
+    "errandExplicitTimeCandidateAllowed": true,
+    "publicationFieldContracts": [
+      "F02",
+      "F03",
+      "F04"
+    ],
+    "historicalAnswersRewritten": false
+  },
+  "residentAi": {
+    "sourceCommit": "3bf3aed3adc7a02cddefa4b38079ccbbb1de4909",
+    "sourceDocument": "docs/resident-ai-balance-confirmed-20261018.md",
+    "freePerNaturalMonth": 3,
+    "freeExpiry": "end-of-issued-natural-month",
+    "pack": {
+      "count": 20,
+      "priceCents": 190,
+      "validDaysAfterCredited": 180
+    },
+    "consumeOnUsableResult": true,
+    "technicalFailureConsumes": false,
+    "manualPublicationFree": true,
+    "paymentChoice": [
+      "direct",
+      "platform-own-consumption-balance"
+    ],
+    "balance": {
+      "purpose": "platform-own-services-only",
+      "topup": "shortfall-only",
+      "bonus": false,
+      "unusedPrincipalExpiry": "none",
+      "unusedPrincipalReturnApplicationAllowed": true,
+      "usedForCustomerGoodsEscrow": false,
+      "usedForProviderEarningsWithdrawal": false
+    },
+    "freeIssuanceSubject": null,
+    "consumptionOrder": null,
+    "packRefundRule": null,
+    "balanceRefundExecutionRule": null,
+    "realSalesEnabled": false
+  },
+  "budget": {
+    "monthlyCashCapCents": 50000,
+    "cashLaborIncluded": true,
+    "upfrontRegistrationAndCertification": "separately-confirm",
+    "actualMonthlyTotal": null,
+    "allocations": null,
+    "minimumViableCostVerified": false
+  },
+  "technicalProposal": {
+    "approvalStatus": "not-approved",
+    "preferredDatabase": "cloudbase-traditional-document-database",
+    "databaseAlternatives": [
+      "cloudbase-postgresql"
+    ],
+    "selectedDatabase": null,
+    "cloudRuntimeVersion": null,
+    "candidateRuntimeMajorVersions": [
+      24,
+      22
+    ],
+    "allowNode20AsProductionDefault": false,
+    "sdkVersions": null,
+    "coreRules": [
+      "server-side-authorization",
+      "atomic-unique-acceptance",
+      "server-time-and-persisted-deadlines",
+      "idempotent-financial-facts",
+      "separate-commission-principal-and-consumer-payments",
+      "private-file-authorization",
+      "transactional-event-and-recovery",
+      "server-only-model-credentials"
+    ],
+    "actualEnvironmentVerified": false
+  },
+  "aiCandidates": [
+    {
+      "provider": "aliyun-model-studio",
+      "model": "qwen3.8-flash",
+      "region": "cn-beijing",
+      "inputUncachedYuanPerMillion": 0.8,
+      "outputYuanPerMillion": 2.7,
+      "source": "QWEN",
+      "recommendedForFirstComparison": true,
+      "measured": false,
+      "approved": false
+    },
+    {
+      "provider": "deepseek-direct",
+      "model": "deepseek-flash",
+      "observedVersion": "DeepSeek-V4.1-Flash-1017",
+      "inputUncachedYuanPerMillion": {
+        "offPeak": 1,
+        "peak": 2
+      },
+      "outputYuanPerMillion": {
+        "offPeak": 4,
+        "peak": 8
+      },
+      "source": "DEEPSEEK",
+      "measured": false,
+      "approved": false
+    }
+  ],
+  "aiProductionParameters": {
+    "provider": null,
+    "model": null,
+    "platformMonthlyBudget": null,
+    "concurrencyLimit": null,
+    "timeoutMs": null,
+    "outputTokenLimit": null,
+    "qualityThresholds": null,
+    "latencyThresholds": null
+  },
+  "dataPlan": {
+    "status": "inventory-and-purpose-proposal-retention-pending",
+    "rawIdentityStoredInOwnDatabase": false,
+    "rawAiInputOutputLogged": false,
+    "residentTextSentForEvaluation": false,
+    "retentionByCategory": null,
+    "finalPrivacyTextApproved": false
+  },
+  "pendingQuestions": [
+    {
+      "id": "resident-free-allowance-subject",
+      "answer": null
+    },
+    {
+      "id": "resident-allowance-consumption-order",
+      "answer": null
+    }
+  ],
+  "gatesPassed": [],
+  "execution": {
+    "productImplementation": false,
+    "realAiCalls": false,
+    "purchase": false,
+    "realPayments": false,
+    "cloudWrites": false,
+    "deployment": false,
+    "destructiveDataOperations": false,
+    "automationChanged": false
+  },
+  "sources": [
+    {
+      "id": "CB-TX",
+      "title": "CloudBase文档数据库事务",
+      "url": "https://docs.cloudbase.net/database/transaction",
+      "retrieval": "official-search-excerpt-direct-page-fetch-failed",
+      "fact": "事务由服务端Node SDK提供；事务内按文档定位，接口限制需在选定SDK/环境中验证。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "CB-RUNTIME",
+      "title": "CloudBase云函数配置",
+      "url": "https://docs.cloudbase.net/cli-v1/functions/configs",
+      "retrieval": "official-search-excerpt-direct-page-fetch-failed",
+      "fact": "配置文档列Nodejs20.19及公测Nodejs22.21/Nodejs24.11，并支持timer配置；不能当作本项目实际可用运行版本。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "NODE",
+      "title": "Node官方版本状态",
+      "url": "https://nodejs.org/en/about/previous-releases",
+      "retrieval": "official-page-opened",
+      "fact": "Node20已EOL，Node22/24列LTS；云端候选仍须核实CloudBase当前支持。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "CB-STORAGE",
+      "title": "CloudBase存储SDK",
+      "url": "https://docs.cloudbase.net/storage/sdk",
+      "retrieval": "official-search-excerpt-direct-page-fetch-failed",
+      "fact": "公开文件和私密授权需区分；临时链接存在不等于已经通过转发/撤权验收。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "CB-PRICE",
+      "title": "CloudBase价格文档",
+      "url": "https://cloud.tencent.com/document/product/876/75213",
+      "retrieval": "official-page-opened-in-prior-pricing-research",
+      "fact": "配额制与资源点须区分；公开个人版限时19.9元/月、标准版199元/月不能替代本账号报价和能力验证。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "IDENTITY-PRICE",
+      "title": "腾讯云核验计费说明",
+      "url": "https://cloud.tencent.com/document/faq/1007/45878",
+      "retrieval": "official-page-and-search-excerpt",
+      "fact": "身份信息核验公开按量0.3元/次；实际开通、可计费结果和最低采购仍待核实。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "QWEN",
+      "title": "百炼qwen3.8-flash",
+      "url": "https://help.aliyun.com/zh/model-studio/qwen3-8-flash",
+      "retrieval": "official-page-opened",
+      "fact": "北京部署公开每百万输入0.8元、输出2.7元；提供结构化输出说明，实际质量/隐私/开通未测。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "DEEPSEEK",
+      "title": "DeepSeek模型与价格",
+      "url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+      "retrieval": "official-page-opened",
+      "fact": "deepseek-flash当前对应V4.1-Flash-1017；缓存未命中输入/输出按高低峰计价，不能继续使用旧模型名作为固定版本证据。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "PIPL",
+      "title": "工信部发布的个人信息保护法全文",
+      "url": "https://www.miit.gov.cn/zwgk/zcwj/flfg/art/2022/art_04a0f1fb5df244e39688fd5372623a8d.html",
+      "retrieval": "official-government-search-excerpt",
+      "fact": "告知保存期限；除另有规定外按实现目的所必要最短时间保存。本项目具体期限及其他适用要求仍待核实。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    },
+    {
+      "id": "WX-PAY",
+      "title": "微信支付能力待取得可核对依据",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/payment/wx.requestPayment.html",
+      "retrieval": "fetch-failed-no-project-applicability-conclusion",
+      "fact": "本次未取得可验证的项目收款/数字服务/自营预付余额适用答复；不推断普通支付或虚拟支付一定可用。",
+      "projectVerified": false,
+      "checkedOn": "2026-10-18"
+    }
+  ],
+  "accountProgress": {
+    "sourceDocument": "docs/miniapp-filing-progress-20261018.md",
+    "sourceCommit": "7cedd9dcc999eb3241c323bce355a698d428f4b4",
+    "evidenceLevel": "user-report-and-project-record-not-live-platform-verification",
+    "newMiniappRegistered": true,
+    "newMiniappAppId": "wx2414399d423dfb65",
+    "wechatVerification": "passed-user-reported",
+    "finalServiceCategories": null,
+    "filing": "awaiting-official-seal-and-additional-commitment-material",
+    "filingApproved": false,
+    "actualAccountCapabilitiesVerified": false
+  }
+}

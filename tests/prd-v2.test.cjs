@@ -96,6 +96,7 @@ test('AI safeguards and metric definitions survive consolidation with the approv
     for (const [id, row] of prior) {
       if(id==='AI10'){terms(current.get(id), ['每自然月免费3次','20次／1.90元','180天','手动发布始终免费','真实支付未验证不售卖'], 'Approved resident AI commercial model');continue;}
       if(id==='AI01'){terms(current.get(id), ['四类发布表单均提供','未登录','受限账号'], 'Updated AI scope');continue;}
+      if(id==='AI07'||id==='AI08'){assert.equal(current.get(id), normalize(row).replace('F03/F04','F02/F03/F04'), id+' four-business field mapping');continue;}
       assert.equal(current.get(id), normalize(row), id);
     }
   }
