@@ -26,3 +26,9 @@ test('earnings counts only latest valid ended errand provider fees, without adva
  const otherHistory=[...m.records,{id:'EXCLUDED',kind:'repair',role:'provider',ended:true,confirmed:true,fee:900,version:1},{id:'EXCLUDED',kind:'repair',role:'provider',ended:true,confirmed:true,fee:1000,version:2}];assert.equal(m.earnings(otherHistory).history.length,1);
  assert(html.includes('按到期订单统计 · 非到账金额'));assert(html.includes('与跑腿服务费统计、佣金账单分别记录'));assert(!html.includes('data-open="withdraw"'));
 });
+
+test('personal transaction heading and earnings share a row; disclosure stays in details',()=>{
+ assert(html.includes('<div class="transactions-heading"><h3>我的交易</h3><button class="earnings-entry"'));
+ assert(!html.includes('<small>按到期订单统计 · 非到账金额</small>'));
+ assert(html.includes('<p class="hint">按到期订单统计 · 非到账金额<br>'));
+});
