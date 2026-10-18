@@ -6,7 +6,10 @@
     "server-authorizes-fields-not-css",
     "unknown-is-not-zero-or-success",
     "failed-submit-retains-user-input",
-    "draft-selection-is-not-accepted-order"
+    "draft-selection-is-not-accepted-order",
+    "discovery-shows-approved-displayable-merchant-posts-only",
+    "service-top-right-is-the-only-notification-center-entry",
+    "post-replacement-keeps-current-published-version-until-approval"
   ],
   "items": [
     {
@@ -21,11 +24,14 @@
       "pages": [
         "V01",
         "V04",
-        "V05"
+        "V05",
+        "V10",
+        "V23"
       ],
       "acceptance": [
         "T01",
-        "T15"
+        "T15",
+        "T19"
       ]
     },
     {
@@ -319,6 +325,89 @@
         "T06",
         "T08",
         "T15"
+      ]
+    },
+    {
+      "id": "C16",
+      "name": "服务页通知入口",
+      "states": [
+        "loading",
+        "read",
+        "unread",
+        "error"
+      ],
+      "pages": [
+        "V10",
+        "V14",
+        "V23"
+      ],
+      "acceptance": [
+        "T19",
+        "T26"
+      ]
+    },
+    {
+      "id": "C17",
+      "name": "发现商家主帖卡",
+      "states": [
+        "loading",
+        "displayable",
+        "image-failed",
+        "unavailable",
+        "risk-removed"
+      ],
+      "pages": [
+        "V23"
+      ],
+      "acceptance": [
+        "T19",
+        "T20",
+        "T25"
+      ]
+    },
+    {
+      "id": "C18",
+      "name": "商家主帖资格与编辑",
+      "states": [
+        "resident",
+        "merchant-pending",
+        "merchant-rejected",
+        "merchant-approved",
+        "editing",
+        "invalid",
+        "submitting",
+        "unknown"
+      ],
+      "pages": [
+        "V04",
+        "V23"
+      ],
+      "acceptance": [
+        "T21",
+        "T22",
+        "T23"
+      ]
+    },
+    {
+      "id": "C19",
+      "name": "商家主帖审核与版本替换",
+      "states": [
+        "draft",
+        "pending-first-publication",
+        "published",
+        "replacement-pending",
+        "replacement-rejected",
+        "replacement-approved",
+        "risk-removed"
+      ],
+      "pages": [
+        "V14",
+        "V23"
+      ],
+      "acceptance": [
+        "T24",
+        "T25",
+        "T26"
       ]
     }
   ],

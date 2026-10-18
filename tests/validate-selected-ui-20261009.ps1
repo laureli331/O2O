@@ -11,3 +11,14 @@ $img = [Drawing.Image]::FromFile($file)
 try { if ($img.Width -ne $record.width -or $img.Height -ne $record.height) { throw 'Dimensions mismatch' } } finally { $img.Dispose() }
 if ($record.status -ne 'user-selected' -or $record.transformed -ne $false -or -not (Test-Path -LiteralPath (Join-Path $dir 'README.md'))) { throw 'Invalid selection record' }
 Write-Output 'PASS: Exact attachment hash, PNG signature, dimensions, unmodified user selection and document.'
+
+$handoff = Join-Path $root 'assets\ui\development-handoff-20261009'
+$manifest = Get-Content -LiteralPath (Join-Path $handoff 'manifest.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+$content = Get-Content -LiteralPath (Join-Path $handoff 'content.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+$expectedNav = @('首页', '发现', '发布', '服务', '我的')
+if (($content.labels.navigation -join '/') -ne ($expectedNav -join '/')) { throw 'Navigation copy differs from approved order' }
+if (($manifest.navigation.label -join '/') -ne ($expectedNav -join '/')) { throw 'Generated navigation differs from approved order' }
+if ($manifest.iconCount -ne 23 -or $manifest.standaloneIconCount -ne 46) { throw 'Discovery icon resources are incomplete' }
+$discover = Get-Content -LiteralPath (Join-Path $handoff 'icons\icon-discover.svg') -Raw -Encoding UTF8
+if ($discover -notmatch '<circle cx="12" cy="12" r="8\.5"/>' -or $discover -notmatch 'M14\.75 9\.25') { throw 'Approved option A compass geometry is missing' }
+Write-Output 'PASS: Approved navigation order, option A compass and generated icon counts.'

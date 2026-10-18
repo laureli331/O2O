@@ -11,6 +11,7 @@ const hash = data => crypto.createHash('sha256').update(data).digest('hex').toUp
 const sourceTextHash = file => hash(fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n'));
 const read = name => fs.readFileSync(path.join(directory, name), 'utf8');
 const tokens = JSON.parse(read('design-tokens.json'));
+const content = JSON.parse(read('content.json'));
 const selected = fs.readFileSync(path.join(directory, tokens.visualSource));
 const expected = 'A73C4D802FBE91900CF9D1E751AB1C45391B7FD10C1868476BDF392605EEE011';
 if (hash(selected) !== expected) throw new Error('Selected attachment differs; refusing generation');
@@ -21,7 +22,8 @@ const symbols = [...source.matchAll(/<symbol id="([^"]+)" viewBox="0 0 24 24">([
 if (symbols.length !== tokens.icons.inheritedCount) throw new Error('Unexpected source icon library');
 symbols.push(
   { id: 'icon-services-bag', body: '<rect x="5" y="7" width="14" height="14" rx="2"/><path d="M9 9V5a3 3 0 0 1 6 0v4"/>', origin: 'new deterministic SVG in inherited 24px/1.75 family' },
-  { id: 'icon-info', body: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7" r=".6" fill="currentColor" stroke="none"/>', origin: 'new deterministic SVG in inherited 24px/1.75 family' }
+  { id: 'icon-info', body: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7" r=".6" fill="currentColor" stroke="none"/>', origin: 'new deterministic SVG in inherited 24px/1.75 family' },
+  { id: 'icon-discover', body: '<circle cx="12" cy="12" r="8.5"/><path d="M14.75 9.25 13.2 13.2l-3.95 1.55 1.55-3.95 3.95-1.55Z"/><circle cx="12" cy="12" r="1"/>', origin: 'approved option A deterministic compass in inherited 24px/1.75 family' }
 );
 const outputs = new Map();
 const svg = (body, color, size = 24) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" color="${color}" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${body}</svg>\n`;
@@ -36,7 +38,7 @@ const preview = symbols.map((s, i) => {
   const y = 20 + Math.floor(i / 4) * 64;
   return `<g transform="translate(${x} ${y})"><use href="#${s.id}" x="48" width="24" height="24"/><text x="60" y="43" text-anchor="middle" stroke="none" fill="${tokens.palette.ink}" font-size="10">${s.id}</text></g>`;
 }).join('');
-outputs.set('icons.svg', `<svg xmlns="http://www.w3.org/2000/svg" width="636" height="${rows * 64 + 20}" viewBox="0 0 636 ${rows * 64 + 20}" color="${tokens.palette.ink}" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" font-family="system-ui, Microsoft YaHei, sans-serif"><title>湘邻湘友：22个可编辑图标，设计交接</title><rect width="636" height="${rows * 64 + 20}" fill="${tokens.palette.ivory}" stroke="none"/><defs>${defs}</defs>${preview}</svg>\n`);
+outputs.set('icons.svg', `<svg xmlns="http://www.w3.org/2000/svg" width="636" height="${rows * 64 + 20}" viewBox="0 0 636 ${rows * 64 + 20}" color="${tokens.palette.ink}" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" font-family="system-ui, Microsoft YaHei, sans-serif"><title>湘邻湘友：${symbols.length}个可编辑图标，设计交接</title><rect width="636" height="${rows * 64 + 20}" fill="${tokens.palette.ivory}" stroke="none"/><defs>${defs}</defs>${preview}</svg>\n`);
 outputs.set('image-placeholder.svg', `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="192" viewBox="0 0 256 192"><title>图片占位</title><rect width="256" height="192" rx="8" fill="${tokens.palette.placeholderSurface}"/><g transform="translate(98 66)" fill="none" stroke="${tokens.palette.ivory}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><rect width="60" height="60" rx="5"/><circle cx="18" cy="18" r="5"/><path d="M0 47 18 29 31 43 43 25 60 47"/></g></svg>\n`);
 const user = symbols.find(s => s.id === 'icon-user').body;
 outputs.set('avatar-placeholder.svg', `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96"><title>通用头像占位，非用户真实照片</title><circle cx="48" cy="48" r="44" fill="${tokens.palette.badgeSurface}" stroke="${tokens.palette.ivory}" stroke-width="3"/><g transform="translate(24 22) scale(2)" color="${tokens.palette.ink}" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${user}</g></svg>\n`);
@@ -70,6 +72,9 @@ const theme = `/* Generated from design-tokens.json; not imported by a product p
 .ui-glass-fallback { background: rgba(252,251,247,0.76); border: 1px solid ${p.border}; box-shadow: 0 16rpx 48rpx rgba(38,58,49,0.08); }
 .ui-icon { width: 24px; height: 24px; }
 .ui-touch-target { min-width: ${unit(tokens.layout.touchTargetMin)}; min-height: ${unit(tokens.layout.touchTargetMin)}; }
+.ui-pressable { transition: transform ${tokens.motion.releaseDurationMs}ms ease; transform-origin: center; }
+.ui-pressable--pressed { transform: scale(${tokens.motion.pressScale}); transition-duration: ${tokens.motion.pressDurationMs}ms; }
+@media (prefers-reduced-motion: reduce) { .ui-pressable, .ui-pressable--pressed { transition: none; transform: none; } }
 .ui-noise-decoration { opacity: ${tokens.effects.noise.opacity}; pointer-events: none; }
 /* Add real runtime bottom safe-area padding and measured action-tray height in the product. */
 `;
@@ -100,7 +105,7 @@ const manifest = {
   iconCount: symbols.length,
   standaloneIconCount: symbols.length * 2,
   icons: symbols.map(s => ({ id: s.id, source: s.origin, normal: `icons/${s.id}.svg`, green: `icons/${s.id}-green.svg` })),
-  navigation: tokens.icons.nav.map((id, index) => ({ label: ['首页', '服务', '发布', '消息', '我的'][index], icon: id })),
+  navigation: tokens.icons.nav.map((id, index) => ({ label: content.labels.navigation[index], icon: id })),
   files: trackedNames.sort().map(name => ({ path: name, bytes: fs.statSync(path.join(directory, name)).size, sha256: hash(fs.readFileSync(path.join(directory, name))) })),
   limitations: ['No Figma/native layered source reconstructed', 'SVG display and any PNG export not yet verified on WeChat runtime', 'Leaf decoration editable source not available', 'Styles and candidate colors require device review']
 };

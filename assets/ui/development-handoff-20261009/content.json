@@ -23,11 +23,22 @@
     "latestSort": "最新",
     "navigation": [
       "首页",
-      "服务",
+      "发现",
       "发布",
-      "消息",
+      "服务",
       "我的"
     ],
+    "discoverTitle": "发现",
+    "discoverEmpty": "暂时没有可展示的商家内容",
+    "merchantPost": "商家主帖",
+    "favorite": "收藏",
+    "shareWechat": "微信分享",
+    "serviceNotifications": "通知中心",
+    "merchantPending": "商家资料审核中",
+    "merchantRejected": "暂不可发布商家主帖",
+    "postPending": "新版本审核中，当前已发布版本继续展示",
+    "postRejected": "新版本未通过，当前已发布版本不受影响",
+    "postRiskRemoved": "内容已下架，处理记录已保留",
     "detailTitle": "需求详情",
     "serviceTime": "服务时间",
     "description": "需求说明",
@@ -131,6 +142,13 @@
     "rawIdentityPublic": false,
     "privacyGatedByServer": true,
     "exampleAmountsNotDefaultValues": true,
-    "avatarUserConsentRequired": true
+    "avatarUserConsentRequired": true,
+    "discoverApprovedMerchantPostsOnly": true,
+    "merchantPostContactFieldsForbidden": [
+      "phone",
+      "wechat",
+      "detailedAddress"
+    ],
+    "notificationEntry": "service-top-right"
   }
 }

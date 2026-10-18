@@ -139,16 +139,24 @@
     "inheritedCount": 20,
     "added": [
       "icon-services-bag",
-      "icon-info"
+      "icon-info",
+      "icon-discover"
     ],
-    "total": 22,
+    "total": 23,
     "nav": [
       "icon-home",
-      "icon-services-bag",
+      "icon-discover",
       "icon-plus",
-      "icon-message",
+      "icon-services-bag",
       "icon-user"
-    ]
+    ],
+    "serviceNotification": "icon-message"
+  },
+  "motion": {
+    "pressScale": 0.96,
+    "pressDurationMs": 120,
+    "releaseDurationMs": 160,
+    "reducedMotion": "no-scale"
   },
   "media": {
     "designReferenceOnlyPlaceholders": true,

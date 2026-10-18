@@ -22,8 +22,8 @@
     "path": "../../branding/miniapp-avatar-v4/avatar-144.png",
     "note": "Prepared prior upload candidate; latest UI selection does not newly approve a brand-avatar change"
   },
-  "iconCount": 22,
-  "standaloneIconCount": 44,
+  "iconCount": 23,
+  "standaloneIconCount": 46,
   "icons": [
     {
       "id": "icon-home",
@@ -156,6 +156,12 @@
       "source": "new deterministic SVG in inherited 24px/1.75 family",
       "normal": "icons/icon-info.svg",
       "green": "icons/icon-info-green.svg"
+    },
+    {
+      "id": "icon-discover",
+      "source": "approved option A deterministic compass in inherited 24px/1.75 family",
+      "normal": "icons/icon-discover.svg",
+      "green": "icons/icon-discover-green.svg"
     }
   ],
   "navigation": [
@@ -164,16 +170,16 @@
       "icon": "icon-home"
     },
     {
-      "label": "服务",
-      "icon": "icon-services-bag"
+      "label": "发现",
+      "icon": "icon-discover"
     },
     {
       "label": "发布",
       "icon": "icon-plus"
     },
     {
-      "label": "消息",
-      "icon": "icon-message"
+      "label": "服务",
+      "icon": "icon-services-bag"
     },
     {
       "label": "我的",
@@ -188,13 +194,13 @@
     },
     {
       "path": "components.json",
-      "bytes": 5626,
-      "sha256": "8571CDCFCF7D93A4CCA8D2AA75479025808D2978153CECB59AB9E6397EB4D980"
+      "bytes": 7338,
+      "sha256": "BFB15C7A7CC04FBA28482D0B85F4F1E8B83A4AF2B789A280DCF17A139CB4B5F1"
     },
     {
       "path": "content.json",
-      "bytes": 3655,
-      "sha256": "ED90A5127E6844884BD9D20865D5EA8A5D6526131028A71BF632BA25050E8F09"
+      "bytes": 4411,
+      "sha256": "ED949564BE0C4132725B9D206593ABB14BFDEEE9105022D7EA85B99A9BC3F8DD"
     },
     {
       "path": "coverage.json",
@@ -208,13 +214,13 @@
     },
     {
       "path": "design-tokens.json",
-      "bytes": 3511,
-      "sha256": "4498A3B791AD1E739BFF193BEC1BDA81F4A7A770258678C622434887AD7C2A86"
+      "bytes": 3711,
+      "sha256": "ABB362C45CEB031B3D2BD4B876E43C7DAB434D8F4EAD4D9741C2ED18E0C9C454"
     },
     {
       "path": "icons.svg",
-      "bytes": 7433,
-      "sha256": "A1C185E72C508F30AC89C346DB0B4577007D3BE8498D9E3A2732F6141E40D22E"
+      "bytes": 7819,
+      "sha256": "9892CCEFC547227AA43F3E19FB57C5F4B7EDFD0F580E70DF0E89E8459B631CD5"
     },
     {
       "path": "icons/icon-back-green.svg",
@@ -255,6 +261,16 @@
       "path": "icons/icon-clock.svg",
       "bytes": 261,
       "sha256": "CD6CBEC6A7CA231B31FA189A1476B8E69F77ECF7E81BE1B9C42677D6F9A387B6"
+    },
+    {
+      "path": "icons/icon-discover-green.svg",
+      "bytes": 336,
+      "sha256": "A3A56A17A7F02224DF0A6CED08C47E9CC6328B3DC8F405620843DC1132638880"
+    },
+    {
+      "path": "icons/icon-discover.svg",
+      "bytes": 336,
+      "sha256": "7A4C27A517D51A1885E7F58AE2C11CAD025A6502222E850AA22A137A5EAB1A2D"
     },
     {
       "path": "icons/icon-file-green.svg",
@@ -448,8 +464,8 @@
     },
     {
       "path": "theme.wxss",
-      "bytes": 1877,
-      "sha256": "BA2FE9AD9CBC9CBE3A1ED1BF6DA3564D59D376B9AE480107CEB587F3A1630ADB"
+      "bytes": 2155,
+      "sha256": "DB51860571B81745A8969173B1C2F32074BEB42478A65DC8CA4ED527270FB9EF"
     }
   ],
   "limitations": [

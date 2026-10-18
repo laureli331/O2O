@@ -21,5 +21,8 @@
 .ui-glass-fallback { background: rgba(252,251,247,0.76); border: 1px solid #D8E2DA; box-shadow: 0 16rpx 48rpx rgba(38,58,49,0.08); }
 .ui-icon { width: 24px; height: 24px; }
 .ui-touch-target { min-width: 88rpx; min-height: 88rpx; }
+.ui-pressable { transition: transform 160ms ease; transform-origin: center; }
+.ui-pressable--pressed { transform: scale(0.96); transition-duration: 120ms; }
+@media (prefers-reduced-motion: reduce) { .ui-pressable, .ui-pressable--pressed { transition: none; transform: none; } }
 .ui-noise-decoration { opacity: 0.015; pointer-events: none; }
 /* Add real runtime bottom safe-area padding and measured action-tray height in the product. */

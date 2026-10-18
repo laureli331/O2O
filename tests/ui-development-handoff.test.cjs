@@ -122,7 +122,7 @@ test('human approvals are recorded separately from unresolved rules and producti
 });
 
 test('exact copy preserves new visual decisions, placeholders and qualification separation', () => {
-  assert.deepEqual(content.labels.navigation, ['首页', '服务', '发布', '消息', '我的']);
+  assert.deepEqual(content.labels.navigation, ['首页', '发现', '发布', '服务', '我的']);
   assert.deepEqual(content.labels.dimensions, ['态度', '效率', '沟通']);
   assert.equal(content.labels.brand, '湘邻湘友');
   assert.equal(content.labels.ratingPlaceholder, '说说这次服务的感受吧...');
@@ -149,11 +149,18 @@ test('candidate text colors are readable on declared solid surfaces and still re
 });
 
 test('SVG icons are safe, standalone, complete and use a single service bag identity', () => {
-  assert.equal(manifest.iconCount, 22);
-  assert.equal(manifest.standaloneIconCount, 44);
-  assert.equal(new Set(manifest.icons.map(item => item.id)).size, 22);
+  assert.equal(manifest.iconCount, 23);
+  assert.equal(manifest.standaloneIconCount, 46);
+  assert.equal(new Set(manifest.icons.map(item => item.id)).size, 23);
+  assert.deepEqual(manifest.navigation.map(item => item.label), ['首页', '发现', '发布', '服务', '我的']);
+  assert.equal(manifest.navigation.find(item => item.label === '发现').icon, 'icon-discover');
   assert.equal(manifest.navigation.find(item => item.label === '服务').icon, 'icon-services-bag');
+  assert.equal(manifest.navigation.some(item => item.label === '消息'), false);
   assert.deepEqual(tokens.icons.nav, manifest.navigation.map(item => item.icon));
+  const discover = read(path.join(directory, 'icons/icon-discover.svg'));
+  assert(discover.includes('<circle cx="12" cy="12" r="8.5"/>'));
+  assert(discover.includes('<path d="M14.75 9.25 13.2 13.2l-3.95 1.55 1.55-3.95 3.95-1.55Z"/>'));
+  assert(discover.includes('<circle cx="12" cy="12" r="1"/>'));
   for (const item of manifest.files.filter(item => item.path.endsWith('.svg'))) validateSafeSVG(read(path.join(directory, item.path)));
   const inherited = read(path.join(repo, 'assets/ui/v2/icons.svg'));
   const normal = read(path.join(directory, 'icons/icon-home.svg'));
@@ -172,6 +179,11 @@ test('component states reference real groups and acceptance cases, including fai
   assert(components.items.find(item => item.id === 'C13').states.includes('valid-zero'));
   assert(components.items.find(item => item.id === 'C13').states.includes('unknown'));
   assert.equal(components.gates.repairOrder, 'HD01');
+  assert.deepEqual(components.items.find(item => item.id === 'C01').pages, ['V01', 'V04', 'V05', 'V10', 'V23']);
+  assert(components.items.find(item => item.id === 'C16').states.includes('unread'));
+  assert(components.items.find(item => item.id === 'C17').states.includes('risk-removed'));
+  assert(components.items.find(item => item.id === 'C18').states.includes('merchant-approved'));
+  assert(components.items.find(item => item.id === 'C19').states.includes('replacement-pending'));
 });
 
 test('handoff Markdown links resolve and current source takes precedence without mutating old documents', () => {
