@@ -9,14 +9,14 @@ const read = file => new TextDecoder('utf-8', { fatal: true }).decode(fs.readFil
 const file = 'docs/ascii-design-prd-2.1.md';
 const document = read(file);
 const prd = read('docs/prd.md');
-const counts = [2, 4, 4, 9, 5, 3, 19, 2, 4, 4, 1, 1, 1, 5, 5, 3, 3, 4, 2, 3, 3, 10];
+const counts = [2, 4, 4, 9, 5, 3, 19, 2, 4, 4, 1, 1, 1, 5, 5, 3, 3, 4, 2, 3, 3, 10, 10];
 const expected = counts.flatMap((n, i) => Array.from({ length: n }, (_, j) => `V${String(i + 1).padStart(2, '0')}-${String.fromCharCode(65 + j)}`));
 const common = ['G01', 'G02', 'G03', 'G04'];
 const cases = [...prd.matchAll(/^\| ((?:T|BX|RT|AT|DT)\d{2}) \|/gm)].map(m => m[1]).sort();
 
 function validate(text) {
   const groups = [...text.matchAll(/^## (V\d{2}) /gm)].map(m => m[1]);
-  assert.deepEqual(groups, Array.from({ length: 22 }, (_, i) => `V${String(i + 1).padStart(2, '0')}`), 'all PRD page groups in order');
+  assert.deepEqual(groups, Array.from({ length: 23 }, (_, i) => `V${String(i + 1).padStart(2, '0')}`), 'all PRD page groups in order');
   const headings = [...text.matchAll(/^### ((?:V\d{2}-[A-Z])|(?:G\d{2})) /gm)].map(m => m[1]);
   assert.deepEqual(headings, [...expected, ...common], 'every reviewed subpage and shared state has its own drawing');
   assert.equal((text.match(/^```/gm) || []).length % 2, 0, 'paired fences');
@@ -27,7 +27,7 @@ function validate(text) {
     assert.match(section, /```text\n\+-+\+\n\|[\s\S]*?\n\+-+\+\n```/, id + ' has a closed ASCII screen');
   }
   const mapped = [...text.matchAll(/^\| ((?:T|BX|RT|AT|DT)\d{2}) \| ([^\n]+) \|$/gm)];
-  assert.equal(cases.length, 74, 'source acceptance inventory');
+  assert.equal(cases.length, 82, 'source acceptance inventory');
   assert.deepEqual(mapped.map(m => m[1]).sort(), cases, 'exact acceptance coverage without duplicates');
   const known = new Set(headings);
   for (const row of mapped) {
@@ -36,17 +36,17 @@ function validate(text) {
     for (const id of refs) assert(known.has(id), row[1] + ' unknown screen ' + id);
   }
   const matrix = [...text.matchAll(/^\| (V\d{2}) \| ([^\n]+) \| ([^\n]+) \|$/gm)];
-  assert.equal(matrix.length, 22, '22 page-group coverage rows');
+  assert.equal(matrix.length, 23, '23 page-group coverage rows');
   for (const row of matrix) {
     assert.deepEqual(row[2].match(/V\d{2}-[A-Z]/g), expected.filter(id => id.startsWith(row[1] + '-')), row[1] + ' matrix matches drawings');
   }
   return true;
 }
 
-test('ASCII design covers every PRD group, all subpages, shared surfaces and 74 current acceptance cases', () => assert.equal(validate(document), true));
+test('ASCII design covers every PRD group, all subpages, shared surfaces and 82 current acceptance cases', () => assert.equal(validate(document), true));
 test('coverage rejects missing group, missing drawing, removed acceptance or broken target', () => {
   for (const changed of [
-    document.replace(/^## V22 .+$/m, ''),
+    document.replace(/^## V23 .+$/m, ''),
     document.replace(/^### V07-R .+$/m, ''),
     document.replace(/^\| BX17 \|.+\n/m, ''),
     document.replace(/^\| BX17 \|.+$/m, '| BX17 | V99-A |'),

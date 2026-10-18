@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "overviewCount": 5,
-  "scope": "PRD 2.0 page groups; five selected visuals remain unchanged; not route definitions",
+  "scope": "PRD 2.1 page groups; five selected visuals remain unchanged; not route definitions",
   "prd": "../../../docs/prd.md",
   "items": [
     {
@@ -397,6 +397,28 @@
         "BX09"
       ],
       "gap": "本人账单、实缴/未知、分项异议/补缴、抵扣、注销人工处理与真实支付通道待设计和实测"
+    },
+    {
+      "id": "V23",
+      "label": "发现/商家主帖/发布审核",
+      "visualPages": [],
+      "status": "not-drawn",
+      "fields": [
+        "F10",
+        "F12",
+        "F22"
+      ],
+      "acceptance": [
+        "T19",
+        "T20",
+        "T21",
+        "T22",
+        "T23",
+        "T24",
+        "T25",
+        "T26"
+      ],
+      "gap": "当前只有已批准合同与合成预览范围；真实商家主体、代表授权、准入、内容处理依据、服务端鉴权、审核通知及实机验证仍待 DP58—DP60"
     }
   ],
   "modules": [
@@ -413,7 +435,8 @@
     "M11",
     "M12",
     "M13",
-    "M14"
+    "M14",
+    "M15"
   ],
   "extensions": [
     "R01",
@@ -425,6 +448,6 @@
     "R07",
     "R08"
   ],
-  "prdVersion": "2.0",
-  "pageGroupCount": 22
+  "prdVersion": "2.1",
+  "pageGroupCount": 23
 }

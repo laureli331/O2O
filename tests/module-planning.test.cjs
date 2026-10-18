@@ -9,6 +9,16 @@ const read = name => fs.readFileSync(path.join(root, name), 'utf8');
 const records = JSON.parse(read('docs/module-specs/decisions.json'));
 const handoff = JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
 
+test('current planning exposes first-release merchant discovery without enabling its unresolved real-world gates', () => {
+  const prd = read('docs/prd.md'), plan = read('docs/development-plan.md'), design = read('docs/structured-design.md');
+  for (const phrase of ['M15 商家发现与主帖', 'F22 商家主帖', 'V23 发现/商家主帖/发布审核', 'N10 商家主帖审核结果']) {
+    assert([prd, plan, design].some(text => text.includes(phrase)), phrase);
+  }
+  for (const phrase of ['DP58', '商家主体', '代表授权', '内容处理依据', '真实接入结果']) assert(plan.includes(phrase), phrase);
+  assert(prd.includes('基础发帖免费'));
+  assert(prd.includes('内容加热仍留在第二版酌情评估'));
+});
+
 test('latest reply approves only clarified CQ37 A and explicitly replaces independent operator accounts with owner account sharing', () => {
   const b=records.businessCloseoutDecisionBatches[3];
   assert.equal(b.userReply,'我的另一个运营伙伴, 用的是我的账号管理, 所以不用那么麻烦\na');

@@ -3,7 +3,7 @@ const test=require('node:test'),assert=require('node:assert/strict'),fs=require(
 const {validateRemapping,rows}=require('./helpers/development-remapping-validator.cjs');
 const root=path.resolve(__dirname,'..'),read=p=>new TextDecoder('utf-8',{fatal:true}).decode(fs.readFileSync(path.join(root,p)));
 function bundle(){return {prd:read('docs/prd.md'),plan:read('docs/development-plan.md'),design:read('docs/structured-design.md'),meta:JSON.parse(read('docs/development-remapping-20261015.json')),tech:JSON.parse(read('docs/development-decisions.json'))};}
-test('current 57-task plan and 22-page design trace all current fields, modules, notifications and 74 exact acceptance cases',()=>assert.equal(validateRemapping(bundle()),true));
+test('current 60-task plan and 23-page design trace all current fields, modules, notifications and 82 exact acceptance cases',()=>assert.equal(validateRemapping(bundle()),true));
 test('original plan/design stay complete and byte-normalized identical to their source Git version',()=>{
  const b=bundle();assert.match(b.meta.sourceCommit,/^[a-f0-9]{40}$/);
  for(const a of b.meta.archives){const current=read(a.path).replace(/\r\n/g,'\n');assert.equal(crypto.createHash('sha256').update(current).digest('hex').toUpperCase(),a.sha256LfNormalized);const original=a.path.includes('development-plan')?'docs/development-plan.md':'docs/structured-design.md';assert.equal(current,cp.execFileSync('git',['show',b.meta.sourceCommit+':'+original],{cwd:root,encoding:'utf8'}).replace(/\r\n/g,'\n'));}
@@ -14,18 +14,18 @@ test('old task progress and approvals are retained separately and current status
  const record=JSON.parse(read('docs/module-specs/decisions.json')),handoff=JSON.parse(read('assets/ui/development-handoff-20261009/decisions.json'));
  assert.equal(record.prdConsolidation.oldTaskPlanRequiresRemapping,false);assert.equal(record.currentPlanningFocus.planningComplete,false);assert.equal(record.currentPlanningFocus.implementationEnabled,false);
  for(const key of ['developmentRemapping','currentPlanningFocus','planningFocusHistory','prdConsolidation'])assert.deepEqual(handoff[key],record[key],key);
- assert.equal(record.developmentRemapping.taskCount,57);assert.equal(record.developmentRemapping.productImplemented,false);
+ assert.equal(record.developmentRemapping.taskCount,60);assert.equal(record.developmentRemapping.productImplemented,false);
  assert.equal(record.remainingPlanningAudit.totalQuestionCount,53);assert.equal(record.remainingPlanningAudit.remainingQuestionCount,0);
 });
 const mutations=[
- ['duplicate task ID',b=>{const r=b.plan.match(/^\| DP57 \|[^\r\n]+/m)[0];b.plan+='\n'+r+'\n';},/Duplicate identifier DP/],
+ ['duplicate task ID',b=>{const r=b.plan.match(/^\| DP60 \|[^\r\n]+/m)[0];b.plan+='\n'+r+'\n';},/Duplicate identifier DP/],
  ['unknown acceptance page',b=>b.plan=b.plan.replace(/(^\| BX14 \|[^\r\n]+)V07/m,'$1V99'),/Unknown acceptance page BX14/],
  ['a notification is omitted',b=>b.design=b.design.replace(/^\| N05 \|[^\r\n]+\r?\n/m,''),/Exact current notices/],
  ['inverse field-page coverage is omitted',b=>b.design=b.design.replace(/(^\| F01 \| )V05、V08、V10/m,'$1V05、V10'),/Consistent field\/page directions F01/],
  ['missing transaction task',b=>b.plan=b.plan.replace(/^\| DP49 \|[^\r\n]+\r?\n/m,''),/Task count/],
  ['missing field mapping',b=>b.plan=b.plan.replace(/^\| F21 [^\r\n]+\r?\n/m,''),/Coverage F/],
  ['missing new business',b=>b.plan=b.plan.replace(/^\| M13 [^\r\n]+\r?\n/m,''),/Coverage M/],
- ['missing billing page',b=>b.design=b.design.replace(/^\| V22 [^\r\n]+\r?\n/m,''),/Design page coverage/],
+ ['missing discovery page',b=>b.design=b.design.replace(/^\| V23 [^\r\n]+\r?\n/m,''),/Design page coverage/],
  ['missing outage acceptance',b=>b.plan=b.plan.replace(/^\| BX14 \|[^\r\n]+\r?\n/m,''),/Acceptance coverage BX/],
  ['changing approved expected result',b=>b.plan=b.plan.replace('仅受影响平台故障暂停自动结束与主计佣','全部交易永久暂停自动结束与主计佣'),/Exact acceptance BX14/],
  ['manual completion returns',b=>b.plan=b.plan.replace('四类服务到期、有效交付异议/解除与双方取消：只在严格过有效到期/保护且无阻断时自动结束','接单员上报完成后客户确认完成'),/Automatic close/],

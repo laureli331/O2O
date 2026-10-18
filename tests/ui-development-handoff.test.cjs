@@ -25,8 +25,8 @@ const expectedHash = 'A73C4D802FBE91900CF9D1E751AB1C45391B7FD10C1868476BDF392605
 
 function validateCoverage(value) {
   const ids = value.items.map(item => item.id);
-  assert.equal(new Set(ids).size, 22, 'page groups must be unique');
-  assert.deepEqual([...ids].sort(), Array.from({ length: 22 }, (_, i) => `V${String(i + 1).padStart(2, '0')}`));
+  assert.equal(new Set(ids).size, 23, 'page groups must be unique');
+  assert.deepEqual([...ids].sort(), Array.from({ length: 23 }, (_, i) => `V${String(i + 1).padStart(2, '0')}`));
   assert.equal(value.overviewCount, 5);
   for (const item of value.items) {
     assert(prd.includes(`| ${item.id} |`), `Unknown page ${item.id}`);
@@ -98,7 +98,7 @@ test('selected attachment is byte-identical and source artifacts remain traceabl
   assert.equal(selection.imageSha256, expectedHash);
 });
 
-test('all 22 current page groups and their real PRD references are covered without pretending they are fully drawn', () => {
+test('all 23 current page groups and their real PRD references are covered without pretending they are fully drawn', () => {
   validateCoverage(coverage);
   assert.equal(coverage.items.find(item => item.id === 'V04').status, 'not-drawn');
   assert.equal(coverage.items.find(item => item.id === 'V21').status, 'not-drawn');

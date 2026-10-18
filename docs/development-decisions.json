@@ -587,8 +587,8 @@
     "documentationRemappingComplete": true,
     "productImplemented": false,
     "realServicesEnabled": false,
-    "taskCount": 57,
-    "activeTaskCount": 51,
+    "taskCount": 60,
+    "activeTaskCount": 54,
     "deferredTaskIds": [
       "DP30",
       "DP31",
@@ -598,12 +598,12 @@
       "DP35"
     ],
     "coverage": {
-      "modules": 14,
+      "modules": 15,
       "extensions": 8,
-      "fields": 21,
-      "pageGroups": 22,
-      "notifications": 9,
-      "acceptanceCases": 74
+      "fields": 22,
+      "pageGroups": 23,
+      "notifications": 10,
+      "acceptanceCases": 82
     },
     "archives": [
       {
@@ -924,7 +924,8 @@
       "DP37": {
         "phase": "G",
         "dependencies": [
-          "DP36"
+        "DP36",
+        "DP60"
         ],
         "status": "未开始",
         "productAcceptancePassed": false
@@ -1122,6 +1123,38 @@
         ],
         "status": "未开始",
         "productAcceptancePassed": false
+    },
+    "DP58": {
+      "phase": "D",
+      "dependencies": [
+        "DP01",
+        "DP02"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP59": {
+      "phase": "D",
+      "dependencies": [
+        "DP09",
+        "DP10",
+        "DP11",
+        "DP12",
+        "DP17",
+        "DP18",
+        "DP58"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
+    },
+    "DP60": {
+      "phase": "G",
+      "dependencies": [
+        "DP05",
+        "DP59"
+      ],
+      "status": "未开始",
+      "productAcceptancePassed": false
       }
     }
   }

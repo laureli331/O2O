@@ -10227,8 +10227,8 @@
     "document": "docs/development-plan.md",
     "designDocument": "docs/structured-design.md",
     "documentationRemappingComplete": true,
-    "taskCount": 57,
-    "activeTaskCount": 51,
+    "taskCount": 60,
+    "activeTaskCount": 54,
     "deferredTaskIds": [
       "DP30",
       "DP31",
