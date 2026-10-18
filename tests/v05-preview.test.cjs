@@ -32,3 +32,8 @@ test('personal transaction heading and earnings share a row; disclosure stays in
  assert(!html.includes('<small>按到期订单统计 · 非到账金额</small>'));
  assert(html.includes('<p class="hint">按到期订单统计 · 非到账金额<br>'));
 });
+
+test('entry handoff layout centers its content independently from forms and fixed actions',()=>{
+ assert(html.includes("classList.toggle('handoff-layout',centered)"));assert(html.includes('.handoff-layout>.content{margin:auto 0;'));
+ assert(html.includes("footer='',centered=false"));
+});
