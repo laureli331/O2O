@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-18",
+  "timezone": "Asia/Shanghai",
+  "sourceCommit": "c4e518edba74e7697c1308032ded67863dc1bb2d",
+  "document": "docs/v1-pricing-budget-confirmed-20261018.md",
+  "status": "v1-rates-and-cash-budget-cap-confirmed-cost-and-demand-evidence-pending",
+  "scope": "v1-only",
+  "responseType": "direct-user-message",
+  "userReply": "价格就这样定了, 预算采纳你的推荐",
+  "commission": {
+    "ratesAndCapsConfirmed": true,
+    "configuration": {
+      "跑腿": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "none"
+        }
+      },
+      "维修": {
+        "rateBasisPoints": 1500,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 3000,
+          "unit": "entire-service"
+        }
+      },
+      "闲置": {
+        "rateBasisPoints": 100,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "single-transaction"
+        }
+      },
+      "其它": {
+        "rateBasisPoints": 1000,
+        "trial": true,
+        "cap": {
+          "kind": "fixed",
+          "amountCents": 2000,
+          "unit": "entire-service"
+        }
+      }
+    },
+    "sourceRecord": "docs/monetization-decisions-20261015.json",
+    "existingBillingDisputeArrearsAndRefundRulesChanged": false,
+    "newConsumerServicePricesSet": false,
+    "reviewDaysAfterActualActivation": 30
+  },
+  "budget": {
+    "currency": "CNY",
+    "monthlyCashExpenseCapCents": 50000,
+    "phase": "v1-trial-operation",
+    "includes": [
+      "platform-recurring-operating-cash-expenses",
+      "cash-compensation-actually-paid-to-partner-or-others"
+    ],
+    "upfrontRegistrationAndCertification": "separately-verify-and-confirm",
+    "actualCostsVerified": false,
+    "minimumViableCostVerified": false,
+    "lineItemAllocations": null,
+    "cashCompensationAmount": null,
+    "automaticBudgetIncrease": false,
+    "overBudgetHandling": "reassess-costs-and-trial-scale-then-obtain-explicit-user-confirmation",
+    "procurementAuthorized": false
+  },
+  "currentEvidence": {
+    "feeRulesIntroducedToServiceProviders": false,
+    "providerAcceptanceValidated": false,
+    "localRepairServicePrices": null,
+    "localErrandServicePrices": null,
+    "observedOrderVolume": null,
+    "actualCommissionReceipts": null,
+    "realIncomeForecast": null
+  },
+  "replyProvenance": {
+    "feeIntroductionReply": {
+      "questionItemId": "[\"request_user_input_async\",\"call_4f9e9dc0cd9b4cb284afdd1e0821aa7f\",0]",
+      "question": "第一版收费意愿的实际进展：截至现在，是否已有维修人员或愿意接跑腿的居民，了解现行佣金规则并明确表示接受？未介绍过、只聊过或已明确接受，请据实区分。",
+      "answer": "尚未正式介绍收费规则"
+    },
+    "priceAndBudgetBeforeRecommendation": {
+      "responseType": "direct-user-message",
+      "userReply": "2未知, 3未定, 你的建议是什么"
+    },
+    "acceptedBudgetRecommendationExcerpt": "预算方面，我建议先用500元／月作为候选测算上限。"
+  },
+  "discussionScope": {
+    "current": "v1",
+    "v2Resume": "user-initiated-only",
+    "sourceUserReply": "第二版等我主动找你聊的时候, 再聊. 现在我们应该继续探讨第一版",
+    "previousActivityQuestionsAwaitingAnswer": false,
+    "automationConfigurationChanged": false
+  },
+  "execution": {
+    "supplierVerificationCompleted": false,
+    "realFeesVerified": false,
+    "realChargingEnabled": false,
+    "procurementAuthorized": false,
+    "productionDeploymentAuthorized": false,
+    "technicalDetailingStarted": false,
+    "visualDesignStarted": false
+  }
+}
