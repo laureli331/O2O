@@ -3,7 +3,7 @@
   "date": "2026-10-18",
   "timezone": "Asia/Shanghai",
   "sourceCommit": "3539430a616de3cbfb8c065a2498b96f2cd795e7",
-  "status": "public-source-research-and-proposal-pending-user-decision",
+  "status": "public-source-research-priority-A-confirmed-project-eligibility-pending",
   "document": "docs/v1-payment-access-research-20261018.md",
   "sources": [
     {
@@ -187,8 +187,8 @@
   },
   "recommendation": {
     "id": "check-commission-and-direct-ai-purchase-first-reserve-stored-value-until-verified",
-    "approvalStatus": "pending-user-decision",
-    "selected": null,
+    "approvalStatus": "confirmed-priority-only",
+    "selected": "A",
     "existingBusinessScopeChanged": false
   },
   "projectGatesPassed": [],
@@ -202,5 +202,27 @@
     "refund": false,
     "productCodeChange": false,
     "automationChange": false
+  },
+  "priorityDecision": {
+    "date": "2026-10-18",
+    "sourceCommit": "714de429fd2b1b67388dbcf3deb47a09856d2f85",
+    "questionItemId": "[\"request_user_input_async\",\"call_963f68a4886e4e1b86e308aa9f111416\",0]",
+    "question": "官方资料已确认企业/个体户的虚拟支付路径，但本项目佣金场景的类目、自营人民币余额的材料及各端本金退回仍待核实。第一版接下来采用哪种推进方式？这一步只决定优先顺序，不开通账号或收费。",
+    "answer": "A（推荐）：先推进佣金场景核实和AI次数包直购；充值余额保留方案，待资质、用途及退款执行确认后，再决定第一版是否启用。",
+    "selected": "A",
+    "scope": "priority-only",
+    "priorityTracks": [
+      "commission-scene-eligibility",
+      "ai-pack-direct-purchase"
+    ],
+    "storedValueDisposition": "retain-plan-v1-enablement-pending",
+    "pendingStoredValueConditions": [
+      "qualification",
+      "fund-use",
+      "refund-execution"
+    ],
+    "realSalesAuthorized": false,
+    "merchantApplicationAuthorized": false,
+    "externalMessageAuthorized": false
   }
 }
