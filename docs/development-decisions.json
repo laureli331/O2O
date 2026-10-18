@@ -491,6 +491,50 @@
     "merchantPermissionVerified": false,
     "userRestrictionCorrection": "third-party-transaction-entry-and-commission-not-all-payment"
   },
+  "discoveryFirstReleaseDecision": {
+    "date": "2026-10-18",
+    "release": "v1",
+    "capabilities": [
+      "approved-merchant-posting",
+      "approved-displayable-merchant-feed",
+      "post-detail",
+      "favorite",
+      "wechat-share"
+    ],
+    "navigation": [
+      "首页",
+      "发现",
+      "发布",
+      "服务",
+      "我的"
+    ],
+    "discoverIcon": "compass-option-a",
+    "notificationEntry": "service-top-right",
+    "notificationLevel": "service-secondary-page",
+    "designDocument": "docs/superpowers/specs/2026-10-18-discover-navigation-design.md",
+    "designCommit": "a220bd1",
+    "iconSelectionCommit": "0b735f4",
+    "basePostingFree": true,
+    "overridesHistoricalMerchantSquareRelease": true,
+    "excludedCapabilities": [
+      "comment",
+      "like",
+      "follow",
+      "video",
+      "hot-ranking",
+      "personalized-recommendation",
+      "content-heating",
+      "membership-paywall"
+    ],
+    "realExecution": {
+      "publishingEnabled": false,
+      "reviewEnabled": false,
+      "notificationsEnabled": false,
+      "salesEnabled": false,
+      "paymentsEnabled": false,
+      "promotionEnabled": false
+    }
+  },
   "versionTwoReminder": {
     "createdDate": "2026-10-08",
     "automationId": "automation",

@@ -17,7 +17,10 @@ function validate(b) {
   assert.deepEqual(ids(b.prd,'VP'),scope,'PRD second-version scope');
   assert.deepEqual(ids(b.roadmap,'VP'),scope,'Roadmap second-version scope');
   assert.deepEqual(b.record.featurePlanning.v2Scope,legacyScope,'Original feature-planning scope is retained as history');
-  assert.equal(b.record.featurePlanning.merchantSquareRelease,'v2','Merchant square must be second version');
+  assert.equal(b.record.featurePlanning.merchantSquareRelease,'v2','Historical merchant-square release remains v2');
+  assert.equal(b.record.discoveryFirstReleaseDecision.release,'v1','Current decision moves free base discovery into v1');
+  assert.equal(b.record.discoveryFirstReleaseDecision.overridesHistoricalMerchantSquareRelease,true,'Current decision explicitly overrides the historical release assignment');
+  assert.equal(b.record.discoveryFirstReleaseDecision.excludedCapabilities.includes('content-heating'),true,'Content heating stays outside v1');
   assert.equal(b.record.featurePlanning.merchantSquareMainPosts,'merchants-only','Only merchants publish square main posts');
   assert.deepEqual(b.record.featurePlanning.merchantSquareCustomerActions,['comment','favorite','wechat-share'],'Customer square actions');
   assert.equal(b.record.featurePlanning.merchantCommercialTermsConfirmed,false,'Commercial terms remain unconfirmed');
@@ -53,7 +56,8 @@ function validate(b) {
 }
 test('second-version scope, original scope and created conditional reminder agree',()=>assert.equal(validate(current()),true));
 const changes=[
-  ['merchant scope moved into first version', b=>b.record.featurePlanning.merchantSquareRelease='v1', /second version/],
+  ['historical merchant scope rewritten in place', b=>b.record.featurePlanning.merchantSquareRelease='v1', /Historical merchant-square/],
+  ['current first-release override removed', b=>delete b.record.discoveryFirstReleaseDecision, /release/],
   ['unconfirmed merchant price filled in', b=>b.record.featurePlanning.merchantPrices={entry:99}, /fabricated/],
   ['merchant permission claimed verified', b=>b.record.featurePlanning.merchantPermissionVerified=true, /not verified/],
   ['all payment confused with commission', b=>b.record.featurePlanning.userRestrictionCorrection='all-payment-blocked', /correction/],

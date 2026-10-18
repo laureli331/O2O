@@ -9,6 +9,8 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const specPath = path.join(root, 'docs/superpowers/specs/2026-10-18-discover-navigation-design.md');
 const spec = fs.readFileSync(specPath, 'utf8');
+const context = fs.readFileSync(path.join(root, 'CONTEXT.md'), 'utf8');
+const basis = fs.readFileSync(path.join(root, 'docs/module-specs/current-development-basis-20261015.md'), 'utf8');
 
 test('approved first-release navigation and notification placement are explicit', () => {
   for (const phrase of [
@@ -57,4 +59,12 @@ test('review replacement and privacy boundaries cannot be mistaken for live impl
 test('written specification has no unresolved placeholders', () => {
   assert.doesNotMatch(spec, /\b(?:TBD|TODO|FIXME)\b/i);
   assert.doesNotMatch(spec, /待确认|另行确认|以后再说/);
+});
+
+test('current context and development basis point back to the approved design and current override', () => {
+  for (const text of [context, basis]) {
+    assert.ok(text.includes('第一版发现与导航确认（2026-10-18）'));
+    assert.ok(text.includes('discoveryFirstReleaseDecision'));
+    assert.ok(text.includes('旧 `featurePlanning.merchantSquareRelease = v2` 保留为2026-10-15历史记录'));
+  }
 });
