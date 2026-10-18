@@ -24,7 +24,7 @@ test('earnings counts only latest valid ended errand provider fees, without adva
  const unknown=m.records.map(x=>x.id==='DEMO-02'?{...x,fee:null}:x);assert.equal(m.earnings(unknown).total,null);assert.equal(m.money(null),'待核对');assert.equal(m.money(0),'0.00');
  const disputed=m.records.map(x=>x.id==='DEMO-03'?{...x,dispute:false}:x);assert.equal(m.earnings(disputed).total,5400);assert.equal(m.earnings([]).total,0);
  const otherHistory=[...m.records,{id:'EXCLUDED',kind:'repair',role:'provider',ended:true,confirmed:true,fee:900,version:1},{id:'EXCLUDED',kind:'repair',role:'provider',ended:true,confirmed:true,fee:1000,version:2}];assert.equal(m.earnings(otherHistory).history.length,1);
- assert(html.includes('按到期订单统计 · 非到账金额'));assert(html.includes('与跑腿服务费统计、佣金账单分别记录'));assert(!html.includes('data-open="withdraw"'));
+ assert(html.includes('按到期订单统计 · 非到账金额'));assert(html.includes('与跑腿服务费统计、佣金账单分别记录'));assert(!html.slice(html.indexOf('function income()'),html.indexOf('function documents(')).includes('data-open="withdraw"'));
 });
 
 test('personal transaction heading and earnings share a row; disclosure stays in details',()=>{
@@ -46,7 +46,17 @@ test('documented layout distinguishes populated content from empty states',()=>{
 });
 
 test('cardbag consolidates AI and balance with explicit labels and login protection',()=>{
- assert(html.includes('data-private="cardbag"'));assert(!html.includes('data-private="ai"'));assert(!html.includes('data-private="balance"'));
+ assert(html.includes("['cardbag','card','卡包']"));assert(!html.includes('data-private="ai"'));assert(!html.includes('data-private="balance"'));
  assert(html.includes('id="ai-pack"'));assert(html.includes('id="balance-pack"'));assert(html.includes('<h3>AI整理卡</h3>'));assert(html.includes('<h3>余额</h3>'));assert(!html.includes('平台消费余额'));assert(!html.includes('可用消费余额'));
  assert(html.includes("'balance','cardbag','reminders'"));assert(html.includes('data-open="cardbag">返回卡包'));
+});
+
+test('wallet forms use exact cents and withdrawal is bounded by available principal',()=>{
+ for(const value of ['', '0','-1','1e2','1.001','100000'])assert.equal(m.cents(value),null,value);
+ assert.equal(m.cents('1.90'),190);assert.equal(m.cents('0.01'),1);assert.equal(m.cents('99999.99'),9999999);
+ assert(m.canWithdraw(190,190));assert(!m.canWithdraw(191,190));assert(!m.canWithdraw(0,190));assert(!m.canWithdraw(null,190));
+ assert.deepEqual(plain(m.aiPack),{count:20,price:190,days:180});
+ assert(html.includes("['addresses','user','私人地址簿'],['cardbag','card','卡包']"));assert(html.includes('repeat(4,minmax(0,1fr))'));
+ assert(!html.includes('cardbag-entry" data-private="cardbag"'));assert(html.includes('data-open="ai">查看详情'));assert(html.includes('data-open="topup">充值'));assert(html.includes('data-open="withdraw">提现'));
+ assert(html.includes('尚未到账'));assert(html.includes('提现不包括跑腿服务费统计中的金额'));
 });
