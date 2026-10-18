@@ -44,3 +44,9 @@ test('documented layout distinguishes populated content from empty states',()=>{
   assert(text.includes('有内容时，标题、说明和列表从顶部排列'),file);assert(text.includes('仅空状态采用居中'),file);
  }
 });
+
+test('cardbag consolidates AI and balance with explicit labels and login protection',()=>{
+ assert(html.includes('data-private="cardbag"'));assert(!html.includes('data-private="ai"'));assert(!html.includes('data-private="balance"'));
+ assert(html.includes('id="ai-pack"'));assert(html.includes('id="balance-pack"'));assert(html.includes('<h3>AI整理卡</h3>'));assert(html.includes('<h3>余额</h3>'));assert(!html.includes('平台消费余额'));assert(!html.includes('可用消费余额'));
+ assert(html.includes("'balance','cardbag','reminders'"));assert(html.includes('data-open="cardbag">返回卡包'));
+});
