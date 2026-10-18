@@ -224,5 +224,26 @@
     "realSalesAuthorized": false,
     "merchantApplicationAuthorized": false,
     "externalMessageAuthorized": false
+  },
+  "accountEntryObservation": {
+    "date": "2026-10-18",
+    "sourceCommit": "15229677e3b8dfff27fb16fa5425574a87d82591",
+    "questionItemId": "[\"request_user_input_async\",\"call_efaacbcf63564e9daa6c19a5a35b89ac\",0]",
+    "question": "请查看新个体户小程序管理后台：能否找到“虚拟支付”入口，页面显示什么开通条件或提示？只查看并回复文字即可，这一步不需要点击开通、签约或付款。",
+    "answer": "能找到，显示可申请或开通（可补充提示原文）",
+    "selected": null,
+    "kind": "status-report",
+    "evidenceLevel": "user-report-not-live-platform-verification",
+    "entryVisible": true,
+    "availableAction": "apply-or-open-user-reported",
+    "backendPromptVerbatim": null,
+    "applicationSubmissionNewlyReported": false,
+    "lastExplicitMerchantApplicationStatus": "not-applied-user-reported",
+    "lastExplicitMerchantApplicationStatusSource": "docs/v1-development-preflight-20261018.json#merchantEnrollmentFollowup",
+    "projectApprovalVerified": false,
+    "merchantOpeningVerified": false,
+    "paymentWorkingVerified": false,
+    "applicationSubmissionAuthorized": false,
+    "realPaymentAuthorized": false
   }
 }
