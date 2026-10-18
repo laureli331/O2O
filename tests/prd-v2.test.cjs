@@ -94,6 +94,7 @@ test('AI safeguards and metric definitions survive consolidation with the approv
     const prior = family(archived, prefix), current = family(prd, prefix);
     assert.deepEqual([...current.keys()], [...prior.keys()]);
     for (const [id, row] of prior) {
+      if(id==='AI10'){terms(current.get(id), ['每自然月免费3次','20次／1.90元','180天','手动发布始终免费','真实支付未验证不售卖'], 'Approved resident AI commercial model');continue;}
       if(id==='AI01'){terms(current.get(id), ['四类发布表单均提供','未登录','受限账号'], 'Updated AI scope');continue;}
       assert.equal(current.get(id), normalize(row), id);
     }
