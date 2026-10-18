@@ -48,3 +48,10 @@ test('all four businesses offer grounded AI samples and concise validation messa
   const text=fs.readFileSync(path.join(__dirname,'..',file),'utf8');assert(text.includes('四类'),file);assert(!text.includes('维修/其它无AI'),file);
  }
 });
+
+test('V04 user-facing states give a truthful next step and retain important limits',()=>{
+ for(const copy of ['当前可手动发布，AI整理暂未开放','本次可继续手动填写，AI整理次数已用完','已保留你的内容，可重试或继续填写','需求已更新，重新整理可获取新建议','内容已保留，请查询本次结果'])assert(html.includes(copy),copy);
+ for(const old of ['整理失败，内容已保留。可重试或手填','结果已过时，请重新整理','请先查询结果，勿重复发布'])assert(!html.includes(old),old);
+ const design=fs.readFileSync(path.join(__dirname,'../docs/ascii-design-prd-2.1.md'),'utf8');assert(design.includes('不承诺恢复时间或把未知结果说成成功'));
+ assert(html.includes("if(published||unknown)return"));
+});
