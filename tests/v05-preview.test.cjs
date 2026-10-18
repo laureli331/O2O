@@ -37,3 +37,10 @@ test('entry handoff layout centers its content independently from forms and fixe
  assert(html.includes("classList.toggle('handoff-layout',centered)"));assert(html.includes('.handoff-layout>.content{margin:auto 0;'));
  assert(html.includes("footer='',centered=false"));
 });
+
+test('documented layout distinguishes populated content from empty states',()=>{
+ for(const file of ['docs/prd.md','docs/structured-design.md']){
+  const text=fs.readFileSync(path.join(__dirname,'..',file),'utf8');
+  assert(text.includes('有内容时，标题、说明和列表从顶部排列'),file);assert(text.includes('仅空状态采用居中'),file);
+ }
+});
