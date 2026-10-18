@@ -58,11 +58,21 @@
       "usedForCustomerGoodsEscrow": false,
       "usedForProviderEarningsWithdrawal": false
     },
-    "freeIssuanceSubject": null,
-    "consumptionOrder": null,
+    "freeIssuanceSubject": "verified-natural-person",
+    "consumptionOrder": [
+      "earliest-expiry-first",
+      "free-first-if-same-expiry",
+      "paid-earliest-credited-first-if-same-expiry"
+    ],
     "packRefundRule": null,
     "balanceRefundExecutionRule": null,
-    "realSalesEnabled": false
+    "realSalesEnabled": false,
+    "freeAllowanceDeduplication": {
+      "acrossWechatAccounts": true,
+      "identifier": "protected-identity-deduplication-id",
+      "explicitPurposeNoticeRequired": true,
+      "paidEntitlementSharingAuthorized": false
+    }
   },
   "budget": {
     "monthlyCashCapCents": 50000,
@@ -145,16 +155,7 @@
     "retentionByCategory": null,
     "finalPrivacyTextApproved": false
   },
-  "pendingQuestions": [
-    {
-      "id": "resident-free-allowance-subject",
-      "answer": null
-    },
-    {
-      "id": "resident-allowance-consumption-order",
-      "answer": null
-    }
-  ],
+  "pendingQuestions": [],
   "gatesPassed": [],
   "execution": {
     "productImplementation": false,
@@ -269,5 +270,41 @@
     "filing": "awaiting-official-seal-and-additional-commitment-material",
     "filingApproved": false,
     "actualAccountCapabilitiesVerified": false
-  }
+  },
+  "residentAllowanceDecision": {
+    "date": "2026-10-18",
+    "sourceCommit": "4fc07686a6f8dc1775b14ad81b1113c60fd4ba40",
+    "sourceDocument": "docs/resident-ai-balance-confirmed-20261018.md",
+    "accountDocumentSha256LfNormalized": "3a0d7a57d53ada2cf06356f232b655e5a63c5ab0cf0672c91535324261a43200",
+    "responses": [
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_49f9fa1e61f246419599a90a75563da1\",0]",
+        "question": "为核实第一版的真实接入条件，请更新新个体工商户主体小程序的当前进度：账号是否已注册？认证、服务类目、备案分别到哪一步？只需状态，不需要密码、密钥或证件号码。",
+        "answer": "E:\\O2O\\docs\\miniapp-filing-progress-20261018.md\n更新了, 在这个文档",
+        "kind": "document-reference",
+        "selected": null
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_49f9fa1e61f246419599a90a75563da1\",1]",
+        "question": "目录中新确认的“居民每自然月免费3次AI整理”，按什么对象发放？真实核验和数据用途仍须通过原有启用条件。",
+        "answer": "A（推荐）：按已核验的同一自然人发放，同一人换微信账号不重复领；仅复用受保护的身份去重标识，需要明确告知该用途。",
+        "kind": "choice",
+        "selected": "A"
+      },
+      {
+        "questionItemId": "[\"request_user_input_async\",\"call_49f9fa1e61f246419599a90a75563da1\",2]",
+        "question": "居民同时有当月免费次数和已购买次数时，先扣哪一种？本题仅确认扣次顺序，不决定次数包退款或过期补偿。",
+        "answer": "A（推荐）：先扣最早到期的可用次数；到期时间相同则免费优先，付费批次再按较早到账顺序扣。",
+        "kind": "choice",
+        "selected": "A"
+      }
+    ]
+  },
+  "remainingDecisionAreas": [
+    "resident-pack-refund-and-expired-unused-quantities",
+    "balance-principal-return-execution",
+    "quota-concurrency-and-identity-lifecycle",
+    "retention-and-final-privacy-text",
+    "real-capabilities-cost-and-technical-parameters"
+  ]
 }
