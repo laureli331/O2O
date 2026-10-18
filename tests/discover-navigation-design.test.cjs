@@ -16,6 +16,9 @@ test('approved first-release navigation and notification placement are explicit'
     '“服务”页右上角提供通知入口',
     '删除底栏“消息”入口',
     '通知中心是“服务”的二级页面',
+    '线性指南针图标',
+    '不复用搜索放大镜',
+    '通知入口复用现有消息气泡图标并叠加未读角标',
   ]) assert.ok(spec.includes(phrase), phrase);
 });
 
