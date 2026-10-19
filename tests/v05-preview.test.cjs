@@ -6,7 +6,16 @@ test('V05 covers every approved screen with separate settings and offline synthe
  for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
  assert(!/fetch\(|XMLHttpRequest|localStorage|sessionStorage|src="https?:|href="https?:|console\.log/.test(html));assert(!html.includes('SHARED_STYLE'));assert(!html.includes('<!-- ICONS -->'));
  assert(html.includes('id="verify-document" class="readonly-input" readonly'));assert(html.includes('全部人物、资格、服务费记录和操作结果为合成演示'));assert(!html.includes('type="date"'));
- const v01=fs.readFileSync(path.join(__dirname,'../previews/v01-v02.html'),'utf8');for(const icon of ['home','bag','plus','message','user'])assert(html.includes(v01.match(new RegExp('<symbol id="i-'+icon+'".*?</symbol>'))[0]),icon);
+ const v01=fs.readFileSync(path.join(__dirname,'../previews/v01-v02.html'),'utf8');for(const icon of ['home','discover','bag','plus','message','user'])assert(html.includes(v01.match(new RegExp('<symbol id="i-'+icon+'".*?</symbol>'))[0]),icon);
+});
+test('bottom message tab is removed and service owns the secondary notification entry',()=>{
+ const nav=html.match(/<nav class="tabbar"[\s\S]*?<\/nav>/)[0];
+ for(const label of ['首页','发现','发布','服务','我的'])assert(nav.includes('>'+label+'<')||nav.includes('>'+label+'</button>'),label);
+ assert(nav.indexOf('首页')<nav.indexOf('发现')&&nav.indexOf('发现')<nav.indexOf('发布')&&nav.indexOf('发布')<nav.indexOf('服务')&&nav.indexOf('服务')<nav.indexOf('我的'));
+ assert(!nav.includes('>消息<'));
+ assert(html.includes('data-open="service-notifications"'));
+ assert(html.includes('aria-label="通知中心，2条未读"'));
+ assert(html.includes('服务页右上角二级入口'));
 });
 test('login, phone, identity, age conditions and identity changes each independently gate new operations',()=>{
  assert(m.allowed(m.initial('ready')));assert(m.allowed(m.initial('admin')));

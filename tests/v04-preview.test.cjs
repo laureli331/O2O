@@ -19,6 +19,16 @@ test('all four business contracts, conditional purchase fields and optional unus
  assert(m.validate('idle',{...idle,priceMode:'',price:''},now).length);assert.equal(m.validate('idle',{...idle,priceMode:'negotiable',price:''},now).length,0);
  assert(m.validate('repair',{...base,category:'未知分类'},now).length);assert(m.validate('other',{...base,region:'未知区域'},now).length);
 });
+test('publish entry separates resident publishing from approved merchant main posts',()=>{
+ assert.deepEqual(JSON.parse(JSON.stringify(m.merchantEligibility('normal'))),{status:'resident',canSubmit:false});
+ assert.deepEqual(JSON.parse(JSON.stringify(m.merchantEligibility('merchant-pending'))),{status:'pending',canSubmit:false});
+ assert.deepEqual(JSON.parse(JSON.stringify(m.merchantEligibility('merchant-approved'))),{status:'approved',canSubmit:true});
+ for(const copy of ['商家主帖','仅审核通过商家可提交','商家资料审核中','基础主帖免费，不需要会员或内容加热'])assert(html.includes(copy),copy);
+ const nav=html.match(/<nav class="tabbar"[\s\S]*?<\/nav>/)[0];
+ for(const label of ['首页','发现','发布','服务','我的'])assert(nav.includes('>'+label+'<')||nav.includes('>'+label+'</span>'),label);
+ assert(nav.indexOf('首页')<nav.indexOf('发现')&&nav.indexOf('发现')<nav.indexOf('发布')&&nav.indexOf('发布')<nav.indexOf('服务')&&nav.indexOf('服务')<nav.indexOf('我的'));
+ assert(!nav.includes('消息'));
+});
 test('amounts, Unicode text and future Shanghai time enforce their boundaries',()=>{
  for(const amount of ['0','-1','1e2','100000','12.345',''])assert(!m.amount(amount),amount);
  for(const amount of ['0.01','12','99999.99'])assert(m.amount(amount),amount);
@@ -41,7 +51,7 @@ test('all four businesses offer grounded AI samples and concise validation messa
  for(const message of m.validate('errands',{...base,title:'',note:'',region:'',fee:'',start:'',end:'',pickup:'',delivery:''},now))assert(Array.from(message).length<=24,message);
  assert(html.includes('class="issue-list"'));assert(!html.includes('待补充 / 核对：'));
  const prior=fs.readFileSync(path.join(__dirname,'../previews/v01-v02.html'),'utf8');
- for(const icon of ['home','bag','plus','message','user']){
+ for(const icon of ['home','discover','bag','plus','message','user']){
   const symbol=prior.match(new RegExp('<symbol id="i-'+icon+'".*?</symbol>'))[0];assert(html.includes(symbol),icon);
  }
  for(const file of ['docs/prd.md','docs/structured-design.md','docs/development-plan.md']){

@@ -29,6 +29,7 @@
 <symbol id="i-back" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
 <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H5V10M9 20v-7h6v7"/></symbol>
+<symbol id="i-discover" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M14.75 9.25 13.2 13.2l-3.95 1.55 1.55-3.95 3.95-1.55Z"/><circle cx="12" cy="12" r="1"/></symbol>
 <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 7h14l1 14H4L5 7ZM8 9V6a4 4 0 0 1 8 0v3"/></symbol>
 <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16"/></symbol>
 <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 4h16v13H10l-5 4v-4H4V4Z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></symbol>
@@ -65,7 +66,7 @@
           <p class="result-note" id="result-note" aria-live="polite" hidden></p><div class="cards" id="cards"></div>
           <div class="empty" id="empty" hidden><svg aria-hidden="true"><use href="#i-search"/></svg><h3>还没有符合条件的需求</h3><p>试试其他关键词，或放宽筛选条件。</p><button class="quiet-button" id="reset-filters">重置筛选</button></div><p class="list-end" id="list-end">附近的每一份需要，都值得被看见。</p>
         </div></div>
-        <nav class="tabbar" aria-label="小程序底部导航"><button class="tab active" data-tab="首页" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>首页</button><button class="tab" data-tab="服务"><svg aria-hidden="true"><use href="#i-bag"/></svg>服务</button><button class="tab publish" data-tab="发布"><span class="plus-disc"><svg aria-hidden="true"><use href="#i-plus"/></svg></span>发布</button><button class="tab" data-tab="消息"><svg aria-hidden="true"><use href="#i-message"/></svg>消息</button><button class="tab" data-tab="我的"><svg aria-hidden="true"><use href="#i-user"/></svg>我的</button></nav>
+        <nav class="tabbar" aria-label="小程序底部导航"><button class="tab active" data-tab="首页" aria-current="page"><svg aria-hidden="true"><use href="#i-home"/></svg>首页</button><button class="tab" data-tab="发现"><svg aria-hidden="true"><use href="#i-discover"/></svg>发现</button><button class="tab publish" data-tab="发布"><span class="plus-disc"><svg aria-hidden="true"><use href="#i-plus"/></svg></span>发布</button><button class="tab" data-tab="服务"><svg aria-hidden="true"><use href="#i-bag"/></svg>服务</button><button class="tab" data-tab="我的"><svg aria-hidden="true"><use href="#i-user"/></svg>我的</button></nav>
         <div class="toast" id="home-toast" role="status" hidden></div>
         <div class="sheet-mask" id="region-modal" hidden><section class="sheet" role="dialog" aria-modal="true" aria-labelledby="region-title"><button class="sheet-close" data-close="region-modal" aria-label="关闭区域筛选">×</button><h3 id="region-title">选择村 / 社区</h3><p>以下为演示区域，不代表真实经营范围。</p><div class="sheet-options"><label class="radio-option"><input type="radio" name="region" value="all" checked>全部村 / 社区</label><label class="radio-option"><input type="radio" name="region" value="A">演示区域 A</label><label class="radio-option"><input type="radio" name="region" value="B">演示区域 B</label></div><div class="sheet-footer"><button class="quiet-button" data-close="region-modal">取消</button><button class="primary" id="apply-region">应用筛选</button></div></section></div>
       </div>

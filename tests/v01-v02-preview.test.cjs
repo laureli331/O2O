@@ -55,6 +55,15 @@ test('standalone HTML has unique element IDs, resolves SVG icons and compiles sc
   assert(html.includes('prefers-reduced-motion'));assert(html.includes('focus-visible'));assert(html.includes('aria-modal="true"'));
 });
 
+test('bottom navigation uses the approved discovery order and compass option A',()=>{
+  const nav=html.match(/<nav class="tabbar"[\s\S]*?<\/nav>/)[0];
+  const labels=[...nav.matchAll(/data-tab="([^"]+)"/g)].map(match=>match[1]);
+  assert.deepEqual(labels,['首页','发现','发布','服务','我的']);
+  assert(nav.includes('<use href="#i-discover"/>'));
+  assert(!nav.includes('data-tab="消息"'));
+  assert(html.includes('<symbol id="i-discover" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/>'));
+});
+
 test('reviewed cards prioritize imagery and title while sort and detail labels stay honest',()=>{
   const sort=html.match(/<span class="sort-label">([\s\S]*?)<\/span>/)[1];
   assert.equal(sort,'最新发布');
