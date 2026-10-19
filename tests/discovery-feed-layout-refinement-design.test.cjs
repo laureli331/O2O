@@ -25,6 +25,9 @@ test('discovery topic behavior is deterministic and does not invent recommendati
   const spec = fs.readFileSync(specPath, 'utf8');
   for (const phrase of [
     '“最新”包含全部审核通过且当前可展示的商家主帖',
+    '同时进入“最新”和“优惠”',
+    '同时进入“最新”和“上新”',
+    '同时进入“最新”和“活动”',
     '普通内容不选主题时，只进入“最新”',
     '不使用“推荐”',
     '不使用“附近”',
