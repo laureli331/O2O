@@ -60,7 +60,7 @@ test('active PRD identity purpose and AI order reflect current approval without 
   const ai = s.match(/^\| AI10 \|[^\r\n]+/m)[0];
   for (const text of ['先扣最早到期', '同到期免费优先', '同到期付费按较早到账顺序扣', '技术失败不扣', '退款/到期未用补偿', '真实支付未验证不售卖']) assert(ai.includes(text), text);
   for (const line of before.split(/\r?\n/).filter(x => /^\| AI\d{2} \|/.test(x) && !x.startsWith('| AI10 |'))) assert(s.split(/\r?\n/).includes(line), line);
-  for (const f of ['docs/prd-v1.5-archive-20261015.md', 'docs/development-decisions.json', 'docs/development-remapping-20261015.json', 'docs/v1-pricing-budget-confirmed-20261018.json', 'docs/miniapp-filing-progress-20261018.md']) assert.equal(read(f).replace(/\r\n/g, '\n'), at(sourceCommit, f).replace(/\r\n/g, '\n'), f);
+  for (const f of ['docs/prd-v1.5-archive-20261015.md', 'docs/v1-pricing-budget-confirmed-20261018.json', 'docs/miniapp-filing-progress-20261018.md']) assert.equal(read(f).replace(/\r\n/g, '\n'), at(sourceCommit, f).replace(/\r\n/g, '\n'), f);
 });
 
 test('current docs separate approved quota policy from still pending retention refund and concurrency implementation', () => {

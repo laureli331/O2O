@@ -60,6 +60,7 @@ test('bottom navigation uses the approved discovery order and compass option A',
   const labels=[...nav.matchAll(/data-tab="([^"]+)"/g)].map(match=>match[1]);
   assert.deepEqual(labels,['首页','发现','发布','服务','我的']);
   assert(nav.includes('<use href="#i-discover"/>'));
+  assert(nav.includes('href="v06.html"'));
   assert(!nav.includes('data-tab="消息"'));
   assert(html.includes('<symbol id="i-discover" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/>'));
 });

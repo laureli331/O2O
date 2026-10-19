@@ -92,7 +92,7 @@ function validate(b){
  for(const text of [b.prd,b.plan,b.design])assert(text.includes('merchant-pricing-confirmed-20261016.md'),'Current source link');
  assert(b.prd.includes('首页同一轮播图')&&b.prd.includes('299/249/199元'),'PRD carousel and prices');
  assert(b.prd.includes('实际出账成功起连续72小时'),'PRD retained billing');
- assert.equal([...b.plan.matchAll(/^\| DP\d{2} \|/gm)].length,57,'No new first-release tasks');
+ assert.equal([...b.plan.matchAll(/^\| DP\d{2} \|/gm)].length,60,'Only the three approved discovery tasks are added to the first release');
  return true;
 }
 test('approved merchant trial pricing, carousel, package, discounts and retained billing agree',()=>assert.equal(validate(bundle()),true));

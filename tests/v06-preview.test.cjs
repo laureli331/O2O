@@ -23,6 +23,7 @@ test('feed, validation, permissions and version states follow the approved contr
   for(const count of [1,9])assert.equal(m.postErrors({title:'新'.repeat(20),body:'好'.repeat(1000),images:Array(count).fill('x')}).length,0);
   for(const count of [0,10])assert(m.postErrors({title:'新'.repeat(20),body:'好',images:Array(count).fill('x')}).length,count);
   assert.equal(m.visibleLength('🙂'.repeat(20)),20);assert(m.postErrors({title:'🙂'.repeat(21),body:'好',images:['x']}).length);
+  assert.equal(m.visibleLength('👨‍👩‍👧‍👦'),1);assert.equal(m.visibleLength('e\u0301'),1);
   assert(m.postErrors({title:'标题',body:'🙂'.repeat(1001),images:['x']}).length);
   assert.deepEqual(plain(m.eligibility('resident')),{status:'resident',canSubmit:false});
   assert.deepEqual(plain(m.eligibility('merchant-pending')),{status:'pending',canSubmit:false});
@@ -38,6 +39,8 @@ test('share, favorite rollback, stale-load retention and notification copy are p
   const share=m.share(m.posts[0]);assert.deepEqual(Object.keys(share).sort(),['cover','merchant','postId','title']);
   assert(!JSON.stringify(share).match(/phone|wechat|address|license|private/i));
   assert.equal(m.favorite(false,true),false);assert.equal(m.favorite(false,false),true);
+  assert.equal(m.badge(2),2);assert.equal(m.badge(0),null);
   const prior=[{id:'OLD'}];assert.equal(m.loadResult(prior,null),prior);assert.deepEqual(JSON.parse(JSON.stringify(m.loadResult(prior,[]))),[]);
-  for(const copy of ['微信分享示意','旧公开版继续展示','风险内容已下架','服务页右上角二级入口','2条未读'])assert(html.includes(copy),copy);
+  assert(html.includes('unreadCount=2'));
+  for(const copy of ['微信分享示意','旧公开版继续展示','风险内容已下架','服务页右上角二级入口','这里还没有可展示的商家主帖','加载失败，已保留上次内容','未登录也可以浏览','发布时间','查看商家公开资料'])assert(html.includes(copy),copy);
 });

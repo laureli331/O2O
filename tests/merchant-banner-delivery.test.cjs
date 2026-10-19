@@ -113,7 +113,7 @@ test('F08 field definitions agree while the existing page mapping and task scope
  const row=s=>s.match(/^\| F08 \| 商家Banner方向 \|[^\r\n]+/m)[0];assert.equal(row(prd),row(design));
  for(const phrase of ['首/次/末3个位置，各1广告主','每5秒自动切换','先审核资格/素材和确认排期再付款','三位置来自本次明确选择','不恢复旧维修/跑腿各三位','不开放真实售卖'])assert(row(prd).includes(phrase),phrase);
  const mapping=s=>s.match(/^\| F08 \| V01[^\r\n]+/m)[0];assert.equal(mapping(design),mapping(at(r.bannerDeliveryDecision.sourceCommit,'docs/structured-design.md')));
- assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,57);
+ assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,60);
  assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
 });
 

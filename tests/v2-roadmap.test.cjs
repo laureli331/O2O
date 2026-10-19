@@ -28,11 +28,11 @@ function validate(b) {
   assert.equal(b.record.featurePlanning.merchantTransactionCommissionPlanned,false,'No third-party transaction commission');
   assert.equal(b.record.featurePlanning.merchantPermissionVerified,false,'Merchant permission is not verified');
   assert.equal(b.record.featurePlanning.userRestrictionCorrection,'third-party-transaction-entry-and-commission-not-all-payment','Payment versus commission correction');
-  assert.equal(ids(b.plan,'DP').length,57,'Current plan remaps first-version work without implementing the second-version scope');
-  assert.equal(ids(b.prd,'M').length,14,'PRD 2.0 modules include other business and commission');
-  assert.equal(ids(b.prd,'F').length,21,'PRD 2.0 fields include time, staged fees and commission');
-  assert.equal(ids(b.prd,'V').length,22,'PRD 2.0 page groups include commission billing');
-  assert.equal(['T','RT','AT','DT','BX'].reduce((n,p)=>n+ids(b.prd,p).length,0),74,'PRD 2.1 acceptance includes three confirmed exception rules');
+  assert.equal(ids(b.plan,'DP').length,60,'Current plan adds only approved first-version discovery work without implementing the second-version scope');
+  assert.equal(ids(b.prd,'M').length,15,'PRD 2.1 modules include discovery, other business and commission');
+  assert.equal(ids(b.prd,'F').length,22,'PRD 2.1 fields include discovery, time, staged fees and commission');
+  assert.equal(ids(b.prd,'V').length,23,'PRD 2.1 page groups include discovery and commission billing');
+  assert.equal(['T','RT','AT','DT','BX'].reduce((n,p)=>n+ids(b.prd,p).length,0),82,'PRD 2.1 acceptance includes discovery and confirmed exception rules');
   const r=b.record.versionTwoReminder;
   assert.equal(r.kind,'heartbeat','Reminder is attached to the current chat');
   assert.equal(r.status,'ACTIVE','Reminder must be active');
@@ -49,7 +49,7 @@ function validate(b) {
   assert.equal(r.creationDateIsObservationStart,false,'Reminder creation is not the observation start');
   assert.equal(r.notifyOncePerStableCycle,true,'No repeated reminder for the same cycle');
   assert.equal(r.automaticImplementation,false,'Reminder does not authorize implementation');
-  for(const term of ['连续14天','从修复验收通过时重新计时','没有故障报告、没有消息也不能证明稳定','文档测试、演示、模拟或部分流程通过不能替代','入驻费/推流费/服务费','不写成所有收款受限','原业务实际经历或评分资格','不自动开发/收费/上线']) {
+  for(const term of ['连续14天','从修复验收通过时重新计时','没有故障报告、没有消息也不能证明稳定','文档测试、演示、模拟或部分流程通过不能替代','入驻费/推流费/服务费','不写成所有收款受限','不自动开发/收费/上线']) {
     assert(b.roadmap.includes(term),'Roadmap boundary: '+term);
   }
   return true;

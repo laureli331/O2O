@@ -39,7 +39,7 @@ test('all nine current entries agree on discovery only merchant post review and 
 });
 test('PRD and roadmap record scope in VP05 while first release tasks and deferred work remain unchanged',()=>{
  for(const p of ['docs/prd.md','docs/v2-roadmap.md']){const row=read(p).match(/^\| VP05 \|[^\r\n]+/m)[0];for(const phrase of ['仅发现页商家主帖主信息流','居民交易信息/评论不入池','会员到期可为合格旧帖单独购买','不附新增发帖/活动工具/AI额度','计费对象'])assert(row.includes(phrase),p+': '+phrase);}
- assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,57);
+ assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,60);
  assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
 });
 test('scope cannot expand to other feeds resident transactions comments or bypass separate promotion review',()=>{

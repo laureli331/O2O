@@ -98,7 +98,7 @@ test('approved exception policy and current PRD retain independent billing, outa
   assert.equal(records.exceptionFinanceRules.sourceBatch, records.exceptionFinanceDecisionBatches[0].id);
 });
 
-test('53 approved choices and 74 acceptance cases preserve the original fifty and remain planning only', () => {
+test('53 historical choices remain intact while current discovery expands acceptance planning only', () => {
   const meta = records.prdConsolidation, current = records.remainingPlanningAudit;
   assert.equal(meta.version, '2.1'); assert.equal(meta.counts.originalCloseoutDecisions, 50);
   assert.equal(meta.counts.closeoutDecisions, 53); assert.equal(meta.counts.acceptanceCases, 74);
@@ -110,7 +110,8 @@ test('53 approved choices and 74 acceptance cases preserve the original fifty an
   assert(records.remainingPlanningAuditHistory.some(x => x.totalQuestionCount === 50 && x.answeredQuestionCount === 50));
   assert.equal(records.businessCloseoutQuestionInventory.totalQuestions, 45);
   assert.equal(records.sharedUnderstandingAudit.questions.length, 5);
-  for (const [prefix, count] of [['M', 14], ['F', 21], ['V', 22]]) assert.equal([...prd.matchAll(new RegExp('^\\| ' + prefix + '\\d{2} \\|', 'gm'))].length, count);
+  for (const [prefix, count] of [['M', 15], ['F', 22], ['V', 23]]) assert.equal([...prd.matchAll(new RegExp('^\\| ' + prefix + '\\d{2} \\|', 'gm'))].length, count);
+  assert.equal(['T','RT','AT','DT','BX'].reduce((sum,prefix)=>sum+[...prd.matchAll(new RegExp('^\\| '+prefix+'\\d{2} \\|','gm'))].length,0),82);
 });
 
 test('remapped documents preserve all three exceptions while legacy validation names its historical archives', () => {

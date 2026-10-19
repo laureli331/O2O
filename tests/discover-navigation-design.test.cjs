@@ -11,6 +11,8 @@ const specPath = path.join(root, 'docs/superpowers/specs/2026-10-18-discover-nav
 const spec = fs.readFileSync(specPath, 'utf8');
 const context = fs.readFileSync(path.join(root, 'CONTEXT.md'), 'utf8');
 const basis = fs.readFileSync(path.join(root, 'docs/module-specs/current-development-basis-20261015.md'), 'utf8');
+const structuredDesign = fs.readFileSync(path.join(root, 'docs/structured-design.md'), 'utf8');
+const previewGuide = fs.readFileSync(path.join(root, 'docs/v06-html-preview.md'), 'utf8');
 
 test('approved first-release navigation and notification placement are explicit', () => {
   for (const phrase of [
@@ -67,4 +69,18 @@ test('current context and development basis point back to the approved design an
     assert.ok(text.includes('discoveryFirstReleaseDecision'));
     assert.ok(text.includes('旧 `featurePlanning.merchantSquareRelease = v2` 保留为2026-10-15历史记录'));
   }
+});
+
+test('current design and preview guide contain no stale bottom navigation contract', () => {
+  assert.ok(structuredDesign.includes('首页/发现/发布/服务/我的导航关系'));
+  assert.ok(structuredDesign.includes('底栏不再保留消息'));
+  assert.ok(structuredDesign.includes('通知从服务页右上角进入二级通知中心'));
+  assert.ok(!structuredDesign.includes('首页/服务/发布/消息/我的导航关系'));
+
+  for (const phrase of [
+    '未读数为 0 时隐藏角标',
+    '空状态、失败保留与重试、游客浏览',
+    'Unicode 字素簇',
+    '发布时间和商家公开资料入口',
+  ]) assert.ok(previewGuide.includes(phrase), phrase);
 });

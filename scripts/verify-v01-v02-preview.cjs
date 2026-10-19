@@ -57,7 +57,7 @@ async function verify(){
     await page.waitForFunction(()=>{const box=document.getElementById('cards'),card=box.children[1];return Math.abs(card.offsetLeft-(box.clientWidth+12)/2)<2;});
   }
   try{
-    await page.goto(url);await page.locator('[data-item]').first().waitFor();assert.deepEqual(await page.locator('#home-phone .tabbar [data-tab]').evaluateAll(items=>items.map(item=>item.dataset.tab)),['首页','发现','发布','服务','我的']);assert.equal(await page.locator('#home-phone .tabbar [data-tab="消息"]').count(),0);assert.equal(await page.locator('#home-phone .tabbar use[href="#i-discover"]').count(),1);
+    await page.goto(url);await page.locator('[data-item]').first().waitFor();assert.deepEqual(await page.locator('#home-phone .tabbar [data-tab]').evaluateAll(items=>items.map(item=>item.dataset.tab)),['首页','发现','发布','服务','我的']);assert.equal(await page.locator('#home-phone .tabbar [data-tab="消息"]').count(),0);assert.equal(await page.locator('#home-phone .tabbar use[href="#i-discover"]').count(),1);assert.equal(await page.locator('#home-phone [data-tab="发现"]').getAttribute('href'),'v06.html');
     await page.goto(url);await page.locator('[data-item]').first().waitFor();
     assert.equal(await page.locator('[data-item]').count(),8);
     await assertCompactCards();

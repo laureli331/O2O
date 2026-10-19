@@ -21,7 +21,7 @@ test('nine document entries carry one slot one simultaneous post limited replace
 });
 test('VP05 agrees on slot model while task counts and deferred work remain unchanged',()=>{
  for(const p of ['docs/prd.md','docs/v2-roadmap.md']){const row=read(p).match(/^\| VP05 \|[^\r\n]+/m)[0];for(const phrase of ['计费对象为单个经营档案的1个推广名额','每名额同时1篇合格主帖','每期最多换帖2次'])assert(row.includes(phrase),p+': '+phrase);}
- assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,57);assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
+ assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,60);assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
 });
 test('purchase model cannot silently lock a post grant multiple slots simultaneous posts or unlimited changes',()=>{
  for(const change of [r=>r.contentHeating.purchaseUnit.unit='per-post',r=>r.contentHeating.purchaseUnit.promotionSlotsPerPurchase=3,r=>r.contentHeating.purchaseUnit.maxSimultaneousPostsPerSlot=3,r=>r.contentHeating.purchaseUnit.limitedPostReplacementAllowed=false,r=>r.contentHeating.purchaseUnit.postReplacementLimit='unlimited']){const r=load();change(r);assert.throws(()=>validate(r));}

@@ -13,9 +13,12 @@ test('bottom message tab is removed and service owns the secondary notification 
  for(const label of ['首页','发现','发布','服务','我的'])assert(nav.includes('>'+label+'<')||nav.includes('>'+label+'</button>'),label);
  assert(nav.indexOf('首页')<nav.indexOf('发现')&&nav.indexOf('发现')<nav.indexOf('发布')&&nav.indexOf('发布')<nav.indexOf('服务')&&nav.indexOf('服务')<nav.indexOf('我的'));
  assert(!nav.includes('>消息<'));
+ assert(nav.includes('href="v06.html"'));
  assert(html.includes('data-open="service-notifications"'));
  assert(html.includes('aria-label="通知中心，2条未读"'));
  assert(html.includes('服务页右上角二级入口'));
+ assert(html.includes('当前无未读通知，右上角不显示角标'));
+ assert(html.includes('data-clear-service-notices'));
 });
 test('login, phone, identity, age conditions and identity changes each independently gate new operations',()=>{
  assert(m.allowed(m.initial('ready')));assert(m.allowed(m.initial('admin')));

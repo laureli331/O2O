@@ -28,6 +28,7 @@ test('publish entry separates resident publishing from approved merchant main po
  for(const label of ['首页','发现','发布','服务','我的'])assert(nav.includes('>'+label+'<')||nav.includes('>'+label+'</span>'),label);
  assert(nav.indexOf('首页')<nav.indexOf('发现')&&nav.indexOf('发现')<nav.indexOf('发布')&&nav.indexOf('发布')<nav.indexOf('服务')&&nav.indexOf('服务')<nav.indexOf('我的'));
  assert(!nav.includes('消息'));
+ assert(nav.includes('href="v06.html"'));
 });
 test('amounts, Unicode text and future Shanghai time enforce their boundaries',()=>{
  for(const amount of ['0','-1','1e2','100000','12.345',''])assert(!m.amount(amount),amount);

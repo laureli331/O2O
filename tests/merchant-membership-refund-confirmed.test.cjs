@@ -130,7 +130,7 @@ test('separate AI-package refunds and all first-release task IDs remain unchange
  assert.equal(r.aiAddOnPackages.refundRule.processingTimeLimit.reviewAndInitiateHours,72);
  assert.equal(r.membership.aiAllowance,null);
  assert.equal(r.membership.aiTrial.finalAllowanceApproved,false);
- assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,57);
+ assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,60);
  assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
 });
 

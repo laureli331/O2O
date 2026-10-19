@@ -30,7 +30,7 @@ test('nine current entries preserve mixed reply status, honest delivery and actu
 });
 test('PRD and roadmap carry delivery and activation while preserving first-release task boundaries',()=>{
  for(const p of ['docs/prd.md','docs/v2-roadmap.md']){const row=read(p).match(/^\| VP05 \|[^\r\n]+/m)[0];for(const phrase of ['交付30天正常共享轮换且不保底排名/曝光/成交','先推广审核并确认可投放再付款','实际生效可正常轮换才起算30天','计费对象'])assert(row.includes(phrase),p+': '+phrase);}
- assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,57);assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
+ assert.equal([...read('docs/development-plan.md').matchAll(/^\| DP\d{2} \|/gm)].length,60);assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')).deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
 });
 test('historical undecided reply cannot be rewritten into an approval or implicit guarantee',()=>{
  for(const change of [r=>r.contentHeatingDeliveryAndActivationDecision.responses[0].selected='A',r=>r.contentHeatingDeliveryAndActivationDecision.approvedResponseIds.unshift('content-heating-purchase-unit'),r=>r.contentHeating.deliveryCommitment.minimumImpressionsGuaranteed=true,r=>r.contentHeating.deliveryCommitment.fixedRankGuaranteed=true,r=>r.contentHeating.deliveryCommitment.transactionsGuaranteed=true,r=>r.contentHeating.deliveryCommitment.metricDefinitions='unverified']){const r=load();change(r);assert.throws(()=>validate(r));}

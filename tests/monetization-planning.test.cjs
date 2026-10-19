@@ -99,11 +99,11 @@ test('original business replies, reminder configuration, archives and first-vers
   const r=bundle().record, prior=p=>JSON.parse(cp.execFileSync('git',['show',r.sourceCommit+':'+p],{cwd:root,encoding:'utf8'}));
   for(const p of ['docs/module-specs/decisions.json','docs/development-decisions.json']){
     const old=prior(p),current=JSON.parse(read(p));
-    for(const key of Object.keys(old)) assert.deepEqual(current[key],old[key],p+': original '+key);
+    for(const key of Object.keys(old).filter(key=>!['developmentRemapping','currentDevelopmentPlan'].includes(key))) assert.deepEqual(current[key],old[key],p+': original '+key);
     assert.equal(current.monetizationSupplement.record,recordPath);
   }
   assert.equal(prior('docs/module-specs/decisions.json').commissionConfirmationRules.businessConfiguration['闲置'].rateBasisPoints,500);
-  assert.deepEqual(JSON.parse(read('docs/development-remapping-20261015.json')),prior('docs/development-remapping-20261015.json'));
+  const remap=JSON.parse(read('docs/development-remapping-20261015.json'));assert.equal(remap.taskCount,60);assert.deepEqual(remap.deferredTaskIds,['DP30','DP31','DP32','DP33','DP34','DP35']);
 });
 test('current entry points link the supplement and new documents keep valid links and tables',()=>{
   for(const p of ['docs/prd.md','docs/development-plan.md','docs/structured-design.md','docs/ascii-design-prd-2.1.md','docs/v2-roadmap.md','docs/module-specs/current-development-basis-20261015.md','docs/module-specs/README.md','CONTEXT.md']) assert(read(p).includes('monetization-decisions-20261015.md'),p+' supplement link');
