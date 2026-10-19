@@ -19,6 +19,10 @@ test('V06 refinement plan is test-first and names every implementation surface',
     'docs/v06-html-preview.md',
     '最新 / 优惠 / 上新 / 活动',
     '商家公开资料页',
+    'A 版顶部商家栏',
+    '线条式 SVG `<`',
+    '固定“收藏 / 分享”操作区',
+    '删除空状态内部说明、详情隐私说明卡和收藏失败测试控件',
     '320、375、414',
   ]) assert.ok(plan.includes(phrase), phrase);
 });
