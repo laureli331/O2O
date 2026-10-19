@@ -14,6 +14,7 @@ test('V06 exists as a standalone offline prototype with the approved navigation'
   assert(nav.includes('<use href="#i-discover"/>'));assert(!nav.includes('data-tab="消息"'));
   assert(html.includes('class="topic-tabs"'));assert(!html.includes('附近 · 商家新鲜事'));assert(!html.includes('最新发布'));
   for(const fragment of ['id="main-actions"','id="detail-actions"','class="topic-options"','name="post-topic"'])assert(html.includes(fragment),fragment);
+  for(const fragment of ['editorDraft','class="field-error"','feed-transition'])assert(html.includes(fragment),fragment);
   assert(html.includes('prefers-reduced-motion'));assert(html.includes('focus-visible'));
 });
 
