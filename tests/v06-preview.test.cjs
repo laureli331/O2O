@@ -54,10 +54,11 @@ test('share, favorite rollback, stale-load retention and notification copy are p
   const prior=[{id:'OLD'}];assert.equal(m.loadResult(prior,null),prior);assert.deepEqual(JSON.parse(JSON.stringify(m.loadResult(prior,[]))),[]);
   assert(html.includes('unreadCount=2'));
   for(const copy of ['分享</button>','旧公开版继续展示','风险内容已下架','服务页右上角二级入口','这里还没有可展示的商家主帖','加载失败，已保留上次内容','未登录也可以浏览','发布时间','查看商家公开资料'])assert(html.includes(copy),copy);
+  for(const structure of ['<div class="detail-meta"><span>发布时间：${published}</span><span>服务区域：${esc(post.area)}</span></div>','.detail-meta span{display:block}', '.detail-meta span+span{margin-top:4px}'])assert(html.includes(structure),structure);
   for(const removed of ['不会用假帖子填充空状态。','这里只展示商家公开资料中的名称和服务区域','id="favorite-failure"','微信分享示意'])assert(!html.includes(removed),removed);
 });
 
 test('preview guide documents the content-first V06 refinement',()=>{
   const markdown=fs.readFileSync(guide,'utf8');
-  for(const phrase of ['最新 / 优惠 / 上新 / 活动','主题帖同时进入“最新”和对应主题','公开页面不显示“已审核”或“资料已审核”','图片选择与排序置顶','A 版顶部商家栏','SVG `<`','固定“收藏 / 分享”操作区','同一商家的合规公开主帖'])assert(markdown.includes(phrase),phrase);
+  for(const phrase of ['最新 / 优惠 / 上新 / 活动','主题帖同时进入“最新”和对应主题','公开页面不显示“已审核”或“资料已审核”','图片选择与排序置顶','A 版顶部商家栏','SVG `<`','固定“收藏 / 分享”操作区','发布时间与服务区域分两行','同一商家的合规公开主帖'])assert(markdown.includes(phrase),phrase);
 });
