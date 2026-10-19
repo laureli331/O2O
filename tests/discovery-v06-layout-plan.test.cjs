@@ -22,6 +22,8 @@ test('V06 refinement plan is test-first and names every implementation surface',
     'A 版顶部商家栏',
     '线条式 SVG `<`',
     '固定“收藏 / 分享”操作区',
+    '发布时间与服务区域拆成两行',
+    '间距固定为 4 像素',
     '删除空状态内部说明、详情隐私说明卡和收藏失败测试控件',
     '320、375、414',
   ]) assert.ok(plan.includes(phrase), phrase);
