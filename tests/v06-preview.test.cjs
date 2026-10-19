@@ -13,7 +13,7 @@ test('V06 exists as a standalone offline prototype with the approved navigation'
   assert.deepEqual([...nav.matchAll(/data-tab="([^"]+)"/g)].map(match=>match[1]),['首页','发现','发布','服务','我的']);
   assert(nav.includes('<use href="#i-discover"/>'));assert(!nav.includes('data-tab="消息"'));
   assert(html.includes('class="topic-tabs"'));assert(!html.includes('附近 · 商家新鲜事'));assert(!html.includes('最新发布'));
-  for(const fragment of ['id="main-actions"','id="detail-actions"','class="topic-options"','name="post-topic"'])assert(html.includes(fragment),fragment);
+  for(const fragment of ['id="main-actions"','id="detail-actions"','class="topic-options"','name="post-topic"','class="detail-merchant-bar"','class="detail-back"','V06PreviewTest'])assert(html.includes(fragment),fragment);
   for(const fragment of ['editorDraft','class="field-error"','feed-transition'])assert(html.includes(fragment),fragment);
   assert(html.includes('prefers-reduced-motion'));assert(html.includes('focus-visible'));
 });
@@ -53,10 +53,11 @@ test('share, favorite rollback, stale-load retention and notification copy are p
   assert.equal(m.badge(2),2);assert.equal(m.badge(0),null);
   const prior=[{id:'OLD'}];assert.equal(m.loadResult(prior,null),prior);assert.deepEqual(JSON.parse(JSON.stringify(m.loadResult(prior,[]))),[]);
   assert(html.includes('unreadCount=2'));
-  for(const copy of ['微信分享示意','旧公开版继续展示','风险内容已下架','服务页右上角二级入口','这里还没有可展示的商家主帖','加载失败，已保留上次内容','未登录也可以浏览','发布时间','查看商家公开资料'])assert(html.includes(copy),copy);
+  for(const copy of ['分享</button>','旧公开版继续展示','风险内容已下架','服务页右上角二级入口','这里还没有可展示的商家主帖','加载失败，已保留上次内容','未登录也可以浏览','发布时间','查看商家公开资料'])assert(html.includes(copy),copy);
+  for(const removed of ['不会用假帖子填充空状态。','这里只展示商家公开资料中的名称和服务区域','id="favorite-failure"','微信分享示意'])assert(!html.includes(removed),removed);
 });
 
 test('preview guide documents the content-first V06 refinement',()=>{
   const markdown=fs.readFileSync(guide,'utf8');
-  for(const phrase of ['最新 / 优惠 / 上新 / 活动','主题帖同时进入“最新”和对应主题','公开页面不显示“已审核”或“资料已审核”','图片选择与排序置顶','固定“收藏 / 微信分享”操作区','同一商家的合规公开主帖'])assert(markdown.includes(phrase),phrase);
+  for(const phrase of ['最新 / 优惠 / 上新 / 活动','主题帖同时进入“最新”和对应主题','公开页面不显示“已审核”或“资料已审核”','图片选择与排序置顶','A 版顶部商家栏','SVG `<`','固定“收藏 / 分享”操作区','同一商家的合规公开主帖'])assert(markdown.includes(phrase),phrase);
 });
