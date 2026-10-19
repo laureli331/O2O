@@ -17,7 +17,7 @@ test('discovery feed refinement design records the approved content-first layout
     '删除“最新发布 / 演示加载失败”行',
     '最多选择一个主题，也可以不选',
     '公开卡片、公开详情和商家公开资料页不显示“已审核”或“资料已审核”',
-    '只修改离线预览、设计记录和验证',
+    '只修改 V06 离线预览、设计记录和验证',
   ]) assert.ok(spec.includes(phrase), phrase);
 });
 
@@ -40,4 +40,18 @@ test('refinement design has no unresolved placeholders', () => {
   const spec = fs.readFileSync(specPath, 'utf8');
   assert.doesNotMatch(spec, /\b(?:TBD|TODO|FIXME)\b/i);
   assert.doesNotMatch(spec, /待确认|另行确认|以后再说/);
+});
+
+test('all approved V06 public and publishing surfaces use the same content-first structure', () => {
+  const spec = fs.readFileSync(specPath, 'utf8');
+  for (const phrase of [
+    '图片选择与排序置顶',
+    '底部固定“保存草稿 / 预览”操作区',
+    '顶部沉浸式大图和页码',
+    '底部固定“收藏 / 微信分享”操作区',
+    '资料头部下方展示该商家自己的公开主帖双列列表',
+    '只包含审核通过且当前可展示的帖子',
+    '不显示粉丝数、获赞数、关注按钮',
+    '不修改 V01—V05',
+  ]) assert.ok(spec.includes(phrase), phrase);
 });
