@@ -50,6 +50,8 @@ test('all approved V06 public and publishing surfaces use the same content-first
     '顶部商家栏',
     '线条式 SVG `<`',
     '底部固定“收藏 / 分享”操作区',
+    '发布时间与服务区域分别使用独立信息行',
+    '行间距为 4 像素',
     '删除“不会用假帖子填充空状态。”',
     '删除详情页隐私说明卡',
     '不在用户页面展示收藏失败测试控件',
