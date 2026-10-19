@@ -11,13 +11,19 @@ test('V06 exists as a standalone offline prototype with the approved navigation'
   const nav=html.match(/<nav class="tabbar"[\s\S]*?<\/nav>/)[0];
   assert.deepEqual([...nav.matchAll(/data-tab="([^"]+)"/g)].map(match=>match[1]),['首页','发现','发布','服务','我的']);
   assert(nav.includes('<use href="#i-discover"/>'));assert(!nav.includes('data-tab="消息"'));
+  assert(html.includes('class="topic-tabs"'));assert(!html.includes('附近 · 商家新鲜事'));assert(!html.includes('最新发布'));
   assert(html.includes('prefers-reduced-motion'));assert(html.includes('focus-visible'));
 });
 
 test('feed, validation, permissions and version states follow the approved contract',()=>{
   const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});
   vm.runInContext(html.match(/<script id="v06-model">([\s\S]*?)<\/script>/)[1],ctx);const m=ctx.V06Model,plain=value=>JSON.parse(JSON.stringify(value));
-  const feed=m.feed(m.posts);assert.deepEqual(plain(feed.map(post=>post.id)),['P-103','P-101','P-104']);
+  assert.deepEqual(plain(m.topics),['最新','优惠','上新','活动']);
+  const feed=m.feed(m.posts,'最新');assert.deepEqual(plain(feed.map(post=>post.id)),['P-103','P-101','P-104']);
+  assert.deepEqual(plain(m.feed(m.posts,'优惠').map(post=>post.id)),['P-101']);
+  assert.deepEqual(plain(m.feed(m.posts,'上新').map(post=>post.id)),['P-103']);
+  assert.deepEqual(plain(m.feed(m.posts,'活动').map(post=>post.id)),['P-104']);
+  const untagged={...m.posts[0],id:'P-U',topic:null};assert.equal(m.feed([untagged],'最新').length,1);assert.equal(m.feed([untagged],'优惠').length,0);
   assert(feed.every(post=>post.approved&&post.displayable));assert(!feed.some(post=>post.kind==='resident'));
   assert.deepEqual(plain(m.layout([9,4,7,2])),[[0,3],[1,2]]);
   for(const count of [1,9])assert.equal(m.postErrors({title:'新'.repeat(20),body:'好'.repeat(1000),images:Array(count).fill('x')}).length,0);
