@@ -39,7 +39,11 @@ async function verify(){
    if(width===375)await shot('v05-payment-options');assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   }
   for(const width of [1280,414,375,320]){
-   await page.setViewportSize({width,height:1120});await screen('D');
+   await page.setViewportSize({width,height:1120});
+   const edit=page.locator('#edit-profile');
+   assert(await edit.evaluate(el=>{const r=el.getBoundingClientRect(),n=el.parentElement.querySelector('.profile-name').getBoundingClientRect(),p=el.closest('.phone').getBoundingClientRect();return r.width>=44&&r.height>=44&&r.x>=n.right&&Math.abs(n.x+n.width/2-p.x-p.width/2)<2;}),'nickname and edit target '+width);
+   await edit.click();assert.equal(await page.locator('#detail-title').textContent(),'个人资料');assert(await page.locator('#nickname').isVisible());
+   assert(await page.locator('.profile-editor-avatar .profile-avatar').evaluate(el=>{const r=el.getBoundingClientRect();return r.width===96&&r.height===96;}),'larger editor avatar '+width);
    assert(await page.locator('.profile-editor-avatar').evaluate(el=>{
     const avatar=el.querySelector('.profile-avatar').getBoundingClientRect(),label=el.querySelector('label').getBoundingClientRect(),phone=el.closest('.phone').getBoundingClientRect();
     return Math.abs(avatar.x+avatar.width/2-phone.x-phone.width/2)<2&&Math.abs(label.x+label.width/2-avatar.x-avatar.width/2)<2&&label.top>=avatar.bottom;

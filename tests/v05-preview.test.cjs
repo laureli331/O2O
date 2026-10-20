@@ -75,6 +75,14 @@ test('wallet forms use exact cents and withdrawal is bounded by available princi
 
 test('V05-D centers the avatar and change-avatar controls above its form fields',()=>{
  assert(html.includes('.profile-editor-avatar{display:flex;flex-direction:column;align-items:center;text-align:center;'));
+ assert(html.includes('.profile-editor-avatar .profile-avatar{width:96px;height:96px}'));
+});
+
+test('V05-A reuses the pencil icon beside the nickname for the existing profile editor',()=>{
+ const source=fs.readFileSync(path.join(__dirname,'../assets/ui/development-handoff-20261009/icons/icon-edit.svg'),'utf8');
+ const body=source.match(/<svg[^>]*>([\s\S]*?)<\/svg>/)[1];
+ assert(html.includes('<symbol id="i-edit" viewBox="0 0 24 24">'+body+'</symbol>'));
+ assert(html.includes('id="edit-profile" data-open="D" aria-label="编辑个人资料"'));
 });
 
 test('V05-A labels the tools section 我的工具',()=>{
