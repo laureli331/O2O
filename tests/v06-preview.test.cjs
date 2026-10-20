@@ -45,6 +45,93 @@ test('feed, validation, permissions and version states follow the approved contr
   assert.deepEqual(plain(m.version('risk-removed')),{publicVersion:null,reviewVersion:null,publicVisible:false,replaced:false});
 });
 
+test('subscription feed contains only current public posts from subscribed merchants',()=>{
+  const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});
+  vm.runInContext(html.match(/<script id="v06-model">([\s\S]*?)<\/script>/)[1],ctx);
+  const m=ctx.V06Model,plain=value=>JSON.parse(JSON.stringify(value));
+  assert.deepEqual(
+    plain(m.subscriptionFeed(m.posts,['木作小铺','一叶花房']).map(post=>post.id)),
+    ['P-103','P-104'],
+  );
+  assert.deepEqual(plain(m.subscriptionFeed(m.posts,[])),[]);
+});
+
+test('discovery exposes subscription and discovery sections with a guest login state',()=>{
+  const html=fs.readFileSync(file,'utf8');
+  for(const fragment of [
+    'class="discovery-sections"',
+    'data-discovery-section="订阅"',
+    'data-discovery-section="发现"',
+    '登录后查看订阅内容',
+    'data-action="login-subscriptions"',
+  ])assert(html.includes(fragment),fragment);
+});
+
+test('merchant public stats use only current public posts and active subscription relations',()=>{
+  const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});
+  vm.runInContext(html.match(/<script id="v06-model">([\s\S]*?)<\/script>/)[1],ctx);
+  const m=ctx.V06Model,plain=value=>JSON.parse(JSON.stringify(value));
+  const relations=[
+    {merchant:'木作小铺',active:true},
+    {merchant:'木作小铺',active:true},
+    {merchant:'木作小铺',active:false},
+  ];
+  assert.deepEqual(plain(m.merchantStats(m.posts,relations,'木作小铺')),{posts:1,subscriptions:2,favorites:24});
+});
+
+test('merchant homepage exposes the approved profile, details and single-select work filter',()=>{
+  const html=fs.readFileSync(file,'utf8');
+  for(const fragment of [
+    'class="profile-stats"',
+    '<span>帖子</span>',
+    '<span>订阅</span>',
+    '<span>收藏</span>',
+    '查看详细信息',
+    '服务方式',
+    '营业时间',
+    '联系方式',
+    'data-action="toggle-profile-details"',
+    'data-action="toggle-subscription"',
+    'data-action="toggle-profile-filter"',
+    'data-profile-topic="${topic}"',
+  ])assert(html.includes(fragment),fragment);
+});
+
+test('unauthorized contact details never enter the offline page data',()=>{
+  const html=fs.readFileSync(file,'utf8');
+  assert(!html.includes('138 0000 1040'));
+  assert(!html.includes('leaf_demo'));
+});
+
+test('subscription changes update counts atomically and preserve state on failure',()=>{
+  const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});
+  vm.runInContext(html.match(/<script id="v06-model">([\s\S]*?)<\/script>/)[1],ctx);
+  const m=ctx.V06Model,plain=value=>JSON.parse(JSON.stringify(value));
+  assert.deepEqual(plain(m.subscriptionTransition({subscribed:false,count:3},'subscribe',false)),{subscribed:true,count:4});
+  assert.deepEqual(plain(m.subscriptionTransition({subscribed:true,count:4},'cancel',false)),{subscribed:false,count:3});
+  assert.deepEqual(plain(m.subscriptionTransition({subscribed:true,count:4},'cancel',true)),{subscribed:true,count:4});
+  assert.deepEqual(plain(m.subscriptionTransition({subscribed:false,count:3},'subscribe',true)),{subscribed:false,count:3});
+  for(const fragment of ['不再继续订阅？','data-action="keep-subscription"','继续订阅','data-action="confirm-unsubscribe"','取消订阅'])assert(html.includes(fragment),fragment);
+});
+
+test('favorite changes keep the merchant total synchronized and roll back together',()=>{
+  const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});
+  vm.runInContext(html.match(/<script id="v06-model">([\s\S]*?)<\/script>/)[1],ctx);
+  const m=ctx.V06Model,plain=value=>JSON.parse(JSON.stringify(value));
+  assert.deepEqual(plain(m.favoriteTransition({favorited:false,count:24},false)),{favorited:true,count:25});
+  assert.deepEqual(plain(m.favoriteTransition({favorited:true,count:25},false)),{favorited:false,count:24});
+  assert.deepEqual(plain(m.favoriteTransition({favorited:true,count:25},true)),{favorited:true,count:25});
+});
+
+test('guest subscription preserves the merchant intent until login completes',()=>{
+  const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});
+  vm.runInContext(html.match(/<script id="v06-model">([\s\S]*?)<\/script>/)[1],ctx);
+  const m=ctx.V06Model,plain=value=>JSON.parse(JSON.stringify(value));
+  assert.deepEqual(plain(m.subscriptionIntent(false,'一叶花房')),{requiresLogin:true,merchant:'一叶花房'});
+  assert.deepEqual(plain(m.subscriptionIntent(true,'一叶花房')),{requiresLogin:false,merchant:'一叶花房'});
+  assert(html.includes('pendingLoginMerchant'));
+});
+
 test('share, favorite rollback, stale-load retention and notification copy are privacy safe',()=>{
   const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});vm.runInContext(html.match(/<script id="v06-model">([\s\S]*?)<\/script>/)[1],ctx);const m=ctx.V06Model;
   const share=m.share(m.posts[0]);assert.deepEqual(Object.keys(share).sort(),['cover','merchant','postId','title']);
@@ -60,5 +147,5 @@ test('share, favorite rollback, stale-load retention and notification copy are p
 
 test('preview guide documents the content-first V06 refinement',()=>{
   const markdown=fs.readFileSync(guide,'utf8');
-  for(const phrase of ['最新 / 优惠 / 上新 / 活动','主题帖同时进入“最新”和对应主题','公开页面不显示“已审核”或“资料已审核”','图片选择与排序置顶','A 版顶部商家栏','SVG `<`','固定“收藏 / 分享”操作区','发布时间与服务区域分两行','同一商家的合规公开主帖'])assert(markdown.includes(phrase),phrase);
+  for(const phrase of ['订阅 / 发现','登录后查看订阅内容','最新 / 优惠 / 上新 / 活动','主题帖同时进入“最新”和对应主题','公开页面不显示“已审核”或“资料已审核”','图片选择与排序置顶','A 版顶部商家栏','SVG `<`','固定“收藏 / 分享”操作区','发布时间与服务区域分两行','帖子 / 订阅 / 收藏','查看详细信息','电话与微信直接完整展示','不再继续订阅？','继续订阅 / 取消订阅'])assert(markdown.includes(phrase),phrase);
 });
