@@ -148,10 +148,10 @@ test('candidate text colors are readable on declared solid surfaces and still re
   assert.throws(() => validateTextContrast(tooLight), /hintText/);
 });
 
-test('SVG icons are safe, standalone, complete and use a single service bag identity', () => {
-  assert.equal(manifest.iconCount, 23);
-  assert.equal(manifest.standaloneIconCount, 46);
-  assert.equal(new Set(manifest.icons.map(item => item.id)).size, 23);
+test('SVG icons are safe, standalone, complete and use approved merchant profile statistics', () => {
+  assert.equal(manifest.iconCount, 25);
+  assert.equal(manifest.standaloneIconCount, 50);
+  assert.equal(new Set(manifest.icons.map(item => item.id)).size, 25);
   assert.deepEqual(manifest.navigation.map(item => item.label), ['首页', '发现', '发布', '服务', '我的']);
   assert.equal(manifest.navigation.find(item => item.label === '发现').icon, 'icon-discover');
   assert.equal(manifest.navigation.find(item => item.label === '服务').icon, 'icon-services-bag');
@@ -161,6 +161,17 @@ test('SVG icons are safe, standalone, complete and use a single service bag iden
   assert(discover.includes('<circle cx="12" cy="12" r="8.5"/>'));
   assert(discover.includes('<path d="M14.75 9.25 13.2 13.2l-3.95 1.55 1.55-3.95 3.95-1.55Z"/>'));
   assert(discover.includes('<circle cx="12" cy="12" r="1"/>'));
+  const iconById = new Map(manifest.icons.map(item => [item.id, item]));
+  assert.equal(iconById.get('icon-post').normal, 'icons/icon-post.svg');
+  assert.equal(iconById.get('icon-post').green, 'icons/icon-post-green.svg');
+  assert.equal(iconById.get('icon-subscribe').normal, 'icons/icon-subscribe.svg');
+  assert.equal(iconById.get('icon-subscribe').green, 'icons/icon-subscribe-green.svg');
+  assert.equal(iconById.get('icon-star').normal, 'icons/icon-star.svg');
+  const post = read(path.join(directory, 'icons/icon-post.svg'));
+  const subscribe = read(path.join(directory, 'icons/icon-subscribe.svg'));
+  assert(post.includes('<rect x="4" y="3" width="16" height="18" rx="2"/>'));
+  assert(post.includes('<path d="M8 8h8M8 12h8M8 16h5"/>'));
+  assert(subscribe.includes('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>'));
   for (const item of manifest.files.filter(item => item.path.endsWith('.svg'))) validateSafeSVG(read(path.join(directory, item.path)));
   const inherited = read(path.join(repo, 'assets/ui/v2/icons.svg'));
   const normal = read(path.join(directory, 'icons/icon-home.svg'));

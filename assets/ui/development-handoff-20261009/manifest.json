@@ -22,8 +22,8 @@
     "path": "../../branding/miniapp-avatar-v4/avatar-144.png",
     "note": "Prepared prior upload candidate; latest UI selection does not newly approve a brand-avatar change"
   },
-  "iconCount": 23,
-  "standaloneIconCount": 46,
+  "iconCount": 25,
+  "standaloneIconCount": 50,
   "icons": [
     {
       "id": "icon-home",
@@ -162,6 +162,18 @@
       "source": "approved option A deterministic compass in inherited 24px/1.75 family",
       "normal": "icons/icon-discover.svg",
       "green": "icons/icon-discover-green.svg"
+    },
+    {
+      "id": "icon-post",
+      "source": "approved option A content-card icon in inherited 24px/1.75 family",
+      "normal": "icons/icon-post.svg",
+      "green": "icons/icon-post-green.svg"
+    },
+    {
+      "id": "icon-subscribe",
+      "source": "approved option A bell icon in inherited 24px/1.75 family",
+      "normal": "icons/icon-subscribe.svg",
+      "green": "icons/icon-subscribe-green.svg"
     }
   ],
   "navigation": [
@@ -219,8 +231,8 @@
     },
     {
       "path": "icons.svg",
-      "bytes": 7819,
-      "sha256": "9892CCEFC547227AA43F3E19FB57C5F4B7EDFD0F580E70DF0E89E8459B631CD5"
+      "bytes": 8472,
+      "sha256": "C5803582293EA0CBACD41F3D3602408E5007C3CB1493F30602F294D6FF127518"
     },
     {
       "path": "icons/icon-back-green.svg",
@@ -373,6 +385,16 @@
       "sha256": "660640E227B3F6DA4EDE845987ACC52E369D5A22E9E985A41441918957F86290"
     },
     {
+      "path": "icons/icon-post-green.svg",
+      "bytes": 288,
+      "sha256": "7CF0B8C0ABEE15908371AD0733FE8E3EE3665C844373DB33CB093AB3B06FBD97"
+    },
+    {
+      "path": "icons/icon-post.svg",
+      "bytes": 288,
+      "sha256": "08DEE567C4D3BC378A0897EE4AD8BF46F87E39733CC545470ECD9F1659EC5FB9"
+    },
+    {
       "path": "icons/icon-repair-green.svg",
       "bytes": 289,
       "sha256": "1CCDF6EAA4F9E94EFA49FB456A012FE5DE817B76002FC0F921363096565BEFE0"
@@ -441,6 +463,16 @@
       "path": "icons/icon-star.svg",
       "bytes": 290,
       "sha256": "7BBDB18D24F83BE945EFF7245AAF1D90FB1D3FF6230A7D88E32B9495D99D87A4"
+    },
+    {
+      "path": "icons/icon-subscribe-green.svg",
+      "bytes": 275,
+      "sha256": "2F376B4D77672F271525DF03045BBC98620B18F35E945C320B553EB7D7EA7683"
+    },
+    {
+      "path": "icons/icon-subscribe.svg",
+      "bytes": 275,
+      "sha256": "A925130906D206F9A8CBFEC314B1242539E612F70965F33A10033630A34D840D"
     },
     {
       "path": "icons/icon-user-green.svg",
