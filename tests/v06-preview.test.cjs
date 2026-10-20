@@ -105,6 +105,13 @@ test('discovery main tabs have no underline and the merchant intro precedes inli
   for(const name of ['file','user','star'])assert(profile.includes("icon('"+name+"')"));
 });
 
+test('merchant work filter uses a quiet borderless trigger and an SVG chevron',()=>{
+  const html=fs.readFileSync(file,'utf8');
+  assert(html.includes('.profile-filter-trigger{min-width:64px;min-height:44px;border:0;'));
+  assert(html.includes('class="profile-filter-chevron"'));
+  assert(!html.includes('${profileTopic}<span>⌄</span>'));
+});
+
 test('unauthorized contact details never enter the offline page data',()=>{
   const html=fs.readFileSync(file,'utf8');
   assert(!html.includes('138 0000 1040'));

@@ -147,7 +147,9 @@ async function verify() {
       ['最新', '优惠', '上新', '活动'],
     );
     await page.locator('[data-profile-topic="活动"]').click();
-    assert.equal((await page.locator('.profile-filter-trigger').textContent()).trim(), '活动⌄');
+    assert.equal((await page.locator('.profile-filter-trigger').textContent()).trim(), '活动');
+    assert(await page.locator('.profile-filter-trigger').evaluate(el=>{const s=getComputedStyle(el),r=el.getBoundingClientRect();return s.borderTopWidth==='0px'&&s.backgroundColor==='rgba(0, 0, 0, 0)'&&r.width>=44&&r.height>=44;}));
+    assert.equal(await page.locator('.profile-filter-chevron').count(),1);
     assert((await page.locator('.profile-feed').textContent()).includes('活动中暂时没有内容'));
     await page.locator('[data-action="toggle-profile-filter"]').click();
     await page.locator('[data-profile-topic="最新"]').click();
