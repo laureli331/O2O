@@ -25,7 +25,8 @@ symbols.push(
   { id: 'icon-info', body: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7" r=".6" fill="currentColor" stroke="none"/>', origin: 'new deterministic SVG in inherited 24px/1.75 family' },
   { id: 'icon-discover', body: '<circle cx="12" cy="12" r="8.5"/><path d="M14.75 9.25 13.2 13.2l-3.95 1.55 1.55-3.95 3.95-1.55Z"/><circle cx="12" cy="12" r="1"/>', origin: 'approved option A deterministic compass in inherited 24px/1.75 family' },
   { id: 'icon-post', body: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>', origin: 'approved option A content-card icon in inherited 24px/1.75 family' },
-  { id: 'icon-subscribe', body: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>', origin: 'approved option A bell icon in inherited 24px/1.75 family' }
+  { id: 'icon-subscribe', body: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>', origin: 'approved option A bell icon in inherited 24px/1.75 family' },
+  { id: 'icon-edit', body: '<path d="M3 21h4l13-13-4-4L3 17Z"/><path d="m14 6 4 4M3 17l4 4"/>', origin: 'deterministic pencil edit icon in inherited 24px/1.75 family' }
 );
 const outputs = new Map();
 const svg = (body, color, size = 24) => `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" color="${color}" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">${body}</svg>\n`;

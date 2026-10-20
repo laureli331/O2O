@@ -149,9 +149,9 @@ test('candidate text colors are readable on declared solid surfaces and still re
 });
 
 test('SVG icons are safe, standalone, complete and use approved merchant profile statistics', () => {
-  assert.equal(manifest.iconCount, 25);
-  assert.equal(manifest.standaloneIconCount, 50);
-  assert.equal(new Set(manifest.icons.map(item => item.id)).size, 25);
+  assert.equal(manifest.iconCount, 26);
+  assert.equal(manifest.standaloneIconCount, 52);
+  assert.equal(new Set(manifest.icons.map(item => item.id)).size, 26);
   assert.deepEqual(manifest.navigation.map(item => item.label), ['首页', '发现', '发布', '服务', '我的']);
   assert.equal(manifest.navigation.find(item => item.label === '发现').icon, 'icon-discover');
   assert.equal(manifest.navigation.find(item => item.label === '服务').icon, 'icon-services-bag');
@@ -166,12 +166,17 @@ test('SVG icons are safe, standalone, complete and use approved merchant profile
   assert.equal(iconById.get('icon-post').green, 'icons/icon-post-green.svg');
   assert.equal(iconById.get('icon-subscribe').normal, 'icons/icon-subscribe.svg');
   assert.equal(iconById.get('icon-subscribe').green, 'icons/icon-subscribe-green.svg');
+  assert.equal(iconById.get('icon-edit').normal, 'icons/icon-edit.svg');
+  assert.equal(iconById.get('icon-edit').green, 'icons/icon-edit-green.svg');
   assert.equal(iconById.get('icon-star').normal, 'icons/icon-star.svg');
   const post = read(path.join(directory, 'icons/icon-post.svg'));
   const subscribe = read(path.join(directory, 'icons/icon-subscribe.svg'));
+  const edit = read(path.join(directory, 'icons/icon-edit.svg'));
   assert(post.includes('<rect x="4" y="3" width="16" height="18" rx="2"/>'));
   assert(post.includes('<path d="M8 8h8M8 12h8M8 16h5"/>'));
   assert(subscribe.includes('<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>'));
+  assert(edit.includes('<path d="M3 21h4l13-13-4-4L3 17Z"/>'));
+  assert(edit.includes('<path d="m14 6 4 4M3 17l4 4"/>'));
   for (const item of manifest.files.filter(item => item.path.endsWith('.svg'))) validateSafeSVG(read(path.join(directory, item.path)));
   const inherited = read(path.join(repo, 'assets/ui/v2/icons.svg'));
   const normal = read(path.join(directory, 'icons/icon-home.svg'));

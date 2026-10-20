@@ -22,8 +22,8 @@
     "path": "../../branding/miniapp-avatar-v4/avatar-144.png",
     "note": "Prepared prior upload candidate; latest UI selection does not newly approve a brand-avatar change"
   },
-  "iconCount": 25,
-  "standaloneIconCount": 50,
+  "iconCount": 26,
+  "standaloneIconCount": 52,
   "icons": [
     {
       "id": "icon-home",
@@ -174,6 +174,12 @@
       "source": "approved option A bell icon in inherited 24px/1.75 family",
       "normal": "icons/icon-subscribe.svg",
       "green": "icons/icon-subscribe-green.svg"
+    },
+    {
+      "id": "icon-edit",
+      "source": "deterministic pencil edit icon in inherited 24px/1.75 family",
+      "normal": "icons/icon-edit.svg",
+      "green": "icons/icon-edit-green.svg"
     }
   ],
   "navigation": [
@@ -231,8 +237,8 @@
     },
     {
       "path": "icons.svg",
-      "bytes": 8472,
-      "sha256": "C5803582293EA0CBACD41F3D3602408E5007C3CB1493F30602F294D6FF127518"
+      "bytes": 8782,
+      "sha256": "3B15162250E873E86197E34C04AEE422DBB307EA3F5C6F0950C9D1FBEB5A40F8"
     },
     {
       "path": "icons/icon-back-green.svg",
@@ -283,6 +289,16 @@
       "path": "icons/icon-discover.svg",
       "bytes": 336,
       "sha256": "7A4C27A517D51A1885E7F58AE2C11CAD025A6502222E850AA22A137A5EAB1A2D"
+    },
+    {
+      "path": "icons/icon-edit-green.svg",
+      "bytes": 272,
+      "sha256": "67014BCF7D7DEAD0DBF6A0D73B541D53F6989E104994DCD760BC8770F3B8EAFC"
+    },
+    {
+      "path": "icons/icon-edit.svg",
+      "bytes": 272,
+      "sha256": "F84521D9D0B677D8AB6C60352406490245E9470A53238CFD4F9C1063D71C0771"
     },
     {
       "path": "icons/icon-file-green.svg",
