@@ -1,0 +1,40 @@
+{
+  "confirmedAt": "2026-10-20",
+  "status": "confirmed-product-rules-not-launched",
+  "drawer": {
+    "surface": "discovery-side-drawer",
+    "merchantOnly": true,
+    "publishInsideDrawer": false,
+    "profileEntryLabel": "查看主页",
+    "profileEntryTarget": "merchant-homepage",
+    "stats": ["subscriptions", "favorites"],
+    "primaryEntries": ["post-management", "business-promotion"],
+    "fixedBottomEntries": ["customer-service", "drafts", "settings"]
+  },
+  "onboarding": {
+    "applicantTypes": ["licensed-business", "independent-service-provider-without-business-license"],
+    "reviewBeforePayment": true,
+    "feeCnyPerPeriod": 99,
+    "periodDays": 30,
+    "calendarMonthBilling": false,
+    "autoRenew": false,
+    "feeUnit": "operating-profile",
+    "activateOnlyAfterConfirmedPayment": true,
+    "chargeWhenReviewRejected": false
+  },
+  "feeBoundary": {
+    "basicMerchantPostsRemainFree": true,
+    "replacesStandaloneToolMembership": true,
+    "includesPreviouslyConfirmedBasicTools": true,
+    "separateFromPromotion": true,
+    "separateFromCommission": true,
+    "realPaymentLaunchAuthorized": false
+  },
+  "unresolved": [
+    "application-entry-location",
+    "category-specific-materials-and-review-sla",
+    "payment-window-expiry-and-refund",
+    "multi-profile-limit-merge-migration-and-closure",
+    "merchant-and-consumer-message-taxonomy"
+  ]
+}

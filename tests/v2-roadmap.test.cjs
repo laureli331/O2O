@@ -49,7 +49,7 @@ function validate(b) {
   assert.equal(r.creationDateIsObservationStart,false,'Reminder creation is not the observation start');
   assert.equal(r.notifyOncePerStableCycle,true,'No repeated reminder for the same cycle');
   assert.equal(r.automaticImplementation,false,'Reminder does not authorize implementation');
-  for(const term of ['连续14天','从修复验收通过时重新计时','没有故障报告、没有消息也不能证明稳定','文档测试、演示、模拟或部分流程通过不能替代','入驻费/推流费/服务费','不写成所有收款受限','不自动开发/收费/上线']) {
+  for(const term of ['连续14天','从修复验收通过时重新计时','没有故障报告、没有消息也不能证明稳定','文档测试、演示、模拟或部分流程通过不能替代','入驻费/推流费/服务费','99元／连续30天商家入驻费','不写成所有收款受限','不自动开发/收费/上线']) {
     assert(b.roadmap.includes(term),'Roadmap boundary: '+term);
   }
   return true;
