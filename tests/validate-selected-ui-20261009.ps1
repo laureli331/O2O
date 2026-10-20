@@ -18,7 +18,7 @@ $content = Get-Content -LiteralPath (Join-Path $handoff 'content.json') -Raw -En
 $expectedNav = @('首页', '发现', '发布', '服务', '我的')
 if (($content.labels.navigation -join '/') -ne ($expectedNav -join '/')) { throw 'Navigation copy differs from approved order' }
 if (($manifest.navigation.label -join '/') -ne ($expectedNav -join '/')) { throw 'Generated navigation differs from approved order' }
-if ($manifest.iconCount -ne 23 -or $manifest.standaloneIconCount -ne 46) { throw 'Discovery icon resources are incomplete' }
+if ($manifest.iconCount -ne 26 -or $manifest.standaloneIconCount -ne 52) { throw 'Discovery icon resources are incomplete' }
 $discover = Get-Content -LiteralPath (Join-Path $handoff 'icons\icon-discover.svg') -Raw -Encoding UTF8
 if ($discover -notmatch '<circle cx="12" cy="12" r="8\.5"/>' -or $discover -notmatch 'M14\.75 9\.25') { throw 'Approved option A compass geometry is missing' }
 Write-Output 'PASS: Approved navigation order, option A compass and generated icon counts.'

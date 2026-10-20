@@ -23,6 +23,12 @@ const components = json('components.json');
 const prd = read(path.join(repo, 'docs/prd.md'));
 const expectedHash = 'A73C4D802FBE91900CF9D1E751AB1C45391B7FD10C1868476BDF392605EEE011';
 
+test('selected-image PowerShell validation uses the current generated icon counts', () => {
+  const script = read(path.join(repo, 'tests/validate-selected-ui-20261009.ps1'));
+  assert.equal(Number(script.match(/\$manifest\.iconCount -ne (\d+)/)[1]), manifest.iconCount);
+  assert.equal(Number(script.match(/\$manifest\.standaloneIconCount -ne (\d+)/)[1]), manifest.standaloneIconCount);
+});
+
 function validateCoverage(value) {
   const ids = value.items.map(item => item.id);
   assert.equal(new Set(ids).size, 23, 'page groups must be unique');
