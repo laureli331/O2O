@@ -38,6 +38,15 @@ async function verify(){
    assert(await options.evaluateAll(els=>els[0].getBoundingClientRect().x<els[1].getBoundingClientRect().x));
    if(width===375)await shot('v05-payment-options');assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   }
+  for(const width of [1280,414,375,320]){
+   await page.setViewportSize({width,height:1120});await screen('D');
+   assert(await page.locator('.profile-editor-avatar').evaluate(el=>{
+    const avatar=el.querySelector('.profile-avatar').getBoundingClientRect(),label=el.querySelector('label').getBoundingClientRect(),phone=el.closest('.phone').getBoundingClientRect();
+    return Math.abs(avatar.x+avatar.width/2-phone.x-phone.width/2)<2&&Math.abs(label.x+label.width/2-avatar.x-avatar.width/2)<2&&label.top>=avatar.bottom;
+   }),'centered editor avatar '+width);
+   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+   if(width===375)await shot('v05-D-centered-avatar');
+  }
   await screen('B');await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.locator('.primary').first().evaluate(el=>getComputedStyle(el).transitionDuration),'0s');assert.deepEqual(errors,[]);
   const result={passed:true,checks:['A-E and separate settings','centered profile and right-aligned earnings','separate login/phone/identity consent','guest private entry gates','age/identity-change/unknown gates','four verification failures','profile validation and explicit contact-change save','local avatar format','reminder state','current/disputed/corrected earnings','unknown not zero','admin entry isolation','all private and settings handoffs','balance independent of earnings','320/375px all screens','reduced motion','no browser errors']};fs.writeFileSync(path.join(outDir,'result.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
  }finally{await browser.close();}

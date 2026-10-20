@@ -73,6 +73,10 @@ test('wallet forms use exact cents and withdrawal is bounded by available princi
  assert(html.includes('尚未到账'));assert(html.includes('提现不包括跑腿服务费统计中的金额'));
 });
 
+test('V05-D centers the avatar and change-avatar controls above its form fields',()=>{
+ assert(html.includes('.profile-editor-avatar{display:flex;flex-direction:column;align-items:center;text-align:center;'));
+});
+
 test('V05-A labels the tools section 我的工具',()=>{
  assert(html.includes('<h3>我的工具</h3><div class="tool-grid">'));
  assert(!html.includes('<h3>工具箱</h3>'));
