@@ -83,9 +83,9 @@ test('merchant homepage exposes the approved profile, details and single-select 
   const html=fs.readFileSync(file,'utf8');
   for(const fragment of [
     'class="profile-stats"',
-    '<span>帖子</span>',
-    '<span>订阅</span>',
-    '<span>收藏</span>',
+    'aria-label="帖子 ${stats.posts}"',
+    'aria-label="订阅 ${stats.subscriptions}"',
+    'aria-label="收藏 ${stats.favorites}"',
     '查看详细信息',
     '服务方式',
     '营业时间',
@@ -95,6 +95,14 @@ test('merchant homepage exposes the approved profile, details and single-select 
     'data-action="toggle-profile-filter"',
     'data-profile-topic="${topic}"',
   ])assert(html.includes(fragment),fragment);
+});
+
+test('discovery main tabs have no underline and the merchant intro precedes inline icon stats',()=>{
+  const html=fs.readFileSync(file,'utf8');
+  assert(!html.includes('.discovery-section[aria-selected=true]:after'));
+  const profile=html.slice(html.indexOf('function merchantProfile('),html.indexOf('function closeSubscriptionDialog('));
+  assert(profile.indexOf('class="profile-intro"')<profile.indexOf('class="profile-stats"'));
+  for(const name of ['file','user','star'])assert(profile.includes("icon('"+name+"')"));
 });
 
 test('unauthorized contact details never enter the offline page data',()=>{

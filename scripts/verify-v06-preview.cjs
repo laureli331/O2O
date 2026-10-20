@@ -124,6 +124,12 @@ async function verify() {
     assert.equal(await page.locator('.profile-hero h2').textContent(), '木作小铺');
     assert.deepEqual(await profileStats(), ['1', '3', '25']);
     assert((await page.locator('.profile-intro').textContent()).includes('这是一家木工作坊'));
+    assert(await page.locator('.profile-hero').evaluate(el=>{
+      const name=el.querySelector('h2').getBoundingClientRect(),intro=el.querySelector('.profile-intro').getBoundingClientRect(),stats=el.querySelector('.profile-stats').getBoundingClientRect();
+      return name.bottom<=intro.top&&intro.bottom<=stats.top;
+    }));
+    assert.equal(await page.locator('.profile-stat svg').count(),3);
+    assert.deepEqual(await page.locator('.profile-stat').evaluateAll(items=>items.map(el=>el.getAttribute('aria-label'))),['帖子 1','订阅 3','收藏 25']);
     assert.equal(await page.locator('.profile-details').count(), 0);
     assert.equal((await page.locator('.profile-subscribe').textContent()).trim(), '已订阅');
     assert.equal(await page.locator('.profile-works-head h3').textContent(), '作品');
@@ -288,11 +294,16 @@ async function verify() {
       await page.setViewportSize({ width, height: 900 });
       await page.goto(url);
       await mainPosts().first().waitFor();
+      assert(await page.locator('.discovery-section[aria-selected="true"]').evaluate(el=>['none','normal',''].includes(getComputedStyle(el,'::after').content)&&getComputedStyle(el).textDecorationLine==='none'));
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), String(width));
       await page.locator('#main-content [data-post="P-103"]').click();
       await page.locator('[data-action="merchant-profile"]').first().click();
       await page.locator('[data-action="toggle-profile-details"]').click();
       await page.locator('[data-action="toggle-profile-filter"]').click();
+      assert(await page.locator('.profile-stats').evaluate(el=>{
+        const cells=[...el.children],intro=el.previousElementSibling.getBoundingClientRect(),row=el.getBoundingClientRect();
+        return intro.bottom<=row.top&&cells.every(cell=>{const icon=cell.querySelector('svg').getBoundingClientRect(),number=cell.querySelector('strong').getBoundingClientRect();return icon.right<=number.left&&Math.abs(icon.y+icon.height/2-number.y-number.height/2)<2;})&&Math.max(...cells.map(x=>x.getBoundingClientRect().y))-Math.min(...cells.map(x=>x.getBoundingClientRect().y))<2;
+      }),`inline-profile-stats-${width}`);
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), `profile-${width}`);
       await page.locator('.profile-subscribe').click();
       assert(await page.locator('#subscription-dialog').isVisible());
