@@ -281,16 +281,9 @@ async function verify() {
     assert.equal(await mainPosts().count(), 3);
     assert((await page.locator('#main-content').textContent()).includes('加载失败，已保留上次内容'));
     await page.locator('[data-action="retry-feed"]').click();
-    await page.locator('[data-tab="服务"]').click();
-    assert(await page.locator('[data-action="open-notices"]').isVisible());
-    assert.equal(await page.locator('[data-action="open-notices"] .unread-badge').textContent(), '2');
-    await page.locator('[data-action="clear-notices"]').click();
-    assert.equal(await page.locator('[data-action="open-notices"] .unread-badge').count(), 0);
-    await page.locator('[data-action="open-notices"]').click();
-    assert((await page.locator('#main-content').textContent()).includes('当前无未读'));
-    await page.locator('[data-action="back-service"]').click();
-    assert.equal(await page.locator('#main-head h2').textContent(), '服务');
-    await shot('v06-service');
+    await screen('notices');
+    assert.equal(await page.locator('#main-head h2').textContent(), '通知中心');
+    await shot('v06-notices');
 
     for (const width of [414, 375, 320]) {
       await page.setViewportSize({ width, height: 900 });

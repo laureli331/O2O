@@ -1,4 +1,21 @@
 {
+  "serviceOrderCenterDecision": {
+    "date": "2026-10-21",
+    "document": "docs/service-order-center-confirmed-20261021.md",
+    "sourceUserRequest": "我希望普通用户和服务用户的订单都集合在服务页",
+    "directoryRetentionReply": "不保留",
+    "primaryEntry": "services.html",
+    "tabs": ["published", "accepted"],
+    "businesses": ["维修", "跑腿", "闲置", "其它"],
+    "personnelDirectoryRetained": false,
+    "directoryMovedElsewhere": false,
+    "notificationsEntry": "service-top-right",
+    "publishingAndParticipationUseSameAccount": true,
+    "secondhandBuyerIncluded": true,
+    "historicalRecordsDeleted": false,
+    "realServicesEnabled": false,
+    "productionAcceptancePassed": false
+  },
   "monetizationSupplement": {
     "date": "2026-10-15",
     "record": "docs/monetization-decisions-20261015.json",
