@@ -47,7 +47,7 @@ test('review comments are reflected without changing the errand commission cap r
   assert(html.includes('还未确认新时间，暂不能选'));
   assert(html.includes('candidate-avatar'));
   assert(html.indexOf('id="application-status"')>html.indexOf('</form>'));
-  assert(html.includes('<div class="task-title-row"><h2>${item.title}</h2><span class="badge">${item.name}</span></div>'));
+  assert(html.includes('<div class="task-title-row"><h2>${esc(item.title)}</h2><span class="badge">${item.name}</span></div>'));
   assert(html.includes('id="fixed-fee-summary"'));assert(!html.includes('发布者填写 · 不能修改'));assert(!html.includes('同次服务最多'));assert(!html.includes('当前时间版本'));assert(html.includes('请联系开发者处理'));
   const read=file=>fs.readFileSync(path.join(__dirname,'..',file),'utf8');
   assert(read('docs/prd.md').includes('不允许自行报价或修改服务费'));

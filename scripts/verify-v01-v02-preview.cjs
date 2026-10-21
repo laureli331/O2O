@@ -91,7 +91,7 @@ async function verify(){
     for(const [kind,button] of [['repair','申请接单'],['errands','申请接单'],['other','申请接单']]){
       await page.locator(`#preview-switcher [data-kind="${kind}"]`).click();assert(await page.locator('#schedule-panel').isVisible());assert.equal(await page.locator('#primary-action').textContent(),button);assert((await page.locator('#published-time').textContent()).startsWith('发布时间：'));
     }
-    await page.locator('#primary-action').click();assert((await page.locator('#action-message').textContent()).includes('未提交申请'));await page.keyboard.press('Escape');
+    await page.locator('#primary-action').click();assert(new URL(page.url()).pathname.endsWith('/v03.html'));assert.equal(new URL(page.url()).searchParams.get('kind'),'other');await page.goto(url);
     await page.locator('#preview-switcher [data-kind="repair"]').click();
     await page.evaluate(()=>document.getElementById('detail-scroll').scrollTop=9999);
     const contacts=await page.locator('.contact-row').evaluateAll(rows=>rows.map(x=>{const r=x.getBoundingClientRect();return {top:r.top,bottom:r.bottom};}));assert(contacts[1].top>=contacts[0].bottom,'contacts use separate rows');
