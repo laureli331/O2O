@@ -11,6 +11,18 @@ test('role filters include only current user records and applications are not ac
  const {m}=bundle(),rows=m.records();for(const tab of ['published','accepted']){const result=m.filter(rows,{tab,kind:'all',status:'all',user:'me'});assert(result.length>=4);assert(result.every(x=>tab==='published'?x.owner==='me':x.provider==='me'||x.applicant==='me'||x.buyer==='me'));assert.equal(new Set(result.map(x=>x.kind)).size,4);}
  assert(!m.filter(rows,{tab:'accepted',status:'active',user:'me'}).some(x=>x.state==='applied'));assert(!m.filter(rows,{tab:'published',user:'me'}).some(x=>x.owner==='other'));
 });
+test('order previews provide local first images and valid agreed time ranges',()=>{
+ const {m}=bundle();
+ for(const row of m.records()){
+  assert(['repair','errand','desk','storage'].includes(row.cover));
+  const cover=path.join(root,'previews/assets/service-'+row.cover+'.svg');
+  assert(fs.existsSync(cover));assert(fs.readFileSync(cover,'utf8').includes('viewBox="0 0 180 180"'));
+  const start=Date.parse(row.start.replace(' ','T')+':00+08:00'),due=Date.parse(row.due.replace(' ','T')+':00+08:00');
+  assert(Number.isFinite(start)&&Number.isFinite(due)&&due>start);
+  const copied=m.draft(row);assert(!('cover' in copied));assert(!('due' in copied));
+ }
+});
+
 test('closing before selection requires confirmation, reopens without old assignees, and preserves original publication',()=>{
  const {m}=bundle(),row=m.records().find(x=>x.id==='PUB-REPAIR');const original=row.published;
  assert.throws(()=>m.manage(row,'close','other',''),/本人/);m.manage(row,'close','me','时间另约');assert.equal(row.state,'closed');m.manage(row,'reopen','me','');assert.equal(row.state,'open');assert.equal(row.published,original);assert.equal(row.provider,null);assert.equal(row.applications,0);assert(row.reopened);assert.equal(row.history.length,2);
