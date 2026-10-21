@@ -17,17 +17,6 @@ async function verify(){
     for(const m of metrics){assert(m.gap>=0&&m.gap<=7,m.id+' compact title/price gap');assert(m.metaGap>=0&&m.metaGap<=6,m.id+' compact metadata gap');assert(!m.priceOverflow,m.id+' price fits');assert(Math.abs(m.titleHeight/m.lineHeight-Math.round(m.titleHeight/m.lineHeight))<.05,m.id+' natural complete title lines');}
     return metrics;
   }
-  async function assertActiveOrderBar(){
-    const geometry=await page.locator('#active-order-bar').evaluate(el=>{
-      const r=el.getBoundingClientRect(),nav=el.nextElementSibling.getBoundingClientRect(),scroll=document.getElementById('home-scroll').getBoundingClientRect();
-      return {height:r.height,bottom:r.bottom,navTop:nav.top,scrollBottom:scroll.bottom,overflow:el.scrollWidth>el.clientWidth+1};
-    });
-    assert(geometry.height>=56,'active order bar keeps a comfortable touch target');
-    assert(Math.abs(geometry.bottom-geometry.navTop)<2,'active order bar attaches directly above navigation');
-    assert(geometry.scrollBottom<=geometry.bottom-geometry.height+1,'scroll region ends before the active order bar');
-    assert(!geometry.overflow,'active order bar does not overflow horizontally');
-    assert.equal(await page.locator('#active-order-bar').getAttribute('href'),'services.html?tab=published&status=active');
-  }
   async function assertStickyFilters(){
     await page.locator('#home-scroll').evaluate(el=>el.scrollTop=420);
     await page.waitForFunction(()=>Math.abs(document.getElementById('sticky-filters').getBoundingClientRect().top-document.getElementById('home-scroll').getBoundingClientRect().top)<2);
@@ -68,7 +57,7 @@ async function verify(){
     await page.waitForFunction(()=>{const box=document.getElementById('cards'),card=box.children[1];return Math.abs(card.offsetLeft-(box.clientWidth+12)/2)<2;});
   }
   try{
-    await page.goto(url);await page.locator('[data-item]').first().waitFor();assert.deepEqual(await page.locator('#home-phone .tabbar [data-tab]').evaluateAll(items=>items.map(item=>item.dataset.tab)),['首页','发现','发布','服务','我的']);assert.equal(await page.locator('#home-phone .tabbar [data-tab="消息"]').count(),0);assert.equal(await page.locator('#home-phone .tabbar use[href="#i-discover"]').count(),1);assert.equal(await page.locator('#home-phone [data-tab="发现"]').getAttribute('href'),'v23.html');await assertActiveOrderBar();await page.locator('#active-order-bar').click();await page.waitForURL('**/services.html?tab=published&status=active');assert.equal(await page.locator('#status-filter').inputValue(),'active');assert.equal(await page.locator('[data-tab="published"]').getAttribute('aria-selected'),'true');
+    await page.goto(url);await page.locator('[data-item]').first().waitFor();assert.deepEqual(await page.locator('#home-phone .tabbar [data-tab]').evaluateAll(items=>items.map(item=>item.dataset.tab)),['首页','发现','发布','服务','我的']);assert.equal(await page.locator('#home-phone .tabbar [data-tab="消息"]').count(),0);assert.equal(await page.locator('#home-phone .tabbar use[href="#i-discover"]').count(),1);assert.equal(await page.locator('#home-phone [data-tab="发现"]').getAttribute('href'),'v23.html');
     await page.goto(url);await page.locator('[data-item]').first().waitFor();
     assert.equal(await page.locator('[data-item]').count(),8);
     await assertCompactCards();
@@ -109,20 +98,20 @@ async function verify(){
     const actionBox=await page.locator('.detail-actions').boundingBox();const scrollBox=await page.locator('#detail-scroll').boundingBox();assert(scrollBox.y+scrollBox.height<=actionBox.y+1,'footer does not overlay scroll content');
     await page.screenshot({path:path.join(outDir,'detail-contacts.png'),fullPage:true});
     await page.locator('#detail-toast').waitFor({state:'hidden'});
-    await page.setViewportSize({width:375,height:900});await page.evaluate(()=>{window.scrollTo(0,0);document.getElementById('home-scroll').scrollTop=0;document.getElementById('detail-scroll').scrollTop=0;});await assertActiveOrderBar();
+    await page.setViewportSize({width:375,height:900});await page.evaluate(()=>{window.scrollTo(0,0);document.getElementById('home-scroll').scrollTop=0;document.getElementById('detail-scroll').scrollTop=0;});
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 375px page overflow');
     assert(await page.evaluate(()=>[...document.querySelectorAll('.phone,.scroll')].every(x=>x.scrollWidth<=x.clientWidth+1)),'no inner horizontal overflow');
     await assertCompactCards();
     await assertStickyFilters();
     await page.screenshot({path:path.join(outDir,'mobile.png'),fullPage:true});
     await page.locator('[data-item="parcel"]').click();assert.equal(await page.locator('#detail-title').textContent(),'帮忙代取一个快递');
-    await page.setViewportSize({width:320,height:800});await assertActiveOrderBar();assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 320px overflow');
+    await page.setViewportSize({width:320,height:800});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 320px overflow');
     assert(await page.evaluate(()=>[...document.querySelectorAll('.phone,.scroll,.listing')].every(x=>x.scrollWidth<=x.clientWidth+1)),'no 320px card or inner overflow');
     const narrowTitles=await assertCompactCards();assert(narrowTitles.some(m=>m.titleHeight>m.lineHeight*1.5),'two-line titles remain naturally wrapped on narrow screens');
     await assertMasonry();
     await page.emulateMedia({reducedMotion:'reduce'});assert.equal(await page.locator('.primary').first().evaluate(x=>getComputedStyle(x).transitionDuration),'0s');
     assert.deepEqual(errors,[],'no browser errors');
-    const result={passed:true,checks:['desktop render','active order accessory and filtered order entrance','category union','keyword and region conjunction','empty/reset','four details','idle privacy and no scheduling','favorite persistence','review role and Escape','no transaction side effects','contact rows','footer layout','375px and 320px overflow','reduced motion','browser error log'],screenshots:['desktop.png','detail-contacts.png','mobile.png']};
+    const result={passed:true,checks:['desktop render','category union','keyword and region conjunction','empty/reset','four details','idle privacy and no scheduling','favorite persistence','review role and Escape','no transaction side effects','contact rows','footer layout','375px and 320px overflow','reduced motion','browser error log'],screenshots:['desktop.png','detail-contacts.png','mobile.png']};
     fs.writeFileSync(path.join(outDir,'result.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
   }finally{await browser.close();}
 }

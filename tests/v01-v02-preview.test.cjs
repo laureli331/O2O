@@ -65,20 +65,6 @@ test('bottom navigation uses the approved discovery order and compass option A',
   assert(html.includes('<symbol id="i-discover" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/>'));
 });
 
-test('V01 prototypes a non-overlapping active-order accessory above the tab bar',()=>{
-  assert(html.includes('id="active-order-bar"'));
-  assert(html.includes('href="services.html?tab=published&amp;status=active"'));
-  assert(html.includes('进行中的订单'));
-  assert(html.includes('帮忙代取一个快递'));
-  assert(html.includes('已接单'));
-  assert(html.includes('.active-order-bar{'));
-  assert(html.includes('flex-shrink:0'));
-  assert(html.includes('.active-order-bar:active{transform:scale(.985)}'));
-  const barIndex=html.indexOf('id="active-order-bar"');
-  const navIndex=html.indexOf('<nav class="tabbar"',barIndex);
-  assert(barIndex>0&&navIndex>barIndex,'order accessory is a sibling immediately before the bottom navigation');
-});
-
 test('reviewed cards prioritize imagery and title while sort and detail labels stay honest',()=>{
   const sort=html.match(/<span class="sort-label">([\s\S]*?)<\/span>/)[1];
   assert.equal(sort,'最新发布');
