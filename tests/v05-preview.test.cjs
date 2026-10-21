@@ -38,8 +38,16 @@ test('earnings counts only latest valid ended errand provider fees, without adva
  assert(html.includes('按到期订单统计 · 非到账金额'));assert(html.includes('与跑腿服务费统计、佣金账单分别记录'));assert(!html.slice(html.indexOf('function income()'),html.indexOf('function documents(')).includes('data-open="withdraw"'));
 });
 
-test('personal transaction heading and earnings share a row; disclosure stays in details',()=>{
- assert(html.includes('<div class="transactions-heading"><h3>我的交易</h3><button class="earnings-entry"'));
+test('favorites replace transaction shortcuts while earnings move beside 我的功能',()=>{
+ const renderMy=html.slice(html.indexOf('function renderMy()'),html.indexOf('function loginGate()'));
+ assert(!html.includes('<h3>我的交易</h3>'));
+ assert(!renderMy.includes("'我发布的'"));
+ assert(!renderMy.includes("'我承接的'"));
+ assert(html.includes('<section class="my-card favorites-card"><div class="favorites-heading"><h3>我的收藏</h3>'));
+ assert(html.includes('class="favorites-preview" data-private="favorites"'));
+ assert.equal((html.match(/class="favorite-thumb/g)||[]).length,3);
+ assert(html.includes('<span class="favorites-more">查看更多'));
+ assert(html.includes('<div class="transactions-heading"><h3>我的功能</h3><button class="earnings-entry"'));
  assert(!html.includes('<small>按到期订单统计 · 非到账金额</small>'));
  assert(html.includes('<p class="hint">按到期订单统计 · 非到账金额<br>'));
 });
@@ -67,7 +75,7 @@ test('wallet forms use exact cents and withdrawal is bounded by available princi
  assert.equal(m.cents('1.90'),190);assert.equal(m.cents('0.01'),1);assert.equal(m.cents('99999.99'),9999999);
  assert(m.canWithdraw(190,190));assert(!m.canWithdraw(191,190));assert(!m.canWithdraw(0,190));assert(!m.canWithdraw(null,190));
  assert.deepEqual(plain(m.aiPack),{count:20,price:190,days:180});
- assert(html.includes("['addresses','user','私人地址簿'],['cardbag','card','卡包']"));assert(html.includes('repeat(4,minmax(0,1fr))'));
+ assert(html.includes("['addresses','folder','地址'],['contacts','message','申请'],['reviews','user','评价'],['cardbag','card','卡包']"));assert(html.includes('repeat(4,minmax(0,1fr))'));
  assert(!html.includes('cardbag-entry" data-private="cardbag"'));assert(html.includes('data-open="ai">查看详情'));assert(html.includes('data-open="topup">充值'));assert(html.includes('data-open="withdraw">提现'));
  assert(html.includes('尚未到账'));assert(html.includes('提现不包括跑腿服务费统计中的金额'));
 });
@@ -84,9 +92,11 @@ test('V05-A reuses the pencil icon beside the nickname for the existing profile 
  assert(html.includes('id="edit-profile" data-open="D" aria-label="编辑个人资料"'));
 });
 
-test('V05-A labels the tools section 我的工具',()=>{
- assert(html.includes('<h3>我的工具</h3><div class="tool-grid">'));
- assert(!html.includes('<h3>工具箱</h3>'));
+test('V05-A labels the section 我的功能 and keeps four confirmed shortcuts in order',()=>{
+ assert(!html.includes('<h3>我的工具</h3>'));
+ const section=html.match(/<div class="transactions-heading"><h3>我的功能[\s\S]*?<\/section>/)[0];
+ const shortcuts="['addresses','folder','地址'],['contacts','message','申请'],['reviews','user','评价'],['cardbag','card','卡包']";
+ assert(section.includes(shortcuts));
 });
 
 test('mobile AI action has a full-width touch target and payment methods follow approved order',()=>{
