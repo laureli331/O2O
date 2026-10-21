@@ -93,7 +93,9 @@ test('V05-A reuses the pencil icon beside the nickname for the existing profile 
  assert(html.includes('<symbol id="i-edit" viewBox="0 0 24 24">'+body+'</symbol>'));
  assert(html.includes('id="edit-profile" data-open="D" aria-label="编辑个人资料"'));
  assert(html.includes('.profile-compact .profile-avatar{width:58px;height:58px}'));
- assert(html.includes('.profile-compact .profile-name-row{margin:5px 0 4px}'));
+ assert(html.includes('.profile-compact .profile-name-row{display:flex;position:relative;min-height:32px;margin:2px 0 -3px}'));
+ assert(html.includes('.profile-compact .profile-edit{position:absolute;left:100%;top:50%;transform:translateY(-50%)}'));
+ assert(html.includes('.profile-compact .profile-edit svg{width:16px;height:16px}'));
 });
 
 test('V05-A labels the section 我的功能 and keeps four confirmed shortcuts in order',()=>{
