@@ -21,8 +21,14 @@ test('active orders cannot be closed as an unselected post and sold items requir
 test('all existing prototype service tabs route to the same center',()=>{
  for(const name of ['v01-v02','v04','v05','v06','v07'])assert(fs.readFileSync(path.join(root,'previews/'+name+'.html'),'utf8').includes('services.html'),name);
 });
+test('messages use a floating bottom-right target outside the mini-program capsule area',()=>{
+ const {html}=bundle();assert(html.includes('class="floating-notices" id="notices"'));
+ const head=html.match(/<header class="phone-head">([\s\S]*?)<\/header>/)[1];assert(!head.includes('id="notices"'));
+ assert(html.includes('.floating-notices{position:absolute;right:16px;bottom:calc(90px + env(safe-area-inset-bottom,0px))'));
+ assert(html.includes('.footer:not([hidden])~.floating-notices'));
+});
 test('current decision retires the directory without deleting legal history or enabling real services',()=>{
  const d=JSON.parse(fs.readFileSync(path.join(root,'docs/development-decisions.json'),'utf8')).serviceOrderCenterDecision;
- assert.equal(d.directoryRetentionReply,'不保留');assert.equal(d.personnelDirectoryRetained,false);assert.equal(d.directoryMovedElsewhere,false);assert.equal(d.historicalRecordsDeleted,false);assert.equal(d.realServicesEnabled,false);assert.equal(d.secondhandBuyerIncluded,true);assert.equal(d.notificationsEntry,'service-top-right');
+ assert.equal(d.directoryRetentionReply,'不保留');assert.equal(d.personnelDirectoryRetained,false);assert.equal(d.directoryMovedElsewhere,false);assert.equal(d.historicalRecordsDeleted,false);assert.equal(d.realServicesEnabled,false);assert.equal(d.secondhandBuyerIncluded,true);assert.equal(d.notificationsEntry,'service-floating-bottom-right');
  for(const name of ['CONTEXT.md','docs/prd.md','docs/structured-design.md','docs/development-plan.md','docs/ascii-design-prd-2.1.md'])assert(fs.readFileSync(path.join(root,name),'utf8').includes('service-order-center-confirmed-20261021.md'),name);
 });
