@@ -12,7 +12,7 @@ const spec = fs.readFileSync(specPath, 'utf8');
 const context = fs.readFileSync(path.join(root, 'CONTEXT.md'), 'utf8');
 const basis = fs.readFileSync(path.join(root, 'docs/module-specs/current-development-basis-20261015.md'), 'utf8');
 const structuredDesign = fs.readFileSync(path.join(root, 'docs/structured-design.md'), 'utf8');
-const previewGuide = fs.readFileSync(path.join(root, 'docs/v06-html-preview.md'), 'utf8');
+const previewGuide = fs.readFileSync(path.join(root, 'docs/v23-html-preview.md'), 'utf8');
 
 test('approved first-release navigation and notification placement are explicit', () => {
   for (const phrase of [

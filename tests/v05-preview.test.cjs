@@ -13,7 +13,7 @@ test('bottom message tab is removed and service owns the secondary notification 
  for(const label of ['首页','发现','发布','服务','我的'])assert(nav.includes('>'+label+'<')||nav.includes('>'+label+'</button>'),label);
  assert(nav.indexOf('首页')<nav.indexOf('发现')&&nav.indexOf('发现')<nav.indexOf('发布')&&nav.indexOf('发布')<nav.indexOf('服务')&&nav.indexOf('服务')<nav.indexOf('我的'));
  assert(!nav.includes('>消息<'));
- assert(nav.includes('href="v06.html"'));
+ assert(nav.includes('href="v23.html"'));
  const center=fs.readFileSync(path.join(__dirname,'../previews/services.html'),'utf8');
  assert(html.includes("location.href='services.html'"));
  assert(center.includes('id="notices"'));assert(center.includes('id="unread-badge"'));

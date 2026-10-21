@@ -31,7 +31,7 @@ test('active orders cannot be closed as an unselected post and sold items requir
  const {m}=bundle(),rows=m.records(),active=rows.find(x=>x.id==='PUB-RUN'),sold=rows.find(x=>x.id==='PUB-IDLE');assert.throws(()=>m.manage(active,'close','me',''),/双方/);assert.throws(()=>m.manage(sold,'reopen','me',''),/新帖/);const draft=m.draft(sold);assert.equal(draft.kind,sold.kind);for(const key of ['provider','phone','address','evidence','due','id'])assert(!(key in draft),key);
 });
 test('all existing prototype service tabs route to the same center',()=>{
- for(const name of ['v01-v02','v04','v05','v06','v07'])assert(fs.readFileSync(path.join(root,'previews/'+name+'.html'),'utf8').includes('services.html'),name);
+ for(const name of ['v01-v02','v04','v05','v23','v07'])assert(fs.readFileSync(path.join(root,'previews/'+name+'.html'),'utf8').includes('services.html'),name);
 });
 test('messages use a floating bottom-right target outside the mini-program capsule area',()=>{
  const {html}=bundle();assert(html.includes('class="floating-notices" id="notices"'));
