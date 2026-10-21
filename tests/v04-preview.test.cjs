@@ -8,7 +8,8 @@ test('V04 covers all nine approved screens and remains a single offline HTML',()
  const ascii=fs.readFileSync(path.join(__dirname,'../docs/ascii-design-prd-2.1.md'),'utf8');
  for(const code of 'ABCDEFGHI'){assert(ascii.includes('### V04-'+code));assert(html.includes('data-screen="'+code+'"'));}
  for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
- assert(!/fetch\(|XMLHttpRequest|localStorage|sessionStorage|src="https?:|href="https?:/.test(html));
+ assert(!/fetch\(|XMLHttpRequest|localStorage|src="https?:|href="https?:/.test(html));
+ assert.deepEqual([...html.matchAll(/sessionStorage\.(\w+)\('([^']+)'/g)].map(m=>[m[1],m[2]]),[['getItem','o2o-v09-form-transfer'],['removeItem','o2o-v09-form-transfer']]);
  assert(html.includes('不会上传图片、调用模型、保存云端草稿或发布真实内容'));assert(html.includes('合成演示'));
 });
 test('all four business contracts, conditional purchase fields and optional unused-item times',()=>{
