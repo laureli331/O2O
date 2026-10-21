@@ -48,6 +48,8 @@ test('favorites replace transaction shortcuts while earnings move beside 我的�
  assert.equal((html.match(/class="favorite-thumb/g)||[]).length,3);
  assert(html.includes('<span class="favorites-more">查看更多'));
  assert(html.includes('<div class="transactions-heading"><h3>我的功能</h3><button class="earnings-entry"'));
+ assert(!renderMy.includes('最近收藏'));
+ assert(renderMy.indexOf('<h3>我的功能</h3>')<renderMy.indexOf('<h3>我的收藏</h3>'));
  assert(!html.includes('<small>按到期订单统计 · 非到账金额</small>'));
  assert(html.includes('<p class="hint">按到期订单统计 · 非到账金额<br>'));
 });
@@ -90,6 +92,8 @@ test('V05-A reuses the pencil icon beside the nickname for the existing profile 
  const body=source.match(/<svg[^>]*>([\s\S]*?)<\/svg>/)[1];
  assert(html.includes('<symbol id="i-edit" viewBox="0 0 24 24">'+body+'</symbol>'));
  assert(html.includes('id="edit-profile" data-open="D" aria-label="编辑个人资料"'));
+ assert(html.includes('.profile-compact .profile-avatar{width:58px;height:58px}'));
+ assert(html.includes('.profile-compact .profile-name-row{margin:5px 0 4px}'));
 });
 
 test('V05-A labels the section 我的功能 and keeps four confirmed shortcuts in order',()=>{
