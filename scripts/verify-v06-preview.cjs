@@ -238,15 +238,15 @@ async function verify() {
     assert((await page.locator('#main-code').textContent()).includes('预览确认'));
     assert((await page.locator('#main-content').textContent()).includes('主题：上新'));
     await page.locator('[data-action="submit-review"]').click();
-    assert((await page.locator('#main-content').textContent()).includes('旧公开版继续展示'));
+    assert((await page.locator('#main-content').textContent()).includes('当前已发布内容继续展示'));
     await shot('v06-pending');
 
     await screen('rejected');
-    assert((await page.locator('#main-content').textContent()).includes('旧公开版继续展示'));
+    assert((await page.locator('#main-content').textContent()).includes('当前已发布内容继续展示'));
     await screen('approved');
-    assert((await page.locator('#main-content').textContent()).includes('原子替换'));
+    assert((await page.locator('#main-content').textContent()).includes('内容已更新'));
     await screen('risk-removed');
-    assert((await page.locator('#main-content').textContent()).includes('公众不可见'));
+    assert((await page.locator('#main-content').textContent()).includes('内容暂不可见'));
     await page.locator('#role-select').selectOption('merchant-pending');
     await screen('edit');
     assert((await page.locator('#main-content').textContent()).includes('只能查看状态'));

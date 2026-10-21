@@ -50,7 +50,7 @@ test('coverage rejects missing group, missing drawing, removed acceptance or bro
     document.replace(/^### V07-R .+$/m, ''),
     document.replace(/^\| BX17 \|.+\n/m, ''),
     document.replace(/^\| BX17 \|.+$/m, '| BX17 | V99-A |'),
-    document.replace('```text\n+', '```text\n!'),
+    document.replace(/(### V01-A[\s\S]*?```text\n)\+/, '$1!'),
   ]) assert.throws(() => validate(changed));
 });
 

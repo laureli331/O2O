@@ -37,6 +37,17 @@ test('amounts, Unicode text and future Shanghai time enforce their boundaries',(
  assert(m.validate('other',{...base,note:'字'.repeat(1001)},now).length);assert(m.validate('other',{...base,start:'2026-10-16T10:00'},now).length);assert(m.validate('other',{...base,end:base.start},now).length);
  assert.equal(m.validate('other',{...base,end:'2026-11-15T10:00'},now).length,0);assert(m.validate('other',{...base,end:'2026-11-15T10:01'},now).length);
 });
+test('field validation identifies correction targets while preserving the original validation interface',()=>{
+ const data={...base,title:'',fee:'0',pickup:'',phone:'abc',images:Array(10).fill({})};
+ const issues=Array.from(m.validateFields('errands',data,now),x=>({field:x.field,message:x.message}));
+ for(const field of ['title','fee','pickup','phone','images'])assert(issues.some(x=>x.field===field),field);
+ assert.deepEqual(issues.map(x=>x.message),Array.from(m.validate('errands',data,now)));
+ const corrected={...data,title:base.title,fee:base.fee,pickup:base.pickup,phone:'',images:[]};
+ assert.equal(m.validateFields('errands',corrected,now).length,0);
+ const buy=m.validateFields('errands',{...base,task:m.tasks[1],purchase:'',goods:'',pickup:''},now);
+ assert(buy.some(x=>x.field==='purchase'));assert(buy.some(x=>x.field==='goods'));assert(!buy.some(x=>x.field==='pickup'));
+});
+
 test('reposting excludes private credentials, old time and fixed fee; demo AI never invents missing facts',()=>{
  const copied=m.copyPublic('errands',{...base,code:'PRIVATE',address:'PRIVATE',contact:'PRIVATE'});
  for(const key of ['phone','pickup','delivery','code','contact','start','end','fee','address'])assert(!(key in copied),key);

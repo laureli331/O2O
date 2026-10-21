@@ -74,13 +74,14 @@ test('current context and development basis point back to the approved design an
 test('current design and preview guide contain no stale bottom navigation contract', () => {
   assert.ok(structuredDesign.includes('首页/发现/发布/服务/我的导航关系'));
   assert.ok(structuredDesign.includes('底栏不再保留消息'));
-  assert.ok(structuredDesign.includes('通知从服务页右上角进入二级通知中心'));
+  assert.ok(structuredDesign.includes('通知从服务页右下角悬浮按钮进入二级通知中心'));
+  assert.ok(!structuredDesign.includes('服务入口资料只含维修/跑腿目录'));
   assert.ok(!structuredDesign.includes('首页/服务/发布/消息/我的导航关系'));
 
   for (const phrase of [
-    '未读数为 0 时隐藏角标',
     '空状态、失败保留与重试、游客浏览',
     'Unicode 字素簇',
     '发布时间和商家公开资料入口',
   ]) assert.ok(previewGuide.includes(phrase), phrase);
+  assert.match(previewGuide,/未读数为\s*0\s*时隐藏角标/);
 });
