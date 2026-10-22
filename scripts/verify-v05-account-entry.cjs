@@ -13,9 +13,9 @@ async function main(){
     const entry=page.locator('#qualification-entry');assert((await entry.textContent()).includes(label));
     assert.equal(await page.locator('.account-states .login-status').textContent(),'微信已登录');
     assert.equal(await page.locator('.account-states button').count(),1);
-    assert(await entry.evaluate(el=>{const r=el.getBoundingClientRect(),style=getComputedStyle(el);return r.height>=44&&parseFloat(style.fontSize)>=14&&parseFloat(style.borderTopWidth)===0&&style.backgroundColor==='rgba(0, 0, 0, 0)';}));
+    assert(await entry.evaluate(el=>{const r=el.getBoundingClientRect(),style=getComputedStyle(el);return r.height>=44&&parseFloat(style.fontSize)===12&&parseFloat(style.borderTopWidth)===0&&style.backgroundColor==='rgba(0, 0, 0, 0)';}));
     assert(await page.locator('.account-states').evaluate(el=>{const a=el.querySelector('.login-status'),b=el.querySelector('.qualification'),x=a.getBoundingClientRect(),y=b.getBoundingClientRect();return x.top<y.bottom&&y.top<x.bottom;}),'status and action stay on the same row');
-    assert.equal(await entry.locator('svg').count(),0);assert.equal(await page.locator('.account-separator').textContent(),'·');assert(await entry.evaluate((el,valid)=>getComputedStyle(el).color===(valid?'rgb(97, 136, 114)':'rgb(69, 99, 79)'),scenario==='ready'));
+    assert.equal(await entry.locator('svg').count(),0);assert.equal(await page.locator('.account-separator').textContent(),'·');assert(await entry.evaluate(el=>{const left=getComputedStyle(document.querySelector('.login-status')),right=getComputedStyle(el);return ['fontFamily','fontSize','fontWeight','fontStyle','letterSpacing','lineHeight','color'].every(key=>left[key]===right[key]);}),'qualification typography matches login status');
     assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
     if(scenario==='pending'){await entry.scrollIntoViewIfNeeded();const box=await entry.boundingBox();await page.mouse.move(box.x+box.width/2,box.y+box.height/2);await page.mouse.down();await page.waitForFunction(()=>getComputedStyle(document.querySelector('#qualification-entry')).backgroundColor==='rgb(237, 242, 232)');await page.mouse.up();}
     await entry.click();
@@ -35,7 +35,7 @@ async function main(){
   }
   await page.locator('#scenario').selectOption('pending');await page.locator('#my-phone [data-open="settings"]').click();
   await page.locator('#detail-phone [data-open="B"]').click();assert(await page.locator('#continue-operation').isDisabled());
-  assert.deepEqual(errors,[]);console.log(JSON.stringify({passed:true,checks:['status is not a hidden button','clear action labels across seven qualification states','44px transparent targets and 14px green action text','no qualification icon or visible border','light green pressed feedback and muted verified state','320/375/414px one-row layout','direct correct step and visible destination','guest login and settings management','no browser errors']}));
+  assert.deepEqual(errors,[]);console.log(JSON.stringify({passed:true,checks:['status is not a hidden button','clear action labels across seven qualification states','44px transparent targets and matching 12px status typography','no qualification icon or visible border','light green pressed feedback and unified status color','320/375/414px one-row layout','direct correct step and visible destination','guest login and settings management','no browser errors']}));
  }finally{await browser.close();}
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});
