@@ -9,7 +9,7 @@ const read = file => new TextDecoder('utf-8', { fatal: true }).decode(fs.readFil
 const file = 'docs/ascii-design-prd-2.1.md';
 const document = read(file);
 const prd = read('docs/prd.md');
-const counts = [2, 4, 4, 9, 5, 3, 19, 2, 4, 4, 1, 1, 1, 5, 5, 3, 3, 4, 2, 3, 3, 10, 10];
+const counts = [2, 4, 4, 9, 5, 3, 19, 2, 4, 4, 4, 3, 1, 5, 5, 3, 3, 4, 2, 3, 3, 10, 10];
 const expected = counts.flatMap((n, i) => Array.from({ length: n }, (_, j) => `V${String(i + 1).padStart(2, '0')}-${String.fromCharCode(65 + j)}`));
 const common = ['G01', 'G02', 'G03', 'G04'];
 const cases = [...prd.matchAll(/^\| ((?:T|BX|RT|AT|DT)\d{2}) \|/gm)].map(m => m[1]).sort();
@@ -75,7 +75,7 @@ test('current completion, permission, finance and deferred-scope boundaries stay
     '旧理由材料重复不重停', '只争议部分暂缓', '不建0元支付',
     '核准抵扣分开', '多收待核对', '不恢复地址/旧凭据',
     '八组', '无全站混合总分', 'AG01前无真实模型', 'DG01前仅合成演示',
-    'V11 商家Banner投放方向（延后记录）', 'VP01', 'VP02', 'VP03', 'VP04', 'VP05',
+    'V11 商家Banner投放（第二版交互预览）', 'VP01', 'VP02', 'VP03', 'VP04', 'VP05',
   ]) assert(document.includes(phrase), phrase);
   // No manual completion action may appear as a button in a drawing.
   for (const action of document.matchAll(/\[([^\]\n]+)\]/g)) {
