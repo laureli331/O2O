@@ -8,6 +8,7 @@
  function capture(kind,form,provided,now=Date.now()){if(!['repair','errands','other'].includes(kind))throw Error('无法恢复原申请');const safe={amount:String(form.amount||''),advance:form.advance==='yes'?'yes':'no',limit:String(form.limit||''),note:String(form.note||'').slice(0,300),time:!!form.time,rules:!!form.rules,context:{title:String(form.context?.title||'').slice(0,30),fee:String(form.context?.fee||''),start:String(form.context?.start||'').slice(0,16),end:String(form.context?.end||'').slice(0,16)}};store(provided).setItem(RETURN,JSON.stringify({owner:'me',kind,form:safe,expires:now+TTL}));}
  function consume(provided,now=Date.now()){try{const st=store(provided),value=JSON.parse(st.getItem(RETURN));st.removeItem(RETURN);return value?.owner==='me'&&['repair','errands','other'].includes(value.kind)&&value.expires>now&&value.expires<=now+TTL&&value.form?value:null;}catch(e){return null;}}
  function invalidate(provided){store(provided).removeItem(GRANT);}
+ function qualificationStep(s){if(!s?.logged)return 'login';if(s.changing||s.identity==='unknown'||['under16','conditions-pending'].includes(s.age))return 'identity';return s.phone?'identity':'phone';}
  function destination(from){return from==='apply'?'v03.html?resume=1':from==='provider'?'v10.html':null;}
- return {allowed,grant,read,capture,consume,invalidate,destination,TTL};
+ return {allowed,grant,read,capture,consume,invalidate,destination,qualificationStep,TTL};
 });
