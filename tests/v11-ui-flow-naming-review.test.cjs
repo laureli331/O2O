@@ -17,18 +17,20 @@ test('V11 review exists and separates observed problems from unconfirmed decisio
     '本次没有假定',
     '不是页面实施授权',
     '本轮确认结果与剩余前置条件',
-    '当前记录不足以安全选择',
+    '本次补充确认 C',
   ]) assert.ok(review.includes(phrase), phrase);
 });
 
-test('V11 review records the user-approved writing scope without inventing unresolved business facts', () => {
+test('V11 review preserves original writing scope and records later implementation authorization and D4 choice', () => {
   const review = read();
   for (const phrase of [
     '已确认文稿',
     '本轮只更新文稿，不修改页面',
     '已确认 A',
     '已确认事实约束',
-    '未决，禁止假设',
+    '本次新增指令授权实施',
+    '本次补充确认 C',
+    '本次广告区域可修改并重新审核，不修改商家档案',
     '未决，禁止接真实能力',
     '仅供其他执行者',
     '不修改现有 HTML、CSS 或 JavaScript',

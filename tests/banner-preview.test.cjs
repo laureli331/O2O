@@ -19,6 +19,21 @@ test('report distinguishes zero from unknown and computes weighted aggregate CTR
 test('temporary demo records expire and reject unrelated malformed versions',()=>{
  const map=new Map(),store={getItem:k=>map.get(k),setItem:(k,v)=>map.set(k,v)};const s=M.create('live');M.save(s,store,1000);assert.equal(M.load(store,1001).status,'live');assert.equal(M.load(store,1000+M.TTL),null);store.setItem(M.KEY,'{"version":9}');assert.equal(M.load(store,1000),null);
 });
+test('next-period draft, review, payment and refund never mutate current creative, dates or status',()=>{
+ const current=M.create('live'),before=JSON.stringify(current),next=M.prepareNext(current);assert.equal(next.start,current.end);assert.equal(M.prepareNext(current),next);
+ M.saveDraft(next,{...next.form,title:'下期推广',region:'本次区域'},2);M.submit(next,next.form);M.approve(next);M.pay(next,'success');M.cancel(next,true);M.queryRefund(next,'unknown');
+ const isolated={...current};delete isolated.next;assert.equal(JSON.stringify(isolated),before);assert.equal(current.form.region,M.merchant.region);
+});
+test('saved snapshots distinguish unchanged saved drafts from later edits and keep merchant identity readonly',()=>{
+ assert.deepEqual(M.positions.map(p=>[p.name,p.price]),[['首位（默认显示）',29900],['第二位',24900],['第三位',19900]]);
+ const s=M.create(),f={...s.form,name:'不可冒用',region:'本次广告区域'};M.saveDraft(s,f,1);assert.equal(s.form.name,M.merchant.name);assert.equal(s.form.region,'本次广告区域');assert.equal(M.merchant.region,'演示社区');
+ const snapshot=M.fingerprint(s.form,1);assert.equal(M.fingerprint({...s.form},1),snapshot);assert.notEqual(M.fingerprint({...s.form,title:'新改动'},1),snapshot);assert.notEqual(M.fingerprint(s.form,2),snapshot);assert.notEqual(M.fingerprint(s.form,1,1),snapshot);
+});
+test('modification rejection and recovery keep the original effective version until approval',()=>{
+ const s=M.create('live'),original=JSON.stringify(s.form),start=s.start,end=s.end;M.submitChange(s,{...s.form,title:'新稿'});M.reject(s);assert.equal(s.changeStatus,'rejected');assert.equal(s.changeRejection.field,'image');assert.equal(JSON.stringify(s.form),original);
+ M.submitChange(s,s.materialDraft);assert.throws(()=>M.submitChange(s,s.form));M.approve(s);assert.equal(s.form.title,'新稿');assert.equal(s.start,start);assert.equal(s.end,end);assert.equal(s.status,'live');
+ const r=M.create('pending');M.reject(r);assert.equal(r.status,'rejected');assert(r.rejection.text);M.submit(r,r.form);assert.equal(r.status,'pending');
+});
 test('three pages use versioned current shared assets and local-only scripts',()=>{
  const root=path.join(__dirname,'../previews');for(const page of ['11','12','13']){const html=fs.readFileSync(path.join(root,'v'+page+'.html'),'utf8');assert(html.includes('data-page="'+page+'"'));assert(html.includes('合成示例'));for(const asset of ['banner-model.js','banner-preview.js','banner-preview.css']){const hash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets',asset),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);assert(html.includes('assets/'+asset+'?v='+hash));}}
  const app=fs.readFileSync(path.join(root,'assets/banner-preview.js'),'utf8');assert(!/fetch\(|XMLHttpRequest|https?:\/\//.test(app));
