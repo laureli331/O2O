@@ -8,12 +8,12 @@ const nodePath = require('node:path');
 const path = 'docs/superpowers/specs/2026-10-23-v15-v16-web-admin-carrier-design.md';
 const doc = fs.readFileSync(path, 'utf8');
 
-test('carrier proposal stays writing-only and does not silently replace DP04', () => {
+test('approved carrier records confirmation without claiming implemented pages', () => {
   for (const text of [
-    '状态：建议稿，待用户审阅确认',
-    '不直接覆盖现有 DP04 决策',
+    '状态：D1—D5 已获用户确认（2026-10-23）',
+    '覆盖旧“小程序内完整承载”决策',
     '不修改现有 V15 HTML、CSS、JavaScript',
-    '本稿本身不授权实施、部署、购买套餐、创建真实账号或执行任何真实处置'
+    '本文不授权部署、购买套餐、创建真实账号或执行任何真实处置'
   ]) {
     assert.match(doc, new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   }
@@ -49,7 +49,7 @@ test('high-risk operations and V16 configuration stay in the web workbench', () 
     '实收重新分配、多收退款发起和费用更正',
     '故障恢复验收和保护截止变更',
     '地区、分类、服务、佣金、公示及生效时间配置',
-    'V16 建议只在网页主后台提供完整编辑能力'
+    'V16 只在网页主后台提供完整编辑能力'
   ]) {
     assert.match(doc, new RegExp(text));
   }
@@ -94,4 +94,26 @@ test('proposal markdown has balanced fences, valid local links and consistent ta
     const widths = rows.map(line => (line.match(/\|/g) || []).length);
     assert.equal(new Set(widths).size, 1, 'inconsistent table width');
   }
+});
+
+
+test('confirmed carrier propagates to authoritative plans and page definitions', () => {
+  for (const path of ['docs/development-plan.md','docs/structured-design.md','docs/prd.md','docs/ascii-design-prd-2.1.md','CONTEXT.md']) {
+    const text = fs.readFileSync(path,'utf8');
+    assert.ok(text.includes('管理端承载确认（2026-10-23）'),path);
+    assert.ok(text.includes('用户确认 D1—D5'),path);
+    assert.ok(text.includes('网页主后台＋小程序轻量入口'),path);
+    assert.ok(text.includes('现有 HTML 未迁移'),path);
+    assert.ok(text.includes('首次回应/请求补充材料须真实能力验证后再开放'),path);
+  }
+  const plan = fs.readFileSync('docs/development-plan.md','utf8');
+  const dp04 = plan.split(/\r?\n/).find(line => line.startsWith('| DP04 |'));
+  const dp12 = plan.split(/\r?\n/).find(line => line.startsWith('| DP12 |'));
+  assert.ok(dp04.includes('网页主后台＋小程序轻量入口'));
+  assert.ok(!dp04.includes('落实已采用小程序内承载形式'));
+  assert.ok(dp12.includes('两端共用后端'));
+  const ascii = fs.readFileSync('docs/ascii-design-prd-2.1.md','utf8');
+  assert.ok(ascii.includes('管理账号专属运营入口的目标为小程序轻量值班'));
+  assert.ok(ascii.includes('不再定义小程序完整操作范围'));
+  assert.ok(ascii.includes('不代表小程序开放配置编辑'));
 });
