@@ -12,7 +12,7 @@ test('approved carrier records confirmation without claiming implemented pages',
   for (const text of [
     '状态：D1—D5 已获用户确认（2026-10-23）',
     '覆盖旧“小程序内完整承载”决策',
-    '不修改现有 V15 HTML、CSS、JavaScript',
+    '真实登录、权限、托管和后端接入仍未实施',
     '本文不授权部署、购买套餐、创建真实账号或执行任何真实处置'
   ]) {
     assert.match(doc, new RegExp(text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
@@ -103,7 +103,7 @@ test('confirmed carrier propagates to authoritative plans and page definitions',
     assert.ok(text.includes('管理端承载确认（2026-10-23）'),path);
     assert.ok(text.includes('用户确认 D1—D5'),path);
     assert.ok(text.includes('网页主后台＋小程序轻量入口'),path);
-    assert.ok(text.includes('现有 HTML 未迁移'),path);
+    assert.ok(text.includes('HTML 本地迁移已完成，真实后端未接入'),path);
     assert.ok(text.includes('首次回应/请求补充材料须真实能力验证后再开放'),path);
   }
   const plan = fs.readFileSync('docs/development-plan.md','utf8');
