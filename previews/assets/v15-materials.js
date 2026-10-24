@@ -11,7 +11,7 @@
   'P-301':{group:'D',title:'分次缴纳与多收退回核对',subject:{title:'平台佣金分次缴纳',kind:'关联收款与账单',images:[],body:'本页核对平台佣金收款，不是客户服务款。逐笔收款、应缴项与暂缓项见下方明细。'},issue:{title:'核对两笔实收如何抵付，是否存在多收',claim:'本事项已有合成通道记录，需要核对支付引用、金额及可抵付的账单。',focus:'先核对每笔实收，再看可抵付项；多收款与历史抵扣分开，发起退回不等于退款成功。'},materials:[{title:'收款凭据查看方式',body:'下方逐笔展示当前合成通道记录和核实状态。未上传真实截图，不以付款截图示意代替成功收款事实。'}]},
   'I-401':{group:'E',title:'登录与异议提交故障',subject:{title:'登录与异议提交异常',kind:'故障现场与验收记录',images:[],body:'故障表现：部分受影响交易关联的用户无法正常登录，或异议提交未能成功。实际保护范围以本事项列出的已核实交易为准。'},issue:{title:'核对故障影响及恢复验收依据',claim:'本地合成事件包含登录失败和异议提交失败的排查记录。',focus:'先核对功能、日志与受影响交易，再记录保护或恢复验收；不得把恢复请求视为已验收成功。'},materials:[{title:'合成排查记录',body:'检查项：登录入口能否完成登录；异议提交能否返回可核对的受理记录。日志与验收引用随当前事项展示，不代表真实系统已经完成排查。'}]}
  };
- function get(r){const value=records[r.id];return value&&value.group===r.group&&value.title===r.title?JSON.parse(JSON.stringify(value)):null;}
+ function get(r){const value=records[r.id];if(!value||value.group!==r.group||value.title!==r.title)return null;const copy=JSON.parse(JSON.stringify(value));if(r.group==='E'&&!r.verified){copy.subject.body='申报称登录与异议提交异常，当前缺少可核实日志，故障表现和影响范围尚待核实。';copy.issue.claim='当前缺少可核实的排查日志，请先补齐依据，再核对影响范围。';copy.materials=[{title:'待核对的检查项',body:'需要核对登录能否完成、异议提交能否形成受理记录。目前尚未取得可核实日志，以下交易仅为待核对范围。'}];}return copy;}
  const needsContext=action=>['conclude','rectify','remove','restrict','ban','release','accountRelease'].includes(action);
  function check(r,action){return r.group==='B'&&needsContext(action)&&!get(r)?'原内容与对应材料尚未加载，请先补齐材料；可以先记录回应或请求补充。':'';}
  return {get,check,needsContext};
