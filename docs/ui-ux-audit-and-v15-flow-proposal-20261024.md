@@ -2,7 +2,7 @@
 
 日期：2026-10-24。审查基线：`830a1cc`。
 
-状态更新：第5节方案A、确认分类与理由短句已获用户确认，V15实施见[v15-inline-processing-20261024.md](v15-inline-processing-20261024.md)。V21/V22已按用户要求完成ASCII任务式整理，见[v21-v22-ascii-task-optimization-20261024.md](v21-v22-ascii-task-optimization-20261024.md)，后续已制作独立合成HTML，见[v21-v22-html-preview.md](v21-v22-html-preview.md)；U05—U09已按用户继续优化的要求实施，见[earlier-pages-task-refinement-20261024.md](earlier-pages-task-refinement-20261024.md)；其余未列入本批的页面仍待专项核对。原审查时状态：分析与设计提案，尚未实施。用户要求继续审查；本文件记录证据、页面职责、处理建议及待确认决策，不代表已批准修改所有页面。HTML、业务模型、主 ASCII、PRD 和 AGENTS.md 本轮不变。
+状态更新：第5节方案A、确认分类与理由短句已获用户确认，V15实施见[v15-inline-processing-20261024.md](v15-inline-processing-20261024.md)。V21/V22已按用户要求完成ASCII任务式整理，见[v21-v22-ascii-task-optimization-20261024.md](v21-v22-ascii-task-optimization-20261024.md)，后续已制作独立合成HTML，见[v21-v22-html-preview.md](v21-v22-html-preview.md)；U05—U09已按用户继续优化的要求实施，见[earlier-pages-task-refinement-20261024.md](earlier-pages-task-refinement-20261024.md)；V04操作用语、V10重复说明已继续整理，见[publish-provider-copy-refinement-20261024.md](publish-provider-copy-refinement-20261024.md)；其余页面及尚未走查的异常路径仍待专项核对。原审查时状态：分析与设计提案，尚未实施。用户要求继续审查；本文件记录证据、页面职责、处理建议及待确认决策，不代表已批准修改所有页面。HTML、业务模型、主 ASCII、PRD 和 AGENTS.md 本轮不变。
 
 ## 先看结论
 
