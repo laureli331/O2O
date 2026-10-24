@@ -14,19 +14,19 @@ const files = {
 
 const read = (relative) => fs.readFileSync(path.join(root, relative), 'utf8');
 
-test('three review drafts stay advisory and preserve the confirmed product boundaries', () => {
+test('three reviews record explicit adoption and preserve the confirmed product boundaries', () => {
   for (const relative of Object.values(files)) {
     const text = read(relative);
-    assert.match(text, /仅供评审/);
-    assert.match(text, /本轮不修改/);
-    assert.match(text, /待确认的关键决策/);
-    assert.match(text, /未确认前/);
+    assert.match(text, /2026-10-24获用户全部确认并实施/);
+    assert.match(text, /已确认的关键决策/);
+    assert.match(text, /既有业务规则、评分算法及真实能力启用边界不变/);
+    assert.match(text, /v17-v19-ui-flow-implementation-20261024\.md/);
     assert.match(text, /实施后的验收清单/);
   }
 
   assert.match(read(files.v17), /不提供新建、重新确认、撤回、重提/);
   assert.match(read(files.v18), /三项 1—5 星均必选且无默认值/);
-  assert.match(read(files.v19), /不修改.*统计口径/);
+  assert.match(read(files.v19), /不改变统计公式/);
 });
 
 test('each draft records the observed issue and an exact naming recommendation', () => {
