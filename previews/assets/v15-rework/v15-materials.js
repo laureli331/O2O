@@ -1,0 +1,20 @@
+'use strict';
+(function(root,factory){if(typeof module==='object'&&module.exports)module.exports=factory();else root.V15Materials=factory();})(globalThis,()=>{
+ // Explicit synthetic case content. Never use a neighbouring case as a fallback.
+ const records={
+  'R-101':{group:'B',title:'洗衣机维修需求被举报',subject:{title:'洗衣机无法启动，想找人上门检查',kind:'需求原文',images:['assets/v15-rework/service-repair.svg'],body:'家里的洗衣机通电后面板亮，按启动没有反应。想找人上门检查，维修费用先沟通。\n另外，我也提供家电维修服务，有需要可以联系我询价。'},issue:{title:'举报人认为需求中夹带服务推广',claim:'这条需求后半段在招揽家电维修客户，希望核对是否属于需求内容。',focus:'核对原文最后一句的用途，再结合举报材料判断是否需要处理。举报本身不代表违规成立。',quote:'另外，我也提供家电维修服务，有需要可以联系我询价。'},materials:[{title:'举报时引用的原文',body:'举报描述指向需求的最后一句，与上方原文对应。该描述是举报人的意见，尚未形成处理结论。'}]},
+  'R-102':{group:'B',title:'商家作品下架申诉',subject:{title:'厨房吊柜安装展示',kind:'被下架的作品原文',images:['assets/v15-rework/service-desk.svg','assets/v15-rework/service-storage.svg'],body:'厨房吊柜安装展示，展示安装后的柜体与收口细节。具体尺寸和施工安排需另行沟通。'},issue:{title:'商家补充图片使用授权，申请重新核对',claim:'这些图片已获得使用授权，现补充授权说明，请重新核对下架处理。',focus:'对照原下架理由，核对授权说明是否覆盖这次作品中的图片；不把提交申诉视为授权已成立。'},materials:[{title:'申请人补充的授权说明',body:'合成授权说明：许可演示商家乙在本平台作品展示中使用本次提交的两张展示图。需核对授权对象、范围与图片是否对应。'},{title:'图片对应关系',body:'补充说明引用的是上方作品的图片1与图片2；本页插画仅示意图片位置，不是真实授权凭据。'}]},
+  'R-103':{group:'B',title:'作品公开内容风险巡查',subject:{title:'上门灯具检修',kind:'巡查中的作品原文',images:['assets/v15-rework/service-lamp.svg'],body:'提供灯具线路检查与维修，具体时间需提前沟通。\n任何故障都能当天修好。'},issue:{title:'需要核对服务承诺是否准确',claim:'巡查线索指出“任何故障都能当天修好”的表述可能过于绝对。',focus:'核对这句话及支持材料是否足以说明服务能力；巡查标记不等于违规结论。',quote:'任何故障都能当天修好。'},materials:[{title:'当前公开内容摘录',body:'风险线索对应上方原文第二段，尚未补充支持该承诺的材料。'}]},
+  'F-201':{group:'C',title:'维修佣金核验 · 补充新材料',subject:{title:'洗衣机检修',kind:'关联服务记录',images:['assets/v15-rework/service-repair.svg'],body:'本次核验对应洗衣机检修服务的佣金账单。服务金额、原锁定佣金标准及本次新材料分别核对。'},issue:{title:'申请按补充的价格约定核对佣金',claim:'申请人称服务费用已调整，提交了新的费用约定，请核对原计佣金额。',focus:'先看本次新增约定，再核对原金额与锁定标准；受理材料和核定金额是两个步骤。'},materials:[{title:'新增费用约定',body:'合成费用说明：原服务计价200元，本次补充约定150元。该材料等待核验，不能仅因提交就覆盖原账单。'}]},
+  'F-202':{group:'C',title:'客户拖欠 · 佣金账单异议',subject:{title:'家电检修服务',kind:'关联服务记录',images:['assets/v15-rework/service-repair.svg'],body:'本事项对应家电检修服务的佣金账单，服务计价与客户是否实际付款分开记录。'},issue:{title:'申请人因客户欠款提出佣金异议',claim:'申请人称客户尚未结清服务款，申请核对平台佣金。',focus:'本页仅核验平台佣金及相关依据，不代收客户欠款，也不因欠款描述自动免佣。'},materials:[{title:'客户欠款说明',body:'合成申请说明：客户服务款尚未结清。此项为申请人陈述，不是客户债务裁定或付款成功凭据。'}]},
+  'F-203':{group:'C',title:'注销时的核准抵扣核对',subject:{title:'账号注销前的抵扣核对',kind:'关联账号账款记录',images:[],body:'核对原已缴金额、核准更正、已使用抵扣与剩余抵扣。核定金额不等于已退款或已注销。'},issue:{title:'核对注销时剩余抵扣如何衔接',claim:'申请人希望核对尚未使用的核准抵扣。',focus:'逐项核对原记录后填写核定应退金额；实际办理渠道仍需另行核实。'},materials:[{title:'原更正记录',body:'合成记录：原已缴30元，核准更正5元，其中2元已经使用，剩余核准抵扣3元。'}]},
+  'P-301':{group:'D',title:'分次缴纳与多收退回核对',subject:{title:'平台佣金分次缴纳',kind:'关联收款与账单',images:[],body:'本页核对平台佣金收款，不是客户服务款。逐笔收款、应缴项与暂缓项见下方明细。'},issue:{title:'核对两笔实收如何抵付，是否存在多收',claim:'本事项已有合成通道记录，需要核对支付引用、金额及可抵付的账单。',focus:'先核对每笔实收，再看可抵付项；多收款与历史抵扣分开，发起退回不等于退款成功。'},materials:[{title:'收款凭据查看方式',body:'下方逐笔展示当前合成通道记录和核实状态。未上传真实截图，不以付款截图示意代替成功收款事实。'}]},
+  'I-401':{group:'E',title:'登录与异议提交故障',subject:{title:'登录与异议提交异常',kind:'故障现场与验收记录',images:[],body:'故障表现：部分受影响交易关联的用户无法正常登录，或异议提交未能成功。实际保护范围以本事项列出的已核实交易为准。'},issue:{title:'核对故障影响及恢复验收依据',claim:'本地合成事件包含登录失败和异议提交失败的排查记录。',focus:'先核对功能、日志与受影响交易，再记录保护或恢复验收；不得把恢复请求视为已验收成功。'},materials:[{title:'合成排查记录',body:'检查项：登录入口能否完成登录；异议提交能否返回可核对的受理记录。日志与验收引用随当前事项展示，不代表真实系统已经完成排查。'}]}
+ };
+ const aliases={};
+ function registerCopy(id,source){if(records[source])aliases[id]=source;}
+ function get(r){const value=records[aliases[r.id]||r.id];return value&&value.group===r.group&&value.title===r.title?JSON.parse(JSON.stringify(value)):null;}
+ const needsContext=action=>['conclude','rectify','remove','restrict','ban','release','accountRelease'].includes(action);
+ function check(r,action){return r.group==='B'&&needsContext(action)&&!get(r)?'原内容与对应材料尚未加载，请先补齐材料；可以先记录回应或请求补充。':'';}
+ return {get,check,needsContext,registerCopy};
+});

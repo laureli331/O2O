@@ -1,0 +1,120 @@
+/* Preserve the existing palette, typefaces and component vocabulary. */
+.rework .workspace{padding:0 22px 16px;max-width:1680px}
+.rework .workspace-head{height:80px}
+.rework .workspace-head h1{font-size:20px}
+.rework .workspace-head p{font-size:12px}
+.rework .admin-layout{height:calc(100dvh - 170px);min-height:520px;grid-template-columns:168px 320px minmax(0,1fr)}
+.rework .admin-sidebar{gap:6px}
+.rework .admin-sidebar .preview-nav{margin:0 0 12px}
+.rework .admin-sidebar .nav-label{display:none}
+.rework .admin-sidebar>a{margin-top:auto;font-size:12px}
+.rework .other-links{padding:8px 12px;font-size:12px;color:var(--muted)}
+.rework .other-links a{display:block;padding:9px 0}
+.rework summary{cursor:pointer;min-height:40px;display:list-item;align-content:center}
+.rework .demo-tools{position:relative;text-align:right;margin:-6px 0 10px;font-size:12px;color:var(--muted)}
+.rework .demo-tools>summary{min-height:30px}
+.rework .demo-tools .toolbar{justify-content:flex-end;margin:8px 0}
+.rework .demo-tools[open]{border:1px solid var(--line);border-radius:10px;padding:8px 14px;background:var(--paper);margin-top:0}
+.rework .queue-tools{flex-wrap:wrap;gap:6px}
+.rework .queue-tools select{min-width:0;flex:1}
+.rework .queue-sort{flex-basis:100%;font-size:11px}
+.rework .admin-queue h2{font-size:17px}
+.rework .queue-card{margin-bottom:10px}
+.rework .queue-open p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:12px;line-height:1.7;color:var(--muted);margin-top:6px}
+.rework .queue-open h3{font-size:14px}
+.rework .queue-foot{margin-top:10px;font-size:11px}
+.rework .phone-head{height:58px;flex-basis:58px;padding:8px 20px}
+.rework .content{padding:22px;max-width:920px;gap:0}
+.rework .case-overview{padding:0 0 18px}
+.rework .case-overview h3{font-size:22px;margin-top:5px}
+.rework .panel{padding:18px;margin-bottom:14px}
+.rework .panel h3{font-size:16px;margin-bottom:10px}
+.rework .task-panel{background:var(--soft);border-color:var(--line)}
+.rework .task-panel .source-label{margin:0 0 7px}
+.rework .task-panel>p{font-size:14px;line-height:1.85}
+.rework .response-row{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);margin-top:12px;padding-top:6px}
+.rework .response-row .quiet{white-space:nowrap;font-size:12px;min-height:40px}
+.rework .source-body{font-size:15px;line-height:1.9}
+.rework .source-panel h3{font-size:17px}
+.rework .source-label{font-size:12px}
+.rework .evidence .material-demo{display:none}
+.rework .material-entry{padding:10px 0}
+.rework .material-entry h4{margin:0 0 6px}
+.rework .facts{margin:8px 0}
+.rework .facts>div{gap:16px;align-items:flex-start}
+.rework .facts dt{min-width:0;flex:1}
+.rework .facts dd{margin:0;max-width:62%;overflow-wrap:anywhere;text-align:right}
+.rework .bill-row{display:grid;grid-template-columns:1fr auto;gap:2px 16px;border-bottom:1px solid var(--line);padding:10px 0}
+.rework .bill-row p{grid-column:1/-1;margin:0}
+.rework .bill-row:last-child{border:0}
+.rework .secondary-info,.rework .case-metadata,.rework .account-section{padding:6px 18px;background:var(--paper)}
+.rework details[open]>summary{margin-bottom:10px}
+.rework .secondary-info p{font-size:12px;line-height:1.9;margin:8px 0;color:var(--muted)}
+.rework .secondary-info .notice{border:0;padding:0}
+.rework .task-actions .action-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+.rework .footer{position:relative;padding:14px 22px;background:var(--paper)}
+.rework .footer>*{min-width:0;flex:0 1 240px}
+.rework .selected-action select:disabled{opacity:1;color:var(--ink);appearance:none;background:var(--soft);border-color:var(--line)}
+.rework .selected-action{padding-top:0}
+.rework .form-object strong,.rework .form-object span{display:block}
+.rework .form-context .menu-row{margin-top:10px}
+.rework .receipt{border-left:4px solid var(--green);background:var(--soft)}
+.rework .preview-note{margin:8px auto 0}
+.rework .toast{position:fixed;bottom:92px;z-index:20}
+.rework button,.rework a{transition:background .15s,transform .15s,box-shadow .15s}
+.rework button:hover:not(:disabled){box-shadow:0 2px 6px #263a3110}
+.rework button:active:not(:disabled){transform:scale(.98)}
+.rework .phone-head .back{min-height:42px}
+@media(min-width:1000px){.rework .admin-layout{grid-template-rows:minmax(0,1fr)}.rework .admin-queue{overflow:hidden}.rework .phone{min-height:0}.rework .scroll{min-height:0;flex:1 1 0}.rework .admin-queue>header{padding-top:18px}.rework .admin-sidebar>a.original-link{padding:10px}}
+@media(min-width:1000px) and (max-width:1199px){.rework .admin-layout{grid-template-columns:142px 278px minmax(0,1fr)}.rework .workspace{padding-inline:12px}.rework .content{padding:18px}}
+@media(max-width:999px){
+ .rework .workspace{padding:0 12px 14px}
+ .rework .workspace-head{height:72px;gap:8px}
+ .rework .workspace-head h1{font-size:17px}
+ .rework .workspace-head p{font-size:11px}
+ .rework #admin-logout{font-size:11px;padding:8px 0}
+ .rework .demo-tools{margin:0 0 7px}
+ .rework .demo-tools>summary{min-height:28px}
+ .rework .admin-layout{height:auto;min-height:0;display:flex;overflow:visible}
+ .rework .admin-sidebar{padding:8px;border:0;border-bottom:1px solid var(--line)}
+ .rework .admin-sidebar .preview-nav{flex-wrap:nowrap;overflow-x:auto;margin:0;gap:2px;scrollbar-width:thin}
+ .rework .admin-sidebar .preview-nav button{font-size:12px;flex:0 0 auto;padding:8px 10px;min-height:42px;white-space:nowrap}
+ .rework .admin-sidebar>button{font-size:12px;min-height:34px;padding:4px 10px}
+ .rework .other-links{display:inline-block;padding:0 8px;font-size:11px}
+ .rework .other-links summary{min-height:34px}
+ .rework .admin-sidebar>a.original-link{display:inline-flex;padding:4px 8px;min-height:34px;width:auto;margin:0;font-size:11px}
+ .rework .admin-queue>header{padding:12px 14px 6px}
+ .rework .admin-queue h2{display:none}
+ .rework .search-label{display:none}
+ .rework .queue-tools{padding:0 14px 10px}
+ .rework .queue-sort{display:none}
+ .rework .phone{height:auto;min-height:0;overflow:visible;display:flex}
+ .rework .scroll{overflow:visible;flex:none;min-height:0}
+ .rework .content{padding:16px 14px;min-height:0}
+ .rework .phone-head{height:54px;flex-basis:54px;padding:6px 12px}
+ .rework .phone-head h2{font-size:16px}
+ .rework .case-overview h3{font-size:19px}
+ .rework .panel{padding:14px}
+ .rework .panel h3{font-size:16px}
+ .rework .footer{position:sticky;bottom:0;z-index:5;padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));box-shadow:0 -4px 12px #263a3108}
+ .rework .footer>*{flex:1;font-size:12px}
+ .rework .task-actions .action-list{grid-template-columns:1fr 1fr}
+ .rework .facts dt{font-size:12px}
+ .rework .facts dd{font-size:13px}
+ .rework .secondary-info,.rework .case-metadata,.rework .account-section{padding:4px 14px}
+ .rework .demo-tools .toolbar{justify-content:flex-start}
+ .rework .blank{padding:36px 16px}
+ .rework[data-screen]:not([data-screen=A]) .admin-queue{display:none}
+ .rework[data-screen=A] .phone-head{display:none}
+ .rework .toast{left:20px;right:20px;min-width:0}
+}
+@media(prefers-reduced-motion:reduce){.rework button,.rework a{transition:none}.rework button:active:not(:disabled){transform:none}}
+
+.rework .selected-action{display:none}
+.rework .search-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+
+.rework .alternative-action{display:flex;align-items:center;justify-content:space-between;padding:0 4px 14px;color:var(--muted);font-size:12px}.rework .alternative-action button{font-size:12px;min-height:44px}
+
+.rework[data-screen=A] .back{visibility:hidden}
+.rework .admin-sidebar .preview-nav{justify-content:flex-start}
+@media(max-width:400px){.rework .admin-sidebar .preview-nav button{font-size:11px;padding-inline:7px}}
