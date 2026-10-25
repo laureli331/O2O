@@ -175,3 +175,11 @@ test('merchant settings link opens the existing settings without an intermediate
  const html=fs.readFileSync(file,'utf8'),profile=fs.readFileSync(path.join(__dirname,'../previews/v05.html'),'utf8');
  assert(html.includes("location.href='v05.html?entry=settings'"));assert(profile.includes("entry==='settings'?settings()"));
 });
+
+test('discovery tools share the centered content navigation row with quiet icons',()=>{
+ const html=fs.readFileSync(file,'utf8');
+ assert(html.includes('class="discovery-nav"><div class="discovery-tools"'));
+ assert(html.includes('grid-template-columns:92px minmax(0,1fr) 92px'));
+ assert(html.includes('.discovery-tools svg{width:20px;height:20px;stroke-width:1.6}'));
+ assert(html.includes('.phone-head.discovery-head{height:95px;flex-basis:95px;'));
+});
