@@ -183,3 +183,13 @@ test('discovery tools share the centered content navigation row with quiet icons
  assert(html.includes('.discovery-tools svg{width:20px;height:20px;stroke-width:1.6}'));
  assert(html.includes('.phone-head.discovery-head{height:95px;flex-basis:95px;'));
 });
+
+test('approved drawer keeps reference cards and icons while content precedes promotion',()=>{
+ const html=fs.readFileSync(file,'utf8'),sample=fs.readFileSync(path.join(__dirname,'../previews/discovery-buttons.html'),'utf8');
+ assert(!sample.includes('<span>商家</span>'));assert(sample.includes('aria-label="打开商家工具"'));
+ for(const part of ['class="drawer-stat"','class="drawer-content-group"','id="i-rocket"','id="i-headset"','id="i-gear"','查看广告管理与经营工具预览'])assert(html.includes(part),part);
+ const body=html.slice(html.indexOf('function openDrawer'));
+ assert(body.indexOf('data-action="drawer-posts"')<body.indexOf('data-action="drawer-review"'));
+ assert(body.indexOf('data-action="drawer-review"')<body.indexOf('data-action="drawer-promotion"'));
+ assert(html.includes('background:#eef2e8;border:1px solid #d2ddcc'));
+});
