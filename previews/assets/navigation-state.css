@@ -1,0 +1,5 @@
+/* Selected navigation uses the prepared green SVG; plus keeps its existing action style. */
+.phone .tabbar svg .nav-green{display:none}
+.phone .tabbar :is(.active,[aria-current="page"]) svg:has(.nav-green)>use{display:none}
+.phone .tabbar :is(.active,[aria-current="page"]) svg .nav-green{display:block}
+.phone .tabbar :is(.active,[aria-current="page"]){color:#365c49;font-weight:650}
