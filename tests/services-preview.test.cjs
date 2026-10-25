@@ -4,7 +4,7 @@ const root=path.resolve(__dirname,'..'),file=path.join(root,'previews/services.h
 function bundle(){const html=fs.readFileSync(file,'utf8'),ctx=vm.createContext({});vm.runInContext(html.match(/<script id="services-model">([\s\S]*?)<\/script>/)[1],ctx);return {html,m:ctx.ServicesModel};}
 test('services centralizes both roles and has no personnel directory or remote side effects',()=>{
  const {html}=bundle();for(const s of ['我发布的','我承接的','通知中心','维修','跑腿','闲置','其它'])assert(html.includes(s),s);
- assert(!/找服务|服务人员目录|附近师傅|公开服务资料/.test(html));assert(!/fetch\(|XMLHttpRequest|localStorage|sessionStorage|src="https?:|href="https?:/.test(html));
+ assert(!/找服务|服务人员目录|附近师傅|公开服务资料/.test(html));assert(!/fetch\(|XMLHttpRequest|localStorage|src="https?:|href="https?:/.test(html));
  for(const match of html.matchAll(/<script(?: [^>]*)?>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
 });
 test('role filters include only current user records and applications are not active orders',()=>{
@@ -43,4 +43,30 @@ test('current decision retires the directory without deleting legal history or e
  const d=JSON.parse(fs.readFileSync(path.join(root,'docs/development-decisions.json'),'utf8')).serviceOrderCenterDecision;
  assert.equal(d.directoryRetentionReply,'不保留');assert.equal(d.personnelDirectoryRetained,false);assert.equal(d.directoryMovedElsewhere,false);assert.equal(d.historicalRecordsDeleted,false);assert.equal(d.realServicesEnabled,false);assert.equal(d.secondhandBuyerIncluded,true);assert.equal(d.notificationsEntry,'service-floating-bottom-right');
  for(const name of ['CONTEXT.md','docs/prd.md','docs/structured-design.md','docs/development-plan.md','docs/ascii-design-prd-2.1.md'])assert(fs.readFileSync(path.join(root,name),'utf8').includes('service-order-center-confirmed-20261021.md'),name);
+});
+
+function noticeReturnHarness(snapshot, token='return-a') {
+ const {html}=bundle();
+ const controller=html.match(/ function consumeNoticeReturn\(\)\{[^\n]*\n/)[0];
+ const values=new Map([['o2o-services-notice-return',JSON.stringify(snapshot)]]);
+ const select={value:'normal'};
+ const initial=[{id:'N1',title:'固定维修通知',record:'PUB-REPAIR',read:false},{id:'N2',title:'固定跑腿通知',record:'PUB-RUN',read:false}];
+ let cleaned='';
+ const ctx=vm.createContext({params:new URLSearchParams('noticeReturn='+token),sessionStorage:{getItem:k=>values.get(k)||null,removeItem:k=>values.delete(k)},URL,location:{href:'http://127.0.0.1/services.html?view=notices&noticeReturn='+token},history:{replaceState(_s,_t,url){cleaned=url;}},$:()=>select,initialNotices:initial,notices:initial.map(x=>({...x})),noticeContext:null,noticeFilter:'all',detailOrigin:'list'});
+ return {ok:vm.runInContext(controller+'consumeNoticeReturn()',ctx),ctx,values,cleaned};
+}
+function noticeSnapshot(){return {token:'return-a',demo:'many',filter:'unread',context:{id:'N26',index:24,top:1700,outer:0},reads:Array.from({length:30},(_,i)=>['N'+(i+1),i===24||i===25])};}
+test('notification return consumes one matching snapshot without restoring orders or arbitrary content',()=>{
+ const {html}=bundle();
+ assert.deepEqual([...new Set([...html.matchAll(/sessionStorage\.(?:setItem|getItem|removeItem)\('([^']+)'/g)].map(m=>m[1]))],['o2o-services-notice-return']);
+ const snapshot=noticeSnapshot();snapshot.orders=[{id:'OUTSIDE'}];snapshot.title='不得导入的标题';
+ const r=noticeReturnHarness(snapshot);
+ assert.equal(r.ok,true);assert.equal(r.values.size,0);assert(!new URL(r.cleaned).searchParams.has('noticeReturn'));
+ assert.equal(r.ctx.notices.length,30);assert.equal(r.ctx.notices[24].read,true);assert.equal(r.ctx.notices[0].read,false);assert.equal(r.ctx.notices[24].title,'固定维修通知');assert.equal(r.ctx.noticeFilter,'unread');assert.equal(r.ctx.noticeContext.id,'N26');
+});
+test('notification return rejects mismatches and malformed read or position data without importing state',()=>{
+ const wrong=noticeReturnHarness({...noticeSnapshot(),token:'return-b'});assert.equal(wrong.ok,false);assert.equal(wrong.values.size,1);
+ for(const mutate of [s=>s.reads[0][1]='false',s=>s.reads[0][0]='UNKNOWN',s=>s.context.top=-1,s=>s.context.index=99,s=>s.demo='guest',s=>s.filter='private',s=>s.reads.pop()]){
+  const snapshot=noticeSnapshot();mutate(snapshot);const r=noticeReturnHarness(snapshot);assert.equal(r.ok,false);assert.equal(r.ctx.notices.length,2);assert.equal(r.ctx.notices[0].read,false);assert.equal(r.ctx.noticeContext,null);
+ }
 });
