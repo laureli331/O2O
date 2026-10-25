@@ -9,7 +9,7 @@
     "businesses": ["维修", "跑腿", "闲置", "其它"],
     "personnelDirectoryRetained": false,
     "directoryMovedElsewhere": false,
-    "notificationsEntry": "service-floating-bottom-right",
+    "notificationsEntry": "service-notification-row",
     "publishingAndParticipationUseSameAccount": true,
     "secondhandBuyerIncluded": true,
     "historicalRecordsDeleted": false,

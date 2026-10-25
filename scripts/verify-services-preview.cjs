@@ -6,7 +6,7 @@ async function verify(){
  page.setDefaultTimeout(8000);page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
  const base=new URL('.',url).href,action=a=>page.locator('[data-action="'+a+'"]:visible').click(),tab=t=>page.locator('[data-tab="'+t+'"]').click(),demo=v=>page.locator('#demo-state').selectOption(v);
  const shot=n=>page.screenshot({path:path.join(outDir,n+'.png'),fullPage:true,animations:'disabled'}),open=id=>page.locator('[data-record="'+id+'"] .order-actions button').click();
- async function checkFloating(){assert(await page.locator('#notices').evaluate(el=>{const r=el.getBoundingClientRect(),p=el.closest('.phone').getBoundingClientRect(),footer=document.querySelector('#actions'),nav=document.querySelector('.tabbar'),boundary=footer.hidden?(getComputedStyle(nav).display==='none'?p.bottom:nav.getBoundingClientRect().top):footer.getBoundingClientRect().top;return r.width>=56&&r.height>=56&&p.right-r.right>=12&&boundary-r.bottom>=12;}));}
+ async function checkFloating(){assert(await page.locator('#notices').evaluate(el=>{const r=el.getBoundingClientRect(),head=document.querySelector('.phone-head').getBoundingClientRect();return r.width>=200&&r.height>=44&&r.top>=head.bottom-1&&getComputedStyle(el).position!=='absolute';}));}
  async function widthCheck(){assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert(await page.evaluate(()=>[...document.querySelectorAll('.scroll')].filter(e=>e.clientWidth).every(e=>e.scrollWidth<=e.clientWidth+1)));}
  try{
  await page.goto(url);assert.equal(await page.locator('.order').count(),4);await checkFloating();
