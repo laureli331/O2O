@@ -70,3 +70,16 @@ test('notification return rejects mismatches and malformed read or position data
   const snapshot=noticeSnapshot();mutate(snapshot);const r=noticeReturnHarness(snapshot);assert.equal(r.ok,false);assert.equal(r.ctx.notices.length,2);assert.equal(r.ctx.notices[0].read,false);assert.equal(r.ctx.noticeContext,null);
  }
 });
+
+
+test('order return restores only a visible card trigger and bounds incoming scroll positions',()=>{
+ const {html}=bundle(),helpers=html.slice(html.indexOf(' function position(value)'),html.indexOf(' function backUrl()'));
+ let focused='',selector='',outer=-1;const scroll={scrollTop:0};
+ const row={dataset:{record:'PUB-REPAIR'},querySelector(value){selector=value;return {focus(options){assert.equal(options.preventScroll,true);focused='record';}};}};
+ const context=vm.createContext({Number,listContext:{id:'PUB-REPAIR',action:'main',outer:321},listOffset:120,settings:{tab:'published'},$:id=>id==='content'?{querySelectorAll:()=>[row]}:scroll,document:{querySelector:()=>({focus(){focused='fallback';}})},scrollTo(_x,y){outer=y;}});
+ vm.runInContext(helpers+'restoreOrder()',context);assert.equal(focused,'record');assert.equal(selector,'.order-open');assert.equal(scroll.scrollTop,120);assert.equal(outer,321);
+ context.listContext.action='action';vm.runInContext('restoreOrder()',context);assert.equal(selector,'.order-actions button');
+ context.listContext={id:'OUTSIDE',action:'main',outer:-1};vm.runInContext('restoreOrder()',context);assert.equal(focused,'fallback');assert.equal(outer,0);
+ for(const value of ['Infinity','NaN',-1,100001]){context.value=value;assert.equal(vm.runInContext('position(value)',context),0);}
+ context.value='234';assert.equal(vm.runInContext('position(value)',context),234);
+});

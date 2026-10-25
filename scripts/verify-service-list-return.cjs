@@ -1,0 +1,17 @@
+"use strict";
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+async function main(){const[base,out,executablePath]=process.argv.slice(2),{chromium}=require(process.env.PREVIEW_PLAYWRIGHT_PATH);fs.mkdirSync(out,{recursive:true});const browser=await chromium.launch({headless:true,executablePath}),p=await browser.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));
+try{for(const width of [320,375,414,1280]){await p.setViewportSize({width,height:1000});
+for(const [tab,id,cross] of [['published','PUB-REPAIR',false],['accepted','ACC-RUN',false],['published','PUB-IDLE',true],['accepted','ACC-OTHER',true]]){
+ await p.goto(base+'/services.html?tab='+tab);
+ const button=p.locator('[data-record='+id+'] .order-actions button');await button.scrollIntoViewIfNeeded();await button.focus();const top=await p.locator('#scroll').evaluate(e=>e.scrollTop),outer=await p.evaluate(()=>scrollY);await button.click();
+ if(cross){await p.waitForURL('**/v07.html?*');await p.locator('#detail-phone .back').click();await p.waitForURL('**/services.html?*');}else await p.locator('#back').click();
+ assert.equal(await p.evaluate(()=>document.activeElement.closest('[data-record]')?.dataset.record),id,'return restores the original order button');assert(await p.evaluate(()=>document.activeElement.matches('.order-actions button')));assert(Math.abs(await p.locator('#scroll').evaluate(e=>e.scrollTop)-top)<=2,'inner position retained');assert(Math.abs(await p.evaluate(()=>scrollY)-outer)<=2,'page position retained');assert.equal(await p.locator('[data-tab='+tab+']').getAttribute('aria-selected'),'true');
+ if(width===375&&id==='ACC-OTHER')await p.screenshot({path:path.join(out,'list-return-375.png'),fullPage:true});
+ // Returning a second time must retain the offset restored from the first visit.
+ await p.locator('[data-record='+id+'] .order-actions button').click();if(cross){await p.waitForURL('**/v07.html?*');await p.locator('#detail-phone .back').click();await p.waitForURL('**/services.html?*');}else await p.locator('#back').click();assert.equal(await p.evaluate(()=>document.activeElement.closest('[data-record]')?.dataset.record),id);assert(Math.abs(await p.locator('#scroll').evaluate(e=>e.scrollTop)-top)<=2);
+}
+ await p.goto(base+'/services.html?tab=accepted&kind='+encodeURIComponent('跑腿')+'&status=pending');await p.locator('.order-open').click();await p.locator('#back').click();assert(await p.evaluate(()=>document.activeElement.matches('.order-open')));assert.equal(await p.locator('#kind-filter').inputValue(),'跑腿');assert.equal(await p.locator('#status-filter').inputValue(),'pending');
+ await p.goto(base+'/services.html?tab=published&kind='+encodeURIComponent('维修')+'&returnRecord=OUTSIDE&returnAction=main&offset=Infinity&outer=-9');assert.equal(await p.locator('.order').count(),1);assert.equal(await p.locator('#scroll').evaluate(e=>e.scrollTop),0);assert.equal(await p.evaluate(()=>document.activeElement.dataset.tab),'published');assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+}assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'result.json'),JSON.stringify({passed:true,widths:[320,375,414,1280],checks:['inline order return','V07 round trip twice','same trigger and role','inner and outer scroll','invalid and invisible target fallback']},null,2));console.log('PASS service list return');}finally{await browser.close();}}
+main().catch(e=>{console.error(e);process.exitCode=1;});
