@@ -73,7 +73,7 @@ test('all four businesses offer grounded AI samples and concise validation messa
 });
 
 test('V04 user-facing states give a truthful next step and retain important limits',()=>{
- for(const copy of ['当前可手动发布，AI整理暂未开放','还想让AI帮你整理？20次只需¥1.90','已保留你的内容，可重试或继续填写','需求已更新，重新整理可获取新建议','内容已保留，请查询本次结果'])assert(html.includes(copy),copy);
+ for(const copy of ['当前可手动发布，AI整理暂未开放','还想让AI帮你整理？20次只需¥1.90','已保留你的内容，可重试或继续填写','需求已更新，重新整理可获取新建议','内容已保留，查询结果后可继续修改。'])assert(html.includes(copy),copy);
  for(const old of ['整理失败，内容已保留。可重试或手填','结果已过时，请重新整理','请先查询结果，勿重复发布'])assert(!html.includes(old),old);
  const design=fs.readFileSync(path.join(__dirname,'../docs/ascii-design-prd-2.1.md'),'utf8');assert(design.includes('不承诺恢复时间或把未知结果说成成功'));
  assert(html.includes("if(published||unknown)return"));
