@@ -1,5 +1,8 @@
-/* Selected navigation uses the prepared green SVG; plus keeps its existing action style. */
+/* Original SVG geometry in both states: outline when idle, green fill when selected. */
+.phone .tabbar svg:has(.nav-green)>use{display:none}
+.phone .tabbar svg .nav-outline{display:block}
 .phone .tabbar svg .nav-green{display:none}
-.phone .tabbar :is(.active,[aria-current="page"]) svg:has(.nav-green)>use{display:none}
+.phone .tabbar :is(.active,[aria-current="page"]) svg .nav-outline{display:none}
 .phone .tabbar :is(.active,[aria-current="page"]) svg .nav-green{display:block}
-.phone .tabbar :is(.active,[aria-current="page"]){color:#365c49;font-weight:650}
+.phone .tabbar :is(.active,[aria-current="page"]){color:#496b56;font-weight:400}
+.phone .tabbar svg:has(.nav-green){width:22px;height:22px}
