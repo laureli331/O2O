@@ -180,7 +180,7 @@ test('discovery tools share the centered content navigation row with quiet icons
  const html=fs.readFileSync(file,'utf8');
  assert(html.includes('class="discovery-nav"><div class="discovery-tools"'));
  assert(html.includes('grid-template-columns:92px minmax(0,1fr) 92px'));
- assert(html.includes('.discovery-tools svg{width:20px;height:20px;stroke-width:1.6}'));
+ assert(html.includes('.discovery-tools svg{width:16px;height:16px;stroke-width:1.6}'));
  assert(html.includes('.phone-head.discovery-head{height:95px;flex-basis:95px;'));
 });
 
@@ -191,5 +191,5 @@ test('approved drawer keeps reference cards and icons while content precedes pro
  const body=html.slice(html.indexOf('function openDrawer'));
  assert(body.indexOf('data-action="drawer-posts"')<body.indexOf('data-action="drawer-review"'));
  assert(body.indexOf('data-action="drawer-review"')<body.indexOf('data-action="drawer-promotion"'));
- assert(html.includes('background:#eef2e8;border:1px solid #d2ddcc'));
+ assert(html.includes('inset:5px 2px;border:1px solid #e0e5da;background:#f0f2eb'));assert(html.includes('.discovery-tools:empty:before,.discovery-tools:empty:after{display:none}'));
 });
