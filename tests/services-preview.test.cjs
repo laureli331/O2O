@@ -94,3 +94,9 @@ test('service sheets isolate ancestor siblings and restore prior inert flags on 
  vm.runInContext('closeMore()',ctx);assert.equal(toolbar.inert,false);assert.equal(content.inert,false);assert(prior.inert);assert.equal(ctx.sheetBackground.length,0);assert.equal(ctx.pendingLeave,null);assert.equal(sheet.hidden,true);assert.equal(focusCount,1);
  vm.runInContext('lockSheetBackground();closeMore(false)',ctx);assert.equal(focusCount,1);assert.equal(content.inert,false);assert(prior.inert);
 });
+
+
+test('demand history has one content entry and empty more menus are omitted',()=>{
+ const {html}=bundle(),menu=html.slice(html.indexOf(' function showMore()'),html.indexOf(' function lockSheetBackground()'));
+ assert(!menu.includes("cta('发布与服务历史'"));assert(html.includes("const more=row.owner==='me'&&row.state==='open'"));assert(!html.includes('普通公开文字编辑不置顶，不修改原发布时间。'));
+});
