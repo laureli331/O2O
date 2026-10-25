@@ -45,7 +45,7 @@
 | V21/V22 | 运营看板/本人佣金账单，已有独立HTML | 本轮13合同浏览器回归通过；见[交付记录](v21-v22-html-preview.md) |
 | V23 | 商家作品/发现，v23.html | 本轮完整回归通过，含合法展示、发布审核、下架与通知 |
 
-G01—G04：共用状态ASCII已优化为设计审阅稿，24个状态实例、文案、返回闭环与验证方案见[G系列设计](superpowers/specs/2026-10-25-g-series-shared-states-design.md)。尚无独立G系列HTML；现有V页的状态实现不因此算作已统一验收。
+G01—G04：共用状态ASCII已优化为设计审阅稿，24个状态实例、文案、返回闭环与验证方案见[G系列设计](superpowers/specs/2026-10-25-g-series-shared-states-design.md)。已按用户确认完成g01.html、g02.html、g03.html、g04.html四个独立交互预览，见[页面与验证](g-series-html-preview.md)。现有V页未批量重写，不因此标记真实网络/权限已验收。
 
 ## 后续真正未验收的范围
 

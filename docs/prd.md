@@ -1,6 +1,6 @@
 # 湘邻湘友微信小程序 PRD
 
-2026-10-25 G系列设计审阅稿：已先优化G01—G04的ASCII与24个状态实例，采用原任务内展示当前状态、保留输入和明确下一步；尚未生成G系列HTML，待用户审阅设计。见[设计与验证方案](superpowers/specs/2026-10-25-g-series-shared-states-design.md)。
+2026-10-25 G系列设计审阅稿：已先优化G01—G04的ASCII与24个状态实例，采用原任务内展示当前状态、保留输入和明确下一步；用户已确认并完成四个独立G系列HTML，均为本地合成预览；见[页面与验证](g-series-html-preview.md)。见[设计与验证方案](superpowers/specs/2026-10-25-g-series-shared-states-design.md)。
 
 2026-10-25底栏修复：选中项显示已确认的绿色实心SVG并隐藏轮廓图标，文字绿色、正常字重；未选中恢复普通图标，发布保留圆形加号。六个底栏及动态当前页状态同步，见[验证记录](navigation-selected-state-20261025.md)。
 
