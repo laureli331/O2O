@@ -11,6 +11,8 @@ async function main() {
   const page = await browser.newPage();
   const errors = [];
   page.on('pageerror', e => errors.push(e.message));
+  // Explicit test navigation starts a fresh synthetic fee form.
+  page.on('dialog', dialog => dialog.accept());
   const image = { name: 'synthetic.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j9ioAAAAASUVORK5CYII=', 'base64') };
   const rows = () => page.locator('.fee-item');
   try {
