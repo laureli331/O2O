@@ -11,6 +11,8 @@ async function main() {
   const p = await browser.newPage();
   const errors = [];
   p.on('pageerror', e => errors.push(e.message));
+  // Explicit fixture navigation starts a fresh synthetic profile.
+  p.on('dialog', dialog => dialog.accept());
   async function assertDraft() {
     assert.equal(await p.locator('#nickname').inputValue(), '未保存的合成昵称');
     assert.equal(await p.locator('#wechat').inputValue(), 'synthetic_contact');
