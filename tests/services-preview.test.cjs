@@ -83,3 +83,14 @@ test('order return restores only a visible card trigger and bounds incoming scro
  for(const value of ['Infinity','NaN',-1,100001]){context.value=value;assert.equal(vm.runInContext('position(value)',context),0);}
  context.value='234';assert.equal(vm.runInContext('position(value)',context),234);
 });
+
+
+test('service sheets isolate ancestor siblings and restore prior inert flags on every exit',()=>{
+ const {html}=bundle();class Element{constructor(tag='DIV',inert=false){this.tagName=tag;this.inert=inert;this.children=[];}append(...items){for(const item of items){this.children.push(item);item.parentElement=this;}return this;}}
+ const body=new Element('BODY'),main=new Element('MAIN'),phone=new Element('ARTICLE'),sheet=new Element(),toolbar=new Element(),content=new Element(),prior=new Element('HEADER',true),script=new Element('SCRIPT');body.append(main,script);main.append(toolbar,phone,prior);phone.append(content,sheet);
+ let focusCount=0;const ctx=vm.createContext({HTMLElement:Element,document:{body},$:()=>sheet,sheetBackground:[],pendingLeave:()=>{},sheetTrigger:{isConnected:true,focus(options){assert.equal(options.preventScroll,true);focusCount++;}}});
+ const source=html.match(/ function lockSheetBackground\(\)[^\n]*\n/)[0]+html.match(/ function closeMore\([^\n]*\n/)[0];
+ vm.runInContext(source+'lockSheetBackground();lockSheetBackground()',ctx);assert(toolbar.inert);assert(content.inert);assert(prior.inert);assert.equal(phone.inert,false);assert.equal(main.inert,false);assert.equal(sheet.inert,false);assert.equal(script.inert,false);assert.equal(ctx.sheetBackground.length,3);
+ vm.runInContext('closeMore()',ctx);assert.equal(toolbar.inert,false);assert.equal(content.inert,false);assert(prior.inert);assert.equal(ctx.sheetBackground.length,0);assert.equal(ctx.pendingLeave,null);assert.equal(sheet.hidden,true);assert.equal(focusCount,1);
+ vm.runInContext('lockSheetBackground();closeMore(false)',ctx);assert.equal(focusCount,1);assert.equal(content.inert,false);assert(prior.inert);
+});
