@@ -36,3 +36,15 @@ test('unknown submission is query-only, idempotent and scoped to the actor',()=>
 test('unknown queries preserve changed records instead of overriding a newer state',()=>{
  const s=M.create(),cmd=command(s,'R1','approve');M.perform(s,cmd,{unknown:true});const r=M.get(s,'R1');r.state='invalid';r.revision++;assert.equal(M.query(s,cmd.key),'changed');assert.equal(r.state,'invalid');
 });
+
+
+test('request return targets only visible items, uses neighbor or tab fallback and bounds positions',()=>{
+ const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),html=fs.readFileSync(path.join(__dirname,'../previews/v08.html'),'utf8');
+ const source=html.slice(html.indexOf(' function position(value)'),html.indexOf(' function tradeUrl('));
+ let focused='',outer=-1;const scroll={scrollTop:0};const items=['S1','S2'].map(id=>({dataset:{detail:id},focus(options){assert.equal(options.preventScroll,true);focused=id;}}));let visible=items;
+ const ctx=vm.createContext({Number,listContext:{id:'S2',index:1,outer:130},offset:120,settings:{tab:'sent'},$:id=>id==='content'?{querySelectorAll:()=>visible}:scroll,document:{querySelector:selector=>{assert.equal(selector,'[data-tab="sent"]');return {focus(){focused='tab';}};}},scrollTo(_x,y){outer=y;}});
+ vm.runInContext(source+'restoreRequest()',ctx);assert.equal(focused,'S2');assert.equal(scroll.scrollTop,120);assert.equal(outer,130);
+ ctx.listContext={id:'OUTSIDE',index:99,outer:-1};vm.runInContext('restoreRequest()',ctx);assert.equal(focused,'S2');assert.equal(outer,0);
+ visible=[];vm.runInContext('restoreRequest()',ctx);assert.equal(focused,'tab');
+ for(const value of ['Infinity','bad',-1,100001]){ctx.value=value;assert.equal(vm.runInContext('position(value)',ctx),0);}ctx.value='250';assert.equal(vm.runInContext('position(value)',ctx),250);
+});
