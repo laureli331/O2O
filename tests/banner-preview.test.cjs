@@ -1,5 +1,15 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),M=require('../previews/assets/banner-model.js');
+test('first-use has no creative or order; only save or valid submission creates a record',()=>{
+ const s=M.create('empty'),before=JSON.stringify(s);assert.equal(s.form.image,false);assert.equal(s.form.title,'');assert.equal(s.form.phone,'');assert.equal(s.start,null);assert(!M.hasOrder(s));
+ assert.throws(()=>M.pay(s,'success'));assert.throws(()=>M.cancel(s,true));assert.throws(()=>M.submit(s,s.form));assert.equal(JSON.stringify(s),before);
+ const map=new Map(),storage={getItem:k=>map.get(k),setItem:(k,v)=>map.set(k,v)};M.save(s,storage,1000);assert.equal(M.load(storage,1001).status,'empty');
+ M.saveDraft(s,{...s.form,title:'未写完的广告'},2);assert.equal(s.status,'draft');assert(s.savedAt);assert(!M.hasOrder(s));assert.equal(s.form.image,false);
+ M.submit(s,{...s.form,description:'本次广告说明',image:true});assert.equal(s.status,'pending');assert(!M.hasOrder(s));M.approve(s);assert(M.hasOrder(s));assert.equal(s.end-s.start,30*M.DAY);
+ const direct=M.create('empty');M.submit(direct,M.create().form);assert.equal(direct.status,'pending');assert(!M.hasOrder(direct));
+ for(const state of ['empty','draft','pending','rejected'])assert(!M.hasOrder(M.create(state)),state);
+ for(const state of ['ready','payment-unknown','scheduled','live','ended','refund-pending','refund-unknown','refunded'])assert(M.hasOrder(M.create(state)),state);
+});
 test('banner payment follows review, confirmed schedule and valid reservation; unknown results cannot double pay',()=>{
  const s=M.create();assert.throws(()=>M.pay(s,'success'));M.submit(s,s.form);assert.equal(s.status,'pending');assert.throws(()=>M.submit(s,s.form));assert.throws(()=>M.pay(s,'success'));
  s.status='ready';M.pay(s,'unknown');assert.equal(s.status,'payment-unknown');assert.throws(()=>M.pay(s,'success'));M.queryPayment(s,'unknown');assert(!s.paid);M.queryPayment(s,'success');assert(s.paid);assert.equal(s.status,'scheduled');assert.equal(s.actualStart,null);assert.throws(()=>M.pay(s,'success'));
