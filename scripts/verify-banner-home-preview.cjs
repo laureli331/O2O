@@ -8,7 +8,7 @@ async function main(){
   const act=a=>page.locator('[data-action="'+a+'"]');await act('edit').click();await page.locator('#f-title').fill('本店周末好物');await page.locator('#f-phone').fill('000-1234');await page.locator('#public-phone').uncheck();
   const source=await page.locator('.banner-cover').getAttribute('src');await act('preview').click();
   assert.equal(await page.locator('.home-ad-open .banner-cover').getAttribute('src'),source);assert.equal(await page.locator('#preview-ad-details').getAttribute('open'),null);
-  assert.equal(await page.locator('.home-sk-card').count(),2);assert.equal(await page.locator('.home-sk-categories span').count(),5);
+  assert.equal(await page.locator('.home-sk-card').count(),2);assert.equal(await page.locator('.home-sk-categories span').count(),5);assert.deepEqual(await page.locator('.home-sk-categories span').allTextContents(),['全部','维修','跑腿','闲置','其它']);assert((await page.locator('.home-sk-filters').textContent()).includes('全部村 / 社区'));assert((await page.locator('.home-sk-filters').textContent()).includes('最新发布'));assert.equal(await page.locator('.home-sk-filters .home-sk-bar').count(),0);
   assert(await page.locator('.home-placement-preview').evaluate(e=>{const q=s=>e.querySelector(s).getBoundingClientRect().top;return q('.home-sk-search')<q('.home-ad-open')&&q('.home-ad-open')<q('.home-sk-categories')&&q('.home-sk-categories')<q('.home-sk-feed');}));
   assert.equal(await page.locator('.home-sk-context button,.home-sk-context input,.home-sk-context a').count(),0);
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));assert(await page.locator('#banner-phone').evaluate(e=>e.scrollWidth<=e.clientWidth+1));
