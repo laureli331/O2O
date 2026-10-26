@@ -70,3 +70,9 @@ AI定制流程：填写标题/短句/宣传重点/风格、可选参考图→生
 方案、来源、边界及验证顺序见[本轮设计](superpowers/specs/2026-10-26-banner-ai-custom-and-schedule-design.md)。官方价格是基础模型调用价，不是本项目实测总成本；0.60元预算是假设，不是供应商报价。
 
 本轮验证：新增5项模型用例，当前全量1255项Node测试通过；`verify-banner-custom-schedule`覆盖320/375/414/1280px、真实文件选择、取消/错误保图、删除保留日期、免费调整、失败不计费、未知只查询、刷新中断查询并只计一次、期望日期和改期接受到订单；原`verify-banner-preview`、`verify-v11-review`、`verify-banner-task-refinement`、`verify-banner-first-use`回归通过。结果与截图在`.superpowers/banner-custom-20261026/`。并发回归时首轮首次进入套件曾遇本地服务连接拒绝，单独重跑通过，未跳过资源错误检查。
+
+## 2026-10-26 首页场景预览
+
+V11-C按用户要求改为首页场景：真实广告首图，搜索/分类/筛选/双列瀑布流使用静态骨架，沿用既有底栏图标示意；不把骨架伪装成实时加载。保留原20:11素材预览比例，完整显示文字，正式上传规格不因此定稿。广告详情默认收起，点击首图或“查看广告详情”展开；公开电话和地址仍按独立授权。返回编辑保留输入，提交审核语义不变。
+
+验证：1265项全量测试通过；`verify-banner-home-preview`通过320/375/414px结构顺序、实际首图、无横向溢出、点击及键盘展开、授权字段、返回保留和提交审核。既有`verify-banner-preview`与`verify-v11-review`回归均通过。证据在`.superpowers/banner-home-20261026/`，不纳入源代码提交。设计、公开参考与范围见[首页场景预览设计](superpowers/specs/2026-10-26-banner-home-context-preview-design.md)。
