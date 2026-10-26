@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-26",
+  "scope": "second-version-html-preview-only",
+  "currency": "CNY",
+  "pricesCents": {
+    "7": [
+      9900,
+      6900,
+      4900
+    ],
+    "14": [
+      17900,
+      12900,
+      8900
+    ],
+    "30": [
+      29900,
+      21900,
+      14900
+    ]
+  },
+  "positions": [
+    "首位",
+    "次位",
+    "末位"
+  ],
+  "customFeeCents": 9900,
+  "optionalCustom": true,
+  "candidateCount": 3,
+  "includedRevisionRounds": 1,
+  "platformCorrectionsConsumeRound": false,
+  "paymentSequence": [
+    "custom-fee-if-selected",
+    "production",
+    "merchant-confirmation",
+    "material-review",
+    "automatic-availability-check",
+    "24-hour-hold",
+    "ad-position-fee"
+  ],
+  "holdHours": 24,
+  "lockDuringProduction": false,
+  "beforeProductionRefundCents": 9900,
+  "afterProductionRefund": "manual-completed-work-assessment-no-fixed-ratio",
+  "carouselSeconds": 5,
+  "source": "banner-standard-service-source-20261026.md",
+  "actualReplies": [
+    {
+      "questionItemId": "[\"request_user_input_async\",\"call_d226572f1ab8468fad431f536bfa4e81\",0]",
+      "answer": "采用：定制加99元，自备图片不加价（推荐）"
+    },
+    {
+      "questionItemId": "[\"request_user_input_async\",\"call_d226572f1ab8468fad431f536bfa4e81\",1]",
+      "answer": "定制费先付, 不过排期不是在系统里吗, 怎么还要时间确认?"
+    },
+    {
+      "questionItemId": "[\"request_user_input_async\",\"call_d226572f1ab8468fad431f536bfa4e81\",2]",
+      "answer": "采用上述分开处理规则（推荐）"
+    }
+  ],
+  "automaticSchedulingFollowUpReply": "没问题",
+  "explicitPriceInstruction": "banner位按图一的价格来\nbanner定制99元\n价格按我说的来, 其它如下:",
+  "notEnabled": [
+    "real-payments",
+    "real-ai",
+    "real-inventory",
+    "real-admin-permissions",
+    "real-ad-serving"
+  ],
+  "pending": [
+    "formal-upload-specifications",
+    "provider-and-cost-validation",
+    "production-working-day-calendar-and-formal-sla",
+    "real-payment-refund-channel",
+    "real-concurrent-reservation-and-scheduler",
+    "formal-event-measurement"
+  ]
+}

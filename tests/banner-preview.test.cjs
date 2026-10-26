@@ -35,7 +35,7 @@ test('next-period draft, review, payment and refund never mutate current creativ
  const isolated={...current};delete isolated.next;assert.equal(JSON.stringify(isolated),before);assert.equal(current.form.region,M.merchant.region);
 });
 test('saved snapshots distinguish unchanged saved drafts from later edits and keep merchant identity readonly',()=>{
- assert.deepEqual(M.positions.map(p=>[p.name,p.price]),[['首位（默认显示）',29900],['第二位',24900],['第三位',19900]]);
+ assert.deepEqual(M.positions.map(p=>[p.name,p.price]),[['首位（默认显示）',29900],['次位',21900],['末位',14900]]);
  const s=M.create(),f={...s.form,name:'不可冒用',region:'本次广告区域'};M.saveDraft(s,f,1);assert.equal(s.form.name,M.merchant.name);assert.equal(s.form.region,'本次广告区域');assert.equal(M.merchant.region,'演示社区');
  const snapshot=M.fingerprint(s.form,1);assert.equal(M.fingerprint({...s.form},1),snapshot);assert.notEqual(M.fingerprint({...s.form,title:'新改动'},1),snapshot);assert.notEqual(M.fingerprint(s.form,2),snapshot);assert.notEqual(M.fingerprint(s.form,1,1),snapshot);
 });
