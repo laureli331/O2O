@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-26",
+  "status": "feature-membership-confirmed-rules-open",
+  "humanDecisions": [
+    {
+      "topic": "merchant-onboarding",
+      "answer": "首版一并做入驻收费，先补齐规则"
+    },
+    {
+      "topic": "banner-version",
+      "answer": "V11—V13广告放到首版"
+    },
+    {
+      "topic": "onboarding-refund-initial",
+      "answer": "入驻费不退"
+    },
+    {
+      "topic": "onboarding-expiry",
+      "question": "入驻到期未续费后保留旧合规主页和帖子，暂停新增，保留必要历史、续费、已领券核销和投诉，已付广告按独立订单执行",
+      "answer": "保留旧主页和帖子，暂停新增"
+    },
+    {
+      "topic": "onboarding-payment-window-days",
+      "answer": "3天内"
+    },
+    {
+      "topic": "onboarding-no-refund-boundary",
+      "question": "不退限定为成功开通后因商家自身原因退出或未使用；重复付款、付款后未能开通、平台未按约交付等另核对，不一概不退",
+      "answer": "按这个范围处理"
+    },
+    {
+      "topic": "onboarding-payment-clock",
+      "question": "从审核通过且通知成功时起连续72小时，到期未付不能按旧审核直接开通",
+      "answer": "通知成功起连续72小时"
+    },
+    {
+      "topic": "onboarding-expired-editing",
+      "question": "暂停营销性修改，可下架旧帖及提交营业地址、联系电话、停业等必要更正，审核后更新",
+      "answer": "采用：可下架和申请必要更正，暂停营销修改"
+    },
+    {
+      "topic": "onboarding-expired-banner-purchase",
+      "question": "到期未续费，经营档案审核仍有效且资料合规时，可单独购买Banner广告和99元定制，不强制先续入驻；新增帖子和活动仍需续费",
+      "answer": "允许单独买广告和定制"
+    },
+    {
+      "topic": "onboarding-exception-service-target",
+      "question": "24小时内首次回应，完整有效材料提交成功后72小时内核对并对符合退款条件者发起退款，不承诺到账，未知先查证",
+      "answer": "采用24小时回应、72小时核对并发起符合条件退款"
+    },
+    {
+      "topic": "onboarding-included-ai",
+      "question": "99元首发权益为经营资料、主页、帖子管理、活动与免费券，不附赠商家AI文案或图片额度，广告及99元Banner定制独立购买",
+      "answer": "先采用这些基础权益，不附赠商家AI额度"
+    },
+    {
+      "topic": "onboarding-profile-count",
+      "answer": "首版每个主体只开一个档案"
+    },
+    {
+      "topic": "coupon-minimum-flow",
+      "question": "免费满减券填写门槛、优惠额、总量和有效期；微信登录用户每账号每活动1张，由该商家核销1次；不卖券、不代收、不新增店员账号",
+      "answer": "采用免费满减券的完整流程"
+    },
+    {
+      "topic": "onboarding-subject-identity",
+      "question": "持照按执照经营主体、无照按已核验自然人去重；同一人拥有不同持照主体可各自申请1档",
+      "answer": "采用：按各经营主体／无照自然人去重"
+    },
+    {
+      "topic": "coupon-validity-and-numeric-constraints",
+      "question": "固定起止时间；门槛和优惠额正数且优惠额不超过门槛，总量正整数；有效期内领取核销，过期失效；不做领取后N天有效",
+      "answer": "采用固定起止时间和这些数值规则"
+    },
+    {
+      "topic": "coupon-post-publish-lock-and-stop-claims",
+      "question": "发布后锁定门槛、优惠额和有效期，可停新领取；已领券仍按原条件至到期，停领或入驻到期不作废；错误争议由平台核对",
+      "answer": "采用：锁定关键条件，已领券权益保留"
+    }
+  ],
+  "firstRelease": [
+    "account-and-qualification",
+    "four-resident-businesses",
+    "provider-profiles",
+    "service-order-center",
+    "private-tools-and-public-sharing",
+    "resident-text-ai",
+    "reviews-and-review-moderation",
+    "operations-and-configuration",
+    "commission-billing-and-refunds",
+    "operations-metrics",
+    "merchant-discovery",
+    "merchant-onboarding-99",
+    "banner-management-v11",
+    "banner-orders-refunds-v12",
+    "banner-metrics-v13",
+    "banner-standard-creation-99"
+  ],
+  "onboardingBundleDependencies": [
+    "merchant-profile",
+    "post-drafts-and-management",
+    "activities-and-free-coupons"
+  ],
+  "onboarding": {
+    "priceCents": 9900,
+    "continuousDays": 30,
+    "autoRenew": false,
+    "reviewBeforePayment": true,
+    "startAfterActualActivation": true,
+    "refundPolicy": "no-prorated-refund-for-merchant-voluntary-exit-after-activation",
+    "paymentWindow": {
+      "hours": 72,
+      "startsAfter": [
+        "review-approved",
+        "notification-success"
+      ],
+      "expiredReviewCannotDirectlyActivate": true
+    },
+    "expiryAndExistingPosts": "retain-compliant-existing-pages-posts-disable-new",
+    "refundExceptions": [
+      "duplicate-payment",
+      "activation-failed",
+      "platform-nondelivery"
+    ],
+    "expiredPostEditing": "allow-removal-and-reviewed-necessary-corrections-no-marketing-edits",
+    "newBannerPurchaseAfterExpiry": "allowed-if-profile-review-valid-and-compliant",
+    "exceptionRefundResponseTarget": {
+      "firstResponseHours": 24,
+      "reviewAndInitiateEligibleRefundHours": 72,
+      "reviewClockStarts": "complete-valid-materials-submitted-successfully",
+      "arrivalTimeGuaranteed": false,
+      "unknownResultQueryFirst": true
+    },
+    "merchantAiIncluded": false,
+    "profileCountPerOwner": 1,
+    "couponRules": "confirmed-free-fixed-validity-threshold-coupon",
+    "subjectIdentityRule": {
+      "licensed": "one-per-reviewed-business-entity",
+      "unlicensed": "one-per-verified-natural-person",
+      "differentLicensedEntitiesOfSamePerson": "each-may-have-one",
+      "rawIdStorageApproved": false
+    },
+    "selfServiceMergeOrMigration": false
+  },
+  "banner": {
+    "days": [
+      7,
+      14,
+      30
+    ],
+    "priceCents": {
+      "7": [
+        9900,
+        6900,
+        4900
+      ],
+      "14": [
+        17900,
+        12900,
+        8900
+      ],
+      "30": [
+        29900,
+        21900,
+        14900
+      ]
+    },
+    "creationOptional": true,
+    "creationCents": 9900,
+    "creationCandidates": 3,
+    "combinedRevisionRounds": 1,
+    "creationPrepaid": true,
+    "productionReservesSlot": false,
+    "slotHoldHours": 24,
+    "slotAvailabilityRechecked": true,
+    "feesAndRefundsIndependent": true
+  },
+  "conditionalNotEnabled": [
+    "resident-ai-direct-purchase",
+    "platform-service-balance"
+  ],
+  "deferred": [
+    "content-heating",
+    "ai-image-input",
+    "source-backed-rule-qa",
+    "ai-operations-assistant",
+    "wechat-traffic-ads"
+  ],
+  "excluded": [
+    "people-directory",
+    "new-v17-entry",
+    "general-resident-post-forum",
+    "free-chat",
+    "resident-transaction-payment-escrow",
+    "automatic-commission-deduction",
+    "face-recognition",
+    "saas"
+  ],
+  "unchanged": {
+    "residentAiFreeMonthly": 3,
+    "residentAiPackCount": 20,
+    "residentAiPackCents": 190,
+    "residentAiPackDays": 180,
+    "monthlyCashBudgetCents": 50000
+  },
+  "realPaymentEnabled": false,
+  "realAiEnabled": false,
+  "productionDeploymentAuthorized": false,
+  "document": "docs/v1-scope-confirmed-20261026.md",
+  "newPrototypeWork": [
+    "merchant-onboarding-review-payment-activation-renewal-expiry-exceptions",
+    "merchant-activity-free-coupon-claim-redemption",
+    "onboarding-expired-profile-correction-and-independent-banner-purchase"
+  ],
+  "coupons": {
+    "type": "free-threshold-discount",
+    "paidCoupon": false,
+    "residentTransactionPaymentEscrow": false,
+    "loginRequired": true,
+    "claimLimit": {
+      "per": "wechat-account-per-activity",
+      "count": 1
+    },
+    "redemptionCount": 1,
+    "redeemer": "owning-merchant",
+    "separateStaffAccounts": false,
+    "fixedValidity": true,
+    "postPublishParameterEditing": "pending",
+    "existingClaimAfterMerchantExpiry": "valid-until-original-expiry",
+    "generatedTradeOrRatingEligibility": false,
+    "validityKind": "fixed-start-and-end",
+    "claimAndRedeemWithinValidity": true,
+    "relativeDaysAfterClaim": false,
+    "amountsPositive": true,
+    "discountNotAboveThreshold": true,
+    "totalQuantityPositiveInteger": true,
+    "postPublishLockedFields": [
+      "threshold",
+      "discount",
+      "validity"
+    ],
+    "merchantMayStopNewClaims": true,
+    "existingClaimsAfterStop": "original-terms-until-original-expiry",
+    "merchantUnilateralInvalidationOfClaimedCoupon": false,
+    "disputeHandling": "platform-review"
+  },
+  "featureScopeFrozen": true,
+  "businessRulesComplete": false,
+  "formalDevelopmentReady": false,
+  "remainingDecisionsOrEvidence": [
+    "merchant-application-location-and-materials-review-standards",
+    "notification-success-definition-for-payment-clock",
+    "banner-production-delivery-target-and-redesign-boundary",
+    "banner-formal-image-and-copy-specifications",
+    "banner-event-definitions-deduplication-data-retention",
+    "platform-eligibility-payment-refund-and-real-ability-evidence",
+    "new-onboarding-and-coupon-ascii-html-design"
+  ],
+  "validation": {
+    "nodeTests": 1284,
+    "nodePassed": 1284,
+    "bannerBrowserRegression": "passed",
+    "realPaymentEnabled": false,
+    "productionDeploymentAuthorized": false
+  }
+}

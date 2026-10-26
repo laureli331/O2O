@@ -75,7 +75,7 @@ test('current completion, permission, finance and deferred-scope boundaries stay
     '旧理由材料重复不重停', '只争议部分暂缓', '不建0元支付',
     '核准抵扣分开', '多收待核对', '不恢复地址/旧凭据',
     '八组', '无全站混合总分', 'AG01前无真实模型', 'DG01前仅合成演示',
-    'V11 商家Banner投放（第二版交互预览）', 'VP01', 'VP02', 'VP03', 'VP04', 'VP05',
+    'V11 商家Banner投放（首版交互预览）', 'VP01', 'VP02', 'VP03', 'VP04', 'VP05',
   ]) assert(document.includes(phrase), phrase);
   // No manual completion action may appear as a button in a drawing.
   for (const action of document.matchAll(/\[([^\]\n]+)\]/g)) {

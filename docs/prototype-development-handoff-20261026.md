@@ -4,7 +4,7 @@
 
 ## 结论与阶段
 
-第1步交付内容为逐页状态核对、实证修复和本清单。第2步首版范围冻结尚未完成；第3步真实核心闭环、第4步小程序真机和上线验收均未开始。V11—V13已有商业规则和交互预览，但仍属第二版，不能因为原型已做好而列为首发。
+第1步交付内容为逐页状态核对、实证修复和本清单。第2步首版范围冻结尚未完成；第3步真实核心闭环、第4步小程序真机和上线验收均未开始。用户后续已明确将V11—V13及99元商家入驻纳入首版；最新范围以[首版范围清单](v1-scope-confirmed-20261026.md)为准，真实能力仍未验收。
 
 “已通过”仅指下列具体合成用例。G01—G04的24种状态不机械复制到所有V页：已实现的业务状态继续使用原模型；没有对应图片／删除动作的页面不适用；静态列表尚无真实请求的部分，以本清单的接入合同交付，不伪称已经完成真实弱网／并发／权限验收。没有全面更换既有视觉或重写通过页面。
 
@@ -40,9 +40,9 @@
 | V08 | [v08.html](../previews/v08.html) | 联系申请：加载／空／失败、未知查询、撤回确认与原项返回 | v08-preview；contact-continuity | 未知不是失败，24小时限制和隐私沿原规则 |
 | V09 | [v09.html](../previews/v09.html) | 收藏／草稿／地址：空／失败、失效原图卡片、修改与删除确认 | v09-preview；prototype-state-gaps | 本轮补弹层背景隔离；跨页带入非云端保存 |
 | V10 | [v10.html](../previews/v10.html) | 接单资料：三类独立编辑／批量时段、输入保留、未保存确认 | v10-preview；provider-edit-continuity；prototype-state-gaps | 本轮补弹层背景隔离；资格与资料分开 |
-| V11 | [v11.html](../previews/v11.html) | 广告：首次无广告／价格、素材校验、日期、审核／排期／未知 | banner-preview；banner-standard-service；banner-date-upload；banner-first-use | 第二版预览；99元制作和广告位费各自状态，不启用售卖 |
-| V12 | [v12.html](../previews/v12.html) | 订单退款：无订单、付款取消／未知、退款核对与结果 | banner-preview；banner-standard-service | 第二版；不把申请退款显示为到账 |
-| V13 | [v13.html](../previews/v13.html) | 投放数据：无数据、日期／指标、来源与非承诺说明 | banner-preview | 第二版合成指标；无真实投放统计 |
+| V11 | [v11.html](../previews/v11.html) | 广告：首次无广告／价格、素材校验、日期、审核／排期／未知 | banner-preview；banner-standard-service；banner-date-upload；banner-first-use | 已纳首版；99元制作和广告位费各自状态，当前仍不启用真实售卖 |
+| V12 | [v12.html](../previews/v12.html) | 订单退款：无订单、付款取消／未知、退款核对与结果 | banner-preview；banner-standard-service | 已纳首版；不把申请退款显示为到账 |
+| V13 | [v13.html](../previews/v13.html) | 投放数据：无数据、日期／指标、来源与非承诺说明 | banner-preview | 已纳首版；仍为合成指标，无真实投放统计 |
 | V14 | [v14.html](../previews/v14.html) | 通知／举报申诉：原记录、补充、图片错误、未知恢复、未保存确认 | v14-preview；prototype-state-gaps | 本轮补格式／5MB和背景隔离；E03未开放部分继续不收材料 |
 | V15 | [v15.html](../previews/v15.html) | 运营：待办、原材料、快捷理由、一次确认、失败／未知／版本差异 | v15-preview；admin-web-carrier | Web主后台；管理账号和高风险操作规则不变 |
 | V16 | [v16.html](../previews/v16.html) | 配置：编辑／核对、未知查询、发布与生效分开、版本日志／权限 | admin-web-carrier | 不接真实配置或支付规则，不改变共用管理账号安排 |
@@ -107,7 +107,7 @@
 
 ### 首发范围还需冻结
 
-进入第2步后，按[开发计划](development-plan.md)整理首发／延后／能力核实前不启用三列，由用户确认；不在本轮代用户改变范围。广告V11—V13继续第二版；V17不恢复；V15/V16仍网页主后台＋小程序轻量值班。平台自身款项与居民间线下款项边界不变。
+进入第2步后，按[开发计划](development-plan.md)整理首发／延后／能力核实前不启用三列，由用户确认；不在本轮代用户改变范围。用户已将广告V11—V13纳入首版，商家入驻细则待补；V17不恢复；V15/V16仍网页主后台＋小程序轻量值班。平台自身款项与居民间线下款项边界不变。
 
 ## 验证记录入口
 
