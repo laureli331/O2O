@@ -1,0 +1,3 @@
+/* Lock only siblings of the modal's ancestor path; restore prior inert values. */
+'use strict';
+window.ModalIsolation=(()=>{const locks=new WeakMap();function lock(dialog){if(locks.has(dialog))return;const saved=[];let branch=dialog;while(branch&&branch!==document.body){const parent=branch.parentElement;if(!parent)break;for(const sibling of parent.children){if(sibling===branch||['SCRIPT','STYLE','LINK'].includes(sibling.tagName))continue;saved.push([sibling,sibling.inert]);sibling.inert=true;}branch=parent;}locks.set(dialog,saved);}function unlock(dialog){const saved=locks.get(dialog);if(!saved)return;for(const [el,value] of saved)el.inert=value;locks.delete(dialog);}return Object.freeze({lock,unlock});})();

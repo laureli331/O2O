@@ -1,0 +1,552 @@
+{
+  "scope": "Synthetic HTML/browser only; no real backend or device acceptance",
+  "results": [
+    {
+      "id": "v01-v02-preview",
+      "script": "scripts/verify-v01-v02-preview.cjs",
+      "url": "http://127.0.0.1:8765/v01-v02.html",
+      "started": "2026-10-26T13:05:27.391Z",
+      "durationMs": 9484,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v01-v02-preview\\run.log"
+    },
+    {
+      "id": "v03-preview",
+      "script": "scripts/verify-v03-preview.cjs",
+      "url": "http://127.0.0.1:8765/v03.html",
+      "started": "2026-10-26T13:05:36.882Z",
+      "durationMs": 10005,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v03-preview\\run.log"
+    },
+    {
+      "id": "v04-preview",
+      "script": "scripts/verify-v04-preview.cjs",
+      "url": "http://127.0.0.1:8765/v04.html",
+      "started": "2026-10-26T13:05:46.888Z",
+      "durationMs": 17917,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v04-preview\\run.log"
+    },
+    {
+      "id": "v05-preview",
+      "script": "scripts/verify-v05-preview.cjs",
+      "url": "http://127.0.0.1:8765/v05.html",
+      "started": "2026-10-26T13:06:04.806Z",
+      "durationMs": 10850,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v05-preview\\run.log"
+    },
+    {
+      "id": "v08-preview",
+      "script": "scripts/verify-v08-preview.cjs",
+      "url": "http://127.0.0.1:8765/v08.html",
+      "started": "2026-10-26T13:06:15.657Z",
+      "durationMs": 8645,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v08-preview\\run.log"
+    },
+    {
+      "id": "v09-preview",
+      "script": "scripts/verify-v09-preview.cjs",
+      "url": "http://127.0.0.1:8765/v09.html",
+      "started": "2026-10-26T13:06:24.312Z",
+      "durationMs": 8208,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v09-preview\\run.log"
+    },
+    {
+      "id": "v10-preview",
+      "script": "scripts/verify-v10-preview.cjs",
+      "url": "http://127.0.0.1:8765/v10.html",
+      "started": "2026-10-26T13:06:32.521Z",
+      "durationMs": 10595,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v10-preview\\run.log"
+    },
+    {
+      "id": "v14-preview",
+      "script": "scripts/verify-v14-preview.cjs",
+      "url": "http://127.0.0.1:8765/v14.html",
+      "started": "2026-10-26T13:06:43.117Z",
+      "durationMs": 7492,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v14-preview\\run.log"
+    },
+    {
+      "id": "v23-preview",
+      "script": "scripts/verify-v23-preview.cjs",
+      "url": "http://127.0.0.1:8765/v23.html",
+      "started": "2026-10-26T13:06:50.610Z",
+      "durationMs": 9390,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v23-preview\\run.log"
+    },
+    {
+      "id": "services-preview",
+      "script": "scripts/verify-services-preview.cjs",
+      "url": "http://127.0.0.1:8765/services.html",
+      "started": "2026-10-26T13:07:00.001Z",
+      "durationMs": 10355,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\services-preview\\run.log"
+    },
+    {
+      "id": "v07-preview",
+      "script": "scripts/verify-v07-preview.cjs",
+      "url": "http://127.0.0.1:8765/v07.html",
+      "started": "2026-10-26T13:07:10.357Z",
+      "durationMs": 8085,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v07-preview\\run.log"
+    },
+    {
+      "id": "banner-preview",
+      "script": "scripts/verify-banner-preview.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:07:18.443Z",
+      "durationMs": 9349,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\banner-preview\\run.log"
+    },
+    {
+      "id": "banner-standard-service",
+      "script": "scripts/verify-banner-standard-service.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:07:27.793Z",
+      "durationMs": 6933,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\banner-standard-service\\run.log"
+    },
+    {
+      "id": "banner-date-upload",
+      "script": "scripts/verify-banner-date-upload.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:07:34.727Z",
+      "durationMs": 19191,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\banner-date-upload\\run.log"
+    },
+    {
+      "id": "banner-first-use",
+      "script": "scripts/verify-banner-first-use.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:13:44.711Z",
+      "durationMs": 10988,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\banner-first-use\\run.log",
+      "attempts": [
+        {
+          "id": "banner-first-use",
+          "script": "scripts/verify-banner-first-use.cjs",
+          "url": "http://127.0.0.1:8765",
+          "started": "2026-10-26T13:07:53.919Z",
+          "durationMs": 11961,
+          "status": "failed",
+          "exitCode": 1,
+          "log": null,
+          "diagnosis": "旧上传用例没有等待异步图片校验，已替换可解码素材并等待首图实际完成",
+          "observedError": "Timeout waiting for [data-action=\"submit\"]"
+        },
+        {
+          "id": "banner-first-use",
+          "script": "scripts/verify-banner-first-use.cjs",
+          "url": "http://127.0.0.1:8765",
+          "started": "2026-10-26T13:13:44.711Z",
+          "durationMs": 10988,
+          "status": "passed",
+          "exitCode": 0,
+          "log": ".superpowers\\prototype-closeout-20261026\\banner-first-use\\run.log"
+        }
+      ]
+    },
+    {
+      "id": "banner-home-preview",
+      "script": "scripts/verify-banner-home-preview.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:08:05.881Z",
+      "durationMs": 5553,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\banner-home-preview\\run.log"
+    },
+    {
+      "id": "v15-preview",
+      "script": "scripts/verify-v15-preview.cjs",
+      "url": "http://127.0.0.1:8765/v15.html",
+      "started": "2026-10-26T13:13:55.703Z",
+      "durationMs": 11855,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v15-preview\\run.log",
+      "attempts": [
+        {
+          "id": "v15-preview",
+          "script": "scripts/verify-v15-preview.cjs",
+          "url": "http://127.0.0.1:8765",
+          "started": "2026-10-26T13:08:11.436Z",
+          "durationMs": 2037,
+          "status": "failed",
+          "exitCode": 1,
+          "log": null,
+          "diagnosis": "回归入口误传根地址，已改为v15.html",
+          "observedError": "Expected queue count 8, got 0"
+        },
+        {
+          "id": "v15-preview",
+          "script": "scripts/verify-v15-preview.cjs",
+          "url": "http://127.0.0.1:8765/v15.html",
+          "started": "2026-10-26T13:13:55.703Z",
+          "durationMs": 11855,
+          "status": "passed",
+          "exitCode": 0,
+          "log": ".superpowers\\prototype-closeout-20261026\\v15-preview\\run.log"
+        }
+      ]
+    },
+    {
+      "id": "admin-web-carrier",
+      "script": "scripts/verify-admin-web-carrier.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:08:13.474Z",
+      "durationMs": 5138,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\admin-web-carrier\\run.log"
+    },
+    {
+      "id": "v20-preview",
+      "script": "scripts/verify-v20-preview.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:08:18.613Z",
+      "durationMs": 8325,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v20-preview\\run.log"
+    },
+    {
+      "id": "v21-v22-preview",
+      "script": "scripts/verify-v21-v22-preview.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:08:26.939Z",
+      "durationMs": 13666,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\v21-v22-preview\\run.log"
+    },
+    {
+      "id": "reviews-preview",
+      "script": "scripts/verify-reviews-preview.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:08:40.606Z",
+      "durationMs": 9219,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\reviews-preview\\run.log"
+    },
+    {
+      "id": "g-series",
+      "script": "scripts/verify-g-series.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:08:49.826Z",
+      "durationMs": 45868,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\g-series\\run.log"
+    },
+    {
+      "id": "mobile-foundations",
+      "script": "scripts/verify-mobile-foundations.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:09:35.695Z",
+      "durationMs": 7149,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\mobile-foundations\\run.log"
+    },
+    {
+      "id": "mobile-time-publish",
+      "script": "scripts/verify-mobile-time-publish.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:09:42.845Z",
+      "durationMs": 6114,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\mobile-time-publish\\run.log"
+    },
+    {
+      "id": "service-application-handoff",
+      "script": "scripts/verify-service-application-handoff.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:09:48.960Z",
+      "durationMs": 8279,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\service-application-handoff\\run.log"
+    },
+    {
+      "id": "service-detail-return",
+      "script": "scripts/verify-service-detail-return.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:09:57.240Z",
+      "durationMs": 5385,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\service-detail-return\\run.log"
+    },
+    {
+      "id": "service-notification-return",
+      "script": "scripts/verify-service-notification-return.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:02.626Z",
+      "durationMs": 5561,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\service-notification-return\\run.log"
+    },
+    {
+      "id": "contact-continuity",
+      "script": "scripts/verify-contact-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:08.188Z",
+      "durationMs": 9089,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\contact-continuity\\run.log"
+    },
+    {
+      "id": "review-dialog-continuity",
+      "script": "scripts/verify-review-dialog-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:17.278Z",
+      "durationMs": 5417,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\review-dialog-continuity\\run.log"
+    },
+    {
+      "id": "publish-field-continuity",
+      "script": "scripts/verify-publish-field-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:22.696Z",
+      "durationMs": 5211,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\publish-field-continuity\\run.log"
+    },
+    {
+      "id": "publish-pending-continuity",
+      "script": "scripts/verify-publish-pending-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:27.908Z",
+      "durationMs": 5240,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\publish-pending-continuity\\run.log"
+    },
+    {
+      "id": "publish-replacement-protection",
+      "script": "scripts/verify-publish-replacement-protection.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:33.150Z",
+      "durationMs": 6495,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\publish-replacement-protection\\run.log"
+    },
+    {
+      "id": "publish-result-invalidation",
+      "script": "scripts/verify-publish-result-invalidation.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:39.647Z",
+      "durationMs": 9558,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\publish-result-invalidation\\run.log"
+    },
+    {
+      "id": "review-failed-query-protection",
+      "script": "scripts/verify-review-failed-query-protection.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:49.206Z",
+      "durationMs": 6733,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\review-failed-query-protection\\run.log"
+    },
+    {
+      "id": "review-photo-continuity",
+      "script": "scripts/verify-review-photo-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:10:55.940Z",
+      "durationMs": 7846,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\review-photo-continuity\\run.log"
+    },
+    {
+      "id": "order-form-leave",
+      "script": "scripts/verify-order-form-leave.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:11:03.786Z",
+      "durationMs": 6327,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\order-form-leave\\run.log"
+    },
+    {
+      "id": "provider-edit-continuity",
+      "script": "scripts/verify-provider-edit-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:11:10.116Z",
+      "durationMs": 5701,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\provider-edit-continuity\\run.log"
+    },
+    {
+      "id": "profile-leave-protection",
+      "script": "scripts/verify-profile-leave-protection.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:11:15.818Z",
+      "durationMs": 8574,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\profile-leave-protection\\run.log"
+    },
+    {
+      "id": "billing-form-continuity",
+      "script": "scripts/verify-billing-form-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:11:24.393Z",
+      "durationMs": 5190,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\billing-form-continuity\\run.log"
+    },
+    {
+      "id": "candidate-pending-continuity",
+      "script": "scripts/verify-candidate-pending-continuity.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:11:29.584Z",
+      "durationMs": 5263,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\candidate-pending-continuity\\run.log"
+    },
+    {
+      "id": "prototype-state-gaps",
+      "script": "scripts/verify-prototype-state-gaps.cjs",
+      "url": "http://127.0.0.1:8765",
+      "started": "2026-10-26T13:14:07.560Z",
+      "durationMs": 10358,
+      "status": "passed",
+      "exitCode": 0,
+      "log": ".superpowers\\prototype-closeout-20261026\\prototype-state-gaps\\run.log"
+    }
+  ],
+  "date": "2026-10-26",
+  "evidenceRoot": ".superpowers/prototype-closeout-20261026/",
+  "realBackendAccepted": false,
+  "realDeviceAccepted": false,
+  "summary": {
+    "browserSuites": 41,
+    "passedBrowserSuites": 41,
+    "nodeTests": 1279,
+    "nodePassed": 1279,
+    "documentChecks": 14,
+    "documentChecksPassed": 14,
+    "generatedHandoffResources": 57,
+    "iconIdentities": 26
+  },
+  "postFixRechecks": [
+    {
+      "id": "v09",
+      "passed": true,
+      "evidence": ".superpowers/prototype-closeout-20261026/v09-final/result.json"
+    },
+    {
+      "id": "v10",
+      "passed": true,
+      "evidence": ".superpowers/prototype-closeout-20261026/v10-final/result.json"
+    },
+    {
+      "id": "v14",
+      "passed": true,
+      "evidence": ".superpowers/prototype-closeout-20261026/v14-final/result.json"
+    }
+  ],
+  "documentChecks": [
+    {
+      "name": "validate-development-plan",
+      "passed": true
+    },
+    {
+      "name": "validate-structured-design",
+      "passed": true
+    },
+    {
+      "name": "validate-registration-checklist",
+      "passed": true
+    },
+    {
+      "name": "validate-registration-handoff",
+      "passed": true
+    },
+    {
+      "name": "validate-selected-ui-20261009",
+      "passed": true
+    },
+    {
+      "name": "validate-ui-b-promotion",
+      "passed": true
+    },
+    {
+      "name": "validate-ui-b-refinement",
+      "passed": true
+    },
+    {
+      "name": "validate-ui-design-v2",
+      "passed": true
+    },
+    {
+      "name": "validate-ui-design",
+      "passed": true
+    },
+    {
+      "name": "validate-ui-request-revision-v2",
+      "passed": true
+    },
+    {
+      "name": "validate-ui-request-revision",
+      "passed": true
+    },
+    {
+      "name": "validate-ui-v02-comparison",
+      "passed": true
+    },
+    {
+      "name": "validate-miniapp-avatar",
+      "passed": true
+    },
+    {
+      "name": "validate-miniapp-logo-directions",
+      "passed": true
+    }
+  ]
+}

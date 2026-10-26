@@ -1,0 +1,207 @@
+[
+  {
+    "id": "v01-v02-preview",
+    "script": "scripts/verify-v01-v02-preview.cjs",
+    "page": "v01-v02.html"
+  },
+  {
+    "id": "v03-preview",
+    "script": "scripts/verify-v03-preview.cjs",
+    "page": "v03.html"
+  },
+  {
+    "id": "v04-preview",
+    "script": "scripts/verify-v04-preview.cjs",
+    "page": "v04.html"
+  },
+  {
+    "id": "v05-preview",
+    "script": "scripts/verify-v05-preview.cjs",
+    "page": "v05.html"
+  },
+  {
+    "id": "v08-preview",
+    "script": "scripts/verify-v08-preview.cjs",
+    "page": "v08.html"
+  },
+  {
+    "id": "v09-preview",
+    "script": "scripts/verify-v09-preview.cjs",
+    "page": "v09.html"
+  },
+  {
+    "id": "v10-preview",
+    "script": "scripts/verify-v10-preview.cjs",
+    "page": "v10.html"
+  },
+  {
+    "id": "v14-preview",
+    "script": "scripts/verify-v14-preview.cjs",
+    "page": "v14.html"
+  },
+  {
+    "id": "v23-preview",
+    "script": "scripts/verify-v23-preview.cjs",
+    "page": "v23.html"
+  },
+  {
+    "id": "services-preview",
+    "script": "scripts/verify-services-preview.cjs",
+    "page": "services.html"
+  },
+  {
+    "id": "v07-preview",
+    "script": "scripts/verify-v07-preview.cjs",
+    "page": "v07.html"
+  },
+  {
+    "id": "banner-preview",
+    "script": "scripts/verify-banner-preview.cjs",
+    "page": ""
+  },
+  {
+    "id": "banner-standard-service",
+    "script": "scripts/verify-banner-standard-service.cjs",
+    "page": ""
+  },
+  {
+    "id": "banner-date-upload",
+    "script": "scripts/verify-banner-date-upload.cjs",
+    "page": ""
+  },
+  {
+    "id": "banner-first-use",
+    "script": "scripts/verify-banner-first-use.cjs",
+    "page": ""
+  },
+  {
+    "id": "banner-home-preview",
+    "script": "scripts/verify-banner-home-preview.cjs",
+    "page": ""
+  },
+  {
+    "id": "v15-preview",
+    "script": "scripts/verify-v15-preview.cjs",
+    "page": "v15.html"
+  },
+  {
+    "id": "admin-web-carrier",
+    "script": "scripts/verify-admin-web-carrier.cjs",
+    "page": ""
+  },
+  {
+    "id": "v20-preview",
+    "script": "scripts/verify-v20-preview.cjs",
+    "page": ""
+  },
+  {
+    "id": "v21-v22-preview",
+    "script": "scripts/verify-v21-v22-preview.cjs",
+    "page": ""
+  },
+  {
+    "id": "reviews-preview",
+    "script": "scripts/verify-reviews-preview.cjs",
+    "page": ""
+  },
+  {
+    "id": "g-series",
+    "script": "scripts/verify-g-series.cjs",
+    "page": ""
+  },
+  {
+    "id": "mobile-foundations",
+    "script": "scripts/verify-mobile-foundations.cjs",
+    "page": ""
+  },
+  {
+    "id": "mobile-time-publish",
+    "script": "scripts/verify-mobile-time-publish.cjs",
+    "page": ""
+  },
+  {
+    "id": "service-application-handoff",
+    "script": "scripts/verify-service-application-handoff.cjs",
+    "page": ""
+  },
+  {
+    "id": "service-detail-return",
+    "script": "scripts/verify-service-detail-return.cjs",
+    "page": ""
+  },
+  {
+    "id": "service-notification-return",
+    "script": "scripts/verify-service-notification-return.cjs",
+    "page": ""
+  },
+  {
+    "id": "contact-continuity",
+    "script": "scripts/verify-contact-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "review-dialog-continuity",
+    "script": "scripts/verify-review-dialog-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "publish-field-continuity",
+    "script": "scripts/verify-publish-field-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "publish-pending-continuity",
+    "script": "scripts/verify-publish-pending-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "publish-replacement-protection",
+    "script": "scripts/verify-publish-replacement-protection.cjs",
+    "page": ""
+  },
+  {
+    "id": "publish-result-invalidation",
+    "script": "scripts/verify-publish-result-invalidation.cjs",
+    "page": ""
+  },
+  {
+    "id": "review-failed-query-protection",
+    "script": "scripts/verify-review-failed-query-protection.cjs",
+    "page": ""
+  },
+  {
+    "id": "review-photo-continuity",
+    "script": "scripts/verify-review-photo-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "order-form-leave",
+    "script": "scripts/verify-order-form-leave.cjs",
+    "page": ""
+  },
+  {
+    "id": "provider-edit-continuity",
+    "script": "scripts/verify-provider-edit-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "profile-leave-protection",
+    "script": "scripts/verify-profile-leave-protection.cjs",
+    "page": ""
+  },
+  {
+    "id": "billing-form-continuity",
+    "script": "scripts/verify-billing-form-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "candidate-pending-continuity",
+    "script": "scripts/verify-candidate-pending-continuity.cjs",
+    "page": ""
+  },
+  {
+    "id": "prototype-state-gaps",
+    "script": "scripts/verify-prototype-state-gaps.cjs",
+    "page": ""
+  }
+]
