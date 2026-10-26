@@ -5,7 +5,7 @@ test('first-use has no creative or order; only save or valid submission creates 
  assert.throws(()=>M.pay(s,'success'));assert.throws(()=>M.cancel(s,true));assert.throws(()=>M.submit(s,s.form));assert.equal(JSON.stringify(s),before);
  const map=new Map(),storage={getItem:k=>map.get(k),setItem:(k,v)=>map.set(k,v)};M.save(s,storage,1000);assert.equal(M.load(storage,1001).status,'empty');
  M.saveDraft(s,{...s.form,title:'未写完的广告'},2);assert.equal(s.status,'draft');assert(s.savedAt);assert(!M.hasOrder(s));assert.equal(s.form.image,false);
- M.submit(s,{...s.form,description:'本次广告说明',image:true});assert.equal(s.status,'pending');assert(!M.hasOrder(s));M.approve(s);assert(M.hasOrder(s));assert.equal(s.end-s.start,30*M.DAY);
+ M.submit(s,{...s.form,description:'本次广告说明',image:true,desiredStart:M.localTime(M.NOW+2*M.DAY)});assert.equal(s.status,'pending');assert(!M.hasOrder(s));M.approve(s);assert(M.hasOrder(s));assert.equal(s.end-s.start,30*M.DAY);
  const direct=M.create('empty');M.submit(direct,M.create().form);assert.equal(direct.status,'pending');assert(!M.hasOrder(direct));
  for(const state of ['empty','draft','pending','rejected'])assert(!M.hasOrder(M.create(state)),state);
  for(const state of ['ready','payment-unknown','scheduled','live','ended','refund-pending','refund-unknown','refunded'])assert(M.hasOrder(M.create(state)),state);
@@ -45,6 +45,6 @@ test('modification rejection and recovery keep the original effective version un
  const r=M.create('pending');M.reject(r);assert.equal(r.status,'rejected');assert(r.rejection.text);M.submit(r,r.form);assert.equal(r.status,'pending');
 });
 test('three pages use versioned current shared assets and local-only scripts',()=>{
- const root=path.join(__dirname,'../previews');for(const page of ['11','12','13']){const html=fs.readFileSync(path.join(root,'v'+page+'.html'),'utf8');assert(html.includes('data-page="'+page+'"'));assert(html.includes('合成示例'));for(const asset of ['banner-model.js','banner-preview.js','banner-preview.css']){const hash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets',asset),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);assert(html.includes('assets/'+asset+'?v='+hash));}}
+ const root=path.join(__dirname,'../previews');for(const page of ['11','12','13']){const html=fs.readFileSync(path.join(root,'v'+page+'.html'),'utf8');assert(html.includes('data-page="'+page+'"'));assert(html.includes('合成示例'));for(const asset of ['banner-model.js','banner-preview.js','banner-preview.css','banner-custom-model.js']){const hash=crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'assets',asset),'utf8').replace(/\r\n/g,'\n')).digest('hex').slice(0,12);assert(html.includes('assets/'+asset+'?v='+hash));}}
  const app=fs.readFileSync(path.join(root,'assets/banner-preview.js'),'utf8');assert(!/fetch\(|XMLHttpRequest|https?:\/\//.test(app));
 });
