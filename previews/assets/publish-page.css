@@ -20,3 +20,11 @@
 .publish-standalone .phone-head{position:relative}
 .publish-standalone .phone-head h2{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 220px);margin:0;pointer-events:none}
 .publish-standalone .phone-head .publish-close{margin-right:auto}
+
+/* Desktop displays a miniature phone; only its page content fills the phone. */
+@media(min-width:681px){
+ .publish-standalone body{overflow:auto;background:radial-gradient(ellipse at 0 0,#dae6d4,transparent 48%),#edf1e9}
+ .publish-standalone .workspace{width:416px;max-width:calc(100% - 48px);margin:24px auto}
+ .publish-standalone .phone{height:min(850px,calc(100dvh - 48px));border:1px solid #cddac9;border-radius:26px;box-shadow:0 24px 45px -28px #304c3a70}
+ .publish-standalone #replace-dialog{inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);width:416px;max-width:calc(100% - 48px);height:min(850px,calc(100dvh - 48px));border-radius:26px;overflow:hidden}
+}

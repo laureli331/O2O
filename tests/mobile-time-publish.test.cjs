@@ -17,3 +17,5 @@ test('every current main tab-bar host loads the shared independent-publish entry
 });
 
 test('merchant publishing retains its own full-screen editor and exit protection',()=>{const s=read('v23.html');assert(s.includes('merchant-publish-standalone'));assert(s.includes('merchant-exit-dialog'));assert(s.includes('merchantFingerprint()===merchantBaseline'));assert(read('assets/publish-navigation.js').includes('entry=merchant&role='));assert(read('assets/merchant-publish-page.css').includes('.tabbar{display:none!important}'));});
+
+test('resident publishing fills a simulated miniapp phone rather than the desktop browser',()=>{const css=read('assets/publish-page.css');assert(css.includes('@media(min-width:681px)'));assert(css.includes('width:416px'));assert(css.includes('height:min(850px,calc(100dvh - 48px))'));assert(read('v04.html').includes("$('form-phone').querySelector('.phone-head').append(capsule)"));});
