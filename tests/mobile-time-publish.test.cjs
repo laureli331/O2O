@@ -13,7 +13,7 @@ test('homepage placeholder has an actual cooperation destination while merchant 
 });
 test('every current main tab-bar host loads the shared independent-publish entry',()=>{
  for(const file of ['v01-v02.html','v23.html','services.html','v05.html','v07.html'])assert(read(file).includes('assets/publish-navigation.js'),file);
- const s=read('v04.html');assert(s.includes("$('entry-tabs').hidden=true"));assert(s.includes('id="flow-close"'));assert(s.includes('id="form-close"'));assert(s.includes('function exitPublish'));
+ const s=read('v04.html');assert(s.includes("$('entry-tabs').hidden=true"));assert(!s.includes('id="flow-close"'));assert(s.includes('id="form-close"'));assert(s.includes('function exitPublish'));
 });
 
 test('merchant publishing retains its own full-screen editor and exit protection',()=>{const s=read('v23.html');assert(s.includes('merchant-publish-standalone'));assert(s.includes('merchant-exit-dialog'));assert(s.includes('merchantFingerprint()===merchantBaseline'));assert(read('assets/publish-navigation.js').includes('entry=merchant&role='));assert(read('assets/merchant-publish-page.css').includes('.tabbar{display:none!important}'));});

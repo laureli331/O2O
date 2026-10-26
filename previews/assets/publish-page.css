@@ -28,3 +28,5 @@
  .publish-standalone .phone{height:min(850px,calc(100dvh - 48px));border:1px solid #cddac9;border-radius:26px;box-shadow:0 24px 45px -28px #304c3a70}
  .publish-standalone #replace-dialog{inset:auto;top:50%;left:50%;transform:translate(-50%,-50%);width:416px;max-width:calc(100% - 48px);height:min(850px,calc(100dvh - 48px));border-radius:26px;overflow:hidden}
 }
+
+.publish-standalone #flow-phone .phone-head .capsule{margin-left:auto}
