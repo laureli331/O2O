@@ -22,7 +22,7 @@ async function main() {
   try {
     for (const width of [320, 375, 414, 1280]) {
       await p.setViewportSize({ width, height: 1100 });
-      await p.goto(base + '/v04.html');
+      await p.goto(base + '/v04.html?mode=review');
       await publish();
       await p.locator('#image-input').setInputFiles(png);
       assert.equal(await p.locator('#flow-title').textContent(), '请重新核对');

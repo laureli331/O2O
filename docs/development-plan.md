@@ -1,5 +1,7 @@
 # 永兴乡镇生活服务小程序开发计划
 
+2026-10-26移动端交互修正：发布改为独立全屏页面，全部子流程隐藏TabBar，顶部返回/关闭并恢复来源；首页招商Banner进入合作说明；V11时分改为弹层内滚动列，不再弹出浏览器长菜单。业务与真实能力边界不变，见[设计与验证](superpowers/specs/2026-10-26-mobile-time-banner-publish-design.md)。
+
 2026-10-26最新Banner确认：7/14/30天九档位置价、可选99元标准制作（3方案＋1轮集中微调）、制作费先付且不锁位、素材通过后系统自动复核档期并实际保留24小时再付广告费；冲突由商家选替代日期，正常排期不逐单人工确认。两项费用/退款独立。仅HTML合成预览，不接真实付款或AI；覆盖旧30天与2.90元/张方案，保留历史。见[最新确认](banner-standard-service-confirmed-20261026.md)与[实施验证](superpowers/specs/2026-10-26-banner-standard-service-design.md)。
 
 2026-10-25 G系列设计审阅稿：已先优化G01—G04的ASCII与24个状态实例，采用原任务内展示当前状态、保留输入和明确下一步；用户已确认并完成四个独立G系列HTML，均为本地合成预览；见[页面与验证](g-series-html-preview.md)。见[设计与验证方案](superpowers/specs/2026-10-25-g-series-shared-states-design.md)。

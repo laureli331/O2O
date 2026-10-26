@@ -14,7 +14,7 @@ async function main() {
   try {
     for (const width of [320, 375, 414, 1280]) {
       await p.setViewportSize({ width, height: 1100 });
-      await p.goto(base + '/v04.html');
+      await p.goto(base + '/v04.html?mode=review');
       await p.locator('#f-title').fill('原提交的合成跑腿需求');
       await p.locator('#save-draft').click();
       await p.locator('[data-screen=A]').click();

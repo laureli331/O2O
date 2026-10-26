@@ -1,0 +1,22 @@
+/* Only the tab-bar entry uses this single-screen application layout. */
+.publish-close{display:none}
+.publish-standalone body{background:var(--paper);overflow:hidden}
+.publish-standalone .workspace{width:100%;max-width:none;margin:0;padding:0}
+.publish-standalone .workspace-head,.publish-standalone .toolbar,.publish-standalone .device-label,.publish-standalone .bottom-note{display:none}
+.publish-standalone .preview-grid{display:block}
+.publish-standalone .preview-grid>section{display:none}
+.publish-standalone[data-publish-stage=flow] .preview-grid>section:has(#flow-phone),.publish-standalone[data-publish-stage=form] .preview-grid>section:has(#form-phone){display:block}
+.publish-standalone .phone{width:100%;max-width:none;height:100dvh;min-height:0;border:0;border-radius:0;box-shadow:none;margin:0}
+.publish-standalone .phone-head{gap:6px;padding:12px 14px;height:auto;min-height:70px;flex-shrink:0}
+.publish-standalone .phone-head h2{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.publish-standalone .phone-head .capsule{flex-shrink:0}
+.publish-standalone .publish-close{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;background:none;color:var(--muted);font-size:24px}
+.publish-standalone .footer{display:flex;gap:10px;padding-bottom:max(14px,env(safe-area-inset-bottom));flex-shrink:0}
+.publish-standalone .footer[hidden]{display:none}
+.publish-standalone #form-phone .footer #save-draft{flex:1;border:1px solid var(--line);border-radius:9px;min-height:46px}
+.publish-standalone #form-phone .footer #review-button{flex:2}
+.publish-standalone .scroll{min-height:0;overscroll-behavior:contain}
+
+.publish-standalone .phone-head{position:relative}
+.publish-standalone .phone-head h2{position:absolute;left:50%;transform:translateX(-50%);max-width:calc(100% - 220px);margin:0;pointer-events:none}
+.publish-standalone .phone-head .publish-close{margin-right:auto}

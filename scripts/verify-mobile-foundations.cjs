@@ -13,7 +13,7 @@ async function verify(){
   const undersized=await page.locator('.phone button,.phone .back,.phone .tabbar a').evaluateAll(els=>els.filter(e=>{const r=e.getBoundingClientRect();return r.width&&r.height&&(r.height<43.5||r.width<43.5);}).map(e=>({text:e.textContent.trim().slice(0,30),cls:e.className,width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height})));
   assert.deepEqual(undersized,[],name+' at '+size+'px');if(size===375)await shot(name+'-mobile');
  }
- await page.goto(new URL('v04.html',base).href);await page.locator('#f-title').fill('');await page.locator('#f-fee').fill('0');await page.locator('#f-pickup').fill('');await page.locator('#review-button').click();
+ await page.goto(new URL('v04.html?mode=review',base).href);await page.locator('#f-title').fill('');await page.locator('#f-fee').fill('0');await page.locator('#f-pickup').fill('');await page.locator('#review-button').click();
  for(const field of ['title','fee','pickup']){assert(await page.locator('#issue-'+field).isVisible());assert.equal(await page.locator('#f-'+field).getAttribute('aria-invalid'),'true');}
  await page.locator('[data-error-field="pickup"]').click();assert.equal(await page.evaluate(()=>document.activeElement.id),'f-pickup');assert(await page.locator('#f-pickup').evaluate(el=>{const r=el.getBoundingClientRect(),s=el.closest('.scroll').getBoundingClientRect();return r.top>=s.top&&r.bottom<=s.bottom;}));
  await page.locator('#f-pickup').fill('合成取件点');assert.equal(await page.locator('#issue-pickup').count(),0);assert.equal(await page.locator('#f-pickup').getAttribute('aria-invalid'),null);assert(await page.locator('#issue-title').isVisible());

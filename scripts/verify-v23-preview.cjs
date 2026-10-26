@@ -43,7 +43,7 @@ async function verify() {
     assert.equal(await page.evaluate(()=>history.length),length+1);
     await page.goBack();
     assert.equal(page.url(),canonical.href);
-    for(const [file,selector] of [['v01-v02.html','[data-tab="发现"]'],['v04.html','#entry-tabs a[href="v23.html"]'],['v05.html','#my-phone .tabbar a[href="v23.html"]'],['v07.html','.tabbar a[href="v23.html"]'],['services.html','.tabbar a[href="v23.html"]']]){
+    for(const [file,selector] of [['v01-v02.html','[data-tab="发现"]'],['v05.html','#my-phone .tabbar a[href="v23.html"]'],['v07.html','.tabbar a[href="v23.html"]'],['services.html','.tabbar a[href="v23.html"]']]){
       await page.goto(new URL(file,base).href);
       await page.locator(selector).click();
       await page.waitForURL('**/v23.html');
@@ -234,7 +234,7 @@ async function verify() {
     await page.goto(url);
     await mainPosts().first().waitFor();
 
-    await page.locator('[data-tab="发布"]').click();
+    await page.locator('[data-screen="edit"]').click();
     assert((await page.locator('#main-content').textContent()).includes('基础主帖免费'));
     assert(await page.locator('#main-actions').isVisible());
     assert.equal(await page.locator('input[name="post-topic"]').count(), 4);

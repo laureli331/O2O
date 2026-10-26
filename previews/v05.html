@@ -115,4 +115,4 @@ if(button.id==='save-reminders'){reminders=$('reminder-switch').checked;toast('d
 document.addEventListener('submit',e=>{if(e.target.id==='profile-form')e.preventDefault();});document.addEventListener('change',e=>{if(e.target.id!=='avatar-input')return;const file=e.target.files[0];if(!file)return;if(!['image/jpeg','image/png'].includes(file.type)||file.size>5*1024*1024){error('profile-error','选择JPEG/PNG图片，每张不超过5MB。');e.target.value='';return;}const draft={nickname:$('nickname').value,wechat:$('wechat').value};profile.avatar=URL.createObjectURL(file);renderMy();profileEditor();$('nickname').value=draft.nickname;$('wechat').value=draft.wechat;toast('detail','头像已在本页更新。');});const entry=new URLSearchParams(location.search).get('entry');if(['guest','phone'].includes(entry))state=M.initial(entry);const sharedQualification=V10Flow.read();if(sharedQualification&&!['guest','phone'].includes(entry))Object.assign(state,sharedQualification);renderMy();entry==='settings'?settings():guidedQualification?qualificationNext():loginGate();
 })();
 </script>
-</body></html>
+<script src="assets/publish-navigation.js?v=f099ee275b66"></script></body></html>
