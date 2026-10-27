@@ -70,7 +70,7 @@ async function open(p,file){await p.goto(base+'/'+file);await p.locator('#conten
   await p.setViewportSize({width:375,height:900});await open(p,'services.html');const button=p.locator('.order-actions button').first();await button.scrollIntoViewIfNeeded();let r=await button.boundingBox();await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();await p.waitForTimeout(180);a.notEqual((await styles(p,'.order-actions button')).transform,'none');await p.mouse.move(0,0);await p.mouse.up();
   await p.emulateMedia({reducedMotion:'reduce'});await button.scrollIntoViewIfNeeded();r=await button.boundingBox();await p.mouse.move(r.x+r.width/2,r.y+r.height/2);await p.mouse.down();a.equal((await styles(p,'.order-actions button')).transform,'none');await p.mouse.move(0,0);await p.mouse.up();await p.emulateMedia({reducedMotion:'no-preference'});
  });
- await note('non-pilot commerce pages do not load the stylesheet',async()=>{await open(p,'v25.html');a.equal(await p.locator('link[href*="ui-consistency.css"]').count(),0);a.equal(await p.locator('body[data-ui-profile]').count(),0);});
+ await note('commerce rollout shares approved tokens',async()=>{await open(p,'v25.html');a.equal(await p.locator('link[href*="ui-consistency.css"]').count(),1);a.equal(await p.locator('body[data-ui-profile=mobile]').count(),1);});
  a.deepEqual(evidence.errors,[]);
  }catch(error){evidence.failure=error.stack;throw error;}finally{await browser.close();fs.writeFileSync(path.join(output,'verification.json'),JSON.stringify(evidence,null,2));}
  console.log(JSON.stringify({passed:evidence.checks.length,errors:evidence.errors.length,output}));

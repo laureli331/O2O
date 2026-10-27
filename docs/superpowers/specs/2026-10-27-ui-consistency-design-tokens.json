@@ -1,5 +1,5 @@
 {
-  "status": "approved-pilot-delivered",
+  "status": "approved-all-active-delivered",
   "implementationStarted": true,
   "unit": "CSS px",
   "document": "2026-10-27-ui-consistency-design.md",
@@ -92,9 +92,7 @@
     "cardTitleFont": 16,
     "pageTitleFont": 20
   },
-  "approvalRequiredBefore": [
-    "all-active-page-rollout"
-  ],
+  "approvalRequiredBefore": [],
   "protected": [
     "business-rules",
     "approved-content-order",
@@ -104,11 +102,20 @@
     "centered-profile",
     "archived-comparison-pages"
   ],
-  "rollout": "pilot-only",
-  "pilotVisualAccepted": false,
+  "rollout": "all-active-pages",
+  "pilotVisualAccepted": true,
   "approval": {
     "confirmed": true,
     "reply": "开始下一步",
     "scope": "numeric-spec-and-three-representative-pages"
+  },
+  "rolloutApproval": {
+    "confirmed": true,
+    "reply": "没问题, 可以推广到全部有效HTML了",
+    "scope": "all-33-active-prototype-html"
+  },
+  "authorization": {
+    "prototypeOnly": true,
+    "realServicesEnabled": false
   }
 }

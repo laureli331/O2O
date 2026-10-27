@@ -105,7 +105,7 @@ async function verify(){
     await assertStickyFilters();
     await page.screenshot({path:path.join(outDir,'mobile.png'),fullPage:true});
     await page.locator('[data-item="parcel"]').click();assert.equal(await page.locator('#detail-title').textContent(),'帮忙代取一个快递');
-    await page.setViewportSize({width:320,height:800});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 320px overflow');
+    await page.setViewportSize({width:320,height:800});await page.waitForFunction(()=>[...document.querySelectorAll('.phone,.scroll,.listing')].every(x=>x.scrollWidth<=x.clientWidth+1));assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'no 320px overflow');
     assert(await page.evaluate(()=>[...document.querySelectorAll('.phone,.scroll,.listing')].every(x=>x.scrollWidth<=x.clientWidth+1)),'no 320px card or inner overflow');
     const narrowTitles=await assertCompactCards();assert(narrowTitles.some(m=>m.titleHeight>m.lineHeight*1.5),'two-line titles remain naturally wrapped on narrow screens');
     await assertMasonry();

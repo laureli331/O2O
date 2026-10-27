@@ -1,0 +1,643 @@
+{
+  "status": "approved-all-active-pages",
+  "approval": "没问题, 可以推广到全部有效HTML了",
+  "pages": [
+    {
+      "file": "ad-cooperation.html",
+      "profile": "mobile",
+      "page": "ad-cooperation",
+      "roots": [
+        "main > article"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        "main > footer"
+      ]
+    },
+    {
+      "file": "banner-admin.html",
+      "profile": "admin",
+      "page": "banner-admin",
+      "roots": [
+        "#admin-content"
+      ],
+      "cards": [
+        ".panel",
+        ".candidate"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "g01.html",
+      "profile": "mobile",
+      "page": "g01",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".status-box"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "g02.html",
+      "profile": "mobile",
+      "page": "g02",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".status-box"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "g03.html",
+      "profile": "mobile",
+      "page": "g03",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".status-box"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "g04.html",
+      "profile": "mobile",
+      "page": "g04",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".status-box"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "services.html",
+      "profile": "mobile",
+      "page": "services",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v01-v02.html",
+      "profile": "mobile",
+      "page": "v01-v02",
+      "roots": [
+        ".home-content",
+        ".detail-content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {
+        ".listing": ".listing-body"
+      },
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v03.html",
+      "profile": "mobile",
+      "page": "v03",
+      "roots": [
+        ".v03-content"
+      ],
+      "cards": [
+        ".panel",
+        ".task-card",
+        ".candidate"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v04.html",
+      "profile": "mobile",
+      "page": "v04",
+      "roots": [
+        ".content"
+      ],
+      "cards": [
+        ".panel",
+        ".type-card",
+        ".draft-card"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v05.html",
+      "profile": "mobile",
+      "page": "v05",
+      "roots": [
+        ".content"
+      ],
+      "cards": [
+        ".panel",
+        ".my-card",
+        ".pack-card"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v07.html",
+      "profile": "mobile",
+      "page": "v07",
+      "roots": [
+        ".content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v08.html",
+      "profile": "mobile",
+      "page": "v08",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".request-card"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v09.html",
+      "profile": "mobile",
+      "page": "v09",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".address-card"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v10.html",
+      "profile": "mobile",
+      "page": "v10",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v11.html",
+      "profile": "mobile",
+      "page": "v11",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v12.html",
+      "profile": "mobile",
+      "page": "v12",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v13.html",
+      "profile": "mobile",
+      "page": "v13",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v14.html",
+      "profile": "mobile",
+      "page": "v14",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v15-duty.html",
+      "profile": "mobile",
+      "page": "v15-duty",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {
+        ".queue-card": ".queue-open"
+      },
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v15.html",
+      "profile": "admin",
+      "page": "operations",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {
+        ".queue-card": ".queue-open"
+      },
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v16.html",
+      "profile": "admin",
+      "page": "v16",
+      "roots": [
+        "#config-content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v18.html",
+      "profile": "mobile",
+      "page": "v18",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v19.html",
+      "profile": "mobile",
+      "page": "v19",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v20-duty.html",
+      "profile": "mobile",
+      "page": "v20-duty",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v20.html",
+      "profile": "admin",
+      "page": "v20",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".v20-summary"
+      ],
+      "edgeCards": {
+        ".task-card": ".task-open"
+      },
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v21.html",
+      "profile": "admin",
+      "page": "v21",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".metric"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v22.html",
+      "profile": "mobile",
+      "page": "v22",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".bill-hero"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v23.html",
+      "profile": "mobile",
+      "page": "v23",
+      "roots": [
+        "#main-content",
+        "#detail-content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {
+        ".post-card": ".card-copy"
+      },
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v24.html",
+      "profile": "mobile",
+      "page": "onboarding",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v25.html",
+      "profile": "mobile",
+      "page": "v25",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".coupon"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v26.html",
+      "profile": "mobile",
+      "page": "v26",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel",
+        ".coupon"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    },
+    {
+      "file": "v27.html",
+      "profile": "admin",
+      "page": "v27",
+      "roots": [
+        "#content"
+      ],
+      "cards": [
+        ".panel"
+      ],
+      "edgeCards": {},
+      "footers": [
+        ".footer",
+        ".v03-footer",
+        ".detail-actions",
+        ".fixed-actions"
+      ]
+    }
+  ],
+  "excludedPages": {
+    "discovery-buttons.html": "design-lab",
+    "navigation-icon-options.html": "design-lab",
+    "v06.html": "redirect",
+    "v15-mobile-legacy.html": "archive",
+    "v15-rework.html": "archive",
+    "v17.html": "archive"
+  },
+  "exceptions": {
+    "calendar": "Seven responsive columns retain their width; each day remains at least 44px tall.",
+    "edgeCards": "Cover touches edge; text area uses semantic card padding.",
+    "circlesAndCapsules": "Retain shape and SVG geometry.",
+    "nestedMoney": "Embedded inputs retain borderless appearance and large amount typography.",
+    "tables": "Horizontal overflow remains confined to table wrappers.",
+    "sideDrawer": "Existing discovery drawer and full-height dashboard drillthrough retain their side attachment."
+  }
+}

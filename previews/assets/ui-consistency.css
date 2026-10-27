@@ -1,4 +1,4 @@
-/* Approved UI consistency pilot. Loaded only by services, V24 and V15.
+/* Approved shared UI standard for all active previews.
    Product roots opt in explicitly; preview controls and other pages stay independent.
    Keep image edges, mini-program capsules, avatars and device frames unchanged. */
 [data-ui-profile] {
@@ -11,6 +11,7 @@
   --ui-touch: 44px;
   --ui-action-height: 46px;
   --ui-space-small: 8px;
+  --ui-helper-font: 12px;
   --ui-page-inset: 16px;
   --ui-card-inset: 16px;
   --ui-card-gap: 12px;
@@ -22,45 +23,45 @@
   --ui-card-inset: 20px;
   --ui-card-gap: 16px;
 }
-[data-ui-profile] #content {
+[data-ui-profile] :is(#content, [data-ui-content]) {
   font-size: 14px;
   line-height: 1.6;
   padding: 8px var(--ui-page-inset) var(--ui-section-gap);
   overflow-wrap: anywhere;
 }
-[data-ui-profile="admin"] #content { padding: var(--ui-page-inset); }
-[data-ui-profile] #content .panel {
+[data-ui-profile="admin"] :is(#content, [data-ui-content]) { padding: var(--ui-page-inset); }
+[data-ui-profile] :is(#content, [data-ui-content]) .panel {
   border-radius: var(--ui-radius-card);
   padding: var(--ui-card-inset);
   margin-bottom: var(--ui-card-gap);
 }
-[data-ui-profile] #content .panel h3 {
+[data-ui-profile] :is(#content, [data-ui-content]) .panel h3 {
   font-size: 16px;
   line-height: 1.4;
   margin-bottom: var(--ui-space-small);
 }
-[data-ui-profile] #content .panel p { font-size: 14px; line-height: 1.6; }
-[data-ui-profile] #content .panel p + p { margin-top: var(--ui-space-small); }
+[data-ui-profile] :is(#content, [data-ui-content]) .panel p { font-size: 14px; line-height: 1.6; }
+[data-ui-profile] :is(#content, [data-ui-content]) .panel p + p { margin-top: var(--ui-space-small); }
 [data-ui-profile="mobile"] .phone-head h2 { font-size: 18px; line-height: 1.4; }
-[data-ui-profile] #content .tag {
+[data-ui-profile] :is(#content, [data-ui-content]) .tag {
   border-radius: var(--ui-radius-tag);
   font-size: 12px;
   line-height: 1.5;
 }
-[data-ui-profile] #content .panel .hint,
-[data-ui-profile] #content .panel .muted,
-[data-ui-profile] #content .hint,
-[data-ui-profile] #content .muted,
-[data-ui-profile] #content .field small {
+[data-ui-profile] :is(#content, [data-ui-content]) .panel .hint,
+[data-ui-profile] :is(#content, [data-ui-content]) .panel .muted,
+[data-ui-profile] :is(#content, [data-ui-content]) .hint,
+[data-ui-profile] :is(#content, [data-ui-content]) .muted,
+[data-ui-profile] :is(#content, [data-ui-content]) .field small {
   font-size: 12px;
   line-height: 1.6;
 }
-[data-ui-profile] #content .field { margin-bottom: var(--ui-field-gap); }
-[data-ui-profile] #content .field label,
-[data-ui-profile] #content .field > span { font-size: 14px; margin-bottom: var(--ui-space-small); }
-[data-ui-profile] #content .field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
-[data-ui-profile] #content .field select,
-[data-ui-profile] #content .field textarea,
+[data-ui-profile] :is(#content, [data-ui-content]) .field { margin-bottom: var(--ui-field-gap); }
+[data-ui-profile] :is(#content, [data-ui-content]) .field label,
+[data-ui-profile] :is(#content, [data-ui-content]) .field > span { font-size: 14px; margin-bottom: var(--ui-space-small); }
+[data-ui-profile] :is(#content, [data-ui-content]) .field input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
+[data-ui-profile] :is(#content, [data-ui-content]) .field select,
+[data-ui-profile] :is(#content, [data-ui-content]) .field textarea,
 [data-ui-profile="admin"] #admin-search {
   border-radius: var(--ui-radius-field);
   min-height: var(--ui-action-height);
@@ -69,10 +70,10 @@
   padding: 10px 12px;
   max-width: 100%;
 }
-[data-ui-profile] #content .field textarea { min-height: 112px; }
-[data-ui-profile="admin"] #content .field textarea { min-height: 140px; }
-[data-ui-profile] #content .primary,
-[data-ui-profile] #content .secondary,
+[data-ui-profile] :is(#content, [data-ui-content]) .field textarea { min-height: 112px; }
+[data-ui-profile="admin"] :is(#content, [data-ui-content]) .field textarea { min-height: 140px; }
+[data-ui-profile] :is(#content, [data-ui-content]) .primary,
+[data-ui-profile] :is(#content, [data-ui-content]) .secondary,
 [data-ui-page="services"] #actions > button,
 [data-ui-page="services"] #actions > a,
 [data-ui-profile] #footer > button,
@@ -89,30 +90,30 @@
   white-space: normal;
   overflow-wrap: anywhere;
 }
-[data-ui-profile] #content button,
-[data-ui-profile] #content .check,
-[data-ui-profile] #content .check input,
+[data-ui-profile] :is(#content, [data-ui-content]) button,
+[data-ui-profile] :is(#content, [data-ui-content]) .check,
+[data-ui-profile] :is(#content, [data-ui-content]) .check input,
 [data-ui-profile] .phone-head button,
 [data-ui-profile] dialog button {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
-[data-ui-profile] #content button,
+[data-ui-profile] :is(#content, [data-ui-content]) button,
 [data-ui-profile] .phone-head button,
 [data-ui-profile] dialog button {
   min-width: var(--ui-touch);
   min-height: var(--ui-touch);
 }
-[data-ui-profile] #content .check { min-height: var(--ui-touch); padding-block: 8px; align-items: flex-start; }
-[data-ui-profile] #content .check input { flex-shrink: 0; }
+[data-ui-profile] :is(#content, [data-ui-content]) .check { min-height: var(--ui-touch); padding-block: 8px; align-items: flex-start; }
+[data-ui-profile] :is(#content, [data-ui-content]) .check input { flex-shrink: 0; }
 [data-ui-page="services"] #actions,
 [data-ui-profile] #footer {
   gap: var(--ui-space-small);
   padding: 12px var(--ui-page-inset) max(12px, env(safe-area-inset-bottom, 0px));
 }
-[data-ui-profile] #content .notice,
-[data-ui-profile] #content .note,
-[data-ui-profile] #content .error {
+[data-ui-profile] :is(#content, [data-ui-content]) .notice,
+[data-ui-profile] :is(#content, [data-ui-content]) .note,
+[data-ui-profile] :is(#content, [data-ui-content]) .error {
   border-radius: var(--ui-radius-card);
   padding: 12px 16px;
   margin-bottom: var(--ui-card-gap);
@@ -130,19 +131,19 @@
   margin-bottom: var(--ui-card-gap);
 }
 [data-ui-profile] #confirm-dialog .dialog-actions { gap: 8px; margin-top: 16px; }
-[data-ui-profile="mobile"] #content .panel h3.status-large { font-size: 22px; }
-[data-ui-profile="mobile"] #content .intro { padding-bottom: var(--ui-section-gap); }
-[data-ui-profile="mobile"] #content .intro h3 { line-height: 1.4; }
+[data-ui-profile="mobile"] :is(#content, [data-ui-content]) .panel h3.status-large { font-size: 22px; }
+[data-ui-profile="mobile"] :is(#content, [data-ui-content]) .intro { padding-bottom: var(--ui-section-gap); }
+[data-ui-profile="mobile"] :is(#content, [data-ui-content]) .intro h3 { line-height: 1.4; }
 
 /* Service list and sheets. Image size and cover shape are deliberately retained. */
-[data-ui-page="services"] #content .order {
+[data-ui-page="services"] :is(#content, [data-ui-content]) .order {
   border-radius: var(--ui-radius-card);
   padding: var(--ui-card-inset);
   margin-bottom: var(--ui-card-gap);
 }
-[data-ui-page="services"] #content .order h3 { font-size: 16px; line-height: 1.4; }
-[data-ui-page="services"] #content .order p { font-size: 12px; line-height: 1.6; }
-[data-ui-page="services"] #content .order-actions { margin-top: 12px; }
+[data-ui-page="services"] :is(#content, [data-ui-content]) .order h3 { font-size: 16px; line-height: 1.4; }
+[data-ui-page="services"] :is(#content, [data-ui-content]) .order p { font-size: 12px; line-height: 1.6; }
+[data-ui-page="services"] :is(#content, [data-ui-content]) .order-actions { margin-top: 12px; }
 [data-ui-page="services"] .filters { padding-inline: var(--ui-page-inset); }
 [data-ui-page="services"] .filters select { min-height: var(--ui-action-height); border-radius: var(--ui-radius-field); font-size: 12px; }
 [data-ui-page="services"] .sheet-panel {
@@ -164,35 +165,35 @@
   overflow: hidden;
 }
 [data-ui-page="operations"] .queue-open { padding: 16px; }
-[data-ui-page="operations"] #content .queue-card { padding: 0; overflow: hidden; }
-[data-ui-page="operations"] #content .queue-open h3 { font-size: 14px; }
-[data-ui-page="operations"] #content .case-overview h3 { font-size: 20px; }
-[data-ui-page="operations"] #content .source-panel h3 { font-size: 18px; }
-[data-ui-page="operations"] #content .source-body { font-size: 14px; line-height: 1.6; }
-[data-ui-page="operations"] #content .focus-question { border-radius: var(--ui-radius-field); padding: 12px 16px; }
-[data-ui-page="operations"] #content .reason-shortcuts { gap: 8px; }
-[data-ui-page="operations"] #content .reason-shortcuts button {
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .queue-card { padding: 0; overflow: hidden; }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .queue-open h3 { font-size: 14px; }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .case-overview h3 { font-size: 20px; }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .source-panel h3 { font-size: 18px; }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .source-body { font-size: 14px; line-height: 1.6; }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .focus-question { border-radius: var(--ui-radius-field); padding: 12px 16px; }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .reason-shortcuts { gap: 8px; }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .reason-shortcuts button {
   border-radius: var(--ui-radius-button);
   font-size: 12px;
   line-height: 1.6;
   padding: 8px 12px;
 }
-[data-ui-page="operations"] #content .reason-help .inline-button { min-height: var(--ui-touch); }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) .reason-help .inline-button { min-height: var(--ui-touch); }
 [data-ui-page="operations"] .operation-modal { padding: 20px; }
 [data-ui-page="operations"] .operation-modal .panel { border-radius: var(--ui-radius-card); padding: 20px; margin-bottom: 16px; }
 [data-ui-page="operations"] .operation-modal-actions { bottom: -20px; padding-top: 16px; gap: 8px; }
 [data-ui-page="operations"] .case-workspace { gap: var(--ui-card-gap); }
 
 /* Press feedback never carries the only indication that an action is available. */
-[data-ui-profile] #content button,
+[data-ui-profile] :is(#content, [data-ui-content]) button,
 [data-ui-page="services"] #actions button,
 [data-ui-profile] #footer button,
 [data-ui-profile] dialog button { transition: transform 150ms ease, background-color 150ms ease; }
-[data-ui-profile] #content button:not(:disabled):active,
+[data-ui-profile] :is(#content, [data-ui-content]) button:not(:disabled):active,
 [data-ui-page="services"] #actions button:not(:disabled):active,
 [data-ui-profile] #footer button:not(:disabled):active,
 [data-ui-profile] dialog button:not(:disabled):active { transform: scale(.98); }
-[data-ui-profile] #content :focus-visible,
+[data-ui-profile] :is(#content, [data-ui-content]) :focus-visible,
 [data-ui-page="services"] #actions :focus-visible,
 [data-ui-profile] #footer :focus-visible,
 [data-ui-profile] dialog :focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
@@ -202,12 +203,296 @@
   [data-ui-page="operations"] .operation-modal-actions { bottom: -16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-ui-profile] #content button,
+  [data-ui-profile] :is(#content, [data-ui-content]) button,
   [data-ui-page="services"] #actions button,
 [data-ui-profile] #footer button,
   [data-ui-profile] dialog button { transition: none; }
-  [data-ui-profile] #content button:not(:disabled):active,
+  [data-ui-profile] :is(#content, [data-ui-content]) button:not(:disabled):active,
   [data-ui-page="services"] #actions button:not(:disabled):active,
 [data-ui-profile] #footer button:not(:disabled):active,
   [data-ui-profile] dialog button:not(:disabled):active { transform: none; }
 }
+
+/* Shared product roots. External preview controls never opt into these roles. */
+[data-ui-profile] [data-ui-surface] { font-size: 14px; line-height: 1.6; }
+[data-ui-profile] [data-ui-content] { font-size: 14px; line-height: 1.6; padding: 8px var(--ui-page-inset) 24px; overflow-wrap: anywhere; }
+[data-ui-profile="admin"] [data-ui-content] { padding: var(--ui-page-inset); }
+[data-ui-profile] [data-ui-surface] :where(button):not(:where(.date-days button)),
+[data-ui-profile] [data-ui-surface] .primary,
+[data-ui-profile] [data-ui-surface] .secondary,
+[data-ui-profile] [data-ui-surface] .page-link,
+[data-ui-profile] [data-ui-surface] summary {
+  min-height: var(--ui-touch); min-width: var(--ui-touch); touch-action: manipulation;
+}
+[data-ui-profile] [data-ui-content] .field > label,
+[data-ui-profile] [data-ui-content] .field > legend { font-size: 14px; line-height: 1.6; }
+[data-ui-profile] [data-ui-content] input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="hidden"]),
+[data-ui-profile] [data-ui-content] select,
+[data-ui-profile] [data-ui-content] textarea { border-radius: var(--ui-radius-field); min-height: var(--ui-action-height); max-width: 100%; }
+[data-ui-profile] [data-ui-content] .search { border-radius: var(--ui-radius-field); }
+[data-ui-profile] [data-ui-content] textarea { min-height: 112px; }
+[data-ui-profile] [data-ui-content] .field { margin-bottom: var(--ui-field-gap); }
+[data-ui-profile] [data-ui-content] .field:last-child { margin-bottom: 0; }
+[data-ui-profile] [data-ui-content] .panel-title { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+[data-ui-profile] [data-ui-footer] {
+  padding: 12px var(--ui-page-inset) max(12px, env(safe-area-inset-bottom, 0px)); gap: 8px;
+}
+[data-ui-profile] [data-ui-surface] .primary,
+[data-ui-profile] [data-ui-surface] .secondary,
+[data-ui-profile] [data-ui-footer] > button,
+[data-ui-profile] [data-ui-footer] > a:not(.tabbar a),
+[data-ui-profile] dialog .primary,
+[data-ui-profile] dialog .secondary,
+[data-ui-profile] dialog .modal-actions > button {
+  border-radius: var(--ui-radius-button); min-height: var(--ui-action-height);
+  padding: 10px 16px; font-size: 14px; line-height: 1.5; white-space: normal; overflow-wrap: anywhere;
+}
+[data-ui-profile] [data-ui-surface] .tag,
+[data-ui-profile] [data-ui-surface] .mini-badge { border-radius: var(--ui-radius-tag); }
+[data-ui-profile] [data-ui-surface] .sheet,
+[data-ui-profile] [data-ui-surface] .sheet-panel,
+[data-ui-profile] [data-ui-surface] .banner-date-sheet,
+[data-ui-profile="mobile"] [data-ui-surface] .dialog-box {
+  border-radius: var(--ui-radius-sheet) var(--ui-radius-sheet) 0 0;
+}
+[data-ui-profile] [data-ui-surface] .sheet { padding: 20px 16px max(20px, env(safe-area-inset-bottom, 0px)); max-height: 92%; overflow-y: auto; }
+[data-ui-profile] [data-ui-surface] .dialog-box { padding: 20px 16px; max-height: 92%; overflow-y: auto; }
+[data-ui-profile] dialog { max-width: calc(100% - 28px); }
+[data-ui-profile] dialog button { min-width: var(--ui-touch); min-height: var(--ui-touch); }
+[data-ui-profile] [data-ui-surface] .check-line,
+[data-ui-profile] [data-ui-surface] .consent,
+[data-ui-profile] [data-ui-surface] .options label { min-height: var(--ui-touch); }
+[data-ui-profile] [data-ui-content] .error-summary,
+[data-ui-profile] [data-ui-content] .status-box { border-radius: var(--ui-radius-card); }
+[data-ui-profile] [data-ui-surface] button,
+[data-ui-profile] dialog button { transition: transform 150ms ease, background-color 150ms ease; }
+[data-ui-profile] [data-ui-surface] button:not(:disabled):active { transform: scale(.98); }
+[data-ui-profile] [data-ui-surface] :focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+/* Compact grids retain their column geometry instead of overflowing at 320px. */
+[data-ui-profile] [data-ui-surface] .date-days button { min-width: 0; min-height: 44px; padding: 0; }
+[data-ui-profile] [data-ui-surface] .date-weekdays { min-width: 0; }
+[data-ui-profile] [data-ui-surface] .search input { border-radius: 0; min-width: 0; }
+
+[data-ui-page="ad-cooperation"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="ad-cooperation"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="banner-admin"] :is(#content, [data-ui-content]) :is(.panel, .candidate) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="banner-admin"] :is(#content, [data-ui-content]) :is(.panel, .candidate) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="g01"] :is(#content, [data-ui-content]) :is(.panel, .status-box) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="g01"] :is(#content, [data-ui-content]) :is(.panel, .status-box) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="g02"] :is(#content, [data-ui-content]) :is(.panel, .status-box) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="g02"] :is(#content, [data-ui-content]) :is(.panel, .status-box) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="g03"] :is(#content, [data-ui-content]) :is(.panel, .status-box) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="g03"] :is(#content, [data-ui-content]) :is(.panel, .status-box) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="g04"] :is(#content, [data-ui-content]) :is(.panel, .status-box) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="g04"] :is(#content, [data-ui-content]) :is(.panel, .status-box) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="services"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="services"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v01-v02"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v01-v02"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+[data-ui-page="v01-v02"] :is(#content, [data-ui-content], #desktop-queue) .listing { border-radius: var(--ui-radius-card); padding: 0; overflow: hidden; }
+[data-ui-page="v01-v02"] .listing-body { padding: var(--ui-card-inset); }
+
+[data-ui-page="v03"] :is(#content, [data-ui-content]) :is(.panel, .task-card, .candidate) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v03"] :is(#content, [data-ui-content]) :is(.panel, .task-card, .candidate) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v04"] :is(#content, [data-ui-content]) :is(.panel, .type-card, .draft-card) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v04"] :is(#content, [data-ui-content]) :is(.panel, .type-card, .draft-card) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v05"] :is(#content, [data-ui-content]) :is(.panel, .my-card, .pack-card) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v05"] :is(#content, [data-ui-content]) :is(.panel, .my-card, .pack-card) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v07"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v07"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v08"] :is(#content, [data-ui-content]) :is(.panel, .request-card) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v08"] :is(#content, [data-ui-content]) :is(.panel, .request-card) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v09"] :is(#content, [data-ui-content]) :is(.panel, .address-card) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v09"] :is(#content, [data-ui-content]) :is(.panel, .address-card) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v10"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v10"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v11"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v11"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v12"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v12"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v13"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v13"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v14"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v14"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v15-duty"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v15-duty"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+[data-ui-page="v15-duty"] :is(#content, [data-ui-content], #desktop-queue) .queue-card { border-radius: var(--ui-radius-card); padding: 0; overflow: hidden; }
+[data-ui-page="v15-duty"] .queue-open { padding: var(--ui-card-inset); }
+
+[data-ui-page="operations"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="operations"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+[data-ui-page="operations"] :is(#content, [data-ui-content], #desktop-queue) .queue-card { border-radius: var(--ui-radius-card); padding: 0; overflow: hidden; }
+[data-ui-page="operations"] .queue-open { padding: var(--ui-card-inset); }
+
+[data-ui-page="v16"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v16"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v18"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v18"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v19"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v19"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v20-duty"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v20-duty"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v20"] :is(#content, [data-ui-content]) :is(.panel, .v20-summary) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v20"] :is(#content, [data-ui-content]) :is(.panel, .v20-summary) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+[data-ui-page="v20"] :is(#content, [data-ui-content], #desktop-queue) .task-card { border-radius: var(--ui-radius-card); padding: 0; overflow: hidden; }
+[data-ui-page="v20"] .task-open { padding: var(--ui-card-inset); }
+
+[data-ui-page="v21"] :is(#content, [data-ui-content]) :is(.panel, .metric) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v21"] :is(#content, [data-ui-content]) :is(.panel, .metric) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v22"] :is(#content, [data-ui-content]) :is(.panel, .bill-hero) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v22"] :is(#content, [data-ui-content]) :is(.panel, .bill-hero) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v23"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v23"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+[data-ui-page="v23"] :is(#content, [data-ui-content], #desktop-queue) .post-card { border-radius: var(--ui-radius-card); padding: 0; overflow: hidden; }
+[data-ui-page="v23"] .card-copy { padding: var(--ui-card-inset); }
+
+[data-ui-page="onboarding"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="onboarding"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v25"] :is(#content, [data-ui-content]) :is(.panel, .coupon) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v25"] :is(#content, [data-ui-content]) :is(.panel, .coupon) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v26"] :is(#content, [data-ui-content]) :is(.panel, .coupon) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v26"] :is(#content, [data-ui-content]) :is(.panel, .coupon) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+[data-ui-page="v27"] :is(#content, [data-ui-content]) :is(.panel) { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v27"] :is(#content, [data-ui-content]) :is(.panel) > h3 { font-size: 16px; line-height: 1.4; margin-bottom: 8px; }
+
+/* Adapt each carrier once, avoiding double padding around nested workspaces. */
+[data-ui-page="v16"] #config-content { padding: var(--ui-page-inset); }
+[data-ui-page="v20"] .v20-main,
+[data-ui-page="v21"] .dash-main,
+[data-ui-page="banner-admin"] .admin-layout > main { padding: var(--ui-page-inset); }
+[data-ui-page="v20"] #content,
+[data-ui-page="v21"] #content,
+[data-ui-page="banner-admin"] #admin-content { padding: 0; }
+[data-ui-page="v21"] #content .metrics { gap: var(--ui-card-gap); }
+[data-ui-page="v21"] #content .metric { margin-bottom: 0; }
+[data-ui-page="banner-admin"] #admin-toolbar input,
+[data-ui-page="banner-admin"] #admin-toolbar select,
+[data-ui-page="v21"] .filters input,
+[data-ui-page="v21"] .filters select,
+[data-ui-page="v16"] #config-content input:not([type="checkbox"]),
+[data-ui-page="v16"] #config-content select { border-radius: var(--ui-radius-field); min-height: 46px; }
+[data-ui-page="v20"] #content .task-card { padding: 0; margin-bottom: 0; }
+[data-ui-page="v20"] #content .task-open { padding: var(--ui-card-inset); }
+[data-ui-page="v20"] #content .task-list { gap: var(--ui-card-gap); }
+[data-ui-page="v23"] #main-actions,
+[data-ui-page="v23"] #detail-actions { height: auto; flex-basis: auto; min-height: 70px; }
+[data-ui-page="v23"] #detail-content:not(.detail-empty) { padding: 0; }
+[data-ui-page="v23"] .detail-body { padding: 16px; }
+[data-ui-page="v23"] .drawer-content-group { border-radius: var(--ui-radius-card); }
+[data-ui-page="v01-v02"] .listing-body h3,
+[data-ui-page="v23"] .card-copy h4 { font-size: 16px; line-height: 1.4; }
+[data-ui-page="v05"] .transactions-heading h3 { margin-bottom: 0; }
+.focused-order [data-ui-page="v07"] :is(#content, [data-ui-content]) { padding-bottom: 100px; }
+[data-ui-page="onboarding"] #content .panel h3.status-large,
+[data-ui-page="v25"] #content .panel h3.status-large,
+[data-ui-page="v26"] #content .panel h3.status-large { font-size: 22px; }
+[data-ui-page="v21"] #metric-dialog { max-width: min(720px, 100vw); border-radius: 16px 0 0 16px; }
+@media (max-width: 600px) {
+  [data-ui-page="v21"] #metric-dialog { max-width: 100vw; border-radius: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-ui-profile] [data-ui-surface] button { transition: none; }
+  [data-ui-profile] [data-ui-surface] button:not(:disabled):active { transform: none; }
+}
+
+/* Full-bleed filter row uses the same inset as its content, not the former 22px. */
+[data-ui-page="v01-v02"] .home-content .sticky-filters { margin-inline: calc(-1 * var(--ui-page-inset)); padding-inline: var(--ui-page-inset); }
+[data-ui-profile] [data-ui-surface] .dialog-card,
+[data-ui-profile] [data-ui-surface] .confirm-card { border-radius: var(--ui-radius-dialog); }
+[data-ui-profile] [data-ui-surface] .dialog-actions > button,
+[data-ui-profile] [data-ui-surface] .sheet-footer > button,
+[data-ui-profile] [data-ui-surface] .leave-actions > button,
+[data-ui-profile] [data-ui-surface] .profile-leave-actions > button,
+[data-ui-profile] [data-ui-surface] .banner-date-sheet > footer button {
+  border-radius: var(--ui-radius-button); min-height: var(--ui-action-height); font-size: 14px; line-height: 1.5;
+}
+[data-ui-profile] [data-ui-surface] .options label,
+[data-ui-profile] [data-ui-surface] .options button,
+[data-ui-profile] [data-ui-surface] .tabs button,
+[data-ui-profile] [data-ui-surface] .chip { border-radius: var(--ui-radius-button); }
+
+/* Metadata is readable at the same helper size; decorative icon glyphs stay small. */
+[data-ui-profile] [data-ui-content] .card-meta,
+[data-ui-profile] [data-ui-content] .meta,
+[data-ui-profile] [data-ui-content] .published,
+[data-ui-profile] [data-ui-content] .area-line,
+[data-ui-profile] [data-ui-content] .time-row,
+[data-ui-profile] [data-ui-content] .schedule-note,
+[data-ui-profile] [data-ui-content] .person-note,
+[data-ui-profile] [data-ui-content] .privacy-note,
+[data-ui-profile] [data-ui-content] .counter,
+[data-ui-profile] [data-ui-content] .candidate-bottom,
+[data-ui-profile] [data-ui-content] .field-error,
+[data-ui-profile] [data-ui-content] .context-note,
+[data-ui-profile] [data-ui-content] .wallet-actions-note,
+[data-ui-profile] [data-ui-content] .profile-small-note,
+[data-ui-profile] [data-ui-content] .version-row,
+[data-ui-profile] [data-ui-content] .detail-meta,
+[data-ui-profile] [data-ui-content] .profile-detail-row,
+[data-ui-profile] [data-ui-content] .merchant { font-size: var(--ui-helper-font); line-height: 1.6; }
+[data-ui-page="v03"] .task-times { font-size: var(--ui-helper-font); line-height: 1.6; }
+[data-ui-page="v03"] .task-text .badge { font-size: var(--ui-helper-font); border-radius: var(--ui-radius-tag); }
+[data-ui-page="v01-v02"] .panel-title small { font-size: var(--ui-helper-font); }
+
+/* Advertising preview is an edge-to-edge copy of the actual homepage. */
+[data-ui-profile] :is(#content, [data-ui-content]).is-home-context { padding: 0; }
+
+/* Dialog content and dashboard drillthrough share the same spacing roles. */
+[data-ui-profile] .modal-content,
+[data-ui-profile] .confirm-content,
+[data-ui-profile] .dialog-copy,
+[data-ui-profile] [data-ui-surface] .confirm-card { padding: var(--ui-card-inset); }
+[data-ui-profile] [data-ui-surface] .dialog-card > .dialog-actions { padding: 0 16px 16px; margin-top: 0; gap: 8px; }
+[data-ui-profile] .dialog-box .dialog-actions { margin-top: 16px; gap: 8px; }
+[data-ui-profile] dialog .panel { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-profile] dialog .field input:not([type="checkbox"]):not([type="radio"]),
+[data-ui-profile] dialog .field textarea { border-radius: var(--ui-radius-field); min-height: 46px; }
+[data-ui-page="v21"] #metric-dialog .drill-list,
+[data-ui-page="v21"] #metric-dialog .drill-detail { padding: var(--ui-page-inset); }
+[data-ui-page="v21"] #metric-dialog .drill-record { border-radius: var(--ui-radius-card); padding: var(--ui-card-inset); margin-bottom: var(--ui-card-gap); }
+[data-ui-page="v21"] #metric-dialog .drill-record small { font-size: 12px; line-height: 1.6; }
+
+/* Previously approved large action stays larger than the 46px minimum. */
+[data-ui-page="v05"] :is(#content, [data-ui-content]) .replenish-button { min-height: 48px; font-size: 15px; }
+[data-ui-page="v05"] .profile-leave-box { border-radius: var(--ui-radius-sheet) var(--ui-radius-sheet) 0 0; padding: 20px 16px; }
+[data-ui-page="v05"] .profile-leave-box h3 { font-size: 18px; }
+[data-ui-page="v05"] .profile-leave-actions { margin-top: 16px; gap: 8px; }
+[data-ui-page="v04"] .replace-box { border-radius: var(--ui-radius-dialog); padding: 16px; }
+[data-ui-page="v23"] #merchant-exit-dialog { border-radius: var(--ui-radius-dialog); padding: 16px; }
+[data-ui-page="v07"] .order-sheet > div { border-radius: var(--ui-radius-sheet) var(--ui-radius-sheet) 0 0; padding: 20px 16px; }
+
+/* Inline validation is a text role, never a padded page-level callout. */
+[data-ui-profile] :is(#content, [data-ui-content]) .field .error,
+[data-ui-profile] :is(#content, [data-ui-content]) small.error[data-error] {
+  display: block; padding: 0; border: 0; border-radius: 0; background: none;
+  margin: 4px 0 0; font-size: 12px; line-height: 1.6;
+}
+[data-ui-profile] :is(#content, [data-ui-content]) .field .error:empty,
+[data-ui-profile] :is(#content, [data-ui-content]) small.error[data-error]:empty { display: none; margin: 0; }

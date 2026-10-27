@@ -1,0 +1,849 @@
+{
+  "date": "2026-10-27",
+  "scope": "33-active-prototype-html",
+  "stylesheetSha256": "de0f67b84a84b8abe896d497ed3fa2d836a5ff72235ea4e59e2014a2aa3aa657",
+  "layoutStateChecks": 423,
+  "issues": [],
+  "pageErrors": [],
+  "pilotInteractionChecks": 23,
+  "nodeTests": 1353,
+  "businessRegressionScripts": [
+    "verify-v01-v02-preview",
+    "verify-v03-preview",
+    "verify-v04-preview",
+    "verify-v05-preview",
+    "verify-v07-preview",
+    "verify-v09-preview",
+    "verify-v10-preview",
+    "verify-v23-preview",
+    "verify-reviews-context",
+    "verify-v20-task-ui",
+    "verify-v21-drillthrough",
+    "verify-commerce-acceptance",
+    "verify-navigation-state",
+    "verify-g-series",
+    "verify-banner-date-upload",
+    "verify-banner-home-preview",
+    "verify-mobile-foundations",
+    "verify-profile-leave-protection"
+  ],
+  "pages": [
+    {
+      "file": "ad-cooperation.html",
+      "profile": "mobile",
+      "checks": 3,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [],
+      "cardSamples": 0,
+      "fieldSamples": 0,
+      "actionSamples": 3
+    },
+    {
+      "file": "banner-admin.html",
+      "profile": "admin",
+      "checks": 7,
+      "viewports": [
+        1280,
+        1440
+      ],
+      "states": [
+        "view:广告概览",
+        "view:广告订单",
+        "view:制作工作台",
+        "view:排期",
+        "view:规则与数据"
+      ],
+      "cardSamples": 8,
+      "fieldSamples": 0,
+      "actionSamples": 0
+    },
+    {
+      "file": "g01.html",
+      "profile": "mobile",
+      "checks": 11,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:首次加载",
+        "scenario:没有收藏",
+        "scenario:筛选无匹配",
+        "scenario:首次读取失败",
+        "scenario:更新失败",
+        "scenario:需要登录",
+        "scenario:没有权限",
+        "scenario:失效与下架"
+      ],
+      "cardSamples": 0,
+      "fieldSamples": 0,
+      "actionSamples": 8
+    },
+    {
+      "file": "g02.html",
+      "profile": "mobile",
+      "checks": 9,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:正在提交",
+        "scenario:结果未知",
+        "scenario:查询仍未知",
+        "scenario:提交成功",
+        "scenario:明确未成功",
+        "scenario:内容有更新"
+      ],
+      "cardSamples": 26,
+      "fieldSamples": 9,
+      "actionSamples": 9
+    },
+    {
+      "file": "g03.html",
+      "profile": "mobile",
+      "checks": 9,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:图片预览",
+        "scenario:大图加载失败",
+        "scenario:格式不支持",
+        "scenario:单张超过5MB",
+        "scenario:超出张数",
+        "scenario:公开分享"
+      ],
+      "cardSamples": 17,
+      "fieldSamples": 8,
+      "actionSamples": 1
+    },
+    {
+      "file": "g04.html",
+      "profile": "mobile",
+      "checks": 7,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:放弃修改",
+        "scenario:删除地址",
+        "scenario:重要操作核对",
+        "scenario:完成反馈"
+      ],
+      "cardSamples": 7,
+      "fieldSamples": 4,
+      "actionSamples": 7
+    },
+    {
+      "file": "services.html",
+      "profile": "mobile",
+      "checks": 9,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:正常订单",
+        "scenario:未登录",
+        "scenario:没有订单",
+        "scenario:加载失败",
+        "scenario:正在加载",
+        "scenario:多条通知"
+      ],
+      "cardSamples": 0,
+      "fieldSamples": 0,
+      "actionSamples": 26
+    },
+    {
+      "file": "v01-v02.html",
+      "profile": "mobile",
+      "checks": 3,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [],
+      "cardSamples": 33,
+      "fieldSamples": 0,
+      "actionSamples": 9
+    },
+    {
+      "file": "v03.html",
+      "profile": "mobile",
+      "checks": 10,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:正常流程",
+        "scenario:服务开始时间已过",
+        "scenario:确认时服务费已更新",
+        "scenario:确认结果未知",
+        "scenario:需求已关闭",
+        "scenario:欠费限制新承接",
+        "scenario:计佣配置缺失"
+      ],
+      "cardSamples": 80,
+      "fieldSamples": 10,
+      "actionSamples": 30
+    },
+    {
+      "file": "v04.html",
+      "profile": "mobile",
+      "checks": 12,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "publish-review:0",
+        "publish-review:1",
+        "publish-review:2",
+        "publish-review:3",
+        "publish-review:4",
+        "publish-review:5",
+        "publish-review:6",
+        "publish-review:7",
+        "publish-review:8"
+      ],
+      "cardSamples": 86,
+      "fieldSamples": 94,
+      "actionSamples": 17
+    },
+    {
+      "file": "v05.html",
+      "profile": "mobile",
+      "checks": 23,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:A 我的",
+        "view:B 登录与资格",
+        "view:C 身份核验",
+        "view:D 个人资料",
+        "view:D 设置",
+        "view:E 服务费统计",
+        "scenario:已登录 · 资格待核验",
+        "scenario:未登录",
+        "scenario:资格有效",
+        "scenario:手机号待验证",
+        "scenario:年龄资格不符合",
+        "scenario:16—17岁适用条件待确认",
+        "scenario:核验结果待查询",
+        "scenario:核验信息不一致",
+        "scenario:核验格式错误",
+        "scenario:暂无匹配记录",
+        "scenario:核验服务暂不可用",
+        "scenario:身份变更处理中",
+        "scenario:服务费统计待核对",
+        "scenario:管理账号"
+      ],
+      "cardSamples": 116,
+      "fieldSamples": 4,
+      "actionSamples": 40
+    },
+    {
+      "file": "v07.html",
+      "profile": "mobile",
+      "checks": 33,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "focused-service-order",
+        "focused-service-order",
+        "focused-service-order",
+        "view:A 我服务的",
+        "view:B 服务详情",
+        "view:C 跑腿订单",
+        "view:D 提出交易时间",
+        "view:E 发起闲置交易",
+        "view:F 闲置交易待确认",
+        "view:G 闲置交易详情",
+        "view:H 本次服务费用",
+        "view:I 阶段费用约定",
+        "view:J 费用方案待回复",
+        "view:K 变更约定",
+        "view:L 延长到期",
+        "view:M 申请取消",
+        "view:N 交付异议",
+        "view:O 协商解除异议",
+        "view:P 交易状态",
+        "view:Q 结束后费用处理",
+        "view:R 临时恢复电话",
+        "view:S 约定与请求历史",
+        "scenario:进行中",
+        "scenario:交付异议",
+        "scenario:平台故障处理中",
+        "scenario:恢复后保护期",
+        "scenario:已到期结束",
+        "scenario:已结束 · 费用待处理",
+        "scenario:双方已取消",
+        "scenario:闲置待确认"
+      ],
+      "cardSamples": 71,
+      "fieldSamples": 16,
+      "actionSamples": 114
+    },
+    {
+      "file": "v08.html",
+      "profile": "mobile",
+      "checks": 11,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:正常记录",
+        "scenario:未登录",
+        "scenario:暂无记录",
+        "scenario:加载失败保留记录",
+        "scenario:加载中",
+        "scenario:提交结果待核对",
+        "scenario:物品已关闭",
+        "scenario:24小时后"
+      ],
+      "cardSamples": 40,
+      "fieldSamples": 0,
+      "actionSamples": 2
+    },
+    {
+      "file": "v09.html",
+      "profile": "mobile",
+      "checks": 12,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:A 收藏",
+        "view:B 草稿与常用需求",
+        "view:C 地址簿",
+        "view:D 新增地址",
+        "scenario:正常记录",
+        "scenario:未登录",
+        "scenario:暂无记录",
+        "scenario:加载失败保留记录",
+        "scenario:加载中"
+      ],
+      "cardSamples": 24,
+      "fieldSamples": 5,
+      "actionSamples": 7
+    },
+    {
+      "file": "v10.html",
+      "profile": "mobile",
+      "checks": 11,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:A 我的接单资料",
+        "view:B 申请人资料",
+        "view:C 编辑资料",
+        "view:D 时段与忙碌",
+        "scenario:待完善",
+        "scenario:已填写与资格有效",
+        "scenario:未登录",
+        "scenario:资格待重新核验"
+      ],
+      "cardSamples": 34,
+      "fieldSamples": 3,
+      "actionSamples": 11
+    },
+    {
+      "file": "v11.html",
+      "profile": "mobile",
+      "checks": 16,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:暂无广告（首次进入）",
+        "scenario:草稿",
+        "scenario:需重新选期",
+        "scenario:审核中",
+        "scenario:审核未通过",
+        "scenario:待付款",
+        "scenario:付款结果核实中",
+        "scenario:待开始",
+        "scenario:投放中",
+        "scenario:已结束",
+        "scenario:退款处理中",
+        "scenario:退款结果核实中",
+        "scenario:已退款"
+      ],
+      "cardSamples": 30,
+      "fieldSamples": 0,
+      "actionSamples": 21
+    },
+    {
+      "file": "v12.html",
+      "profile": "mobile",
+      "checks": 16,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:暂无广告（首次进入）",
+        "scenario:草稿",
+        "scenario:需重新选期",
+        "scenario:审核中",
+        "scenario:审核未通过",
+        "scenario:待付款",
+        "scenario:付款结果核实中",
+        "scenario:待开始",
+        "scenario:投放中",
+        "scenario:已结束",
+        "scenario:退款处理中",
+        "scenario:退款结果核实中",
+        "scenario:已退款"
+      ],
+      "cardSamples": 21,
+      "fieldSamples": 0,
+      "actionSamples": 17
+    },
+    {
+      "file": "v13.html",
+      "profile": "mobile",
+      "checks": 16,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:暂无广告（首次进入）",
+        "scenario:草稿",
+        "scenario:需重新选期",
+        "scenario:审核中",
+        "scenario:审核未通过",
+        "scenario:待付款",
+        "scenario:付款结果核实中",
+        "scenario:待开始",
+        "scenario:投放中",
+        "scenario:已结束",
+        "scenario:退款处理中",
+        "scenario:退款结果核实中",
+        "scenario:已退款"
+      ],
+      "cardSamples": 29,
+      "fieldSamples": 0,
+      "actionSamples": 24
+    },
+    {
+      "file": "v14.html",
+      "profile": "mobile",
+      "checks": 12,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:通知中心",
+        "view:举报",
+        "view:处理申诉",
+        "view:处理记录",
+        "view:提醒设置",
+        "scenario:正常",
+        "scenario:未登录",
+        "scenario:30条通知",
+        "scenario:暂无通知"
+      ],
+      "cardSamples": 11,
+      "fieldSamples": 0,
+      "actionSamples": 3
+    },
+    {
+      "file": "v15-duty.html",
+      "profile": "mobile",
+      "checks": 9,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:管理账号",
+        "scenario:普通账号",
+        "scenario:未登录",
+        "scenario:空队列",
+        "scenario:30项待办",
+        "scenario:加载失败"
+      ],
+      "cardSamples": 64,
+      "fieldSamples": 0,
+      "actionSamples": 18
+    },
+    {
+      "file": "v15.html",
+      "profile": "admin",
+      "checks": 17,
+      "viewports": [
+        1280,
+        1440
+      ],
+      "states": [
+        "view:A 运营待办",
+        "view:B 内容处置",
+        "view:C 费用核验",
+        "view:D 实收与退款",
+        "view:E 故障保护",
+        "scenario:管理账号",
+        "scenario:普通账号",
+        "scenario:未登录",
+        "scenario:空队列",
+        "scenario:30项待办",
+        "scenario:加载失败",
+        "scenario:旧版本冲突",
+        "scenario:重复旧材料",
+        "scenario:无法原路退回",
+        "scenario:无故障核实依据"
+      ],
+      "cardSamples": 32,
+      "fieldSamples": 8,
+      "actionSamples": 15
+    },
+    {
+      "file": "v16.html",
+      "profile": "admin",
+      "checks": 2,
+      "viewports": [
+        1280,
+        1440
+      ],
+      "states": [],
+      "cardSamples": 0,
+      "fieldSamples": 0,
+      "actionSamples": 2
+    },
+    {
+      "file": "v18.html",
+      "profile": "mobile",
+      "checks": 14,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:正常记录",
+        "scenario:修改已提交，图文待审",
+        "scenario:评分已生效，图文未通过",
+        "scenario:检测待核实",
+        "scenario:审核已超时",
+        "scenario:回应未通过",
+        "scenario:回应已公开",
+        "scenario:修改已超期",
+        "scenario:资格经核查失效",
+        "scenario:暂无本人记录",
+        "scenario:未登录"
+      ],
+      "cardSamples": 16,
+      "fieldSamples": 0,
+      "actionSamples": 27
+    },
+    {
+      "file": "v19.html",
+      "profile": "mobile",
+      "checks": 9,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "scenario:正常公开记录",
+        "scenario:25条评价",
+        "scenario:修改已提交，图文待审",
+        "scenario:评分已生效，图文未通过",
+        "scenario:暂无评价",
+        "scenario:访客浏览"
+      ],
+      "cardSamples": 42,
+      "fieldSamples": 0,
+      "actionSamples": 19
+    },
+    {
+      "file": "v20-duty.html",
+      "profile": "mobile",
+      "checks": 3,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [],
+      "cardSamples": 0,
+      "fieldSamples": 0,
+      "actionSamples": 6
+    },
+    {
+      "file": "v20.html",
+      "profile": "admin",
+      "checks": 9,
+      "viewports": [
+        1280,
+        1440
+      ],
+      "states": [
+        "scenario:正常队列",
+        "scenario:空队列",
+        "scenario:32项任务",
+        "scenario:读取失败 · 保留旧列表",
+        "scenario:核查材料不足",
+        "scenario:补充材料已到达",
+        "scenario:检测结果未知"
+      ],
+      "cardSamples": 57,
+      "fieldSamples": 0,
+      "actionSamples": 32
+    },
+    {
+      "file": "v21.html",
+      "profile": "admin",
+      "checks": 14,
+      "viewports": [
+        1280,
+        1440
+      ],
+      "states": [
+        "view:运营总览",
+        "view:跑腿转化",
+        "view:AI整理统计",
+        "scenario:正常数据",
+        "scenario:无样本",
+        "scenario:部分指标未知",
+        "scenario:部分指标未采集",
+        "scenario:刷新失败",
+        "scenario:缺少历史快照",
+        "scenario:无质量报告",
+        "scenario:普通账号",
+        "scenario:未登录"
+      ],
+      "cardSamples": 142,
+      "fieldSamples": 0,
+      "actionSamples": 32
+    },
+    {
+      "file": "v22.html",
+      "profile": "mobile",
+      "checks": 29,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:A 账单",
+        "view:B 佣金明细",
+        "view:C 调整申请",
+        "view:D 账单异议",
+        "view:E 异议进度",
+        "view:F 缴纳",
+        "view:G 付款记录",
+        "view:H 抵扣",
+        "view:I 退款",
+        "view:J 注销",
+        "scenario:正常账单",
+        "scenario:部分争议暂缓",
+        "scenario:异议待补充",
+        "scenario:核验结果已通知",
+        "scenario:补通知结果未知",
+        "scenario:存在逾期",
+        "scenario:本期已缴清",
+        "scenario:尚未出账",
+        "scenario:出账结果未知",
+        "scenario:佣金金额待核对",
+        "scenario:抵扣结余",
+        "scenario:退款结果未知",
+        "scenario:退款失败",
+        "scenario:退款需人工核对",
+        "scenario:暂无交易",
+        "scenario:未登录"
+      ],
+      "cardSamples": 72,
+      "fieldSamples": 4,
+      "actionSamples": 21
+    },
+    {
+      "file": "v23.html",
+      "profile": "mobile",
+      "checks": 15,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:发现流",
+        "view:空状态",
+        "view:加载失败",
+        "view:未登录",
+        "view:主帖详情",
+        "view:发布编辑",
+        "view:预览确认",
+        "view:待审核",
+        "view:已驳回",
+        "view:替换成功",
+        "view:风险下架",
+        "view:通知中心"
+      ],
+      "cardSamples": 25,
+      "fieldSamples": 2,
+      "actionSamples": 40
+    },
+    {
+      "file": "v24.html",
+      "profile": "mobile",
+      "checks": 23,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:A 申请入驻",
+        "view:B 核对申请",
+        "view:C 申请进度",
+        "view:D 开通与续费",
+        "view:E 入驻管理",
+        "view:F 入驻订单",
+        "view:G 异常申请",
+        "view:H 异常进度",
+        "view:I 必要更正",
+        "scenario:未申请／空表单",
+        "scenario:审核中",
+        "scenario:需要补充",
+        "scenario:审核未通过",
+        "scenario:通过／通知未生成",
+        "scenario:通过／可付款",
+        "scenario:通过／支付期限已过",
+        "scenario:已付款／正在开通",
+        "scenario:入驻有效",
+        "scenario:入驻已到期",
+        "scenario:异常核对中"
+      ],
+      "cardSamples": 20,
+      "fieldSamples": 35,
+      "actionSamples": 18
+    },
+    {
+      "file": "v25.html",
+      "profile": "mobile",
+      "checks": 17,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:A 活动列表",
+        "view:B 创建满减券",
+        "view:C 核对活动",
+        "view:D 活动详情",
+        "view:E 当面核销",
+        "view:F 核销记录",
+        "scenario:有效商家／草稿",
+        "scenario:暂无活动",
+        "scenario:活动审核中",
+        "scenario:公开领取中",
+        "scenario:已有一张券可核销",
+        "scenario:已有核销记录",
+        "scenario:已停止领取",
+        "scenario:入驻已到期"
+      ],
+      "cardSamples": 23,
+      "fieldSamples": 1,
+      "actionSamples": 25
+    },
+    {
+      "file": "v26.html",
+      "profile": "mobile",
+      "checks": 16,
+      "viewports": [
+        320,
+        375,
+        414
+      ],
+      "states": [
+        "view:A 活动与领券",
+        "view:B 我的优惠券",
+        "view:C 券详情",
+        "scenario:我的券为空",
+        "scenario:未登录",
+        "scenario:可领取",
+        "scenario:活动未开始",
+        "scenario:已经领完",
+        "scenario:券已过期",
+        "scenario:已领取",
+        "scenario:已核销",
+        "scenario:停领／已领可用",
+        "scenario:入驻到期／已领可用"
+      ],
+      "cardSamples": 18,
+      "fieldSamples": 0,
+      "actionSamples": 12
+    },
+    {
+      "file": "v27.html",
+      "profile": "admin",
+      "checks": 16,
+      "viewports": [
+        1280,
+        1440
+      ],
+      "states": [
+        "view:A 经营队列",
+        "view:B 入驻审核",
+        "view:C 必要更正",
+        "view:D 入驻异常",
+        "view:E 活动审核",
+        "view:F 券争议",
+        "scenario:入驻待审核",
+        "scenario:已通过／待开通",
+        "scenario:必要更正待审核",
+        "scenario:入驻异常待核对",
+        "scenario:活动待人工审核",
+        "scenario:活动检测待确认",
+        "scenario:券争议待核对",
+        "scenario:无经营审核权限"
+      ],
+      "cardSamples": 0,
+      "fieldSamples": 10,
+      "actionSamples": 5
+    }
+  ],
+  "realMiniProgramTested": false,
+  "livePaymentTested": false
+}
