@@ -12,6 +12,10 @@
     "docs/v1-scope-confirmed-20261026.json",
     "docs/v1-scope-confirmed-20261026.md",
     "docs/v1-development-preflight-20261018.json",
+    "docs/miniapp-filing-progress-20261018.md",
+    "docs/sp01-technical-environment-20261027.md",
+    "docs/sp02-platform-evidence-20261027.md",
+    "docs/sp02-platform-evidence-20261027.json",
     "docs/commerce-acceptance-20261027.md",
     "docs/superpowers/specs/2026-10-23-v15-v16-web-admin-carrier-design.md",
     "docs/superpowers/specs/2026-10-27-ui-consistency-design.md",
@@ -58,8 +62,21 @@
   "accountEvidence": {
     "licenseObtainedRecorded": true,
     "licenseRecordDate": "2026-10-08",
-    "formalNewAppId": null,
+    "formalNewAppId": "wx2414399d423dfb65",
+    "formalNewAppIdEvidence": "user-report-and-project-record-not-live-platform-verification",
+    "formalNewAppIdSource": "docs/miniapp-filing-progress-20261018.md",
     "formalNewEnvironmentId": null,
+    "formalNewEnvironmentStatus": "not-verified",
+    "newSubjectCloudDevelopmentOpeningStatus": "not-opened-user-reported",
+    "newAppIdCurrentProjectConfirmedByUser": true,
+    "oldCloudEnvironmentReadOnlyEvidence": {
+      "appId": "wx358290e451cb06e7",
+      "environmentId": "cloud1-d1g1mv89t76512a25",
+      "queryDate": "2026-10-27",
+      "scope": "development-and-controlled-testing-only",
+      "screenshotAppIdVisible": false,
+      "newAppIdEnvironmentVerified": false
+    },
     "oldCloudEnvironmentApprovedForProduction": false,
     "liveCloudRevalidatedThisDelivery": false
   },
@@ -274,8 +291,23 @@
         "E06"
       ],
       "features": [],
-      "status": "planned",
+      "status": "in-progress",
       "productAcceptancePassed": false,
+      "executionProgress": {
+        "date": "2026-10-27",
+        "completedChecks": [
+          "本机Node.js 24.18.0与npm 11.16.0已复核；不是云端运行时证据",
+          "微信开发者工具CLI只读登录检查返回login=true",
+        "旧AppID wx358290e451cb06e7只读查询返回cloud1-d1g1mv89t76512a25；不证明新AppID环境状态",
+        "用户提供的控制台截图显示cloud1/微信体验版和暂无数据/无可用集合，截图未显示AppID",
+          "预览根地址返回目录列表，不是单页原型入口"
+        ],
+        "blockedChecks": [
+          "新AppID云环境列表查询返回code 10 system error，未取得环境清单",
+          "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
+        ],
+        "nextAction": "仅在官方查询可用时重试只读环境清单，并核对目标环境；不创建、修改或部署云资源"
+      },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
         "data": "docs/v1-quality-acceptance-20261027.json",
@@ -336,8 +368,21 @@
         "AG01"
       ],
       "features": [],
-      "status": "planned",
+      "status": "in-progress",
       "productAcceptancePassed": false,
+      "executionProgress": {
+        "date": "2026-10-27",
+        "completedChecks": [
+          "已整理九项门槛的已知证据、缺项、责任方、放行条件和未发送咨询稿",
+          "已按证据等级区分用户报告、公开资料、AI转述和实时账号结果",
+          "旧AppID wx358290e451cb06e7只读云查询返回cloud1-d1g1mv89t76512a25；与未显示AppID的用户截图分开记录"
+        ],
+        "blockedChecks": [
+          "最终服务类目、备案及微信平台对完整业务组合的适用结论未取得",
+          "新主体支付、核验、消息、内容检测、AI供应商和项目报价/权限仍待实际账号或供应商依据"
+        ],
+        "nextAction": "保留咨询稿供用户审阅；获取正式平台/供应商证据后逐项更新矩阵，不自行发送、采购或真实调用"
+      },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
         "data": "docs/v1-quality-acceptance-20261027.json",

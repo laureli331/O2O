@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "document": "docs/sp02-platform-evidence-20261027.md",
+  "status": "evidence-matrix-in-progress",
+  "deliveryScope": "evidence-inventory-only-no-external-actions",
+  "sources": [
+    "docs/v1-development-preflight-20261018.json",
+    "docs/miniapp-filing-progress-20261018.md",
+    "docs/development-decisions.json",
+    "docs/external-evidence.md",
+    "docs/v1-scope-confirmed-20261026.md",
+    "docs/v1-scope-confirmed-20261026.json",
+    "docs/v1-payment-access-research-20261018.md",
+    "docs/resident-ai-balance-confirmed-20261018.md",
+    "docs/v1-quality-acceptance-20261027.md",
+    "docs/sp01-technical-environment-20261027.md"
+  ],
+  "account": {
+    "legalEntity": "永兴县渐循信息技术服务中心（个体工商户）",
+    "licenseObtained": true,
+    "licenseEvidenceLevel": "user-report-and-user-provided-photo-no-independent-registry-check",
+    "appId": "wx2414399d423dfb65",
+    "appIdEvidenceLevel": "user-report-and-project-record-not-live-platform-verification",
+    "appIdSource": "docs/miniapp-filing-progress-20261018.md",
+    "currentProjectAppIdUserConfirmedAt": "2026-10-27",
+    "miniProgramName": "湘邻湘友",
+    "wechatVerificationStatus": "passed-user-reported-2026-10-16",
+    "finalServiceCategories": null,
+    "filingStatus": "awaiting-official-seal-and-additional-commitment-material",
+    "filingApproved": false,
+    "newCloudDevelopmentStatus": "not-opened-user-reported-2026-10-18",
+    "environmentId": null,
+    "newAppIdCloudQuery": {
+      "date": "2026-10-27",
+      "appId": "wx2414399d423dfb65",
+      "cliLogin": true,
+      "result": "code-10-base-response-abnormal-ret-1000-system-error",
+      "environmentListRetrieved": false
+    }
+  },
+  "oldDevelopmentEnvironment": {
+    "appId": "wx358290e451cb06e7",
+    "environmentId": "cloud1-d1g1mv89t76512a25",
+    "queryDate": "2026-10-27",
+    "queryEvidence": "read-only-cloud-env-list-command-result",
+    "scope": "development-and-controlled-testing-only",
+    "userScreenshotObservations": ["cloud1", "微信体验版", "暂无数据", "找不到可用的集合"],
+    "screenshotAppIdVisible": false,
+    "newAccountAttributionVerified": false
+  },
+  "capabilities": {
+    "paymentMerchantStatus": "not-applied-user-reported",
+    "paymentProductEligibilityVerified": false,
+    "realPaymentAndRefundVerified": false,
+    "identityVerificationStatus": "not-applied-or-contacted-user-reported",
+    "identityVerificationEligibilityVerified": false,
+    "contentModerationProjectAccessVerified": false,
+    "notificationProjectAccessVerified": false,
+    "newCloudEnvironmentVerified": false
+  },
+  "ai": {
+    "selectedProvider": null,
+    "candidatePriceSourcesReviewedOn": "2026-10-18",
+    "projectPriceQuote": null,
+    "measured": false,
+    "approved": false,
+    "realCallsAuthorized": false
+  },
+  "data": {
+    "retentionByCategory": null,
+    "finalPrivacyTextApproved": false,
+    "realProductionPersonalDataProcessingAuthorized": false
+  },
+  "externalConsultation": {
+    "sent": false,
+    "wechatDeveloperAssistantAndMiniAIResponses": "user-transcribed-ai-responses-no-checkable-project-applicability-source",
+    "draftPreparedForUserReview": true
+  },
+  "authorization": {
+    "purchase": false,
+    "realAiCalls": false,
+    "realPayments": false,
+    "realIdentityVerification": false,
+    "externalConsultationSent": false,
+    "cloudWrites": false,
+    "deployment": false
+  },
+  "officialReferences": [
+    {
+      "topic": "wechat-mini-program-payment",
+      "title": "开发接入准备_小程序支付",
+      "url": "https://pay.wechatpay.cn/doc/v3/merchant/4015459512",
+      "sourceType": "official-primary-source",
+      "pageUpdated": "2026-10-16",
+      "supports": ["支持小程序支付权限申请的商户主体包含个体工商户", "未认证的小程序不能申请小程序支付权限", "现有商户需要申请对应权限并发起APPID授权绑定"],
+      "doesNotProve": ["当前新主体商户号已申请或获批", "具体推广位、制作或AI收费商品适用", "完整业务组合已通过平台审核"]
+    },
+    {
+      "topic": "wechat-mini-program-payment",
+      "title": "产品介绍_小程序支付",
+      "url": "https://pay.wechatpay.cn/doc/v3/merchant/4012791894",
+      "sourceType": "official-primary-source",
+      "pageUpdated": "2025-07-15",
+      "supports": ["小程序支付通用主体类型包含个体工商户", "应用类型为已认证小程序", "交易类小程序结算周期受公众平台规则约束"],
+      "doesNotProve": ["本项目具体类目和每种收费模式已获准", "本账号实际权限、费率或结算周期"]
+    },
+    {
+      "topic": "wechat-mini-program-payment",
+      "title": "mchid与appid申请_通用规则",
+      "url": "https://pay.wechatpay.cn/doc/v3/merchant/4012071573",
+      "sourceType": "official-primary-source",
+      "pageUpdated": "2025-10-28",
+      "supports": ["普通商户主体类型包含个体工商户", "商户号与APPID需要建立绑定关系"],
+      "doesNotProve": ["本项目已取得商户号", "新主体类目或收费内容已通过审核"]
+    }
+  ],
+  "gates": [
+    {
+      "id": "E01",
+      "title": "正式主体、服务类目与经营准入",
+      "gatePassed": false,
+      "evidenceLevel": "partial-user-report-no-final-category-or-platform-proof",
+      "knownEvidence": [
+        "已取得个体工商户执照，依据为用户报告及用户提供照片，未作登记公示系统独立核验",
+        "新小程序AppID与名称来自2026-10-18用户进度记录",
+        "微信认证通过为用户报告；备案仍等待公章与补充材料"
+      ],
+      "missingEvidence": [
+        "当前开发者工具中的服务类目最终选择及审核结果",
+        "当前备案是否已提交、受理或通过",
+        "四项居民业务、商家经营、推广和公开评价分别对应的项目适用类目与所需材料"
+      ],
+      "owner": {
+        "user": "提供当前后台类目/备案状态；审阅业务说明与主体资料",
+        "developer": "按已确认PRD整理各业务的准确功能说明并核对可查官方依据",
+        "platform": "给出适用于该AppID、主体和完整业务组合的正式结果"
+      },
+      "releaseCondition": "主体、备案、每项真实业务的类目及材料均有可核对的项目适用依据；不能用AI答复或旧个人主体结果代替",
+      "sources": ["docs/miniapp-filing-progress-20261018.md", "docs/v1-scope-confirmed-20261026.md", "docs/external-evidence.md"]
+    },
+    {
+      "id": "E02",
+      "title": "手机号、身份年龄、通知与内容检测能力",
+      "gatePassed": false,
+      "evidenceLevel": "public-reference-and-user-report-no-live-provider-proof",
+      "knownEvidence": [
+        "产品约束已确认：不刷脸；实际调用、年龄边界和权限按对应任务验收",
+        "既有台账保存了微信手机号、订阅消息、内容安全及二要素服务的官方核实入口"
+      ],
+      "missingEvidence": [
+        "新主体对手机号、消息、图片/文字检测和身份核验服务的实际可用资格、配额及价格",
+        "供应商对16至17岁适用性、失败/超时结果、数据留存与删除的项目答复",
+        "服务成功、失败、超时、撤权和重复请求的真实环境验收"
+      ],
+      "owner": {
+        "user": "在取得具体供应商、用途与费用方案后决定是否申请/开通",
+        "developer": "整理接口和失败场景，按授权范围执行受控测试",
+        "platformOrSupplier": "提供账号适用条件、计费与数据处理说明"
+      },
+      "releaseCondition": "各服务分别有主体/类目适用依据、权限和费用记录；失败/未知不放行，真实测试另按授权执行",
+      "sources": ["docs/external-evidence.md", "docs/v1-development-preflight-20261018.md", "docs/v1-quality-acceptance-20261027.md"]
+    },
+    {
+      "id": "E03",
+      "title": "个人信息用途、可见范围、期限与删除",
+      "gatePassed": false,
+      "evidenceLevel": "partial-product-rules-retention-and-final-notice-unconfirmed",
+      "knownEvidence": [
+        "已有明确的不保存原始完整姓名/身份证、不在普通日志记录AI原文等约束",
+        "四业务、入驻、活动券、支付/退款、评价、广告与AI新增数据类别已有盘点来源"
+      ],
+      "missingEvidence": [
+        "逐字段用途、可见角色、保存期限、删除触发与依法必要保留",
+        "核验、AI、内容安全等供应商的处理/分包/训练/留存依据",
+        "最终隐私告知、协议和数据主体请求处理规则的用户确认"
+      ],
+      "owner": {
+        "user": "确认确需的运营用途与期限选择",
+        "developer": "逐字段整理最小必要方案和访问/删除路径",
+        "supplier": "提供实际服务处理、留存与删除说明"
+      },
+      "releaseCondition": "数据清单逐类有明确依据与用户确认，供应商处理透明；完成SP03后才允许对应真实个人信息处理",
+      "sources": ["docs/v1-development-preflight-20261018.md", "docs/v1-quality-acceptance-20261027.md", "docs/prd.md"]
+    },
+    {
+      "id": "E04",
+      "title": "自有服务收费、商户支付、查单与退款",
+      "gatePassed": false,
+      "evidenceLevel": "public-payment-references-no-merchant-or-project-eligibility-proof",
+      "knownEvidence": [
+        "用户于2026-10-18报告尚未申请新主体微信支付商户号",
+        "微信支付商户官方资料列出个体工商户可申请小程序支付，但要求认证小程序及商户/APPID授权绑定；这是通用产品准入说明，不证明本账号权限或每种收费权益已获准",
+        "商业规则已区分入驻、广告位、制作及条件性AI服务费用；不代收居民交易款",
+        "微信支付公开接入研究已整理，但不构成本项目支付权限"
+      ],
+      "missingEvidence": [
+        "新主体商户进件、AppID绑定及实际启用的支付产品",
+        "各自有服务商品/数字服务的主体、类目和支付方式适用结论",
+        "真实查单、退款、迟到/重复回调、对账及实际费率/收费凭据"
+      ],
+      "owner": {
+        "user": "决定是否提交商户进件及承担已确认费用",
+        "developer": "按项目适用答复实现并测试查单、回调、退款和恢复",
+        "wechatPay": "核对主体、商品、类目及端侧适用资格"
+      },
+      "releaseCondition": "商户/产品/类目匹配且真实收退、未知查单及对账验收通过；未通过前所有真实收费保持关闭",
+      "sources": ["docs/v1-development-preflight-20261018.md", "docs/v1-payment-access-research-20261018.md", "docs/commerce-acceptance-20261027.md", "docs/external-evidence.md"]
+    },
+    {
+      "id": "E05",
+      "title": "真实服务区域、运营投入与现金预算",
+      "gatePassed": false,
+      "evidenceLevel": "business-rules-known-real-operating-configuration-missing",
+      "knownEvidence": [
+        "共用一个管理账号、不新增独立运营账号或双人复核已确认",
+        "既有月现金上限为500元且包含现金人工；这不是已核实的实际总成本",
+        "营业执照登记地点不能代替实际服务区域清单"
+      ],
+      "missingEvidence": [
+        "实际经营乡镇/村/社区及服务半径和分类",
+        "本人可投入时段、交接安排与可用测试设备",
+        "云资源、核验、内容检测、AI、收退款、人工等真实分项及最低可行月成本"
+      ],
+      "owner": {
+        "user": "提供真实运营区域、可投入时间、设备和预算边界",
+        "developer": "根据实价及用量拆分成本、风险缓冲和执行批次"
+      },
+      "releaseCondition": "真实区域/账号/时段与完整分项预算经用户确认，且项目预计支出不以未经核实的公开价替代实际报价",
+      "sources": ["docs/development-decisions.json", "docs/v1-scope-confirmed-20261026.md", "docs/v1-development-preflight-20261018.md"]
+    },
+    {
+      "id": "E06",
+      "title": "新主体云环境、运行时、数据模式、安全与恢复",
+      "gatePassed": false,
+      "evidenceLevel": "user-reported-not-opened-plus-current-live-query-failed",
+      "knownEvidence": [
+        "新主体云开发于2026-10-18为用户报告尚未开通；2026-10-27 CLI登录为真，但环境列表请求返回code 10系统错误",
+        "Node/npm版本仅为本机；旧cloud1仅批准受控开发/测试",
+        "公开运行时资料状态描述不一致，数据库模式、SDK版本仍未选"
+      ],
+      "missingEvidence": [
+        "目标环境ID和该AppID下的实际环境归属/状态",
+        "可部署运行时、数据库模式、事务和私密文件访问实测",
+        "真实安全权限、备份/恢复能力及成本依据"
+      ],
+      "owner": {
+        "user": "在官方工具可读时确认目标项目/环境并确认有费用或风险的动作",
+        "developer": "保持只读核验，环境确认后准备隔离测试、恢复和依赖锁定方案",
+        "cloudbase": "提供当前账号/环境的可用能力和计费信息"
+      },
+      "releaseCondition": "新主体目标环境和实际运行/数据库/存储能力有可复核证据；受控测试、备份恢复和权限边界通过",
+      "sources": ["docs/sp01-technical-environment-20261027.md", "docs/v1-development-preflight-20261018.md", "docs/external-evidence.md"]
+    },
+    {
+      "id": "QG01",
+      "title": "双向评分、图文评价与回应资格",
+      "gatePassed": false,
+      "evidenceLevel": "product-scope-confirmed-platform-admissibility-not-verified",
+      "knownEvidence": [
+        "业务规则已有评分、评价、回应、申诉和审核的产品合同",
+        "公开类目和内容检测资料仅作为核实入口"
+      ],
+      "missingEvidence": [
+        "不同业务关系产生评分资格的类目/平台依据",
+        "数值评分、公开图文、商家回应及申诉分别适用的审核/治理要求",
+        "新主体相关内容检测权限及真实状态验收"
+      ],
+      "owner": {
+        "user": "审阅准确业务说明并授权是否发送咨询",
+        "developer": "拆分数值、图文、回应和检测规则，不用一个结论覆盖全部能力",
+        "platform": "给出项目适用的类目、管理和内容要求"
+      },
+      "releaseCondition": "上述能力分别取得项目适用依据和内容处理证据；缺项时不公开真实评价",
+      "sources": ["docs/v1-scope-confirmed-20261026.md", "docs/external-evidence.md", "docs/v1-quality-acceptance-20261027.md"]
+    },
+    {
+      "id": "AG01",
+      "title": "真实AI供应商、隐私、预算与质量门槛",
+      "gatePassed": false,
+      "evidenceLevel": "candidate-public-price-only-unmeasured-unapproved",
+      "knownEvidence": [
+        "当前文字AI只处理本次文字、用户确认候选后手动发布；不读取图片/历史/私密字段",
+        "供应商和模型仍为比较候选；2026-10-18公开价格资料不是项目报价",
+        "免费次数及规则已确认，但真实调用启用条件未通过"
+      ],
+      "missingEvidence": [
+        "实际账户、模型版本、结构化输出与合同/处理条款",
+        "供应商保存/训练/删除方式及本项目业务适用性",
+        "质量集、事实/隐私指标、超时、输出上限、并发与月预算确认及合成实测"
+      ],
+      "owner": {
+        "developer": "形成候选对比、合成评测集和含失败/未知的测试计划",
+        "user": "确认供应商、适用业务、质量门槛和支出上限",
+        "supplier": "提供合同、模型版本、计费与数据处理说明"
+      },
+      "releaseCondition": "供应商和处理条款被确认，预算/质量门槛经用户确认，合成实测通过；真实调用须另有授权",
+      "sources": ["docs/v1-development-preflight-20261018.md", "docs/resident-ai-balance-confirmed-20261018.md", "docs/external-evidence.md", "docs/v1-quality-acceptance-20261027.md"]
+    },
+    {
+      "id": "DG01",
+      "title": "新增统计、归因、去重与保留期限",
+      "gatePassed": false,
+      "evidenceLevel": "business-metric-rules-partially-confirmed-retention-unresolved",
+      "knownEvidence": [
+        "运营统计按本人管理账号受限读取，未知、未采集、无数据和0须区分",
+        "Banner有效曝光/点击事件和去重/保留期限仍待确认",
+        "数据计划中按类别的保留期限为空"
+      ],
+      "missingEvidence": [
+        "新增访问、AI请求、采用比较标识、Banner曝光点击和商家运营数据的具体用途",
+        "去重、事件来源、迟到/重放、删除和汇总可识别性方案",
+        "各类别期限及供应商/备份删除传播规则的用户确认"
+      ],
+      "owner": {
+        "developer": "逐字段提出采集最小化、去重和删除方案",
+        "user": "确认运营用途和必要期限",
+        "supplier": "说明日志、统计和备份处理/删除行为"
+      },
+      "releaseCondition": "每类新增数据的目的、期限、权限、去重和恢复均明确并按用户确认实现；在此之前只使用合成数据",
+      "sources": ["docs/v1-development-preflight-20261018.md", "docs/v1-scope-confirmed-20261026.md", "docs/v1-quality-acceptance-20261027.md", "docs/prd.md"]
+    }
+  ]
+}
