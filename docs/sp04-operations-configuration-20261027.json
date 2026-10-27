@@ -129,6 +129,16 @@
       "status": "user-confirmed",
       "source": "user-reply-2026-10-27",
       "scope": "本项目服务模块名称，不代表微信平台官方服务类目已确认"
+    },
+    "providerSupply": {
+      "status": "user-reported-no-confirmed-willing-providers",
+      "source": "user-reply-2026-10-27",
+      "confirmedWillingProviderCounts": {
+        "homeRepair": 0,
+        "errand": 0
+      },
+      "credentialReviewStatus": "not-confirmed",
+      "tenLocationCoverageStatus": "not-confirmed"
     }
   },
   "operations": {
@@ -256,7 +266,7 @@
     {
       "id": "E05",
       "passed": false,
-      "reason": "服务范围、三类服务模块、09:00—22:00服务时段及22:00后次日处理均已由用户确认；微信官方类目适用性和真实运营/供应能力仍需正式依据。"
+      "reason": "服务范围、三类服务模块、09:00—22:00服务时段及22:00后次日处理均已由用户确认；用户说明当前没有已确认愿意接单的家电维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认，官方类目适用性也未获正式依据。"
     },
     {
       "id": "E06",
@@ -267,6 +277,7 @@
   "cloudWritesOrDeploymentPerformed": false,
   "remainingChecks": [
     "核实微信官方类目适用性及真实运营/供应能力，不从项目服务名称推定平台准入。",
+    "目前没有已确认愿意接单的维修或代买代取服务者；后续需确认服务者资质审核状态及十个地点的实际覆盖。",
     "目标新AppID对应工程未出现在当前开发者工具已登记项目列表；列表外或其他账号/设备中的工程是否存在仍未核实。明确定位目标工程后，再核验新AppID下的环境归属、登录/托管能力和配置状态。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
     "按确认的真实设备和浏览器执行网页后台登录、权限和页面验收。"

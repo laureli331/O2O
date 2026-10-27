@@ -161,6 +161,22 @@ test('SP04 records the confirmed service hours and next-day handling after 22:00
   assert.equal(record.operations.coverageSchedule.unattendedHandling, '22:00后次日处理');
 });
 
+test('SP04 records no confirmed repair or errand providers without inventing credential checks or coverage', () => {
+  const record = evidence();
+  assert.deepEqual(record.businessConfiguration.providerSupply, {
+    status: 'user-reported-no-confirmed-willing-providers',
+    source: 'user-reply-2026-10-27',
+    confirmedWillingProviderCounts: { homeRepair: 0, errand: 0 },
+    credentialReviewStatus: 'not-confirmed',
+    tenLocationCoverageStatus: 'not-confirmed',
+  });
+  assert.equal(record.evidenceGates.find((gate) => gate.id === 'E05').passed, false);
+  assert.ok(record.remainingChecks.some((item) => item.includes('目前没有已确认愿意接单的维修或代买代取服务者')));
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  assert.ok(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
+  assert.ok(doc.includes('资质审核状态和十个地点的实际覆盖尚未确认'));
+});
+
 test('SP04 preserves the confirmed shared-account and no-24-hour operating rules', () => {
   const record = evidence();
   assert.equal(record.operations.managementAccounts, 1);

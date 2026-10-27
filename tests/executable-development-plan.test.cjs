@@ -90,6 +90,19 @@ test('SP01 records the local diagnostic project AppID separately from the new ta
     a.ok(doc.includes('不匹配'), file);
   }
 });
+
+test('SP04 plan progress records no confirmed service providers as a blocker and keeps product engineering gated', () => {
+  const p = load();
+  const task = p.tasks.find((entry) => entry.id === 'SP04');
+  const doc = read('docs/v1-executable-development-plan-20261027.md');
+  a.equal(task.status, 'in-progress');
+  a.equal(task.productAcceptancePassed, false);
+  a(task.executionProgress.completedChecks.some((check) => check.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
+  a(task.executionProgress.blockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
+  a(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
+  a.equal(p.firstProductTask, 'SP07');
+  a.deepEqual(p.firstProductTaskPrerequisites, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
+});
 test('SP01 scopes the DevTools project-manager inventory to its visible registered projects', () => {
   const record = load();
   a.deepEqual(record.accountEvidence.devtoolsProjectManagerObservation, {

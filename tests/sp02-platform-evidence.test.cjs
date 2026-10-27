@@ -17,11 +17,13 @@ test('SP02 accounts for all nine real qualification gates without treating unkno
  a.equal(e05.evidenceLevel,'partial-user-confirmed-area-and-hours-supply-costs-unverified');
  a(e05.knownEvidence.some(v=>v.includes('湘阴渡社区、高矿社区、松柏村、堡口村、油塘村、滩头村、田心村、南塘村、胜利村、湘阴村')));
  a(e05.knownEvidence.some(v=>v.includes('伙伴09:00—17:00、本人17:00—22:00')&&v.includes('22:00后请求次日处理')));
+ a(e05.knownEvidence.some(v=>v.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
+ a(e05.missingEvidence.some(v=>v.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
  a(e05.missingEvidence.some(v=>v.includes('服务人员数量、资质核验状态及十个地点的实际覆盖能力')));
  a(e05.sources.includes('docs/sp04-operations-configuration-20261027.json'));
  const e05Table=read('docs/sp02-platform-evidence-20261027.md');
  a(e05Table.includes('湘阴渡社区、高矿社区、松柏村、堡口村、油塘村、滩头村、田心村、南塘村、胜利村、湘阴村'));
- a(e05Table.includes('服务人员数量、资质核验状态及十个地点的实际覆盖能力仍待核实'));
+ a(e05Table.includes('资质审核状态和十个地点的实际覆盖尚未确认'));
  const sp02=plan.tasks.find(t=>t.id==='SP02');a.equal(sp02.status,'complete');a.equal(sp02.productAcceptancePassed,false);a.equal(sp02.completion.commit,'2b3dd5d940fb04d6cedeb5d59f2de77bd1025a43');a.equal(sp02.completion.environment,'Windows 11 local documentation and tests; no external actions');a(sp02.completion.evidence.length>=3);a(sp02.executionProgress.completedChecks.some(v=>v.includes('cloud1-d1g1mv89t76512a25')));a(plan.sources.includes('docs/sp02-platform-evidence-20261027.md'));a(plan.sources.includes('docs/sp02-platform-evidence-20261027.json'));
 });
 
