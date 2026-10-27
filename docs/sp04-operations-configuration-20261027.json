@@ -38,16 +38,34 @@
   },
   "businessConfiguration": {
     "registrationLocationRecord": "湖南省郴州市永兴县湘阴渡（执照登记地点记录）",
-    "registrationAddressIsServiceArea": false,
+    "registrationAddressEstablishesServiceArea": false,
     "serviceArea": {
-      "value": null,
-      "status": "awaiting-user-confirmation",
-      "recommendationStatus": "proposed-not-applied",
-      "recommendation": "首发先选一个实际能覆盖的乡镇，并只开放目前确有服务供给的村/社区；湘阴渡仅作为候选，需用户确认实际经营/服务覆盖后才能采用。"
+      "value": [
+        "湘阴渡社区",
+        "高矿社区",
+        "松柏村",
+        "堡口村",
+        "油塘村",
+        "滩头村",
+        "田心村",
+        "南塘村",
+        "胜利村",
+        "湘阴村"
+      ],
+      "status": "user-confirmed",
+      "source": "user-reply-2026-10-27",
+      "recommendationStatus": "superseded-by-user-confirmation",
+      "recommendation": "旧建议：首发先选一个实际能覆盖的乡镇，并只开放目前确有服务供给的村/社区；此建议已被用户明确确认的十地点清单取代，不再表示湘阴渡社区或其他地点待确认。"
     },
     "serviceCategories": {
-      "value": [],
-      "status": "awaiting-user-confirmation"
+      "value": [
+        "家电维修求助与服务人员目录",
+        "居民二手物品信息发布",
+        "代买代取代送需求报价匹配"
+      ],
+      "status": "user-confirmed",
+      "source": "user-reply-2026-10-27",
+      "scope": "本项目服务模块名称，不代表微信平台官方服务类目已确认"
     }
   },
   "operations": {
@@ -64,7 +82,19 @@
         "user": "晚班",
         "source": "user-reply-2026-10-27"
       },
-      "exactHours": null,
+      "managementDutyHours": {
+        "partner": {
+          "start": "09:00",
+          "end": "17:00"
+        },
+        "user": {
+          "start": "17:00",
+          "end": "22:00"
+        },
+        "source": "user-reply-2026-10-27",
+        "scope": "management-review-and-handover-only"
+      },
+      "serviceAvailabilityHours": null,
       "unattendedHandling": null
     },
     "confirmedSource": "docs/module-specs/business-closeout-confirmed-20261015.md"
@@ -129,7 +159,7 @@
     {
       "id": "E05",
       "passed": false,
-      "reason": "真实服务范围、分类和实际运营开放时段尚未确认。"
+      "reason": "服务范围和三类服务模块已由用户确认；顾客可预约时段及值班外请求处理方式仍未确认，且微信官方类目适用性不能由本记录推定。"
     },
     {
       "id": "E06",
@@ -139,8 +169,8 @@
   ],
   "cloudWritesOrDeploymentPerformed": false,
   "remainingChecks": [
-    "用户确认真实开放的乡镇及村/社区范围和服务分类；确认区域建议前不预填湘阴渡。",
-    "补充本人和伙伴白班/晚班的具体起止时间，以及无人值班时的实际处理安排；不要求承诺24小时值守。",
+    "确认顾客可预约服务的实际时段是否等同于09:00—22:00管理值班时段；当前不作等同推定。",
+    "确认22:00后及其他无人值班时段的请求处理安排；不要求承诺24小时值守。",
     "在新AppID下核验环境归属、可用登录/托管能力和配置状态。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
     "按确认的真实设备和浏览器执行网页后台登录、权限和页面验收。"

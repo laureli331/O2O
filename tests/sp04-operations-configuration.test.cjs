@@ -25,23 +25,51 @@ test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence
   assert.equal(record.cloudConsoleScreenshot.provesNewAppIdConnection, false);
 });
 
-test('SP04 records unconfirmed service coverage and operating hours as unresolved, not synthetic defaults', () => {
+test('SP04 records the exact user-confirmed service area and three service modules', () => {
   const record = evidence();
-  assert.equal(record.businessConfiguration.serviceArea.value, null);
-  assert.equal(record.businessConfiguration.serviceArea.status, 'awaiting-user-confirmation');
-  assert.deepEqual(record.businessConfiguration.serviceCategories.value, []);
-  assert.equal(record.businessConfiguration.serviceCategories.status, 'awaiting-user-confirmation');
+  assert.deepEqual(record.businessConfiguration.serviceArea.value, [
+    '湘阴渡社区',
+    '高矿社区',
+    '松柏村',
+    '堡口村',
+    '油塘村',
+    '滩头村',
+    '田心村',
+    '南塘村',
+    '胜利村',
+    '湘阴村',
+  ]);
+  assert.equal(record.businessConfiguration.serviceArea.status, 'user-confirmed');
+  assert.equal(record.businessConfiguration.serviceArea.source, 'user-reply-2026-10-27');
+  assert.equal(record.businessConfiguration.registrationAddressEstablishesServiceArea, false);
+  assert.deepEqual(record.businessConfiguration.serviceCategories.value, [
+    '家电维修求助与服务人员目录',
+    '居民二手物品信息发布',
+    '代买代取代送需求报价匹配',
+  ]);
+  assert.equal(record.businessConfiguration.serviceCategories.status, 'user-confirmed');
+  assert.equal(record.businessConfiguration.serviceCategories.source, 'user-reply-2026-10-27');
+  assert.equal(record.businessConfiguration.serviceCategories.scope, '本项目服务模块名称，不代表微信平台官方服务类目已确认');
+  assert.equal(record.businessConfiguration.serviceArea.recommendationStatus, 'superseded-by-user-confirmation');
+  assert.match(record.businessConfiguration.serviceArea.recommendation, /已被用户明确确认的十地点清单取代/);
+});
+
+test('SP04 separates confirmed management shifts from customer availability and unattended handling', () => {
+  const record = evidence();
   assert.equal(record.operations.coverageSchedule.status, 'partially-confirmed');
   assert.deepEqual(record.operations.coverageSchedule.shiftArrangement, {
     partner: '白班',
     user: '晚班',
     source: 'user-reply-2026-10-27',
   });
-  assert.equal(record.operations.coverageSchedule.exactHours, null);
+  assert.deepEqual(record.operations.coverageSchedule.managementDutyHours, {
+    partner: { start: '09:00', end: '17:00' },
+    user: { start: '17:00', end: '22:00' },
+    source: 'user-reply-2026-10-27',
+    scope: 'management-review-and-handover-only',
+  });
+  assert.equal(record.operations.coverageSchedule.serviceAvailabilityHours, null);
   assert.equal(record.operations.coverageSchedule.unattendedHandling, null);
-  assert.equal(record.businessConfiguration.serviceArea.recommendationStatus, 'proposed-not-applied');
-  assert.equal(record.businessConfiguration.serviceArea.value, null);
-  assert.equal(record.businessConfiguration.registrationAddressIsServiceArea, false);
 });
 
 test('SP04 preserves the confirmed shared-account and no-24-hour operating rules', () => {
@@ -84,6 +112,9 @@ test('SP04 records browser installation separately from tested support and block
   assert.equal(task.status, 'in-progress');
   assert.equal(task.productAcceptancePassed, false);
   assert.ok(task.executionProgress.blockedChecks.length >= 1);
+  assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('湘阴渡社区') && check.includes('湘阴村')));
+  assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('09:00') && check.includes('22:00')));
+  assert.ok(task.executionProgress.blockedChecks.some((check) => check.includes('顾客可预约服务时段')));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.md'));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.json'));
 });
@@ -94,15 +125,18 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
     '截图未显示AppID',
     '不能证明新AppID已接通',
     '不把它当服务范围',
-    '伙伴白班、用户晚班',
-    '首发地区建议',
-    '湘阴渡仅作为待确认候选',
+    '用户确认伙伴09:00—17:00、本人17:00—22:00',
+    '首发服务范围（用户确认）',
+    '湘阴渡社区、高矿社区、松柏村、堡口村、油塘村、滩头村、田心村、南塘村、胜利村、湘阴村',
+    '湘阴渡社区来自用户明确确认',
     '不能识别具体自然人',
     '不承诺24小时值守',
     '正式环境必须绑定已完成备案的自定义域名',
     '没有创建云环境、部署托管',
     '回退',
-    '服务范围与开放时段仍待用户确认',
+    '服务范围、三类项目服务和管理值班时段已由用户确认',
+    '顾客实际可预约服务时段是否与管理值班相同',
+    '22:00后或其他无人值班时段如何处理请求',
   ]) {
     assert.ok(doc.includes(phrase), phrase);
   }
