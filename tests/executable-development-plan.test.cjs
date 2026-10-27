@@ -141,6 +141,19 @@ test('SP01 separates the original wizard screenshot from the current live state 
     scope: 'user-provided-screenshot-baseline-with-later-live-ui-observation',
     officialCloudEnablementSource: 'https://developer.cloud.tencent.com/article/1840315?policyId=1003',
     currentPricingSource: 'https://cloud.tencent.com/document/product/876/127357',
+    pricingPolicyObservedAt: '2026-10-27',
+    freeTrialPolicy: {
+      priceCny: 0,
+      resourcePointsPerMonth: 3000,
+      renewalTermMonths: 6,
+      autoRenewal: false,
+      appliesToWechatExperience: false,
+      publishedMiniProgramExpiryDays: 15,
+      afterExpiry: 'isolation-then-destruction-if-not-converted-to-paid',
+      freeEnvironmentLimitPerCloudBaseAccount: 1,
+    },
+    currentCloudBaseAccountFreeTrialEligibilityVerified: false,
+    wizardOfferTypeAndPriceVerified: false,
     latestObservation: {
       observationDate: '2026-10-27',
       method: 'computer-use-read-only-window-capture',
@@ -169,6 +182,11 @@ test('SP01 separates the original wizard screenshot from the current live state 
   a(doc.includes('项目未创建'));
   a(doc.includes('不能据此认定已创建新环境'));
   a(doc.includes('预览`cloud1`不是环境归属证据'));
+  a(doc.includes('提供3000点/月'));
+  a(doc.includes('不支持自动续费'));
+  a(doc.includes('微信体验版不适用'));
+  a(doc.includes('上线后的第15天'));
+  a(doc.includes('用户当前云开发账号的免费资格'));
   a(doc.includes('首次创建云开发环境前需完成云开发服务开通，包括同意服务条款和完成服务角色权限授权'));
   a(doc.includes('3000点/月'));
 });
@@ -212,7 +230,7 @@ test('SP01 excludes old cloud1 after the user reports different subjects and kee
   a.equal(task.status, 'in-progress');
   a.equal(task.productAcceptancePassed, false);
   a(task.executionProgress.nextAction.includes('不要点击创建'));
-  a(task.executionProgress.nextAction.includes('旧cloud1不满足同主体共享前提'));
+  a(task.executionProgress.nextAction.includes('旧cloud1不再作为共享候选'));
   a(task.executionProgress.nextAction.includes('目标AppID自己的环境是否已存在'));
   const sp01 = read('docs/sp01-technical-environment-20261027.md');
   const plan = read('docs/v1-executable-development-plan-20261027.md');
