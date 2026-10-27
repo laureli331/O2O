@@ -77,6 +77,16 @@
       "topic": "coupon-post-publish-lock-and-stop-claims",
       "question": "发布后锁定门槛、优惠额和有效期，可停新领取；已领券仍按原条件至到期，停领或入驻到期不作废；错误争议由平台核对",
       "answer": "采用：锁定关键条件，已领券权益保留"
+    },
+    {
+      "topic": "onboarding-notification-success",
+      "question": "审核通过站内通知成功生成并记时起72小时，不等商家已读或微信订阅消息送达",
+      "answer": "采用站内消息成功生成的时刻"
+    },
+    {
+      "topic": "coupon-publication-gate",
+      "question": "活动满减券经内容安全检测和人工审核通过后公开；不通过保留原输入按原因重提，不自定审核时限",
+      "answer": "采用：检测和人工审核通过后公开"
     }
   ],
   "firstRelease": [
@@ -115,7 +125,9 @@
         "review-approved",
         "notification-success"
       ],
-      "expiredReviewCannotDirectlyActivate": true
+      "expiredReviewCannotDirectlyActivate": true,
+      "notificationSuccessDefinition": "review-approved-in-app-message-created-successfully",
+      "waitForReadOrWechatDelivery": false
     },
     "expiryAndExistingPosts": "retain-compliant-existing-pages-posts-disable-new",
     "refundExceptions": [
@@ -243,14 +255,18 @@
     "merchantMayStopNewClaims": true,
     "existingClaimsAfterStop": "original-terms-until-original-expiry",
     "merchantUnilateralInvalidationOfClaimedCoupon": false,
-    "disputeHandling": "platform-review"
+    "disputeHandling": "platform-review",
+    "publicReleaseRequires": [
+      "content-safety-passed",
+      "human-review-approved"
+    ],
+    "reviewTimeTarget": null
   },
   "featureScopeFrozen": true,
   "businessRulesComplete": false,
   "formalDevelopmentReady": false,
   "remainingDecisionsOrEvidence": [
     "merchant-application-location-and-materials-review-standards",
-    "notification-success-definition-for-payment-clock",
     "banner-production-delivery-target-and-redesign-boundary",
     "banner-formal-image-and-copy-specifications",
     "banner-event-definitions-deduplication-data-retention",
@@ -258,10 +274,11 @@
     "new-onboarding-and-coupon-ascii-html-design"
   ],
   "validation": {
-    "nodeTests": 1284,
-    "nodePassed": 1284,
+    "nodeTests": 1288,
+    "nodePassed": 1288,
     "bannerBrowserRegression": "passed",
     "realPaymentEnabled": false,
     "productionDeploymentAuthorized": false
-  }
+  },
+  "designReviewDocument": "docs/superpowers/specs/2026-10-26-merchant-onboarding-coupons-ascii-design.md"
 }
