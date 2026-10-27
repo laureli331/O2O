@@ -61,6 +61,22 @@ test('SP01 records current CLI authorization and listener separately from failed
   a.ok(doc.includes('本次再次显式授权后仍为'));
   a.ok(doc.includes('`cloud_env_list`和`check_wechatide_status`均继续在本地连接层返回`CONNECT_ERROR`'));
 });
+
+test('SP01 records the visible local validation project without inferring its AppID or cloud setup', () => {
+  const record = load();
+  a.deepEqual(record.accountEvidence.currentWindowObservation, {
+    visibleProjectLabel: 'PERMISSION-CHECK',
+    visibleMessage: '仅用于检查本地开发环境。没有业务功能、真实数据或云服务连接。',
+    appIdVisible: false,
+  });
+  a.equal(record.accountEvidence.formalNewAppId, 'wx2414399d423dfb65');
+  a.equal(record.accountEvidence.formalNewAppIdEvidence, 'user-report-and-project-record-not-live-platform-verification');
+  a.ok(record.tasks.find((task) => task.id === 'SP01').executionProgress.completedChecks.some((check) => check.includes('PERMISSION-CHECK') && check.includes('云服务连接')));
+  const doc = read('docs/sp01-technical-environment-20261027.md');
+  a.ok(doc.includes('当前窗口显示`PERMISSION-CHECK`'));
+  a.ok(doc.includes('没有业务功能、真实数据或云服务连接'));
+  a.ok(doc.includes('窗口未显示AppID'));
+});
 test('current plan entry points preserve legacy rows and point to the new execution document',()=>{for(const file of ['docs/development-plan.md','docs/post-registration-development.md','docs/module-specs/current-development-basis-20261015.md','CONTEXT.md'])a(read(file).includes('v1-executable-development-plan-20261027.md'),file);const p=load();a(p.legacyOverrides.some(x=>x.legacy.includes('DP14')&&x.decision==='provider-profiles-only-no-people-directory'));a(p.legacyOverrides.some(x=>x.legacy.includes('DP25')&&x.decision==='existing-legal-history-only-v17-archived'));a.equal(p.tasks.flatMap(t=>t.pages).includes('V17'),false);a(!scope.remainingDecisionsOrEvidence.includes('new-onboarding-and-coupon-ascii-html-design'));a.equal(scope.prototypeDelivery.realAbilitiesVerified,false);a.equal(scope.formalDevelopmentReady,false);});
 for(const [name,mutate]of [
  ['missing task',p=>p.tasks.pop()],

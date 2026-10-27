@@ -77,6 +77,11 @@
     "formalNewEnvironmentStatus": "not-verified",
     "newSubjectCloudDevelopmentOpeningStatus": "not-opened-user-reported",
     "newAppIdCurrentProjectConfirmedByUser": true,
+    "currentWindowObservation": {
+      "visibleProjectLabel": "PERMISSION-CHECK",
+      "visibleMessage": "仅用于检查本地开发环境。没有业务功能、真实数据或云服务连接。",
+      "appIdVisible": false
+    },
     "oldCloudEnvironmentReadOnlyEvidence": {
       "appId": "wx358290e451cb06e7",
       "environmentId": "cloud1-d1g1mv89t76512a25",
@@ -365,6 +370,7 @@
           "微信开发者工具CLI只读登录检查返回login=true",
           "安装诊断返回compatible=true、Stable 2.02.2608080；只证明本机安装与CLI版本兼容，不证明本地桥接已恢复",
           "本轮重新显式执行CLI授权仍返回authorized=true、alreadyTrusted=true；127.0.0.1:31781仍由开发者工具PID 51712监听；CLI授权与端口监听均不代表工具调用可达",
+          "只读观察当前开发者工具窗口显示PERMISSION-CHECK；模拟器提示仅本地环境检查、无业务/真实数据/云服务连接；窗口未显示AppID",
           "旧AppID wx358290e451cb06e7只读查询返回cloud1-d1g1mv89t76512a25；不证明新AppID环境状态",
           "用户提供的控制台截图显示cloud1/微信体验版和暂无数据/无可用集合，截图未显示AppID",
           "预览根地址返回目录列表，不是单页原型入口"
@@ -373,7 +379,7 @@
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "已完成工具文档支持的CLI重新授权与监听检查；两个只读工具仍在本地连接层失败。暂停重复查询，不更改PATH或重装；待获得新的可验证IDE连接诊断后再执行只读环境列表查询"
+        "nextAction": "当前窗口可见PERMISSION-CHECK本地验证页且无云服务连接，AppID未显示；先确认该项目是否就是目标项目。桥接错误仍未解决；确认目标后仅重试只读环境列表，不进行云资源写入"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
