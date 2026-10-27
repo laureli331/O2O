@@ -37,3 +37,22 @@ for(const [name,mutate]of [
  ['missing module',p=>p.tasks[27].features=[]],
  ['invented legacy id',p=>p.tasks[0].legacyTasks.push('DP99')]
 ])test('execution validator rejects '+name,()=>{const p=load();mutate(p);a.throws(()=>validate(p));});
+
+function validateUiProgress(p){
+ const ui=p.prototypeUiDelivery,proof=JSON.parse(read('docs/ui-consistency-verification-20261027.json')),manifest=JSON.parse(read('docs/ui-consistency-pages-20261027.json'));
+ a.equal(ui.status,'complete-prototype-only');a.equal(ui.commit,cp.execFileSync('git',['rev-parse','f729b0e'],{cwd:root,encoding:'utf8'}).trim());
+ a.deepEqual(ui.activePages,manifest.pages.map(x=>x.file));a.deepEqual(ui.excludedPages,manifest.excludedPages);a.equal(ui.stylesheetSha256,proof.stylesheetSha256);
+ for(const key of ['layoutStateChecks','pilotInteractionChecks','nodeTests'])a.equal(ui.validation[key],proof[key]);
+ a.equal(ui.realMiniProgramTested,false);a.equal(ui.livePaymentTested,false);a.equal(ui.formalTaskCompleted,false);
+ const sp=p.tasks.find(x=>x.id==='SP05');a.equal(sp.prototypeProgress.uiDeliveryRef,'prototypeUiDelivery');a.equal(sp.status,'planned');a.equal(sp.productAcceptancePassed,false);a(sp.prototypeProgress.remaining.length>=3);
+ for(const f of ui.evidence)a(p.sources.includes(f)&&fs.existsSync(path.join(root,f)));
+ return true;
+}
+test('development plan records completed UI rollout separately from unfinished formal task SP05',()=>a(validateUiProgress(load())));
+test('all current execution entry documents expose the completed UI baseline and implementation source',()=>{
+ for(const f of ['docs/v1-executable-development-plan-20261027.md','docs/development-plan.md','docs/post-registration-development.md','CONTEXT.md']){const doc=read(f);a(doc.includes('ui-consistency-rollout-delivery-20261027.md'),f);a(doc.includes('f729b0e'),f);}
+ const p=load(),doc=read(p.document);for(const text of p.tasks.find(t=>t.id==='SP05').prototypeProgress.remaining)a(doc.includes(text),text);
+});
+test('UI progress cannot claim real-device completion or omit accepted page coverage',()=>{
+ for(const mutate of [p=>p.prototypeUiDelivery.realMiniProgramTested=true,p=>p.prototypeUiDelivery.activePages.pop(),p=>p.tasks.find(t=>t.id==='SP05').status='complete']){const p=load();mutate(p);a.throws(()=>validateUiProgress(p));}
+});

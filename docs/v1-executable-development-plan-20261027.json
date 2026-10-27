@@ -13,7 +13,11 @@
     "docs/v1-scope-confirmed-20261026.md",
     "docs/v1-development-preflight-20261018.json",
     "docs/commerce-acceptance-20261027.md",
-    "docs/superpowers/specs/2026-10-23-v15-v16-web-admin-carrier-design.md"
+    "docs/superpowers/specs/2026-10-23-v15-v16-web-admin-carrier-design.md",
+    "docs/superpowers/specs/2026-10-27-ui-consistency-design.md",
+    "docs/ui-consistency-pages-20261027.json",
+    "docs/ui-consistency-verification-20261027.json",
+    "docs/ui-consistency-rollout-delivery-20261027.md"
   ],
   "architecture": {
     "frontend": "native-wechat-typescript",
@@ -386,21 +390,35 @@
         "G03",
         "G04"
       ],
-      "deliverable": "当前页面清单、状态/权限/返回合同、真机差异清单",
+      "deliverable": "当前页面清单、状态/权限/返回合同、统一视觉基准与真机差异清单",
       "steps": [
         "以V01—V27现行承载和G状态为依据",
+        "沿用已完成的33个有效HTML及共享UI规范，保留6个排除页",
         "区分已通过的浏览器检查与未做的真机检查",
         "将所有表单失败保留、未知查询、弹层和安全区列为共用验收"
       ],
       "acceptance": [
         "V17仅归档，V06跳转服务页而不是发现",
         "发布为小程序独立全屏页，子页隐藏TabBar",
-        "不重复翻修已通过布局，新实质变化需确认"
+        "不重复翻修已通过布局，新实质变化需确认",
+        "正式组件采用同一套圆角、间距、字号与操作尺寸；保留胶囊、图文贴边及明确的尺寸例外"
       ],
       "evidenceGates": [],
       "features": [],
       "status": "planned",
-      "productAcceptancePassed": false
+      "productAcceptancePassed": false,
+      "prototypeProgress": {
+        "uiDeliveryRef": "prototypeUiDelivery",
+        "completed": [
+          "33个有效HTML共享规范已完成并通过本地浏览器验证",
+          "规范、逐页映射、测试证据与回退提交已归档"
+        ],
+        "remaining": [
+          "完成SP01、SP04的技术与真实配置前置核对",
+          "将原型页面状态、权限和返回规则整理成正式组件及接口验收合同",
+          "形成微信真机胶囊、键盘、安全区与通知差异清单，实际执行留到SP35"
+        ]
+      }
     },
     {
       "id": "SP06",
@@ -1592,5 +1610,69 @@
       "status": "planned",
       "productAcceptancePassed": false
     }
-  ]
+  ],
+  "revision": "execution-backlog-1.1-ui-rollout-synced",
+  "prototypeUiDelivery": {
+    "status": "complete-prototype-only",
+    "date": "2026-10-27",
+    "commit": "f729b0e3980d77523720a73e28cc2d94d729ecf5",
+    "activePages": [
+      "ad-cooperation.html",
+      "banner-admin.html",
+      "g01.html",
+      "g02.html",
+      "g03.html",
+      "g04.html",
+      "services.html",
+      "v01-v02.html",
+      "v03.html",
+      "v04.html",
+      "v05.html",
+      "v07.html",
+      "v08.html",
+      "v09.html",
+      "v10.html",
+      "v11.html",
+      "v12.html",
+      "v13.html",
+      "v14.html",
+      "v15-duty.html",
+      "v15.html",
+      "v16.html",
+      "v18.html",
+      "v19.html",
+      "v20-duty.html",
+      "v20.html",
+      "v21.html",
+      "v22.html",
+      "v23.html",
+      "v24.html",
+      "v25.html",
+      "v26.html",
+      "v27.html"
+    ],
+    "excludedPages": {
+      "discovery-buttons.html": "design-lab",
+      "navigation-icon-options.html": "design-lab",
+      "v06.html": "redirect",
+      "v15-mobile-legacy.html": "archive",
+      "v15-rework.html": "archive",
+      "v17.html": "archive"
+    },
+    "stylesheetSha256": "de0f67b84a84b8abe896d497ed3fa2d836a5ff72235ea4e59e2014a2aa3aa657",
+    "validation": {
+      "layoutStateChecks": 423,
+      "pilotInteractionChecks": 23,
+      "nodeTests": 1353
+    },
+    "realMiniProgramTested": false,
+    "livePaymentTested": false,
+    "formalTaskCompleted": false,
+    "evidence": [
+      "docs/superpowers/specs/2026-10-27-ui-consistency-design.md",
+      "docs/ui-consistency-pages-20261027.json",
+      "docs/ui-consistency-verification-20261027.json",
+      "docs/ui-consistency-rollout-delivery-20261027.md"
+    ]
+  }
 }
