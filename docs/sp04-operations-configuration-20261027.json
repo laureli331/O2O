@@ -76,7 +76,7 @@
     "twoPersonReview": false,
     "promisesTwentyFourHourCoverage": false,
     "coverageSchedule": {
-      "status": "partially-confirmed",
+      "status": "user-confirmed",
       "shiftArrangement": {
         "partner": "白班",
         "user": "晚班",
@@ -94,8 +94,12 @@
         "source": "user-reply-2026-10-27",
         "scope": "management-review-and-handover-only"
       },
-      "serviceAvailabilityHours": null,
-      "unattendedHandling": null
+      "serviceAvailabilityHours": {
+        "start": "09:00",
+        "end": "22:00",
+        "source": "user-reply-2026-10-27"
+      },
+      "unattendedHandling": "22:00后次日处理"
     },
     "confirmedSource": "docs/module-specs/business-closeout-confirmed-20261015.md"
   },
@@ -159,7 +163,7 @@
     {
       "id": "E05",
       "passed": false,
-      "reason": "服务范围和三类服务模块已由用户确认；顾客可预约时段及值班外请求处理方式仍未确认，且微信官方类目适用性不能由本记录推定。"
+      "reason": "服务范围、三类服务模块、09:00—22:00服务时段及22:00后次日处理均已由用户确认；微信官方类目适用性和真实运营/供应能力仍需正式依据。"
     },
     {
       "id": "E06",
@@ -169,8 +173,7 @@
   ],
   "cloudWritesOrDeploymentPerformed": false,
   "remainingChecks": [
-    "确认顾客可预约服务的实际时段是否等同于09:00—22:00管理值班时段；当前不作等同推定。",
-    "确认22:00后及其他无人值班时段的请求处理安排；不要求承诺24小时值守。",
+    "核实微信官方类目适用性及真实运营/供应能力，不从项目服务名称推定平台准入。",
     "在新AppID下核验环境归属、可用登录/托管能力和配置状态。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
     "按确认的真实设备和浏览器执行网页后台登录、权限和页面验收。"

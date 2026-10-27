@@ -54,9 +54,9 @@ test('SP04 records the exact user-confirmed service area and three service modul
   assert.match(record.businessConfiguration.serviceArea.recommendation, /已被用户明确确认的十地点清单取代/);
 });
 
-test('SP04 separates confirmed management shifts from customer availability and unattended handling', () => {
+test('SP04 records the confirmed service hours and next-day handling after 22:00', () => {
   const record = evidence();
-  assert.equal(record.operations.coverageSchedule.status, 'partially-confirmed');
+  assert.equal(record.operations.coverageSchedule.status, 'user-confirmed');
   assert.deepEqual(record.operations.coverageSchedule.shiftArrangement, {
     partner: '白班',
     user: '晚班',
@@ -68,8 +68,12 @@ test('SP04 separates confirmed management shifts from customer availability and 
     source: 'user-reply-2026-10-27',
     scope: 'management-review-and-handover-only',
   });
-  assert.equal(record.operations.coverageSchedule.serviceAvailabilityHours, null);
-  assert.equal(record.operations.coverageSchedule.unattendedHandling, null);
+  assert.deepEqual(record.operations.coverageSchedule.serviceAvailabilityHours, {
+    start: '09:00',
+    end: '22:00',
+    source: 'user-reply-2026-10-27',
+  });
+  assert.equal(record.operations.coverageSchedule.unattendedHandling, '22:00后次日处理');
 });
 
 test('SP04 preserves the confirmed shared-account and no-24-hour operating rules', () => {
@@ -114,7 +118,8 @@ test('SP04 records browser installation separately from tested support and block
   assert.ok(task.executionProgress.blockedChecks.length >= 1);
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('湘阴渡社区') && check.includes('湘阴村')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('09:00') && check.includes('22:00')));
-  assert.ok(task.executionProgress.blockedChecks.some((check) => check.includes('顾客可预约服务时段')));
+  assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('顾客服务时段09:00—22:00') && check.includes('22:00后请求次日处理')));
+  assert.ok(task.executionProgress.blockedChecks.every((check) => !check.includes('顾客可预约服务时段')));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.md'));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.json'));
 });
@@ -134,10 +139,11 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
     '正式环境必须绑定已完成备案的自定义域名',
     '没有创建云环境、部署托管',
     '回退',
-    '服务范围、三类项目服务和管理值班时段已由用户确认',
-    '顾客实际可预约服务时段是否与管理值班相同',
-    '22:00后或其他无人值班时段如何处理请求',
+    '服务范围、三类项目服务、管理值班、09:00—22:00服务时段及22:00后次日处理均已由用户确认',
+    '用户另确认顾客服务时段为09:00—22:00，22:00后收到的请求次日处理',
   ]) {
     assert.ok(doc.includes(phrase), phrase);
   }
+  assert.ok(!doc.includes('顾客实际可预约服务时段是否与管理值班相同'));
+  assert.ok(!doc.includes('22:00后或其他无人值班时段如何处理请求'));
 });
