@@ -80,7 +80,23 @@
       "newAppIdEnvironmentVerified": false
     },
     "oldCloudEnvironmentApprovedForProduction": false,
-    "liveCloudRevalidatedThisDelivery": false
+    "liveCloudRevalidatedThisDelivery": false,
+    "latestReadOnlyQueryAttempt": {
+      "date": "2026-10-27",
+      "clientName": "Codex",
+      "appId": "wx2414399d423dfb65",
+      "cliAuthorization": "already-trusted",
+      "authorizationResponse": {
+        "authorized": true,
+        "alreadyTrusted": true,
+        "cliTokenRequired": false,
+        "mcpTokenRequired": true
+      },
+      "port": 31781,
+      "queryTool": "cloud_env_list",
+      "queryStatus": "connect-error-before-cloud-response",
+      "environmentListRetrieved": false
+    }
   },
   "scope": {
     "firstRelease": [
@@ -300,15 +316,16 @@
         "completedChecks": [
           "本机Node.js 24.18.0与npm 11.16.0已复核；不是云端运行时证据",
           "微信开发者工具CLI只读登录检查返回login=true",
+          "Codex客户端CLI授权返回authorized=true、alreadyTrusted=true；CLI令牌未启用，不代表云环境查询成功",
         "旧AppID wx358290e451cb06e7只读查询返回cloud1-d1g1mv89t76512a25；不证明新AppID环境状态",
         "用户提供的控制台截图显示cloud1/微信体验版和暂无数据/无可用集合，截图未显示AppID",
           "预览根地址返回目录列表，不是单页原型入口"
         ],
         "blockedChecks": [
-          "新AppID云环境列表查询返回code 10 system error，未取得环境清单",
+          "新AppID早先云查询返回code 10 system error；最新Codex CLI cloud_env_list调用返回CONNECT_ERROR且未收到目标AppID的云端响应；均未取得环境清单",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "仅在官方查询可用时重试只读环境清单，并核对目标环境；不创建、修改或部署云资源"
+        "nextAction": "先恢复微信开发者工具CLI连接，再仅重试只读环境清单并核对目标环境；不创建、修改或部署云资源"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
