@@ -5,7 +5,7 @@ const stem='2026-10-27-ui-consistency-design';
 const load=()=>JSON.parse(fs.readFileSync(path.join(dir,stem+'-tokens.json'),'utf8'));
 const evidence=JSON.parse(fs.readFileSync(path.join(dir,stem+'-audit.json'),'utf8'));
 function validate(p){
- a.equal(p.status,'proposal-awaiting-user-review');a.equal(p.implementationStarted,false);
+ a.equal(p.status,'approved-pilot-delivered');a.equal(p.implementationStarted,true);a.equal(p.rollout,'pilot-only');a.equal(p.pilotVisualAccepted,false);a.equal(p.approval.confirmed,true);a.equal(p.approval.reply,'开始下一步');
  a.deepEqual(p.radius,{tag:4,button:8,field:8,card:12,dialog:16,sheetTop:20});
  a.deepEqual(p.spacingScale,[4,8,12,16,20,24,32]);
  a.equal(p.mobile.primaryMinHeight,46);a.equal(p.mobile.touchMinWidth,44);a.equal(p.mobile.touchMinHeight,44);
@@ -16,7 +16,7 @@ function validate(p){
  for(const [f,status]of Object.entries(p.excludedPages)){a(!p.activePages.includes(f));a.equal(evidence.pages.find(x=>x.file===f).status,status);}
  a.deepEqual(p.representativePages,['services.html','v24.html','v15.html']);
  a(p.representativePages.every(x=>p.activePages.includes(x)));
- a.deepEqual(p.approvalRequiredBefore,['representative-html-changes','all-active-page-rollout']);
+ a.deepEqual(p.approvalRequiredBefore,['all-active-page-rollout']);
  return true;
 }
 test('candidate tokens preserve explicit approval gates, scope and role-based dimensions',()=>a(validate(load())));
@@ -28,12 +28,13 @@ test('measurement evidence identifies source version and separates samples from 
 test('written proposal has resolvable links and records limitations and protected behavior',()=>{
  const doc=fs.readFileSync(path.join(dir,stem+'.md'),'utf8');
  for(const [,target]of doc.matchAll(/\]\(([^)]+)\)/g))if(!/^https?:/.test(target))a(fs.existsSync(path.resolve(dir,target)),target);
- for(const phrase of ['验证方案','尚未修改产品 HTML/CSS','AAA','不是其它平台最新版应用','明确例外','未知结果查询','不能作为已经验收','原SVG轮廓填绿'])a(doc.includes(phrase),phrase);
+ for(const phrase of ['验证方案','等待代表页视觉审阅','AAA','不是其它平台最新版应用','明确例外','未知结果查询','不能作为已经验收','原SVG轮廓填绿'])a(doc.includes(phrase),phrase);
 });
 for(const [label,mutate]of [
- ['silent rollout',p=>p.implementationStarted=true],
+ ['silent rollout',p=>p.rollout='all-active-pages'],
  ['archive restored',p=>p.activePages.push('v17.html')],
  ['wrong touch target',p=>p.mobile.touchMinHeight=32],
  ['unapproved radius',p=>p.radius.card=18],
- ['missing review gate',p=>p.approvalRequiredBefore=[]]
+ ['missing review gate',p=>p.approvalRequiredBefore=[]],
+ ['missing human approval',p=>p.approval.confirmed=false]
 ])test('rejects '+label,()=>{const p=load();mutate(p);a.throws(()=>validate(p));});
