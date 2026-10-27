@@ -15,7 +15,7 @@ const {chromium}=require(process.env.PREVIEW_PLAYWRIGHT_PATH);
  // Same synthetic application moves through the separate admin URL.
  await open(27);await act('open-B');await act('reason-2');await act('decision');await modal();await act('notify');assert.match(await page.locator('#content').innerText(),/支付截止/);
  await open(24);await act('payment');await act('pay');await modal();assert.match(await page.locator('#title').innerText(),/订单/);assert.match(await page.locator('#content').innerText(),/实际开通/);
- await open(25);await act('create');await act('review');await act('submit');assert.match(await page.locator('#content').innerText(),/审核中/);
+ await open(25);assert.match(await page.locator('#content').innerText(),/还没有活动/);await act('create');await act('review');await act('submit');assert.match(await page.locator('#content').innerText(),/审核中/);
  await open(27);await act('open-E');await act('reason-0');await act('decision');await modal();assert.match(await page.locator('#toast').innerText(),/内容安全/);await page.locator('#safety').selectOption('passed');await act('decision');await modal();assert.match(await page.locator('#content').innerText(),/只读/);
  await open(26);await act('claim');assert.match(await page.locator('#title').innerText(),/券详情/);const code=await page.locator('.coupon-code').innerText();assert.match(code,/DEMO-/);
  await open(25);await act('redeem');await page.locator('[data-field=code]').fill(code);await act('lookup');await page.locator('#result').selectOption('unknown');await act('execute-redeem');await page.reload();await act('query');assert.match(await page.locator('#content').innerText(),/已经核销/);await act('next');await act('records');assert.match(await page.locator('#content').innerText(),/青禾|邻里到店/);

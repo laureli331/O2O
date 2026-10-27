@@ -4,7 +4,7 @@
  const beijing=t=>new Date(t+8*HOUR).toISOString().slice(0,16);
  const time=v=>{if(typeof v==='number')return v;if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v||''))return NaN;const t=Date.parse(v+':00+08:00');return Number.isFinite(t)&&beijing(t)===v?t:NaN;};
  function createState(now=Date.now()){
-  return {version:1,revision:0,clock:now,account:'resident-demo',merchantId:'shop-demo',existingSubjects:[],pending:null,events:[],
+  return {version:1,revision:0,hideActivities:true,clock:now,account:'resident-demo',merchantId:'shop-demo',existingSubjects:[],pending:null,events:[],
    merchant:{status:'new',notifiedAt:null,activeUntil:null,draft:{name:'',category:'',area:'',phone:'',address:'',hours:'',subjectType:'licensed',subject:'entity-demo',consent:false},reason:'',order:null,correction:null,anomaly:null},
    activity:{id:'campaign-demo',status:'draft',safety:'unknown',reason:'',stopped:false,draft:{title:'邻里到店优惠',threshold:'50',discount:'5',quantity:'100',start:beijing(now- HOUR),end:beijing(now+7*DAY),usage:'到店消费满50元可用，不与其他优惠叠加。'}},coupons:[]};
  }
@@ -14,7 +14,7 @@
  const fail=message=>({ok:false,message});
  function couponStatus(c,now){return c.usedAt?'used':now>=c.end?'expired':'available';}
  function claimable(s,account,now){const a=s.activity,p=permissions(s,now),d=a.draft;if(!account)return '请先微信登录';if(a.status!=='published')return '活动暂未开放';if(a.stopped||!p.create)return '已停止领取';if(now<time(d.start))return '活动尚未开始';if(now>=time(d.end))return '活动已结束';if(s.coupons.some(c=>c.account===account&&c.activityId===a.id))return '你已经领过这张券';if(s.coupons.filter(c=>c.activityId===a.id).length>=Number(d.quantity))return '已领完';return '';}
- function redeemable(s,code,merchant,now){const c=s.coupons.find(c=>c.code===code);if(!c)return '没有找到这张券，请核对券码';if(c.merchantId!==merchant)return '这不是本店的优惠券';if(c.usedAt)return '这张券已经核销';if(now<c.start)return '还未到使用时间';if(now>=c.end)return '这张券已经过期';if(!permissions(s,now).redeem)return '请使用所属商家的管理身份';return '';}
+ function redeemable(s,code,merchant,now){const c=s.coupons.find(c=>c.code===code);if(!c)return '没有找到这张券，请核对券码';if(merchant!==s.merchantId||c.merchantId!==s.merchantId)return '这不是本店的优惠券';if(c.usedAt)return '这张券已经核销';if(now<c.start)return '还未到使用时间';if(now>=c.end)return '这张券已经过期';if(!permissions(s,now).redeem)return '请使用所属商家的管理身份';return '';}
  function apply(s,c,now=s.clock){
   if(c.type==='query'){if(!s.pending)return fail('没有待核实操作');const original=s.pending;s.pending=null;const operationTime=['claim','redeem'].includes(original.type)?original.requestedAt:now;const result=apply(s,{...original,result:'success',settledRequest:true},operationTime);if(!result.ok){s.pending=original;return fail('本次结果仍待核实，请稍后查询');}return result;}
   if(s.pending)return fail('上次操作结果待核实，请先查询');

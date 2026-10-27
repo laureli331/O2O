@@ -36,3 +36,7 @@ test('late query of redemption uses original valid operation time',()=>{let s=ac
 test('query that cannot resolve original context keeps pending request',()=>{let s=active(state());s.activity.status='published';cmd(s,'claim',{result:'unknown'});s.activity.status='review';a.equal(cmd(s,'query').ok,false);a(s.pending);a.equal(cmd(s,'claim').ok,false)});
 
 test('received payment waiting activation can only activate its existing order once',()=>{let s=state();s.merchant.status='paid';s.merchant.order={id:'original',amount:99,paidAt:now-M.HOUR,activatedAt:null};a.equal(cmd(s,'pay').ok,false);a.equal(cmd(s,'activate').ok,true);a.equal(s.merchant.order.id,'original');a.equal(s.merchant.order.paidAt,now-M.HOUR);a.equal(s.merchant.order.activatedAt,now);a.equal(cmd(s,'activate').ok,false)});
+
+test('changing merchant argument cannot authorize another shops coupon',()=>{let s=active(state());s.activity.status='published';cmd(s,'claim');const coupon=s.coupons[0];coupon.merchantId='another-shop';a.equal(cmd(s,'redeem',{code:coupon.code,merchant:'another-shop'}).ok,false);a.equal(coupon.usedAt,null)});
+
+test('first activated merchant has no saved campaign until a user creates one',()=>{let s=approved(state());cmd(s,'pay');a.equal(s.hideActivities,true);a.equal(s.coupons.length,0)});
