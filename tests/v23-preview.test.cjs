@@ -168,7 +168,7 @@ test('preview guide documents the content-first V23 refinement',()=>{
 test('discovery merchant tools use separate capsule row and accessible left drawer',()=>{
  const html=fs.readFileSync(file,'utf8');
  for(const part of ['id="i-menu"','id="i-bell"','class="capsule-row"','class="discovery-tools"','id="merchant-drawer"','aria-controls="merchant-drawer"','drawerInert','rememberDiscovery','returnDiscovery','merchant-home'])assert(html.includes(part),part);
- assert(!html.includes('查看商家公开资料'));assert(html.includes("isLoggedIn&&role.value==='merchant-approved'"));
+ assert(!html.includes('查看商家公开资料'));assert(html.includes("const merchant=isLoggedIn;"));assert(html.includes("role.value!=='merchant-approved'?`<section"));assert(html.includes("entry.hidden=role.value==='merchant-approved'"));assert(html.includes("v24.html?from=discovery"));
 });
 
 test('merchant settings link opens the existing settings without an intermediate page',()=>{

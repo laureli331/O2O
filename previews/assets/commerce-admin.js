@@ -1,0 +1,42 @@
+'use strict';
+(()=>{const U=CommerceUI,{M,esc,action:A,panel:P,notice:N,row:R,field:F,select:S,check:C,fmt,empty:E}=U;let segment='todo',type='all';
+ const pages=[['A','经营队列'],['B','入驻审核'],['C','必要更正'],['D','入驻异常'],['E','活动审核'],['F','券争议']];
+ const names={B:'入驻申请',C:'必要信息更正',D:'入驻异常',E:'活动审核',F:'券争议'};
+ const cards=()=>{const s=U.state,m=s.merchant,a=s.activity,r=[];if(m.status!=='new'&&m.status!=='draft')r.push({view:'B',status:m.status,title:m.draft.name||'商家入驻申请',task:'核对经营资料及主体依据，决定是否通过',at:s.clock-3*M.HOUR});if(m.correction)r.push({view:'C',status:m.correction.status,title:'经营信息申请更正',task:'对照原公开资料与申请改动',at:s.clock-2*M.HOUR});if(m.anomaly)r.push({view:'D',status:m.anomaly.status,title:m.anomaly.kind,task:'核对实际付款、开通与申请人说明',at:m.anomaly.receivedAt});if(a.status!=='draft')r.push({view:'E',status:a.status,title:a.draft.title,task:'核对优惠条件与内容安全检测结果',at:s.clock-M.HOUR});if(s.dispute)r.push({view:'F',status:s.dispute.status,title:'顾客对券核销有疑问',task:'核对原券、领取及核销事实',at:s.clock});return r;};
+ const bucket=x=>['supplement'].includes(x)?'waiting':['review'].includes(x)?'todo':'done';
+ const merchant=()=>{const d=U.state.merchant.draft;return P(`<div class="subject"><img src="assets/service-repair.svg" alt="合成经营配图"><div><h3>${esc(d.name||'未填写名称')}</h3><p>${esc(d.category)} · ${esc(d.area)}</p></div></div>${R('对外电话',d.phone||'未填')}${R('经营地址',d.address||'未填')}${R('营业时段',d.hours||'未填')}`);};
+ function controls(v,closed=false){if(closed)return N('本次事项已有处理结果，当前只读。');const f=U.state.forms?.['admin-'+v]||{};const options=v==='D'?[['resolved','记录核对结论'],['supplement','请求补充材料'],['refund','发起符合条件退款']]:v==='F'?[['resolved','记录核对结论'],['supplement','请求补充材料']]:[['approved','通过'],['supplement','需要补充'],['rejected','不通过']];
+  const suggestions=v==='E'?['使用范围需要写清楚','优惠条件与说明不一致','请调整已过期的有效时间']:v==='D'?['请补充该订单的付款凭证','已核对原订单与开通记录']:v==='C'?['请说明新的联系方式','更正依据与申请内容一致']:['请补充经营区域说明','经营说明与主体依据不一致','已核对本次提交资料'];
+  return P(`<h3>本次怎么处理</h3>${S('decision','处理方式',f.decision||options[0][0],options)}<div class="reason-chips">${suggestions.map((t,i)=>A(t,'reason-'+i)).join('')}</div>${F('reason','原因或核对说明',f.reason||'','点选上方提示后，可继续修改','textarea')}${v==='D'?F('amount','拟退款金额',f.amount||'','仅选择退款时填写，不超过本订单已核实可退款')+C('verified','已核实原订单实际收款及符合退款条件的未退金额。',f.verified):''}${A('核对本次处理','decision',true)}`);
+ }
+ function render(v){const s=U.state,m=s.merchant,a=s.activity;if(s.adminDenied){U.show('经营审核',E('当前账号无经营审核权限','请联系管理员核对权限。'));return;}
+  if(v==='A'){
+   const all=cards().sort((a,b)=>a.at-b.at),filtered=all.filter(x=>bucket(x.status)===segment&&(type==='all'||x.view===type));
+   U.show('经营审核',`<div class="tabs">${[['todo','待你处理'],['waiting','等待对方'],['done','最近完成']].map(([id,t])=>`<button role="tab" aria-selected="${id===segment}" data-action="segment-${id}">${t} ${all.filter(x=>bucket(x.status)===id).length}</button>`).join('')}</div><label class="field"><span>事务类型</span><select id="type-filter"><option value="all">全部类型</option>${Object.entries(names).map(([id,t])=>`<option value="${id}" ${id===type?'selected':''}>${t}</option>`).join('')}</select></label>`+(filtered.length?filtered.map(x=>`<button class="queue-card" data-action="open-${x.view}"><div class="panel-head"><span class="tag">${names[x.view]}</span><small>${fmt(x.at)}</small></div><h3>${esc(x.title)}</h3><p>需要你：${x.task}</p><p style="color:var(--green)">查看内容并处理 ›</p></button>`).join(''):E(segment==='todo'?'当前没有待处理事务':'这里还没有记录','可切换事务类型或队列查看。')));return;
+  }
+  if(!cards().some(x=>x.view===v)){U.show(names[v],E('没有对应待办记录','请从经营审核队列进入。',A('返回队列','queue',true)));return;}
+  let left='',right='',closed=false;
+  if(v==='B'){
+   closed=!['review','supplement'].includes(m.status);left=merchant()+P(`<h3>本次核对依据</h3>${R('主体类型',m.draft.subjectType==='licensed'?'持照经营主体':'已核验自然人')}${R('主体证据','合成主体核验记录 · 非真实证件')}${R('唯一档案检查',s.existingSubjects.includes(m.draft.subjectType+':'+m.draft.subject)?'该主体已有档案':'未发现同主体既有档案')}<p class="hint">正式材料标准另行确认，本预览不收真实证件。</p>`);
+   right=N('通过只代表资料审核通过，不代表已付款或已开通。站内通知成功生成后，才开始72小时付款窗口。')+(m.status==='approved'?P(`<h3>审核已通过</h3>${R('通知生成时间',fmt(m.notifiedAt))}${m.notifiedAt?R('支付截止',fmt(m.notifiedAt+72*M.HOUR)):A('生成审核通过通知','notify',true)}`):'')+(m.reason?N(esc(m.reason)): '');
+  }else if(v==='C'){
+   const x=m.correction;closed=x.status!=='review';left=merchant()+P(`<h3>本次申请更正</h3>${R('原联系电话',x.original.phone||'未填')}${R('申请联系电话',x.phone||'不变')}${R('原经营地址',x.original.address||'未填')}${R('申请经营地址',x.address||'不变')}${R('营业状态',x.businessStatus||'不变')}<p>${esc(x.reason)}</p>`);right=N('只更正本次必要信息。未通过前保留原公开内容；通过不恢复到期商家的营销权限。');
+  }else if(v==='D'){
+   const x=m.anomaly,o=m.order;closed=!['review','supplement'].includes(x.status);left=P(`<h3>商家遇到什么问题</h3>${R('异常类型',x.kind)}<p>${esc(x.reason)}</p>`)+P(`<h3>核对原订单</h3>${R('金额','¥99.00')}${R('实际付款',fmt(o?.paidAt))}${R('实际开通',fmt(o?.activatedAt))}${R('退款记录',x.refundAmount?'已发起 ¥'+x.refundAmount:'暂无')}<details><summary>订单标识与处理记录</summary>${R('原订单',o?.id||'未找到')}<p>${esc(x.history?.map(h=>h.text).join('；')||'暂无历史结论')}</p></details>`);right=N('成功开通后个人原因退出不按时间退款；重复付款、未能开通、平台未交付须按事实核对。')+P(R('首次回应目标',fmt(x.receivedAt+24*M.HOUR))+R('完整材料核对目标',x.completeAt?fmt(x.completeAt+72*M.HOUR):'等待完整有效材料')+(x.reply?'<p>'+esc(x.reply)+'</p>':''));
+  }else if(v==='E'){
+   const d=a.draft;closed=a.status!=='review';left=P(`<h3>顾客将看到的优惠</h3><div class="coupon-face"><div class="price">¥${esc(d.discount)}</div><div><h3>${esc(d.title)}</h3><p>满${esc(d.threshold)}元可用</p></div></div>${R('商家',m.draft.name)}${R('开始',d.start.replace('T',' '))}${R('结束',d.end.replace('T',' '))}${R('总量',d.quantity+'张')}<p>${esc(d.usage)}</p>`);right=P(`<h3>本次检测与条件</h3>${R('内容安全检测',a.safety==='passed'?'已通过':a.safety==='failed'?'未通过':'结果待确认')}${R('每账号限领','1张')}${R('当前入驻',M.permissions(s,U.now()).create?'有效':'已到期')}`)+N('须检测及人工审核都通过。审核不顺延活动时间，公开后锁定门槛、优惠额和有效期。');
+  }else if(v==='F'){
+   const x=s.dispute,c=s.coupons[0];closed=x.status==='resolved';left=P(`<h3>顾客的说明</h3><p>${esc(x.reason)}</p>`)+(c?P(`<h3>原券及使用记录</h3>${R('活动',c.title)}${R('条件','满'+c.threshold+'减'+c.discount)}${R('领取',fmt(c.claimedAt))}${R('核销',c.usedAt?fmt(c.usedAt):'尚未核销')}${R('失效时间',fmt(c.end))}${R('活动停领',a.stopped?'已停止新领取':'尚未停领')}`):N('尚未关联到可核实的券记录，需要补充材料。'));right=N('核对并记录事实，不任意撤销核销、不延长有效期，也不改写原券条件。')+(x.reply?N(esc(x.reply)):'');
+  }
+  U.show(names[v],`<div class="admin-grid"><div>${left}</div><div>${right}${controls(v,closed)}</div></div>`,A('返回待办队列','queue'),closed?'':'admin-'+v);
+ }
+ function decision(){const v=U.view,f=U.getForm(),choice=f.decision||(['D','F'].includes(v)?'resolved':'approved');if(!f.reason?.trim()){U.errors({reason:'请点选提示或填写具体处理说明'});return;}let command;if(v==='B')command={type:'reviewMerchant',decision:choice,reason:f.reason};if(v==='C')command={type:'reviewCorrection',decision:choice,reason:f.reason};if(v==='D')command=choice==='refund'?{type:'refund',amount:f.amount||'',verified:!!f.verified,reason:f.reason}:{type:'reviewAnomaly',decision:choice,reason:f.reason};if(v==='E')command={type:'reviewActivity',decision:choice,reason:f.reason};if(v==='F')command={type:'reviewDispute',decision:choice,reason:f.reason};
+  U.confirm('核对本次处理',P(R('本次对象',names[v])+R('处理方式',choice==='approved'?'通过':choice==='supplement'?'请求补充':choice==='refund'?'发起退款':choice==='resolved'?'记录结论':'不通过')+'<p>'+esc(f.reason)+'</p>')+N('仅处理当前事项，不扩大为账号处罚。'),()=>{U.write(command,v);},'确认处理');
+ }
+ const actions={queue:()=>U.go('A'),decision,notify:()=>U.write({type:'notify'},'B')};
+ for(const id of ['todo','waiting','done'])actions['segment-'+id]=()=>{segment=id;render('A');};for(const v of ['B','C','D','E','F'])actions['open-'+v]=()=>U.go(v);
+ for(let i=0;i<3;i++)actions['reason-'+i]=()=>{const el=U.$('f-reason'),b=document.querySelector('[data-action="reason-'+i+'"]');el.value=b.textContent;el.dispatchEvent(new Event('input',{bubbles:true}));el.focus();};
+ document.addEventListener('change',e=>{if(e.target.id==='type-filter'){type=e.target.value;render('A');}});
+ U.boot({pages,scenarios:[['review','入驻待审核'],['approved','已通过／待开通'],['correction','必要更正待审核'],['anomaly','入驻异常待核对'],['activity-review','活动待人工审核'],['safety-unknown','活动检测待确认'],['dispute','券争议待核对'],['no-permission','无经营审核权限']],render,actions});
+ const safety=document.createElement('label');safety.innerHTML='内容检测演示<select id="safety"><option value="unknown">待确认</option><option value="passed">已通过</option><option value="failed">未通过</option></select>';document.querySelector('.demo-controls').appendChild(safety);U.$('safety').value=U.state.activity.safety;U.$('safety').onchange=e=>{U.state.activity.safety=e.target.value;U.persist();render(U.view);};
+})();

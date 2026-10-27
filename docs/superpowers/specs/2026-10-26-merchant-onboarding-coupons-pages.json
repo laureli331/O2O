@@ -178,5 +178,12 @@
     }
   ],
   "realAbilitiesEnabled": false,
-  "entryConfirmation": "2026-10-27: 我的接单资料区域及发现抽屉底部入驻；仅加载中使用骨架"
+  "entryConfirmation": "2026-10-27: 我的接单资料区域及发现抽屉底部入驻；仅加载中使用骨架",
+  "htmlRoutes": {
+    "V24": "v24.html",
+    "V25": "v25.html",
+    "V26": "v26.html",
+    "V27": "v27.html"
+  },
+  "htmlImplemented": true
 }

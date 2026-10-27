@@ -1,0 +1,44 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
+const [base='http://127.0.0.1:8765',out='.superpowers/evidence',exe='C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe']=process.argv.slice(2);
+const {chromium}=require(process.env.PREVIEW_PLAYWRIGHT_PATH);
+(async()=>{fs.mkdirSync(out,{recursive:true});const browser=await chromium.launch({headless:true,executablePath:exe});const context=await browser.newContext({viewport:{width:414,height:896}});const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(r.status()+' '+r.url());});
+ const open=n=>page.goto(base+'/v'+n+'.html');
+ const scenario=id=>page.locator('#scenario').selectOption(id);
+ const act=id=>page.locator('[data-action="'+id+'"]').click();
+ const view=id=>page.locator('[data-view="'+id+'"]').click();
+ const modal=()=>page.locator('#execute-confirm').click();
+ const noOverflow=async()=>assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,'document horizontal overflow');
+ await open(24);await scenario('new');await act('review');assert.match(await page.locator('#toast').innerText(),/经营名称/);
+ for(const [key,val]of Object.entries({name:'青禾生活馆',category:'社区服务',area:'合成社区',phone:'演示联系',address:'合成地址'}))await page.locator('[data-field="'+key+'"]').fill(val);await page.locator('[data-field="consent"]').check();
+ await act('review');assert.match(await page.locator('#title').innerText(),/核对/);await page.locator('#result').selectOption('failed');await act('submit');assert.match(await page.locator('#toast').innerText(),/未完成/);await act('apply');assert.equal(await page.locator('[data-field=name]').inputValue(),'青禾生活馆');await act('review');await page.locator('#result').selectOption('unknown');await act('submit');assert.equal(await page.locator('#footer button:disabled').count(),2);await page.reload();assert.equal(await page.locator('[data-action=query]').count(),1);await act('query');assert.match(await page.locator('#title').innerText(),/进度/);
+ // Same synthetic application moves through the separate admin URL.
+ await open(27);await act('open-B');await act('reason-2');await act('decision');await modal();await act('notify');assert.match(await page.locator('#content').innerText(),/支付截止/);
+ await open(24);await act('payment');await act('pay');await modal();assert.match(await page.locator('#title').innerText(),/订单/);assert.match(await page.locator('#content').innerText(),/实际开通/);
+ await open(25);await act('create');await act('review');await act('submit');assert.match(await page.locator('#content').innerText(),/审核中/);
+ await open(27);await act('open-E');await act('reason-0');await act('decision');await modal();assert.match(await page.locator('#toast').innerText(),/内容安全/);await page.locator('#safety').selectOption('passed');await act('decision');await modal();assert.match(await page.locator('#content').innerText(),/只读/);
+ await open(26);await act('claim');assert.match(await page.locator('#title').innerText(),/券详情/);const code=await page.locator('.coupon-code').innerText();assert.match(code,/DEMO-/);
+ await open(25);await act('redeem');await page.locator('[data-field=code]').fill(code);await act('lookup');await page.locator('#result').selectOption('unknown');await act('execute-redeem');await page.reload();await act('query');assert.match(await page.locator('#content').innerText(),/已经核销/);await act('next');await act('records');assert.match(await page.locator('#content').innerText(),/青禾|邻里到店/);
+ await open(26);await view('B');await act('tab-used');assert.match(await page.locator('#content').innerText(),/邻里到店/);
+ // Every approved view is reachable; prerequisite failures show an actionable state.
+ for(const [n,fixture,ids]of [[24,'active','ABCDEFGHI'],[25,'claimed','ABCDEF'],[26,'claimed','ABC'],[27,'review','ABCDEF']]){await open(n);await scenario(fixture);for(const id of ids){await view(id);if(await page.locator('#confirm-dialog').isVisible())await modal();assert((await page.locator('#title').innerText()).trim());await noOverflow();}await page.screenshot({path:path.join(out,'commerce-v'+n+'-414.png'),fullPage:true});}
+ for(const width of [320,375,414,1280]){await page.setViewportSize({width,height:900});for(const [n,fixture,target]of [[24,'new','A'],[25,'active','B'],[26,'claimed','C'],[27,'activity-review','E']]){await open(n);await scenario(fixture);await view(target);await noOverflow();assert.equal(await page.locator('#device').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true,'device overflow');}}
+ await page.setViewportSize({width:375,height:812});await open(25);await scenario('active');await view('B');await page.locator('[data-date-field=end]').click();assert.equal(await page.locator('.banner-date-overlay').count(),1);await page.locator('[data-date=cancel]').first().click();assert.equal(await page.locator('.banner-date-overlay').count(),0);assert.equal(await page.locator('.device').getAttribute('inert'),null);
+ await open(26);await scenario('guest');await act('login');assert.match(await page.locator('#footer').innerText(),/免费领取/);assert.equal(await page.evaluate(()=>CommerceUI.state.coupons.length),0);
+ await open(27);await scenario('no-permission');await view('B');assert.match(await page.locator('#content').innerText(),/无经营审核权限/);assert.equal(await page.locator('[data-action=decision]').count(),0);
+ // A transient read failure is not an empty page and preserves the form.
+ await open(24);await scenario('new');await page.locator('[data-field=name]').fill('读取失败仍保留');await page.locator('#read-state').selectOption('failed');assert.equal(await page.locator('[data-field=name]').inputValue(),'读取失败仍保留');await act('retry-read');assert.equal(await page.locator('[data-field=name]').inputValue(),'读取失败仍保留');await page.locator('#read-state').selectOption('loading');assert.equal(await page.locator('.skeleton').count(),1);await page.locator('#read-state').selectOption('ready');assert.equal(await page.locator('[data-field=name]').inputValue(),'读取失败仍保留');
+ // Other admin tasks retain their own object and confirm once.
+ await open(27);await scenario('correction');await act('open-C');await act('reason-1');await act('decision');await modal();assert.match(await page.locator('#content').innerText(),/只读/);
+ await scenario('anomaly');await act('open-D');await act('reason-1');await act('decision');await modal();assert.match(await page.locator('#content').innerText(),/只读/);
+ await scenario('dispute');await act('open-F');await act('reason-2');await page.locator('#result').selectOption('unknown');await act('decision');await modal();await page.reload();await act('query');assert.match(await page.locator('#content').innerText(),/只读/);
+ // A request for supplement must return to the SAME editable activity.
+ await open(27);await scenario('activity-review');await act('open-E');await page.locator('[data-field=decision]').selectOption('supplement');await act('reason-0');await act('decision');await modal();
+ await open(25);await act('detail');await act('create');await page.locator('[data-field=usage]').fill('适用于合成门店日用品，已补充范围');await act('review');await act('submit');assert.match(await page.locator('#content').innerText(),/审核中/);
+ await open(24);await scenario('activation-waiting');assert.match(await page.locator('#title').innerText(),/订单/);await act('activation');assert.match(await page.locator('#content').innerText(),/实际开通/);assert.equal(await page.evaluate(()=>CommerceUI.state.merchant.order.amount),99);
+ await open(26);await scenario('coupon-expired');await view('C');assert.match(await page.locator('#content').innerText(),/已过有效期/);
+ // Existing page entry points, including no fabricated merchant data before onboarding.
+ await page.goto(base+'/v05.html?entry=cardbag');assert.equal(await page.locator('a[href^="v26.html"]').count(),1);assert.equal(await page.locator('a[href^="v24.html"]').count(),1);
+ await page.goto(base+'/v23.html');await page.locator('#role-select').selectOption('resident');await page.locator('[data-action=open-drawer]').click();assert.match(await page.locator('#drawer-body').innerText(),/经营你的生意/);assert.equal(await page.locator('#drawer-body .drawer-stats').count(),0);assert.equal(await page.locator('#drawer-onboarding').isVisible(),true);await page.keyboard.press('Escape');assert.equal(await page.locator('#merchant-drawer').isVisible(),false);
+ assert.deepEqual(errors,[]);fs.writeFileSync(path.join(out,'commerce-browser-result.json'),JSON.stringify({passed:true,groups:4,views:24,widths:[320,375,414,1280],errors},null,2));await browser.close();console.log('PASS commerce: 24 views; approval/payment/claim/redemption flow; failure/unknown; entries; 4 viewport widths');
+})().catch(e=>{console.error(e);process.exit(1);});
