@@ -55,6 +55,50 @@
     "scope": "wechat-devtools-registered-project-list-only",
     "evidenceMethod": "read-only-visible-ui-observation"
   },
+  "officialCategorySourceLookup": {
+    "lookupDate": "2026-10-27",
+    "officialUrl": "https://developers.weixin.qq.com/miniprogram/product/material/",
+    "directPageAccess": "non-retryable-error",
+    "officialDomainRestrictedSearch": "no-results",
+    "eligibilityConclusion": null,
+    "provesCategoryUnavailable": false,
+    "evidenceMethod": "public-web-read-only"
+  },
+  "categoryPickerObservation": {
+    "sourceScreenshots": [
+      "codex-clipboard-bec8e09b-c65b-4574-bcc0-8ceb0636029d.png",
+      "codex-clipboard-54786573-29f3-42d1-a95c-f2586d709fe7.png"
+    ],
+    "screenshotAppIdVisible": false,
+    "selectedAndSaved": false,
+    "homeServicesOption": {
+      "path": [
+        "生活服务",
+        "家政服务"
+      ],
+      "description": "适用于提供家政服务，如保姆、月嫂、房屋保洁、家电维修、数码电器维修等在线预约等服务。"
+    },
+    "errandSearch": {
+      "term": "跑腿",
+      "visibleResults": [
+        [
+          "物流服务",
+          "查件"
+        ],
+        [
+          "物流服务",
+          "装卸搬运"
+        ]
+      ],
+      "exactRunErrandCategoryVisible": false
+    },
+    "secondhandSearch": {
+      "observed": false,
+      "result": null
+    },
+    "scope": "visible-user-provided-portal-screenshots-only",
+    "evidenceMethod": "review-of-user-provided-screenshots"
+  },
   "businessConfiguration": {
     "registrationLocationRecord": "湖南省郴州市永兴县湘阴渡（执照登记地点记录）",
     "registrationAddressEstablishesServiceArea": false,

@@ -65,6 +65,51 @@ test('SP04 records the DevTools project list without claiming all local projects
   assert.ok(doc.includes('此结果仅适用于该开发者工具当前显示的已登记工程列表'));
 });
 
+test('SP04 keeps an inaccessible official category source separate from eligibility conclusions', () => {
+  const record = evidence();
+  assert.deepEqual(record.officialCategorySourceLookup, {
+    lookupDate: '2026-10-27',
+    officialUrl: 'https://developers.weixin.qq.com/miniprogram/product/material/',
+    directPageAccess: 'non-retryable-error',
+    officialDomainRestrictedSearch: 'no-results',
+    eligibilityConclusion: null,
+    provesCategoryUnavailable: false,
+    evidenceMethod: 'public-web-read-only',
+  });
+  assert.deepEqual(record.categoryPickerObservation, {
+    sourceScreenshots: [
+      'codex-clipboard-bec8e09b-c65b-4574-bcc0-8ceb0636029d.png',
+      'codex-clipboard-54786573-29f3-42d1-a95c-f2586d709fe7.png',
+    ],
+    screenshotAppIdVisible: false,
+    selectedAndSaved: false,
+    homeServicesOption: {
+      path: ['生活服务', '家政服务'],
+      description: '适用于提供家政服务，如保姆、月嫂、房屋保洁、家电维修、数码电器维修等在线预约等服务。',
+    },
+    errandSearch: {
+      term: '跑腿',
+      visibleResults: [
+        ['物流服务', '查件'],
+        ['物流服务', '装卸搬运'],
+      ],
+      exactRunErrandCategoryVisible: false,
+    },
+    secondhandSearch: {
+      observed: false,
+      result: null,
+    },
+    scope: 'visible-user-provided-portal-screenshots-only',
+    evidenceMethod: 'review-of-user-provided-screenshots',
+  });
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  assert.ok(doc.includes('本轮尝试打开微信官方'));
+  assert.ok(doc.includes('不能据此判断相关类目不存在、可申请或不可申请'));
+  assert.ok(doc.includes('“生活服务 > 家政服务”的说明包含家电维修'));
+  assert.ok(doc.includes('搜索“跑腿”时，截图只显示“物流服务 > 查件”和“物流服务 > 装卸搬运”'));
+  assert.ok(doc.includes('没有保存最终服务类目'));
+});
+
 test('SP04 records the exact user-confirmed service area and three service modules', () => {
   const record = evidence();
   assert.deepEqual(record.businessConfiguration.serviceArea.value, [
