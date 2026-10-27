@@ -1,5 +1,5 @@
 {
-  "status": "design-review",
+  "status": "approved",
   "groups": {
     "V24": "入驻",
     "V25": "商家活动与核销",
@@ -177,5 +177,6 @@
       "route": "沿用现有举报申诉边界，原券和核销记录只读，无任意改写按钮"
     }
   ],
-  "realAbilitiesEnabled": false
+  "realAbilitiesEnabled": false,
+  "entryConfirmation": "2026-10-27: 我的接单资料区域及发现抽屉底部入驻；仅加载中使用骨架"
 }
