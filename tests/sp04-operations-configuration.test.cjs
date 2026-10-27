@@ -253,6 +253,7 @@ test('SP04 records current official CloudBase tariffs as candidates without clai
   assert.deepEqual(pricing, {
     sourceUrl: 'https://cloud.tencent.com/document/product/876/127357',
     checkedAt: '2026-10-27',
+    sourcePageUpdatedAt: '2026-10-26',
     billingModel: 'resource-points',
     pointValueCny: { points: 1000, cny: 1 },
     regions: {
@@ -266,11 +267,24 @@ test('SP04 records current official CloudBase tariffs as candidates without clai
       },
     },
     freeExperienceCandidate: {
+      policyScope: 'console-resource-point-redemption-code-trial',
+      redemptionCodeEnvironmentsPerCloudBaseAccount: 1,
       monthlyPoints: 3000,
       devTestPurpose: true,
+      renewalTermMonths: 6,
+      autoRenewal: false,
+      renewalPolicyAppliesToWechatExperience: false,
       supportsResourcePacksOrPayAsYouGo: false,
       publishedAfterReleaseExpiryDays: 15,
       appliesToScreenshotEnvironment: null,
+    },
+    newUserGuideTrialCandidate: {
+      sourceUrl: 'https://cloud.tencent.com/document/product/876/56375',
+      sourcePageUpdatedAt: '2026-04-21',
+      policyScope: 'cloudbase-new-user-onboarding-guide',
+      firstUseOffer: 'one-month-free-personal-plan-environment',
+      firstUseEligibilityVerified: false,
+      currentWizardMappingVerified: false,
     },
     monthlyQuoteCny: null,
     quoteStatus: 'not-computable-without-region-domain-and-usage-estimates',
@@ -283,6 +297,10 @@ test('SP04 records current official CloudBase tariffs as candidates without clai
   assert.ok(doc.includes('资源点计费模式的公开单价候选'));
   assert.ok(doc.includes('不能据此形成项目月报价'));
   assert.ok(doc.includes('截图中的“微信体验版”是否对应免费体验环境仍未核实'));
+  assert.ok(doc.includes('免费体验入口和适用规则有区别'));
+  assert.ok(doc.includes('每个云开发账号'));
+  assert.ok(doc.includes('初次使用可免费体验1个月个人版环境'));
+  assert.ok(doc.includes('当前开发者工具向导适用哪种体验'));
 });
 
 test('SP04 records browser installation separately from tested support and blocks false completion', () => {
@@ -299,6 +317,7 @@ test('SP04 records browser installation separately from tested support and block
   assert.equal(task.status, 'in-progress');
   assert.equal(task.productAcceptancePassed, false);
   assert.ok(task.executionProgress.blockedChecks.length >= 1);
+  assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('控制台兑换码体验') && check.includes('初次使用个人版一个月免费说明')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('湘阴渡社区') && check.includes('湘阴村')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('09:00') && check.includes('22:00')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('顾客服务时段09:00—22:00') && check.includes('22:00后请求次日处理')));

@@ -232,6 +232,7 @@
     "publishedPricing": {
       "sourceUrl": "https://cloud.tencent.com/document/product/876/127357",
       "checkedAt": "2026-10-27",
+    "sourcePageUpdatedAt": "2026-10-26",
       "billingModel": "resource-points",
       "pointValueCny": {
         "points": 1000,
@@ -248,12 +249,25 @@
         }
       },
       "freeExperienceCandidate": {
+      "policyScope": "console-resource-point-redemption-code-trial",
+      "redemptionCodeEnvironmentsPerCloudBaseAccount": 1,
         "monthlyPoints": 3000,
         "devTestPurpose": true,
+      "renewalTermMonths": 6,
+      "autoRenewal": false,
+      "renewalPolicyAppliesToWechatExperience": false,
         "supportsResourcePacksOrPayAsYouGo": false,
         "publishedAfterReleaseExpiryDays": 15,
         "appliesToScreenshotEnvironment": null
       },
+    "newUserGuideTrialCandidate": {
+      "sourceUrl": "https://cloud.tencent.com/document/product/876/56375",
+      "sourcePageUpdatedAt": "2026-04-21",
+      "policyScope": "cloudbase-new-user-onboarding-guide",
+      "firstUseOffer": "one-month-free-personal-plan-environment",
+      "firstUseEligibilityVerified": false,
+      "currentWizardMappingVerified": false
+    },
       "monthlyQuoteCny": null,
       "quoteStatus": "not-computable-without-region-domain-and-usage-estimates",
       "purchaseAuthorized": false
