@@ -41,6 +41,23 @@
       "provesScreenshotOwner": false
     }
   },
+  "cloudEnvironmentReuseAssessment": {
+    "resourceAppId": "wx358290e451cb06e7",
+    "resourceEnvironmentId": "cloud1-d1g1mv89t76512a25",
+    "targetNewAppId": "wx2414399d423dfb65",
+    "status": "unverified-conditional-candidate",
+    "eligibleScopeIfApproved": "development-and-controlled-testing-only",
+    "sameSubjectVerified": false,
+    "resourceSharingEnabledOrAuthorized": false,
+    "sharingConfigurationMutationAuthorized": false,
+    "provesNewAppIdConnection": false,
+    "provesHostingLoginDomainOrPricing": false,
+    "officialRule": "A Tencent Cloud account can bind one mini-program; the resource-side mini-program may share CloudBase resources including cloud functions and cloud database with other mini-programs of the same subject; CloudBase environments cannot be migrated across accounts.",
+    "sources": [
+      "https://cloud.tencent.com/document/faq/876/57380",
+      "https://cloud.tencent.com/document/faq/876/18438"
+    ]
+  },
   "devtoolsProjectManagerObservation": {
     "visibleRegisteredProjectCount": 1,
     "visibleProjects": [
@@ -271,13 +288,14 @@
     {
       "id": "E06",
       "passed": false,
-      "reason": "新AppID环境归属、托管/登录配置及正式域名和费用尚未核实。"
+      "reason": "新AppID环境归属、旧cloud1可否同主体共享及资源方授权尚未核实；托管/登录配置、正式域名和费用也尚未核实。"
     }
   ],
   "cloudWritesOrDeploymentPerformed": false,
   "remainingChecks": [
     "核实微信官方类目适用性及真实运营/供应能力，不从项目服务名称推定平台准入。",
     "目前没有已确认愿意接单的维修或代买代取服务者；后续需确认服务者资质审核状态及十个地点的实际覆盖。",
+    "只读核实旧、新小程序主体是否一致及旧cloud1是否已向目标AppID授权环境共享；环境共享不是跨账号迁移，目前未授权改动共享设置。",
     "目标新AppID对应工程未出现在当前开发者工具已登记项目列表；列表外或其他账号/设备中的工程是否存在仍未核实。明确定位目标工程后，再核验新AppID下的环境归属、登录/托管能力和配置状态。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
     "按确认的真实设备和浏览器执行网页后台登录、权限和页面验收。"
