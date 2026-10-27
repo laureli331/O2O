@@ -197,9 +197,23 @@
         "userReportsNoPayment": true,
         "provesBindingToFormalTargetAppId": false
       },
+      "latestSettingsScreenshot": {
+        "source": "user-provided-screenshot-codex-clipboard-78e2d442-1d10-4070-a2ec-ccac743a548d.png",
+        "visibleEnvironmentLabel": "cloud1",
+        "visibleEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+        "visiblePlanLabel": "微信体验版",
+        "visibleConsoleSection": "设置",
+        "visibleSettingsTab": "权限设置",
+        "appIdVisible": false,
+        "expiryVisible": false,
+        "billingOrAutoRenewalVisible": false,
+        "provesBindingToFormalTargetAppId": false
+      },
       "currentRecommendation": "use-free-experience-for-development-and-testing; do-not-buy-paid-plan-until-capability-or-quota-need-is-evidenced",
       "officialCurrentPricingSource": "https://cloud.tencent.com/document/product/876/75213",
       "officialPlanAndOverlimitSource": "https://cloud.tencent.com/document/product/876/136006",
+      "officialPlanUsageSource": "https://cloud.tencent.com/document/product/876/136006",
+      "officialTrialRenewalGuideSource": "https://tcb.cloud.tencent.com/blog/2026/07/28/cloudbase-free-trial-renewal",
       "currentFreeExperiencePolicy": {
         "perCloudBaseAccountLimit": 1,
         "monthlyResourcePoints": 3000,
@@ -534,17 +548,17 @@
           "用户最初截图显示目标AppID wx2414399d423dfb65已选中、条款框未勾选；后续只读实时画面显示目标AppID与微信云开发仍选中、条款框已勾选但操作人无法确认，创建向导仍打开且项目尚未创建，默认目录也不存在；预览cloud1不证明环境归属",
           "旧AppID wx358290e451cb06e7只读查询返回cloud1-d1g1mv89t76512a25；不证明新AppID环境状态",
           "只读检查用户在E:\\O2O\\miniprogram创建的CloudBase QuickStart工程；project.config.json配置AppID wx2414399d423dfb65并与目标一致，但仅为模板脚手架，不是产品实现；app.js的env为空且envList为空，项目尚未绑定环境ID",
-          "用户最新控制台截图显示cloud1和微信体验版，概览暂无数据；用户报告没有付费。截图未显示AppID、精确环境ID、到期日、账单或续费设置，因此不证明环境属于目标AppID或其确切计费条款",
+          "较早的控制台概览截图显示cloud1/微信体验版和暂无数据；较新的设置截图显示环境ID cloud1-d2gjahlq39bf141c7、页面为权限设置，但未显示AppID、到期日、账单或续费设置。用户报告没有付费；环境归属目标AppID及准确计费期限仍未证实",
           "复核CloudBase当前价格文档（2026-08-31更新）及套餐说明（2026-10-26更新）：免费体验额度/限制适用于控制台免费体验；文档同时提示微信开发者工具创建的免费期环境可能仍属历史套餐版本，不能把公开的3000点、续期或到期规则直接套用到截图中的微信体验版",
           "按当前仍处于开发和受控验证阶段，建议先用免费体验环境，不购买19.9元/月付费套餐；遇到实际功能/额度限制或准备上线时，再依据控制台环境详情、用量和费用重新评估",
           "预览根地址返回目录列表，不是单页原型入口"
         ],
         "blockedChecks": [
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
-          "用户已创建目标AppID匹配的CloudBase QuickStart模板，且最新截图显示cloud1/微信体验版；但截图未显示AppID、精确环境ID、到期日、账单或续费设置，项目app.js的env为空且envList为空，环境绑定和适用套餐仍未核实。官方当前说明的控制台免费体验额度/限制不能直接套用于微信开发者工具创建的历史套餐环境；旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
+          "用户已创建目标AppID匹配的CloudBase QuickStart模板；最新设置截图显示cloud1-d2gjahlq39bf141c7和权限设置页，但未显示AppID、到期日、账单或续费设置；项目app.js的env为空且envList为空，环境绑定和适用套餐仍未核实。官方当前说明的控制台免费体验额度/限制不能直接套用于微信开发者工具创建的历史套餐环境；旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "开发与受控测试阶段继续使用当前免费体验环境，暂不购买付费套餐。官方当前价格文档说明免费体验环境有功能限制、不能购买资源包或开启按量付费，发布小程序后到期日可能变为上线后的第15天；同时微信开发者工具创建的免费期环境可能仍为历史套餐版本。截图只显示cloud1/微信体验版，没有AppID、准确环境ID、到期日、账单或续费设置，因此不能断言这笔环境绑定到目标AppID或其费用条款。先由用户在控制台设置/套餐页核对环境ID、套餐/计费模式、到期与付费/续费状态；确认后再配置QuickStart工程环境ID并进行隔离验证。只有遇到实际能力/额度限制或进入上线准备时，再按实际用量评估19.9元/月或其他套餐。旧号个人主体的cloud1不再作为新号共享候选。"
+        "nextAction": "开发与受控测试阶段继续使用当前免费体验环境，暂不购买付费套餐。官方当前价格文档说明免费体验环境有功能限制、不能购买资源包或开启按量付费，发布小程序后到期日可能变为上线后的第15天；同时微信开发者工具创建的免费期环境可能仍为历史套餐版本。最新设置截图确认页面可见环境ID cloud1-d2gjahlq39bf141c7，但页面是权限设置，没有AppID、到期日、账单或续费信息，不能断言该环境绑定到目标AppID或推断费用条款。请在当前控制台点左侧‘费用管理’，找到‘套餐用量’核对环境ID、套餐/计费模式和到期状态；腾讯云官方文档指出该页可查看当前套餐版本及计费模式，CloudBase体验版续期说明也将续期入口定位在此页。拿到该页证据后，再核实环境与目标AppID的绑定；确认后才配置QuickStart工程环境ID并进行隔离验证。只有遇到实际能力/额度限制或进入上线准备时，再按实际用量评估19.9元/月或其他套餐。旧号个人主体的cloud1不再作为新号共享候选。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
