@@ -41,7 +41,9 @@
     "registrationAddressIsServiceArea": false,
     "serviceArea": {
       "value": null,
-      "status": "awaiting-user-confirmation"
+      "status": "awaiting-user-confirmation",
+      "recommendationStatus": "proposed-not-applied",
+      "recommendation": "首发先选一个实际能覆盖的乡镇，并只开放目前确有服务供给的村/社区；湘阴渡仅作为候选，需用户确认实际经营/服务覆盖后才能采用。"
     },
     "serviceCategories": {
       "value": [],
@@ -56,8 +58,14 @@
     "twoPersonReview": false,
     "promisesTwentyFourHourCoverage": false,
     "coverageSchedule": {
-      "value": null,
-      "status": "awaiting-user-confirmation"
+      "status": "partially-confirmed",
+      "shiftArrangement": {
+        "partner": "白班",
+        "user": "晚班",
+        "source": "user-reply-2026-10-27"
+      },
+      "exactHours": null,
+      "unattendedHandling": null
     },
     "confirmedSource": "docs/module-specs/business-closeout-confirmed-20261015.md"
   },
@@ -131,8 +139,8 @@
   ],
   "cloudWritesOrDeploymentPerformed": false,
   "remainingChecks": [
-    "用户确认真实开放的乡镇及村/社区范围和服务分类。",
-    "用户确认本人和伙伴共用账号的实际查看/交接时段；不要求承诺24小时值守。",
+    "用户确认真实开放的乡镇及村/社区范围和服务分类；确认区域建议前不预填湘阴渡。",
+    "补充本人和伙伴白班/晚班的具体起止时间，以及无人值班时的实际处理安排；不要求承诺24小时值守。",
     "在新AppID下核验环境归属、可用登录/托管能力和配置状态。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
     "按确认的真实设备和浏览器执行网页后台登录、权限和页面验收。"

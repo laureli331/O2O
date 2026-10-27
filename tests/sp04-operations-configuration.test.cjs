@@ -31,8 +31,16 @@ test('SP04 records unconfirmed service coverage and operating hours as unresolve
   assert.equal(record.businessConfiguration.serviceArea.status, 'awaiting-user-confirmation');
   assert.deepEqual(record.businessConfiguration.serviceCategories.value, []);
   assert.equal(record.businessConfiguration.serviceCategories.status, 'awaiting-user-confirmation');
-  assert.equal(record.operations.coverageSchedule.value, null);
-  assert.equal(record.operations.coverageSchedule.status, 'awaiting-user-confirmation');
+  assert.equal(record.operations.coverageSchedule.status, 'partially-confirmed');
+  assert.deepEqual(record.operations.coverageSchedule.shiftArrangement, {
+    partner: '白班',
+    user: '晚班',
+    source: 'user-reply-2026-10-27',
+  });
+  assert.equal(record.operations.coverageSchedule.exactHours, null);
+  assert.equal(record.operations.coverageSchedule.unattendedHandling, null);
+  assert.equal(record.businessConfiguration.serviceArea.recommendationStatus, 'proposed-not-applied');
+  assert.equal(record.businessConfiguration.serviceArea.value, null);
   assert.equal(record.businessConfiguration.registrationAddressIsServiceArea, false);
 });
 
@@ -86,6 +94,9 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
     '截图未显示AppID',
     '不能证明新AppID已接通',
     '不把它当服务范围',
+    '伙伴白班、用户晚班',
+    '首发地区建议',
+    '湘阴渡仅作为待确认候选',
     '不能识别具体自然人',
     '不承诺24小时值守',
     '正式环境必须绑定已完成备案的自定义域名',
