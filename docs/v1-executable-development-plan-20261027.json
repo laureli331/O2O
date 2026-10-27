@@ -1,0 +1,1596 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "document": "docs/v1-executable-development-plan-20261027.md",
+  "status": "execution-backlog-preconditions-open",
+  "deliveryScope": "documentation-and-validation-only",
+  "sourceCommit": "c4e4c078f7a6a14b1d23f7f028eada64f63c53e3",
+  "sources": [
+    "docs/development-plan.md",
+    "docs/development-decisions.json",
+    "docs/post-registration-development.md",
+    "docs/v1-scope-confirmed-20261026.json",
+    "docs/v1-scope-confirmed-20261026.md",
+    "docs/v1-development-preflight-20261018.json",
+    "docs/commerce-acceptance-20261027.md",
+    "docs/superpowers/specs/2026-10-23-v15-v16-web-admin-carrier-design.md"
+  ],
+  "architecture": {
+    "frontend": "native-wechat-typescript",
+    "backend": "node-cloud-functions",
+    "databaseFamily": "cloudbase",
+    "storage": "cloudbase-storage",
+    "operations": "custom-web-primary-miniapp-light-duty",
+    "managementAccounts": 1,
+    "actualHumanAttribution": false,
+    "databaseMode": null,
+    "cloudRuntimeVersion": null,
+    "sdkVersions": null
+  },
+  "inventory": {
+    "verifiedOn": "2026-10-27",
+    "formalProjectPresent": false,
+    "absent": [
+      "miniprogram",
+      "cloudfunctions",
+      "packages/domain",
+      "package.json",
+      "project.config.json"
+    ],
+    "present": [
+      "previews",
+      "docs",
+      "tests",
+      "scripts"
+    ],
+    "localNode": "24.18.0",
+    "localNpm": "11.16.0",
+    "localVersionsAreCloudVersions": false
+  },
+  "accountEvidence": {
+    "licenseObtainedRecorded": true,
+    "licenseRecordDate": "2026-10-08",
+    "formalNewAppId": null,
+    "formalNewEnvironmentId": null,
+    "oldCloudEnvironmentApprovedForProduction": false,
+    "liveCloudRevalidatedThisDelivery": false
+  },
+  "scope": {
+    "firstRelease": [
+      "account-and-qualification",
+      "four-resident-businesses",
+      "provider-profiles",
+      "service-order-center",
+      "private-tools-and-public-sharing",
+      "resident-text-ai",
+      "reviews-and-review-moderation",
+      "operations-and-configuration",
+      "commission-billing-and-refunds",
+      "operations-metrics",
+      "merchant-discovery",
+      "merchant-onboarding-99",
+      "banner-management-v11",
+      "banner-orders-refunds-v12",
+      "banner-metrics-v13",
+      "banner-standard-creation-99"
+    ],
+    "conditionalNotEnabled": [
+      "resident-ai-direct-purchase",
+      "platform-service-balance"
+    ],
+    "deferred": [
+      "content-heating",
+      "ai-image-input",
+      "source-backed-rule-qa",
+      "ai-operations-assistant",
+      "wechat-traffic-ads"
+    ],
+    "excluded": [
+      "people-directory",
+      "new-v17-entry",
+      "general-resident-post-forum",
+      "free-chat",
+      "resident-transaction-payment-escrow",
+      "automatic-commission-deduction",
+      "face-recognition",
+      "saas"
+    ],
+    "couponsIncludedInOnboarding": true
+  },
+  "authorization": {
+    "realPaymentEnabled": false,
+    "realAiEnabled": false,
+    "productionDeploymentAuthorized": false,
+    "purchaseAuthorizedByThisPlan": false,
+    "accountRegistrationAuthorizedByThisPlan": false
+  },
+  "taskCount": 36,
+  "firstProductTask": "SP07",
+  "firstProductTaskPrerequisites": [
+    "SP01",
+    "SP02",
+    "SP03",
+    "SP04",
+    "SP05",
+    "SP06"
+  ],
+  "legacyOverrides": [
+    {
+      "legacy": [
+        "DP14"
+      ],
+      "current": [
+        "SP14"
+      ],
+      "decision": "provider-profiles-only-no-people-directory",
+      "source": "docs/v1-scope-confirmed-20261026.json"
+    },
+    {
+      "legacy": [
+        "DP25"
+      ],
+      "current": [
+        "SP21"
+      ],
+      "decision": "existing-legal-history-only-v17-archived",
+      "source": "docs/v1-scope-confirmed-20261026.json"
+    },
+    {
+      "legacy": [
+        "DP30",
+        "DP31",
+        "DP32",
+        "DP33",
+        "DP34",
+        "DP35"
+      ],
+      "current": [
+        "SP26",
+        "SP27",
+        "SP28"
+      ],
+      "decision": "banner-first-release-new-confirmed-prices-24-hour-hold-no-old-plan-revival",
+      "source": "docs/banner-standard-service-confirmed-20261026.md"
+    }
+  ],
+  "openItems": [
+    {
+      "id": "OPEN01",
+      "kind": "technical-decision-and-evidence",
+      "title": "云数据库模式、云运行时、SDK及托管登录依据",
+      "tasks": [
+        "SP01",
+        "SP07",
+        "SP08",
+        "SP12"
+      ],
+      "humanDecisionNeeded": true
+    },
+    {
+      "id": "OPEN02",
+      "kind": "external-evidence",
+      "title": "新正式账号、环境、类目及登录核验/检测/通知/支付退款实际权限",
+      "tasks": [
+        "SP02",
+        "SP09",
+        "SP10",
+        "SP11",
+        "SP13",
+        "SP34"
+      ],
+      "humanDecisionNeeded": false
+    },
+    {
+      "id": "OPEN03",
+      "kind": "business-decision",
+      "title": "逐类数据用途、保存期限、删除与必要保留",
+      "tasks": [
+        "SP03",
+        "SP31",
+        "SP33"
+      ],
+      "humanDecisionNeeded": true
+    },
+    {
+      "id": "OPEN04",
+      "kind": "business-configuration",
+      "title": "真实区域分类、共享账号交接、可投入时间及可行预算",
+      "tasks": [
+        "SP04",
+        "SP06",
+        "SP36"
+      ],
+      "humanDecisionNeeded": true
+    },
+    {
+      "id": "OPEN05",
+      "kind": "business-decision-and-evidence",
+      "title": "商家材料、审核标准、无照类别适用资质与标识",
+      "tasks": [
+        "SP23"
+      ],
+      "humanDecisionNeeded": true
+    },
+    {
+      "id": "OPEN06",
+      "kind": "business-decision",
+      "title": "Banner正式素材规格、定制交付目标及整体重做边界",
+      "tasks": [
+        "SP26"
+      ],
+      "humanDecisionNeeded": true
+    },
+    {
+      "id": "OPEN07",
+      "kind": "business-decision",
+      "title": "广告有效曝光/点击、去重和数据期限",
+      "tasks": [
+        "SP28"
+      ],
+      "humanDecisionNeeded": true
+    },
+    {
+      "id": "OPEN08",
+      "kind": "business-decision-and-evidence",
+      "title": "AI供应商及质量/额度/预算上限，付费次数包退款等条件性售卖门槛",
+      "tasks": [
+        "SP02",
+        "SP31",
+        "SP32"
+      ],
+      "humanDecisionNeeded": true
+    }
+  ],
+  "tasks": [
+    {
+      "id": "SP01",
+      "phase": "A",
+      "title": "复核实际技术环境与版本",
+      "dependsOn": [],
+      "legacyTasks": [
+        "DP01"
+      ],
+      "pages": [],
+      "deliverable": "技术事实表、版本候选与实测方案、环境隔离和回退说明",
+      "steps": [
+        "核对本机工具与已有诊断记录",
+        "查询目标云环境当前可用运行时、数据库事务与私密文件能力",
+        "列明拟采用的依赖和锁定方法，关键选择交用户确认"
+      ],
+      "acceptance": [
+        "本机版本与云运行时分栏，不把本机Node当云端版本",
+        "候选有来源与实际环境证据，未知不填默认",
+        "不因查过旧cloud1就宣称新正式账号已就绪"
+      ],
+      "evidenceGates": [
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP02",
+      "phase": "A",
+      "title": "整理主体、平台能力与供应商证据",
+      "dependsOn": [],
+      "legacyTasks": [
+        "DP02",
+        "DP41",
+        "DP58"
+      ],
+      "pages": [],
+      "deliverable": "按九项门槛列出的证据、缺项、负责人和解除条件",
+      "steps": [
+        "核对已取得执照与新账号注册记录",
+        "按四业务、商家、评价、支付、AI、通知检测逐项列实际适用证据",
+        "整理需咨询材料供用户审阅，不自行发送"
+      ],
+      "acceptance": [
+        "营业执照取得不等于新小程序或支付已开通",
+        "旧账号受控验证不替代新账号正式资格",
+        "AI候选报价与实测分开，不采购或真实调用"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E02",
+        "E04",
+        "QG01",
+        "AG01"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP03",
+      "phase": "A",
+      "title": "确认数据、隐私与删除方案",
+      "dependsOn": [
+        "SP01",
+        "SP02"
+      ],
+      "legacyTasks": [
+        "DP03"
+      ],
+      "pages": [],
+      "deliverable": "逐类数据的用途、可见人、期限、删除及必要保留清单",
+      "steps": [
+        "盘点原字段合同及新增入驻、券、支付和广告数据",
+        "核对供应商处理与访问限制",
+        "把确需用户决定的用途和期限列成待确认项"
+      ],
+      "acceptance": [
+        "不自定永久、统一90天等保存期限",
+        "不存原始完整姓名或身份证，不把AI原文写普通日志",
+        "没有确认和适用依据不处理真实个人信息"
+      ],
+      "evidenceGates": [
+        "E03",
+        "AG01",
+        "DG01"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP04",
+      "phase": "A",
+      "title": "确认真实地区、经营配置与运营入口",
+      "dependsOn": [
+        "SP02"
+      ],
+      "legacyTasks": [
+        "DP04"
+      ],
+      "pages": [
+        "V14",
+        "V15",
+        "V16",
+        "V27"
+      ],
+      "deliverable": "真实配置清单、共用管理账号安排、网页后台与轻量值班衔接",
+      "steps": [
+        "收齐真实乡镇村社区和分类",
+        "核对本人管理账号及交接时段",
+        "核对网页托管、登录和设备条件，保留待证项"
+      ],
+      "acceptance": [
+        "不用合成地区和商家开展经营",
+        "网页与小程序共用后端权限，日志仅归账号",
+        "不增加独立运营账号或双人复核，不承诺24小时值守"
+      ],
+      "evidenceGates": [
+        "E05",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP05",
+      "phase": "A",
+      "title": "将原型收口为正式页面与验收合同",
+      "dependsOn": [
+        "SP01",
+        "SP04"
+      ],
+      "legacyTasks": [
+        "DP05"
+      ],
+      "pages": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ],
+      "deliverable": "当前页面清单、状态/权限/返回合同、真机差异清单",
+      "steps": [
+        "以V01—V27现行承载和G状态为依据",
+        "区分已通过的浏览器检查与未做的真机检查",
+        "将所有表单失败保留、未知查询、弹层和安全区列为共用验收"
+      ],
+      "acceptance": [
+        "V17仅归档，V06跳转服务页而不是发现",
+        "发布为小程序独立全屏页，子页隐藏TabBar",
+        "不重复翻修已通过布局，新实质变化需确认"
+      ],
+      "evidenceGates": [],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP06",
+      "phase": "A",
+      "title": "确认投入、预算与执行批次",
+      "dependsOn": [
+        "SP01",
+        "SP02",
+        "SP03",
+        "SP04",
+        "SP05"
+      ],
+      "legacyTasks": [
+        "DP06"
+      ],
+      "pages": [],
+      "deliverable": "负责人、可投入时间、费用分项、阶段条件与待确认排期",
+      "steps": [
+        "汇总真实资源和外部审核等待",
+        "按依赖列开发工时依据及风险缓冲",
+        "将实际预算与采购清单交用户确认"
+      ],
+      "acceptance": [
+        "不编造上线日期、总工期或人力",
+        "既有每月现金上限500元不等于实际可行成本",
+        "外部等待、开发工时与一次性费用分开"
+      ],
+      "evidenceGates": [
+        "E05"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP07",
+      "phase": "B",
+      "title": "建立正式工程与自动检查",
+      "dependsOn": [
+        "SP01",
+        "SP02",
+        "SP03",
+        "SP04",
+        "SP05",
+        "SP06"
+      ],
+      "legacyTasks": [
+        "DP07"
+      ],
+      "pages": [],
+      "deliverable": "可复现的小程序/云函数/领域层工程、锁文件与测试入口",
+      "steps": [
+        "按已确认架构及SP01实证选择建立工程",
+        "隔离本地、受控测试和生产配置",
+        "添加质量检查、测试夹具和回退说明"
+      ],
+      "acceptance": [
+        "干净环境可按说明启动和运行检查",
+        "无密钥入库，生产不能默认用测试替身",
+        "原DP07前置未通过不得凭原型完成标记跳过"
+      ],
+      "evidenceGates": [],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP08",
+      "phase": "B",
+      "title": "落实数据对象、权限与请求合同",
+      "dependsOn": [
+        "SP07"
+      ],
+      "legacyTasks": [
+        "DP08"
+      ],
+      "pages": [],
+      "deliverable": "有来源的数据、接口、索引、版本、幂等和错误合同",
+      "steps": [
+        "先验证所选数据库实际一致性能力",
+        "定义对象所有权与公开/私密快照",
+        "用受控数据验证并发、服务端时钟、金额到分和同请求查询"
+      ],
+      "acceptance": [
+        "客户端不能伪造身份、金额和时间",
+        "并发唯一性有原子证据",
+        "API名称和SDK签名来自实际工程及文档，不从HTML事件名编造"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP09",
+      "phase": "B",
+      "title": "实现登录、个人资料与发布接单资格",
+      "dependsOn": [
+        "SP08"
+      ],
+      "legacyTasks": [
+        "DP09"
+      ],
+      "pages": [
+        "V05"
+      ],
+      "deliverable": "真实身份适配与受控失败场景、资格服务端门禁",
+      "steps": [
+        "分别处理微信登录、手机号与身份用途同意",
+        "接入已有资格/年龄边界和复用规则",
+        "接好补资料返回来源与身份变更人工入口"
+      ],
+      "acceptance": [
+        "失败或未知不视为已核验，覆盖15/16/17岁边界",
+        "不刷脸、不转移旧身份资产",
+        "登录本身不解码联系方式或赋予接单资格"
+      ],
+      "evidenceGates": [
+        "E02",
+        "E03"
+      ],
+      "features": [
+        "account-and-qualification"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP10",
+      "phase": "B",
+      "title": "实现图片与内容安全基础",
+      "dependsOn": [
+        "SP08"
+      ],
+      "legacyTasks": [
+        "DP10"
+      ],
+      "pages": [
+        "G03"
+      ],
+      "deliverable": "上传/读取授权、检测适配、单图失败恢复与隐私处理",
+      "steps": [
+        "验证真实文件类型和已确认的数量/大小规则",
+        "隔离公开、私密、未审和执照材料",
+        "实现检测未知、读取撤权与上传重试"
+      ],
+      "acceptance": [
+        "未审和私密图不能用直链绕过权限",
+        "JPEG/PNG和5MB只用于已确认适用场景，不套到未定Banner",
+        "真实检测未过不公开，真实素材规格未定不擅设"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E03",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP11",
+      "phase": "B",
+      "title": "实现站内消息、时钟与恢复任务",
+      "dependsOn": [
+        "SP08"
+      ],
+      "legacyTasks": [
+        "DP11"
+      ],
+      "pages": [
+        "V14",
+        "G01",
+        "G02"
+      ],
+      "deliverable": "可靠事件、通知、期限扫描补偿及账号级审计基础",
+      "steps": [
+        "分开事件发生、消息生成、已读与微信送达",
+        "保存各自期限起点与处理进度",
+        "重放、断网、重启和迟到事件测试"
+      ],
+      "acceptance": [
+        "重放不多发、不重复结束、不重置期限",
+        "跑腿不发到期前24小时提醒",
+        "入驻72小时从审核通知站内成功生成起算"
+      ],
+      "evidenceGates": [
+        "E02",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP12",
+      "phase": "B",
+      "title": "实现运营队列、权限与配置后台",
+      "dependsOn": [
+        "SP09",
+        "SP10",
+        "SP11"
+      ],
+      "legacyTasks": [
+        "DP12"
+      ],
+      "pages": [
+        "V14",
+        "V15",
+        "V16",
+        "V27"
+      ],
+      "deliverable": "网页处理队列、轻量值班、配置和账号级操作记录",
+      "steps": [
+        "先展示原内容及依据，再给操作",
+        "复用同事项编号、理由提示、一次核对和未知查询",
+        "实现已确认能力限制、期限、封禁及独立限制记录"
+      ],
+      "acceptance": [
+        "非管理账号直接请求被拒",
+        "处罚只针对已核实原对象账号，解除本条不清其它限制",
+        "不裁决居民线下债务，旧履约与申诉入口保留"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E05",
+        "E06"
+      ],
+      "features": [
+        "operations-and-configuration"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP13",
+      "phase": "B",
+      "title": "核实并实现平台自身收款与退款适配",
+      "dependsOn": [
+        "SP08",
+        "SP11"
+      ],
+      "legacyTasks": [
+        "DP02",
+        "DP54",
+        "DP56"
+      ],
+      "pages": [
+        "G02"
+      ],
+      "deliverable": "按实际适用通道的收款/查单/退款适配及对账测试",
+      "steps": [
+        "核实本项目各自服务的真实支付适用与权限",
+        "区分入驻、广告位、制作、佣金及条件性AI直购的服务账目",
+        "实现同请求查询、回调幂等、退款与异常对账"
+      ],
+      "acceptance": [
+        "不同真实付款与重复同回调分开",
+        "失败、处理中、未知不当成功且不重复扣退",
+        "不接居民交易代收、不自动扣佣，不启用余额"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E04",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP14",
+      "phase": "C",
+      "title": "实现接单资料和私人常用工具",
+      "dependsOn": [
+        "SP09",
+        "SP10",
+        "SP11"
+      ],
+      "legacyTasks": [
+        "DP14",
+        "DP15",
+        "DP17",
+        "DP18"
+      ],
+      "pages": [
+        "V05",
+        "V08",
+        "V09",
+        "V10"
+      ],
+      "deliverable": "三类接单资料、独立时段、收藏/草稿/地址/公开分享",
+      "steps": [
+        "维修/跑腿/其它资料分开且支持批量设置时段",
+        "实现本人草稿和地址快照、两类收藏",
+        "候选查看合法资料，分享仅用公开字段"
+      ],
+      "acceptance": [
+        "不恢复人员目录或找人入口",
+        "失效收藏保留原图信息并禁用",
+        "地址改删不倒改任务快照，执照原图不公开"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E05"
+      ],
+      "features": [
+        "provider-profiles",
+        "private-tools-and-public-sharing"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP15",
+      "phase": "C",
+      "title": "实现四类发布、首页与服务列表",
+      "dependsOn": [
+        "SP09",
+        "SP10",
+        "SP11",
+        "SP12",
+        "SP14"
+      ],
+      "legacyTasks": [
+        "DP13",
+        "DP16",
+        "DP20"
+      ],
+      "pages": [
+        "V01",
+        "V02",
+        "V04",
+        "V06",
+        "V07"
+      ],
+      "deliverable": "真实发布/管理、首页筛选瀑布流与统一订单中心",
+      "steps": [
+        "按四类已确认字段分别填写和核对",
+        "实现草稿/复用新对象及公开私密分区",
+        "列表显示首图、标题和必要时间状态，详情一次看全"
+      ],
+      "acceptance": [
+        "新账号无内容先显示空态，不造草稿订单",
+        "手动发布免费，AI失败仍可手填",
+        "维修/其它不新增逐帖人工预审，过期/无权不泄漏私密字段"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E02",
+        "E03"
+      ],
+      "features": [
+        "four-resident-businesses",
+        "service-order-center"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP16",
+      "phase": "C",
+      "title": "实现申请、候选资料与时间版本",
+      "dependsOn": [
+        "SP15",
+        "SP14"
+      ],
+      "legacyTasks": [
+        "DP20",
+        "DP49",
+        "DP51"
+      ],
+      "pages": [
+        "V03",
+        "V10"
+      ],
+      "deliverable": "有效申请、修改撤回、时间接受版本及候选查看",
+      "steps": [
+        "校验当前申请资格和需求状态",
+        "跑腿申请只读接受发布者服务费",
+        "变更时间后要求明确接受，保持资料查看和返回上下文"
+      ],
+      "acceptance": [
+        "每人每需求一份有效申请",
+        "关键编辑或重开不能复活旧申请",
+        "待查询时锁原请求，不把未回应视为同意"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E02",
+        "E03"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP17",
+      "phase": "C",
+      "title": "实现佣金标准、版本与锁定",
+      "dependsOn": [
+        "SP08",
+        "SP12"
+      ],
+      "legacyTasks": [
+        "DP53"
+      ],
+      "pages": [
+        "V16",
+        "V03",
+        "V07"
+      ],
+      "deliverable": "四类佣金规则、配置版本、告知与不可倒改快照",
+      "steps": [
+        "复用已确认费率和封顶",
+        "定义各业务正式确认时锁定点",
+        "测试分阶段累计、到分再封顶和缺标准阻断"
+      ],
+      "acceptance": [
+        "跑腿15%不封顶，维修15%整次30元，闲置1%每笔20元，其它10%整次20元",
+        "缺标准不阻发布但阻对应新确认",
+        "改配置不倒改旧单，不把居民实付与佣金混为一谈"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E04",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP18",
+      "phase": "C",
+      "title": "实现正式选人及闲置交易确认",
+      "dependsOn": [
+        "SP16",
+        "SP17",
+        "SP11"
+      ],
+      "legacyTasks": [
+        "DP15",
+        "DP21",
+        "DP49",
+        "DP50"
+      ],
+      "pages": [
+        "V03",
+        "V07",
+        "V08"
+      ],
+      "deliverable": "唯一正式交易及双方必要联系方式/地址授权",
+      "steps": [
+        "维修/其它/跑腿按当前候选及时间正式选定",
+        "闲置复用合法联系申请再由卖家发起明确交易确认",
+        "原子写入交易、授权和佣金快照"
+      ],
+      "acceptance": [
+        "并发选两人只一人成功，草选不生效、不二次接单",
+        "闲置获准联系仍打码，不能当成交",
+        "结束或失效后权限按原规则收回"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP19",
+      "phase": "C",
+      "title": "实现履约变更、阶段费用与延期",
+      "dependsOn": [
+        "SP18",
+        "SP10",
+        "SP11"
+      ],
+      "legacyTasks": [
+        "DP22",
+        "DP51",
+        "DP52"
+      ],
+      "pages": [
+        "V07"
+      ],
+      "deliverable": "双方当前版本同意的费用/支出/时间变更与证据权限",
+      "steps": [
+        "分开服务费、实际支出和垫付上限",
+        "维修/其它分阶段编号累计，跑腿变更不得单方推定",
+        "实现延期及结束后同次费用后处理"
+      ],
+      "acceptance": [
+        "未同意不修改原约定",
+        "同名阶段仍独立，跨阶段不重复封顶",
+        "未知费用不填0，合计上限和72/24小时按原费用合同"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP20",
+      "phase": "C",
+      "title": "实现到期、取消、交付异议与故障保护",
+      "dependsOn": [
+        "SP19",
+        "SP12"
+      ],
+      "legacyTasks": [
+        "DP23",
+        "DP57"
+      ],
+      "pages": [
+        "V07",
+        "V14",
+        "V15"
+      ],
+      "deliverable": "可恢复的四类生命周期、后处理及权限回收",
+      "steps": [
+        "分别处理双方取消、有效交付异议及解除",
+        "严格超过有效到期且无阻断才自动结束",
+        "用核实故障范围和恢复验收计算保护截止"
+      ],
+      "acceptance": [
+        "不新增手动完成/收到确认，不额外加普通72小时",
+        "取消与费用待处理分别记录，不推定结清",
+        "自动结束不证明交付或客户付款，重放不得重复计佣"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP21",
+      "phase": "C",
+      "title": "实现评价、回应与审核闭环",
+      "dependsOn": [
+        "SP20",
+        "SP10",
+        "SP12"
+      ],
+      "legacyTasks": [
+        "DP25",
+        "DP26",
+        "DP27",
+        "DP28",
+        "DP29"
+      ],
+      "pages": [
+        "V18",
+        "V19",
+        "V20"
+      ],
+      "deliverable": "真实评价资格、三维数值、图文/回应审核及公开汇总",
+      "steps": [
+        "按正式交易或合法既有来源生成资格",
+        "实现自愿三维评分、一次修改及回应",
+        "审核原对象版本、处理申诉并按业务角色汇总"
+      ],
+      "acceptance": [
+        "有效异议暂停未提交评分，解除后新7日，不删除既有合法评分",
+        "未知检测不公开图文，旧审核不覆盖新版本",
+        "V17保持归档，不恢复新发起或新目录入口"
+      ],
+      "evidenceGates": [
+        "QG01",
+        "E01",
+        "E03",
+        "E06"
+      ],
+      "features": [
+        "reviews-and-review-moderation"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP22",
+      "phase": "C",
+      "title": "验收居民核心闭环",
+      "dependsOn": [
+        "SP21"
+      ],
+      "legacyTasks": [
+        "DP19",
+        "DP24"
+      ],
+      "pages": [
+        "V01",
+        "V02",
+        "V03",
+        "V04",
+        "V05",
+        "V06",
+        "V07",
+        "V08",
+        "V09",
+        "V10",
+        "V18",
+        "V19",
+        "V20"
+      ],
+      "deliverable": "四业务从发布到评价的环境明确、可复现验收报告",
+      "steps": [
+        "用相同真实对象串发布申请、正式确认、履约和到期评价",
+        "覆盖跨账号直读/直写、选人竞争与临界时间",
+        "区分受控测试与真实外部能力验收"
+      ],
+      "acceptance": [
+        "四业务分支均有证据，不用一条跑腿成功冒充全业务",
+        "失败保留输入、结果未知查询原请求",
+        "不存在阻断缺陷，真实门槛未过的部分明确待接入"
+      ],
+      "evidenceGates": [],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP23",
+      "phase": "D",
+      "title": "实现商家入驻、续费与必要更正",
+      "dependsOn": [
+        "SP09",
+        "SP10",
+        "SP11",
+        "SP12",
+        "SP13",
+        "SP22"
+      ],
+      "legacyTasks": [
+        "DP58",
+        "DP59"
+      ],
+      "pages": [
+        "V24",
+        "V27"
+      ],
+      "deliverable": "多主体唯一档案、审核通知、开通到期、原订单异常处理",
+      "steps": [
+        "真实材料标准确认后建申请审核",
+        "成功生成通知起72小时，实际开通起连续30天",
+        "实现续费、必要更正、异常回应和符合条件退款"
+      ],
+      "acceptance": [
+        "99元不自动续费，不按帖收费、不附赠商家AI",
+        "开通后个人退出不按时间退，重复付款/未开通/未交付另核对",
+        "到期旧合规内容和原券保留，可独立买合规广告与定制"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E06"
+      ],
+      "features": [
+        "merchant-onboarding-99"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP24",
+      "phase": "D",
+      "title": "实现商家主页、作品和发现",
+      "dependsOn": [
+        "SP23",
+        "SP10",
+        "SP11",
+        "SP12",
+        "SP14"
+      ],
+      "legacyTasks": [
+        "DP59",
+        "DP60"
+      ],
+      "pages": [
+        "V23",
+        "V05"
+      ],
+      "deliverable": "真实商家内容版本、双列发现、抽屉及公开主页",
+      "steps": [
+        "只带入已审核经营档案",
+        "草稿、提交、审核替换和风险下架分开",
+        "接通主页/作品、订阅收藏、公开分享和通知来源"
+      ],
+      "acceptance": [
+        "只展示审核通过且可展示版本",
+        "待审或被拒保留旧合法公开版",
+        "到期暂停新增与营销修改但允许下架和必要更正，不恢复内容加热"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E03"
+      ],
+      "features": [
+        "merchant-discovery"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP25",
+      "phase": "D",
+      "title": "实现活动、领券、核销与券争议",
+      "dependsOn": [
+        "SP23",
+        "SP24",
+        "SP10",
+        "SP11",
+        "SP12"
+      ],
+      "legacyTasks": [],
+      "pages": [
+        "V25",
+        "V26",
+        "V27"
+      ],
+      "deliverable": "多活动固定有效期免费满减券和真实库存/核销事务",
+      "steps": [
+        "检测加人工审核后公开并锁定关键条件",
+        "实现微信账号每活动一次领取与本人卡包出示",
+        "由所属商家当面核销一次并保留争议记录"
+      ],
+      "acceptance": [
+        "门槛/优惠正数且优惠不超过门槛、总量正整数，过期不可领核销",
+        "停领或入驻到期不作废已领有效券",
+        "换码使旧核对失效、最后一张并发只发一次、不得生成交易佣金或评分"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E02",
+        "E03",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP26",
+      "phase": "D",
+      "title": "实现Banner资料和99元标准定制",
+      "dependsOn": [
+        "SP23",
+        "SP10",
+        "SP12",
+        "SP13"
+      ],
+      "legacyTasks": [
+        "DP30",
+        "DP31"
+      ],
+      "pages": [
+        "V11",
+        "V27"
+      ],
+      "deliverable": "自备图或标准定制、付款制作、候选与确认素材的完整记录",
+      "steps": [
+        "先确认正式图片/文案规格及制作交付/重做边界",
+        "自备合格图片不收制作费",
+        "定制先付99元，交付3个候选方案和选定后1轮集中微调"
+      ],
+      "acceptance": [
+        "制作期间不占广告位",
+        "失败/未知不冒充制作交付，重做范围未定不自行收费",
+        "未开始可全退，开始后按实际工作核对，不预设退款比例"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E03",
+        "E04",
+        "AG01"
+      ],
+      "features": [
+        "banner-standard-creation-99"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP27",
+      "phase": "D",
+      "title": "实现广告档期、付款、投放与退款",
+      "dependsOn": [
+        "SP26",
+        "SP11",
+        "SP12",
+        "SP13"
+      ],
+      "legacyTasks": [
+        "DP30",
+        "DP31",
+        "DP32",
+        "DP33",
+        "DP35"
+      ],
+      "pages": [
+        "V11",
+        "V12",
+        "V27"
+      ],
+      "deliverable": "三位单轮播的区间锁定、订单、展示和独立退款",
+      "steps": [
+        "按已确认九档价格和起止日期计算",
+        "素材通过后核验完整区间，无冲突建单实际保留24小时",
+        "接实际付款查询、投放、终止和剩余时间退款核对"
+      ],
+      "acceptance": [
+        "7天99/69/49、14天179/129/89、30天299/219/149",
+        "同一时段同一位竞争仅一单成功，未知不按超时重售",
+        "广告位费、制作费、入驻费分别记账与退，不沿旧15分钟占位"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E03",
+        "E04",
+        "E06"
+      ],
+      "features": [
+        "banner-management-v11",
+        "banner-orders-refunds-v12"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP28",
+      "phase": "D",
+      "title": "实现广告曝光、点击及点击率",
+      "dependsOn": [
+        "SP27",
+        "SP03"
+      ],
+      "legacyTasks": [
+        "DP34"
+      ],
+      "pages": [
+        "V13"
+      ],
+      "deliverable": "经确认的事件合同、来源和商家本人投放统计",
+      "steps": [
+        "先确认有效曝光/点击、去重与数据期限",
+        "实现事件采集和来源对账",
+        "展示三指标、日期范围、截止时间及失败/未知状态"
+      ],
+      "acceptance": [
+        "不自定访客身份、转化或收益承诺",
+        "0、未知、尚未采集明确分开",
+        "商家不能读取他人广告数据，事件重放不多计"
+      ],
+      "evidenceGates": [
+        "DG01",
+        "E03"
+      ],
+      "features": [
+        "banner-metrics-v13"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP29",
+      "phase": "E",
+      "title": "实现平台佣金月账单与主动缴纳",
+      "dependsOn": [
+        "SP20",
+        "SP17",
+        "SP13",
+        "SP11"
+      ],
+      "legacyTasks": [
+        "DP54"
+      ],
+      "pages": [
+        "V22",
+        "V15"
+      ],
+      "deliverable": "唯一计佣、出账期限、分次实缴分配与欠费门禁",
+      "steps": [
+        "按实际形成月份归集佣金",
+        "计划次月1日00:10，实际出账成功起72小时",
+        "核实实缴后按已确认顺序抵付并更新必要限制"
+      ],
+      "acceptance": [
+        "争议暂缓不自动占款",
+        "部分缴纳不重置原期限，0应缴无支付",
+        "欠费仅阻对应新接/卖，不阻原履约、浏览、免费发布和申诉"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E04",
+        "E06"
+      ],
+      "features": [
+        "commission-billing-and-refunds"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP30",
+      "phase": "E",
+      "title": "实现账单争议、更正、多收与退款",
+      "dependsOn": [
+        "SP29",
+        "SP12",
+        "SP13",
+        "SP19"
+      ],
+      "legacyTasks": [
+        "DP55",
+        "DP56"
+      ],
+      "pages": [
+        "V15",
+        "V16",
+        "V22"
+      ],
+      "deliverable": "争议材料/版本、核准抵扣、多收退款及注销人工核对",
+      "steps": [
+        "只暂停争议部分，无争议保留原期限",
+        "核验余额和补通知成功后给相应新72小时",
+        "区分应缴更正抵扣和实际多收退回"
+      ],
+      "acceptance": [
+        "同理由旧材料不反复停表",
+        "多收退款不让已抵佣金重新欠费",
+        "退款未知先查不重复退，不把客户欠款自动判成免佣"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E04",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP31",
+      "phase": "E",
+      "title": "实现居民文字AI适配与次数权益",
+      "dependsOn": [
+        "SP08",
+        "SP09",
+        "SP03"
+      ],
+      "legacyTasks": [
+        "DP41",
+        "DP42"
+      ],
+      "pages": [
+        "V04",
+        "V05"
+      ],
+      "deliverable": "有真实依据的模型适配、自然月免费额度、幂等及关闭降级",
+      "steps": [
+        "核实供应商协议、实际版本和已批准预算限额",
+        "实现已核验自然人每月3次及已确认扣次顺序",
+        "保留20次/1.90元/到账后180天合同，但付费直购与余额须另过门槛"
+      ],
+      "acceptance": [
+        "不读图片、历史或私密字段，密钥只在服务端",
+        "技术失败不扣、未知不重试扣次",
+        "AI直购与余额仍条件性未启用，不因这张任务卡自动开售"
+      ],
+      "evidenceGates": [
+        "AG01",
+        "E02",
+        "E03",
+        "E04"
+      ],
+      "features": [
+        "resident-text-ai"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP32",
+      "phase": "E",
+      "title": "实现四类文字整理、采用与质量评测",
+      "dependsOn": [
+        "SP31",
+        "SP15",
+        "SP16"
+      ],
+      "legacyTasks": [
+        "DP43",
+        "DP44"
+      ],
+      "pages": [
+        "V04"
+      ],
+      "deliverable": "提取候选、缺失/冲突、多需求选择、明确采用及发布关联",
+      "steps": [
+        "维修/其它只整理标题说明，时间仍手填",
+        "跑腿明确时间才给候选，闲置按本类字段核对",
+        "用有标准答案的合成数据做版本评测"
+      ],
+      "acceptance": [
+        "不自动采用、覆盖、重试或发布",
+        "失败/次数不足保留手动填写和原内容",
+        "实际时延用量与质量须实测，不把候选模型报价写成真实费用"
+      ],
+      "evidenceGates": [
+        "AG01"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP33",
+      "phase": "E",
+      "title": "实现运营看板与个人服务费统计",
+      "dependsOn": [
+        "SP22",
+        "SP30",
+        "SP32",
+        "SP11"
+      ],
+      "legacyTasks": [
+        "DP45",
+        "DP46",
+        "DP47",
+        "DP48"
+      ],
+      "pages": [
+        "V05",
+        "V21"
+      ],
+      "deliverable": "可追溯四业务/AI/佣金事实、日汇总及本人跑腿统计",
+      "steps": [
+        "明确采集起点、同批/每日事件及去重",
+        "分开业务量、佣金应缴/实缴/抵付/多收退款",
+        "接本人跑腿合格服务费与运营日期筛选"
+      ],
+      "acceptance": [
+        "自动结束不证明客户已付款，不冒充GMV或钱包到账",
+        "本人收入不混货款/垫付，不把未知填0",
+        "管理员权限与来源可核，删除恢复和迟到事件对账通过"
+      ],
+      "evidenceGates": [
+        "DG01",
+        "E03",
+        "E06"
+      ],
+      "features": [
+        "operations-metrics"
+      ],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP34",
+      "phase": "F",
+      "title": "完成全部首版真实接入和集成验收",
+      "dependsOn": [
+        "SP22",
+        "SP24",
+        "SP25",
+        "SP27",
+        "SP28",
+        "SP30",
+        "SP33"
+      ],
+      "legacyTasks": [
+        "DP36",
+        "DP37",
+        "DP60"
+      ],
+      "pages": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ],
+      "deliverable": "包含新增商业范围的完整首版证据和缺陷复验矩阵",
+      "steps": [
+        "逐项核对实际账号、环境、权限和供应商结果",
+        "运行原82项业务验收及新增入驻/券/广告合同",
+        "验证多用户、并发、重放、断网未知和权限撤回"
+      ],
+      "acceptance": [
+        "原82项通过不代替新增商业范围",
+        "受控替身不能在生产默认放行",
+        "全部首版实际启用条件满足且无阻断，不能只靠HTML或Node通过"
+      ],
+      "evidenceGates": [
+        "E01",
+        "E02",
+        "E03",
+        "E04",
+        "E05",
+        "E06",
+        "QG01",
+        "AG01",
+        "DG01"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP35",
+      "phase": "F",
+      "title": "完成真机、隐私、安全与恢复验收",
+      "dependsOn": [
+        "SP34",
+        "SP05"
+      ],
+      "legacyTasks": [
+        "DP38"
+      ],
+      "pages": [
+        "G01",
+        "G02",
+        "G03",
+        "G04"
+      ],
+      "deliverable": "设备矩阵、安全与容量依据、恢复/回退演练记录",
+      "steps": [
+        "用真实设备检查胶囊、键盘、返回、安全区、大字和弱网",
+        "验证私密文件撤权、敏感日志和越权请求",
+        "演练任务中断、数据备份恢复及旧客户端兼容"
+      ],
+      "acceptance": [
+        "恢复不重复结束、计佣、退款、核销、评分或通知",
+        "故障保护和资金事实一致",
+        "性能/设备支持标准经确认，不编造指标"
+      ],
+      "evidenceGates": [
+        "E03",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    },
+    {
+      "id": "SP36",
+      "phase": "F",
+      "title": "运营交接、上线批准与稳定观察",
+      "dependsOn": [
+        "SP35",
+        "SP04",
+        "SP06"
+      ],
+      "legacyTasks": [
+        "DP39",
+        "DP40"
+      ],
+      "pages": [],
+      "deliverable": "运营手册、版本/费用/风险与回退清单、授权及稳定观察证据",
+      "steps": [
+        "完成共享管理账号交接和异常演练",
+        "向用户提交最终版本及未决风险供批准",
+        "获单独授权后提审发布，按原规则记录稳定观察"
+      ],
+      "acceptance": [
+        "未授权不发布、不真实收退款或采购",
+        "没有完整真实验收不开始连续14天稳定计时",
+        "沉默不表示稳定，也不自动启动第二版"
+      ],
+      "evidenceGates": [
+        "E05",
+        "E06"
+      ],
+      "features": [],
+      "status": "planned",
+      "productAcceptancePassed": false
+    }
+  ]
+}

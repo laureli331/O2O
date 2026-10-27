@@ -266,12 +266,11 @@
   "businessRulesComplete": false,
   "formalDevelopmentReady": false,
   "remainingDecisionsOrEvidence": [
-    "merchant-application-location-and-materials-review-standards",
+    "merchant-materials-review-standards",
     "banner-production-delivery-target-and-redesign-boundary",
     "banner-formal-image-and-copy-specifications",
     "banner-event-definitions-deduplication-data-retention",
-    "platform-eligibility-payment-refund-and-real-ability-evidence",
-    "new-onboarding-and-coupon-ascii-html-design"
+    "platform-eligibility-payment-refund-and-real-ability-evidence"
   ],
   "validation": {
     "nodeTests": 1288,
@@ -280,5 +279,19 @@
     "realPaymentEnabled": false,
     "productionDeploymentAuthorized": false
   },
-  "designReviewDocument": "docs/superpowers/specs/2026-10-26-merchant-onboarding-coupons-ascii-design.md"
+  "designReviewDocument": "docs/superpowers/specs/2026-10-26-merchant-onboarding-coupons-ascii-design.md",
+  "prototypeDelivery": {
+    "date": "2026-10-27",
+    "status": "local-preview-verified",
+    "document": "docs/commerce-acceptance-20261027.md",
+    "designApproved": true,
+    "htmlRoutes": [
+      "v24.html",
+      "v25.html",
+      "v26.html",
+      "v27.html"
+    ],
+    "realAbilitiesVerified": false
+  },
+  "executionBacklogDocument": "docs/v1-executable-development-plan-20261027.md"
 }
