@@ -26,8 +26,13 @@
     "interpretation": "截图只记录页面上可见的名称和空态，不证明该环境绑定哪个AppID、当前AppID是否已接通、是否具有运行所需权限。"
   },
   "appIdCrossCheck": {
-    "currentProjectAppId": "wx2414399d423dfb65",
-    "currentProjectAppIdConfirmedByUser": true,
+    "currentProjectAppId": "wx358290e451cb06e7",
+    "currentProjectAppIdConfirmedByUser": false,
+    "projectConfigPath": ".local/permission-check/project.config.json",
+    "targetNewAppId": "wx2414399d423dfb65",
+    "currentProjectMatchesNewAppId": false,
+    "evidenceMethod": "read-only-local-config",
+    "historicalUserReportCurrentProjectAppIdMatch": true,
     "screenshotBoundAppId": null,
     "oldAppIdReadOnlyResult": {
       "appId": "wx358290e451cb06e7",

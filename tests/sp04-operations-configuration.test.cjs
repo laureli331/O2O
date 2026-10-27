@@ -25,6 +25,26 @@ test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence
   assert.equal(record.cloudConsoleScreenshot.provesNewAppIdConnection, false);
 });
 
+test('SP04 records that the open diagnostic project uses the old AppID, not the new target', () => {
+  const crossCheck = evidence().appIdCrossCheck;
+  assert.deepEqual(crossCheck, {
+    currentProjectAppId: 'wx358290e451cb06e7',
+    currentProjectAppIdConfirmedByUser: false,
+    projectConfigPath: '.local/permission-check/project.config.json',
+    targetNewAppId: 'wx2414399d423dfb65',
+    currentProjectMatchesNewAppId: false,
+    evidenceMethod: 'read-only-local-config',
+    historicalUserReportCurrentProjectAppIdMatch: true,
+    screenshotBoundAppId: null,
+    oldAppIdReadOnlyResult: {
+      appId: 'wx358290e451cb06e7',
+      environmentId: 'cloud1-d1g1mv89t76512a25',
+      scope: 'development-and-controlled-testing-only',
+      provesScreenshotOwner: false,
+    },
+  });
+});
+
 test('SP04 records the exact user-confirmed service area and three service modules', () => {
   const record = evidence();
   assert.deepEqual(record.businessConfiguration.serviceArea.value, [

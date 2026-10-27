@@ -23,7 +23,15 @@
     "appId": "wx2414399d423dfb65",
     "appIdEvidenceLevel": "user-report-and-project-record-not-live-platform-verification",
     "appIdSource": "docs/miniapp-filing-progress-20261018.md",
-    "currentProjectAppIdUserConfirmedAt": "2026-10-27",
+    "historicalUserReportCurrentProjectAppIdMatch": true,
+    "currentProjectAppIdObservation": {
+      "projectLabel": "PERMISSION-CHECK",
+      "projectConfigPath": ".local/permission-check/project.config.json",
+      "projectConfigAppId": "wx358290e451cb06e7",
+      "targetAppId": "wx2414399d423dfb65",
+      "matchesTargetAppId": false,
+      "evidenceMethod": "read-only-local-config"
+    },
     "miniProgramName": "湘邻湘友",
     "wechatVerificationStatus": "passed-user-reported-2026-10-16",
     "finalServiceCategories": null,
