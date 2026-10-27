@@ -45,6 +45,26 @@ test('SP04 records that the open diagnostic project uses the old AppID, not the 
   });
 });
 
+test('SP04 records the DevTools project list without claiming all local projects were searched', () => {
+  const record = evidence();
+  assert.deepEqual(record.devtoolsProjectManagerObservation, {
+    visibleRegisteredProjectCount: 1,
+    visibleProjects: [{
+      name: 'O2O environment verification',
+      path: 'E:\\O2O\\.local\\permission-check',
+    }],
+    targetNewAppId: 'wx2414399d423dfb65',
+    targetProjectListed: false,
+    appIdVisibleInProjectManager: false,
+    scope: 'wechat-devtools-registered-project-list-only',
+    evidenceMethod: 'read-only-visible-ui-observation',
+  });
+  assert.ok(record.remainingChecks.some((item) => item.includes('列表外或其他账号/设备')));
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  assert.ok(doc.includes('目标新AppID对应工程未出现在当前列表中'));
+  assert.ok(doc.includes('此结果仅适用于该开发者工具当前显示的已登记工程列表'));
+});
+
 test('SP04 records the exact user-confirmed service area and three service modules', () => {
   const record = evidence();
   assert.deepEqual(record.businessConfiguration.serviceArea.value, [

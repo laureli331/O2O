@@ -90,6 +90,25 @@ test('SP01 records the local diagnostic project AppID separately from the new ta
     a.ok(doc.includes('不匹配'), file);
   }
 });
+test('SP01 scopes the DevTools project-manager inventory to its visible registered projects', () => {
+  const record = load();
+  a.deepEqual(record.accountEvidence.devtoolsProjectManagerObservation, {
+    observationDate: '2026-10-27',
+    visibleRegisteredProjectCount: 1,
+    visibleProjects: [{
+      name: 'O2O environment verification',
+      path: 'E:\\O2O\\.local\\permission-check',
+    }],
+    targetFormalAppId: 'wx2414399d423dfb65',
+    targetProjectListed: false,
+    appIdVisibleInProjectManager: false,
+    scope: 'wechat-devtools-registered-project-list-only',
+    evidenceMethod: 'read-only-visible-ui-observation',
+  });
+  const doc = read('docs/sp01-technical-environment-20261027.md');
+  a.ok(doc.includes('“项目→查看所有项目”列表'));
+  a.ok(doc.includes('列表外、其他目录、账号或设备中的工程是否存在仍未核实'));
+});
 test('current plan entry points preserve legacy rows and point to the new execution document',()=>{for(const file of ['docs/development-plan.md','docs/post-registration-development.md','docs/module-specs/current-development-basis-20261015.md','CONTEXT.md'])a(read(file).includes('v1-executable-development-plan-20261027.md'),file);const p=load();a(p.legacyOverrides.some(x=>x.legacy.includes('DP14')&&x.decision==='provider-profiles-only-no-people-directory'));a(p.legacyOverrides.some(x=>x.legacy.includes('DP25')&&x.decision==='existing-legal-history-only-v17-archived'));a.equal(p.tasks.flatMap(t=>t.pages).includes('V17'),false);a(!scope.remainingDecisionsOrEvidence.includes('new-onboarding-and-coupon-ascii-html-design'));a.equal(scope.prototypeDelivery.realAbilitiesVerified,false);a.equal(scope.formalDevelopmentReady,false);});
 for(const [name,mutate]of [
  ['missing task',p=>p.tasks.pop()],
