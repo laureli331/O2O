@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "taskId": "SP04",
+  "status": "in-progress",
+  "productAcceptancePassed": false,
+  "deliveryScope": "evidence-review-only",
+  "sources": [
+    "docs/v1-executable-development-plan-20261027.md",
+    "docs/v1-executable-development-plan-20261027.json",
+    "docs/module-specs/business-closeout-confirmed-20261015.md",
+    "docs/superpowers/specs/2026-10-23-v15-v16-web-admin-carrier-design.md",
+    "docs/admin-web-carrier-html-20261023.md",
+    "docs/development-decisions.json",
+    "docs/v1-pricing-budget-confirmed-20261018.md"
+  ],
+  "cloudConsoleScreenshot": {
+    "name": "user-provided-2026-10-27",
+    "visibleEnvironmentName": "cloud1",
+    "visibleBadge": "微信体验版",
+    "visibleOverviewState": "暂无数据",
+    "visibleDatabaseState": "找不到可用的集合",
+    "appIdVisible": false,
+    "environmentOwnerAppId": null,
+    "provesNewAppIdConnection": false,
+    "interpretation": "截图只记录页面上可见的名称和空态，不证明该环境绑定哪个AppID、当前AppID是否已接通、是否具有运行所需权限。"
+  },
+  "appIdCrossCheck": {
+    "currentProjectAppId": "wx2414399d423dfb65",
+    "currentProjectAppIdConfirmedByUser": true,
+    "screenshotBoundAppId": null,
+    "oldAppIdReadOnlyResult": {
+      "appId": "wx358290e451cb06e7",
+      "environmentId": "cloud1-d1g1mv89t76512a25",
+      "scope": "development-and-controlled-testing-only",
+      "provesScreenshotOwner": false
+    }
+  },
+  "businessConfiguration": {
+    "registrationLocationRecord": "湖南省郴州市永兴县湘阴渡（执照登记地点记录）",
+    "registrationAddressIsServiceArea": false,
+    "serviceArea": {
+      "value": null,
+      "status": "awaiting-user-confirmation"
+    },
+    "serviceCategories": {
+      "value": [],
+      "status": "awaiting-user-confirmation"
+    }
+  },
+  "operations": {
+    "managementAccounts": 1,
+    "sharedManagementAccount": true,
+    "actualHumanAttribution": false,
+    "separateOperatorAccounts": false,
+    "twoPersonReview": false,
+    "promisesTwentyFourHourCoverage": false,
+    "coverageSchedule": {
+      "value": null,
+      "status": "awaiting-user-confirmation"
+    },
+    "confirmedSource": "docs/module-specs/business-closeout-confirmed-20261015.md"
+  },
+  "webAdministration": {
+    "model": "custom-web-primary-miniapp-light-duty",
+    "sharedBackendAndPermissions": true,
+    "hostingProvider": {
+      "value": null,
+      "status": "not-selected"
+    },
+    "customDomain": {
+      "value": null,
+      "status": "not-selected"
+    },
+    "loginMethod": {
+      "value": null,
+      "status": "not-verified"
+    },
+    "monthlyHostingQuote": {
+      "value": null,
+      "status": "not-verified"
+    },
+    "accountProvisioningVerified": false,
+    "currentAppIdHostingAccessVerified": false,
+    "productionCustomDomainRequiredByReviewedDocs": true,
+    "sources": {
+      "staticHosting": "https://cloud.tencent.com/document/product/876/46900",
+      "httpAccess": "https://cloud.tencent.com/document/product/876/130728"
+    },
+    "sourceInterpretation": "官方文档说明了公开产品能力和默认域名限制，不证明本项目账号已开通、可登录、已购买域名或已配置托管。"
+  },
+  "localDevice": {
+    "environment": "Windows 11",
+    "installedBrowsersEvidence": "本机Windows卸载程序注册表的只读版本清单，2026-10-27",
+    "installedBrowsers": [
+      {
+        "name": "Microsoft Edge",
+        "version": "156.0.4314.42",
+        "compatibilityTested": false
+      },
+      {
+        "name": "Google Chrome",
+        "version": "156.0.8078.47",
+        "compatibilityTested": false
+      },
+      {
+        "name": "Mozilla Firefox",
+        "version": "153.0",
+        "compatibilityTested": false
+      }
+    ],
+    "webHostingAndLoginTested": false
+  },
+  "budget": {
+    "confirmedMonthlyCashCapCny": 500,
+    "hostingAndDomainQuoteIncluded": null,
+    "budgetSource": "docs/v1-pricing-budget-confirmed-20261018.md",
+    "purchaseAuthorized": false
+  },
+  "evidenceGates": [
+    {
+      "id": "E05",
+      "passed": false,
+      "reason": "真实服务范围、分类和实际运营开放时段尚未确认。"
+    },
+    {
+      "id": "E06",
+      "passed": false,
+      "reason": "新AppID环境归属、托管/登录配置及正式域名和费用尚未核实。"
+    }
+  ],
+  "cloudWritesOrDeploymentPerformed": false,
+  "remainingChecks": [
+    "用户确认真实开放的乡镇及村/社区范围和服务分类。",
+    "用户确认本人和伙伴共用账号的实际查看/交接时段；不要求承诺24小时值守。",
+    "在新AppID下核验环境归属、可用登录/托管能力和配置状态。",
+    "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
+    "按确认的真实设备和浏览器执行网页后台登录、权限和页面验收。"
+  ],
+  "rollback": "本阶段仅新增证据文档、计划状态和文档测试；回退时只回退本阶段提交或恢复这些自有文件，不重置整个工作区、不触碰用户已有改动，也没有云端测试数据需要清理。"
+}
