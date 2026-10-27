@@ -141,8 +141,10 @@ test('SP01 separates the original wizard screenshot from the current live state 
     scope: 'user-provided-screenshot-baseline-with-later-live-ui-observation',
     officialCloudEnablementSource: 'https://developer.cloud.tencent.com/article/1840315?policyId=1003',
     currentPricingSource: 'https://cloud.tencent.com/document/product/876/127357',
+    newUserGuideSource: 'https://cloud.tencent.com/document/product/876/56375',
     pricingPolicyObservedAt: '2026-10-27',
     freeTrialPolicy: {
+      policyScope: 'console-resource-point-redemption-code-trial',
       priceCny: 0,
       resourcePointsPerMonth: 3000,
       renewalTermMonths: 6,
@@ -150,10 +152,17 @@ test('SP01 separates the original wizard screenshot from the current live state 
       appliesToWechatExperience: false,
       publishedMiniProgramExpiryDays: 15,
       afterExpiry: 'isolation-then-destruction-if-not-converted-to-paid',
-      freeEnvironmentLimitPerCloudBaseAccount: 1,
+      redemptionCodeEnvironmentsPerCloudBaseAccount: 1,
+    },
+    newUserGuideTrial: {
+      policyScope: 'cloudbase-new-user-onboarding-guide',
+      firstUseOffer: 'one-month-free-personal-plan-environment',
+      firstUseEligibilityVerified: false,
+      currentWizardMappingVerified: false,
     },
     currentCloudBaseAccountFreeTrialEligibilityVerified: false,
     wizardOfferTypeAndPriceVerified: false,
+    wizardPostTrialBillingVerified: false,
     latestObservation: {
       observationDate: '2026-10-27',
       method: 'computer-use-read-only-window-capture',
@@ -186,7 +195,11 @@ test('SP01 separates the original wizard screenshot from the current live state 
   a(doc.includes('不支持自动续费'));
   a(doc.includes('微信体验版不适用'));
   a(doc.includes('上线后的第15天'));
-  a(doc.includes('用户当前云开发账号的免费资格'));
+  a(doc.includes('目标账号当前免费资格'));
+  a(doc.includes('免费体验入口和适用规则有区别'));
+  a(doc.includes('初次使用可免费体验1个月个人版环境'));
+  a(doc.includes('通过一次性兑换码创建一个控制台免费体验环境'));
+  a(doc.includes('也不能判断开发者工具向导中的“免费体验一个月”对应哪一种体验'));
   a(doc.includes('首次创建云开发环境前需完成云开发服务开通，包括同意服务条款和完成服务角色权限授权'));
   a(doc.includes('3000点/月'));
 });
@@ -241,7 +254,7 @@ test('SP01 excludes old cloud1 after the user reports different subjects and kee
     '用户于2026-10-27明确确认，旧号为个人主体，新号属于个体工商户/公司',
     '不符合官方同主体共享前提',
     '未授权修改环境共享设置',
-    '当前不要点击“创建”',
+    '当前建议不要点击“创建”',
   ]) a(sp01.includes(text), text);
   a(plan.includes('旧号为个人主体、新号为个体工商户/公司主体'));
 });

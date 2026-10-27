@@ -118,8 +118,10 @@
       "scope": "user-provided-screenshot-baseline-with-later-live-ui-observation",
       "officialCloudEnablementSource": "https://developer.cloud.tencent.com/article/1840315?policyId=1003",
       "currentPricingSource": "https://cloud.tencent.com/document/product/876/127357",
+      "newUserGuideSource": "https://cloud.tencent.com/document/product/876/56375",
       "pricingPolicyObservedAt": "2026-10-27",
       "freeTrialPolicy": {
+        "policyScope": "console-resource-point-redemption-code-trial",
         "priceCny": 0,
         "resourcePointsPerMonth": 3000,
         "renewalTermMonths": 6,
@@ -127,10 +129,17 @@
         "appliesToWechatExperience": false,
         "publishedMiniProgramExpiryDays": 15,
         "afterExpiry": "isolation-then-destruction-if-not-converted-to-paid",
-        "freeEnvironmentLimitPerCloudBaseAccount": 1
+        "redemptionCodeEnvironmentsPerCloudBaseAccount": 1
+      },
+      "newUserGuideTrial": {
+        "policyScope": "cloudbase-new-user-onboarding-guide",
+        "firstUseOffer": "one-month-free-personal-plan-environment",
+        "firstUseEligibilityVerified": false,
+        "currentWizardMappingVerified": false
       },
       "currentCloudBaseAccountFreeTrialEligibilityVerified": false,
       "wizardOfferTypeAndPriceVerified": false,
+      "wizardPostTrialBillingVerified": false,
       "latestObservation": {
         "observationDate": "2026-10-27",
         "method": "computer-use-read-only-window-capture",
@@ -468,14 +477,15 @@
           "用户最初截图显示目标AppID wx2414399d423dfb65已选中、条款框未勾选；后续只读实时画面显示目标AppID与微信云开发仍选中、条款框已勾选但操作人无法确认，创建向导仍打开且项目尚未创建，默认目录也不存在；预览cloud1不证明环境归属",
           "旧AppID wx358290e451cb06e7只读查询返回cloud1-d1g1mv89t76512a25；不证明新AppID环境状态",
           "用户提供的控制台截图显示cloud1/微信体验版和暂无数据/无可用集合，截图未显示AppID",
+          "复核CloudBase资源点价格页（2026-10-26更新）与新手指引（2026-04-21更新），将控制台兑换码体验规则与初次使用个人版一个月免费说明分开记录；开发者工具向导适用哪一条及试用后计费仍未核实",
           "预览根地址返回目录列表，不是单页原型入口"
         ],
         "blockedChecks": [
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
-          "当前向导条款框已勾选但操作人未知，且仍未点击创建；官方通用规则显示免费环境为0元、3000点/月、可续6个月且不自动续费，但仅适用于控制台创建的体验环境，微信体验版不适用；发布小程序后到期时间调整为上线后第15天，之后隔离并可能销毁。目标账号免费体验资格、旧cloud1是否占用同一云开发账号资格、向导‘免费体验一个月’实际环境类型和费用、新AppID自己的环境是否存在均未核实。旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
+          "当前向导条款框已勾选但操作人未知，且仍未点击创建；官方资料分别说明：控制台资源点兑换码体验为每CloudBase账号一个、3000点/月、可续6个月且不自动续费（微信体验版不适用此续期政策，发布后到期日变为上线后第15天）；新手指引另称初次使用可免费体验1个月个人版环境。两份说明适用入口不同，目标账号资格、旧cloud1是否与目标账号同一云开发账号、开发者工具向导对应哪种免费体验、实际到期与试用后计费、新AppID自己的环境是否存在均未核实。旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "不要点击创建。腾讯云当前公开规则显示，CloudBase免费体验环境为0元、3000点/月、可续6个月且不自动续费；该续期政策仅适用于云开发控制台创建的体验环境，微信体验版不适用。小程序发布后免费环境到期时间调整为上线后第15天，随后进入隔离期，未转付费将销毁。免费环境每个云开发账号限一个；目标账号当前资格、旧cloud1是否占用同一云开发账号资格、向导‘免费体验一个月’将创建何种环境及实际费用均未核实。旧号个人与新号个体工商户/公司主体不同，旧cloud1不再作为共享候选。仍需只读确认目标AppID自己的环境是否已存在，并在开发者工具/控制台核实当前向导对应的环境类型、免费资格和到期规则；若需开通新环境，先取得用户对具体方案的明确决定。不要把向导预览cloud1当作环境ID或归属证据。"
+        "nextAction": "不要点击创建。当前官方资料有两种不同入口说明：资源点价格页的控制台兑换码体验规则是每云开发账号一个、3000点/月、可续6个月且不自动续费，并明确不适用于微信体验版续期；新手指引另称初次使用可免费体验1个月个人版环境。不能据此断定开发者工具向导对应哪一种体验，也不能推断试用期后的套餐、费用或续费行为。小程序发布会影响控制台免费体验环境的到期日（上线后第15天），之后隔离，未转付费将销毁。目标账号资格、旧cloud1是否属于同一云开发账号、向导的环境类型/到期/试用后计费、目标AppID自己的环境是否已存在仍未核实；旧号个人与新号个体工商户/公司主体不同，旧cloud1不再作为共享候选。仅在目标账号对应页面明确展示环境类型、试用到期日、费用和续费设置后，再据此作决定。不要把向导预览cloud1当作环境ID或归属证据。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
