@@ -1,0 +1,812 @@
+{
+  "date": "2026-10-27",
+  "status": "read-only-measurement",
+  "sourceCommit": "00421e6ed19c6ed8b1b1405af1603f7588379c6b",
+  "method": "source declaration counts include overridden and media rules; computed styles are separate visible-node samples, not all dynamic states",
+  "pages": [
+    {
+      "file": "ad-cooperation.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": []
+    },
+    {
+      "file": "banner-admin.html",
+      "status": "active",
+      "surface": "admin",
+      "stylesheets": [
+        "assets/banner-admin.css"
+      ]
+    },
+    {
+      "file": "discovery-buttons.html",
+      "status": "design-lab",
+      "surface": "mobile",
+      "stylesheets": []
+    },
+    {
+      "file": "g01.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/g-series.css"
+      ]
+    },
+    {
+      "file": "g02.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/g-series.css"
+      ]
+    },
+    {
+      "file": "g03.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/g-series.css"
+      ]
+    },
+    {
+      "file": "g04.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/g-series.css"
+      ]
+    },
+    {
+      "file": "navigation-icon-options.html",
+      "status": "design-lab",
+      "surface": "mobile",
+      "stylesheets": []
+    },
+    {
+      "file": "services.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css",
+        "assets/navigation-state.css"
+      ]
+    },
+    {
+      "file": "v01-v02.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css",
+        "assets/navigation-state.css"
+      ]
+    },
+    {
+      "file": "v03.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css"
+      ]
+    },
+    {
+      "file": "v04.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css",
+        "assets/navigation-state.css",
+        "assets/publish-page.css"
+      ]
+    },
+    {
+      "file": "v05.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css",
+        "assets/navigation-state.css"
+      ]
+    },
+    {
+      "file": "v06.html",
+      "status": "redirect",
+      "surface": "mobile",
+      "stylesheets": []
+    },
+    {
+      "file": "v07.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css",
+        "assets/navigation-state.css"
+      ]
+    },
+    {
+      "file": "v08.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css"
+      ]
+    },
+    {
+      "file": "v09.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css"
+      ]
+    },
+    {
+      "file": "v10.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css"
+      ]
+    },
+    {
+      "file": "v11.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/banner-preview.css"
+      ]
+    },
+    {
+      "file": "v12.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/banner-preview.css"
+      ]
+    },
+    {
+      "file": "v13.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/banner-preview.css"
+      ]
+    },
+    {
+      "file": "v14.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css"
+      ]
+    },
+    {
+      "file": "v15-duty.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css",
+        "assets/v15.css"
+      ]
+    },
+    {
+      "file": "v15-mobile-legacy.html",
+      "status": "archive",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css",
+        "assets/v15.css"
+      ]
+    },
+    {
+      "file": "v15-rework.html",
+      "status": "archive",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v15-rework/v09.css",
+        "assets/v15-rework/mobile-foundations.css",
+        "assets/v15-rework/v14.css",
+        "assets/v15-rework/v15.css",
+        "assets/v15-rework/admin-web.css",
+        "assets/v15-rework/v15-context.css",
+        "assets/v15-rework/rework.css"
+      ]
+    },
+    {
+      "file": "v15.html",
+      "status": "active",
+      "surface": "admin",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css",
+        "assets/v15.css",
+        "assets/admin-web.css",
+        "assets/v15-context.css"
+      ]
+    },
+    {
+      "file": "v16.html",
+      "status": "active",
+      "surface": "admin",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/v15.css",
+        "assets/admin-web.css"
+      ]
+    },
+    {
+      "file": "v17.html",
+      "status": "archive",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css",
+        "assets/reviews.css"
+      ]
+    },
+    {
+      "file": "v18.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css",
+        "assets/reviews.css"
+      ]
+    },
+    {
+      "file": "v19.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css",
+        "assets/reviews.css"
+      ]
+    },
+    {
+      "file": "v20-duty.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v14.css",
+        "assets/v20-duty.css"
+      ]
+    },
+    {
+      "file": "v20.html",
+      "status": "active",
+      "surface": "admin",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/v15.css",
+        "assets/admin-web.css",
+        "assets/v20.css"
+      ]
+    },
+    {
+      "file": "v21.html",
+      "status": "active",
+      "surface": "admin",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v21-v22.css"
+      ]
+    },
+    {
+      "file": "v22.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/v09.css",
+        "assets/mobile-foundations.css",
+        "assets/v21-v22.css"
+      ]
+    },
+    {
+      "file": "v23.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/mobile-foundations.css",
+        "assets/navigation-state.css",
+        "assets/merchant-publish-page.css"
+      ]
+    },
+    {
+      "file": "v24.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/commerce.css"
+      ]
+    },
+    {
+      "file": "v25.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/commerce.css"
+      ]
+    },
+    {
+      "file": "v26.html",
+      "status": "active",
+      "surface": "mobile",
+      "stylesheets": [
+        "assets/commerce.css"
+      ]
+    },
+    {
+      "file": "v27.html",
+      "status": "active",
+      "surface": "admin",
+      "stylesheets": [
+        "assets/commerce.css"
+      ]
+    }
+  ],
+  "measurements": [
+    {
+      "file": "services.html",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": "#content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content",
+          "borderRadius": "0px",
+          "padding": "8px 13px 24px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(38, 58, 49)",
+          "height": 906.75,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".primary",
+          "found": true,
+          "element": "BUTTON",
+          "classes": "primary",
+          "borderRadius": "8px",
+          "padding": "9px 13px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "color": "rgb(255, 255, 255)",
+          "height": 46,
+          "minHeight": "46px"
+        }
+      ]
+    },
+    {
+      "file": "v15.html",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": "#content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content",
+          "borderRadius": "0px",
+          "padding": "24px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(38, 58, 49)",
+          "height": 658,
+          "minHeight": "100%"
+        },
+        {
+          "selector": ".panel",
+          "found": true,
+          "element": "SECTION",
+          "classes": "panel queue-card",
+          "borderRadius": "10px",
+          "padding": "0px",
+          "margin": "0px 0px 14px",
+          "gap": "normal",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(38, 58, 49)",
+          "height": 144.47,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".queue-card",
+          "found": true,
+          "element": "SECTION",
+          "classes": "panel queue-card",
+          "borderRadius": "10px",
+          "padding": "0px",
+          "margin": "0px 0px 14px",
+          "gap": "normal",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(38, 58, 49)",
+          "height": 144.47,
+          "minHeight": "0px"
+        }
+      ]
+    },
+    {
+      "file": "v24.html#D",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": "#content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content",
+          "borderRadius": "0px",
+          "padding": "4px 15px 22px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "15px",
+          "lineHeight": "24.75px",
+          "color": "rgb(38, 62, 53)",
+          "height": 721.25,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".panel",
+          "found": true,
+          "element": "SECTION",
+          "classes": "panel ",
+          "borderRadius": "14px",
+          "padding": "16px",
+          "margin": "0px 0px 14px",
+          "gap": "normal",
+          "fontSize": "15px",
+          "lineHeight": "24.75px",
+          "color": "rgb(38, 62, 53)",
+          "height": 243,
+          "minHeight": "0px"
+        },
+        {
+          "selector": "#footer .primary",
+          "found": true,
+          "element": "BUTTON",
+          "classes": "primary",
+          "borderRadius": "10px",
+          "padding": "11px 15px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "15px",
+          "lineHeight": "24.75px",
+          "color": "rgb(255, 255, 255)",
+          "height": 48.75,
+          "minHeight": "44px"
+        },
+        {
+          "selector": ".notice",
+          "found": true,
+          "element": "DIV",
+          "classes": "notice warning",
+          "borderRadius": "11px",
+          "padding": "14px 15px",
+          "margin": "0px 0px 14px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "21.45px",
+          "color": "rgb(136, 97, 34)",
+          "height": 92.31,
+          "minHeight": "0px"
+        }
+      ]
+    },
+    {
+      "file": "v03.html",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": ".scroll",
+          "found": true,
+          "element": "DIV",
+          "classes": "scroll",
+          "borderRadius": "0px",
+          "padding": "0px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "16px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 657,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".task-card",
+          "found": true,
+          "element": "SECTION",
+          "classes": "task-card",
+          "borderRadius": "11px",
+          "padding": "15px",
+          "margin": "0px 0px 14px",
+          "gap": "normal",
+          "fontSize": "16px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 150,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".candidate",
+          "found": true,
+          "element": "ARTICLE",
+          "classes": "candidate",
+          "borderRadius": "10px",
+          "padding": "13px",
+          "margin": "0px 0px 11px",
+          "gap": "normal",
+          "fontSize": "16px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 189.09,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".primary",
+          "found": true,
+          "element": "BUTTON",
+          "classes": "primary",
+          "borderRadius": "8px",
+          "padding": "12px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "color": "rgb(252, 251, 247)",
+          "height": 46,
+          "minHeight": "46px"
+        }
+      ]
+    },
+    {
+      "file": "v04.html",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": "#flow-content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content",
+          "borderRadius": "0px",
+          "padding": "5px 15px 22px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 679.17,
+          "minHeight": "0px"
+        }
+      ]
+    },
+    {
+      "file": "v05.html",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": "#my-content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content",
+          "borderRadius": "0px",
+          "padding": "5px 15px 22px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 847.19,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".my-card",
+          "found": true,
+          "element": "SECTION",
+          "classes": "my-card",
+          "borderRadius": "12px",
+          "padding": "15px 12px",
+          "margin": "0px 0px 13px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 156,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".primary",
+          "found": true,
+          "element": "BUTTON",
+          "classes": "primary",
+          "borderRadius": "8px",
+          "padding": "13px 16px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "12px",
+          "lineHeight": "18px",
+          "color": "rgb(252, 251, 247)",
+          "height": 46,
+          "minHeight": "46px"
+        }
+      ]
+    },
+    {
+      "file": "v09.html",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": "#content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content",
+          "borderRadius": "0px",
+          "padding": "10px 13px 26px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(38, 58, 49)",
+          "height": 717,
+          "minHeight": "100%"
+        },
+        {
+          "selector": ".panel",
+          "found": true,
+          "element": "ARTICLE",
+          "classes": "panel favorite",
+          "borderRadius": "13px",
+          "padding": "14px",
+          "margin": "0px 0px 14px",
+          "gap": "normal",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(38, 58, 49)",
+          "height": 188,
+          "minHeight": "auto"
+        }
+      ]
+    },
+    {
+      "file": "v23.html",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": "#main-content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content",
+          "borderRadius": "0px",
+          "padding": "14px 15px 28px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 535.78,
+          "minHeight": "0px"
+        },
+        {
+          "selector": ".post-card",
+          "found": true,
+          "element": "BUTTON",
+          "classes": "post-card",
+          "borderRadius": "12px",
+          "padding": "0px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "13px",
+          "lineHeight": "normal",
+          "color": "rgb(38, 58, 49)",
+          "height": 226.19,
+          "minHeight": "44px"
+        },
+        {
+          "selector": ".primary",
+          "found": true,
+          "element": "BUTTON",
+          "classes": "primary",
+          "borderRadius": "10px",
+          "padding": "11px 14px",
+          "margin": "0px",
+          "gap": "7px",
+          "fontSize": "13px",
+          "lineHeight": "19.5px",
+          "color": "rgb(255, 255, 255)",
+          "height": 46,
+          "minHeight": "46px"
+        }
+      ]
+    },
+    {
+      "file": "g01.html",
+      "viewport": {
+        "width": 375,
+        "height": 900
+      },
+      "values": [
+        {
+          "selector": ".content",
+          "found": true,
+          "element": "DIV",
+          "classes": "content empty-list",
+          "borderRadius": "0px",
+          "padding": "16px 13px 24px",
+          "margin": "0px",
+          "gap": "normal",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(38, 58, 49)",
+          "height": 727,
+          "minHeight": "100%"
+        },
+        {
+          "selector": ".primary",
+          "found": true,
+          "element": "BUTTON",
+          "classes": "primary",
+          "borderRadius": "9px",
+          "padding": "10px 17px",
+          "margin": "0px",
+          "gap": "6px",
+          "fontSize": "14px",
+          "lineHeight": "23.8px",
+          "color": "rgb(255, 255, 255)",
+          "height": 46,
+          "minHeight": "46px"
+        }
+      ]
+    }
+  ],
+  "browserErrors": []
+}

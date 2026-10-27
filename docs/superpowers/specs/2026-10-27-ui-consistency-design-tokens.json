@@ -1,0 +1,108 @@
+{
+  "status": "proposal-awaiting-user-review",
+  "implementationStarted": false,
+  "unit": "CSS px",
+  "document": "2026-10-27-ui-consistency-design.md",
+  "evidence": "2026-10-27-ui-consistency-design-audit.json",
+  "activePages": [
+    "ad-cooperation.html",
+    "banner-admin.html",
+    "g01.html",
+    "g02.html",
+    "g03.html",
+    "g04.html",
+    "services.html",
+    "v01-v02.html",
+    "v03.html",
+    "v04.html",
+    "v05.html",
+    "v07.html",
+    "v08.html",
+    "v09.html",
+    "v10.html",
+    "v11.html",
+    "v12.html",
+    "v13.html",
+    "v14.html",
+    "v15-duty.html",
+    "v15.html",
+    "v16.html",
+    "v18.html",
+    "v19.html",
+    "v20-duty.html",
+    "v20.html",
+    "v21.html",
+    "v22.html",
+    "v23.html",
+    "v24.html",
+    "v25.html",
+    "v26.html",
+    "v27.html"
+  ],
+  "excludedPages": {
+    "discovery-buttons.html": "design-lab",
+    "navigation-icon-options.html": "design-lab",
+    "v06.html": "redirect",
+    "v15-mobile-legacy.html": "archive",
+    "v15-rework.html": "archive",
+    "v17.html": "archive"
+  },
+  "representativePages": [
+    "services.html",
+    "v24.html",
+    "v15.html"
+  ],
+  "spacingScale": [
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    32
+  ],
+  "radius": {
+    "tag": 4,
+    "button": 8,
+    "field": 8,
+    "card": 12,
+    "dialog": 16,
+    "sheetTop": 20
+  },
+  "mobile": {
+    "pageInset": 16,
+    "cardInset": 16,
+    "cardGap": 12,
+    "sectionGap": 24,
+    "fieldGap": 16,
+    "primaryMinHeight": 46,
+    "touchMinWidth": 44,
+    "touchMinHeight": 44,
+    "bodyFont": 14,
+    "cardTitleFont": 16,
+    "navigationTitleFont": 18,
+    "helperFont": 12
+  },
+  "admin": {
+    "pageInset": 24,
+    "cardInset": 20,
+    "cardGap": 16,
+    "sectionGap": 24,
+    "bodyFont": 14,
+    "cardTitleFont": 16,
+    "pageTitleFont": 20
+  },
+  "approvalRequiredBefore": [
+    "representative-html-changes",
+    "all-active-page-rollout"
+  ],
+  "protected": [
+    "business-rules",
+    "approved-content-order",
+    "filled-navigation-svg-paths",
+    "capsule-safe-area",
+    "masonry",
+    "centered-profile",
+    "archived-comparison-pages"
+  ]
+}
