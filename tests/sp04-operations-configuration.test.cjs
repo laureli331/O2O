@@ -45,15 +45,24 @@ test('SP04 records that the open diagnostic project uses the old AppID, not the 
   });
 });
 
-test('SP04 treats old cloud1 as a same-subject sharing candidate, not verified access or hosting', () => {
+test('SP04 excludes old cloud1 based on the user-reported subject difference without claiming live verification', () => {
   const record = evidence();
   assert.deepEqual(record.cloudEnvironmentReuseAssessment, {
     resourceAppId: 'wx358290e451cb06e7',
     resourceEnvironmentId: 'cloud1-d1g1mv89t76512a25',
     targetNewAppId: 'wx2414399d423dfb65',
-    status: 'unverified-conditional-candidate',
-    eligibleScopeIfApproved: 'development-and-controlled-testing-only',
+    status: 'excluded-by-user-reported-different-subject',
+    eligibleScopeIfApproved: null,
+    subjectRelationshipUserReport: {
+      resourceSubject: 'personal',
+      targetSubjectCategory: 'individual-business-or-company',
+      targetLegalFormConfirmed: false,
+      sameSubject: false,
+      date: '2026-10-27',
+      evidenceLevel: 'user-report-not-live-platform-verification',
+    },
     sameSubjectVerified: false,
+    sameSubjectRequirementSatisfiedBasedOnUserReport: false,
     resourceSharingEnabledOrAuthorized: false,
     sharingConfigurationMutationAuthorized: false,
     provesNewAppIdConnection: false,
@@ -65,16 +74,19 @@ test('SP04 treats old cloud1 as a same-subject sharing candidate, not verified a
     ],
   });
   assert.equal(record.evidenceGates.find((gate) => gate.id === 'E06').passed, false);
-  assert.ok(record.remainingChecks.some((item) => item.includes('目前未授权改动共享设置')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('不符合官方同主体共享条件')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('新号自己的CloudBase环境')));
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('一个腾讯云账号只能绑定一个小程序'));
-  assert.ok(doc.includes('旧`cloud1`因此只是一个可能的开发/受控测试资源共享候选'));
+  assert.ok(doc.includes('旧号为个人主体，新号为个体工商户/公司主体'));
+  assert.ok(doc.includes('不符合官方同主体共享条件'));
+  assert.ok(doc.includes('这是用户报告，未通过平台后台实时核验'));
   assert.ok(doc.includes('不代表托管、登录、域名或费用已经配置'));
   const plan = load('docs/v1-executable-development-plan-20261027.json');
   const task = plan.tasks.find((entry) => entry.id === 'SP04');
   assert.equal(task.status, 'in-progress');
   assert.equal(task.productAcceptancePassed, false);
-  assert.ok(task.executionProgress.blockedChecks.some((item) => item.includes('旧cloud1能否同主体共享及资源方授权')));
+  assert.ok(task.executionProgress.blockedChecks.some((item) => item.includes('目标新AppID自己的CloudBase环境')));
 });
 
 test('SP04 records the DevTools project list without claiming all local projects were searched', () => {

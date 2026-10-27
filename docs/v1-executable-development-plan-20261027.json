@@ -131,14 +131,23 @@
       "resourceAppId": "wx358290e451cb06e7",
       "resourceEnvironmentId": "cloud1-d1g1mv89t76512a25",
       "targetAppId": "wx2414399d423dfb65",
-      "status": "unverified-conditional-candidate",
-      "scopeIfEligible": "development-and-controlled-testing-only",
+      "status": "excluded-by-user-reported-different-subject",
+      "scopeIfEligible": null,
+      "subjectRelationshipUserReport": {
+        "resourceSubject": "personal",
+        "targetSubjectCategory": "individual-business-or-company",
+        "targetLegalFormConfirmed": false,
+        "sameSubject": false,
+        "date": "2026-10-27",
+        "evidenceLevel": "user-report-not-live-platform-verification"
+      },
       "officialRequirements": [
         "resource and target mini-programs must have the same subject",
         "resource mini-program must explicitly enable environment sharing and authorize the target mini-program",
         "environment sharing is resource authorization, not cross-account environment migration"
       ],
       "sameSubjectVerified": false,
+      "sameSubjectRequirementSatisfiedBasedOnUserReport": false,
       "sharingEnabledOrAuthorized": false,
       "sharingConfigurationMutationAuthorized": false,
       "accountBindingConstraint": "one Tencent Cloud account can bind one mini-program; official FAQ says same-subject mini-programs may use environment sharing for CloudBase resources including cloud functions and cloud database",
@@ -437,10 +446,10 @@
         ],
         "blockedChecks": [
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
-          "当前向导服务条款未勾选；旧、新小程序主体关系及旧环境共享设置未核实，也未授权修改共享设置；新建环境的实际套餐、期限和费用亦未确认",
+          "当前向导服务条款未勾选；用户报告旧号为个人主体、新号为个体工商户/公司主体，因此旧cloud1不符合官方同主体共享前提；新AppID自己的环境是否存在及新环境实际套餐/期限/费用仍未核实",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "建议暂不勾选条款或创建项目。先只读核实旧、新小程序主体是否一致，以及资源方是否已向目标AppID开放环境共享；目前两项均未知，旧cloud1仍只限开发与受控测试且共享设置修改未获授权。若共享不适用，等SP01—SP06准备接近完成时核实新向导实际套餐、期限、到期处理和费用，再由用户决定是否开通。不要把向导预览cloud1当作环境ID或归属证据。"
+        "nextAction": "暂不勾选条款或创建项目。用户报告旧号为个人主体、新号为个体工商户/公司主体，旧cloud1不满足同主体共享前提，不再作为目标AppID候选；新号具体法律形态及主体信息尚未通过平台实时核验。仍需只读确认目标AppID自己的环境是否已存在；若不存在，待SP01—SP06准备接近完成时核实新环境实际套餐、期限、到期处理和费用，再由用户明确决定是否开通。不要把向导预览cloud1当作环境ID或归属证据。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
@@ -654,7 +663,7 @@
         ],
         "blockedChecks": [
           "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认",
-          "新AppID环境归属、旧cloud1能否同主体共享及资源方授权、项目托管/登录配置、自定义域名和可行费用尚未验证"
+          "目标新AppID自己的CloudBase环境归属/是否存在、项目托管/登录配置、自定义域名和可行费用尚未验证；旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提"
         ],
         "evidence": [
           "docs/sp04-operations-configuration-20261027.md",

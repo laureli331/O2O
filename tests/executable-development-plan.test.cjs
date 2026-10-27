@@ -155,21 +155,30 @@ test('SP01 records the target AppID selected in the project wizard without infer
   a(doc.includes('首次创建云开发环境前需完成云开发服务开通，包括同意服务条款和完成服务角色权限授权'));
   a(doc.includes('3000点/月'));
 });
-test('SP01 treats old cloud1 reuse as conditional on verified same-subject sharing and keeps trial activation deferred', () => {
+test('SP01 excludes old cloud1 after the user reports different subjects and keeps target-environment activation deferred', () => {
   const record = load();
   const assessment = record.accountEvidence.oldCloudEnvironmentReuseAssessment;
   a.deepEqual(assessment, {
     resourceAppId: 'wx358290e451cb06e7',
     resourceEnvironmentId: 'cloud1-d1g1mv89t76512a25',
     targetAppId: 'wx2414399d423dfb65',
-    status: 'unverified-conditional-candidate',
-    scopeIfEligible: 'development-and-controlled-testing-only',
+    status: 'excluded-by-user-reported-different-subject',
+    scopeIfEligible: null,
+    subjectRelationshipUserReport: {
+      resourceSubject: 'personal',
+      targetSubjectCategory: 'individual-business-or-company',
+      targetLegalFormConfirmed: false,
+      sameSubject: false,
+      date: '2026-10-27',
+      evidenceLevel: 'user-report-not-live-platform-verification',
+    },
     officialRequirements: [
       'resource and target mini-programs must have the same subject',
       'resource mini-program must explicitly enable environment sharing and authorize the target mini-program',
       'environment sharing is resource authorization, not cross-account environment migration',
     ],
     sameSubjectVerified: false,
+    sameSubjectRequirementSatisfiedBasedOnUserReport: false,
     sharingEnabledOrAuthorized: false,
     sharingConfigurationMutationAuthorized: false,
     accountBindingConstraint: 'one Tencent Cloud account can bind one mini-program; official FAQ says same-subject mini-programs may use environment sharing for CloudBase resources including cloud functions and cloud database',
@@ -185,18 +194,20 @@ test('SP01 treats old cloud1 reuse as conditional on verified same-subject shari
   a.equal(task.status, 'in-progress');
   a.equal(task.productAcceptancePassed, false);
   a(task.executionProgress.nextAction.includes('暂不勾选条款或创建项目'));
-  a(task.executionProgress.nextAction.includes('旧、新小程序主体是否一致'));
+  a(task.executionProgress.nextAction.includes('旧cloud1不满足同主体共享前提'));
+  a(task.executionProgress.nextAction.includes('目标AppID自己的环境是否已存在'));
   const sp01 = read('docs/sp01-technical-environment-20261027.md');
   const plan = read('docs/v1-executable-development-plan-20261027.md');
   for (const text of [
     '一个腾讯云账号只能绑定一个小程序',
     '同主体的其他小程序/公众号',
     '云开发环境不支持跨账号迁移',
-    '当前两项条件均未核实',
-    '未授权修改共享设置',
+    '用户于2026-10-27明确确认，旧号为个人主体，新号属于个体工商户/公司',
+    '不符合官方同主体共享前提',
+    '未授权修改环境共享设置',
     '建议暂不勾选条款或点击创建',
   ]) a(sp01.includes(text), text);
-  a(plan.includes('旧、新小程序主体关系及旧环境共享设置均未知'));
+  a(plan.includes('旧号为个人主体、新号为个体工商户/公司主体'));
 });
 test('current plan entry points preserve legacy rows and point to the new execution document',()=>{for(const file of ['docs/development-plan.md','docs/post-registration-development.md','docs/module-specs/current-development-basis-20261015.md','CONTEXT.md'])a(read(file).includes('v1-executable-development-plan-20261027.md'),file);const p=load();a(p.legacyOverrides.some(x=>x.legacy.includes('DP14')&&x.decision==='provider-profiles-only-no-people-directory'));a(p.legacyOverrides.some(x=>x.legacy.includes('DP25')&&x.decision==='existing-legal-history-only-v17-archived'));a.equal(p.tasks.flatMap(t=>t.pages).includes('V17'),false);a(!scope.remainingDecisionsOrEvidence.includes('new-onboarding-and-coupon-ascii-html-design'));a.equal(scope.prototypeDelivery.realAbilitiesVerified,false);a.equal(scope.formalDevelopmentReady,false);});
 for(const [name,mutate]of [
