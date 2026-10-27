@@ -187,6 +187,44 @@ test('SP04 treats Web hosting docs as capability evidence, not account provision
   assert.match(record.webAdministration.sources.httpAccess, /^https:\/\/cloud\.tencent\.com\/document\/product\/876\/130728$/);
 });
 
+test('SP04 records current official CloudBase tariffs as candidates without claiming a project quote', () => {
+  const record = evidence();
+  const pricing = record.webAdministration.publishedPricing;
+  assert.deepEqual(pricing, {
+    sourceUrl: 'https://cloud.tencent.com/document/product/876/127357',
+    checkedAt: '2026-10-27',
+    billingModel: 'resource-points',
+    pointValueCny: { points: 1000, cny: 1 },
+    regions: {
+      shanghai: {
+        staticHostingTrafficCnyPerGb: 0.21,
+        staticHostingStorageCnyPerGbDay: 0.00394,
+      },
+      singapore: {
+        staticHostingTrafficCnyPerGb: 0.46,
+        staticHostingStorageCnyPerGbDay: 0.00454,
+      },
+    },
+    freeExperienceCandidate: {
+      monthlyPoints: 3000,
+      devTestPurpose: true,
+      supportsResourcePacksOrPayAsYouGo: false,
+      publishedAfterReleaseExpiryDays: 15,
+      appliesToScreenshotEnvironment: null,
+    },
+    monthlyQuoteCny: null,
+    quoteStatus: 'not-computable-without-region-domain-and-usage-estimates',
+    purchaseAuthorized: false,
+  });
+  assert.equal(record.webAdministration.monthlyHostingQuote.value, null);
+  assert.equal(record.budget.confirmedMonthlyCashCapCny, 500);
+  assert.equal(record.budget.purchaseAuthorized, false);
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  assert.ok(doc.includes('资源点计费模式的公开单价候选'));
+  assert.ok(doc.includes('不能据此形成项目月报价'));
+  assert.ok(doc.includes('截图中的“微信体验版”是否对应免费体验环境仍未核实'));
+});
+
 test('SP04 records browser installation separately from tested support and blocks false completion', () => {
   const record = evidence();
   assert.equal(record.localDevice.environment, 'Windows 11');

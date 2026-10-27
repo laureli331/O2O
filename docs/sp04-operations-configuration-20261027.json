@@ -190,9 +190,39 @@
     "productionCustomDomainRequiredByReviewedDocs": true,
     "sources": {
       "staticHosting": "https://cloud.tencent.com/document/product/876/46900",
-      "httpAccess": "https://cloud.tencent.com/document/product/876/130728"
+      "httpAccess": "https://cloud.tencent.com/document/product/876/130728",
+      "cloudBasePricing": "https://cloud.tencent.com/document/product/876/127357"
     },
-    "sourceInterpretation": "官方文档说明了公开产品能力和默认域名限制，不证明本项目账号已开通、可登录、已购买域名或已配置托管。"
+    "publishedPricing": {
+      "sourceUrl": "https://cloud.tencent.com/document/product/876/127357",
+      "checkedAt": "2026-10-27",
+      "billingModel": "resource-points",
+      "pointValueCny": {
+        "points": 1000,
+        "cny": 1
+      },
+      "regions": {
+        "shanghai": {
+          "staticHostingTrafficCnyPerGb": 0.21,
+          "staticHostingStorageCnyPerGbDay": 0.00394
+        },
+        "singapore": {
+          "staticHostingTrafficCnyPerGb": 0.46,
+          "staticHostingStorageCnyPerGbDay": 0.00454
+        }
+      },
+      "freeExperienceCandidate": {
+        "monthlyPoints": 3000,
+        "devTestPurpose": true,
+        "supportsResourcePacksOrPayAsYouGo": false,
+        "publishedAfterReleaseExpiryDays": 15,
+        "appliesToScreenshotEnvironment": null
+      },
+      "monthlyQuoteCny": null,
+      "quoteStatus": "not-computable-without-region-domain-and-usage-estimates",
+      "purchaseAuthorized": false
+    },
+    "sourceInterpretation": "官方文档说明了公开产品能力、默认域名限制和资源点公开单价，不证明本项目账号已开通、可登录、已购买域名或已配置托管，也不能在地域、域名和实际用量未知时替代项目月报价。"
   },
   "localDevice": {
     "environment": "Windows 11",
