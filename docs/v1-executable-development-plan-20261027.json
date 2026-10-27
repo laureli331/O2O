@@ -110,14 +110,27 @@
       "targetAppId": "wx2414399d423dfb65",
       "targetAppIdSelected": true,
       "cloudBackendSelected": true,
-      "cloudTermsAgreementChecked": false,
+      "screenshotCloudTermsAgreementChecked": false,
       "initializationMode": "template",
       "selectedTemplate": "云开发基础模板（官方）",
       "previewEnvironmentLabel": "cloud1",
       "projectCreated": false,
-      "scope": "user-provided-visible-ui-screenshot-only",
+      "scope": "user-provided-screenshot-baseline-with-later-live-ui-observation",
       "officialCloudEnablementSource": "https://developer.cloud.tencent.com/article/1840315?policyId=1003",
-      "currentPricingSource": "https://cloud.tencent.com/document/product/876/127357"
+      "currentPricingSource": "https://cloud.tencent.com/document/product/876/127357",
+      "latestObservation": {
+        "observationDate": "2026-10-27",
+        "method": "computer-use-read-only-window-capture",
+        "targetAppId": "wx2414399d423dfb65",
+        "targetAppIdVisible": true,
+        "cloudBackendSelected": true,
+        "cloudTermsAgreementChecked": true,
+        "checkboxActorVerified": false,
+        "projectCreated": false,
+        "directoryExists": false,
+        "previewEnvironmentLabel": "cloud1",
+        "feesOrExpiryVerified": false
+      }
     },
     "oldCloudEnvironmentReadOnlyEvidence": {
       "appId": "wx358290e451cb06e7",
@@ -439,17 +452,17 @@
           "本轮重新显式执行CLI授权仍返回authorized=true、alreadyTrusted=true；127.0.0.1:31781仍由开发者工具PID 51712监听；CLI授权与端口监听均不代表工具调用可达",
           "只读观察当前开发者工具窗口显示PERMISSION-CHECK；模拟器提示仅本地环境检查、无业务/真实数据/云服务连接；只读配置.local/permission-check/project.config.json确认其AppID为旧号wx358290e451cb06e7，与目标新号wx2414399d423dfb65不匹配",
           "只读打开开发者工具项目管理器；“查看所有项目”只显示O2O environment verification，路径E:\\O2O\\.local\\permission-check；目标新AppID对应工程未列出，但列表外或其他账号/设备中的工程是否存在仍未核实",
-          "用户最新截图显示创建向导已选中新AppID wx2414399d423dfb65，仍选微信云开发，服务条款未勾选，项目路径仍是默认C盘路径；项目尚未创建，预览cloud1不证明环境归属",
+          "用户最初截图显示目标AppID wx2414399d423dfb65已选中、条款框未勾选；后续只读实时画面显示目标AppID与微信云开发仍选中、条款框已勾选但操作人无法确认，创建向导仍打开且项目尚未创建，默认目录也不存在；预览cloud1不证明环境归属",
           "旧AppID wx358290e451cb06e7只读查询返回cloud1-d1g1mv89t76512a25；不证明新AppID环境状态",
           "用户提供的控制台截图显示cloud1/微信体验版和暂无数据/无可用集合，截图未显示AppID",
           "预览根地址返回目录列表，不是单页原型入口"
         ],
         "blockedChecks": [
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
-          "当前向导服务条款未勾选；用户报告旧号为个人主体、新号为个体工商户/公司主体，因此旧cloud1不符合官方同主体共享前提；新AppID自己的环境是否存在及新环境实际套餐/期限/费用仍未核实",
+          "当前向导条款框已勾选但操作人未知，且仍未点击创建；用户报告旧号为个人主体、新号为个体工商户/公司主体，因此旧cloud1不符合官方同主体共享前提；新AppID自己的环境是否存在及新环境实际套餐/期限/费用仍未核实",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "暂不勾选条款或创建项目。用户报告旧号为个人主体、新号为个体工商户/公司主体，旧cloud1不满足同主体共享前提，不再作为目标AppID候选；新号具体法律形态及主体信息尚未通过平台实时核验。仍需只读确认目标AppID自己的环境是否已存在；若不存在，待SP01—SP06准备接近完成时核实新环境实际套餐、期限、到期处理和费用，再由用户明确决定是否开通。不要把向导预览cloud1当作环境ID或归属证据。"
+        "nextAction": "不要点击创建。最新只读画面显示目标AppID和微信云开发已选中、条款框已勾选但操作人无法确认，项目仍未创建；尚未核实实际套餐、期限、到期处理和费用，也未收到创建新CloudBase环境的明确授权。用户报告旧号为个人主体、新号为个体工商户/公司主体，旧cloud1不满足同主体共享前提，不再作为目标AppID候选。仍需只读确认目标AppID自己的环境是否已存在；如需新建，先核实当前实际费用和期限并取得用户明确决定。不要把向导预览cloud1当作环境ID或归属证据。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

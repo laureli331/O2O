@@ -122,7 +122,7 @@ test('SP01 scopes the DevTools project-manager inventory to its visible register
   a.ok(doc.includes('“项目→查看所有项目”列表'));
   a.ok(doc.includes('列表外、其他目录、账号或设备中的工程是否存在仍未核实'));
 });
-test('SP01 records the target AppID selected in the project wizard without inferring cloud activation', () => {
+test('SP01 separates the original wizard screenshot from the current live state without inferring CloudBase creation', () => {
   const record = load();
   const observation = record.accountEvidence.devtoolsProjectCreationWizardObservation;
   a.deepEqual(observation, {
@@ -133,25 +133,42 @@ test('SP01 records the target AppID selected in the project wizard without infer
     targetAppId: 'wx2414399d423dfb65',
     targetAppIdSelected: true,
     cloudBackendSelected: true,
-    cloudTermsAgreementChecked: false,
+    screenshotCloudTermsAgreementChecked: false,
     initializationMode: 'template',
     selectedTemplate: '云开发基础模板（官方）',
     previewEnvironmentLabel: 'cloud1',
     projectCreated: false,
-    scope: 'user-provided-visible-ui-screenshot-only',
+    scope: 'user-provided-screenshot-baseline-with-later-live-ui-observation',
     officialCloudEnablementSource: 'https://developer.cloud.tencent.com/article/1840315?policyId=1003',
     currentPricingSource: 'https://cloud.tencent.com/document/product/876/127357',
+    latestObservation: {
+      observationDate: '2026-10-27',
+      method: 'computer-use-read-only-window-capture',
+      targetAppId: 'wx2414399d423dfb65',
+      targetAppIdVisible: true,
+      cloudBackendSelected: true,
+      cloudTermsAgreementChecked: true,
+      checkboxActorVerified: false,
+      projectCreated: false,
+      directoryExists: false,
+      previewEnvironmentLabel: 'cloud1',
+      feesOrExpiryVerified: false,
+    },
   });
   a.equal(record.accountEvidence.formalNewEnvironmentId, null);
   a.equal(record.accountEvidence.liveCloudRevalidatedThisDelivery, false);
   const sp01 = record.tasks.find((task) => task.id === 'SP01');
   a.equal(sp01.status, 'in-progress');
   a.equal(sp01.productAcceptancePassed, false);
-  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('服务条款') && check.includes('未勾选')));
+  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('条款框已勾选') && check.includes('操作人未知')));
+  a(sp01.executionProgress.nextAction.includes('不要点击创建'));
   const doc = read('docs/sp01-technical-environment-20261027.md');
-  a(doc.includes('用户最新截图显示微信开发者工具“创建小程序”向导已选中目标AppID'));
-  a(doc.includes('不能证明工程已创建'));
-  a(doc.includes('`cloud1`归属该AppID'));
+  a(doc.includes('用户最初提供的截图显示微信开发者工具“创建小程序”向导'));
+  a(doc.includes('条款框未勾选'));
+  a(doc.includes('最新只读观察显示条款框已勾选，操作人无法从画面确认'));
+  a(doc.includes('项目未创建'));
+  a(doc.includes('不能据此认定已创建新环境'));
+  a(doc.includes('预览`cloud1`不是环境归属证据'));
   a(doc.includes('首次创建云开发环境前需完成云开发服务开通，包括同意服务条款和完成服务角色权限授权'));
   a(doc.includes('3000点/月'));
 });
@@ -189,11 +206,12 @@ test('SP01 excludes old cloud1 after the user reports different subjects and kee
     ],
   });
   a.equal(record.accountEvidence.formalNewEnvironmentId, null);
-  a.equal(record.accountEvidence.devtoolsProjectCreationWizardObservation.cloudTermsAgreementChecked, false);
+  a.equal(record.accountEvidence.devtoolsProjectCreationWizardObservation.screenshotCloudTermsAgreementChecked, false);
+  a.equal(record.accountEvidence.devtoolsProjectCreationWizardObservation.latestObservation.cloudTermsAgreementChecked, true);
   const task = record.tasks.find((entry) => entry.id === 'SP01');
   a.equal(task.status, 'in-progress');
   a.equal(task.productAcceptancePassed, false);
-  a(task.executionProgress.nextAction.includes('暂不勾选条款或创建项目'));
+  a(task.executionProgress.nextAction.includes('不要点击创建'));
   a(task.executionProgress.nextAction.includes('旧cloud1不满足同主体共享前提'));
   a(task.executionProgress.nextAction.includes('目标AppID自己的环境是否已存在'));
   const sp01 = read('docs/sp01-technical-environment-20261027.md');
@@ -205,7 +223,7 @@ test('SP01 excludes old cloud1 after the user reports different subjects and kee
     '用户于2026-10-27明确确认，旧号为个人主体，新号属于个体工商户/公司',
     '不符合官方同主体共享前提',
     '未授权修改环境共享设置',
-    '建议暂不勾选条款或点击创建',
+    '当前不要点击“创建”',
   ]) a(sp01.includes(text), text);
   a(plan.includes('旧号为个人主体、新号为个体工商户/公司主体'));
 });
