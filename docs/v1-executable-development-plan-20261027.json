@@ -243,6 +243,32 @@
         "exactEnvironmentMappingVerified": false
       }
     },
+    "miniProgramExperienceAndCloudBasePlanDistinction": {
+      "userReportedExperienceVersionUnderstanding": {
+        "purpose": "internal-core-feature-validation-before-release",
+        "reportedExperienceMemberLimit": 15,
+        "reportedWechatPaymentAvailable": false,
+        "evidenceLevel": "user-reported-research-not-verified-for-target-appid"
+      },
+      "officialCloudBaseEvidence": {
+        "source": "https://cloud.tencent.com/document/product/876/127357",
+        "sourceUpdatedAt": "2026-10-26",
+        "freeEnvironmentExpiryAfterMiniProgramReleaseDays": 15,
+        "afterExpiry": "service-isolation-then-destruction-if-not-converted-to-paid",
+        "sixMonthTrialRenewalAppliesToWechatExperienceLabel": false,
+        "personalPlanPublicMonthlyPriceRmb": 19.9,
+        "priceRequiresPurchase": true
+      },
+      "currentTargetEnvironment": {
+        "visibleCloudBasePlanLabel": "微信体验版",
+        "targetAppId": "wx2414399d423dfb65",
+        "miniProgramReleaseChannelVerified": false,
+        "environmentBindingToTargetAppIdVerified": false,
+        "exactPlanAndExpiryVerified": false,
+        "paidOrderVerified": false
+      },
+      "interpretation": "mini-program experience release channel and CloudBase environment plan are distinct; the official 15-day expiry applies to free CloudBase environments, but applicability to the screenshot environment and a required 19.9-RMB plan purchase are not verified"
+    },
     "oldCloudEnvironmentReadOnlyEvidence": {
       "appId": "wx358290e451cb06e7",
       "environmentId": "cloud1-d1g1mv89t76512a25",
