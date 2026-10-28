@@ -60,6 +60,26 @@ test('only explicit storage permission codes count as denial; missing or unknown
   assert.equal(contract.classifyStorageError({ errCode: 'NETWORK_ERROR' }).kind, 'inconclusive');
 });
 
+test('identity call errors retain only a safe provider code and request ID for diagnosis', async () => {
+  const workflow = createProbeWorkflow({
+    getIdentity: async () => {
+      throw Object.assign(new Error('cloud.callFunction:fail'), {
+        errCode: '-501000',
+        requestId: 'request-12345678',
+        errMsg: 'secret-token=must-not-escape',
+      });
+    },
+  });
+  await assert.rejects(workflow.identify(nonce), (error) => {
+    assert.equal(error.code, 'IDENTITY_CALL_FAILED');
+    assert.equal(error.providerCode, '-501000');
+    assert.equal(error.requestId, 'request-12345678');
+    assert.equal(JSON.stringify(error).includes('secret-token'), false);
+    assert.equal(JSON.stringify(error).includes('cloud.callFunction'), false);
+    return true;
+  });
+});
+
 test('standalone project targets the confirmed AppID and EnvID without sharing the QuickStart root', () => {
   const root = path.resolve(__dirname, '../tools/sp01-storage-probe');
   const config = JSON.parse(fs.readFileSync(path.join(root, 'project.config.json'), 'utf8'));
@@ -255,6 +275,34 @@ test('owner page distinguishes local file creation failure and never attempts up
   assert.equal(page.data.bundleText, '');
   assert.match(page.data.report, /未能创建本机合成临时文件，尚未尝试上传/);
   assert.doesNotMatch(page.data.report, new RegExp(cloudPath));
+});
+
+test('owner page reports safe identity call diagnostics without raw provider text', async () => {
+  const wx = {
+    env: { USER_DATA_PATH: '/user-data' },
+    cloud: {
+      callFunction: async () => {
+        throw Object.assign(new Error('cloud.callFunction:fail'), {
+          errCode: '-501000',
+          requestId: 'request-12345678',
+          errMsg: 'secret-token=must-not-escape',
+        });
+      },
+    },
+    getFileSystemManager: () => ({
+      writeFile: () => { throw new Error('identity failure must happen before local file creation'); },
+      unlink: () => { throw new Error('no local file should exist'); },
+    }),
+  };
+  const page = loadProbePage(wx);
+  page.data = { ...page.data, nonce };
+  page.setData = (update) => Object.assign(page.data, update);
+  await page.createOwnerFile();
+  assert.match(page.data.report, /IDENTITY_CALL_FAILED/);
+  assert.match(page.data.report, /-501000/);
+  assert.match(page.data.report, /request-12345678/);
+  assert.doesNotMatch(page.data.report, /secret-token|cloud\.callFunction/);
+  assert.equal(page.data.bundleText, '');
 });
 
 test('other-account storage probe refuses same identity before read, link, download, or write', async () => {

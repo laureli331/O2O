@@ -65,6 +65,15 @@ function safeCode(error) {
   return 'UNKNOWN';
 }
 
+function identityCallDiagnostics(error) {
+  const providerCode = safeCode(error);
+  const rawRequestId = error?.requestId ?? error?.requestID;
+  const requestId = typeof rawRequestId === 'string' && /^[A-Za-z0-9_-]{8,80}$/.test(rawRequestId)
+    ? rawRequestId
+    : null;
+  return { providerCode, requestId };
+}
+
 function classifyStorageError(error) {
   const code = safeCode(error);
   return { kind: DENIAL_CODES.has(code) ? 'denied' : 'inconclusive', code };
@@ -88,6 +97,7 @@ module.exports = {
   validateOwnerBundle,
   compareIdentity,
   safeCode,
+  identityCallDiagnostics,
   classifyStorageError,
   makeProbeError,
 };

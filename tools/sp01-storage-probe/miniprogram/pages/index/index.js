@@ -98,7 +98,10 @@ Page({
               ? '未能创建本机合成临时文件，尚未尝试上传。'
             : '操作未完成。';
       const localCleanupNotice = error?.localTempCleanup === 'cleanup-failed' ? '本机临时文件清理也未获确认。' : '';
-      this.setData({ bundleText: '', report: `${cleanupNotice}${localCleanupNotice}错误码：${code}。没有输出身份原文或临时授权信息。${pathNotice}` });
+      const identityDiagnostic = code === 'IDENTITY_CALL_FAILED'
+        ? `云函数返回码：${error?.providerCode || 'UNKNOWN'}；调用请求 ID：${error?.requestId || '未提供'}。`
+        : '';
+      this.setData({ bundleText: '', report: `${cleanupNotice}${localCleanupNotice}错误码：${code}。${identityDiagnostic}没有输出身份原文或临时授权信息。${pathNotice}` });
     } finally { this.setData({ busy: false }); }
   },
 

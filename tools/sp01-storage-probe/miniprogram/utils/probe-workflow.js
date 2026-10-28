@@ -8,8 +8,10 @@ function createProbeWorkflow(api) {
     let result;
     try {
       result = await api.getIdentity(nonce);
-    } catch (_) {
-      throw contract.makeProbeError('IDENTITY_CALL_FAILED');
+    } catch (cause) {
+      const error = contract.makeProbeError('IDENTITY_CALL_FAILED');
+      Object.assign(error, contract.identityCallDiagnostics(cause));
+      throw error;
     }
     if (!result || result.success !== true || !contract.validateFingerprint(result.fingerprint)) {
       throw contract.makeProbeError(result?.errorCode === 'APP_ID_MISMATCH' ? 'WRONG_APP' : 'IDENTITY_CHECK_FAILED');
