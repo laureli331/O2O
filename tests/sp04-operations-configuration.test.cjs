@@ -293,7 +293,20 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
   assert.ok(e06.reason.includes('用户已确认Node.js 20.19，但云函数尚未创建或运行'));
   assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
-  assert.ok(record.remainingChecks.some((item) => item.includes('先只读核对腾讯云账号中心的微信公众平台关联')));
+  assert.deepEqual(record.latestUserReportedAccountAssociationCheck, {
+    date: '2026-10-28',
+    source: 'user-reply-to-read-only-check',
+    accountCenterPath: 'account-information/login-method/wechat-official-account',
+    targetAppId: 'wx2414399d423dfb65',
+    result: 'associated',
+    screenshotProvided: false,
+    environmentImportPerformed: false,
+    deploymentPerformed: false,
+  });
+  const accountRemaining = record.remainingChecks.find((item) => item.includes('用户已复查cloudfunctions根目录环境菜单并报告仍为空'));
+  assert.ok(accountRemaining.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
+  assert.ok(accountRemaining.includes('当前授权不含导入，须先取得具体授权'));
+  assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
   assert.equal(record.cloudWritesOrDeploymentPerformed, false);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));

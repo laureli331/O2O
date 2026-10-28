@@ -753,3 +753,17 @@ test('SP01 records the user-reported account association and keeps importing clo
   a(doc.includes('尚未执行')||doc.includes('未执行'));
  }
 });
+test('SP01 runtime-form evidence and SP04 next actions reflect the latest confirmed state',()=>{
+ const techDoc=read('docs/sp01-technical-environment-20261027.md');
+ const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
+ const runtimeCase=techDoc.split('\n').find(line=>line.includes('ENV-RUNTIME-01'));
+ const sp04AccountCheck=sp04.remainingChecks.find(line=>line.includes('用户已复查cloudfunctions根目录环境菜单'));
+ a(runtimeCase.includes('用户截图已记录候选并确认选择Node.js 20.19'));
+ a(runtimeCase.includes('函数尚未创建'));
+ a(!runtimeCase.includes('等待只读观察'));
+ a(techDoc.includes('运行时候选截图及用户选择；云函数实际配置、创建与运行仍未验证'));
+ a(!techDoc.includes('运行时菜单、数据库模式、事务和文件权限继续标为未知'));
+ a(sp04AccountCheck.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
+ a(sp04AccountCheck.includes('须先取得具体授权'));
+ a(!sp04AccountCheck.includes('先只读核对腾讯云账号中心'));
+});
