@@ -63,7 +63,7 @@ test('SP04 reflects the target-project read-only CLI evidence without claiming a
   assert.equal(project.appJsEnvironmentValue, record.environmentDetailsScreenshot.visibleEnvironmentId);
   assert.ok(task.executionProgress.completedChecks.some((item) => item.includes('目标AppID') && item.includes('0个云函数') && item.includes('0个数据库集合')));
   assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径') && item.includes('仍未核实')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('导入后菜单已选中cloud1') && item.includes('临时SP01探针已单独部署')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('当前环境已选中cloud1') && item.includes('当前函数Active/Nodejs20.19')));
   assert.ok(record.remainingChecks.some((item) => item.includes('在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('该QuickStart仍未配置EnvId')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('待只读桥接恢复后核验')));
@@ -294,11 +294,11 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(e06.reason.includes('较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空'));
   assert.ok(e06.reason.includes('已导入cloud1'));
   assert.ok(e06.reason.includes('报告当前环境已选中cloud1'));
-  assert.ok(e06.reason.includes('测试截图回显输入事件并显示Hello World/运行上下文'));
-  assert.ok(e06.reason.includes('不能证明本地探针、云端运行时或事务通过'));
-  assert.ok(e06.reason.includes('用户已删除函数'));
+  assert.ok(e06.reason.includes('首轮临时SP01函数的测试截图回显输入事件并显示Hello World/运行上下文'));
+  assert.ok(e06.reason.includes('最新恢复函数Active/Nodejs20.19'));
+  assert.ok(e06.reason.includes('run返回433、3秒执行超时'));
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
-  assert.ok(e06.reason.includes('临时SP01探针'));
+  assert.ok(e06.reason.includes('SP01函数'));
   assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
   assert.deepEqual(record.latestUserReportedAccountAssociationCheck, {
     date: '2026-10-28',
@@ -310,29 +310,43 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
     environmentImportPerformed: false,
     deploymentPerformed: false,
   });
-  const accountRemaining = record.remainingChecks.find((item) => item.includes('用户已复查cloudfunctions根目录环境菜单并报告仍为空'));
+  const accountRemaining = record.remainingChecks.find((item) => item.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   assert.ok(accountRemaining.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
-  assert.ok(accountRemaining.includes('用户随后报告已导入cloud1'));
+  assert.ok(accountRemaining.includes('已导入cloud1'));
   assert.ok(accountRemaining.includes('当前环境已选中cloud1'));
-  assert.ok(accountRemaining.includes('首次SP01探针部署与删除均已记录'));
-  assert.ok(accountRemaining.includes('最新重部署状态和运行时见SP01最新部署记录'));
+  assert.ok(accountRemaining.includes('首轮临时函数随后由用户删除'));
+  assert.ok(accountRemaining.includes('最新恢复状态见latestProbeDeploymentRecovery'));
   assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
   assert.equal(record.latestTemporaryProbeDeploymentAttempt.functionName, 'sp01EnvProbe');
   assert.equal(record.latestTemporaryProbeDeploymentAttempt.postDeploymentReadOnly.runtime, 'Nodejs16.13');
   assert.equal(record.latestTemporaryProbeDeploymentAttempt.taskResult.codeUpdateStatus, 'failed');
+  assert.equal(record.latestProbeDeploymentRecovery.retry.deploymentStatus, 'success');
+  assert.equal(record.latestProbeDeploymentRecovery.postDeploymentReadOnly.runtime, 'Nodejs20.19');
+  assert.equal(record.latestProbeDeploymentRecovery.inspectResultReceived, true);
+  assert.deepEqual(record.latestProbeDeploymentRecovery.inspectResult, { success: true, nodeVersion: 'v20.19.3', nodeRuntimeMatch: true, sdkVersion: '3.18.7' });
+  assert.equal(record.latestProbeDeploymentRecovery.prepareResultReceived, true);
+  assert.deepEqual(record.latestProbeDeploymentRecovery.prepareResult, { success: true, collection: 'sp01_probe_20261028', created: true });
+  assert.deepEqual(record.latestProbeRunAttempt.response, { errorCode: -1, errorMessage: 'Invoking task timed out after 3 seconds', requestId: '5f15ce84-6771-432e-8d22-1d10bc53babc', statusCode: 433 });
+  assert.equal(record.latestProbeRunAttempt.timeoutSeconds, 3);
+  assert.equal(record.latestProbeRunAttempt.transactionRunCompleted, false);
+  assert.equal(record.latestProbeRunAttempt.cleanupVerified, false);
+  assert.equal(record.latestProbeRunAttempt.currentReadOnlyRecordCount, 0);
+  assert.equal(record.latestProbeRunAttempt.currentReadOnlyRequestId, '7fb04c35-77aa-4f5f-bd6c-666a87db5b3d');
   assert.equal(record.latestCloudFunctionRecheck.functionStatus, 'Active');
   assert.equal(record.latestCloudFunctionRecheck.databaseCollectionCount, 0);
-  assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
-  assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionCount, 0);
-  assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionRequestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
-  assert.equal(record.latestPostProbeReadOnlyDatabaseCheck.writePerformed, false);
+  assert.equal(record.previousTemporaryProbeTestAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
+  assert.equal(record.previousTemporaryProbeTestAttempt.postAttemptCollectionCount, 0);
+  assert.equal(record.previousTemporaryProbeTestAttempt.postAttemptCollectionRequestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
+  assert.equal(record.previousPostProbeReadOnlyDatabaseCheck.writePerformed, false);
+  assert.deepEqual(record.latestProbePreparation.response, { success: true, collection: 'sp01_probe_20261028', created: true });
+  assert.equal(record.latestProbePreparation.syntheticRecordsWritten, false);
   assert.equal(record.cloudWritesOrDeploymentPerformed, true);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));
-  assert.ok(doc.includes('开发者工具早期截图显示项目根目录`cloudfunctions`文件夹的右键菜单为“当前环境：(无)”'));
-  assert.ok(doc.includes('`cloudfunctions`根目录的“当前环境”菜单决定云函数上传部署目标'));
-  assert.ok(doc.includes('用户已确认首版采用Node.js 20.19'));
-  assert.ok(doc.includes('用户随后查看“数据库→数据库设置”并报告为“文档型数据库”，该信息尚未由只读API复核'));
+  assert.ok(doc.includes('开发者工具早期截图显示项目根目录cloudfunctions文件夹右键菜单为“当前环境：(无)”'));
+  assert.ok(doc.includes('该菜单决定函数上传/部署目标'));
+  assert.ok(doc.includes('用户确认首版Node.js20.19'));
+  assert.ok(doc.includes('报告数据库为文档型但尚未API复核'));
   assert.ok(doc.includes('未修改QuickStart业务配置或云端数据库/存储设置'));
 });
 

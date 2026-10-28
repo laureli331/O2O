@@ -298,9 +298,9 @@
         "targetAppId": "wx2414399d423dfb65",
         "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
         "currentCloudFunctionCount": 1,
-        "currentDatabaseCollectionCount": 0,
+        "currentDatabaseCollectionCount": 1,
         "separateTestEnvironmentVerified": false,
-        "testWriteAuthorization": "read-only-only",
+        "testWriteAuthorization": "granted-for-sp01-probe-only",
         "realPersonalDataAllowed": false,
         "officialSourceCheckDate": "2026-10-28",
         "cases": [
@@ -309,14 +309,14 @@
             "operation": "read-only",
             "input": "目标AppID/EnvID及云函数新建表单中的运行时下拉选项；不提交表单",
             "expected": "按用户确认记录首版Node.js 20.19；创建和运行前仍须按授权及测试方案验证，不把选择记录写成运行时通过",
-            "status": "blocked-created-as-Nodejs16.13-runtime-mismatch"
+            "status": "inspect-passed-runtime-verified"
           },
           {
             "id": "ENV-DB-TX-01",
             "operation": "cloud-write-requires-explicit-authorization",
             "input": "隔离测试环境中的无个人信息测试记录：服务端Node SDK事务成功提交、事务中途注入失败、并发写冲突；重复请求仅在业务契约确定幂等键后执行。单次事务遵守官方已公布的100次操作、30秒、doc方法限制，不在事务内调用外部服务",
             "expected": "依据实际数据库模式和已确认事务契约核对提交/回滚及写冲突结果，不允许部分写入；不预设未知数据库模式或业务冲突策略",
-            "status": "not-executed-no-write-authorization"
+            "status": "run-timed-out-after-3-seconds; transaction-not-verified"
           },
           {
             "id": "ENV-STORE-01",
@@ -330,10 +330,61 @@
             "operation": "cloud-write-requires-explicit-authorization",
             "input": "仅限本轮创建且带唯一测试运行标识的记录和文件",
             "expected": "验证后只清理本轮创建的精确记录/对象，不删除集合或既有资源；清理失败立即停止后续写入并保留脱敏证据",
-            "status": "not-executed-no-write-authorization"
+            "status": "cleanup-unverified-after-run-timeout"
           }
         ],
-        "preDeploymentCloudFunctionCount": 0
+        "preDeploymentCloudFunctionCount": 0,
+        "currentDatabaseCollectionEvidenceSource": "user-prepare-response-and-cli-listCollections-after-run-timeout; fixed collection exists with zero current records",
+        "latestRunAttempt": {
+          "date": "2026-10-28",
+          "source": "user-provided-cloud-function-test-response",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "event": {
+            "action": "run",
+            "runId": "sp01_f4157fdc182bda6f9fd8e37395d4943e"
+          },
+          "response": {
+            "errorCode": -1,
+            "errorMessage": "Invoking task timed out after 3 seconds",
+            "requestId": "5f15ce84-6771-432e-8d22-1d10bc53babc",
+            "statusCode": 433
+          },
+          "responseMatchedExpectedProbeContract": false,
+          "invocationTimedOut": true,
+          "functionRuntime": "Nodejs20.19",
+          "functionTimeoutSeconds": 3,
+          "transactionAcceptancePassed": false,
+          "cleanupVerified": false,
+          "recordWritesDuringTimedOutInvocation": "unknown",
+          "postTimeoutReadOnlyCollectionCount": 1,
+          "postTimeoutReadOnlyRecordCount": 0,
+          "postTimeoutReadOnlyCollectionName": "sp01_probe_20261028",
+          "postTimeoutReadOnlyRequestId": "7fb04c35-77aa-4f5f-bd6c-666a87db5b3d",
+          "collectionDescriptionRequestId": "dc470f28-3ec9-4b3f-a59d-63b972f74eb9"
+        },
+        "latestReadOnlyDatabaseRecheck": {
+          "source": "wechatide-cli-read-only-after-user-run-timeout",
+          "date": "2026-10-28",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "functionStatus": "Active",
+          "functionRuntime": "Nodejs20.19",
+          "functionTimeoutSeconds": 3,
+          "databaseAction": "listCollections",
+          "databaseCollectionCount": 1,
+          "databaseCollectionNames": [
+            "sp01_probe_20261028"
+          ],
+          "databaseRecordCount": 0,
+          "databaseRequestId": "7fb04c35-77aa-4f5f-bd6c-666a87db5b3d",
+          "collectionDescriptionRequestId": "dc470f28-3ec9-4b3f-a59d-63b972f74eb9",
+          "occurredAfterPrepare": true,
+          "occurredAfterRunTimeout": true,
+          "provesRunCleanupCompleted": false
+        }
       },
       "userScreenshotCloudBaseObservation": {
         "date": "2026-10-28",
@@ -411,11 +462,14 @@
       "userConfirmedRuntimeAndDatabase": {
         "runtimeChoice": "Node.js 20.19",
         "runtimeSource": "user-reply-2026-10-28",
-        "runtimeCreatedOrExecuted": false,
+        "runtimeCreatedOrExecuted": true,
         "databaseMode": "文档型数据库",
         "databaseModeSource": "user-reply-2026-10-28",
         "databaseModeApiVerified": false
-      }
+      },
+      "completedChecks": [
+        "2026-10-28 user-provided inspect response verified Node.js v20.19.3, runtime match and CloudBase SDK 3.18.7; prepare response verified creation of fixed synthetic-test collection sp01_probe_20261028; no synthetic records written yet"
+      ]
     },
     "devtoolsProjectCreationWizardObservation": {
       "observationDate": "2026-10-27",
@@ -946,25 +1000,29 @@
           "2026-10-28 node --test tests/sp01-environment-probe.test.cjs：11项本地测试通过，含提交/注入回滚/并发丢更新识别/屏障超时后串行假阳性保护/异常后自动清理/删除后回查/清理遗留失败/保留空集合；仅使用内存模拟数据库，不是目标云端运行证据",
           "2026-10-28受控云端操作手册已列明目标AppID、EnvID、输入/预期、预检、清理与停机边界；本轮未部署函数、未创建集合、未写入或删除云端记录/存储",
           "2026-10-28重新检查本地预览入口http://127.0.0.1:8765/返回连接被拒绝；未启动或修改预览服务",
-          "2026-10-28受控部署后只读确认函数Active但运行时Nodejs16.13；部署任务内层代码更新失败；未调用函数、未写数据库，集合列表为空"
+          "2026-10-28受控部署后只读确认函数Active但运行时Nodejs16.13；部署任务内层代码更新失败；未调用函数、未写数据库，集合列表为空",
+          "2026-10-28恢复部署后用户提供inspect和prepare成功响应；run返回433、3秒执行超时。超时后只读确认固定集合存在且当前0条记录；事务和自动清理未验收，不能据此证明调用期间未写入或清理成功。"
         ],
         "latestReadOnlyCloudRecheck": {
+          "source": "wechatide-cli-read-only-after-user-run-timeout",
           "date": "2026-10-28",
           "targetAppId": "wx2414399d423dfb65",
           "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
-          "environmentList": [
-            "cloud1-d2gjahlq39bf141c7"
-          ],
-          "cloudFunctionCount": 1,
-          "functionNames": [
-            "sp01EnvProbe"
-          ],
+          "functionName": "sp01EnvProbe",
           "functionStatus": "Active",
-          "functionRuntime": "Nodejs16.13",
+          "functionRuntime": "Nodejs20.19",
+          "functionTimeoutSeconds": 3,
           "databaseAction": "listCollections",
-          "databaseCollectionCount": 0,
-          "databaseRequestId": "870fb9ca-db84-48bc-8304-4035df9ecc4e",
-          "cloudWriteOrDeploymentPerformed": true
+          "databaseCollectionCount": 1,
+          "databaseCollectionNames": [
+            "sp01_probe_20261028"
+          ],
+          "databaseRecordCount": 0,
+          "databaseRequestId": "7fb04c35-77aa-4f5f-bd6c-666a87db5b3d",
+          "collectionDescriptionRequestId": "dc470f28-3ec9-4b3f-a59d-63b972f74eb9",
+          "occurredAfterPrepare": true,
+          "occurredAfterRunTimeout": true,
+          "provesRunCleanupCompleted": false
         },
         "latestUserScreenshotCloudBaseObservation": {
           "date": "2026-10-28",
@@ -997,14 +1055,14 @@
           "deploymentPerformed": false
         },
         "blockedChecks": [
-          "首版运行时选择Node.js 20.19已确认；用户提交inspect、prepare、run事件的测试截图回显输入事件并显示Hello World/运行上下文，和本地探针不符。首轮临时函数已删除，删除后只读函数列表为空；删除后数据库集合列表也为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），固定集合当前不存在且没有可见记录，但不能反推调用期间是否曾短暂创建。已只读核对CLI部署帮助要求绝对函数目录、目标工程cloudfunctionRoot、探针package入口和SDK锁文件，并新增本地包预检测试；历史部署path参数与上传包摘要未留存，Hello World根因仍未知。未来任何重试前重新检查固定集合与本轮文档ID，部署路径须指向函数目录本身，部署后先检查inspect响应。数据库模式为用户报告的文档型数据库，尚未API复核；事务与私密文件权限仍未实测。",
-          "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
-          "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过",
-          "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞",
-          "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；之后用户报告目标小程序已关联、cloud1已导入并在菜单中选中。该历史菜单核对不是当前部署状态；首轮临时探针曾部署，测试截图不符合本地代码响应契约；首轮函数删除后只读函数列表为空。之后重部署的当前函数为Active/Nodejs16.13，代码更新失败。",
-          "本次CLI部署外层任务状态为success，但内层UpdateFunctionCode因函数处于Creating而失败；云端sp01EnvProbe为Active/Nodejs16.13，与已确认Node.js 20.19不符。运行时创建后不可修改；需删除本轮临时函数并用20.19重建。修复前不得测试函数或写数据库，SP01与SP07门槛未通过。"
+          "历史首轮测试截图回显输入事件并显示Hello World/运行上下文，和本地探针不符；首轮Nodejs16.13部署失败与该截图均保留为历史，不代表当前部署结果。",
+          "当前sp01EnvProbe为Active/Nodejs20.19，代码包上传、inspect与prepare结构化响应均通过；最新run返回433、3秒超时，事务与清理未验收。固定集合当前存在且记录数为0，但不能据此证明调用期间的自动清理完成。",
+          "目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认。",
+          "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过。",
+          "旧号个人与新号个体工商户/公司主体不同，旧cloud1不作新号共享候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞。",
+          "SP01当前已限定在目标AppID、cloud1、临时探针及固定合成测试集合；服务范围供给、官方类目等SP04核验仍按对应卡片推进，SP01—SP06门槛完成前不得进入SP07。"
         ],
-        "nextAction": "目标AppID wx2414399d423dfb65 的 cloud1 环境 cloud1-d2gjahlq39bf141c7 已通过cloud_env_list只读复核；SP01首轮部署前云函数与集合均为空。用户较早复查cloudfunctions根目录环境菜单并报告仍为空（导入前）；随后报告腾讯云账号中心已关联目标小程序；随后报告已导入cloud1并报告当前环境已选中cloud1（导入和菜单选择无截图）。首轮临时探针截图回显输入事件并出现Hello World/运行上下文，与本地处理器不符；用户之后删除该首轮函数，删除后的只读集合为空。用户已确认Node.js 20.19并报告数据库模式为文档型，后者尚未API复核。最新一次经用户确认的CLI部署外层返回success，但内层代码更新因函数处于Creating状态失败；只读查询显示当前sp01EnvProbe为Active/Nodejs16.13，集合列表为空（requestId 870fb9ca-db84-48bc-8304-4035df9ecc4e）。本次未调用函数、未写数据库或存储，云端代码是否为本地探针未知。运行时不能通过配置修改；下一步在控制台删除本轮临时函数并用Node.js 20.19重建同名函数，等待Active后由CLI上传，再只读检查运行时和inspect结构化响应；不匹配即停止，不执行prepare/run或数据库写入。SP01保持进行中，SP07不得越过SP01—SP06门槛。旧号个人主体的cloud1不作新号共享候选；剩余存储写入仍须单独授权。若上线后有平台实际付费提示，用户自行办理；费用核查按用户要求略过且不构成当前开发阻塞。",
+        "nextAction": "环境上下文：用户确认腾讯云账号中心已关联目标小程序，随后报告已导入cloud1，并报告当前环境已选中cloud1，具体为E:\\O2O\\miniprogram\\cloudfunctions；目标AppID范围的cloud_env_list已确认环境ID。用户报告数据库模式为文档型，尚未API复核。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理。当前sp01EnvProbe为Active/Nodejs20.19，inspect和prepare已通过，固定集合当前有0条记录；run返回433超时且自动清理未验收。用户同意自行把该临时函数超时调整到30秒，尚待只读确认配置已更新；未确认前不重跑。存储权限写入仍需另行授权，服务端事务验收通过前SP01不完成，SP01—SP06门槛完成前不得进入SP07。",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -1078,11 +1136,11 @@
           "localTestsPassed": 13,
           "localTestsFailed": 0,
           "testBackend": "in-memory-database-mock",
-          "cloudRuntimeExecuted": false,
+          "cloudRuntimeExecuted": true,
           "cloudTransactionTestExecuted": false,
           "cloudFunctionDeployed": true,
-          "cloudCollectionCreated": null,
-          "cloudRecordsWrittenOrDeleted": null,
+          "cloudCollectionCreated": true,
+          "cloudRecordsWrittenOrDeleted": "unknown-during-timeout; current-read-only-record-count-zero",
           "cloudStorageWritten": false,
           "cloudWriteAndDeploymentAuthorization": "granted-for-sp01EnvProbe-and-sp01_probe_20261028-synthetic-records-only",
           "collectionCleanup": "records-only; retain-empty-collection",
@@ -1091,14 +1149,29 @@
           "runbook": "docs/sp01-cloud-probe-runbook-20261028.md",
           "concurrencyBarrierTimeoutMs": 1500,
           "concurrencyRequiresOverlappingInitialReads": true,
-          "timeoutOrSequentialBehavior": "reported-as-not-passed",
+          "timeoutOrSequentialBehavior": "cloud-run-timed-out-after-3-seconds; transaction-and-cleanup-not-verified",
           "sdkVersionRuntimeSource": "require(@cloudbase/node-sdk/package.json).version",
           "cleanupPostDeleteReadback": true,
           "cleanupFailsWhenRunDocumentRemains": true,
           "secondWechatTestAccountAvailable": true,
           "secondWechatTestAccountEvidence": "user-reported-available-not-used"
         },
-        "latestCloudDeployment": {
+        "preDeploymentReadOnlyCloudRecheck": {
+          "date": "2026-10-28",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "environmentList": [
+            "cloud1-d2gjahlq39bf141c7"
+          ],
+          "cloudFunctionCount": 0,
+          "databaseAction": "listCollections",
+          "databaseCollectionCount": 0,
+          "databaseRequestId": "9999efac-d8b8-4c0c-997a-91674556d58e",
+          "initialDatabaseInputError": "missing-required-action; rejected-locally-before-cloud-request",
+          "recovery": "read-tool-help; retry-with-listCollections",
+          "cloudWriteOrDeploymentPerformed": false
+        },
+        "initialCloudDeployment": {
           "date": "2026-10-28",
           "source": "wechatide-cli-cloud_fn_deploy-and-read-only-recheck",
           "targetAppId": "wx2414399d423dfb65",
@@ -1133,47 +1206,7 @@
           "userRunsFunctionTests": true,
           "userDeletesTemporaryFunctionAfterReview": true
         },
-        "latestCloudTestAttempt": {
-          "date": "2026-10-28",
-          "source": "user-provided-cloud-function-test-screenshots",
-          "targetAppId": "wx2414399d423dfb65",
-          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
-          "functionName": "sp01EnvProbe",
-          "submittedActions": [
-            "inspect",
-            "prepare",
-            "run"
-          ],
-          "runId": "sp01_f95243389fa9ca4f7a407c90ce2052ef",
-          "consoleDisplayedStatus": "success",
-          "responseMatchedExpectedProbeContract": false,
-          "logsIncludedHelloWorld": true,
-          "logsIncludedRuntimeContext": true,
-          "temporaryCredentialValuesVisibleInScreenshots": true,
-          "probeExecutionVerified": false,
-          "transactionAcceptancePassed": false,
-          "cleanupVerified": false,
-          "postAttemptCollectionState": "not-present-on-read-only-recheck",
-          "userDeletedFunction": true,
-          "functionCurrentlyPresent": false,
-          "functionNamesAfterDeletion": [],
-          "postAttemptCollectionCount": 0,
-          "postAttemptCollectionRequestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
-          "postAttemptCollectionReadScope": "target-appid-and-environment-explicitly-passed-to-read-only-cli",
-          "cloudFunctionTestEventsSubmitted": true
-        },
-        "latestPostProbeReadOnlyDatabaseCheck": {
-          "date": "2026-10-28",
-          "source": "wechatide-cli-cloud-db-read-struct-listCollections",
-          "targetAppId": "wx2414399d423dfb65",
-          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
-          "collections": [],
-          "collectionCount": 0,
-          "requestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
-          "writePerformed": false,
-          "provesFunctionDidNotTransientlyCreateCollectionDuringAttempt": false
-        },
-        "latestCloudDeploymentAttempt": {
+        "previousCloudDeploymentAttempt": {
           "date": "2026-10-28",
           "targetAppId": "wx2414399d423dfb65",
           "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
@@ -1214,20 +1247,192 @@
           "functionTestInvoked": false,
           "databaseWritePerformed": false
         },
-        "preDeploymentReadOnlyCloudRecheck": {
+        "previousUnmatchedCloudTestAttempt": {
           "date": "2026-10-28",
+          "source": "user-provided-cloud-function-test-screenshots",
           "targetAppId": "wx2414399d423dfb65",
           "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
-          "environmentList": [
-            "cloud1-d2gjahlq39bf141c7"
+          "functionName": "sp01EnvProbe",
+          "submittedActions": [
+            "inspect",
+            "prepare",
+            "run"
           ],
-          "cloudFunctionCount": 0,
-          "databaseAction": "listCollections",
-          "databaseCollectionCount": 0,
-          "databaseRequestId": "9999efac-d8b8-4c0c-997a-91674556d58e",
-          "initialDatabaseInputError": "missing-required-action; rejected-locally-before-cloud-request",
-          "recovery": "read-tool-help; retry-with-listCollections",
-          "cloudWriteOrDeploymentPerformed": false
+          "runId": "sp01_f95243389fa9ca4f7a407c90ce2052ef",
+          "consoleDisplayedStatus": "success",
+          "responseMatchedExpectedProbeContract": false,
+          "logsIncludedHelloWorld": true,
+          "logsIncludedRuntimeContext": true,
+          "temporaryCredentialValuesVisibleInScreenshots": true,
+          "probeExecutionVerified": false,
+          "transactionAcceptancePassed": false,
+          "cleanupVerified": false,
+          "postAttemptCollectionState": "not-present-on-read-only-recheck",
+          "userDeletedFunction": true,
+          "functionCurrentlyPresent": false,
+          "functionNamesAfterDeletion": [],
+          "postAttemptCollectionCount": 0,
+          "postAttemptCollectionRequestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
+          "postAttemptCollectionReadScope": "target-appid-and-environment-explicitly-passed-to-read-only-cli",
+          "cloudFunctionTestEventsSubmitted": true
+        },
+        "previousPostProbeReadOnlyDatabaseCheck": {
+          "date": "2026-10-28",
+          "source": "wechatide-cli-cloud-db-read-struct-listCollections",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "collections": [],
+          "collectionCount": 0,
+          "requestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
+          "writePerformed": false,
+          "provesFunctionDidNotTransientlyCreateCollectionDuringAttempt": false
+        },
+        "latestCloudDeployment": {
+          "date": "2026-10-28",
+          "source": "wechatide-cli-cloud_fn_deploy-after-runtime-correct-recreation",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "deploymentTaskId": "confirmation_cloud_fn_deploy_9b5488be-6095-41b1-b41c-ee75bcf0a3bc",
+          "runtime": "Nodejs20.19",
+          "codeUploadStatus": "success",
+          "uploadedFiles": 4,
+          "packageSize": "12.6 KB",
+          "cloudFunctionDeployed": true,
+          "cloudRuntimeExecuted": true,
+          "cloudCollectionCreated": true,
+          "cloudRecordsWrittenOrDeleted": false,
+          "cloudStorageWritten": false,
+          "cloudTransactionTestExecuted": false
+        },
+        "latestCloudDeploymentEvidence": {
+          "date": "2026-10-28",
+          "source": "wechatide-cli-cloud_fn_deploy-after-runtime-correct-recreation",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "functionDirectory": "E:\\O2O\\miniprogram\\cloudfunctions\\sp01EnvProbe",
+          "preflight": {
+            "functionStatus": "Active",
+            "runtime": "Nodejs20.19",
+            "collectionCount": 0,
+            "collectionRequestId": "0f565042-c6be-43d4-ad15-30036d520e57"
+          },
+          "firstUploadAttempt": {
+            "taskId": "confirmation_cloud_fn_deploy_daa38efd-ee77-4702-8532-9b2546a5150b",
+            "wrapperStatus": "success",
+            "codeUpdateStatus": "failed",
+            "errorCode": "FailedOperation.UpdateFunctionCode",
+            "errorMessage": "当前函数处于Updating状态，无法进行此操作，请稍后重试。",
+            "requestId": "f0a3ba9f-f1ee-4d60-bb5c-38422be5baa1"
+          },
+          "retry": {
+            "taskId": "confirmation_cloud_fn_deploy_9b5488be-6095-41b1-b41c-ee75bcf0a3bc",
+            "wrapperStatus": "success",
+            "deploymentStatus": "success",
+            "filesCount": 4,
+            "packSize": "12.6 KB"
+          },
+          "postDeploymentReadOnly": {
+            "functionStatus": "Active",
+            "runtime": "Nodejs20.19",
+            "collectionCount": 0,
+            "collectionRequestId": "040816c3-b5f5-4172-bd42-50975a271493"
+          },
+          "inspectEvent": {
+            "action": "inspect"
+          },
+          "inspectResultReceived": true,
+          "inspectResult": {
+            "success": true,
+            "nodeVersion": "v20.19.3",
+            "nodeRuntimeMatch": true,
+            "sdkVersion": "3.18.7"
+          },
+          "cloudRuntimeExecutionVerified": true,
+          "prepareEvent": {
+            "action": "prepare"
+          },
+          "prepareResultReceived": true,
+          "prepareResult": {
+            "success": true,
+            "collection": "sp01_probe_20261028",
+            "created": true
+          },
+          "cloudCollectionCreated": true,
+          "cloudRecordsWrittenOrDeleted": false,
+          "databaseWritePerformed": true
+        },
+        "previousCloudTestAttempt": {
+          "date": "2026-10-28",
+          "source": "user-provided-cloud-function-test-response",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "event": {
+            "action": "inspect"
+          },
+          "response": {
+            "success": true,
+            "nodeVersion": "v20.19.3",
+            "nodeRuntimeMatch": true,
+            "sdkVersion": "3.18.7"
+          },
+          "responseMatchedExpectedProbeContract": true,
+          "probeExecutionVerified": true,
+          "transactionAcceptancePassed": false,
+          "databaseWritePerformed": false
+        },
+        "latestCloudTestAttempt": {
+          "date": "2026-10-28",
+          "source": "user-provided-cloud-function-test-response",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "event": {
+            "action": "prepare"
+          },
+          "response": {
+            "success": true,
+            "collection": "sp01_probe_20261028",
+            "created": true
+          },
+          "responseMatchedExpectedProbeContract": true,
+          "probeExecutionVerified": true,
+          "transactionAcceptancePassed": false,
+          "collectionCreated": true,
+          "collection": "sp01_probe_20261028",
+          "databaseWritePerformed": true,
+          "syntheticRecordsWritten": false
+        },
+        "latestCloudRunAttempt": {
+          "date": "2026-10-28",
+          "source": "user-provided-cloud-function-test-response",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "event": {
+            "action": "run",
+            "runId": "sp01_f4157fdc182bda6f9fd8e37395d4943e"
+          },
+          "response": {
+            "errorCode": -1,
+            "errorMessage": "Invoking task timed out after 3 seconds",
+            "requestId": "5f15ce84-6771-432e-8d22-1d10bc53babc",
+            "statusCode": 433
+          },
+          "responseMatchedExpectedProbeContract": false,
+          "invocationTimedOut": true,
+          "functionRuntime": "Nodejs20.19",
+          "functionTimeoutSeconds": 3,
+          "transactionAcceptancePassed": false,
+          "cleanupVerified": false,
+          "recordWritesDuringTimedOutInvocation": "unknown",
+          "postTimeoutReadOnlyCollectionCount": 1,
+          "postTimeoutReadOnlyRecordCount": 0,
+          "postTimeoutReadOnlyCollectionName": "sp01_probe_20261028",
+          "postTimeoutReadOnlyRequestId": "7fb04c35-77aa-4f5f-bd6c-666a87db5b3d",
+          "collectionDescriptionRequestId": "dc470f28-3ec9-4b3f-a59d-63b972f74eb9"
         }
       },
       "qualityContract": {
@@ -1444,11 +1649,12 @@
           "2026-10-28按目标AppID wx2414399d423dfb65查询cloud_env_list返回cloud1-d2gjahlq39bf141c7；project_list列出E:\\O2O\\miniprogram，cloud_fn_list与cloud_db_read_struct显式限定AppID/EnvID后分别返回0个云函数和0个数据库集合；QuickStart app.js已配置该EnvID。以上为只读/本地配置证据，不证明活动项目路径或小程序运行时",
           "2026-10-28用户提供CloudBase截图，记录云函数运行时候选、数据库回档页、空存储根目录及仅创建者可读写选项；开发者工具菜单显示当前环境为无且子菜单为空。本地envList仍为空；已交叉记入SP04，未改云端设置或项目配置",
           "2026-10-28用户提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79；后台验收选择Chrome，网络场景为家中WiFi 5G与公共免费WiFi。用户报告不代表设备连接、兼容性或网络性能已实测",
-          "用户确认首版云函数运行时为Node.js 20.19；查看数据库设置后报告当前为文档型数据库。均与截图可见范围分开记载；临时SP01探针曾部署并收到不符合本地响应契约的测试结果，之后已由用户删除。SP04未变更CloudBase权限或数据库设置；数据库模式未API复核"
+          "用户确认首版云函数运行时为Node.js 20.19；查看数据库设置后报告当前为文档型数据库。均与截图可见范围分开记载；临时SP01探针曾部署并收到不符合本地响应契约的测试结果，之后已由用户删除。SP04未变更CloudBase权限或数据库设置；数据库模式未API复核",
+          "SP01当前恢复函数Active/Nodejs20.19，代码包上传成功；inspect与prepare结构化响应通过，run返回433、3秒执行超时，事务及自动清理未验收。超时后只读确认固定集合sp01_probe_20261028存在、记录数0；零条记录不能证明自动清理。用户同意自行调超时至30秒，尚待只读核实。"
         ],
         "blockedChecks": [
-          "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户已确认Node.js 20.19并报告数据库为文档型数据库，但函数未创建/运行、数据库模式尚未API复核；用户报告cloudfunctions文件夹当前环境已选中cloud1，活动窗口项目路径、托管/登录配置和正式域名仍未核验。旧号与新号主体不同，旧cloud1不作为共享候选。费用核查按用户要求略过",
-          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；最新只读CLI仍返回cloud1、project_list列出目标工程、cloud_fn_list返回0个函数。用户报告已将cloud1导入（无截图），用户报告cloudfunctions文件夹当前环境已选中cloud1。SP01临时探针曾按授权部署，但测试输出不符合本地响应契约，用户已删除；删除后函数和集合列表均为空。Node.js 20.19选择已确认，文档型数据库为用户报告，尚未API复核；SP04没有修改CloudBase权限或数据库设置。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
+          "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户已确认Node.js 20.19并报告数据库为文档型数据库；当前恢复函数Active/Nodejs20.19，上传、inspect和prepare通过，但run返回433、3秒执行超时，事务与清理未验收，数据库模式尚未API复核。用户报告cloudfunctions文件夹当前环境已选中cloud1；活动窗口项目路径、托管/登录配置和正式域名仍未核验。旧号与新号主体不同，旧cloud1不作为共享候选。费用核查按用户要求略过",
+          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；用户报告已将cloud1导入并在cloudfunctions菜单选中（无截图）。首轮SP01临时函数及不匹配测试输出已删除，删除后的空列表仅为历史状态。最新恢复函数Active/Nodejs20.19，代码包上传、inspect和prepare通过；run返回433、3秒超时。超时后固定集合仍存在、当前可见记录数0，自动清理与事务结果未验收。数据库模式仍为用户报告、尚未API复核；SP04没有修改CloudBase权限或数据库设置。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
         ],
         "evidence": [
           "docs/sp04-operations-configuration-20261027.md",
