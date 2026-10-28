@@ -24,7 +24,7 @@ function validate(p){
 test('executable plan covers all first-release modules and all 60 legacy references with a gated acyclic task graph',()=>a.equal(validate(load()),true));
 test('human plan and structured 36 delivery cards agree on work, dependencies and acceptance',()=>{const p=load(),s=read(p.document);for(const t of p.tasks){const start=s.indexOf('### '+t.id+' '+t.title);a(start>=0,t.id);const next=s.indexOf('\n### ',start+1),block=s.slice(start,next<0?s.indexOf('\n## 7.',start):next);a(block.includes(t.deliverable),t.id+' deliverable');for(const v of [...t.dependsOn,...t.steps,...t.acceptance])a(block.includes(v),t.id+' '+v);}for(const [,target]of s.matchAll(/\]\(([^)]+)\)/g))if(!/^https?:/.test(target))a(fs.existsSync(path.resolve(path.dirname(path.join(root,p.document)),target.split('#')[0])),target);a(s.indexOf('## 1. 验证方案')<s.indexOf('## 6. 36张'));});
 test('repository inventory is an as-of source snapshot and does not prohibit creating a future product',()=>{const p=load();a.match(p.sourceCommit,/^[a-f0-9]{40}$/);const names=cp.execFileSync('git',['ls-tree','--name-only',p.sourceCommit],{cwd:root,encoding:'utf8'}).split(/\r?\n/);for(const name of ['miniprogram','cloudfunctions','packages','package.json','project.config.json'])a(!names.includes(name));a.equal(p.inventory.formalProjectPresent,false);a.equal(p.inventory.localVersionsAreCloudVersions,false);});
-test('plan records the user-confirmed target CloudBase environment and appid-scoped API confirmation',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-screenshot-and-cli-environment-list-visible-appid-and-envid-not-runtime-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'in-progress');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,6);a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);a.equal(sp01.executionProgress.latestCloudRunAttempt.event.runId,'sp01_f892f63b9fdc4c11ae1254800a9e83cf');a.equal(sp01.executionProgress.latestCloudRunAttempt.functionTimeoutSeconds,30);a.equal(sp01.executionProgress.latestCloudRunAttempt.transactionAcceptancePassed,false);a.equal(sp01.executionProgress.latestCloudRunAttempt.cleanupVerified,false);a.equal(sp01.executionProgress.latestCloudRunAttempt.recordStateAfterFailedCleanup,'unknown; no post-run read-only record query');a.equal(sp01.executionProgress.previousCloudRunAttemptAtThreeSeconds.response.statusCode,433);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.cloudCauseConfirmed,false);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud,false);a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
+test('plan records the user-confirmed target CloudBase environment and appid-scoped API confirmation',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-screenshot-and-cli-environment-list-visible-appid-and-envid-not-runtime-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'in-progress');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,6);a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.event.runId,'sp01_f892f63b9fdc4c11ae1254800a9e83cf');a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.functionTimeoutSeconds,30);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.transactionAcceptancePassed,false);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.cleanupVerified,false);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.recordStateAfterFailedCleanup,'unknown; no post-run read-only record query');a.equal(sp01.executionProgress.previousCloudRunAttemptAtThreeSeconds.response.statusCode,433);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.cloudCauseConfirmed,false);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud,true);a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
 test('SP01 records CloudBase screenshots separately from the user-confirmed target-project association',()=>{
   const p=load(),scaffold=p.inventory.userCreatedQuickStartScaffold,current=p.accountEvidence.latestUserCreatedProjectAndCloudConsoleObservation,task=p.tasks.find(x=>x.id==='SP01'),doc=read('docs/sp01-technical-environment-20261027.md'),plan=read('docs/v1-executable-development-plan-20261027.md'),settings=current.latestSettingsScreenshot,fees=current.latestFeeManagementScreenshot;
   a.equal(scaffold.present,true);a.equal(scaffold.createdByUser,true);a.equal(scaffold.appId,p.accountEvidence.formalNewAppId);a.equal(scaffold.matchesFormalTargetAppId,true);a.equal(scaffold.containsProductImplementation,false);a.equal(scaffold.cloudEnvironmentIdConfigured,true);a.equal(scaffold.appJsEnvironmentValue,'cloud1-d2gjahlq39bf141c7');a.equal(scaffold.envListIsEmpty,true);a.equal(current.configuredAppIdMatchesFormalTarget,true);a.equal(current.scaffoldOnly,true);a.equal(current.environmentIdConfigured,true);a.equal(current.confirmedCloudEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(current.userConfirmedCloudEnvironmentCreatedFromTargetProject,true);a.equal(current.cloudEnvironmentBindingApiVerified,true);a.equal(current.cloudEnvironmentBindingApiEvidenceDate,'2026-10-28');a.equal(current.cloudEnvironmentBindingApiEvidenceMethod,'target-appid-scoped-cloud-env-list');
@@ -128,17 +128,17 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   });
   const tech=read('docs/sp01-technical-environment-20261027.md'),runbook=read('docs/sp01-cloud-probe-runbook-20261028.md'),plan=read('docs/v1-executable-development-plan-20261027.md');
   a.equal(task.status,'in-progress');a.equal(task.productAcceptancePassed,false);
-  a.equal(execution.latestCloudRunAttempt.event.runId,'sp01_f892f63b9fdc4c11ae1254800a9e83cf');
-  a.deepEqual(execution.latestCloudRunAttempt.response.rollback,{abortObserved:true,noPartialWrites:true});
-  a.equal(execution.latestCloudRunAttempt.response.commit.allDocumentsVisible,false);
-  a.deepEqual(execution.latestCloudRunAttempt.response.concurrency.outcomes.map((item)=>item.reasonCode),['INVALID_PARAM','INVALID_PARAM']);
-  a.equal(execution.latestCloudRunAttempt.functionTimeoutSeconds,30);
-  a.equal(execution.latestCloudRunAttempt.transactionAcceptancePassed,false);
-  a.equal(execution.latestCloudRunAttempt.cleanupVerified,false);
-  a.equal(execution.latestCloudRunAttempt.recordStateAfterFailedCleanup,'unknown; no post-run read-only record query');
+  a.equal(execution.previousFailedCloudRunAttempt.event.runId,'sp01_f892f63b9fdc4c11ae1254800a9e83cf');
+  a.deepEqual(execution.previousFailedCloudRunAttempt.response.rollback,{abortObserved:true,noPartialWrites:true});
+  a.equal(execution.previousFailedCloudRunAttempt.response.commit.allDocumentsVisible,false);
+  a.deepEqual(execution.previousFailedCloudRunAttempt.response.concurrency.outcomes.map((item)=>item.reasonCode),['INVALID_PARAM','INVALID_PARAM']);
+  a.equal(execution.previousFailedCloudRunAttempt.functionTimeoutSeconds,30);
+  a.equal(execution.previousFailedCloudRunAttempt.transactionAcceptancePassed,false);
+  a.equal(execution.previousFailedCloudRunAttempt.cleanupVerified,false);
+  a.equal(execution.previousFailedCloudRunAttempt.recordStateAfterFailedCleanup,'unknown; no post-run read-only record query');
   a.equal(execution.previousCloudRunAttemptAtThreeSeconds.response.statusCode,433);
   a.equal(execution.latestLocalSdkCompatibilityDiagnosis.cloudCauseConfirmed,false);
-  a.equal(execution.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud,false);
+  a.equal(execution.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud,true);
   a.deepEqual(execution.preDeploymentReadOnlyCloudRecheck, {
     date:'2026-10-28',
     targetAppId:'wx2414399d423dfb65',
@@ -154,12 +154,12 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   });
   a.equal(p.accountEvidence.technicalEnvironmentAudit.cloudCapabilityTestPlan.preDeploymentCloudFunctionCount,0);
   a(tech.includes('Nodejs16.13') && tech.includes('历史状态'));
-  a(tech.includes('恢复函数为Active / Nodejs20.19'));
-  a(runbook.includes('最新只读核对确认目标环境仅有`sp01EnvProbe`（Active / Nodejs20.19 / 30秒）'));
+  a(tech.includes('目标函数`sp01EnvProbe`已确认Active / Nodejs20.19'));
+  a(runbook.includes('目标环境`sp01EnvProbe`（Nodejs20.19 / 30秒）的最新事务探针通过'));
   a(runbook.includes('`inspectRun`只读事件'));
   a(runbook.includes('最新 run（30秒配置）'));
   a(runbook.includes('旧形状导致提交标记不可见') && runbook.includes('改为平铺字段'));
-  a(runbook.includes('云端根因尚未确认'));
+  a(runbook.includes('历史失败没有逐变量云端对照'));
   a(plan.includes('曾因函数处于Creating状态返回 FailedOperation.UpdateFunctionCode'));
 });
 
@@ -457,7 +457,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('指定目标工程的只读CLI模拟器`systemInfo`报告`SDKVersion=3.17.5`'));
   a(doc.includes('不代表三台真机的基础库版本已验证'));
   a(planDoc.includes('公开项目配置声明基础库`2.20.1`，私有配置声明`3.17.5`'));
-  a(doc.includes('目标环境受控验证要求与结果（尚未通过）'));
+  a(doc.includes('目标环境受控验证要求与结果（探针部分通过；SP01整卡尚未通过）'));
   a(doc.includes('ENV-DB-TX-01'));
   a(doc.includes('ENV-STORE-01'));
   a(doc.includes('单事务最多100个操作、最长30秒'));
@@ -467,7 +467,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('目标环境文件清单和实际权限仍未核实'));
   a(planDoc.includes('补充只读云资源复核'));
   a(planDoc.includes('用户确认首版采用Node.js 20.19'));
-  a(doc.includes('清理也是云端变更'));
+  a(doc.includes('一次性云端写入授权已用完'));
   a(doc.includes('运行时下拉当前选择Node.js 20.19'));
   a(doc.includes('Node.js 24.11和22.21标注“公测中”'));
   a(doc.includes('数据库截图显示“数据库回档”及暂无数据'));
@@ -501,9 +501,9 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);
   a.equal(record.accountEvidence.technicalEnvironmentAudit.userConfirmedRuntimeAndDatabase.databaseMode,'文档型数据库');
   a(sp01.executionProgress.nextAction.includes('Nodejs20.19') && sp01.executionProgress.nextAction.includes('用户报告数据库模式为文档型，尚未API复核'));
-  a(sp01.executionProgress.nextAction.includes('最新只读详情确认超时30秒'));
-  a(sp01.executionProgress.nextAction.includes('后续部署、按旧runId定向清理和新run复验须明确授权'));
-  a(sp01.executionProgress.nextAction.includes('报告当前环境已选中cloud1'));
+  a(sp01.executionProgress.nextAction.includes('超时30秒'));
+  a(sp01.executionProgress.nextAction.includes('此前一次性云端写入授权已使用'));
+  a(sp01.executionProgress.nextAction.includes('cloudfunctions中选中cloud1'));
 });
 
 test('SP01 records the local diagnostic project AppID separately from the new target AppID', () => {
@@ -544,7 +544,7 @@ test('SP04 plan progress records no confirmed service providers as a blocker and
   a(task.executionProgress.completedChecks.some((check) => check.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
   a(task.executionProgress.completedChecks.some((check) => check.includes('CloudBase截图') && check.includes('当前环境为无') && check.includes('未改云端设置')));
   a(task.executionProgress.blockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
-  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('数据库模式尚未API复核')));
+  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('数据库模式仍未API复核')));
   a(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
   a(doc.includes('开发者工具云函数菜单早期显示“当前环境：(无)”且子菜单“(空)”'));
   a.equal(p.firstProductTask, 'SP07');
@@ -632,7 +632,7 @@ test('SP01 separates the historical creation wizard from current environment-lis
   a.equal(sp01.productAcceptancePassed, false);
   a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);
   a(!sp01.executionProgress.blockedChecks.some((check) => check.includes('CloudBase API关联尚未核验')));
-  a(sp01.executionProgress.nextAction.includes('存储权限写入仍需另行授权'));
+  a(sp01.executionProgress.nextAction.includes('真实文件权限未做跨账号访问测试'));
   a(sp01.executionProgress.nextAction.includes('费用核查按用户要求略过'));
   const doc = read('docs/sp01-technical-environment-20261027.md');
   a(doc.includes('用户最初提供的截图显示微信开发者工具“创建小程序”向导'));
@@ -764,7 +764,7 @@ test('SP01 preserves the earlier empty menu report and records the later import 
   a.equal(sp01.productAcceptancePassed, false);
   a(sp01.executionProgress.nextAction.includes('腾讯云账号中心已关联目标小程序'));
   a(sp01.executionProgress.nextAction.includes('随后报告已导入'));
-  a(sp01.executionProgress.nextAction.includes('报告当前环境已选中cloud1'));
+  a(sp01.executionProgress.nextAction.includes('cloudfunctions中选中cloud1'));
   a(sp01Doc.includes('回复“菜单仍为空”'));
   a(sp01Doc.includes('这是导入前的观察'));
   a(sp01Doc.includes('https://docs.cloudbase.net/faq/account'));
@@ -815,7 +815,7 @@ test('SP01 separates confirmed runtime and user-reported database mode from runt
   a(doc.includes('用户报告')||doc.includes('用户查看'));
   a(doc.includes('文档型数据库'));
  }
- a(techDoc.includes('恢复函数为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化响应通过'));a(techDoc.includes('最新30秒run完成但事务与清理验收失败'));
+ a(techDoc.includes('目标函数`sp01EnvProbe`已确认Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));a(techDoc.includes('最新修正版30秒run通过探针断言'));
  a(techDoc.includes('尚未API复核'));
  a(!techDoc.includes('没有为本项目选定Node云运行时'));
  a(!planDoc.includes('运行时选择、数据库模式、小程序端运行时'));
@@ -890,7 +890,7 @@ test('SP04 E06 distinguishes the reported cloud1 import from unverified deployme
  a(e06.reason.includes('用户随后报告腾讯云账号中心已关联'));
  a(e06.reason.includes('已导入cloud1'));
  a(e06.reason.includes('报告当前环境已选中cloud1'));
-  a(e06.reason.includes('首轮临时SP01函数')); a(e06.reason.includes('首轮函数')); a(e06.reason.includes('最新恢复函数Active/Nodejs20.19')); a(e06.reason.includes('最新30秒run回滚通过'));
+  a(e06.reason.includes('首轮临时SP01函数')); a(e06.reason.includes('首轮函数')); a(e06.reason.includes('修正版已上传')); a(e06.reason.includes('最新30秒事务探针均通过'));
  a(!e06.reason.includes('环境导入仍未执行'));
  a(!e06.reason.includes('关联核对和环境导入均未执行'));
 });
@@ -899,11 +899,11 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
  const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
  const runtimeCase=techDoc.split('\n').find(line=>line.includes('ENV-RUNTIME-01'));
   const sp04AccountCheck=sp04.remainingChecks.find(line=>line.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
- a(runtimeCase.includes('用户截图已记录候选并确认选择Node.js 20.19'));
- a(runtimeCase.includes('当前函数此前只读详情显示Nodejs20.19'));
- a(runtimeCase.includes('代码包上传已成功'));
- a(runtimeCase.includes('inspect结构化响应通过'));
- a(runtimeCase.includes('最新30秒run完成但事务与清理验收失败'));
+ a(runtimeCase.includes('运行时验收通过：只读详情为Active / Nodejs20.19'));
+ a(runtimeCase.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));
+ a(!runtimeCase.includes('临时函数已删除'));
+ a(runtimeCase.includes('最新run后的临时函数删除状态尚未确认'));
+ const transactionCase=techDoc.split('\n').find(line=>line.includes('ENV-DB-TX-01')); a(transactionCase.includes('最新修正版30秒run通过探针断言'));
  a(!runtimeCase.includes('临时函数已删除'));
  a(!runtimeCase.includes('等待只读观察'));
  a(techDoc.includes('用户已取得仅针对SP01临时探针'));
@@ -912,7 +912,7 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
   a(sp04AccountCheck.includes('已导入cloud1'));
  a(sp04AccountCheck.includes('当前环境已选中cloud1'));
   a(sp04AccountCheck.includes('首轮SP01截图回显输入事件'));
-  a(sp04AccountCheck.includes('删除后CLI函数列表为空'));
-  a(sp04AccountCheck.includes('postTimeoutReadOnlyCheckBeforeTimeoutAdjustment'));
+  a(sp04AccountCheck.includes('首轮删除后的CLI函数列表和数据库集合列表为空'));
+  a(sp04AccountCheck.includes('latestProbeDeploymentRecovery'));
  a(!sp04AccountCheck.includes('先只读核对腾讯云账号中心'));
 });

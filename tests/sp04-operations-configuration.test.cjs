@@ -295,10 +295,9 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(e06.reason.includes('已导入cloud1'));
   assert.ok(e06.reason.includes('报告当前环境已选中cloud1'));
   assert.ok(e06.reason.includes('首轮临时SP01函数的测试截图回显输入事件并显示Hello World/运行上下文'));
-  assert.ok(e06.reason.includes('最新恢复函数Active/Nodejs20.19'));
-  assert.ok(e06.reason.includes('最新30秒run回滚通过'));
-  assert.ok(e06.reason.includes('调用后记录状态未知'));
-  assert.ok(e06.reason.includes('云端根因未确认'));
+  assert.ok(e06.reason.includes('修正版已上传'));
+  assert.ok(e06.reason.includes('最新30秒事务探针均通过'));
+  assert.ok(e06.reason.includes('此前失败run的三条自有记录也已定向清理'));
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
   assert.ok(e06.reason.includes('SP01函数'));
   assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
@@ -328,16 +327,28 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.deepEqual(record.latestProbeDeploymentRecovery.inspectResult, { success: true, nodeVersion: 'v20.19.3', nodeRuntimeMatch: true, sdkVersion: '3.18.7' });
   assert.equal(record.latestProbeDeploymentRecovery.prepareResultReceived, true);
   assert.deepEqual(record.latestProbeDeploymentRecovery.prepareResult, { success: true, collection: 'sp01_probe_20261028', created: true });
-  assert.equal(record.latestProbeRunAttempt.event.runId, 'sp01_f892f63b9fdc4c11ae1254800a9e83cf');
-  assert.equal(record.latestProbeRunAttempt.timeoutSeconds, 30);
-  assert.deepEqual(record.latestProbeRunAttempt.response.rollback, { abortObserved: true, noPartialWrites: true });
-  assert.equal(record.latestProbeRunAttempt.response.commit.allDocumentsVisible, false);
-  assert.deepEqual(record.latestProbeRunAttempt.response.concurrency.outcomes.map((item) => item.reasonCode), ['INVALID_PARAM', 'INVALID_PARAM']);
-  assert.equal(record.latestProbeRunAttempt.transactionRunCompleted, true);
-  assert.equal(record.latestProbeRunAttempt.cleanupVerified, false);
-  assert.equal(record.latestProbeRunAttempt.recordStateAfterFailedCleanup, 'unknown; no post-run read-only record query');
+  assert.equal(record.previousFailedProbeRunAttempt.event.runId, 'sp01_f892f63b9fdc4c11ae1254800a9e83cf');
+  assert.equal(record.previousFailedProbeRunAttempt.timeoutSeconds, 30);
+  assert.deepEqual(record.previousFailedProbeRunAttempt.response.rollback, { abortObserved: true, noPartialWrites: true });
+  assert.equal(record.previousFailedProbeRunAttempt.response.commit.allDocumentsVisible, false);
+  assert.deepEqual(record.previousFailedProbeRunAttempt.response.concurrency.outcomes.map((item) => item.reasonCode), ['INVALID_PARAM', 'INVALID_PARAM']);
+  assert.equal(record.previousFailedProbeRunAttempt.transactionRunCompleted, true);
+  assert.equal(record.previousFailedProbeRunAttempt.cleanupVerified, false);
+  assert.equal(record.previousFailedProbeRunAttempt.recordStateAfterFailedCleanup, 'unknown; no post-run read-only record query');
   assert.equal(record.previousProbeRunAttemptAtThreeSeconds.response.statusCode, 433);
-  assert.equal(record.latestProbeRunAttempt.userReportsChangeCompleted, true);
+  assert.equal(record.previousFailedProbeRunAttempt.userReportsChangeCompleted, true);
+  assert.equal(record.latestProbeRunRecovery.event.runId, 'sp01_3db660bc5eb548559f4f6966a34209a2');
+  assert.equal(record.latestProbeRunRecovery.response.success, true);
+  assert.equal(record.latestProbeRunRecovery.response.commit.allDocumentsVisible, true);
+  assert.deepEqual(record.latestProbeRunRecovery.response.rollback, { abortObserved: true, noPartialWrites: true });
+  assert.deepEqual(record.latestProbeRunRecovery.response.concurrency.outcomes, [{ status: 'fulfilled' }, { status: 'fulfilled' }]);
+  assert.equal(record.latestProbeRunRecovery.response.concurrency.finalValue, 2);
+  assert.equal(record.latestProbeRunRecovery.response.concurrency.stateConsistent, true);
+  assert.equal(record.latestProbeRunRecovery.response.cleanup.success, true);
+  assert.equal(record.latestProbeRunRecovery.response.cleanup.deletedCount, 3);
+  assert.equal(record.latestProbeRunRecovery.transactionProbePassed, true);
+  assert.equal(record.latestProbeRunRecovery.cleanupVerified, true);
+  assert.equal(record.latestProbeRunRecovery.temporaryFunctionDeletionStatus, 'not-confirmed-after-latest-run');
   assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.functionStatus, 'Active');
   assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.runtime, 'Nodejs20.19');
   assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.timeoutSeconds, 30);
@@ -359,9 +370,9 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(doc.includes('用户确认首版Node.js20.19'));
   assert.ok(doc.includes('报告数据库为文档型但尚未API复核'));
   assert.ok(doc.includes('超时30秒'));
-  assert.ok(doc.includes('最新30秒run回滚通过'));
-  assert.ok(doc.includes('本地SDK字段对象修正已经过回归但未上传'));
-  assert.ok(doc.includes('云端原因尚未确认'));
+  assert.ok(doc.includes('最新事务探针通过'));
+  assert.ok(doc.includes('修正版代码包上传'));
+  assert.ok(doc.includes('最新成功run的记录已自动清理并回查'));
   assert.ok(doc.includes('未修改QuickStart业务配置或云端数据库/存储设置'));
 });
 
@@ -496,7 +507,7 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
     '目标`cloud1`环境由用户于2026-10-27在目标项目中创建',
     'SP04未执行运营数据写入、托管部署、数据库业务写入或域名配置',
     'SP01曾按单独授权部署临时探针',
-    '用户测试截图与本地响应不符后已删除',
+    '首轮测试截图与本地响应不符后，首轮函数随后已删除',
     '回退',
     '服务范围、三类项目服务、管理值班、09:00—22:00服务时段及22:00后次日处理均已由用户确认',
     '用户另确认顾客服务时段为09:00—22:00，22:00后收到的请求次日处理',

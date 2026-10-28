@@ -1,12 +1,12 @@
 # SP01 CloudBase 受控探针操作记录
 
-日期：2026-10-28。状态：最新只读核对确认目标环境仅有`sp01EnvProbe`（Active / Nodejs20.19 / 30秒）；旧run遗留的三条自有记录已定向清理，函数返回成功并回查无遗留。用户已授权以一个全新runId进行一次合成数据复验；SP01仍未通过。
+日期：2026-10-28。状态：目标环境`sp01EnvProbe`（Nodejs20.19 / 30秒）的最新事务探针通过：提交、回滚、并发一致性及清理均满足探针断言；清理后五个固定ID均无遗留。SP01整张规格卡仍在进行中。
 
 ## 最新恢复进度（授权后）
 
 用户明确授权的范围仅为目标AppID `wx2414399d423dfb65`、EnvID `cloud1-d2gjahlq39bf141c7`、临时函数`sp01EnvProbe`与固定集合`sp01_probe_20261028`中的合成记录；不得改动其他函数、集合、记录或存储。通过微信开发者工具 CLI（项目`E:\O2O\miniprogram`）只读核对：环境列表仅含目标EnvID，函数列表仅含`sp01EnvProbe`；函数状态`Active`、运行时`Nodejs20.19`、超时30秒。CLI没有数据库记录查询或函数调用命令，不能据此判断旧run的记录是否仍存在。
 
-为避免先清理再判断，已在本地探针加入`inspectRun`只读事件：只读取该runId对应的五个固定文档ID，返回存在状态、记录归属/格式摘要，不返回记录内容，也不写入或删除。`tests/sp01-environment-probe.test.cjs`及`tests/sp01-cloudbase-sdk-contract.test.cjs`本轮共17项通过。修正版已通过开发者工具CLI更新到目标环境，上传4个文件、13.0 KB；部署后只读复核函数仍为`Active / Nodejs20.19 / 30秒`，函数列表仍仅含`sp01EnvProbe`。用户提供的只读`inspectRun`返回`safeToClean:true`、`presentCount:3`；五个指定ID中三条均标记为`owned / legacy-nested`，其余两条为`missing`。用户随后提供`cleanup`成功回包，报告删除3条记录；按处理器契约，成功响应同时表示五个固定ID的删除后回查无遗留。集合及其他记录均保留。下一步只以新runId `sp01_3db660bc5eb548559f4f6966a34209a2`运行一次`run`。若返回错误或出现付费提示，立即停止，不扩大操作范围。
+为避免先清理再判断，已在本地探针加入`inspectRun`只读事件：只读取该runId对应的五个固定文档ID，返回存在状态、记录归属/格式摘要，不返回记录内容，也不写入或删除。`tests/sp01-environment-probe.test.cjs`及`tests/sp01-cloudbase-sdk-contract.test.cjs`本轮共17项通过。修正版已通过开发者工具CLI更新到目标环境，上传4个文件、13.0 KB；部署后只读复核函数仍为`Active / Nodejs20.19 / 30秒`，函数列表仍仅含`sp01EnvProbe`。用户提供的只读`inspectRun`返回`safeToClean:true`、`presentCount:3`；五个指定ID中三条均标记为`owned / legacy-nested`，其余两条为`missing`。定向`cleanup`删除旧run的3条自有记录，并回查确认五个固定ID均无遗留。随后使用全新runId `sp01_3db660bc5eb548559f4f6966a34209a2`执行一次事务探针，返回`success:true`：提交可见、注入异常触发回滚且无部分写入、并发事务重叠并均成功且最终值为2，自动清理删除3条记录并通过删除后回查。此次一次性新run授权已用完，不再进行云端写入或重跑。
 
 用户提供的只读检查返回值：
 
@@ -20,23 +20,31 @@
 {"success":true,"runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf","collection":"sp01_probe_20261028","deletedCount":3}
 ```
 
-此前恢复包上传成功（4个文件、12.6 KB）；`inspect`结构化响应通过，返回Node.js v20.19.3和SDK 3.18.7；`prepare`结构化响应通过，固定集合`sp01_probe_20261028`已创建。之后用户将超时调为30秒。下面分开记录3秒历史超时和最新30秒失败结果。
+此前恢复包上传成功（4个文件、12.6 KB）；`inspect`结构化响应通过，返回Node.js v20.19.3和SDK 3.18.7；`prepare`结构化响应通过，固定集合`sp01_probe_20261028`已创建。之后用户将超时调为30秒。下面分别记录3秒历史超时、修正前的30秒失败和修正后的30秒成功结果。
 
 3秒历史run使用runId `sp01_f4157fdc182bda6f9fd8e37395d4943e`，返回433超时：`{"errorCode":-1,"errorMessage":"Invoking task timed out after 3 seconds","requestId":"5f15ce84-6771-432e-8d22-1d10bc53babc","statusCode":433}`。该次超时后只读查询显示固定集合存在、当前记录数为0（listCollections requestId `7fb04c35-77aa-4f5f-bd6c-666a87db5b3d`；describeCollection requestId `dc470f28-3ec9-4b3f-a59d-63b972f74eb9`）。这是超时后的历史读取，不能证明调用期间未写入或自动清理完成。
 
-## 最新 run（30秒配置）
+## 上一轮失败的30秒 run（修正部署前）
 
-用户提供的结构化返回对应事件`{"action":"run","runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf"}`。回滚注入异常被观察到且无部分写入；提交后的两份记录未全部可见；两个并发事务均以 `INVALID_PARAM` 拒绝，重叠屏障已成功、没有屏障超时；清理返回失败。用户没有提供清理失败的具体消息或错误码，也没有本次调用后的只读记录查询，因此调用后记录状态未知，不能声称为空或已清理。
+用户提供的结构化返回对应事件`{"action":"run","runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf"}`。回滚注入异常被观察到且无部分写入；提交后的两份记录未全部可见；两个并发事务均以 `INVALID_PARAM` 拒绝，重叠屏障已成功、没有屏障超时；清理返回失败。该回包当时没有清理错误细节或调用后读取，所以当时的记录状态未知；后续`inspectRun`和定向`cleanup`结果已另行记录，并确认清理完成。
 
 ```json
 {"success":false,"runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf","collection":"sp01_probe_20261028","commit":{"allDocumentsVisible":false},"rollback":{"abortObserved":true,"noPartialWrites":true},"concurrency":{"overlapObserved":true,"startBarrierTimedOut":false,"outcomes":[{"status":"rejected","reasonName":"Error","reasonCode":"INVALID_PARAM"},{"status":"rejected","reasonName":"Error","reasonCode":"INVALID_PARAM"}],"finalValue":null,"successfulTransactions":0,"stateConsistent":false,"resultRequiresReview":true},"cleanup":{"success":false,"runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf","collection":"sp01_probe_20261028","deletedCount":null},"failures":[{"phase":"cleanup","name":"Error","code":null}]}
+```
+
+## 最新 run（30秒配置）
+
+用户在CloudBase测试面板提交事件`{"action":"run","runId":"sp01_3db660bc5eb548559f4f6966a34209a2"}`，面板先因输入缺少`runId`结束引号而拒绝非法JSON；修正为合法JSON后，函数成功执行。返回值满足临时事务探针的全部断言：提交后文档可见；回滚观察到中止且无部分写入；并发屏障未超时、两笔事务均成功、最终值为2且状态一致；清理成功删除3条记录，函数执行删除后检查，返回`success:true`且无失败项。
+
+```json
+{"success":true,"runId":"sp01_3db660bc5eb548559f4f6966a34209a2","collection":"sp01_probe_20261028","commit":{"allDocumentsVisible":true},"rollback":{"abortObserved":true,"noPartialWrites":true},"concurrency":{"overlapObserved":true,"startBarrierTimedOut":false,"outcomes":[{"status":"fulfilled"},{"status":"fulfilled"}],"finalValue":2,"successfulTransactions":2,"stateConsistent":true,"resultRequiresReview":false},"cleanup":{"success":true,"runId":"sp01_3db660bc5eb548559f4f6966a34209a2","collection":"sp01_probe_20261028","deletedCount":3},"failures":[]}
 ```
 
 ## 本地 SDK 契约诊断
 
 目标工程锁定`@cloudbase/node-sdk` 3.18.7，其数据库依赖为`@cloudbase/database` 1.4.3。该依赖源码的文档`set`和`update`接口接收平铺字段对象；旧探针传入`{data: fields}`，会把业务字段嵌套到`data`属性。本地SDK接口形状契约模拟测试复现并修复了字段对象问题：旧形状导致提交标记不可见、并发读取`value`缺失后更新参数不合法；改为平铺字段后，本地模拟接受请求并清理本轮记录。该模拟只核对SDK调用字段形状，不模拟CloudBase事务隔离或云端实现，不能作为事务验收通过证据。清理逻辑也增加了对本轮旧格式嵌套记录的精确归属识别，只允许删除五个固定ID中归属本runId的文档并逐个回查。
 
-这是受锁定SDK源码和本地回归支持的根因判断，**云端根因尚未确认**：修正代码已上传，但尚未运行`inspectRun`或云端事务复验；此前清理失败也没有带回详细错误消息。当前上传只更新了`sp01EnvProbe`，没有修改集合、其他运行ID、QuickStart模板函数或存储。
+这是受锁定SDK源码和本地回归支持的根因诊断。修正版已上传，目标环境的新事务探针现已通过，支持平铺字段修复的判断；历史失败没有逐变量云端对照，故不把历史根因写成独立云端证实。当前上传只更新了`sp01EnvProbe`，没有修改QuickStart模板函数或存储；旧run和新run的固定记录已分别定向清理，集合保留。
 
 腾讯云[函数概述](https://cloud.tencent.com/document/product/583/19805)说明普通事件函数默认超时3秒、可配置范围为1至900秒；[云函数测试文档](https://cloud.tencent.com/document/product/583/56125)说明433/TimeLimitReached表示函数执行超过超时配置。用户报告已调高此临时函数超时，安装目录CLI只读详情确认当前配置为30秒。配置查询未调用函数；不自动重试此前失败的run。
 
@@ -64,7 +72,7 @@
 
 ## 后续测试门槛与恢复顺序
 
-历史运行标识`sp01_f95243389fa9ca4f7a407c90ce2052ef`、3秒超时运行标识`sp01_f4157fdc182bda6f9fd8e37395d4943e`和最新失败运行标识`sp01_f892f63b9fdc4c11ae1254800a9e83cf`均不得复用。固定集合已由prepare创建，不得再次执行prepare，也不得删除集合。修正后的本地代码尚未上传。若后续获明确授权，先仅部署更新后的`sp01EnvProbe`，再以旧runId调用`cleanup`（仅清理本轮固定ID且归属标记匹配的记录、保留集合和其他记录），最后用全新唯一runId运行一次事务探针并检查结构化回包；若归属不明、遇到付费提示或出现新错误，立即停止。部署、清理和新一轮云端写入均不在当前授权内。结构化事件输入/输出契约由本地探针实现和测试定义；本地包检查不证明云端调用结果。
+历史运行标识`sp01_f95243389fa9ca4f7a407c90ce2052ef`、3秒超时运行标识`sp01_f4157fdc182bda6f9fd8e37395d4943e`、失败运行标识`sp01_f892f63b9fdc4c11ae1254800a9e83cf`和成功运行标识`sp01_3db660bc5eb548559f4f6966a34209a2`均不得复用。固定集合已创建并保留，不得再次执行`prepare`或删除集合。一次性新run授权已使用；若需要新的云端写入、清理或部署，须先重新确认具体操作范围。事务探针通过只证明该临时函数在目标CloudBase环境中的受控合成事务行为，不替代SP01整张技术规格卡、存储权限、实机/弱网及其他验收。当前还未API复核数据库模式；存储文件权限的真实访问行为也未通过跨账号测试。结构化事件输入/输出契约由本地探针实现和测试定义；本地包检查不替代真实环境结果。
 
 ## 范围与隔离
 
@@ -76,15 +84,16 @@
 
 ## 测试输入与预期
 
-此前授权覆盖临时函数、固定集合和随机合成记录的受控测试，不包括存储写入或生产操作。修正代码部署及后续云端清理/重跑仍需明确授权。腾讯云官方[事务文档](https://docs.cloudbase.net/database/transaction)说明事务只支持服务端 Node SDK，并列出 `runTransaction`、文档操作和限制；这些公开能力不能替代本环境实测。
+此前授权覆盖临时函数、固定集合和随机合成记录的受控测试，不包括存储写入或生产操作；修正版部署、旧run定向清理和一次新run已在该授权范围内完成。授权的一次新run已用完，不包括后续云端写入或重跑。腾讯云官方[事务文档](https://docs.cloudbase.net/database/transaction)说明事务只支持服务端 Node SDK，并列出 `runTransaction`、文档操作和限制；这些公开能力不能替代本环境实测。
 
 | 顺序 | 操作与输入 | 预期与证据 |
 | --- | --- | --- |
-| 1 | **首轮历史已完成后已删除**：首次部署过 `sp01EnvProbe`，用户随后删除 | 首轮部署前函数/集合均为空；部署后列表曾仅有探针。首轮删除后函数与集合只读列表为空。之后的恢复部署当前为Active / Nodejs20.19；最新run返回433超时，见顶部状态。历史部署及删除不证明本地探针代码正确上传。 |
+| 1 | **首轮历史已完成后已删除**：首次部署过 `sp01EnvProbe`，用户随后删除 | 首轮部署前函数/集合均为空；部署后列表曾仅有探针。首轮删除后函数与集合只读列表为空。该历史部署及删除不证明本地探针代码正确上传。 |
 | 2 | **已尝试但未验证**：函数测试事件 `{"action":"inspect"}` | 截图返回区域显示输入事件，不含预期运行时与SDK字段；运行日志含 `Hello World` 和运行上下文。运行时验收未通过。 |
 | 3 | **已通过**：函数测试事件 `{"action":"prepare"}` | 用户提供结构化响应 `{success:true,collection:"sp01_probe_20261028",created:true}`；固定测试集合已创建。 |
 | 4 | **历史失败**：run事件，runId `sp01_f4157fdc182bda6f9fd8e37395d4943e`，超时3秒 | 用户返回433执行超时；事务未完成验证。超时后历史集合查询显示记录数0，自动清理仍未证明。该运行标识不复用。 |
-| 5 | **失败，尚未复验**：run事件，runId `sp01_f892f63b9fdc4c11ae1254800a9e83cf`，超时30秒 | 回滚通过；提交记录不可见；并发事务均以`INVALID_PARAM`拒绝；清理失败。没有调用后的只读记录查询，记录状态未知。修正代码尚未部署，云端原因尚未确认。 |
+| 5 | **修正前历史失败，已定向清理**：run事件，runId `sp01_f892f63b9fdc4c11ae1254800a9e83cf`，超时30秒 | 回滚通过；提交记录不可见；并发事务均以`INVALID_PARAM`拒绝；清理失败。随后`inspectRun`确认3条本轮自有记录、2条缺失，再由`cleanup`删除3条并回查无遗留。 |
+| 6 | **最新云端事务探针已通过**：run事件，runId `sp01_3db660bc5eb548559f4f6966a34209a2`，超时30秒 | `success:true`；提交可见，回滚中止且无部分写入；两笔并发事务均成功、最终值2且状态一致；自动清理删除3条并回查通过。固定集合保留，运行ID不复用。 |
 
 `run` 在提交、回滚、并发任一验证抛错时仍尝试清理本轮文档；只要清理失败或回查发现遗留，响应必须是失败，且不得继续宣称通过。并发阶段有1.5秒启动屏障超时，且只有两个事务在超时前都完成首次读取才记录重叠；串行执行或屏障超时会作为未通过结果。探针只返回有限的状态摘要，不返回文档内容。不可将本地内存数据库结果当作云端事务证据。
 
@@ -93,12 +102,12 @@
 1. 若部署失败或函数测试返回未知结果，停止重复写入；保留脱敏错误码/请求 ID和控制台日志，不广泛重试。
 2. 若记录未清理，先用同一运行标识调用 `cleanup`；仅当记录标记校验通过时才删除。如果不能确认归属，停止并保留现场供人工审查。
 3. 按既定恢复边界保留 `sp01_probe_20261028` 为空集合，不删除集合或任何非本轮记录。
-4. 当前安装目录的开发者工具 CLI没有云函数调用或删除命令；云端执行需通过开发者工具/控制台的函数测试入口，临时函数测试后需在函数管理页人工删除。删除动作只针对本轮创建的 `sp01EnvProbe`，不触碰其他函数。
+4. 当前安装目录的开发者工具 CLI没有云函数调用或删除命令；云端执行需通过开发者工具/控制台的函数测试入口。此前授权范围包含测试后删除临时`sp01EnvProbe`；最新run结束后的删除状态尚未由用户确认，需只针对该函数人工删除并回报，不触碰其他函数。一次性新run授权已使用。
 5. 当前存储是空目录且权限配置为“仅创建者可读写”的截图证据；服务端管理员权限不等于客户端逐角色验收。匿名、所有者、其他用户、临时链接到期和撤权测试需要另行确认身份与具体云写入授权，本探针不测试存储权限。
 
 ## 本地验证证据
 
-`node --test tests/sp01-environment-probe.test.cjs`：16项本地测试通过；`node --test tests/sp01-cloudbase-sdk-contract.test.cjs`：1项锁定SDK字段形状模拟测试通过。测试覆盖事件白名单、只读归属检查、探针流程、异常后清理、旧格式本轮记录安全清理、集合保留、运行标识及凭据边界、部署包入口和字段对象契约。结果只证明本地逻辑和模拟行为，不替代云端复验。最新30秒run明确未通过，失败输出及调用后记录状态未知如上；本地SDK字段形状修复尚未上传。
+`node --test tests/sp01-environment-probe.test.cjs`：16项本地测试通过；`node --test tests/sp01-cloudbase-sdk-contract.test.cjs`：1项锁定SDK字段形状模拟测试通过。测试覆盖事件白名单、只读归属检查、探针流程、异常后清理、旧格式本轮记录安全清理、集合保留、运行标识及凭据边界、部署包入口和字段对象契约。结果只证明本地逻辑和模拟行为；最新修正版云端事务结果另见上表，已通过临时探针断言，不等于SP01整卡验收。
 
 ## 参考
 

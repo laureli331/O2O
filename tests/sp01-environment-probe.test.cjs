@@ -370,6 +370,7 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
 
   assert.equal(task.status, 'in-progress');
   assert.equal(task.productAcceptancePassed, false);
+  assert.match(harness.evidenceScope, /before-authorized-transaction-recovery/);
   assert.equal(harness.functionName, 'sp01EnvProbe');
   assert.equal(harness.localTestCount, 16);
   assert.equal(harness.localTestsPassed, 16);
@@ -422,7 +423,7 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   assert.deepEqual(inspectAttempt.response, { success: true, nodeVersion: 'v20.19.3', nodeRuntimeMatch: true, sdkVersion: '3.18.7' });
   assert.equal(inspectAttempt.responseMatchedExpectedProbeContract, true);
   assert.equal(inspectAttempt.probeExecutionVerified, true);
-  const attempt = task.executionProgress.latestCloudTestAttempt;
+  const attempt = task.executionProgress.prepareCloudTestAttempt;
   assert.deepEqual(attempt.event, { action: 'prepare' });
   assert.deepEqual(attempt.response, { success: true, collection: 'sp01_probe_20261028', created: true });
   assert.equal(attempt.responseMatchedExpectedProbeContract, true);
@@ -430,7 +431,7 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   assert.equal(attempt.transactionAcceptancePassed, false);
   assert.equal(attempt.transactionAcceptancePassed, false);
   assert.equal(attempt.databaseWritePerformed, true);
-  const runAttempt = task.executionProgress.latestCloudRunAttempt;
+  const runAttempt = task.executionProgress.previousFailedCloudRunAttempt;
   assert.deepEqual(runAttempt.event, { action: 'run', runId: 'sp01_f892f63b9fdc4c11ae1254800a9e83cf' });
   assert.equal(runAttempt.functionTimeoutSeconds, 30);
   assert.equal(runAttempt.response.success, false);
@@ -477,10 +478,39 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
     collectionRetained: true,
   });
   assert.equal(recovery.newRunId, 'sp01_3db660bc5eb548559f4f6966a34209a2');
-  assert.equal(recovery.newRunExecuted, false);
-  assert.equal(recovery.cloudTransactionAcceptancePassed, false);
+  assert.equal(recovery.newRunExecuted, true);
+  assert.deepEqual(recovery.newRunResponse, {
+    success: true,
+    runId: recovery.newRunId,
+    collection: 'sp01_probe_20261028',
+    commit: { allDocumentsVisible: true },
+    rollback: { abortObserved: true, noPartialWrites: true },
+    concurrency: {
+      overlapObserved: true,
+      startBarrierTimedOut: false,
+      outcomes: [{ status: 'fulfilled' }, { status: 'fulfilled' }],
+      finalValue: 2,
+      successfulTransactions: 2,
+      stateConsistent: true,
+      resultRequiresReview: false,
+    },
+    cleanup: {
+      success: true,
+      runId: recovery.newRunId,
+      collection: 'sp01_probe_20261028',
+      deletedCount: 3,
+    },
+    failures: [],
+  });
+  assert.equal(recovery.newRunResponseMatchedExpectedProbeContract, true);
+  assert.equal(recovery.newRunCleanupVerified, true);
+  assert.equal(recovery.cloudTransactionAcceptancePassed, true);
+  assert.equal(recovery.temporaryFunctionRemovalStatus, 'not-confirmed-after-latest-run');
+  assert.equal(task.status, 'in-progress');
+  assert.equal(task.productAcceptancePassed, false);
   assert.equal(task.executionProgress.previousCloudRunAttemptAtThreeSeconds.event.runId, 'sp01_f4157fdc182bda6f9fd8e37395d4943e');
-  assert.equal(task.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud, false);
+  assert.equal(task.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud, true);
+  assert.equal(task.executionProgress.latestLocalSdkCompatibilityDiagnosis.cloudProbeAfterFixPassed, true);
   assert.equal(previousAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
   assert.equal(previousAttempt.postAttemptCollectionCount, 0);
   assert.equal(previousAttempt.postAttemptCollectionRequestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
@@ -489,19 +519,22 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.collectionCount, 0);
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.requestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.provesFunctionDidNotTransientlyCreateCollectionDuringAttempt, false);
-  assert.match(runbook, /最新只读核对确认目标环境仅有`sp01EnvProbe`（Active \/ Nodejs20.19 \/ 30秒）/);
+  assert.match(runbook, /只读核对：环境列表仅含目标EnvID，函数列表仅含`sp01EnvProbe`；函数状态`Active`、运行时`Nodejs20.19`、超时30秒/);
   assert.match(runbook, /`inspectRun`只读事件/);
   assert.match(runbook, /安装目录CLI只读详情确认当前配置为30秒/);
   assert.match(runbook, /最新 run（30秒配置）/);
+  assert.match(runbook, /最新云端事务探针已通过/);
+  assert.match(runbook, /全部断言/);
   assert.match(runbook, /inspect.*结构化响应通过/);
   assert.match(runbook, /定向清理返回值/);
+  assert.match(runbook, /最新run结束后的删除状态尚未由用户确认/);
   assert.match(runbook, /sp01_3db660bc5eb548559f4f6966a34209a2/);
   assert.ok(runbook.includes('prepare') && runbook.includes('固定集合`sp01_probe_20261028`已创建'));
   assert.match(runbook, /sp01_f892f63b9fdc4c11ae1254800a9e83cf/);
   assert.match(runbook, /两个并发事务均以 `INVALID_PARAM` 拒绝/);
   assert.match(runbook, /本地SDK接口形状契约模拟测试复现并修复/);
-  assert.match(runbook, /云端根因尚未确认/);
-  assert.match(runbook, /调用后记录状态未知/);
+  assert.match(runbook, /历史失败没有逐变量云端对照/);
+  assert.match(runbook, /当时的记录状态未知/);
   assert.match(runbook, /删除后的只读查询返回数据库集合列表为空/);
   assert.ok(runbook.includes('固定集合`sp01_probe_20261028`已创建'));
   assert.match(runbook, /临时授权凭据字段和值/);
