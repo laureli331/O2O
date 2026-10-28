@@ -6,6 +6,10 @@
 
 用户自行创建了`E:\O2O\miniprogram`下的CloudBase QuickStart模板。`miniprogram/project.config.json`配置AppID为`wx2414399d423dfb65`，与目标号一致；工程仍是生成模板，不是产品实现。用户之后明确确认该`cloud1`是在目标AppID项目中创建；最新用户截图同屏显示小程序名“湘邻湘友”、目标AppID、`cloud1`、环境ID `cloud1-d2gjahlq39bf141c7`及创建时间`2026-10-27 22:28:44`，形成截图级应用与环境关联证据；此图不证明平台API响应、开发者工具桥接、运行时调用或实际权限。较早截图本身未显示AppID；EnvId和其与目标项目的关系已由用户确认，最新详情截图再同屏显示两者。已将本地`miniprogram/miniprogram/app.js`的`env`绑定为截图所示EnvID，并添加配置一致性测试；`envList.js`仍为空。此操作只修改本地模板配置，没有调用云函数或写入云端资源。
 
+### 2026-10-28最新只读桥接复核
+
+本机进程清单显示微信开发者工具主窗口标题为“湘邻湘友”，进程ID `51712`，可执行文件为`E:\微信web开发者工具\微信开发者工具.exe`；本地`E:\O2O\miniprogram\project.config.json`的AppID为目标号`wx2414399d423dfb65`。这两项证据分别说明当前窗口标题和本地项目配置，不能单独证明当前窗口实际加载的工程路径，因此路径匹配仍标为未验证。按安装目录运行只读兼容性诊断返回`compatible=true`、版本`2.02.2608080`；`wechatide auth -c Codex`返回`authorized=true`、`alreadyTrusted=true`、`cliTokenRequired=false`。随后状态查询和`cloud_env_list --appid wx2414399d423dfb65`仍在连接层返回`CONNECT_ERROR`，没有收到云端响应。该结果没有证明登录过期或云环境不可用，也没有验证API、运行时、数据库模式、事务或私密文件权限；没有执行安装更新、云端写入或部署。
+
 较早的概览截图显示CloudBase顶部为`cloud1`、“微信体验版”，概览为“暂无数据”；数据库页显示找不到可用集合。“设置→权限设置”截图显示环境ID，但没有AppID或到期日。最新环境详情截图同屏显示应用名、AppID和EnvID；费用管理截图仍只显示“微信体验版”、40,000点/月、¥19.9/月购买按钮，按量付费与自动续费均关闭，且没有环境ID、AppID、到期日或账单。购买按钮旁的价格不是已扣款证据。新建环境没有集合和调用数据是正常空态，不代表开通失败。
 
 套餐、账单和到期日核查按用户要求本轮略过，不作为当前开发阻塞。用户表示若上线后出现实际付费提示，将自行办理；本轮不购买套餐，不开启按量付费或自动续费。已有官方计费规则仅留作后续上线准备参考，截图中的套餐标签、额度和价格按钮不证明已扣款或确切到期日。开发者工具只读桥接此前失败，SP01未完成。
@@ -18,7 +22,7 @@
 
 本轮的本机连接证据：用户确认重新打开微信开发者工具后，本机端口PID由`52272`变为`51712`，新进程启动时间为`2026-10-27 20:06:15`；Codex CLI授权返回`authorized=true`、`alreadyTrusted=true`。本次再次显式授权后仍为`authorized=true`、`alreadyTrusted=true`、`cliTokenRequired=false`，本机`127.0.0.1:31781`仍由PID `51712`监听；安装诊断返回 compatible=true、Stable 2.02.2608080，只证明本机安装与CLI兼容。`cloud_env_list`和`check_wechatide_status`均继续在本地连接层返回`CONNECT_ERROR`，未取得目标AppID的云端响应。开发者工具“查看所有项目”列表的该次历史快照当时只显示`O2O environment verification`（`E:\O2O\.local\permission-check`），目标新AppID对应工程在该次列表快照中未出现；列表外、其他账号或设备中的工程是否存在仍未核实。用户明确确认截图中的`cloud1`由该项目创建；最新详情截图另同屏显示目标AppID与EnvID，但CloudBase API关联及运行时仍未核验。按用户要求，本轮跳过费用核对；若上线后出现实际付费提示，由用户自行处理后续平台付费提示。
 
-只读查看开发者工具当前窗口时，项目区域显示`PERMISSION-CHECK`，模拟器页面说明“仅用于检查本地开发环境。没有业务功能、真实数据或云服务连接。”窗口未显示AppID；随后仅读取其`.local/permission-check/project.config.json`，确认配置AppID为旧号`wx358290e451cb06e7`，与目标新号`wx2414399d423dfb65`不匹配。之后只读打开开发者工具“项目→查看所有项目”列表，画面只显示1个已登记工程：`O2O environment verification`，路径`E:\O2O\.local\permission-check`。目标新AppID对应工程当时未出现在这个列表中；列表外、其他目录、账号或设备中的工程是否存在仍未核实。诊断项目配置未修改。此后用户在`miniprogram/`手动创建了目标AppID的QuickStart模板；该脚手架不含本项目业务实现，见本记录最新状态。
+此前的一次只读检查中，开发者工具项目区域显示`PERMISSION-CHECK`，模拟器页面说明“仅用于检查本地开发环境。没有业务功能、真实数据或云服务连接。”窗口未显示AppID；随后仅读取其`.local/permission-check/project.config.json`，确认配置AppID为旧号`wx358290e451cb06e7`，与目标新号`wx2414399d423dfb65`不匹配。之后只读打开开发者工具“项目→查看所有项目”列表，画面只显示1个已登记工程：`O2O environment verification`，路径`E:\O2O\.local\permission-check`。目标新AppID对应工程当时未出现在这个列表中；列表外、其他目录、账号或设备中的工程是否存在仍未核实。诊断项目配置未修改。此后用户在`miniprogram/`手动创建了目标AppID的QuickStart模板；该脚手架不含本项目业务实现，见本记录最新状态。
 
 AppID `wx2414399d423dfb65`来自2026-10-18用户进度记录，属于用户报告/项目记录，不等于本轮平台核验。该记录记载新主体云开发当时尚未开通。旧个人主体的`cloud1`仅获准开发与受控测试，不能代替新主体，也不能作为生产资格或环境依据。
 
@@ -43,7 +47,8 @@ CloudBase[创建环境文档](https://docs.cloudbase.net/quick-start/create-env)
 | 微信开发者工具 | CLI登录检查应确认扫码登录；检查服务端口及用户重开后的进程 | 重开前CLI登录查询返回`login=true`；CLI报告本地HTTP服务`127.0.0.1:31781`。用户重新打开工具后，Windows监听PID从`52272`变为`51712`，新进程启动于`2026-10-27 20:06:15`；安装诊断返回 compatible=true、Stable 2.02.2608080，表示本机安装版本和CLI兼容，不表示桥接可用或重开后的登录态已核实 | 通过（本地端口/安装兼容/重开进程）；当前登录态未复核 |
 | Codex CLI客户端授权 | 按本机工具文档以当前产品名授权CLI；不需要MCP令牌或秘密值 | 重开后Codex 客户端授权返回 authorized=true、alreadyTrusted=true、cliTokenRequired=false；响应说明MCP入口单独要求令牌，但该要求不适用于本次CLI调用 | 通过（CLI客户端授权状态） |
 | 开发者工具当前项目窗口与配置 | 只读确认已打开项目名称、用途和配置AppID，并与目标新号比较 | 项目区域显示`PERMISSION-CHECK`；模拟器说明仅用于检查本地开发环境、没有业务功能/真实数据/云服务连接；配置`.local/permission-check/project.config.json`使用旧AppID `wx358290e451cb06e7`，与目标新AppID `wx2414399d423dfb65`不匹配 | 通过（本地只读核对）；该窗口不是目标新号项目 |
-| 开发者工具已登记项目列表 | 只读查看“项目→查看所有项目”；预期记录列表可见工程，不打开或创建项目 | 列表只显示1个已登记工程`O2O environment verification`，路径`E:\O2O\.local\permission-check`；目标新AppID对应工程未列出；列表外、其他账号或设备中的工程是否存在仍未核实 | 通过（仅限当前项目管理器可见列表） |
+| 最新开发者工具窗口与桥接 | 只读核对活动窗口标题、本地目标项目AppID、CLI兼容和桥接可达性 | 活动进程窗口标题为`湘邻湘友`；本地`E:\O2O\miniprogram\project.config.json`使用目标AppID；安装诊断兼容`2.02.2608080`且CLI授权已受信任。但CLI状态和环境列表仍返回`CONNECT_ERROR`；窗口对应的本地项目路径未由桥接验证 | 部分通过（窗口/本地配置/安装诊断）；桥接、云API及运行时未验证 |
+| 开发者工具已登记项目列表 | 只读查看“项目→查看所有项目”；预期记录列表可见工程，不打开或创建项目 | 2026-10-27那次列表快照只显示1个已登记工程`O2O environment verification`，路径`E:\O2O\.local\permission-check`；目标新AppID对应工程在该次快照未列出；列表外、其他账号或设备中的工程是否存在仍未核实 | 通过（仅限该次项目管理器快照） |
 | 重启后的CLI状态检查 | 获取工具兼容性和登录态，预期得到版本关系及登录状态 | 重新显式执行`wechatide auth -c Codex`成功；随后`check_wechatide_status --skill-version 0.3.11`仍返回`CONNECT_ERROR`；未取得`versionRelation`或`loginExpired`字段，因此不更新登录状态结论 | 失败/受阻（本地连接层） |
 | 新主体云环境列表 | 对登记来源中的AppID执行只读列表查询，预期取得环境列表或明确权限错误 | 查询请求对AppID `wx2414399d423dfb65`返回`code 10`（`Base resp abnormal`、`ret:1000`、`errmsg: system error`）；未取得环境清单。CLI进程退出码为0不代表该查询成功 | 失败/受阻（本轮云查询） |
 | Codex CLI新主体云环境列表重试 | 用户重新打开工具、CLI授权有效后，对确认的AppID执行只读列表查询，预期取得列表或明确云端响应 | `wechatide auth -c Codex`返回授权成功；`127.0.0.1:31781`仍由PID `51712`监听。`wechatide -c Codex cloud_env_list --appid wx2414399d423dfb65`和状态检查都返回`CONNECT_ERROR`，工具未收到目标AppID的云端响应，不能判断云端是否有环境 | 失败/受阻（本地CLI连接层）；未验证目标环境 |

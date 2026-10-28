@@ -123,6 +123,37 @@
       "scope": "wechat-devtools-registered-project-list-only",
       "evidenceMethod": "read-only-visible-ui-observation"
     },
+    "latestBridgeRecheck": {
+      "date": "2026-10-28",
+      "evidenceMethod": "read-only-process-inventory-and-CLI",
+      "processId": 51712,
+      "activeWindowTitle": "湘邻湘友",
+      "executablePath": "E:\\微信web开发者工具\\微信开发者工具.exe",
+      "localProjectPath": "E:\\O2O\\miniprogram",
+      "localProjectAppId": "wx2414399d423dfb65",
+      "openProjectPathVerified": false,
+      "installationDiagnostic": {
+        "compatible": true,
+        "version": "2.02.2608080"
+      },
+      "cliAuthorization": {
+        "authorized": true,
+        "alreadyTrusted": true,
+        "cliTokenRequired": false
+      },
+      "statusCheck": {
+        "ok": false,
+        "errorType": "CONNECT_ERROR",
+        "cloudResponseReceived": false
+      },
+      "environmentList": {
+        "ok": false,
+        "errorType": "CONNECT_ERROR",
+        "cloudResponseReceived": false
+      },
+      "environmentApiVerified": false,
+      "runtimeVerified": false
+    },
     "devtoolsProjectCreationWizardObservation": {
       "observationDate": "2026-10-27",
       "screenshot": "codex-clipboard-1a1ebb2d-4268-435e-8f86-40237ba5cd56.png",
@@ -296,7 +327,7 @@
         "paidOrderVerified": false,
         "freeEnvironmentStatusVerified": false
       },
-      "interpretation": "The mini-program experience release channel and CloudBase plan are distinct. If the bound environment is a free CloudBase environment and the app will continue using it after publication, convert it to a paid plan by the day-15 expiry to avoid service interruption; if left unpaid through the isolation period it will be destroyed. The Personal plan is currently promoted at 19.9 CNY/month, but the expiry rule does not mandate that specific plan. The target environment binding, free-environment status, and exact expiry remain not verified.",
+      "interpretation": "The mini-program experience release channel and CloudBase plan are distinct. If the bound environment is a free CloudBase environment and the app will continue using it after publication, convert it to a paid plan by the day-15 expiry to avoid service interruption; if left unpaid through the isolation period it will be destroyed. The Personal plan is currently promoted at 19.9 CNY/month, but the expiry rule does not mandate that specific plan. Screenshot-level app/environment association is evidenced; platform API binding, free-environment status, and exact expiry remain unverified.",
       "userReportedReleaseAndCloudBaseBudgetUnderstanding": {
         "formalPublicationAfterReview": true,
         "reportedPaidConversionWindowDaysAfterPublication": 15,
@@ -633,14 +664,17 @@
           "复核CloudBase当前价格文档（2026-08-31更新）及套餐说明（2026-10-26更新）：免费体验额度/限制适用于控制台免费体验；文档同时提示微信开发者工具创建的免费期环境可能仍属历史套餐版本，不能把公开的3000点、续期或到期规则直接套用到截图中的微信体验版",
           "按当前仍处于开发和受控验证阶段，建议先用免费体验环境，不购买19.9元/月付费套餐；遇到实际功能/额度限制或准备上线时，再依据控制台环境详情、用量和费用重新评估",
           "预览根地址返回目录列表，不是单页原型入口",
-          "复核腾讯云官方资源点价格文档：免费CloudBase环境在小程序发布后第15天到期并进入停服隔离，隔离期仍未转付费将销毁；如目标环境确属该免费环境且需持续使用，应在发布准备中安排付费转换。个人版当前¥19.9/月为限时优惠，规则未指定唯一套餐；当前截图仍未证明目标环境归属、免费状态或到期日。"
+          "复核腾讯云官方资源点价格文档：免费CloudBase环境在小程序发布后第15天到期并进入停服隔离，隔离期仍未转付费将销毁；如目标环境确属该免费环境且需持续使用，应在发布准备中安排付费转换。个人版当前¥19.9/月为限时优惠，规则未指定唯一套餐；较早概览、设置和费用截图未证明目标环境归属，最新详情截图已提供截图级应用/环境关联证据，但环境类型和到期日仍未验证。",
+          "2026-10-28只读进程清单显示开发者工具主窗口标题为湘邻湘友；目标本地项目配置为wx2414399d423dfb65，但桥接未能证明活动窗口加载的工程路径",
+          "按实际安装目录运行兼容性诊断为compatible=true、2.02.2608080；重新授权仍trusted，status与cloud_env_list继续CONNECT_ERROR且无云端响应"
         ],
         "blockedChecks": [
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
           "用户明确确认cloud1由目标项目创建，且最新详情截图同屏显示目标AppID与EnvID；本地QuickStart已按截图证据绑定EnvID，但CloudBase API关联尚未核验，CLI状态/查询仍返回CONNECT_ERROR；套餐/账单/到期核查按用户要求本轮略过，不作为当前阻塞。旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
-          "目标环境运行时、数据库模式、事务和私密文件权限仍未验证"
+          "目标环境运行时、数据库模式、事务和私密文件权限仍未验证",
+          "最新只读观察下窗口标题与目标本地项目配置均可见/可读，但工程路径未由桥接确认；安装兼容且CLI已授权，status与环境清单调用仍CONNECT_ERROR"
         ],
-        "nextAction": "最新CloudBase详情截图同屏显示目标AppID wx2414399d423dfb65、cloud1及EnvID cloud1-d2gjahlq39bf141c7；本地QuickStart app.js已绑定该EnvID并有配置一致性测试，但平台API关联和运行时调用仍未核验。旧号个人主体的cloud1不再作为新号共享候选。用户要求本轮不再核对费用；若上线后出现平台付费提示，由用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。当前阻塞为开发者工具桥接CONNECT_ERROR，以及目标环境运行时、数据库模式、事务和私密文件权限尚未实测。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
+        "nextAction": "最新CloudBase详情截图同屏显示目标AppID wx2414399d423dfb65、cloud1及EnvID cloud1-d2gjahlq39bf141c7；本地QuickStart app.js已绑定该EnvID并有配置一致性测试，但平台API关联和运行时调用仍未核验。最新只读进程观察显示开发者工具主窗口标题为湘邻湘友，本地目标项目配置AppID匹配，但窗口加载路径未由桥接确认；实际安装兼容诊断通过、CLI已授权，status和环境列表调用仍CONNECT_ERROR。旧号个人主体的cloud1不再作为新号共享候选。用户要求本轮不再核对费用；若上线后出现平台付费提示，由用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。当前阻塞为开发者工具本地桥接CONNECT_ERROR，以及目标环境运行时、数据库模式、事务和私密文件权限尚未实测。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
