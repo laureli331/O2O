@@ -1003,7 +1003,8 @@
           "2026-10-28受控部署后只读确认函数Active但运行时Nodejs16.13；部署任务内层代码更新失败；未调用函数、未写数据库，集合列表为空",
           "2026-10-28恢复部署后用户提供inspect和prepare成功响应；run返回433、3秒执行超时。超时后只读确认固定集合存在且当前0条记录；事务和自动清理未验收，不能据此证明调用期间未写入或清理成功。",
           "2026-10-28用户提供30秒配置run结构化结果：回滚通过；提交可见性失败；两个并发事务均以INVALID_PARAM拒绝；清理失败；没有调用后只读记录查询，记录状态未知。锁定SDK源码与本地红绿回归指向字段对象形状不匹配。随后修正版已部署；旧run自有记录经inspectRun核对并定向清理，cleanup报告删除3条且删除后回查无遗留；新run sp01_3db660bc5eb548559f4f6966a34209a2返回success:true，提交可见、回滚无部分写入、两笔并发事务成功且最终值2、清理3条并回查通过。事务探针通过不等于SP01整卡验收。",
-          "2026-10-28本地准备独立双账号存储权限诊断工程tools/sp01-storage-probe；16项测试通过，覆盖身份摘要核对、同身份前置停止、直接下载/临时链接/同路径覆盖写、未知错误保守分类及确切文件清理。工程未导入或编译，未部署函数、未写入/删除云文件、未更改QuickStart；后续云端部署和复测需新授权。"
+          "2026-10-28本地准备独立双账号存储权限诊断工程tools/sp01-storage-probe；16项单元测试通过。随后由开发者工具CLI导入独立工程，并在单独轻量窗口通过simulator_open_page打开pages/index/index；筛选error日志没有匹配行。该结果仅为模拟器编译/打开证据，不证明云函数身份或云存储权限；未部署身份函数、未比对身份摘要、未写入或删除云文件、未运行真机。",
+          "2026-10-28更新SP01进度文档后：开发计划测试43/43通过，仓库全量Node测试1434/1434通过；配套JSON解析和git diff --check通过。"
         ],
         "postRunTimeoutReadOnlyCloudRecheckBeforeTimeoutAdjustment": {
           "source": "wechatide-cli-read-only-after-user-run-timeout",
@@ -1187,13 +1188,13 @@
         },
         "blockedChecks": [
           "历史首轮测试截图回显输入事件并显示Hello World/运行上下文，和本地探针不符；首轮Nodejs16.13部署失败与该截图均保留为历史，不代表当前部署结果。",
-          "目标cloud1的临时事务探针现已通过一次修正版云端验证；数据库模式由后续DescribeEnvs回包结合官方资源定义支持确认。存储跨账号客户端探针在该测试文件上失败：用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读取并写入合成文件；两个账号的_openid未直接采集，结论限定于该账号和文件。确切文件已删除且目录只读查询为0；未修改权限设置，具体规则生效原因未定。已准备tools/sp01-storage-probe本地身份诊断工程及16项单元测试，未导入、编译、部署或访问云端；同身份会先停止，只有身份摘要不同才运行文件访问测试。部署和复测仍需新授权。实际手机/网络验证与请求及耐久预算等规格证据也未完成。历史事务失败结果继续保留为历史记录，不再作为当前事务验收状态.",
+          "目标cloud1的临时事务探针现已通过一次修正版云端验证；数据库模式由后续DescribeEnvs回包结合官方资源定义支持确认。存储跨账号客户端探针在该测试文件上失败：用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读取并写入合成文件；两个账号的_openid未直接采集，结论限定于该账号和文件。确切文件已删除且目录只读查询为0；未修改权限设置，具体规则生效原因未定。tools/sp01-storage-probe本地身份诊断工程已导入开发者工具项目列表，并在独立模拟器中打开pages/index/index；筛选error日志没有匹配行，这仅证明模拟器页面编译/打开，不证明云端身份或存储权限。16项单元测试通过；身份函数尚未部署，两个账号的身份摘要尚未比对，未写入或删除云文件，未运行真机。云端身份验证和存储复测仍需新授权。实际手机/网络验证与请求及耐久预算等规格证据也未完成。历史事务失败结果继续保留为历史记录，不再作为当前事务验收状态.",
           "目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认。",
           "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过。",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不作新号共享候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞。",
           "SP01当前已限定在目标AppID、cloud1、临时探针及固定合成测试集合；服务范围供给、官方类目等SP04核验仍按对应卡片推进，SP01—SP06门槛完成前不得进入SP07。"
         ],
-        "nextAction": "环境上下文：用户确认腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并在E:\\O2O\\miniprogram\\cloudfunctions中选中cloud1；目标AppID范围的cloud_env_list已确认环境ID。DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理。事务验证期间sp01EnvProbe为Active/Nodejs20.19、超时30秒；用户随后报告已删除，目标AppID/EnvID范围只读cloud_fn_list返回total:0、list:[]；inspect、prepare及一次新run结构化结果均通过，事务探针的提交、回滚、并发和自动清理断言通过。此前失败run的三条自有记录已定向清理并验证无遗留；成功run的三条测试记录也由函数自动清理并回查通过。之后的一次性存储权限测试中，用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读写合成文件，故该测试文件的跨账号隔离失败；两个账号_openid未直接采集。确切文件已删除且目录只读查询为0，设置未改、具体规则生效原因未定；进一步云端诊断/修改/复测需要新授权。tools/sp01-storage-probe本地身份诊断工程已准备并通过16项单元测试，未导入/编译/部署或访问云端；同身份会停止，不同身份才执行读取与同路径覆盖写。部署和复测仍需新授权。SP01还需完成实际手机/网络测量与请求和耐久预算等质量合同项目；状态保持进行中、产品验收未通过。后续任何云端写入、清理或部署均须先确认具体范围。SP01—SP06门槛完成前不得进入SP07。",
+        "nextAction": "环境上下文：用户确认腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并在E:\\O2O\\miniprogram\\cloudfunctions中选中cloud1；目标AppID范围的cloud_env_list已确认环境ID。DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理。事务验证期间sp01EnvProbe为Active/Nodejs20.19、超时30秒；用户随后报告已删除，目标AppID/EnvID范围只读cloud_fn_list返回total:0、list:[]；inspect、prepare及一次新run结构化结果均通过，事务探针的提交、回滚、并发和自动清理断言通过。此前失败run的三条自有记录已定向清理并验证无遗留；成功run的三条测试记录也由函数自动清理并回查通过。之后的一次性存储权限测试中，用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读写合成文件，故该测试文件的跨账号隔离失败；两个账号_openid未直接采集。确切文件已删除且目录只读查询为0，设置未改、具体规则生效原因未定；进一步云端诊断/修改/复测需要新授权。tools/sp01-storage-probe已导入开发者工具项目列表并在独立模拟器中成功打开pages/index/index；筛选error日志没有匹配行，但该结果不证明云端身份或存储能力。16项单元测试通过，身份函数未部署、账号身份摘要未比对、未写入或删除云文件、未运行真机；下一步须先取得部署临时身份函数的具体云端授权，再按身份不同与否决定是否运行合成文件测试。SP01还需完成实际手机/网络测量与请求和耐久预算等质量合同项目；状态保持进行中、产品验收未通过。后续任何云端写入、清理或部署均须先确认具体范围。SP01—SP06门槛完成前不得进入SP07。",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -1783,6 +1784,58 @@
             "confirm-temporary-probe-function-deleted-after-test",
             "require-new-explicit-authorization-before-any-additional-cloud-write"
           ]
+        },
+        "localStorageProbe": {
+          "date": "2026-10-28",
+          "path": "tools/sp01-storage-probe",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "projectImport": {
+            "tool": "wechatide-cli project_import",
+            "status": "success",
+            "path": "E:\\O2O\\tools\\sp01-storage-probe",
+            "scope": "independent-probe-project-list-entry-only"
+          },
+          "simulatorOpen": {
+            "command": "simulator_open_page",
+            "page": "pages/index/index",
+            "success": true,
+            "scene": 1001,
+            "evidenceScope": "devtools-simulator-compile-and-open-only"
+          },
+          "simulatorConsoleErrorFilter": {
+            "command": "get_simulator_console --command 'grep -i error'",
+            "noMatchingLines": true,
+            "provesNoRuntimeErrors": false
+          },
+          "templateSummaryCommand": {
+            "result": "no-result-command-canceled",
+            "passed": false
+          },
+          "localTestCommand": "node --test tests/sp01-storage-probe.test.cjs",
+          "localTestCount": 16,
+          "localTestsPassed": 16,
+          "localTestsFailed": 0,
+          "cloudIdentityComparisonCompleted": false,
+          "cloudFunctionName": "sp01IdentityProbe",
+          "cloudFunctionDeployed": false,
+          "probeCloudStorageWrittenOrDeleted": false,
+          "realDeviceRun": false,
+          "quickStartModified": false,
+          "productAcceptancePassed": false,
+          "nextCloudActionRequiresNewAuthorization": true,
+          "regression": {
+            "developmentPlan": {
+              "passed": 43,
+              "failed": 0
+            },
+            "repositoryNodeTests": {
+              "passed": 1434,
+              "failed": 0
+            },
+            "jsonParse": "passed",
+            "diffCheck": "passed"
+          }
         }
       },
       "qualityContract": {

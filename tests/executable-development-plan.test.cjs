@@ -524,6 +524,42 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(sp01.executionProgress.nextAction.includes('cloudfunctions中选中cloud1'));
 });
 
+test('SP01 records simulator compilation separately from cloud identity, storage, and real-device evidence', () => {
+  const record = load();
+  const probe = record.tasks.find((task) => task.id === 'SP01').executionProgress.localStorageProbe;
+  const plan = read('docs/v1-executable-development-plan-20261027.md');
+  a.equal(probe.projectImport.status, 'success');
+  a.equal(probe.projectImport.path, 'E:\\O2O\\tools\\sp01-storage-probe');
+  a.deepEqual(probe.simulatorOpen, {
+    command: 'simulator_open_page',
+    page: 'pages/index/index',
+    success: true,
+    scene: 1001,
+    evidenceScope: 'devtools-simulator-compile-and-open-only',
+  });
+  a.equal(probe.simulatorConsoleErrorFilter.noMatchingLines, true);
+  a.equal(probe.simulatorConsoleErrorFilter.provesNoRuntimeErrors, false);
+  a.equal(probe.templateSummaryCommand.result, 'no-result-command-canceled');
+  a.equal(probe.localTestCount, 16);
+  a.equal(probe.localTestsPassed, 16);
+  a.deepEqual(probe.regression, {
+    developmentPlan: { passed: 43, failed: 0 },
+    repositoryNodeTests: { passed: 1434, failed: 0 },
+    jsonParse: 'passed',
+    diffCheck: 'passed',
+  });
+  a.equal(probe.cloudIdentityComparisonCompleted, false);
+  a.equal(probe.cloudFunctionDeployed, false);
+  a.equal(probe.probeCloudStorageWrittenOrDeleted, false);
+  a.equal(probe.realDeviceRun, false);
+  a.equal(probe.quickStartModified, false);
+  a.equal(record.tasks.find((task) => task.id === 'SP01').productAcceptancePassed, false);
+  a(plan.includes('开发者工具 CLI 导入项目列表'));
+  a(plan.includes('模拟器页面`pages/index/index`'));
+  a(plan.includes('不证明云函数身份通路、云存储权限或真机行为'));
+  a(!plan.includes('该阶段未导入开发者工具'));
+});
+
 test('SP01 records the local diagnostic project AppID separately from the new target AppID', () => {
   const record = load();
   a.deepEqual(record.accountEvidence.currentWindowObservation, {
