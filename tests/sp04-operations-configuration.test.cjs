@@ -42,7 +42,8 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
   assert.equal(e06.passed, false);
   assert.ok(e06.reason.includes('sp01IdentityProbe'));
   assert.ok(e06.reason.includes('Nodejs16.13 / 3秒'));
-  assert.ok(e06.reason.includes('尚未从客户端调用'));
+  assert.ok(e06.reason.includes('用户尚未在手机打开'));
+  assert.ok(e06.reason.includes('客户端身份函数仍未调用'));
   assert.ok(currentCheck.includes('身份摘要尚未比对'));
   assert.ok(!currentCheck.includes('当前函数Active/Nodejs20.19'));
   assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.result, 'no-official-results');
@@ -51,6 +52,44 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
   assert.ok(doc.includes('当前身份探针状态：`sp01IdentityProbe`'));
   assert.ok(doc.includes('Nodejs16.13 / 3秒'));
   assert.ok(doc.includes('开发者工具模拟器打开不证明小程序运行时连接或跨账号文件隔离'));
+});
+
+test('SP04 records the generated identity-probe preview without claiming a client test', () => {
+  const record = evidence();
+  const preview = record.latestIdentityProbePreview;
+  const plan = load('docs/v1-executable-development-plan-20261027.json');
+  const planSp04 = plan.tasks.find((task) => task.id === 'SP04');
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
+
+  assert.deepEqual(preview, {
+    date: '2026-10-28',
+    source: 'authorized-wechatide-cli-auto-preview-and-qrcode',
+    projectPath: 'E:\\O2O\\tools\\sp01-storage-probe',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    projectConfigAppIdVerified: true,
+    projectRuntimeEnvironmentIdVerified: true,
+    pagePath: 'pages/index/index',
+    autoPreviewPushSucceeded: true,
+    autoPreviewReportedPackageSize: 32120,
+    previewQrGenerationSucceeded: true,
+    previewQrFormat: 'window',
+    experienceVersionUploadPerformed: false,
+    productionPublishPerformed: false,
+    clientOpened: false,
+    clientInvocationVerified: false,
+    identityComparisonCompleted: false,
+    secondAccountAccessVerified: false,
+    cloudStorageWritePerformed: false,
+    cloudStorageCleanupPerformed: false,
+  });
+  assert.deepEqual(planSp04.executionProgress.latestIdentityProbePreview, preview);
+  assert.equal(record.evidenceGates.find((gate) => gate.id === 'E06').passed, false);
+  assert.ok(read('tools/sp01-storage-probe/project.config.json').includes('"appid": "wx2414399d423dfb65"'));
+  assert.ok(read('tools/sp01-storage-probe/miniprogram/utils/probe-contract.js').includes("const TARGET_ENV_ID = 'cloud1-d2gjahlq39bf141c7'"));
+  assert.ok(doc.includes('预览已通过CLI推送并生成二维码'));
+  assert.ok(runbook.includes('预览推送与二维码生成已成功'));
 });
 
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {

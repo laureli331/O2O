@@ -394,7 +394,7 @@
     {
       "id": "E06",
       "passed": false,
-      "reason": "服务范围、服务时段和当前供给缺口已按用户确认记录。目标AppID范围的只读环境查询已返回cloud1，本地app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js。较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空；用户此前按只读核对请求回复“菜单仍为空”，这是导入前状态；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1并报告当前环境已选中cloud1（均未附截图）。首轮临时SP01函数的测试截图回显输入事件并显示Hello World/运行上下文，与本地探针契约不符；该首轮函数及失败的30秒run均为历史状态。修正版已上传，inspect、prepare和最新30秒事务探针均通过；最新结果确认提交可见、回滚无部分写入、两笔并发事务成功且最终值2、自动清理回查通过。此前失败run的三条自有记录也已定向清理。数据库模式先由用户查看后报告为文档型数据库，之后用户提供的DescribeEnvs回包结合官方资源映射支持确认该模式。之后一次用户授权的跨账号合成文件测试中，第二测试账号读取和写入均成功，用户确认其未加入管理员/开发者名单，因此该测试文件的隔离失败；两个账号的_openid未直接采集，确切文件已定向删除且目录查询为空，权限设置未改、具体规则原因未定，其他角色/链接情形未测。托管/登录和正式域名尚未核验。费用核查按用户要求略过；E06仍未放行。 后续单独部署的`sp01IdentityProbe`当前只读详情为Active / Nodejs16.13 / 3秒；模拟器已打开，但尚未从客户端调用身份函数，身份摘要未比对，未写入云存储。此新函数与已删除的`sp01EnvProbe`事务探针分开记录。"
+      "reason": "服务范围、服务时段和当前供给缺口已按用户确认记录。目标AppID范围的只读环境查询已返回cloud1，本地app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js。较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空；用户此前按只读核对请求回复“菜单仍为空”，这是导入前状态；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1并报告当前环境已选中cloud1（均未附截图）。首轮临时SP01函数的测试截图回显输入事件并显示Hello World/运行上下文，与本地探针契约不符；该首轮函数及失败的30秒run均为历史状态。修正版已上传，inspect、prepare和最新30秒事务探针均通过；最新结果确认提交可见、回滚无部分写入、两笔并发事务成功且最终值2、自动清理回查通过。此前失败run的三条自有记录也已定向清理。数据库模式先由用户查看后报告为文档型数据库，之后用户提供的DescribeEnvs回包结合官方资源映射支持确认该模式。之后一次用户授权的跨账号合成文件测试中，第二测试账号读取和写入均成功，用户确认其未加入管理员/开发者名单，因此该测试文件的隔离失败；两个账号的_openid未直接采集，确切文件已定向删除且目录查询为空，权限设置未改、具体规则原因未定，其他角色/链接情形未测。托管/登录和正式域名尚未核验。费用核查按用户要求略过；E06仍未放行。 后续单独部署的`sp01IdentityProbe`当前只读详情为Active / Nodejs16.13 / 3秒；模拟器已打开，CLI随后已成功推送隔离项目预览并生成二维码；用户尚未在手机打开，客户端身份函数仍未调用，身份摘要未比对，未写入本轮云存储。第二测试账号未加入成员名单，若不能打开预览须先解决预览权限。此新函数与已删除的`sp01EnvProbe`事务探针分开记录。"
     }
   ],
   "cloudWritesOrDeploymentPerformed": true,
@@ -414,7 +414,7 @@
     "functionNamesAfterDeletion": []
   },
   "remainingChecks": [
-    "用户报告cloudfunctions菜单当前环境已选中cloud1；旧事务探针`sp01EnvProbe`当时为Active/Nodejs20.19、超时30秒并通过，之后已删除；新身份探针`sp01IdentityProbe`当前为Active/Nodejs16.13、3秒，尚未从客户端调用，两个账号身份摘要尚未比对。数据库模式由用户回传DescribeEnvs结果及官方资源映射支持确认；另一次跨账号探针中，用户确认第二测试账号未加入管理员/开发者名单且截图显示其成功读写合成文件，因此该测试文件的隔离失败；两个账号的_openid未直接采集，确切文件已删除、权限设置未改且具体规则原因未定；匿名访问、链接和撤权、实机/网络、托管/登录与正式域名等SP01/SP04证据仍需完成。",
+    "用户报告cloudfunctions菜单当前环境已选中cloud1；旧事务探针`sp01EnvProbe`当时为Active/Nodejs20.19、超时30秒并通过，之后已删除；新身份探针`sp01IdentityProbe`当前为Active/Nodejs16.13、3秒，CLI已成功推送预览包并生成二维码，但尚未从客户端调用，两个账号身份摘要尚未比对；账号B尚未加入成员名单，若其无法打开预览需先解决预览权限。数据库模式由用户回传DescribeEnvs结果及官方资源映射支持确认；另一次跨账号探针中，用户确认第二测试账号未加入管理员/开发者名单且截图显示其成功读写合成文件，因此该测试文件的隔离失败；两个账号的_openid未直接采集，确切文件已删除、权限设置未改且具体规则原因未定；匿名访问、链接和撤权、实机/网络、托管/登录与正式域名等SP01/SP04证据仍需完成。",
     "核实微信官方类目适用性及真实运营/供应能力，不从项目服务名称推定平台准入。",
     "目前没有已确认愿意接单的维修或代买代取服务者；后续需确认服务者资质审核状态及十个地点的实际覆盖。",
     "旧cloud1因旧号个人、新号为个体工商户/公司主体（用户报告）不符合官方同主体共享条件，不再按该资源共享路径推进；目标AppID范围的CLI只读环境列表已返回新号自己的CloudBase环境cloud1，云函数和数据库集合查询均返回当前状态；小程序端运行时和实际项目访问能力仍待核验。",
@@ -427,7 +427,7 @@
     "用户已复查cloudfunctions根目录环境菜单并报告仍为空（导入前）；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1并报告当前环境已选中cloud1（均无截图）。首轮SP01截图回显输入事件并出现Hello World/运行上下文；首轮临时函数随后由用户删除。首轮删除后的CLI函数列表和数据库集合列表为空，仅为历史状态。旧事务探针阶段的恢复状态见latestProbeDeploymentRecovery：当时函数Active/Nodejs20.19，代码上传、inspect和prepare通过；之后已删除。最新身份探针状态见latestIdentityProbeDeployment。修正前30秒run失败及其失败后记录不确定状态均为历史；旧run之后经inspectRun核对并定向清理。修正版新run返回success:true，事务检查和自动清理通过。用户随后报告已删除临时函数，最新只读cloud_fn_list返回total:0、list:[]。此前一次性云端写入授权已使用，任何后续云端写入需另行授权。",
     "用户已复查cloudfunctions根目录环境菜单并报告仍为空（导入前）；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1并报告当前环境已选中cloud1（均无截图）。首次SP01探针部署、首轮不匹配测试和用户删除均为历史状态。旧事务探针阶段的恢复状态见latestProbeDeploymentRecovery：当时Active/Nodejs20.19，上传、inspect与prepare通过，之后已删除；最新身份探针状态见latestIdentityProbeDeployment；修正版新run返回success:true，提交、回滚、并发和自动清理断言均通过；修正前失败run的三条自有记录已清理回查。postTimeoutReadOnlyCheckBeforeTimeoutAdjustment仅记录3秒超时后的集合/记录计数，不能代替当前状态。数据库模式由后续DescribeEnvs回包结合官方资源映射支持确认；SP04运营写入、产品部署、存储权限和正式托管仍未验收。"
   ],
-  "rollback": "本阶段只回退本阶段自己的文档和测试提交，不重置整个工作区、不触碰用户已有改动。首轮临时云函数删除与修正版恢复部署均为历史操作。修正版最新事务探针返回success:true，提交、回滚、并发与自动清理断言通过；修正前失败run的三条自有记录也已定向清理并回查。固定集合保留，不删除集合或非本轮记录。此前一次性云端写入授权已使用；后续任何云端写入、清理或部署均需先确认具体范围。用户报告已删除最新临时函数，之后对目标AppID和EnvID执行只读cloud_fn_list，返回total:0、list:[]，确认当前函数列表为空。",
+  "rollback": "本阶段只回退本阶段自己的文档和测试提交，不重置整个工作区、不触碰用户已有改动。首轮临时云函数删除与修正版恢复部署均为历史操作。修正版最新事务探针返回success:true，提交、回滚、并发与自动清理断言通过；修正前失败run的三条自有记录也已定向清理并回查。固定集合保留，不删除集合或非本轮记录。此前一次性云端写入授权已使用；后续任何云端写入、清理或部署均需先确认具体范围。用户报告已删除旧事务函数`sp01EnvProbe`后，对目标AppID和EnvID执行只读cloud_fn_list，返回total:0、list:[]；之后单独部署的`sp01IdentityProbe`当前Active，预览包已成功推送/生成二维码，客户端验收仍待用户执行。",
   "latestUserReportedAccountAssociationCheck": {
     "date": "2026-10-28",
     "source": "user-reply-to-read-only-check",
@@ -911,6 +911,28 @@
     "simulatorPageOpened": true,
     "clientInvocationVerified": false,
     "identityComparisonCompleted": false,
+    "cloudStorageWritePerformed": false,
+    "cloudStorageCleanupPerformed": false
+  },
+  "latestIdentityProbePreview": {
+    "date": "2026-10-28",
+    "source": "authorized-wechatide-cli-auto-preview-and-qrcode",
+    "projectPath": "E:\\O2O\\tools\\sp01-storage-probe",
+    "targetAppId": "wx2414399d423dfb65",
+    "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+    "projectConfigAppIdVerified": true,
+    "projectRuntimeEnvironmentIdVerified": true,
+    "pagePath": "pages/index/index",
+    "autoPreviewPushSucceeded": true,
+    "autoPreviewReportedPackageSize": 32120,
+    "previewQrGenerationSucceeded": true,
+    "previewQrFormat": "window",
+    "experienceVersionUploadPerformed": false,
+    "productionPublishPerformed": false,
+    "clientOpened": false,
+    "clientInvocationVerified": false,
+    "identityComparisonCompleted": false,
+    "secondAccountAccessVerified": false,
     "cloudStorageWritePerformed": false,
     "cloudStorageCleanupPerformed": false
   }

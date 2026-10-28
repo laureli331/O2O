@@ -1849,7 +1849,7 @@
               "failed": 0
             },
             "repositoryNodeTests": {
-              "passed": 1434,
+              "passed": 1436,
               "failed": 0
             },
             "jsonParse": "passed",
@@ -2161,7 +2161,29 @@
           "cloudStorageWritePerformed": false,
           "cloudStorageCleanupPerformed": false
         },
-        "nextAction": "在真实微信客户端按sp01-cloud-probe-runbook-20261028.md由账号A创建合成文件、账号B先核对身份摘要；若摘要相同立即停止，若不同再执行授权内的访问测试并完成确切文件清理。"
+        "latestIdentityProbePreview": {
+          "date": "2026-10-28",
+          "source": "authorized-wechatide-cli-auto-preview-and-qrcode",
+          "projectPath": "E:\\O2O\\tools\\sp01-storage-probe",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "projectConfigAppIdVerified": true,
+          "projectRuntimeEnvironmentIdVerified": true,
+          "pagePath": "pages/index/index",
+          "autoPreviewPushSucceeded": true,
+          "autoPreviewReportedPackageSize": 32120,
+          "previewQrGenerationSucceeded": true,
+          "previewQrFormat": "window",
+          "experienceVersionUploadPerformed": false,
+          "productionPublishPerformed": false,
+          "clientOpened": false,
+          "clientInvocationVerified": false,
+          "identityComparisonCompleted": false,
+          "secondAccountAccessVerified": false,
+          "cloudStorageWritePerformed": false,
+          "cloudStorageCleanupPerformed": false
+        },
+        "nextAction": "预览已由CLI推送并生成二维码；账号A在真实微信客户端打开隔离探针并创建合成测试包，私下交给账号B。B先核对身份摘要；摘要相同立即停止，只有不同才执行授权内的访问测试并完成确切文件清理。账号B尚未加入成员名单；若无法打开预览，先解决预览访问权限，不将该错误记作存储拒绝。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
