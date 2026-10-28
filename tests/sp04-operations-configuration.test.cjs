@@ -314,9 +314,14 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(accountRemaining.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   assert.ok(accountRemaining.includes('用户随后报告已导入cloud1'));
   assert.ok(accountRemaining.includes('当前环境已选中cloud1'));
-  assert.ok(accountRemaining.includes('用户测试截图与本地响应契约不符'));
-  assert.ok(accountRemaining.includes('删除后CLI函数列表为空，数据库集合列表也为空'));
+  assert.ok(accountRemaining.includes('首次SP01探针部署与删除均已记录'));
+  assert.ok(accountRemaining.includes('最新重部署状态和运行时见SP01最新部署记录'));
   assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
+  assert.equal(record.latestTemporaryProbeDeploymentAttempt.functionName, 'sp01EnvProbe');
+  assert.equal(record.latestTemporaryProbeDeploymentAttempt.postDeploymentReadOnly.runtime, 'Nodejs16.13');
+  assert.equal(record.latestTemporaryProbeDeploymentAttempt.taskResult.codeUpdateStatus, 'failed');
+  assert.equal(record.latestCloudFunctionRecheck.functionStatus, 'Active');
+  assert.equal(record.latestCloudFunctionRecheck.databaseCollectionCount, 0);
   assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
   assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionCount, 0);
   assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionRequestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');

@@ -297,7 +297,7 @@
       "cloudCapabilityTestPlan": {
         "targetAppId": "wx2414399d423dfb65",
         "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
-        "currentCloudFunctionCount": 0,
+        "currentCloudFunctionCount": 1,
         "currentDatabaseCollectionCount": 0,
         "separateTestEnvironmentVerified": false,
         "testWriteAuthorization": "read-only-only",
@@ -309,7 +309,7 @@
             "operation": "read-only",
             "input": "目标AppID/EnvID及云函数新建表单中的运行时下拉选项；不提交表单",
             "expected": "按用户确认记录首版Node.js 20.19；创建和运行前仍须按授权及测试方案验证，不把选择记录写成运行时通过",
-            "status": "user-confirmed-nodejs-20-19-not-created-or-executed"
+            "status": "blocked-created-as-Nodejs16.13-runtime-mismatch"
           },
           {
             "id": "ENV-DB-TX-01",
@@ -332,7 +332,8 @@
             "expected": "验证后只清理本轮创建的精确记录/对象，不删除集合或既有资源；清理失败立即停止后续写入并保留脱敏证据",
             "status": "not-executed-no-write-authorization"
           }
-        ]
+        ],
+        "preDeploymentCloudFunctionCount": 0
       },
       "userScreenshotCloudBaseObservation": {
         "date": "2026-10-28",
@@ -944,7 +945,8 @@
           "2026-10-28新增临时SP01云事务探针源码，固定Node.js 20.19.x及@cloudbase/node-sdk 3.18.7并锁定传递依赖；只访问sp01_probe_20261028和随机合成运行记录，不改动QuickStart示例函数",
           "2026-10-28 node --test tests/sp01-environment-probe.test.cjs：11项本地测试通过，含提交/注入回滚/并发丢更新识别/屏障超时后串行假阳性保护/异常后自动清理/删除后回查/清理遗留失败/保留空集合；仅使用内存模拟数据库，不是目标云端运行证据",
           "2026-10-28受控云端操作手册已列明目标AppID、EnvID、输入/预期、预检、清理与停机边界；本轮未部署函数、未创建集合、未写入或删除云端记录/存储",
-          "2026-10-28重新检查本地预览入口http://127.0.0.1:8765/返回连接被拒绝；未启动或修改预览服务"
+          "2026-10-28重新检查本地预览入口http://127.0.0.1:8765/返回连接被拒绝；未启动或修改预览服务",
+          "2026-10-28受控部署后只读确认函数Active但运行时Nodejs16.13；部署任务内层代码更新失败；未调用函数、未写数据库，集合列表为空"
         ],
         "latestReadOnlyCloudRecheck": {
           "date": "2026-10-28",
@@ -953,13 +955,16 @@
           "environmentList": [
             "cloud1-d2gjahlq39bf141c7"
           ],
-          "cloudFunctionCount": 0,
+          "cloudFunctionCount": 1,
+          "functionNames": [
+            "sp01EnvProbe"
+          ],
+          "functionStatus": "Active",
+          "functionRuntime": "Nodejs16.13",
           "databaseAction": "listCollections",
           "databaseCollectionCount": 0,
-          "databaseRequestId": "9999efac-d8b8-4c0c-997a-91674556d58e",
-          "initialDatabaseInputError": "missing-required-action; rejected-locally-before-cloud-request",
-          "recovery": "read-tool-help; retry-with-listCollections",
-          "cloudWriteOrDeploymentPerformed": false
+          "databaseRequestId": "870fb9ca-db84-48bc-8304-4035df9ecc4e",
+          "cloudWriteOrDeploymentPerformed": true
         },
         "latestUserScreenshotCloudBaseObservation": {
           "date": "2026-10-28",
@@ -992,13 +997,14 @@
           "deploymentPerformed": false
         },
         "blockedChecks": [
-          "首版运行时选择Node.js 20.19已确认；用户提交inspect、prepare、run事件的测试截图回显输入事件并显示Hello World/运行上下文，和本地探针不符。临时函数已删除，删除后只读函数列表为空；删除后数据库集合列表也为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），固定集合当前不存在且没有可见记录，但不能反推调用期间是否曾短暂创建。已只读核对CLI部署帮助要求绝对函数目录、目标工程cloudfunctionRoot、探针package入口和SDK锁文件，并新增本地包预检测试；历史部署path参数与上传包摘要未留存，Hello World根因仍未知。未来任何重试前重新检查固定集合与本轮文档ID，部署路径须指向函数目录本身，部署后先检查inspect响应。数据库模式为用户报告的文档型数据库，尚未API复核；事务与私密文件权限仍未实测。",
+          "首版运行时选择Node.js 20.19已确认；用户提交inspect、prepare、run事件的测试截图回显输入事件并显示Hello World/运行上下文，和本地探针不符。首轮临时函数已删除，删除后只读函数列表为空；删除后数据库集合列表也为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），固定集合当前不存在且没有可见记录，但不能反推调用期间是否曾短暂创建。已只读核对CLI部署帮助要求绝对函数目录、目标工程cloudfunctionRoot、探针package入口和SDK锁文件，并新增本地包预检测试；历史部署path参数与上传包摘要未留存，Hello World根因仍未知。未来任何重试前重新检查固定集合与本轮文档ID，部署路径须指向函数目录本身，部署后先检查inspect响应。数据库模式为用户报告的文档型数据库，尚未API复核；事务与私密文件权限仍未实测。",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
           "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞",
-          "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；之后用户报告目标小程序已关联、cloud1已导入并在菜单中选中。该历史菜单核对不是当前部署状态；临时探针曾部署，测试截图不符合本地代码响应契约，用户已删除，之后只读函数列表为空。"
+          "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；之后用户报告目标小程序已关联、cloud1已导入并在菜单中选中。该历史菜单核对不是当前部署状态；首轮临时探针曾部署，测试截图不符合本地代码响应契约；首轮函数删除后只读函数列表为空。之后重部署的当前函数为Active/Nodejs16.13，代码更新失败。",
+          "本次CLI部署外层任务状态为success，但内层UpdateFunctionCode因函数处于Creating而失败；云端sp01EnvProbe为Active/Nodejs16.13，与已确认Node.js 20.19不符。运行时创建后不可修改；需删除本轮临时函数并用20.19重建。修复前不得测试函数或写数据库，SP01与SP07门槛未通过。"
         ],
-        "nextAction": "目标AppID wx2414399d423dfb65 的 cloud1 环境 cloud1-d2gjahlq39bf141c7 已通过CLI只读复核；此前部署前云函数和集合均为空。用户随后报告腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并报告当前环境已选中cloud1（后两项无截图）。临时探针曾按明确授权部署；用户提交inspect、prepare、run事件，但截图显示输入事件回显及Hello World/运行上下文日志，与本地处理器预期不符，不能验收。用户已删除探针，删除后只读函数列表和数据库集合列表均为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），固定集合当前不存在、没有可见记录，但不能反推调用期间是否曾短暂创建。已只读核对CLI要求绝对函数目录、工程cloudfunctionRoot、miniprogram/cloudfunctions内探针index.js入口及固定SDK锁文件，并加入本地包预检；历史部署path参数和上传包摘要未留存，故Hello World根因仍未知。用户决定重试时，先重新只读检查固定集合及本轮五个确切ID，使用函数目录本身作为部署path，部署后先看结构化inspect响应；未匹配即停止并删除临时函数。测试时只分享脱敏结构化返回JSON，不分享运行日志；若响应仍不匹配，立即停止并删除临时函数。已通过cloud_env_list只读确认目标环境；用户确认Node.js 20.19并报告数据库模式为文档型数据库，尚未API复核；旧号个人主体的cloud1不作新号共享候选；剩余存储写入仍须单独授权。若上线后有平台实际付费提示，用户自行办理；费用核查按用户要求略过且不构成当前开发阻塞。SP01保持进行中、产品验收未通过，SP07不得越过SP01—SP06门槛。云端运行时、事务和清理未验收。",
+        "nextAction": "目标AppID wx2414399d423dfb65 的 cloud1 环境 cloud1-d2gjahlq39bf141c7 已通过cloud_env_list只读复核；SP01首轮部署前云函数与集合均为空。用户较早复查cloudfunctions根目录环境菜单并报告仍为空（导入前）；随后报告腾讯云账号中心已关联目标小程序；随后报告已导入cloud1并报告当前环境已选中cloud1（导入和菜单选择无截图）。首轮临时探针截图回显输入事件并出现Hello World/运行上下文，与本地处理器不符；用户之后删除该首轮函数，删除后的只读集合为空。用户已确认Node.js 20.19并报告数据库模式为文档型，后者尚未API复核。最新一次经用户确认的CLI部署外层返回success，但内层代码更新因函数处于Creating状态失败；只读查询显示当前sp01EnvProbe为Active/Nodejs16.13，集合列表为空（requestId 870fb9ca-db84-48bc-8304-4035df9ecc4e）。本次未调用函数、未写数据库或存储，云端代码是否为本地探针未知。运行时不能通过配置修改；下一步在控制台删除本轮临时函数并用Node.js 20.19重建同名函数，等待Active后由CLI上传，再只读检查运行时和inspect结构化响应；不匹配即停止，不执行prepare/run或数据库写入。SP01保持进行中，SP07不得越过SP01—SP06门槛。旧号个人主体的cloud1不作新号共享候选；剩余存储写入仍须单独授权。若上线后有平台实际付费提示，用户自行办理；费用核查按用户要求略过且不构成当前开发阻塞。",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -1166,6 +1172,62 @@
           "requestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
           "writePerformed": false,
           "provesFunctionDidNotTransientlyCreateCollectionDuringAttempt": false
+        },
+        "latestCloudDeploymentAttempt": {
+          "date": "2026-10-28",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "functionDirectory": "E:\\O2O\\miniprogram\\cloudfunctions\\sp01EnvProbe",
+          "preflight": {
+            "functionCount": 0,
+            "collectionCount": 0,
+            "collectionRequestId": "924144ef-5918-466a-a41a-45ad3760a5a9"
+          },
+          "userAuthorization": {
+            "deploymentConfirmed": true,
+            "confirmationTaskId": "confirmation_cloud_fn_deploy_77f0c2c5-43cd-4b7f-a971-40540ed4107a"
+          },
+          "package": {
+            "declaredNodeEngine": "20.19.x",
+            "cloudbaseNodeSdk": "3.18.7"
+          },
+          "deployTool": {
+            "name": "wechatide cloud_fn_deploy",
+            "runtimeOverrideSupported": false
+          },
+          "taskResult": {
+            "wrapperStatus": "success",
+            "codeUpdateStatus": "failed",
+            "errorCode": "FailedOperation.UpdateFunctionCode",
+            "errorMessage": "当前函数处于Creating状态，无法进行此操作，请稍后重试。",
+            "requestId": "791efa4d-518f-41dd-9d90-4a802704a22f"
+          },
+          "postDeploymentReadOnly": {
+            "functionStatus": "Active",
+            "runtime": "Nodejs16.13",
+            "functionCount": 1,
+            "collectionCount": 0,
+            "collectionRequestId": "870fb9ca-db84-48bc-8304-4035df9ecc4e"
+          },
+          "runtimeChangeSupportedByOfficialApi": false,
+          "functionTestInvoked": false,
+          "databaseWritePerformed": false
+        },
+        "preDeploymentReadOnlyCloudRecheck": {
+          "date": "2026-10-28",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "environmentList": [
+            "cloud1-d2gjahlq39bf141c7"
+          ],
+          "cloudFunctionCount": 0,
+          "databaseAction": "listCollections",
+          "databaseCollectionCount": 0,
+          "databaseRequestId": "9999efac-d8b8-4c0c-997a-91674556d58e",
+          "initialDatabaseInputError": "missing-required-action; rejected-locally-before-cloud-request",
+          "recovery": "read-tool-help; retry-with-listCollections",
+          "cloudWriteOrDeploymentPerformed": false
         }
       },
       "qualityContract": {

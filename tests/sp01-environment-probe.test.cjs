@@ -282,6 +282,7 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   const task = plan.tasks.find((item) => item.id === 'SP01');
   const harness = task.executionProgress.localProbeHarness;
   const deployment = task.executionProgress.latestCloudDeployment;
+  const latestDeploymentAttempt = task.executionProgress.latestCloudDeploymentAttempt;
   const runbook = fs.readFileSync(path.join(root, 'docs/sp01-cloud-probe-runbook-20261028.md'), 'utf8');
 
   assert.equal(task.status, 'in-progress');
@@ -314,6 +315,12 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(deployment.postDeploymentCollectionCount, 0);
   assert.equal(deployment.cloudRuntimeExecuted, false);
   assert.equal(deployment.cloudRecordsWrittenOrDeleted, false);
+  assert.equal(latestDeploymentAttempt.functionName, 'sp01EnvProbe');
+  assert.equal(latestDeploymentAttempt.taskResult.wrapperStatus, 'success');
+  assert.equal(latestDeploymentAttempt.taskResult.codeUpdateStatus, 'failed');
+  assert.equal(latestDeploymentAttempt.postDeploymentReadOnly.runtime, 'Nodejs16.13');
+  assert.equal(latestDeploymentAttempt.functionTestInvoked, false);
+  assert.equal(latestDeploymentAttempt.databaseWritePerformed, false);
   const attempt = task.executionProgress.latestCloudTestAttempt;
   assert.equal(attempt.responseMatchedExpectedProbeContract, false);
   assert.equal(attempt.probeExecutionVerified, false);
@@ -326,7 +333,7 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(task.executionProgress.latestPostProbeReadOnlyDatabaseCheck.collectionCount, 0);
   assert.equal(task.executionProgress.latestPostProbeReadOnlyDatabaseCheck.requestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
   assert.equal(task.executionProgress.latestPostProbeReadOnlyDatabaseCheck.provesFunctionDidNotTransientlyCreateCollectionDuringAttempt, false);
-  assert.match(runbook, /临时函数已删除；截图中的三次调用虽显示“成功”，但返回内容和日志与本地探针契约不符/);
+  assert.match(runbook, /最新临时函数`sp01EnvProbe`为`Active \/ Nodejs16.13`/);
   assert.match(runbook, /删除后的只读查询返回数据库集合列表为空/);
   assert.match(runbook, /固定测试集合当前不存在/);
   assert.match(runbook, /临时授权凭据字段和值/);
