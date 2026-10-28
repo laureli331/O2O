@@ -824,6 +824,19 @@
           "CLI技能版本为0.3.11；结构查询只列出集合/索引读取操作，未提供环境级运行时、数据库模式或存储权限配置的只读查询；帮助显示的云函数部署、数据库写入及存储上传/删除是变更操作。本轮未读取云存储文件列表、临时链接或内容",
           "本机设备清点未发现ADB命令或常见Android SDK路径中的adb.exe；用户于2026-10-28提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79，并选择Chrome作为后台验收浏览器；实际设备连接、微信小程序基础库版本和浏览器兼容性仍未核验。用户提供家中WiFi 5G作为常规场景、公共免费WiFi作为较弱场景，网络性能指标尚未测量"
         ],
+    "latestReadOnlyCloudRecheck": {
+      "date": "2026-10-28",
+      "targetAppId": "wx2414399d423dfb65",
+      "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+      "environmentList": ["cloud1-d2gjahlq39bf141c7"],
+      "cloudFunctionCount": 0,
+      "databaseAction": "listCollections",
+      "databaseCollectionCount": 0,
+      "databaseRequestId": "9999efac-d8b8-4c0c-997a-91674556d58e",
+      "initialDatabaseInputError": "missing-required-action; rejected-locally-before-cloud-request",
+      "recovery": "read-tool-help; retry-with-listCollections",
+      "cloudWriteOrDeploymentPerformed": false
+    },
         "blockedChecks": [
           "目标环境运行时、数据库模式、事务和私密文件权限仍未验证；本次只读检查显示尚无云函数和集合，按已授权范围未部署测试函数或写入数据",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",

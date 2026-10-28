@@ -10,6 +10,10 @@
 
 本机进程清单显示微信开发者工具主窗口标题为“湘邻湘友”，进程ID `51712`，可执行文件为`E:\微信web开发者工具\微信开发者工具.exe`；本地`E:\O2O\miniprogram\project.config.json`的AppID为目标号`wx2414399d423dfb65`。开发者工具安装诊断返回`compatible=true`、版本`2.02.2608080`。此前Shell命令解析到项目内辅助入口`E:\O2O\.local\tools\wechat-devtools\wechatide.cmd`，经该入口查询返回`CONNECT_ERROR`；改用真实安装目录入口`E:\微信web开发者工具\wechatide.cmd`后，状态检查成功，`loginExpired=false`且`versionRelation=equal`。按目标AppID执行`cloud_env_list`返回环境ID `cloud1-d2gjahlq39bf141c7`；`project_list`列出目标工程`E:\O2O\miniprogram`和相符AppID，但未证明该工程就是活动窗口当前加载的路径。本轮云资源查询首次因漏传CLI必需参数`-c Codex`返回输入校验错误；查看命令帮助后补齐参数重试成功，首次错误未发出云请求。`cloud_fn_list`和`cloud_db_read_struct`的重试均显式传入目标AppID与EnvID：云函数响应回显目标AppID且总数为0；数据库响应返回空集合列表（requestId `273b6a14-fb31-4dba-91ab-69418f65f135`）。这两个响应没有回显EnvID，EnvID作用域由命令参数记录。未部署函数或写入云端。运行时、数据库模式、事务及私密文件权限仍未核实。
 
+### 2026-10-28补充只读云资源复核
+
+使用微信开发者工具安装目录CLI重新显式查询目标AppID `wx2414399d423dfb65`：`cloud_env_list`仍返回唯一环境`cloud1-d2gjahlq39bf141c7`，`cloud_fn_list`返回`total: 0`。数据库结构查询第一次因缺少必填`--action`被CLI本地校验拒绝；查阅该工具帮助后，以`--action listCollections`重试成功，返回`collections: []`、`Total: 0`，requestId `9999efac-d8b8-4c0c-997a-91674556d58e`。第一次输入错误未发出云请求；成功查询使用明确的目标AppID和EnvID参数。此复核未写入数据库、未创建或部署云函数。它确认当前资源空态，但仍不能确认环境级运行时菜单、数据库模式、事务语义或私密文件权限。
+
 较早的概览截图显示CloudBase顶部为`cloud1`、“微信体验版”，概览为“暂无数据”；数据库页显示找不到可用集合。“设置→权限设置”截图显示环境ID，但没有AppID或到期日。最新环境详情截图同屏显示应用名、AppID和EnvID；费用管理截图仍只显示“微信体验版”、40,000点/月、¥19.9/月购买按钮，按量付费与自动续费均关闭，且没有环境ID、AppID、到期日或账单。购买按钮旁的价格不是已扣款证据。新建环境没有集合和调用数据是正常空态，不代表开通失败。
 
 套餐、账单和到期日核查按用户要求本轮略过，不作为当前开发阻塞。用户表示若上线后出现实际付费提示，将自行办理；本轮不购买套餐，不开启按量付费或自动续费。已有官方计费规则仅留作后续上线准备参考，截图中的套餐标签、额度和价格按钮不证明已扣款或确切到期日。开发者工具只读CLI现已可用；SP01仍因运行时及数据库/存储能力未验证而未完成。

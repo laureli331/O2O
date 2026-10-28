@@ -245,6 +245,19 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(audit.cloudCapabilityTestPlan.testWriteAuthorization, 'read-only-only');
   a.equal(audit.cloudCapabilityTestPlan.realPersonalDataAllowed, false);
   a.equal(audit.cloudCapabilityTestPlan.officialSourceCheckDate, '2026-10-28');
+  a.deepEqual(record.tasks.find((task) => task.id === 'SP01').executionProgress.latestReadOnlyCloudRecheck, {
+    date: '2026-10-28',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    environmentList: ['cloud1-d2gjahlq39bf141c7'],
+    cloudFunctionCount: 0,
+    databaseAction: 'listCollections',
+    databaseCollectionCount: 0,
+    databaseRequestId: '9999efac-d8b8-4c0c-997a-91674556d58e',
+    initialDatabaseInputError: 'missing-required-action; rejected-locally-before-cloud-request',
+    recovery: 'read-tool-help; retry-with-listCollections',
+    cloudWriteOrDeploymentPerformed: false,
+  });
   a.deepEqual(audit.cloudCapabilityTestPlan.cases.map((testCase) => testCase.id), [
     'ENV-RUNTIME-01', 'ENV-DB-TX-01', 'ENV-STORE-01', 'ENV-CLEANUP-01',
   ]);
@@ -271,6 +284,9 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('ENV-STORE-01'));
   a(doc.includes('单事务最多100个操作、最长30秒'));
   a(doc.includes('并应避免事务期间DDL及外部调用'));
+  a(doc.includes('第一次输入错误未发出云请求'));
+  a(planDoc.includes('补充只读云资源复核'));
+  a(planDoc.includes('当前待用户只读查看目标环境的新建云函数运行时下拉选项'));
   a(doc.includes('清理也是云端变更'));
   a(planDoc.includes('CLI技能版本为'));
   a(planDoc.includes('PowerShell清点未发现ADB'));
