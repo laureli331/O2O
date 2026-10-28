@@ -297,7 +297,8 @@
       "cloudCapabilityTestPlan": {
         "targetAppId": "wx2414399d423dfb65",
         "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
-        "currentCloudFunctionCount": 0,
+        "currentCloudFunctionCount": 1,
+        "currentCloudFunctionCountEvidenceSource": "2026-10-28 wechatide CLI read-only cloud_fn_list and cloud_fn_info for the explicit target AppID and EnvID",
         "currentDatabaseCollectionCount": 1,
         "separateTestEnvironmentVerified": false,
         "testWriteAuthorization": "granted-for-sp01-transaction-and-one-file-storage-probe",
@@ -384,6 +385,24 @@
           "occurredAfterPrepare": true,
           "occurredAfterRunTimeout": true,
           "provesRunCleanupCompleted": false
+        },
+        "latestReadOnlyCloudFunctionRecheck": {
+          "source": "wechatide-cli-cloud-fn-list-and-info-read-only",
+          "date": "2026-10-28",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionCount": 1,
+          "functions": [
+            {
+              "name": "sp01IdentityProbe",
+              "status": "Active",
+              "runtime": "Nodejs16.13",
+              "timeoutSeconds": 3
+            }
+          ],
+          "functionInvocationPerformed": false,
+          "provesClientIdentityInvocation": false,
+          "provesStoragePermissions": false
         }
       },
       "userScreenshotCloudBaseObservation": {

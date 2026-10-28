@@ -157,6 +157,9 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   a(tech.includes('事务验证期间临时函数`sp01EnvProbe`为Active / Nodejs20.19'));
   a(tech.includes('`sp01IdentityProbe`首次代码更新因函数尚处于Creating被拒'));
   a(tech.includes('当前只读详情为Active / Nodejs16.13 / 3秒'));
+  a(tech.includes('只读执行`cloud_fn_list`与`cloud_fn_info`'));
+  a(tech.includes('列表总数为1，仅含`sp01IdentityProbe`'));
+  a(tech.includes('此查询未调用函数'));
   a(tech.includes('用户报告已删除临时函数'));
   a(runbook.includes('目标环境`sp01EnvProbe`（Nodejs20.19 / 30秒）的最新事务探针通过'));
   a(runbook.includes('`inspectRun`只读事件'));
@@ -344,7 +347,18 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(audit.networkMetricsMeasured, false);
   a.equal(audit.cloudCapabilityTestPlan.targetAppId, 'wx2414399d423dfb65');
   a.equal(audit.cloudCapabilityTestPlan.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
-  a.equal(audit.cloudCapabilityTestPlan.currentCloudFunctionCount, 0);
+  a.equal(audit.cloudCapabilityTestPlan.currentCloudFunctionCount, 1);
+  a.deepEqual(audit.cloudCapabilityTestPlan.latestReadOnlyCloudFunctionRecheck, {
+    source: 'wechatide-cli-cloud-fn-list-and-info-read-only',
+    date: '2026-10-28',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    functionCount: 1,
+    functions: [{ name: 'sp01IdentityProbe', status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 }],
+    functionInvocationPerformed: false,
+    provesClientIdentityInvocation: false,
+    provesStoragePermissions: false,
+  });
   a.equal(audit.cloudCapabilityTestPlan.currentDatabaseCollectionCount, 1);
   a.equal(audit.cloudCapabilityTestPlan.currentDatabaseCollectionEvidenceSource, 'user-prepare-response-and-cli-listCollections-after-run-timeout; fixed collection exists with zero current records');
   a.equal(audit.cloudCapabilityTestPlan.separateTestEnvironmentVerified, false);
