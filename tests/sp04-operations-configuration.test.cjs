@@ -62,7 +62,7 @@ test('SP04 reflects the target-project read-only CLI evidence without claiming a
   assert.equal(project.environmentIdConfigured, true);
   assert.equal(project.appJsEnvironmentValue, record.environmentDetailsScreenshot.visibleEnvironmentId);
   assert.ok(task.executionProgress.completedChecks.some((item) => item.includes('目标AppID') && item.includes('0个云函数') && item.includes('0个数据库集合')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径仍未核实')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径、IDE为何未列出目标环境仍未核实')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('该QuickStart仍未配置EnvId')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('待只读桥接恢复后核验')));
   assert.ok(doc.includes('cloud_fn_list'));
@@ -275,23 +275,33 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
     targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
     sourceRecord: 'docs/sp01-technical-environment-20261027.md',
     runtimeOptionsRecorded: true,
-    runtimeChoiceConfirmed: false,
-    databaseModeConfirmed: false,
+    runtimeChoiceConfirmed: true,
+    runtimeChoice: 'Node.js 20.19',
+    runtimeCreatedOrExecuted: false,
+    databaseModeUserReported: '文档型数据库',
+    databaseModeApiVerified: false,
     storageRootEmptyAndPermissionObserved: true,
-    devtoolsEnvironmentSelectorEmpty: true,
+    cloudfunctionsFolderCurrentEnvironmentNone: true,
+    devtoolsEnvironmentSubmenuEmpty: true,
+    appJsInitTargetsEnvironment: true,
+    envListImportedByProjectCode: false,
     cloudSettingsChanged: false,
   });
   const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
   assert.equal(e06.passed, false);
-  assert.ok(e06.reason.includes('最新开发者工具截图显示当前环境为无、函数子菜单为空，本地envList仍为空'));
-  assert.ok(e06.reason.includes('运行时选择和数据库模式仍未确认'));
-  assert.ok(record.remainingChecks.some((item) => item.includes('核对envList与app.js环境绑定的关系')));
+  assert.ok(e06.reason.includes('最新开发者工具截图显示cloudfunctions根目录的当前环境为无、子菜单为空'));
+  assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
+  assert.ok(e06.reason.includes('用户已确认Node.js 20.19，但云函数尚未创建或运行'));
+  assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
+  assert.ok(record.remainingChecks.some((item) => item.includes('核对开发者工具是否能为cloudfunctions根目录选择cloud1')));
   assert.equal(record.cloudWritesOrDeploymentPerformed, false);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));
-  assert.ok(doc.includes('开发者工具截图的云函数菜单显示“当前环境：(无)”'));
-  assert.ok(doc.includes('运行时选择和数据库模式仍未确认'));
-  assert.ok(doc.includes('未修改云端设置'));
+  assert.ok(doc.includes('开发者工具截图显示项目根目录`cloudfunctions`文件夹的右键菜单为“当前环境：(无)”'));
+  assert.ok(doc.includes('`cloudfunctions`根目录的“当前环境”菜单决定云函数上传部署目标'));
+  assert.ok(doc.includes('用户已确认首版采用Node.js 20.19'));
+  assert.ok(doc.includes('用户随后查看“数据库→数据库设置”并报告为“文档型数据库”，该信息尚未由只读API复核'));
+  assert.ok(doc.includes('未修改项目配置或云端设置'));
 });
 
 test('SP04 preserves the confirmed shared-account and no-24-hour operating rules', () => {
