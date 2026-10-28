@@ -15,6 +15,9 @@ function evidence() {
 
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {
   const record = evidence();
+  assert.equal(record.date, '2026-10-27');
+  assert.equal(record.lastUpdated, '2026-10-28');
+  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('创建日期：2026-10-27；最近更新：2026-10-28'));
   assert.equal(record.cloudConsoleScreenshot.name, 'user-provided-2026-10-27');
   assert.equal(record.cloudConsoleScreenshot.visibleEnvironmentName, 'cloud1');
   assert.equal(record.cloudConsoleScreenshot.visibleBadge, '微信体验版');
@@ -105,8 +108,8 @@ test('SP04 records the DevTools project list without claiming all local projects
   });
   assert.ok(record.remainingChecks.some((item) => item.includes('列表外或其他账号/设备')));
   const doc = read('docs/sp04-operations-configuration-20261027.md');
-  assert.ok(doc.includes('目标新AppID对应工程未出现在当前列表中'));
-  assert.ok(doc.includes('此结果仅适用于该开发者工具当前显示的已登记工程列表'));
+  assert.ok(doc.includes('目标新AppID对应工程当时未出现在当前列表中'));
+  assert.ok(doc.includes('此结果仅适用于该开发者工具当时显示的已登记工程列表'));
 });
 
 test('SP04 keeps an inaccessible official category source separate from eligibility conclusions', () => {

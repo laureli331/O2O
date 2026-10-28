@@ -91,8 +91,11 @@
     "formalNewAppId": "wx2414399d423dfb65",
     "formalNewAppIdEvidence": "user-report-and-project-record-not-live-platform-verification",
     "formalNewAppIdSource": "docs/miniapp-filing-progress-20261018.md",
-    "formalNewEnvironmentId": null,
-    "formalNewEnvironmentStatus": "not-verified",
+    "formalNewEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+    "formalNewEnvironmentStatus": "user-confirmed-created-not-api-verified",
+    "formalNewEnvironmentIdEvidenceLevel": "user-screenshot-and-explicit-user-confirmation-not-api-verified",
+    "formalNewEnvironmentCreatedFromTargetProjectConfirmedByUser": true,
+    "formalNewEnvironmentConfirmationDate": "2026-10-28",
     "newSubjectCloudDevelopmentOpeningStatus": "user-reported-free-experience-opened-screenshot-shows-cloud1",
     "newAppIdCurrentProjectConfirmedByUser": false,
     "historicalUserReportCurrentProjectAppIdMatch": true,
@@ -182,6 +185,10 @@
       "configuredAppIdMatchesFormalTarget": true,
       "scaffoldOnly": true,
       "environmentIdConfigured": false,
+      "confirmedCloudEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+      "userConfirmedCloudEnvironmentCreatedFromTargetProject": true,
+      "cloudEnvironmentBindingApiVerified": false,
+      "cloudEnvironmentConfirmationDate": "2026-10-28",
       "appJsEnvironmentValue": "",
       "envListIsEmpty": true,
       "cloudConsoleScreenshot": {
@@ -269,6 +276,8 @@
         "targetAppId": "wx2414399d423dfb65",
         "miniProgramReleaseChannelVerified": false,
         "environmentBindingToTargetAppIdVerified": false,
+        "userConfirmedCloudEnvironmentCreatedFromTargetProject": true,
+        "environmentIdFromUserEvidence": "cloud1-d2gjahlq39bf141c7",
         "exactPlanAndExpiryVerified": false,
         "paidOrderVerified": false,
         "freeEnvironmentStatusVerified": false
@@ -604,7 +613,8 @@
           "用户最初截图显示目标AppID wx2414399d423dfb65已选中、条款框未勾选；后续只读实时画面显示目标AppID与微信云开发仍选中、条款框已勾选但操作人无法确认，创建向导仍打开且项目尚未创建，默认目录也不存在；预览cloud1不证明环境归属",
           "旧AppID wx358290e451cb06e7只读查询返回cloud1-d1g1mv89t76512a25；不证明新AppID环境状态",
           "只读检查用户在E:\\O2O\\miniprogram创建的CloudBase QuickStart工程；project.config.json配置AppID wx2414399d423dfb65并与目标一致，但仅为模板脚手架，不是产品实现；app.js的env为空且envList为空，项目尚未绑定环境ID",
-          "较早的控制台概览截图显示cloud1/微信体验版和暂无数据；设置截图显示环境ID cloud1-d2gjahlq39bf141c7且位于权限设置页；最新费用管理截图显示当前标签微信体验版、40,000点/月、19.9元/月购买按钮、按量付费与自动续费均关闭，但没有显示环境ID、AppID、到期日或历史账单。用户报告没有付费；购买价格展示不证明已付费，环境归属目标AppID及准确计费期限仍未证实",
+          "截至当时，较早的控制台概览截图显示cloud1/微信体验版和暂无数据；设置截图显示环境ID cloud1-d2gjahlq39bf141c7且位于权限设置页；最新费用管理截图显示当前标签微信体验版、40,000点/月、19.9元/月购买按钮、按量付费与自动续费均关闭，但没有显示环境ID、AppID、到期日或历史账单。用户报告没有付费；购买价格展示不证明已付费，环境归属当时仍未证实",
+          "2026-10-28用户明确确认：截图中的CloudBase cloud1是在目标AppID wx2414399d423dfb65的E:\\O2O\\miniprogram项目中创建；结合设置截图所示环境ID cloud1-d2gjahlq39bf141c7，记录为用户确认的目标项目环境，但尚未通过开发者工具接口核验；QuickStart的app.js env仍为空且envList为空",
           "复核CloudBase当前价格文档（2026-08-31更新）及套餐说明（2026-10-26更新）：免费体验额度/限制适用于控制台免费体验；文档同时提示微信开发者工具创建的免费期环境可能仍属历史套餐版本，不能把公开的3000点、续期或到期规则直接套用到截图中的微信体验版",
           "按当前仍处于开发和受控验证阶段，建议先用免费体验环境，不购买19.9元/月付费套餐；遇到实际功能/额度限制或准备上线时，再依据控制台环境详情、用量和费用重新评估",
           "预览根地址返回目录列表，不是单页原型入口",
@@ -612,10 +622,10 @@
         ],
         "blockedChecks": [
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
-          "用户已创建目标AppID匹配的CloudBase QuickStart模板；最新费用管理截图显示微信体验版标签、40,000点/月和19.9元/月购买按钮，按量付费与自动续费均关闭，但没有显示环境ID、AppID、到期日或历史账单；项目app.js的env为空且envList为空，环境绑定和适用套餐仍未核实。官方当前免费体验额度为3,000点/月、个人版为40,000点/月且19.9元/月；截图的购买按钮和套餐标签无法证明已有付费订阅。旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
+          "用户明确确认cloud1（设置截图中的环境ID cloud1-d2gjahlq39bf141c7）由目标AppID wx2414399d423dfb65的项目创建；此归属是用户确认，尚未通过平台接口核验。QuickStart app.js的env为空、envList为空，代码仍未绑定环境ID；套餐/账单/到期核查按用户要求本轮略过，不作为当前任务阻塞。旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "开发与受控测试阶段暂不购买付费套餐。旧号个人主体的cloud1不再作为新号共享候选。正式发布准备时，先只读取证确认目标AppID绑定的EnvId、环境类型和准确到期日；若确属发布后第15天到期的免费CloudBase环境且继续使用，则安排到期前转付费以避免停服。个人版当前¥19.9/月为限时优惠，最终套餐与价格以届时控制台为准。若要核对现有订单或支出，只读查看“我的订单”和“充值与账单”，不要购买或开启计费；目标EnvId确认且只读桥接恢复后，可使用DescribeBillingInfo核验计费状态和到期日。"
+      "nextAction": "用户已明确确认截图中的cloud1（EnvId cloud1-d2gjahlq39bf141c7）是在目标AppID wx2414399d423dfb65项目中创建；记录为用户确认，开发者工具接口仍未核验。旧号个人主体的cloud1不再作为新号共享候选。用户要求本轮不再核对费用；若上线后出现平台付费提示，由用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。当前真实阻塞是本地开发者工具桥接CONNECT_ERROR，以及目标环境运行时、数据库模式、事务和私密文件权限尚未实测。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
@@ -821,6 +831,7 @@
         "date": "2026-10-27",
         "completedChecks": [
           "用户截图中的cloud1名称、微信体验版标记和空态已记录；截图未显示AppID，未将其归属到新AppID",
+      "2026-10-28用户明确确认目标AppID wx2414399d423dfb65的E:\\O2O\\miniprogram项目创建了cloud1；设置截图显示EnvId cloud1-d2gjahlq39bf141c7，归属为用户确认、尚未由平台接口核验",
           "既有确认的共用管理账号、账号级日志、无双人复核和不承诺24小时值守规则已核对",
           "用户确认首发开放湘阴渡社区、高矿社区、松柏村、堡口村、油塘村、滩头村、田心村、南塘村、胜利村、湘阴村，并开放家电维修、二手信息、代买代取代送三类项目服务",
           "用户确认伙伴09:00—17:00、本人17:00—22:00为管理查看/交接时段，顾客服务时段09:00—22:00，22:00后请求次日处理",
@@ -830,7 +841,7 @@
         ],
         "blockedChecks": [
           "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认",
-          "目标新AppID自己的CloudBase环境归属/是否存在、项目托管/登录配置、自定义域名和可行费用尚未验证；旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提"
+      "目标新AppID自己的CloudBase环境已由用户确认创建，但开发者工具接口、运行时、项目托管/登录配置和自定义域名仍未验证；旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
         ],
         "evidence": [
           "docs/sp04-operations-configuration-20261027.md",
