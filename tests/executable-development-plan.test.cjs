@@ -570,14 +570,32 @@ test('SP01 records simulator compilation separately from cloud identity, storage
     preflightFunctionCount: 0,
     preflightStorageFileCount: 0,
     firstAttempt: 'code-update-rejected-while-creating',
-    retry: { status: 'success', filesCount: 5833, packSize: '6.7 MB' },
+    retry: {
+      status: 'success',
+      filesCount: 5833,
+      packSize: '6.7 MB',
+      confirmationTaskId: 'confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b',
+    },
     postDeploymentReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
+  });
+  a.deepEqual(probe.latestPreClientRunReadOnlyCheck, {
+    date: '2026-10-28',
+    source: 'wechatide-cli-cloud_fn_list-cloud_fn_info-cloud_query_storage-read-only',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    functionNames: ['sp01IdentityProbe'],
+    functionInfo: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
+    storagePath: 'sp01_permission_probe/',
+    storageObjectCount: 0,
   });
   a.equal(probe.clientInvocationCompleted, false);
   a.equal(probe.probeCloudStorageWrittenOrDeleted, false);
   a.equal(probe.realDeviceRun, false);
   a.equal(probe.nextCloudActionRequiresNewAuthorization, false);
   a.equal(probe.pendingCloudStep, 'account-A-create-synthetic-file-then-account-B-identity-comparison-and-conditional-access-test');
+  const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
+  a(runbook.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
+  a(runbook.includes('execution_success'));
   a.equal(probe.quickStartModified, false);
   a.equal(record.tasks.find((task) => task.id === 'SP01').productAcceptancePassed, false);
   a(plan.includes('开发者工具 CLI 导入项目列表'));

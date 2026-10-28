@@ -1862,13 +1862,30 @@
             "retry": {
               "status": "success",
               "filesCount": 5833,
-              "packSize": "6.7 MB"
+              "packSize": "6.7 MB",
+              "confirmationTaskId": "confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b"
             },
             "postDeploymentReadOnly": {
               "status": "Active",
               "runtime": "Nodejs16.13",
               "timeoutSeconds": 3
             }
+          },
+          "latestPreClientRunReadOnlyCheck": {
+            "date": "2026-10-28",
+            "source": "wechatide-cli-cloud_fn_list-cloud_fn_info-cloud_query_storage-read-only",
+            "targetAppId": "wx2414399d423dfb65",
+            "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+            "functionNames": [
+              "sp01IdentityProbe"
+            ],
+            "functionInfo": {
+              "status": "Active",
+              "runtime": "Nodejs16.13",
+              "timeoutSeconds": 3
+            },
+            "storagePath": "sp01_permission_probe/",
+            "storageObjectCount": 0
           },
           "clientInvocationCompleted": false,
           "pendingCloudStep": "account-A-create-synthetic-file-then-account-B-identity-comparison-and-conditional-access-test"
@@ -2148,7 +2165,8 @@
           "retry": {
             "status": "success",
             "filesCount": 5833,
-            "packSize": "6.7 MB"
+            "packSize": "6.7 MB",
+            "confirmationTaskId": "confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b"
           },
           "postDeploymentReadOnly": {
             "status": "Active",

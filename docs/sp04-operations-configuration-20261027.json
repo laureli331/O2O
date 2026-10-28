@@ -901,7 +901,8 @@
     "retry": {
       "status": "success",
       "filesCount": 5833,
-      "packSize": "6.7 MB"
+      "packSize": "6.7 MB",
+      "confirmationTaskId": "confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b"
     },
     "postDeploymentReadOnly": {
       "status": "Active",

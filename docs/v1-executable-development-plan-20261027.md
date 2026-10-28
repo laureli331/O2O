@@ -12,6 +12,10 @@
 
 用户确认本次代码更新后，本轮安装目录CLI使用明确的目标AppID和EnvID只读执行`cloud_fn_list`与`cloud_fn_info`：列表总数为1，仅有`sp01IdentityProbe`，详情为Active / Nodejs16.13 / 3秒。该检查未调用函数；不能证明微信客户端身份通路或文件权限。
 
+对应的部署确认任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`现已返回`success / execution_success`，上传5833个文件、6.7 MB；部署后函数仍为Active / Nodejs16.13 / 3秒。客户端身份函数调用及本轮文件写入尚未发生。
+
+紧邻真实手机测试前的只读预检确认目标环境仅有`sp01IdentityProbe`，状态Active / Nodejs16.13 / 3秒，且`sp01_permission_probe/`目录为0个文件；这是本轮开始前的基线，不是客户端验收结果。
+
 为定位此前“第二账号”是否实际与文件创建者使用同一微信身份，新增独立工程[tools/sp01-storage-probe](../tools/sp01-storage-probe/README.md)，固定目标AppID/EnvID，不改动`E:\O2O\miniprogram` QuickStart。账号A创建合成文件并分享一次性测试包；账号B先通过小程序云函数获取当前身份的短摘要，只有摘要与A不同才继续。之后依次测试临时链接、直接下载和同路径合成覆盖写；短链接不显示，下载内容只与合成证明比较，覆盖写若成功会立即尝试按返回的确切fileID删除。错误码不明确时记为“无法判定”，不当作权限拒绝。云函数只从小程序端读取`getWXContext()`，不接收事件里伪造的身份字段，也不返回或记录原始`OPENID`。
 
 独立工程已由开发者工具 CLI 导入项目列表，并在单独轻量窗口中打开模拟器页面`pages/index/index`；CLI 返回页面打开成功，模拟器筛选日志中没有匹配`error`的行。该证据只说明页面在开发者工具模拟器中编译并打开，不证明云函数身份通路、云存储权限或真机行为。单独的模板摘要命令未返回结果并已取消，没有记为通过。主QuickStart工程未打开或修改。

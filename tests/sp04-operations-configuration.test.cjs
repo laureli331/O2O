@@ -30,7 +30,12 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
     preflightFunctionCount: 0,
     preflightStorageObjectCount: 0,
     firstAttempt: 'code-update-rejected-while-creating',
-    retry: { status: 'success', filesCount: 5833, packSize: '6.7 MB' },
+    retry: {
+      status: 'success',
+      filesCount: 5833,
+      packSize: '6.7 MB',
+      confirmationTaskId: 'confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b',
+    },
     postDeploymentReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
     simulatorPageOpened: true,
     clientInvocationVerified: false,
@@ -51,6 +56,8 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
   assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.nonOfficialResultsUsedAsEvidence, false);
   assert.ok(doc.includes('当前身份探针状态：`sp01IdentityProbe`'));
   assert.ok(doc.includes('Nodejs16.13 / 3秒'));
+  assert.ok(doc.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
+  assert.ok(doc.includes('execution_success'));
   assert.ok(doc.includes('开发者工具模拟器打开不证明小程序运行时连接或跨账号文件隔离'));
 });
 
