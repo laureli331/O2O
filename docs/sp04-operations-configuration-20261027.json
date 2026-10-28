@@ -427,7 +427,7 @@
     "用户已复查cloudfunctions根目录环境菜单并报告仍为空（导入前）；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1并报告当前环境已选中cloud1（均无截图）。首轮SP01截图回显输入事件并出现Hello World/运行上下文；首轮临时函数随后由用户删除。首轮删除后的CLI函数列表和数据库集合列表为空，仅为历史状态。旧事务探针阶段的恢复状态见latestProbeDeploymentRecovery：当时函数Active/Nodejs20.19，代码上传、inspect和prepare通过；之后已删除。最新身份探针状态见latestIdentityProbeDeployment。修正前30秒run失败及其失败后记录不确定状态均为历史；旧run之后经inspectRun核对并定向清理。修正版新run返回success:true，事务检查和自动清理通过。用户随后报告已删除临时函数，最新只读cloud_fn_list返回total:0、list:[]。此前一次性云端写入授权已使用，任何后续云端写入需另行授权。",
     "用户已复查cloudfunctions根目录环境菜单并报告仍为空（导入前）；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1并报告当前环境已选中cloud1（均无截图）。首次SP01探针部署、首轮不匹配测试和用户删除均为历史状态。旧事务探针阶段的恢复状态见latestProbeDeploymentRecovery：当时Active/Nodejs20.19，上传、inspect与prepare通过，之后已删除；最新身份探针状态见latestIdentityProbeDeployment；修正版新run返回success:true，提交、回滚、并发和自动清理断言均通过；修正前失败run的三条自有记录已清理回查。postTimeoutReadOnlyCheckBeforeTimeoutAdjustment仅记录3秒超时后的集合/记录计数，不能代替当前状态。数据库模式由后续DescribeEnvs回包结合官方资源映射支持确认；SP04运营写入、产品部署、存储权限和正式托管仍未验收。",
     "本地身份探针源码已补上创建者临时文件清理保护，22项本地测试通过；这项改动未部署或推送。当前二维码不含该修正，真实客户端测试前需刷新独立预览。一次性身份/存储验证授权仍待客户端使用，本地源码修正未写入云端。",
-    "真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；函数详情底部未见日志配置/主题，运行时Nodejs16.13、超时3秒；未改设置、未重跑。当前不能判定请求是否到达或失败根因；仅继续只读核对日志设置入口。"
+    "真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；之后只读查看日志设置菜单，看到设置列显示字段、设置保存时长、投递到CLS、删除日志四项；没有选择菜单项，CLS投递和保存时长状态未知。Nodejs16.13在官方支持列表中，但部署包兼容性、请求是否到达或失败根因仍未确认；未获新授权前不改设置、不重试。"
   ],
   "rollback": "本阶段只回退本阶段自己的文档和测试提交，不重置整个工作区、不触碰用户已有改动。首轮临时云函数删除与修正版恢复部署均为历史操作。修正版最新事务探针返回success:true，提交、回滚、并发与自动清理断言通过；修正前失败run的三条自有记录也已定向清理并回查。固定集合保留，不删除集合或非本轮记录。此前一次性云端写入授权已使用；后续任何云端写入、清理或部署均需先确认具体范围。用户报告已删除旧事务函数`sp01EnvProbe`后，对目标AppID和EnvID执行只读cloud_fn_list，返回total:0、list:[]；之后单独部署的`sp01IdentityProbe`当前Active，预览包已成功推送/生成二维码，客户端验收仍待用户执行。",
   "latestUserReportedAccountAssociationCheck": {
@@ -1033,7 +1033,7 @@
   },
   "latestIdentityProbeLogInspection": {
     "date": "2026-10-28",
-    "source": "user-reported-cloudbase-filtered-log-query-and-function-detail-observation",
+    "source": "user-reported-cloudbase-filtered-log-query-function-detail-and-log-settings-menu-observation",
     "targetAppId": "wx2414399d423dfb65",
     "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
     "functionName": "sp01IdentityProbe",
@@ -1047,15 +1047,32 @@
       "functionFilter": "sp01IdentityProbe",
       "timeRange": "最近24小时",
       "logSettingsControlVisible": true,
-      "logSettingsMenuOpened": false,
+      "logSettingsMenuOpened": true,
+      "logSettingsMenuItems": [
+        "设置列显示字段",
+        "设置保存时长",
+        "投递到 CLS",
+        "删除日志"
+      ],
       "searchButtonVisible": true,
       "searchAction": "queried",
       "searchResult": "no-records-reported"
     },
+    "clsDeliveryState": "unknown-not-selected",
+    "retentionSettingState": "unknown-not-selected",
     "settingsChanged": false,
     "clientRetestPerformed": false,
     "invocationArrivalConfirmed": false,
     "failureCauseDetermined": false,
+    "runtimeCompatibilityReview": {
+      "date": "2026-10-28",
+      "source": "official-cloudbase-runtime-support-document-read-only-review",
+      "runtime": "Nodejs16.13",
+      "listedAsSupported": true,
+      "officialSource": "https://docs.cloudbase.net/cloud-function/runtime-support",
+      "deployedPackageCompatibilityVerified": false,
+      "failureCauseDetermined": false
+    },
     "queryOrRefreshAction": "user-reported-filtered-query"
   }
 }

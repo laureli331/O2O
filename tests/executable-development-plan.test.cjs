@@ -614,18 +614,30 @@ test('SP01 records simulator compilation separately from cloud identity, storage
     functionFilter: 'sp01IdentityProbe',
     timeRange: '最近24小时',
     logSettingsControlVisible: true,
-    logSettingsMenuOpened: false,
+    logSettingsMenuOpened: true,
+    logSettingsMenuItems: ['设置列显示字段', '设置保存时长', '投递到 CLS', '删除日志'],
     searchButtonVisible: true,
     searchAction: 'queried',
     searchResult: 'no-records-reported',
   });
+  a.equal(probe.latestIdentityProbeLogInspection.clsDeliveryState, 'unknown-not-selected');
+  a.equal(probe.latestIdentityProbeLogInspection.retentionSettingState, 'unknown-not-selected');
   a.equal(probe.latestIdentityProbeLogInspection.logsPageOpenedAfterClientAttempt, true);
   a.equal(probe.latestIdentityProbeLogInspection.queryOrRefreshAction, 'user-reported-filtered-query');
   a.equal(probe.latestIdentityProbeLogInspection.invocationArrivalConfirmed, false);
+  a.deepEqual(probe.latestIdentityProbeLogInspection.runtimeCompatibilityReview, {
+    date: '2026-10-28',
+    source: 'official-cloudbase-runtime-support-document-read-only-review',
+    runtime: 'Nodejs16.13',
+    listedAsSupported: true,
+    officialSource: 'https://docs.cloudbase.net/cloud-function/runtime-support',
+    deployedPackageCompatibilityVerified: false,
+    failureCauseDetermined: false,
+  });
+  a.equal(probe.pendingCloudStep, 'no-cloud-retest-or-settings-change-without-new-authorization');
   a.equal(probe.probeCloudStorageWrittenOrDeleted, false);
   a.equal(probe.realDeviceRun, false);
-  a.equal(probe.nextCloudActionRequiresNewAuthorization, false);
-  a.equal(probe.pendingCloudStep, 'read-only-inspect-cloudbase-log-settings-menu; do-not-retry');
+  a.equal(probe.nextCloudActionRequiresNewAuthorization, true);
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
   a(runbook.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
   a(runbook.includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
@@ -1071,18 +1083,34 @@ test('SP01 records the selected menu separately from the deployed temporary prob
   functionFilter:'sp01IdentityProbe',
   timeRange:'最近24小时',
   logSettingsControlVisible:true,
-  logSettingsMenuOpened:false,
+   logSettingsMenuOpened:true,
+   logSettingsMenuItems:['设置列显示字段','设置保存时长','投递到 CLS','删除日志'],
   searchButtonVisible:true,
   searchAction:'queried',
   searchResult:'no-records-reported',
  });
+ a.equal(sp04.latestIdentityProbeLogInspection.clsDeliveryState,'unknown-not-selected');
+ a.equal(sp04.latestIdentityProbeLogInspection.retentionSettingState,'unknown-not-selected');
  a.equal(sp04.latestIdentityProbeLogInspection.queryOrRefreshAction,'user-reported-filtered-query');
  a.equal(sp04.latestIdentityProbeLogInspection.settingsChanged,false);
  a.equal(sp04.latestIdentityProbeLogInspection.clientRetestPerformed,false);
+ const runtimeReview={
+  date:'2026-10-28',
+  source:'official-cloudbase-runtime-support-document-read-only-review',
+  runtime:'Nodejs16.13',
+  listedAsSupported:true,
+  officialSource:'https://docs.cloudbase.net/cloud-function/runtime-support',
+  deployedPackageCompatibilityVerified:false,
+  failureCauseDetermined:false,
+ };
+  a.deepEqual(sp04.latestIdentityProbeLogInspection.runtimeCompatibilityReview,runtimeReview);
+  a.deepEqual(sp04Task.executionProgress.latestIdentityProbeLogInspection.runtimeCompatibilityReview,runtimeReview);
  a.equal(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix.clientRetestPerformed,true);
  a(sp04Task.executionProgress.nextAction.includes('IDENTITY_CALL_FAILED'));
- a(sp04Task.executionProgress.nextAction.includes('仅继续只读核对日志设置入口'));
- a(sp04Task.executionProgress.nextAction.includes('不重复调用'));
+  a(sp04Task.executionProgress.nextAction.includes('官方支持列表包含Nodejs16.13'));
+ a(sp04Task.executionProgress.nextAction.includes('未选择菜单项'));
+ a(sp04Task.executionProgress.nextAction.includes('CLS投递及保存时长状态未知'));
+ a(sp04Task.executionProgress.nextAction.includes('未获新授权前不改设置、不重试'));
  a(!sp04Task.executionProgress.nextAction.includes('账号A在真实微信客户端扫码打开隔离探针'));
  a(read('docs/sp01-cloud-probe-runbook-20261028.md').includes('O2O-SP01-preview-20261028-193939.jpg'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);

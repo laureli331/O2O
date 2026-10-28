@@ -693,10 +693,22 @@ test('CloudBase filtered log query records no matching events without inferring 
     functionFilter: 'sp01IdentityProbe',
     timeRange: '最近24小时',
     logSettingsControlVisible: true,
-    logSettingsMenuOpened: false,
+    logSettingsMenuOpened: true,
+    logSettingsMenuItems: ['设置列显示字段', '设置保存时长', '投递到 CLS', '删除日志'],
     searchButtonVisible: true,
     searchAction: 'queried',
     searchResult: 'no-records-reported',
+  });
+  assert.equal(observation.clsDeliveryState, 'unknown-not-selected');
+  assert.equal(observation.retentionSettingState, 'unknown-not-selected');
+  assert.deepEqual(observation.runtimeCompatibilityReview, {
+    date: '2026-10-28',
+    source: 'official-cloudbase-runtime-support-document-read-only-review',
+    runtime: 'Nodejs16.13',
+    listedAsSupported: true,
+    officialSource: 'https://docs.cloudbase.net/cloud-function/runtime-support',
+    deployedPackageCompatibilityVerified: false,
+    failureCauseDetermined: false,
   });
   assert.equal(observation.functionDetailLogConfigurationOrTopicVisible, false);
   assert.equal(observation.invocationArrivalConfirmed, false);
@@ -704,9 +716,11 @@ test('CloudBase filtered log query records no matching events without inferring 
   assert.equal(observation.queryOrRefreshAction, 'user-reported-filtered-query');
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
   assert.ok(runbook.includes('用户随后按函数筛选`sp01IdentityProbe`并查询最近24小时，报告无记录'));
-  assert.ok(runbook.includes('右上“日志设置”入口'));
-  assert.ok(runbook.includes('菜单未打开'));
-  assert.ok(read('docs/sp01-technical-environment-20261027.md').includes('按`sp01IdentityProbe`筛选并查询最近24小时，报告无记录'));
+  assert.ok(runbook.includes('右上可见“日志设置”入口'));
+  assert.ok(runbook.includes('没有选择任何一项'));
+  assert.ok(runbook.includes('当时尚未打开“日志设置”菜单'));
+  assert.ok(runbook.includes('官方[CloudBase运行环境支持表]'));
+  assert.ok(read('docs/sp01-technical-environment-20261027.md').includes('按`sp01IdentityProbe`筛选并查询最近24小时后报告无记录'));
   assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('按`sp01IdentityProbe`筛选并查询最近24小时后报告无记录'));
 });
 
@@ -733,7 +747,7 @@ test('SP04 records the latest read-only identity-probe status without treating i
   assert.ok(sp01.executionProgress.completedChecks.includes(evidenceText));
   assert.ok(sp04.executionProgress.completedChecks.includes(evidenceText));
   assert.deepEqual(sp04.executionProgress.latestIdentityProbePostConfirmationReadOnlyCheck, expected);
-  assert.deepEqual(record.remainingChecks.at(-1), '真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；函数详情底部未见日志配置/主题，运行时Nodejs16.13、超时3秒；未改设置、未重跑。当前不能判定请求是否到达或失败根因；仅继续只读核对日志设置入口。');
+  assert.deepEqual(record.remainingChecks.at(-1), '真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；之后只读查看日志设置菜单，看到设置列显示字段、设置保存时长、投递到CLS、删除日志四项；没有选择菜单项，CLS投递和保存时长状态未知。Nodejs16.13在官方支持列表中，但部署包兼容性、请求是否到达或失败根因仍未确认；未获新授权前不改设置、不重试。');
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('用户报告真实客户端调用返回`IDENTITY_CALL_FAILED`'));
 });
