@@ -31,6 +31,18 @@
     "confirmationEvidenceLevel": "explicit-user-confirmation-not-platform-api-verified",
     "interpretation": "截图只记录页面上可见的名称和空态，不证明该环境绑定哪个AppID、当前AppID是否已接通、是否具有运行所需权限。"
   },
+  "environmentDetailsScreenshot": {
+    "source": "user-provided-screenshot-codex-clipboard-735eb7db-3e6f-4f27-b5c0-040361142474.png",
+    "receivedDate": "2026-10-28",
+    "visibleEnvironmentScope": "我的环境",
+    "visibleApplicationName": "湘邻湘友",
+    "visibleAppId": "wx2414399d423dfb65",
+    "visibleEnvironmentName": "cloud1",
+    "visibleEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+    "visibleCreatedAt": "2026-10-27 22:28:44",
+    "provesTargetAppEnvironmentAssociation": true,
+    "provesCloudBaseApiOrRuntimeAccess": false
+  },
   "appIdCrossCheck": {
     "currentProjectAppId": "wx358290e451cb06e7",
     "currentProjectAppIdConfirmedByUser": false,

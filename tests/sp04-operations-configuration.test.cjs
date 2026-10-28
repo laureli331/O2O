@@ -28,6 +28,23 @@ test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence
   assert.equal(record.cloudConsoleScreenshot.provesNewAppIdConnection, false);
 });
 
+test('SP04 records the CloudBase detail screenshot as visible AppID-to-environment evidence', () => {
+  const record = evidence();
+  assert.deepEqual(record.environmentDetailsScreenshot, {
+    source: 'user-provided-screenshot-codex-clipboard-735eb7db-3e6f-4f27-b5c0-040361142474.png',
+    receivedDate: '2026-10-28',
+    visibleEnvironmentScope: '我的环境',
+    visibleApplicationName: '湘邻湘友',
+    visibleAppId: 'wx2414399d423dfb65',
+    visibleEnvironmentName: 'cloud1',
+    visibleEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    visibleCreatedAt: '2026-10-27 22:28:44',
+    provesTargetAppEnvironmentAssociation: true,
+    provesCloudBaseApiOrRuntimeAccess: false,
+  });
+  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('页面同屏显示目标 AppID `wx2414399d423dfb65` 和环境 ID `cloud1-d2gjahlq39bf141c7`'));
+});
+
 test('SP04 records that the open diagnostic project uses the old AppID, not the new target', () => {
   const crossCheck = evidence().appIdCrossCheck;
   assert.deepEqual(crossCheck, {
