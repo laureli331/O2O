@@ -938,7 +938,9 @@
           "2026-10-28用户确认首版云函数采用Node.js 20.19；用户查看数据库设置后报告为文档型数据库。两项确认分别留档，但云函数未创建/运行，数据库模式未由API复核",
           "2026-10-28用户按只读核对请求复查目标工程E:\\O2O\\miniprogram的cloudfunctions根目录“当前环境”菜单，回复“菜单仍为空”；该回复未附新截图，未核实账号关联或环境导入，也未执行导入或部署。",
           "2026-10-28用户在腾讯云账号中心只读查看后报告目标小程序已关联；未附截图。环境导入和云函数部署均未执行",
-          "2026-10-28用户报告已将目标AppID的cloud1导入开发者工具（无截图）；导入后直接安装目录CLI按目标AppID及项目路径列出的环境均包含cloud1-d2gjahlq39bf141c7，project_list列出E:\\O2O\\miniprogram，cloud_fn_list返回0个函数。该只读CLI不能证明cloudfunctions文件夹菜单已更新；未部署或写入云资源。"
+          "2026-10-28用户报告已将目标AppID的cloud1导入开发者工具（无截图）；导入后直接安装目录CLI按目标AppID及项目路径列出的环境均包含cloud1-d2gjahlq39bf141c7，project_list列出E:\\O2O\\miniprogram，cloud_fn_list返回0个函数。该只读CLI不能证明cloudfunctions文件夹菜单已更新；未部署或写入云资源。",
+          "2026-10-28用户报告：导入后在目标工程E:\\O2O\\miniprogram的cloudfunctions根目录“当前环境”菜单中现在能选到cloud1（无截图）。仅记录菜单选项可选，不代表已选中、部署目标已设置或已部署；未执行云端写入/部署。",
+          "2026-10-28用户报告：导入后在目标工程E:\\O2O\\miniprogram的cloudfunctions根目录“当前环境”菜单中已选中cloud1（无截图）。这记录的是当前环境选中状态，不代表云函数已上传/部署或运行；本轮未执行云端写入/部署。"
         ],
         "latestReadOnlyCloudRecheck": {
           "date": "2026-10-28",
@@ -986,13 +988,13 @@
           "deploymentPerformed": false
         },
         "blockedChecks": [
-          "用户已确认Node.js 20.19，但云函数尚未创建或运行；用户查看后报告数据库为文档型数据库，CLI没有数据库模式查询且尚未API复核；事务未测试，存储当前选中仅创建者可读写，但私密文件角色、临时链接和撤权仍未实测。开发者工具cloudfunctions根目录环境菜单的早期截图显示(无)、子菜单为空；用户随后报告已导入cloud1（无截图），导入后菜单尚未复核，上传/部署目标仍未验证。该设置与app.js的wx.cloud.init运行时环境分开，当前模板代码未引用envList.js。云写入/部署测试未获授权",
+          "用户已确认Node.js 20.19，但云函数尚未创建或运行；用户查看后报告数据库为文档型数据库，CLI没有数据库模式查询且尚未API复核；事务未测试，存储当前选中仅创建者可读写，但私密文件角色、临时链接和撤权仍未实测。开发者工具cloudfunctions根目录环境菜单的早期截图显示(无)、子菜单为空；用户随后报告已导入cloud1（无截图），并报告导入后菜单已选中cloud1（无截图）；云函数上传、部署和运行仍未执行/验证。该设置与app.js的wx.cloud.init运行时环境分开，当前模板代码未引用envList.js。云写入/部署测试未获授权",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
           "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞",
-          "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；用户随后报告腾讯云账号中心已关联目标小程序并已导入cloud1（均未附截图）。导入后的目标AppID只读环境列表仍返回cloud1，云函数列表为0；导入后菜单状态、云函数部署目标及部署均未确认，云写入/部署测试未获授权。"
+          "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；用户随后报告腾讯云账号中心已关联目标小程序并已导入cloud1（均未附截图）。导入后的目标AppID只读环境列表仍返回cloud1，云函数列表为0；用户报告导入后菜单已选中cloud1（无截图），但云函数部署和运行尚未执行/验证；云写入/部署测试未获具体授权。"
         ],
-        "nextAction": "目标AppID的cloud_env_list按AppID和项目路径均返回cloud1-d2gjahlq39bf141c7，project_list确认E:\\O2O\\miniprogram已登记且AppID匹配；cloud_fn_list返回0个函数，数据库集合列表返回0项。用户复查cloudfunctions根目录环境菜单仍为空；其后报告腾讯云账号中心已关联目标小程序（未附截图），随后报告已导入cloud1（未附截图）。最新只读CLI结果不能读取cloudfunctions文件夹的当前环境菜单；下一步导入后复核cloudfunctions菜单，确认是否可选择cloud1，并确认活动窗口实际加载路径。用户已确认Node.js 20.19，报告数据库模式为文档型；函数尚未创建/运行，数据库模式尚未API复核，事务与私密文件权限边界仍需验证。后续云端写入/部署测试须先取得具体授权。公开/私有配置声明基础库2.20.1/3.17.5不一致，手机实际版本、浏览器兼容性与网络性能须实测。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理；不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。",
+        "nextAction": "目标AppID的cloud_env_list按AppID和项目路径均返回cloud1-d2gjahlq39bf141c7，project_list确认E:\\O2O\\miniprogram已登记且AppID匹配；cloud_fn_list返回0个函数，数据库集合列表返回0项。用户此前报告cloudfunctions根目录菜单仍为空（导入前）；其后报告腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并报告当前环境已选中cloud1（均未附截图）。选择状态按用户报告记录；活动窗口实际加载路径仍待核实。用户已确认首版Node.js 20.19，并报告数据库模式为文档型；函数尚未创建/部署/运行，数据库模式尚未API复核，事务与私密文件权限边界仍需验证。后续云端写入/部署测试须先取得具体授权。公开/私有配置声明基础库2.20.1/3.17.5不一致，手机实际版本、浏览器兼容性与网络性能须实测。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理；不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -1024,6 +1026,18 @@
           "cloudFunctionCount": 0,
           "runtimeExecutionVerified": false,
           "cloudWriteOrDeploymentPerformed": false
+        },
+        "latestUserReportedEnvironmentMenuAfterImport": {
+          "date": "2026-10-28",
+          "source": "user-reply-to-post-import-check",
+          "projectPath": "E:\\O2O\\miniprogram",
+          "folder": "cloudfunctions",
+          "result": "cloud1-selected",
+          "cloud1Selectable": true,
+          "selectionState": "selected",
+          "selectedEnvironmentName": "cloud1",
+          "screenshotProvided": false,
+          "deploymentPerformed": false
         }
       },
       "qualityContract": {
@@ -1243,8 +1257,8 @@
           "用户确认首版云函数运行时为Node.js 20.19；查看数据库设置后报告当前为文档型数据库。均与截图可见范围分开记载，云函数未创建/运行，数据库模式未API复核"
         ],
         "blockedChecks": [
-          "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户已确认Node.js 20.19并报告数据库为文档型数据库，但函数未创建/运行、数据库模式尚未API复核；cloudfunctions文件夹部署环境菜单仍为空，活动窗口项目路径、托管/登录配置和正式域名仍未核验。旧号与新号主体不同，旧cloud1不作为共享候选。费用核查按用户要求略过",
-          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；最新只读CLI仍返回cloud1、project_list列出目标工程、cloud_fn_list返回0个函数。用户报告已将cloud1导入（无截图），但cloudfunctions文件夹菜单尚未在导入后复核，部署目标仍待确认；本地envList仍为空。Node.js 20.19选择已确认，但云函数未创建/运行；文档型数据库为用户报告，尚未API复核。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
+          "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户已确认Node.js 20.19并报告数据库为文档型数据库，但函数未创建/运行、数据库模式尚未API复核；用户报告cloudfunctions文件夹当前环境已选中cloud1，活动窗口项目路径、托管/登录配置和正式域名仍未核验。旧号与新号主体不同，旧cloud1不作为共享候选。费用核查按用户要求略过",
+          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；最新只读CLI仍返回cloud1、project_list列出目标工程、cloud_fn_list返回0个函数。用户报告已将cloud1导入（无截图），用户报告菜单已选中cloud1，但云函数尚未部署且部署结果未验证；本地envList仍为空。Node.js 20.19选择已确认，但云函数未创建/运行；文档型数据库为用户报告，尚未API复核。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
         ],
         "evidence": [
           "docs/sp04-operations-configuration-20261027.md",
@@ -1272,6 +1286,18 @@
           "cloudFunctionCount": 0,
           "runtimeExecutionVerified": false,
           "cloudWriteOrDeploymentPerformed": false
+        },
+        "latestUserReportedEnvironmentMenuAfterImport": {
+          "date": "2026-10-28",
+          "source": "user-reply-to-post-import-check",
+          "projectPath": "E:\\O2O\\miniprogram",
+          "folder": "cloudfunctions",
+          "result": "cloud1-selected",
+          "cloud1Selectable": true,
+          "selectionState": "selected",
+          "selectedEnvironmentName": "cloud1",
+          "screenshotProvided": false,
+          "deploymentPerformed": false
         }
       },
       "qualityContract": {

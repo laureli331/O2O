@@ -63,7 +63,7 @@ test('SP04 reflects the target-project read-only CLI evidence without claiming a
   assert.equal(project.appJsEnvironmentValue, record.environmentDetailsScreenshot.visibleEnvironmentId);
   assert.ok(task.executionProgress.completedChecks.some((item) => item.includes('目标AppID') && item.includes('0个云函数') && item.includes('0个数据库集合')));
   assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径') && item.includes('仍未核实')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('导入后菜单状态仍待复核')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('导入后菜单已选中cloud1') && item.includes('上传/部署')));
   assert.ok(record.remainingChecks.some((item) => item.includes('在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('该QuickStart仍未配置EnvId')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('待只读桥接恢复后核验')));
@@ -292,8 +292,9 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
   assert.equal(e06.passed, false);
   assert.ok(e06.reason.includes('较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空'));
-  assert.ok(e06.reason.includes('随后报告已导入cloud1'));
-  assert.ok(e06.reason.includes('导入后菜单状态仍未复核'));
+  assert.ok(e06.reason.includes('已导入cloud1'));
+  assert.ok(e06.reason.includes('报告当前环境已选中cloud1'));
+  assert.ok(e06.reason.includes('未证明函数上传、部署或运行'));
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
   assert.ok(e06.reason.includes('用户已确认Node.js 20.19，但云函数尚未创建或运行'));
   assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
@@ -310,12 +311,13 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   const accountRemaining = record.remainingChecks.find((item) => item.includes('用户已复查cloudfunctions根目录环境菜单并报告仍为空'));
   assert.ok(accountRemaining.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   assert.ok(accountRemaining.includes('用户随后报告已导入cloud1'));
-  assert.ok(accountRemaining.includes('导入后菜单状态仍待复核'));
+  assert.ok(accountRemaining.includes('当前环境已选中cloud1'));
+  assert.ok(accountRemaining.includes('函数上传/部署和运行仍未执行或验证'));
   assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
   assert.equal(record.cloudWritesOrDeploymentPerformed, false);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));
-  assert.ok(doc.includes('开发者工具截图显示项目根目录`cloudfunctions`文件夹的右键菜单为“当前环境：(无)”'));
+  assert.ok(doc.includes('开发者工具早期截图显示项目根目录`cloudfunctions`文件夹的右键菜单为“当前环境：(无)”'));
   assert.ok(doc.includes('`cloudfunctions`根目录的“当前环境”菜单决定云函数上传部署目标'));
   assert.ok(doc.includes('用户已确认首版采用Node.js 20.19'));
   assert.ok(doc.includes('用户随后查看“数据库→数据库设置”并报告为“文档型数据库”，该信息尚未由只读API复核'));

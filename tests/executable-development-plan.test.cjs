@@ -416,8 +416,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(sp01.productAcceptancePassed, false);
   a(sp01.executionProgress.blockedChecks.some((check) => check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景') && check.includes('网络性能仍未实测')));
   a(sp01.executionProgress.blockedChecks.some((check) => check.includes('用户已确认Node.js 20.19') && check.includes('云函数尚未创建或运行') && check.includes('用户查看后报告数据库为文档型数据库')));
-  a(sp01.executionProgress.nextAction.includes('用户已确认Node.js 20.19，报告数据库模式为文档型'));
-  a(sp01.executionProgress.nextAction.includes('用户复查cloudfunctions根目录环境菜单仍为空'));
+  a(sp01.executionProgress.nextAction.includes('Node.js 20.19') && sp01.executionProgress.nextAction.includes('报告数据库模式为文档型'));
+  a(sp01.executionProgress.nextAction.includes('报告当前环境已选中cloud1'));
 });
 
 test('SP01 records the local diagnostic project AppID separately from the new target AppID', () => {
@@ -458,9 +458,9 @@ test('SP04 plan progress records no confirmed service providers as a blocker and
   a(task.executionProgress.completedChecks.some((check) => check.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
   a(task.executionProgress.completedChecks.some((check) => check.includes('CloudBase截图') && check.includes('当前环境为无') && check.includes('未改云端设置')));
   a(task.executionProgress.blockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
-  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹部署环境菜单仍为空') && check.includes('数据库模式尚未API复核')));
+  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('数据库模式尚未API复核')));
   a(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
-  a(doc.includes('`cloudfunctions`文件夹部署菜单显示当前环境“(无)”且子菜单为空'));
+  a(doc.includes('`cloudfunctions`文件夹部署菜单的早期截图显示当前环境“(无)”且子菜单为空'));
   a.equal(p.firstProductTask, 'SP07');
   a.deepEqual(p.firstProductTaskPrerequisites, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
 });
@@ -678,14 +678,14 @@ test('SP01 preserves the earlier empty menu report and records the later import 
   a.equal(sp01.productAcceptancePassed, false);
   a(sp01.executionProgress.nextAction.includes('腾讯云账号中心已关联目标小程序'));
   a(sp01.executionProgress.nextAction.includes('随后报告已导入'));
-  a(sp01.executionProgress.nextAction.includes('导入后复核'));
+  a(sp01.executionProgress.nextAction.includes('报告当前环境已选中cloud1'));
   a(sp01Doc.includes('回复“菜单仍为空”'));
   a(sp01Doc.includes('这是导入前的观察'));
   a(sp01Doc.includes('https://docs.cloudbase.net/faq/account'));
   a(sp01Doc.includes('用户随后在账号中心只读查看并报告目标小程序已关联（未附截图）'));
   a(sp01Doc.includes('随后报告已导入'));
   a(sp04Doc.includes('菜单仍为空'));
-  a(sp04Doc.includes('随后报告已导入'));
+  a(sp04Doc.includes('报告已导入'));
   a.equal(sp04.cloudWritesOrDeploymentPerformed, false);
 });
 test('current plan entry points preserve legacy rows and point to the new execution document',()=>{for(const file of ['docs/development-plan.md','docs/post-registration-development.md','docs/module-specs/current-development-basis-20261015.md','CONTEXT.md'])a(read(file).includes('v1-executable-development-plan-20261027.md'),file);const p=load();a(p.legacyOverrides.some(x=>x.legacy.includes('DP14')&&x.decision==='provider-profiles-only-no-people-directory'));a(p.legacyOverrides.some(x=>x.legacy.includes('DP25')&&x.decision==='existing-legal-history-only-v17-archived'));a.equal(p.tasks.flatMap(t=>t.pages).includes('V17'),false);a(!scope.remainingDecisionsOrEvidence.includes('new-onboarding-and-coupon-ascii-html-design'));a.equal(scope.prototypeDelivery.realAbilitiesVerified,false);a.equal(scope.formalDevelopmentReady,false);});
@@ -771,6 +771,24 @@ test('SP01 records the later user-reported cloud1 import separately from read-on
  a(sp01.executionProgress.nextAction.includes('cloudfunctions'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);
 });
+test('SP01 records that cloud1 is selected after import without claiming it is deployed',()=>{
+ const plan=load(),sp01=plan.tasks.find(task=>task.id==='SP01'),sp04Task=plan.tasks.find(task=>task.id==='SP04');
+ const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
+ const expected={date:'2026-10-28',source:'user-reply-to-post-import-check',projectPath:'E:\\O2O\\miniprogram',folder:'cloudfunctions',result:'cloud1-selected',cloud1Selectable:true,selectionState:'selected',selectedEnvironmentName:'cloud1',screenshotProvided:false,deploymentPerformed:false};
+ a.deepEqual(sp01.executionProgress.latestUserReportedEnvironmentMenuAfterImport,expected);
+ a.deepEqual(sp04Task.executionProgress.latestUserReportedEnvironmentMenuAfterImport,expected);
+ a.deepEqual(sp04.latestUserReportedEnvironmentMenuAfterImport,expected);
+ a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);
+ a(sp04.evidenceGates.find(gate=>gate.id==='E06').reason.includes('报告当前环境已选中cloud1'));
+ a.equal(sp04.cloudWritesOrDeploymentPerformed,false);
+ const techDoc=read('docs/sp01-technical-environment-20261027.md');
+ const planDoc=read('docs/v1-executable-development-plan-20261027.md');
+ const sp04Doc=read('docs/sp04-operations-configuration-20261027.md');
+ for(const doc of [techDoc,planDoc,sp04Doc]){
+  a(doc.includes('cloud1'));
+  a(doc.includes('未部署')||doc.includes('没有部署')||doc.includes('不代表函数已上传'));
+ }
+});
 test('SP04 E06 distinguishes the reported cloud1 import from unverified deployment wiring',()=>{
  const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
  const e06=sp04.evidenceGates.find(gate=>gate.id==='E06');
@@ -783,8 +801,9 @@ test('SP04 E06 distinguishes the reported cloud1 import from unverified deployme
  a.equal(imported.deploymentPerformed,false);
  a.equal(e06.passed,false);
  a(e06.reason.includes('用户随后报告腾讯云账号中心已关联'));
- a(e06.reason.includes('随后报告已导入'));
- a(e06.reason.includes('导入后菜单状态仍未复核'));
+ a(e06.reason.includes('已导入cloud1'));
+ a(e06.reason.includes('报告当前环境已选中cloud1'));
+ a(e06.reason.includes('未证明函数上传、部署或运行'));
  a(!e06.reason.includes('环境导入仍未执行'));
  a(!e06.reason.includes('关联核对和环境导入均未执行'));
 });
@@ -800,6 +819,7 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
  a(!techDoc.includes('运行时菜单、数据库模式、事务和文件权限继续标为未知'));
  a(sp04AccountCheck.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
  a(sp04AccountCheck.includes('用户随后报告已导入'));
- a(sp04AccountCheck.includes('导入后菜单状态仍待复核'));
+ a(sp04AccountCheck.includes('当前环境已选中cloud1'));
+ a(sp04AccountCheck.includes('函数上传/部署和运行仍未执行或验证'));
  a(!sp04AccountCheck.includes('先只读核对腾讯云账号中心'));
 });
