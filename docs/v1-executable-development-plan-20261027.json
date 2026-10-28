@@ -935,7 +935,8 @@
           "CLI技能版本为0.3.11；结构查询只列出集合/索引读取操作，未提供环境级运行时、数据库模式或存储权限配置的只读查询；帮助显示的云函数部署、数据库写入及存储上传/删除是变更操作。本轮未读取云存储文件列表、临时链接或内容",
           "2026-10-28用户提供目标环境只读截图：云函数表单当前选择Node.js 20.19，候选包括24.11/22.21（界面标注公测中）、20.19、18.15、16.13；截图背景显示0个云函数，未显示函数创建或部署结果。数据库页为数据库回档，提示自动备份且暂无回档数据，没有显示数据库模式或引擎。存储根目录显示暂无文件，权限页选中仅创建者可读写，并提示该规则约束小程序客户端请求、控制台和云函数仍有完整文件读写权限；未更改设置。开发者工具菜单显示当前环境(无)、子菜单为空；本地envList.js导出空数组。截图事实不证明函数运行成功、数据库模式或事务能力，亦未授权写入/部署",
           "本机设备清点未发现ADB命令或常见Android SDK路径中的adb.exe；用户于2026-10-28提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79，并选择Chrome作为后台验收浏览器；公开配置miniprogram/project.config.json声明基础库2.20.1，私有配置miniprogram/project.private.config.json声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5且当前页为/pages/index/index（基础能力），但手机实际加载的基础库版本和浏览器兼容性仍未核验。用户提供家中WiFi 5G作为常规场景、公共免费WiFi作为较弱场景，网络性能指标尚未测量",
-          "2026-10-28用户确认首版云函数采用Node.js 20.19；用户查看数据库设置后报告为文档型数据库。两项确认分别留档，但云函数未创建/运行，数据库模式未由API复核"
+          "2026-10-28用户确认首版云函数采用Node.js 20.19；用户查看数据库设置后报告为文档型数据库。两项确认分别留档，但云函数未创建/运行，数据库模式未由API复核",
+          "2026-10-28用户按只读核对请求复查目标工程E:\\O2O\\miniprogram的cloudfunctions根目录“当前环境”菜单，回复“菜单仍为空”；该回复未附新截图，未核实账号关联或环境导入，也未执行导入或部署。"
         ],
         "latestReadOnlyCloudRecheck": {
           "date": "2026-10-28",
@@ -970,13 +971,26 @@
           "databaseModeUserReported": "文档型数据库",
           "databaseModeApiVerified": false
         },
+        "latestUserReportedEnvironmentMenuRecheck": {
+          "date": "2026-10-28",
+          "source": "user-reply-to-read-only-check",
+          "projectPath": "E:\\O2O\\miniprogram",
+          "folder": "cloudfunctions",
+          "result": "environment-menu-empty",
+          "cloud1Selectable": false,
+          "screenshotProvided": false,
+          "accountAssociationChecked": false,
+          "existingTencentEnvironmentImported": false,
+          "deploymentPerformed": false
+        },
         "blockedChecks": [
           "用户已确认Node.js 20.19，但云函数尚未创建或运行；用户查看后报告数据库为文档型数据库，CLI没有数据库模式查询且尚未API复核；事务未测试，存储当前选中仅创建者可读写，但私密文件角色、临时链接和撤权仍未实测。开发者工具cloudfunctions根目录环境菜单显示(无)、子菜单为空，云函数上传/部署目标未配置；该设置与app.js的wx.cloud.init运行时环境分开，当前模板代码未引用envList.js。为何IDE未列出目标环境仍待核对；未修改环境关联。云写入/部署测试未获授权",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
           "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过",
-          "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞"
+          "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞",
+          "用户复查目标工程cloudfunctions根目录菜单后仍报告为空；CloudBase官方账号FAQ要求先核对小程序账号与腾讯云账号关联，账号一致时再按官方流程导入已有腾讯云环境。账号关联尚未只读核实，环境导入和云函数部署均未执行。"
         ],
-        "nextAction": "目标AppID的cloud_env_list已返回cloud1-d2gjahlq39bf141c7，project_list确认E:\\O2O\\miniprogram已登记且AppID匹配；云函数和数据库集合只读查询分别返回0个函数和0个集合。用户已确认Node.js 20.19作为首版选择，用户报告数据库模式为文档型；不再等待运行时选择或数据库模式口头确认。云函数尚未创建或运行，数据库模式尚未API复核，事务与私密文件权限边界仍需验证。当前活动窗口加载路径仍未确认；cloudfunctions文件夹部署环境仍未选择。公开/私有项目配置分别声明基础库2.20.1和3.17.5，DevTools模拟器报告SDKVersion 3.17.5，三台真机实际加载版本、浏览器兼容性与网络性能须实测。下一步只读核对目标工程cloudfunctions根目录是否可选择cloud1；若菜单仍空，查清账号关联/导入条件后再决定是否操作。任何云端部署或写入测试须先取得具体授权。旧号个人主体的cloud1不作新号共享候选。若上线后出现平台付费提示，用户自行处理后续平台付费提示；本轮不再核对费用，按用户要求略过费用核对；不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
+        "nextAction": "目标AppID的cloud_env_list已返回cloud1-d2gjahlq39bf141c7，project_list确认E:\\O2O\\miniprogram已登记且AppID匹配；云函数和数据库集合只读查询分别返回0个函数和0个集合。用户已确认Node.js 20.19，报告数据库模式为文档型；函数尚未创建/运行，数据库模式尚未API复核，事务与私密文件权限边界仍需验证。用户复查cloudfunctions根目录环境菜单仍为空，账号关联尚未核实、已有腾讯云环境尚未导入。下一步先只读核对腾讯云账号中心中微信公众平台账号关联；若关联一致，再依官方流程查看开发者工具“设置→环境设置→管理我的环境→使用已有腾讯云环境”，是否导入由用户决定，导入后再复核菜单。任何导入、云写入或部署均未执行，后续云端写入/部署测试须先取得具体授权。当前活动窗口加载路径仍未确认；公开/私有配置声明基础库2.20.1/3.17.5不一致，手机实际版本、浏览器兼容性与网络性能须实测。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理；不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

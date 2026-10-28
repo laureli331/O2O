@@ -289,11 +289,11 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   });
   const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
   assert.equal(e06.passed, false);
-  assert.ok(e06.reason.includes('最新开发者工具截图显示cloudfunctions根目录的当前环境为无、子菜单为空'));
+  assert.ok(e06.reason.includes('用户复查目标工程cloudfunctions根目录“当前环境”菜单后仍报告为空'));
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
   assert.ok(e06.reason.includes('用户已确认Node.js 20.19，但云函数尚未创建或运行'));
   assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
-  assert.ok(record.remainingChecks.some((item) => item.includes('核对开发者工具是否能为cloudfunctions根目录选择cloud1')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('先只读核对腾讯云账号中心的微信公众平台关联')));
   assert.equal(record.cloudWritesOrDeploymentPerformed, false);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));

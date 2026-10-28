@@ -362,6 +362,18 @@
     "budgetSource": "docs/v1-pricing-budget-confirmed-20261018.md",
     "purchaseAuthorized": false
   },
+  "latestUserReportedEnvironmentMenuRecheck": {
+    "date": "2026-10-28",
+    "source": "user-reply-to-read-only-check",
+    "projectPath": "E:\\O2O\\miniprogram",
+    "folder": "cloudfunctions",
+    "result": "environment-menu-empty",
+    "cloud1Selectable": false,
+    "screenshotProvided": false,
+    "accountAssociationChecked": false,
+    "existingTencentEnvironmentImported": false,
+    "deploymentPerformed": false
+  },
   "evidenceGates": [
     {
       "id": "E05",
@@ -371,7 +383,7 @@
     {
       "id": "E06",
       "passed": false,
-      "reason": "用户报告旧号为个人主体、新号为个体工商户/公司主体，旧cloud1不符合官方同主体共享前提；目标AppID范围的CLI只读环境列表已返回cloud1-d2gjahlq39bf141c7，云函数和数据库集合查询均为空，app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js。最新开发者工具截图显示cloudfunctions根目录的当前环境为无、子菜单为空，云函数上传/部署目标尚未配置；这与app.js的小程序运行时环境设置分开，当前模板代码也未引用envList.js。为何IDE未列出目标环境尚待核对；用户已确认Node.js 20.19，但云函数尚未创建或运行；数据库模式由用户查看后报告为文档型数据库，尚未接口复核。活动窗口项目路径、托管/登录配置和正式域名尚未核验；套餐、账单与到期核查按用户要求本轮略过。"
+      "reason": "服务范围、服务时段和当前供给缺口已按用户确认记录。目标AppID范围的只读环境查询已返回cloud1，本地app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js；这不等于云函数部署目标已配置。用户复查目标工程cloudfunctions根目录“当前环境”菜单后仍报告为空，且未提供新截图；CloudBase官方账号FAQ指引先核对小程序与腾讯云账号关联，若账号一致再导入已有腾讯云环境。关联核对和环境导入均未执行。用户已确认Node.js 20.19，但云函数尚未创建或运行；数据库模式由用户查看后报告为文档型数据库，尚未接口复核；事务和私密文件权限未测试。托管/登录和正式域名尚未核验。费用核查按用户要求略过。"
     }
   ],
   "cloudWritesOrDeploymentPerformed": false,
@@ -383,7 +395,7 @@
     "最新控制台截图已交叉记录至SP01：运行时下拉选项已记录，用户确认采用Node.js 20.19，但云函数未创建或运行；数据库设置由用户查看后报告为文档型数据库，尚未接口复核；存储根目录为空且权限页显示“仅创建者可读写”；开发者工具cloudfunctions文件夹菜单当前环境为无且子菜单为空，部署环境目标尚未配置。未修改云端设置。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
     "按用户提供的真实设备与Chrome浏览器执行网页后台登录、权限和页面验收；在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标。",
-    "只读核对开发者工具是否能为cloudfunctions根目录选择cloud1；若需核对账号关联、导入或修改环境关联，先明确具体操作与授权。运行时选择已确认但未执行，数据库模式为用户报告且未API复核。"
+    "用户已复查cloudfunctions根目录环境菜单并报告仍为空。下一步先只读核对腾讯云账号中心的微信公众平台关联；若关联一致，再依据CloudBase官方流程查看开发者工具“设置→环境设置→管理我的环境→使用已有腾讯云环境”。导入属于环境配置变更，本轮未执行，须由用户决定后再操作；导入后复核菜单。运行时选择已确认但未创建/运行，数据库模式为用户报告且未API复核。"
   ],
   "rollback": "本阶段仅新增证据文档、计划状态和文档测试；回退时只回退本阶段提交或恢复这些自有文件，不重置整个工作区、不触碰用户已有改动，也没有云端测试数据需要清理。"
 }
