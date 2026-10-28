@@ -263,7 +263,46 @@
       "adminBrowserTested": false,
       "normalNetworkScenario": "家中 WiFi 5G（用户描述）",
       "weakNetworkScenario": "公共免费 WiFi（用户指定为较弱场景）",
-      "networkMetricsMeasured": false
+      "networkMetricsMeasured": false,
+      "cloudCapabilityTestPlan": {
+        "targetAppId": "wx2414399d423dfb65",
+        "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+        "currentCloudFunctionCount": 0,
+        "currentDatabaseCollectionCount": 0,
+        "separateTestEnvironmentVerified": false,
+        "testWriteAuthorization": "read-only-only",
+        "realPersonalDataAllowed": false,
+        "cases": [
+          {
+            "id": "ENV-RUNTIME-01",
+            "operation": "read-only",
+            "input": "目标AppID/EnvID及云函数新建表单中的运行时下拉选项；不提交表单",
+            "expected": "只记录页面实际显示的运行时名称和版本；未显示的候选保持未知，不创建或部署云函数",
+            "status": "waiting-for-user-read-only-observation"
+          },
+          {
+            "id": "ENV-DB-TX-01",
+            "operation": "cloud-write-requires-explicit-authorization",
+            "input": "隔离测试环境中的无个人信息测试记录：事务成功提交、事务中途注入失败、并发版本冲突；重复请求仅在业务契约确定幂等键后执行",
+            "expected": "依据实际数据库模式和已确认事务契约核对提交/回滚及并发结果，不允许部分写入；不预设未知数据库模式或冲突策略",
+            "status": "not-executed-no-write-authorization"
+          },
+          {
+            "id": "ENV-STORE-01",
+            "operation": "cloud-write-and-role-test-require-explicit-authorization",
+            "input": "隔离环境中的非敏感合成文件；匿名、文件所有者、其他用户、管理员角色分别验证读取/写入、直链、临时链接到期和撤权",
+            "expected": "逐角色对照已批准的私密文件策略；匿名和无权用户不得越权读取；链接有效期不预设，按实际配置验证到期与撤权",
+            "status": "not-executed-no-write-authorization"
+          },
+          {
+            "id": "ENV-CLEANUP-01",
+            "operation": "cloud-write-requires-explicit-authorization",
+            "input": "仅限本轮创建且带唯一测试运行标识的记录和文件",
+            "expected": "验证后只清理本轮创建的精确记录/对象，不删除集合或既有资源；清理失败立即停止后续写入并保留脱敏证据",
+            "status": "not-executed-no-write-authorization"
+          }
+        ]
+      }
     },
     "devtoolsProjectCreationWizardObservation": {
       "observationDate": "2026-10-27",

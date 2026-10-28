@@ -237,6 +237,19 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(audit.normalNetworkScenario, '家中 WiFi 5G（用户描述）');
   a.equal(audit.weakNetworkScenario, '公共免费 WiFi（用户指定为较弱场景）');
   a.equal(audit.networkMetricsMeasured, false);
+  a.equal(audit.cloudCapabilityTestPlan.targetAppId, 'wx2414399d423dfb65');
+  a.equal(audit.cloudCapabilityTestPlan.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
+  a.equal(audit.cloudCapabilityTestPlan.currentCloudFunctionCount, 0);
+  a.equal(audit.cloudCapabilityTestPlan.currentDatabaseCollectionCount, 0);
+  a.equal(audit.cloudCapabilityTestPlan.separateTestEnvironmentVerified, false);
+  a.equal(audit.cloudCapabilityTestPlan.testWriteAuthorization, 'read-only-only');
+  a.equal(audit.cloudCapabilityTestPlan.realPersonalDataAllowed, false);
+  a.deepEqual(audit.cloudCapabilityTestPlan.cases.map((testCase) => testCase.id), [
+    'ENV-RUNTIME-01', 'ENV-DB-TX-01', 'ENV-STORE-01', 'ENV-CLEANUP-01',
+  ]);
+  a(audit.cloudCapabilityTestPlan.cases.filter((testCase) => testCase.operation !== 'read-only')
+    .every((testCase) => testCase.status === 'not-executed-no-write-authorization'));
+  a(audit.cloudCapabilityTestPlan.cases.every((testCase) => testCase.input && testCase.expected));
   a.deepEqual(audit.installedDesktopBrowsers, [
     { name: 'Google Chrome', version: '156.0.8078.47' },
     { name: 'Microsoft Edge', version: '156.0.4314.50' },
@@ -252,6 +265,10 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('用户于2026-10-28提供三台测试设备信息'));
   a(doc.includes('用户选择Google Chrome执行后台验收'));
   a(doc.includes('微信小程序基础库版本未提供'));
+  a(doc.includes('目标环境受控验证方案（尚未执行）'));
+  a(doc.includes('ENV-DB-TX-01'));
+  a(doc.includes('ENV-STORE-01'));
+  a(doc.includes('清理也是云端变更'));
   a(planDoc.includes('CLI技能版本为'));
   a(planDoc.includes('PowerShell清点未发现ADB'));
   a(planDoc.includes('用户已提供OPPO Find X9'));
