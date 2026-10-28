@@ -74,7 +74,7 @@ test('SP01 execution record separates historical CLI failures from current read-
   for(const text of ['Node.js 24.18.0','npm 11.16.0','login=true','code 10','system error','wx2414399d423dfb65','Node.js 24.11','Nodejs24.11','未取得环境清单','cloud1-d1g1mv89t76512a25','较早截图本身未显示AppID','未执行数据库业务写入、存储写入、支付、AI调用或生产操作','回退','CLI授权成功','CONNECT_ERROR','现有截图和只读CLI结果共同确认AppID/环境关联','用户确认重新打开微信开发者工具','安装诊断返回`compatible=true`','项目本地AppID已核验','本轮按用户要求跳过套餐、账单和到期核查'])a(doc.includes(text),text);
   a(planDoc.includes('之后有一次命令因Shell解析到项目内辅助CLI而返回`CONNECT_ERROR`'));
   a(planDoc.includes('改用安装目录`E:\\微信web开发者工具\\wechatide.cmd`后，状态查询成功'));
-  a(planDoc.includes('云环境列表查询已恢复'));
+  a(doc.includes('当前查询通路已恢复'));
   a(!planDoc.includes('本轮新AppID环境列表查询失败'));
   a(!planDoc.includes('云环境清单查询受阻'));
   a(!planDoc.includes('当前开发者工具“查看所有项目”列表只显示'));
@@ -265,7 +265,7 @@ test('SP01 resolves the CLI wrapper path and records the read-only target enviro
   a(doc.includes('数据库响应返回空集合列表'));
   a(doc.includes('`-c Codex --appid wx2414399d423dfb65 --env cloud1-d2gjahlq39bf141c7`'));
   a(doc.includes('这两个响应没有回显EnvID，EnvID作用域由命令参数记录'));
-  a(doc.includes('本轮云资源查询首次因漏传CLI必需参数`-c Codex`返回输入校验错误'));
+  a(doc.includes('本次云资源查询首次因漏传CLI必需参数`-c Codex`返回输入校验错误'));
   a(doc.includes('活动窗口实际加载路径仍未确认'));
   a(doc.includes('随后通过目标AppID执行的`cloud_env_list`也返回同一EnvID'));
   a(!doc.includes('该项目与环境的创建关系仍未通过开发者工具接口核验'));
@@ -370,7 +370,13 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(progress.databaseModeReadOnlyApiResearch.apiName, 'DescribeEnvs');
   a.deepEqual(progress.databaseModeReadOnlyApiResearch.responseFields, ['Databases', 'PostgreSQL', 'Meta']);
   a.equal(progress.databaseModeReadOnlyApiResearch.directDatabaseTypeFieldDocumented, false);
-  a.equal(progress.databaseModeReadOnlyApiResearch.apiCallPerformed, false);
+  a.equal(progress.databaseModeReadOnlyApiResearch.apiCallPerformed, true);
+  a.equal(progress.databaseModeReadOnlyApiResearch.apiCallPerformedBy, 'user-in-api-explorer');
+  a.equal(progress.databaseModeReadOnlyApiResearch.databaseModeApiVerified, true);
+  a.equal(progress.databaseModeReadOnlyApiResearch.modeConclusion, '文档型数据库（flexdb）');
+  a.deepEqual(progress.databaseModeReadOnlyApiResearch.response.PostgreSQL, []);
+  a.deepEqual(progress.databaseModeReadOnlyApiResearch.response.Meta, []);
+  a.equal(progress.databaseModeReadOnlyApiResearch.response.Databases[0].Status, 'RUNNING');
 
   a.deepEqual(audit.userScreenshotCloudBaseObservation, {
     date: '2026-10-28',
@@ -435,8 +441,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
     runtimeSource: 'user-reply-2026-10-28',
     runtimeCreatedOrExecuted: true,
     databaseMode: '文档型数据库',
-    databaseModeSource: 'user-reply-2026-10-28',
-    databaseModeApiVerified: false,
+    databaseModeSource: 'user-reply-and-user-provided-DescribeEnvs-response-with-official-resource-mapping-2026-10-28',
+    databaseModeApiVerified: true,
   });
   a.deepEqual(audit.cloudCapabilityTestPlan.cases.map((testCase) => testCase.id), [
     'ENV-RUNTIME-01', 'ENV-DB-TX-01', 'ENV-STORE-01', 'ENV-CLEANUP-01',
@@ -488,7 +494,9 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('PG模式不提供文档型数据库级别的备份与回档'));
   a(doc.includes('此前从回档页作出的模式推断因此不再作为现状判断'));
   a(doc.includes('用户随后查看“数据库→数据库设置”并报告当前为“文档型数据库”'));
-  a(doc.includes('该模式来自用户查看反馈，尚未由只读API复核'));
+  a(doc.includes('当时尚未收到只读API回包'));
+  a(doc.includes('用户回传`DescribeEnvs`结果'));
+  a(doc.includes('API没有直接返回类型名'));
   a(doc.includes('存储管理根目录显示暂无文件'));
   a(doc.includes('当前选中“仅创建者可读写”'));
   a(doc.includes('开发者工具截图中打开的是项目根目录`cloudfunctions`文件夹的右键菜单'));
@@ -508,7 +516,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(sp01.executionProgress.localProbeHarness.runtime.includes('Node.js 20.19'));
   a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);
   a.equal(record.accountEvidence.technicalEnvironmentAudit.userConfirmedRuntimeAndDatabase.databaseMode,'文档型数据库');
-  a(sp01.executionProgress.nextAction.includes('Nodejs20.19') && sp01.executionProgress.nextAction.includes('用户报告数据库模式为文档型，尚未API复核'));
+  a(sp01.executionProgress.nextAction.includes('Nodejs20.19') && sp01.executionProgress.nextAction.includes('DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型'));
   a(sp01.executionProgress.nextAction.includes('超时30秒'));
   a(sp01.executionProgress.nextAction.includes('此前一次性云端写入授权已使用'));
   a(sp01.executionProgress.nextAction.includes('cloudfunctions中选中cloud1'));
@@ -552,7 +560,7 @@ test('SP04 plan progress records no confirmed service providers as a blocker and
   a(task.executionProgress.completedChecks.some((check) => check.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
   a(task.executionProgress.completedChecks.some((check) => check.includes('CloudBase截图') && check.includes('当前环境为无') && check.includes('未改云端设置')));
   a(task.executionProgress.blockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
-  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('数据库模式仍未API复核')));
+  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('存储权限未作跨账号验证')));
   a(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
   a(doc.includes('开发者工具云函数菜单早期显示“当前环境：(无)”且子菜单“(空)”'));
   a.equal(p.firstProductTask, 'SP07');
@@ -824,9 +832,10 @@ test('SP01 separates confirmed runtime and user-reported database mode from runt
   a(doc.includes('文档型数据库'));
  }
  a(techDoc.includes('临时函数`sp01EnvProbe`在事务验证期间的配置为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));a(techDoc.includes('最新修正版30秒run通过探针断言'));
- a(techDoc.includes('尚未API复核'));
+ a(techDoc.includes('当时尚未收到只读API回包'));
  a(techDoc.includes('DescribeEnvs 获取环境列表接口'));
- a(techDoc.includes('未给出单一的`DatabaseType`字段'));
+ a(techDoc.includes('API没有直接返回类型名'));
+ a(techDoc.includes('部分通过：模式与受控事务探针有证据'));
  a(!techDoc.includes('没有为本项目选定Node云运行时'));
  a(!planDoc.includes('运行时选择、数据库模式、小程序端运行时'));
  a(!sp04Doc.includes('运行时选择和数据库模式仍未验证'));

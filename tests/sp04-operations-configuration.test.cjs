@@ -291,6 +291,7 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   });
   const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
   assert.equal(e06.passed, false);
+  assert.ok(!record.remainingChecks.some((check) => check.includes('数据库模式仍仅为用户报告')));
   assert.ok(e06.reason.includes('较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空'));
   assert.ok(e06.reason.includes('已导入cloud1'));
   assert.ok(e06.reason.includes('报告当前环境已选中cloud1'));
@@ -300,7 +301,7 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(e06.reason.includes('此前失败run的三条自有记录也已定向清理'));
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
   assert.ok(e06.reason.includes('SP01函数'));
-  assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
+  assert.ok(e06.reason.includes('数据库模式先由用户查看后报告为文档型数据库，之后用户提供的DescribeEnvs回包结合官方资源映射支持确认该模式'));
   assert.deepEqual(record.latestUserReportedAccountAssociationCheck, {
     date: '2026-10-28',
     source: 'user-reply-to-read-only-check',
@@ -378,7 +379,7 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(doc.includes('开发者工具早期截图显示项目根目录cloudfunctions文件夹右键菜单为“当前环境：(无)”'));
   assert.ok(doc.includes('该菜单决定函数上传/部署目标'));
   assert.ok(doc.includes('用户确认首版Node.js20.19'));
-  assert.ok(doc.includes('报告数据库为文档型但尚未API复核'));
+  assert.ok(doc.includes('后续`DescribeEnvs`回包结合官方资源映射支持确认该模式'));
   assert.ok(doc.includes('超时30秒'));
   assert.ok(doc.includes('最新事务探针通过'));
   assert.ok(doc.includes('修正版代码包上传'));
