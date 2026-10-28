@@ -216,6 +216,17 @@
         "read"
       ],
       "storageContentReadThisTurn": false,
+      "storageRootListAttempt": {
+        "date": "2026-10-28",
+        "targetAppId": "wx2414399d423dfb65",
+        "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+        "action": "list",
+        "cloudPath": "",
+        "result": "local-validation-rejected-minimum-length-1",
+        "cloudRequestSent": false,
+        "rootPathSemanticsDocumentedForThisCli": false,
+        "fileContentsReadOrDownloaded": false
+      },
       "androidDebugBridgeFound": false,
       "androidDebugBridgeSearch": "Get-Command and standard Android SDK platform-tools paths",
       "physicalDeviceInventoryVerified": false,

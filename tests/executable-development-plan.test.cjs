@@ -220,6 +220,17 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(audit.cliExposesStoragePermissionConfigurationQuery, false);
   a.deepEqual(audit.storageReadActions, ['list', 'info', 'url', 'read']);
   a.equal(audit.storageContentReadThisTurn, false);
+  a.deepEqual(audit.storageRootListAttempt, {
+    date: '2026-10-28',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    action: 'list',
+    cloudPath: '',
+    result: 'local-validation-rejected-minimum-length-1',
+    cloudRequestSent: false,
+    rootPathSemanticsDocumentedForThisCli: false,
+    fileContentsReadOrDownloaded: false,
+  });
   a.equal(audit.androidDebugBridgeFound, false);
   a.equal(audit.physicalDeviceInventoryVerified, false);
   a.equal(audit.deviceInventoryReportedByUser, true);
@@ -285,6 +296,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('单事务最多100个操作、最长30秒'));
   a(doc.includes('并应避免事务期间DDL及外部调用'));
   a(doc.includes('第一次输入错误未发出云请求'));
+  a(doc.includes('没有用猜测路径重试'));
+  a(doc.includes('目标环境文件清单和实际权限仍未核实'));
   a(planDoc.includes('补充只读云资源复核'));
   a(planDoc.includes('当前待用户只读查看目标环境的新建云函数运行时下拉选项'));
   a(doc.includes('清理也是云端变更'));
