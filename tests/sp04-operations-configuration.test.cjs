@@ -653,3 +653,31 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
   assert.ok(!doc.includes('顾客实际可预约服务时段是否与管理值班相同'));
   assert.ok(!doc.includes('22:00后或其他无人值班时段如何处理请求'));
 });
+
+test('SP04 records the latest read-only identity-probe status without treating it as deployment or client proof', () => {
+  const record = evidence();
+  const expected = {
+    date: '2026-10-28',
+    source: 'wechatide-cli-cloud_fn_info-after-user-confirmed-deployment-card',
+    command: 'wechatide.cmd -c Codex cloud_fn_info --appid wx2414399d423dfb65 --env cloud1-d2gjahlq39bf141c7 --names sp01IdentityProbe',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    functionName: 'sp01IdentityProbe',
+    result: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
+    codeUpdateSuccessVerified: false,
+    clientInvocationVerified: false,
+    cloudStorageWritePerformed: false,
+  };
+  assert.deepEqual(record.latestIdentityProbePostConfirmationReadOnlyCheck, expected);
+
+  const plan = load('docs/v1-executable-development-plan-20261027.json');
+  const sp01 = plan.tasks.find((entry) => entry.id === 'SP01');
+  const sp04 = plan.tasks.find((entry) => entry.id === 'SP04');
+  const evidenceText = '用户确认CLI部署卡片后，安装目录CLI只读查询sp01IdentityProbe返回Active / Nodejs16.13 / 3秒；该状态查询不证明本次代码更新成功，也不证明客户端调用。';
+  assert.ok(sp01.executionProgress.completedChecks.includes(evidenceText));
+  assert.ok(sp04.executionProgress.completedChecks.includes(evidenceText));
+  assert.deepEqual(sp04.executionProgress.latestIdentityProbePostConfirmationReadOnlyCheck, expected);
+  assert.deepEqual(record.remainingChecks.at(-1), '确认卡片后的只读查询仍未证明代码更新成功或客户端身份调用：再次查询显示sp01IdentityProbe为Active / Nodejs16.13 / 3秒，没有回报本次代码包的执行结果。');
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  assert.ok(doc.includes('确认卡片后的只读查询仍未证明代码更新成功或客户端身份调用'));
+});

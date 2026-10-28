@@ -1023,7 +1023,8 @@
           "2026-10-28恢复部署后用户提供inspect和prepare成功响应；run返回433、3秒执行超时。超时后只读确认固定集合存在且当前0条记录；事务和自动清理未验收，不能据此证明调用期间未写入或清理成功。",
           "2026-10-28用户提供30秒配置run结构化结果：回滚通过；提交可见性失败；两个并发事务均以INVALID_PARAM拒绝；清理失败；没有调用后只读记录查询，记录状态未知。锁定SDK源码与本地红绿回归指向字段对象形状不匹配。随后修正版已部署；旧run自有记录经inspectRun核对并定向清理，cleanup报告删除3条且删除后回查无遗留；新run sp01_3db660bc5eb548559f4f6966a34209a2返回success:true，提交可见、回滚无部分写入、两笔并发事务成功且最终值2、清理3条并回查通过。事务探针通过不等于SP01整卡验收。",
           "2026-10-28本地准备独立双账号存储权限诊断工程tools/sp01-storage-probe；16项单元测试通过。随后由开发者工具CLI导入独立工程，并在单独轻量窗口通过simulator_open_page打开pages/index/index；筛选error日志没有匹配行。该结果仅为模拟器编译/打开证据，不证明云函数身份或云存储权限；未部署身份函数、未比对身份摘要、未写入或删除云文件、未运行真机。",
-          "2026-10-28更新SP01进度文档后：开发计划测试43/43通过，仓库全量Node测试1434/1434通过；配套JSON解析和git diff --check通过。"
+          "2026-10-28更新SP01进度文档后：开发计划测试43/43通过，仓库全量Node测试1434/1434通过；配套JSON解析和git diff --check通过。",
+          "用户确认CLI部署卡片后，安装目录CLI只读查询sp01IdentityProbe返回Active / Nodejs16.13 / 3秒；该状态查询不证明本次代码更新成功，也不证明客户端调用。"
         ],
         "postRunTimeoutReadOnlyCloudRecheckBeforeTimeoutAdjustment": {
           "source": "wechatide-cli-read-only-after-user-run-timeout",
@@ -2122,7 +2123,8 @@
           "历史记录（截至当时）：用户确认首版云函数运行时为Node.js 20.19；查看数据库设置后报告当前为文档型数据库。均与截图可见范围分开记载；临时SP01探针当时曾部署并收到不符合本地响应契约的测试结果，之后已由用户删除。SP04未变更CloudBase权限或数据库设置。随后DescribeEnvs回包及官方资源映射支持确认数据库模式，见SP01技术记录。",
           "SP01恢复函数Active/Nodejs20.19、超时30秒；修正版代码已上传，inspect、prepare及新run结构化响应通过。3秒历史超时和首次30秒失败仍按历史记录保留；旧失败run的三条自有记录已核验并清理，成功run自动清理3条并完成删除后回查。最新事务探针的提交可见、回滚无部分写入、并发两笔成功且最终值为2。随后DescribeEnvs回包及官方资源映射支持确认数据库模式；SP04未修改CloudBase权限或数据库设置。",
           "2026-10-28后续独立部署sp01IdentityProbe：代码更新首次因Creating被拒，Active后重试成功；只读详情Active/Nodejs16.13/3秒，模拟器页面已打开；客户端身份调用和存储写入尚未执行。",
-          "2026-10-28用户确认最新sp01IdentityProbe代码更新后，部署任务confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba返回success/execution_success；目标AppID/EnvID只读详情仍为Active/Nodejs16.13/3秒。真实客户端身份调用、摘要比较及本轮存储写入仍未发生。"
+          "2026-10-28用户确认最新sp01IdentityProbe代码更新后，部署任务confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba返回success/execution_success；目标AppID/EnvID只读详情仍为Active/Nodejs16.13/3秒。真实客户端身份调用、摘要比较及本轮存储写入仍未发生。",
+          "用户确认CLI部署卡片后，安装目录CLI只读查询sp01IdentityProbe返回Active / Nodejs16.13 / 3秒；该状态查询不证明本次代码更新成功，也不证明客户端调用。"
         ],
         "blockedChecks": [
           "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户报告cloudfunctions文件夹当前环境已选中cloud1；活动窗口项目路径、托管/登录配置和正式域名仍未核验。SP01事务探针通过；另一次存储跨账号客户端探针在该测试文件上失败：用户确认第二测试账号未加入管理员/开发者名单且截图显示其成功读写；两个账号_openid未直接采集，文件已定向删除且权限设置未改，进一步云端诊断或复测需新授权。旧号与新号主体不同，旧cloud1不作共享候选。费用核查按用户要求略过。",
@@ -2207,6 +2209,22 @@
           "identityComparisonCompleted": false,
           "cloudStorageWritePerformed": false,
           "cloudStorageCleanupPerformed": false
+        },
+        "latestIdentityProbePostConfirmationReadOnlyCheck": {
+          "date": "2026-10-28",
+          "source": "wechatide-cli-cloud_fn_info-after-user-confirmed-deployment-card",
+          "command": "wechatide.cmd -c Codex cloud_fn_info --appid wx2414399d423dfb65 --env cloud1-d2gjahlq39bf141c7 --names sp01IdentityProbe",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01IdentityProbe",
+          "result": {
+            "status": "Active",
+            "runtime": "Nodejs16.13",
+            "timeoutSeconds": 3
+          },
+          "codeUpdateSuccessVerified": false,
+          "clientInvocationVerified": false,
+          "cloudStorageWritePerformed": false
         },
         "latestIdentityProbePreview": {
           "date": "2026-10-28",

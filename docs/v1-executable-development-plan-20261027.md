@@ -12,6 +12,8 @@
 
 此前代码更新后，安装目录CLI使用明确的目标AppID和EnvID只读执行`cloud_fn_list`与`cloud_fn_info`：列表总数为1，仅有`sp01IdentityProbe`，详情为Active / Nodejs16.13 / 3秒。该检查未调用函数；不能证明微信客户端身份通路或文件权限。
 
+用户确认本次CLI部署卡片后，我再次使用安装目录CLI，以明确的目标AppID和EnvID只读查询`sp01IdentityProbe`，结果仍为Active / Nodejs16.13 / 3秒。只读函数详情不返回代码包任务结果，因此未将其记录为本次代码更新成功；客户端身份调用和云存储写入仍未发生。
+
 首次代码更新确认任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`返回`success / execution_success`，上传5833个文件、6.7 MB；部署后函数为Active / Nodejs16.13 / 3秒。之后用户确认最新代码更新任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`，CLI返回`success / execution_success`；更新后只读详情仍为Active / Nodejs16.13 / 3秒。两次均为函数代码部署，不代表客户端调用；真实身份函数调用及本轮文件写入尚未发生。
 
 紧邻真实手机测试前的只读预检确认目标环境仅有`sp01IdentityProbe`，状态Active / Nodejs16.13 / 3秒，且`sp01_permission_probe/`目录为0个文件；这是本轮开始前的基线，不是客户端验收结果。
