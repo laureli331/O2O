@@ -576,6 +576,16 @@ test('SP01 records simulator compilation separately from cloud identity, storage
       packSize: '6.7 MB',
       confirmationTaskId: 'confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b',
     },
+    latestCodeUpdate: {
+      date: '2026-10-28',
+      source: 'authorized-wechatide-cli-confirmed-code-update-and-read-only-function-info',
+      confirmationTaskId: 'confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba',
+      status: 'success',
+      detail: 'execution_success',
+      filesCount: 5833,
+      packSize: '6.7 MB',
+      postUpdateReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
+    },
     postDeploymentReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
   });
   a.deepEqual(probe.latestPreClientRunReadOnlyCheck, {
@@ -595,6 +605,8 @@ test('SP01 records simulator compilation separately from cloud identity, storage
   a.equal(probe.pendingCloudStep, 'account-A-create-synthetic-file-then-account-B-identity-comparison-and-conditional-access-test');
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
   a(runbook.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
+  a(runbook.includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
+  a(read('tools/sp01-storage-probe/README.md').includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
   a(runbook.includes('execution_success'));
   a.equal(probe.quickStartModified, false);
   a.equal(record.tasks.find((task) => task.id === 'SP01').productAcceptancePassed, false);

@@ -1,6 +1,6 @@
 # SP01 实际技术环境与版本核对
 
-2026-10-28用户确认本次代码更新后，安装目录CLI以明确目标AppID/EnvID只读执行`cloud_fn_list`与`cloud_fn_info`：列表总数为1，仅含`sp01IdentityProbe`，状态Active、运行时Nodejs16.13、超时3秒。此查询未调用函数，不能证明小程序端身份通路或文件权限。
+此前安装目录CLI曾以明确目标AppID/EnvID只读执行`cloud_fn_list`与`cloud_fn_info`，返回列表总数为1，仅含`sp01IdentityProbe`，状态为Active / Nodejs16.13 / 3秒。最新代码更新确认任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`返回`success / execution_success`后，CLI再次只读查询`cloud_fn_info`，状态仍相同，并列出`sp01_permission_probe/`为0个文件。此查询未调用函数，不能证明小程序端身份通路或文件权限。
 
 随后对独立工程`E:\O2O\tools\sp01-storage-probe`的`pages/index/index`执行CLI `auto_preview`及`create_preview_qrcode`均返回成功；CLI报告预览包大小32120。项目配置AppID与目标号一致，探针代码固定EnvID `cloud1-d2gjahlq39bf141c7`。预览包已生成/推送，但用户尚未在手机打开；身份函数调用、身份摘要比较、双账号访问与本轮存储写入仍未发生。第二测试账号未加入成员名单，若其无法打开预览，应先解决预览访问权限，不应把该结果记为存储拒绝。
 
@@ -8,7 +8,7 @@
 
 最新一次性身份/存储验证已获用户授权。`sp01IdentityProbe`首次代码更新因函数尚处于Creating被拒；函数Active后重新部署代码成功。当前只读详情为Active / Nodejs16.13 / 3秒（和此前确认的Node.js 20.19不同；SCF官方说明运行时创建后不能修改）。本工程在模拟器成功打开；部署后尚未从客户端调用身份函数，`sp01_permission_probe/`在账号A写入前只读为空，尚未生成测试文件。账号A/B的身份摘要比对、差异身份下的访问测试及定向清理均待完成。当前授权仅覆盖本次一次性验证，不包含任何权限设置修改、其他云函数/数据操作或生产变更。SP01整卡仍未通过；真机/网络、请求/供应商、耐久及内存预算等质量合同项也未完成。
 
-本轮确认的代码更新任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`已成功返回`execution_success`；上传包统计5833个文件、6.7 MB，之后只读查询仍为Active / Nodejs16.13 / 3秒。该结果仅证明代码包上传及函数状态，不代替真实微信客户端的身份和存储调用。
+初次代码更新任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`已成功返回`execution_success`；上传包统计5833个文件、6.7 MB。之后最新代码更新任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`也已成功，部署包统计相同；更新后只读详情仍为Active / Nodejs16.13 / 3秒。两次结果均只证明代码包上传及函数状态，不代替真实微信客户端的身份和存储调用。
 
 用户截图在新建表单中确认选择Node.js 20.19；后续只读函数详情确认目标函数为Active / Nodejs20.19，inspect结构化回包为v20.19.3和SDK 3.18.7。最新修正版事务探针的提交、回滚、并发和自动清理断言也通过；这只证明该临时探针的覆盖范围，不代表数据库模式、存储权限或SP01整卡验收通过。
 

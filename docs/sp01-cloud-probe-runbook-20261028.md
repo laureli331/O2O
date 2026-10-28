@@ -1,8 +1,8 @@
 # SP01 CloudBase 受控探针操作记录
 
-2026-10-28用户确认本次代码更新后，安装目录CLI以明确目标AppID/EnvID只读执行`cloud_fn_list`与`cloud_fn_info`：列表总数为1，仅含`sp01IdentityProbe`，状态Active、运行时Nodejs16.13、超时3秒。此次只读核对未调用函数，不证明小程序身份通路或存储权限。
+2026-10-28最新代码更新确认任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`返回`success / execution_success`。安装目录CLI随后只读确认`sp01IdentityProbe`为Active / Nodejs16.13 / 3秒，并列出`sp01_permission_probe/`为0个文件。此次只读核对未调用函数，不证明小程序身份通路或存储权限。
 
-本轮部署确认任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`现已返回`status: success`、`detail: execution_success`；包统计为5833个文件、6.7 MB。部署后只读详情仍为`Active / Nodejs16.13 / 3秒`。这证明代码包已部署，不证明客户端调用成功；目前没有本轮云存储写入。便于手机扫码的预览二维码图片保存在本地忽略目录`tools/sp01-storage-probe/.local/sp01-identity-probe-preview-20261028.jpg`，未纳入版本控制。
+初次代码更新任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`返回`success / execution_success`，包统计为5833个文件、6.7 MB。之后最新代码更新任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`也返回`success / execution_success`，包统计相同，更新后只读详情仍为`Active / Nodejs16.13 / 3秒`。这证明代码包已部署，不证明客户端调用成功；目前没有本轮云存储写入。便于手机扫码的预览二维码图片保存在本地忽略目录`tools/sp01-storage-probe/.local/sp01-identity-probe-preview-20261028.jpg`，未纳入版本控制。
 
 紧邻手机验收前的只读预检再次确认目标环境函数列表仅含`sp01IdentityProbe`，详情为`Active / Nodejs16.13 / 3秒`；`sp01_permission_probe/`目录返回`totalCount: 0`。此快照证明开始测试前目录为空，尚无真实微信客户端函数调用或本轮文件写入。
 
