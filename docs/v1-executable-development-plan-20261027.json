@@ -321,9 +321,9 @@
           {
             "id": "ENV-STORE-01",
             "operation": "cloud-write-and-role-test-require-explicit-authorization",
-            "input": "隔离环境中的非敏感合成文件；匿名、文件所有者、其他用户、管理员角色分别验证读取/写入、直链、临时链接到期和撤权",
-            "expected": "逐角色对照已批准的私密文件策略；匿名和无权用户不得越权读取；链接有效期不预设，按实际配置验证到期与撤权",
-            "status": "failed-second-test-account-read-and-write; exact-file-deleted; root-cause-unknown"
+            "input": "隔离环境中的非敏感合成文件；逐角色验证读取/写入。当前已测用户报告为非管理员的第二微信测试账号；匿名、所有者、管理员、直链、临时链接到期和撤权仍待测",
+            "expected": "逐角色对照已批准的私密文件策略；“仅创建者可读写”允许管理员访问，对非管理员且身份不同于创建者的账号应拒绝读取/写入；链接有效期不预设，按实际配置验证到期与撤权",
+            "status": "failed-tested-file-nonadmin-second-account-read-and-write; exact-file-deleted; openid-not-directly-captured; root-cause-unknown"
           },
           {
             "id": "ENV-CLEANUP-01",
@@ -1105,8 +1105,8 @@
           "syntheticObjectPath": "sp01_permission_probe/owner-probe-20261028-a7c31e.txt",
           "testRole": "second-wechat-test-account",
           "expected": {
-            "secondAccountRead": "denied",
-            "secondAccountWrite": "denied"
+            "secondAccountRead": "denied-for-distinct-non-admin-account",
+            "secondAccountWrite": "denied-for-distinct-non-admin-account"
           },
           "observed": {
             "secondAccountRead": "succeeded",
@@ -1127,7 +1127,13 @@
             "revocation",
             "other-roles"
           ],
-          "nextCloudWriteOrRetestRequiresNewAuthorization": true
+          "nextCloudWriteOrRetestRequiresNewAuthorization": true,
+          "identityVerification": {
+            "separateWechatTestAccount": "user-reported",
+            "administratorOrDeveloperMembership": "user-reported-not-member",
+            "openidDistinctFromFileCreatorDirectlyCaptured": false
+          },
+          "resultClassification": "failed-for-tested-file; second-account-read-and-write-observed; openid-not-directly-captured"
         },
         "latestUserReportedEnvironmentMenuRecheck": {
           "date": "2026-10-28",
@@ -1143,13 +1149,13 @@
         },
         "blockedChecks": [
           "历史首轮测试截图回显输入事件并显示Hello World/运行上下文，和本地探针不符；首轮Nodejs16.13部署失败与该截图均保留为历史，不代表当前部署结果。",
-          "目标cloud1的临时事务探针现已通过一次修正版云端验证；数据库模式由后续DescribeEnvs回包结合官方资源定义支持确认。存储跨账号客户端探针失败：第二测试账号成功读取并写入合成文件，确切文件已删除且目录只读查询为0；未修改权限设置，根因未定，进一步诊断/修复/复测需新授权。实际手机/网络验证与请求及耐久预算等规格证据也未完成。历史事务失败结果继续保留为历史记录，不再作为当前事务验收状态。",
+          "目标cloud1的临时事务探针现已通过一次修正版云端验证；数据库模式由后续DescribeEnvs回包结合官方资源定义支持确认。存储跨账号客户端探针在该测试文件上失败：用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读取并写入合成文件；两个账号的_openid未直接采集，结论限定于该账号和文件。确切文件已删除且目录只读查询为0；未修改权限设置，具体规则生效原因未定，进一步诊断/修复/复测需新授权。实际手机/网络验证与请求及耐久预算等规格证据也未完成。历史事务失败结果继续保留为历史记录，不再作为当前事务验收状态.",
           "目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认。",
           "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过。",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不作新号共享候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞。",
           "SP01当前已限定在目标AppID、cloud1、临时探针及固定合成测试集合；服务范围供给、官方类目等SP04核验仍按对应卡片推进，SP01—SP06门槛完成前不得进入SP07。"
         ],
-      "nextAction": "环境上下文：用户确认腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并在E:\\O2O\\miniprogram\\cloudfunctions中选中cloud1；目标AppID范围的cloud_env_list已确认环境ID。DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理。事务验证期间sp01EnvProbe为Active/Nodejs20.19、超时30秒；用户随后报告已删除，目标AppID/EnvID范围只读cloud_fn_list返回total:0、list:[]；inspect、prepare及一次新run结构化结果均通过，事务探针的提交、回滚、并发和自动清理断言通过。此前失败run的三条自有记录已定向清理并验证无遗留；成功run的三条测试记录也由函数自动清理并回查通过。之后的一次性存储权限测试失败：第二测试账号可读写合成文件，确切文件已删除且目录只读查询为0，设置未改、根因未定；进一步云端诊断/修改/复测需要新授权。SP01还需完成实际手机/网络测量与请求和耐久预算等质量合同项目；状态保持进行中、产品验收未通过。后续任何云端写入、清理或部署均须先确认具体范围。SP01—SP06门槛完成前不得进入SP07。",
+        "nextAction": "环境上下文：用户确认腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并在E:\\O2O\\miniprogram\\cloudfunctions中选中cloud1；目标AppID范围的cloud_env_list已确认环境ID。DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理。事务验证期间sp01EnvProbe为Active/Nodejs20.19、超时30秒；用户随后报告已删除，目标AppID/EnvID范围只读cloud_fn_list返回total:0、list:[]；inspect、prepare及一次新run结构化结果均通过，事务探针的提交、回滚、并发和自动清理断言通过。此前失败run的三条自有记录已定向清理并验证无遗留；成功run的三条测试记录也由函数自动清理并回查通过。之后的一次性存储权限测试中，用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读写合成文件，故该测试文件的跨账号隔离失败；两个账号_openid未直接采集。确切文件已删除且目录只读查询为0，设置未改、具体规则生效原因未定；进一步云端诊断/修改/复测需要新授权。SP01还需完成实际手机/网络测量与请求和耐久预算等质量合同项目；状态保持进行中、产品验收未通过。后续任何云端写入、清理或部署均须先确认具体范围。SP01—SP06门槛完成前不得进入SP07。",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -1593,8 +1599,12 @@
           "authorization": "granted-for-target-sp01EnvProbe-fixed-collection-owned-record-cleanup-and-one-new-synthetic-run",
           "targetAppId": "wx2414399d423dfb65",
           "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
-          "readOnlyEnvironmentList": ["cloud1-d2gjahlq39bf141c7"],
-          "readOnlyFunctionList": ["sp01EnvProbe"],
+          "readOnlyEnvironmentList": [
+            "cloud1-d2gjahlq39bf141c7"
+          ],
+          "readOnlyFunctionList": [
+            "sp01EnvProbe"
+          ],
           "functionInfo": {
             "status": "Active",
             "runtime": "Nodejs20.19",
@@ -1613,7 +1623,9 @@
             "uploadedFiles": 4,
             "packageSize": "13.0 KB",
             "remoteNpmInstall": true,
-            "postDeploymentFunctionNames": ["sp01EnvProbe"],
+            "postDeploymentFunctionNames": [
+              "sp01EnvProbe"
+            ],
             "postDeploymentInfo": {
               "status": "Active",
               "runtime": "Nodejs20.19",
@@ -1630,11 +1642,29 @@
             "safeToClean": true,
             "presentCount": 3,
             "documents": [
-              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_a", "state": "owned", "format": "legacy-nested" },
-              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_b", "state": "owned", "format": "legacy-nested" },
-              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_a", "state": "missing" },
-              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_b", "state": "missing" },
-              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_concurrency", "state": "owned", "format": "legacy-nested" }
+              {
+                "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_a",
+                "state": "owned",
+                "format": "legacy-nested"
+              },
+              {
+                "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_b",
+                "state": "owned",
+                "format": "legacy-nested"
+              },
+              {
+                "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_a",
+                "state": "missing"
+              },
+              {
+                "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_b",
+                "state": "missing"
+              },
+              {
+                "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_concurrency",
+                "state": "owned",
+                "format": "legacy-nested"
+              }
             ]
           },
           "legacyRecordsCleaned": true,
@@ -1652,12 +1682,24 @@
             "success": true,
             "runId": "sp01_3db660bc5eb548559f4f6966a34209a2",
             "collection": "sp01_probe_20261028",
-            "commit": { "allDocumentsVisible": true },
-            "rollback": { "abortObserved": true, "noPartialWrites": true },
+            "commit": {
+              "allDocumentsVisible": true
+            },
+            "rollback": {
+              "abortObserved": true,
+              "noPartialWrites": true
+            },
             "concurrency": {
               "overlapObserved": true,
               "startBarrierTimedOut": false,
-              "outcomes": [ { "status": "fulfilled" }, { "status": "fulfilled" } ],
+              "outcomes": [
+                {
+                  "status": "fulfilled"
+                },
+                {
+                  "status": "fulfilled"
+                }
+              ],
               "finalValue": 2,
               "successfulTransactions": 2,
               "stateConsistent": true,
@@ -1923,7 +1965,7 @@
           "SP01恢复函数Active/Nodejs20.19、超时30秒；修正版代码已上传，inspect、prepare及新run结构化响应通过。3秒历史超时和首次30秒失败仍按历史记录保留；旧失败run的三条自有记录已核验并清理，成功run自动清理3条并完成删除后回查。最新事务探针的提交可见、回滚无部分写入、并发两笔成功且最终值为2。随后DescribeEnvs回包及官方资源映射支持确认数据库模式；SP04未修改CloudBase权限或数据库设置。"
         ],
         "blockedChecks": [
-          "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户报告cloudfunctions文件夹当前环境已选中cloud1；活动窗口项目路径、托管/登录配置和正式域名仍未核验。SP01事务探针通过；另一次存储跨账号客户端探针失败，第二测试账号成功读取及写入合成文件，文件已定向删除且权限设置未改；根因未定，进一步云端诊断或复测需新授权。旧号与新号主体不同，旧cloud1不作共享候选。费用核查按用户要求略过。",
+          "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户报告cloudfunctions文件夹当前环境已选中cloud1；活动窗口项目路径、托管/登录配置和正式域名仍未核验。SP01事务探针通过；另一次存储跨账号客户端探针在该测试文件上失败：用户确认第二测试账号未加入管理员/开发者名单且截图显示其成功读写；两个账号_openid未直接采集，文件已定向删除且权限设置未改，进一步云端诊断或复测需新授权。旧号与新号主体不同，旧cloud1不作共享候选。费用核查按用户要求略过。",
           "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；用户报告已将cloud1导入并在cloudfunctions菜单选中（无截图）。首轮SP01临时函数与不匹配测试仍为历史状态。恢复函数Active/Nodejs20.19、30秒，修正版代码包上传；inspect、prepare与一次新run通过，后者确认提交可见、回滚无部分写入、并发一致且自动清理回查通过。此前失败run遗留3条自有记录已定向清理，固定集合保留。数据库模式随后由API回包结合官方资源映射支持确认；SP04没有修改CloudBase权限或数据库设置。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过。"
         ],
         "evidence": [
