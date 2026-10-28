@@ -257,7 +257,12 @@
         "afterExpiry": "service-isolation-then-destruction-if-not-converted-to-paid",
         "sixMonthTrialRenewalAppliesToWechatExperienceLabel": false,
         "personalPlanPublicMonthlyPriceRmb": 19.9,
-        "priceRequiresPurchase": true
+        "priceRequiresPurchase": true,
+        "checkedAt": "2026-10-28",
+        "expiryAnchor": "mini-program-publication",
+        "conversionToPaidNeededToRetainFreeEnvironment": true,
+        "personalPlanPriceIsPromotional": true,
+        "expiryRuleMandatesSpecificPaidPlan": false
       },
       "currentTargetEnvironment": {
         "visibleCloudBasePlanLabel": "微信体验版",
@@ -265,9 +270,16 @@
         "miniProgramReleaseChannelVerified": false,
         "environmentBindingToTargetAppIdVerified": false,
         "exactPlanAndExpiryVerified": false,
-        "paidOrderVerified": false
+        "paidOrderVerified": false,
+        "freeEnvironmentStatusVerified": false
       },
-      "interpretation": "mini-program experience release channel and CloudBase environment plan are distinct; the official 15-day expiry applies to free CloudBase environments, but applicability to the screenshot environment and a required 19.9-RMB plan purchase are not verified"
+      "interpretation": "The mini-program experience release channel and CloudBase plan are distinct. If the bound environment is a free CloudBase environment and the app will continue using it after publication, convert it to a paid plan by the day-15 expiry to avoid service interruption; if left unpaid through the isolation period it will be destroyed. The Personal plan is currently promoted at 19.9 CNY/month, but the expiry rule does not mandate that specific plan. The target environment binding, free-environment status, and exact expiry remain not verified.",
+      "userReportedReleaseAndCloudBaseBudgetUnderstanding": {
+        "formalPublicationAfterReview": true,
+        "reportedPaidConversionWindowDaysAfterPublication": 15,
+        "reportedPersonalPlanPriceRmbPerMonth": 19.9,
+        "evidenceLevel": "user-provided-research-not-verified-for-target-appid-or-environment"
+      }
     },
     "oldCloudEnvironmentReadOnlyEvidence": {
       "appId": "wx358290e451cb06e7",
@@ -581,7 +593,7 @@
       "status": "in-progress",
       "productAcceptancePassed": false,
       "executionProgress": {
-        "date": "2026-10-27",
+        "date": "2026-10-28",
         "completedChecks": [
           "本机Node.js 24.18.0与npm 11.16.0已复核；不是云端运行时证据",
           "微信开发者工具CLI只读登录检查返回login=true",
@@ -595,14 +607,15 @@
           "较早的控制台概览截图显示cloud1/微信体验版和暂无数据；设置截图显示环境ID cloud1-d2gjahlq39bf141c7且位于权限设置页；最新费用管理截图显示当前标签微信体验版、40,000点/月、19.9元/月购买按钮、按量付费与自动续费均关闭，但没有显示环境ID、AppID、到期日或历史账单。用户报告没有付费；购买价格展示不证明已付费，环境归属目标AppID及准确计费期限仍未证实",
           "复核CloudBase当前价格文档（2026-08-31更新）及套餐说明（2026-10-26更新）：免费体验额度/限制适用于控制台免费体验；文档同时提示微信开发者工具创建的免费期环境可能仍属历史套餐版本，不能把公开的3000点、续期或到期规则直接套用到截图中的微信体验版",
           "按当前仍处于开发和受控验证阶段，建议先用免费体验环境，不购买19.9元/月付费套餐；遇到实际功能/额度限制或准备上线时，再依据控制台环境详情、用量和费用重新评估",
-          "预览根地址返回目录列表，不是单页原型入口"
+          "预览根地址返回目录列表，不是单页原型入口",
+          "复核腾讯云官方资源点价格文档：免费CloudBase环境在小程序发布后第15天到期并进入停服隔离，隔离期仍未转付费将销毁；如目标环境确属该免费环境且需持续使用，应在发布准备中安排付费转换。个人版当前¥19.9/月为限时优惠，规则未指定唯一套餐；当前截图仍未证明目标环境归属、免费状态或到期日。"
         ],
         "blockedChecks": [
           "新AppID早先云查询返回code 10 system error；用户重新打开开发者工具后Codex CLI授权成功，但重启后再次查询仍返回CONNECT_ERROR，状态检查也无法取得登录/版本状态；未收到目标AppID的云端响应，未取得环境清单",
           "用户已创建目标AppID匹配的CloudBase QuickStart模板；最新费用管理截图显示微信体验版标签、40,000点/月和19.9元/月购买按钮，按量付费与自动续费均关闭，但没有显示环境ID、AppID、到期日或历史账单；项目app.js的env为空且envList为空，环境绑定和适用套餐仍未核实。官方当前免费体验额度为3,000点/月、个人版为40,000点/月且19.9元/月；截图的购买按钮和套餐标签无法证明已有付费订阅。旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提",
           "新环境ID、运行时、数据库模式、事务和存储权限仍未验证"
         ],
-        "nextAction": "开发与受控测试阶段暂不购买付费套餐。最新费用管理截图显示微信体验版标签、40,000点/月和19.9元/月购买入口，按量付费、自动续费均关闭；官方现行价格将免费体验版列为3,000点/月、个人版列为40,000点/月与19.9元/月，因此截图上的价格及购买按钮不能证明已扣费或已订阅，也不能据公开现行额度推断此微信体验版的精确历史套餐。该页没有到期日，截图也未显示AppID或EnvId，不能证明环境绑定到目标AppID。若要检查是否有实际订单/支出，可只读查看‘我的订单’和‘充值与账单’；不要点击‘购买’或打开计费开关。官方CloudBase管理资源文档说明，DescribeBillingInfo接口传入EnvId可读取计费状态和到期时间；前一张截图显示的候选EnvId为cloud1-d2gjahlq39bf141c7，但尚未证明它与本页/目标AppID绑定。通过环境详情或此前失败的只读工具桥接取得对应EnvId与计费信息后，再绑定QuickStart工程并隔离验证。旧号个人主体的cloud1不再作为新号共享候选。"
+        "nextAction": "开发与受控测试阶段暂不购买付费套餐。旧号个人主体的cloud1不再作为新号共享候选。正式发布准备时，先只读取证确认目标AppID绑定的EnvId、环境类型和准确到期日；若确属发布后第15天到期的免费CloudBase环境且继续使用，则安排到期前转付费以避免停服。个人版当前¥19.9/月为限时优惠，最终套餐与价格以届时控制台为准。若要核对现有订单或支出，只读查看“我的订单”和“充值与账单”，不要购买或开启计费；目标EnvId确认且只读桥接恢复后，可使用DescribeBillingInfo核验计费状态和到期日。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
