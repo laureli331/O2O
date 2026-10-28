@@ -283,9 +283,57 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
     recovery: 'read-tool-help; retry-with-listCollections',
     cloudWriteOrDeploymentPerformed: false,
   });
+  a.deepEqual(audit.userScreenshotCloudBaseObservation, {
+    date: '2026-10-28',
+    targetEnvironmentName: 'cloud1',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    cloudFunctionDialog: {
+      functionCountDisplayed: 0,
+      selectedRuntime: 'Node.js 20.19',
+      runtimeOptions: [
+        { version: 'Node.js 24.11', label: 'public-beta' },
+        { version: 'Node.js 22.21', label: 'public-beta' },
+        { version: 'Node.js 20.19', label: 'not-labeled-beta' },
+        { version: 'Node.js 18.15', label: 'not-labeled-beta' },
+        { version: 'Node.js 16.13', label: 'not-labeled-beta' },
+      ],
+      screenshotShowsFunctionCreationOrDeployment: false,
+    },
+    runtimeSourceComparison: {
+      cliFunctionConfigDocument: 'https://docs.cloudbase.net/cli-v1/functions/configs',
+      cliFunctionConfigCallsNodejs20_19RecommendedAndDefault: true,
+      runtimeSupportDocument: 'https://docs.cloudbase.net/cloud-function/runtime-support',
+      runtimeSupportCallsNodejs24_11ActiveLtsAndRecommended: true,
+      documentationRecommendationConflict: true,
+      projectRecommendation: 'Node.js 20.19',
+      requiresUserConfirmation: true,
+    },
+    database: {
+      page: 'database-restore',
+      automaticBackupNoticeDisplayed: true,
+      restorePointCountDisplayed: 0,
+      modeOrEngineDisplayed: false,
+      modeInferenceFromRestorePage: 'consistent-with-traditional-mode-but-not-confirmed',
+      inferenceSource: 'https://docs.cloudbase.net/quick-start/classic-overview',
+    },
+    storage: {
+      rootFileCountDisplayed: 0,
+      selectedPermission: '仅创建者可读写',
+      miniProgramClientRequestsOnlyAreGovernedByThisSetting: true,
+      settingChanged: false,
+    },
+    developerTools: {
+      environmentMenuLabel: '当前环境：(无)',
+      environmentSubmenuLabel: '(空)',
+      newNodeJsCloudFunctionMenuDisplayed: true,
+      projectEnvListPath: 'miniprogram/miniprogram/envList.js',
+      projectEnvListLength: 0,
+    },
+  });
   a.deepEqual(audit.cloudCapabilityTestPlan.cases.map((testCase) => testCase.id), [
     'ENV-RUNTIME-01', 'ENV-DB-TX-01', 'ENV-STORE-01', 'ENV-CLEANUP-01',
   ]);
+  a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-RUNTIME-01').status, 'user-screenshot-options-recorded-runtime-choice-unconfirmed');
   a(audit.cloudCapabilityTestPlan.cases.filter((testCase) => testCase.operation !== 'read-only')
     .every((testCase) => testCase.status === 'not-executed-no-write-authorization'));
   a(audit.cloudCapabilityTestPlan.cases.every((testCase) => testCase.input && testCase.expected));
@@ -317,8 +365,22 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('没有用猜测路径重试'));
   a(doc.includes('目标环境文件清单和实际权限仍未核实'));
   a(planDoc.includes('补充只读云资源复核'));
-  a(planDoc.includes('当前待用户只读查看目标环境的新建云函数运行时下拉选项'));
+  a(planDoc.includes('用户截图已记录运行时选项与存储权限选择'));
   a(doc.includes('清理也是云端变更'));
+  a(doc.includes('运行时下拉截图显示当前选择Node.js 20.19'));
+  a(doc.includes('Node.js 24.11和22.21标注“公测中”'));
+  a(doc.includes('数据库截图显示“数据库回档”及暂无数据'));
+  a(doc.includes('没有显示数据库模式或引擎'));
+  a(doc.includes('CloudBase[云函数配置文档](https://docs.cloudbase.net/cli-v1/functions/configs)'));
+  a(doc.includes('CloudBase[运行环境支持表](https://docs.cloudbase.net/cloud-function/runtime-support)'));
+  a(doc.includes('运行时选择参考'));
+  a(doc.includes('等用户确认后再锁定'));
+  a(doc.includes('PG模式不提供文档型数据库级别的备份与回档'));
+  a(doc.includes('是一个线索，但不能代替明确的模式标签'));
+  a(doc.includes('存储管理根目录显示暂无文件'));
+  a(doc.includes('当前选中“仅创建者可读写”'));
+  a(doc.includes('开发者工具菜单显示“当前环境：(无)”'));
+  a(doc.includes('本地`envList.js`仍为空'));
   a(planDoc.includes('CLI技能版本为'));
   a(planDoc.includes('PowerShell清点未发现ADB'));
   a(planDoc.includes('用户已提供OPPO Find X9'));
@@ -326,7 +388,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(sp01.status, 'in-progress');
   a.equal(sp01.productAcceptancePassed, false);
   a(sp01.executionProgress.blockedChecks.some((check) => check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景') && check.includes('网络性能仍未实测')));
-  a(sp01.executionProgress.nextAction.includes('结合用户正在查看的云函数、数据库设置和存储页完成只读核对'));
+  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('运行时选项已记录') && check.includes('数据库模式/引擎仍未知')));
+  a(sp01.executionProgress.nextAction.includes('请用户确认Node.js 20.19作为首选稳定候选'));
 });
 
 test('SP01 records the local diagnostic project AppID separately from the new target AppID', () => {

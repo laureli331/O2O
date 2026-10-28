@@ -306,7 +306,7 @@
             "operation": "read-only",
             "input": "目标AppID/EnvID及云函数新建表单中的运行时下拉选项；不提交表单",
             "expected": "只记录页面实际显示的运行时名称和版本；未显示的候选保持未知，不创建或部署云函数",
-            "status": "waiting-for-user-read-only-observation"
+            "status": "user-screenshot-options-recorded-runtime-choice-unconfirmed"
           },
           {
             "id": "ENV-DB-TX-01",
@@ -330,6 +330,53 @@
             "status": "not-executed-no-write-authorization"
           }
         ]
+      },
+      "userScreenshotCloudBaseObservation": {
+        "date": "2026-10-28",
+        "targetEnvironmentName": "cloud1",
+        "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+        "cloudFunctionDialog": {
+          "functionCountDisplayed": 0,
+          "selectedRuntime": "Node.js 20.19",
+          "runtimeOptions": [
+            { "version": "Node.js 24.11", "label": "public-beta" },
+            { "version": "Node.js 22.21", "label": "public-beta" },
+            { "version": "Node.js 20.19", "label": "not-labeled-beta" },
+            { "version": "Node.js 18.15", "label": "not-labeled-beta" },
+            { "version": "Node.js 16.13", "label": "not-labeled-beta" }
+          ],
+          "screenshotShowsFunctionCreationOrDeployment": false
+        },
+        "runtimeSourceComparison": {
+          "cliFunctionConfigDocument": "https://docs.cloudbase.net/cli-v1/functions/configs",
+          "cliFunctionConfigCallsNodejs20_19RecommendedAndDefault": true,
+          "runtimeSupportDocument": "https://docs.cloudbase.net/cloud-function/runtime-support",
+          "runtimeSupportCallsNodejs24_11ActiveLtsAndRecommended": true,
+          "documentationRecommendationConflict": true,
+          "projectRecommendation": "Node.js 20.19",
+          "requiresUserConfirmation": true
+        },
+        "database": {
+          "page": "database-restore",
+          "automaticBackupNoticeDisplayed": true,
+          "restorePointCountDisplayed": 0,
+          "modeOrEngineDisplayed": false,
+          "modeInferenceFromRestorePage": "consistent-with-traditional-mode-but-not-confirmed",
+          "inferenceSource": "https://docs.cloudbase.net/quick-start/classic-overview"
+        },
+        "storage": {
+          "rootFileCountDisplayed": 0,
+          "selectedPermission": "仅创建者可读写",
+          "miniProgramClientRequestsOnlyAreGovernedByThisSetting": true,
+          "settingChanged": false
+        },
+        "developerTools": {
+          "environmentMenuLabel": "当前环境：(无)",
+          "environmentSubmenuLabel": "(空)",
+          "newNodeJsCloudFunctionMenuDisplayed": true,
+          "projectEnvListPath": "miniprogram/miniprogram/envList.js",
+          "projectEnvListLength": 0
+        }
       }
     },
     "devtoolsProjectCreationWizardObservation": {
@@ -849,6 +896,7 @@
           "此前shell将wechatide解析到E:\\O2O\\.local\\tools\\wechat-devtools\\wechatide.cmd，该路径调用status与cloud_env_list返回CONNECT_ERROR；直接使用微信开发者工具安装目录E:\\微信web开发者工具\\wechatide.cmd后，status返回success/loginExpired=false/versionRelation=equal，按目标AppID的cloud_env_list返回cloud1-d2gjahlq39bf141c7",
           "首次云资源查询因遗漏必需的-c Codex参数返回INPUT_ERROR/missing_client，没有发出云请求；根据CLI帮助补齐参数后重试。直接使用安装目录CLI进行只读核验：project_list包含E:\\O2O\\miniprogram及目标AppID wx2414399d423dfb65；cloud_fn_list和cloud_db_read_struct命令显式传入目标AppID wx2414399d423dfb65及EnvID cloud1-d2gjahlq39bf141c7，分别返回0个云函数和0个数据库集合。响应未回显EnvID，查询作用域由命令参数记录。没有部署或写入云端资源",
           "CLI技能版本为0.3.11；结构查询只列出集合/索引读取操作，未提供环境级运行时、数据库模式或存储权限配置的只读查询；帮助显示的云函数部署、数据库写入及存储上传/删除是变更操作。本轮未读取云存储文件列表、临时链接或内容",
+          "2026-10-28用户提供目标环境只读截图：云函数表单当前选择Node.js 20.19，候选包括24.11/22.21（界面标注公测中）、20.19、18.15、16.13；截图背景显示0个云函数，未显示函数创建或部署结果。数据库页为数据库回档，提示自动备份且暂无回档数据，没有显示数据库模式或引擎。存储根目录显示暂无文件，权限页选中仅创建者可读写，并提示该规则约束小程序客户端请求、控制台和云函数仍有完整文件读写权限；未更改设置。开发者工具菜单显示当前环境(无)、子菜单为空；本地envList.js导出空数组。截图事实不证明函数运行成功、数据库模式或事务能力，亦未授权写入/部署",
           "本机设备清点未发现ADB命令或常见Android SDK路径中的adb.exe；用户于2026-10-28提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79，并选择Chrome作为后台验收浏览器；公开配置miniprogram/project.config.json声明基础库2.20.1，私有配置miniprogram/project.private.config.json声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5且当前页为/pages/index/index（基础能力），但手机实际加载的基础库版本和浏览器兼容性仍未核验。用户提供家中WiFi 5G作为常规场景、公共免费WiFi作为较弱场景，网络性能指标尚未测量"
         ],
     "latestReadOnlyCloudRecheck": {
@@ -864,13 +912,24 @@
       "recovery": "read-tool-help; retry-with-listCollections",
       "cloudWriteOrDeploymentPerformed": false
     },
+    "latestUserScreenshotCloudBaseObservation": {
+      "date": "2026-10-28",
+      "evidenceSource": "user-provided-screenshots",
+      "runtimeOptionsCaptured": true,
+      "runtimeChoiceConfirmed": false,
+      "databaseModeOrEngineCaptured": false,
+      "storageRootEmptyDisplayed": true,
+      "storagePermissionDisplayed": "仅创建者可读写",
+      "developerToolsEnvironmentSelectorEmptyDisplayed": true,
+      "cloudWriteOrDeploymentPerformedByThisObservation": false
+    },
         "blockedChecks": [
-          "目标环境运行时、数据库模式、事务和私密文件权限仍未验证；本次只读检查显示尚无云函数和集合，按已授权范围未部署测试函数或写入数据",
+          "目标环境运行时、数据库模式、事务和私密文件权限仍未验证；运行时选项已记录：界面当前选择Node.js 20.19，24.11和22.21标注公测中，仍需确认采用的运行时。数据库模式/引擎仍未知，事务未测试；存储当前选中仅创建者可读写，但私密文件角色、临时链接和撤权仍未实测。开发者工具环境选择器显示(无)，本地envList.js为空；尚未确认其与app.js环境绑定配置的关系或进行任何修改。云写入/部署测试未获授权",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
           "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞"
         ],
-        "nextAction": "目标AppID的cloud_env_list已通过微信开发者工具安装目录内CLI返回cloud1-d2gjahlq39bf141c7；project_list确认E:\\O2O\\miniprogram已登记且AppID匹配。云函数和数据库集合只读查询均显式传入目标AppID及EnvID，分别返回0个函数和0个集合，响应未回显EnvID，查询作用域由命令参数留证。CLI帮助没有环境级运行时、数据库模式或存储权限配置查询，本轮未读取存储文件；实际运行时、事务与私密文件权限需后续受控测试。当前活动窗口加载路径仍未确认。公开配置声明基础库2.20.1、私有配置声明3.17.5，目标工程DevTools模拟器systemInfo报告SDKVersion 3.17.5；三台真机实际加载版本、浏览器兼容性及网络性能须在执行后留证。公开/私有配置声明差异尚未处理。下一步结合用户正在查看的云函数、数据库设置和存储页完成只读核对。任何云端部署或写入测试须先取得具体授权。旧号个人主体的cloud1不作新号共享候选。用户要求本轮不再核对费用；若上线后出现实际付费提示，用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
+        "nextAction": "目标AppID的cloud_env_list已通过微信开发者工具安装目录内CLI返回cloud1-d2gjahlq39bf141c7；project_list确认E:\\O2O\\miniprogram已登记且AppID匹配。云函数和数据库集合只读查询均显式传入目标AppID及EnvID，分别返回0个函数和0个集合，响应未回显EnvID，查询作用域由命令参数留证。CLI帮助没有环境级配置查询。用户截图已确认运行时选项可见且存储页显示权限选择，但未确认运行时采用或实际角色访问；数据库模式/引擎未显示，事务与权限边界仍需验证。当前活动窗口加载路径仍未确认。公开配置声明基础库2.20.1、私有配置声明3.17.5，目标工程DevTools模拟器systemInfo报告SDKVersion 3.17.5；三台真机实际加载版本、浏览器兼容性及网络性能须在执行后留证。公开/私有配置声明差异尚未处理。下一步请用户确认Node.js 20.19作为首选稳定候选或指定其他已显示版本；核对模板envList配置与DevTools环境选择器显示(无)的关系，并查找数据库模式/引擎实际页面。任何云端部署或写入测试须先取得具体授权。旧号个人主体的cloud1不作新号共享候选。用户要求本轮不再核对费用；若上线后出现实际付费提示，用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
