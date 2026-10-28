@@ -651,7 +651,7 @@ test('SP01 distinguishes cloudfunctions deployment target from the mini-program 
   a(environmentList.includes('const envList = [];'));
   a.equal(/require\(['"].*envList/.test(app), false);
 });
-test('SP01 records the user-reported empty environment menu and keeps account import unperformed', () => {
+test('SP01 preserves the earlier empty menu report and records the later import separately', () => {
   const plan = load();
   const sp01 = plan.tasks.find((task) => task.id === 'SP01');
   const sp04 = JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
@@ -677,13 +677,15 @@ test('SP01 records the user-reported empty environment menu and keeps account im
   a.equal(sp01.status, 'in-progress');
   a.equal(sp01.productAcceptancePassed, false);
   a(sp01.executionProgress.nextAction.includes('腾讯云账号中心已关联目标小程序'));
-  a(sp01.executionProgress.nextAction.includes('导入现有cloud1'));
-  a(sp01.executionProgress.nextAction.includes('当前尚未获得明确授权'));
+  a(sp01.executionProgress.nextAction.includes('随后报告已导入'));
+  a(sp01.executionProgress.nextAction.includes('导入后复核'));
   a(sp01Doc.includes('回复“菜单仍为空”'));
+  a(sp01Doc.includes('这是导入前的观察'));
   a(sp01Doc.includes('https://docs.cloudbase.net/faq/account'));
   a(sp01Doc.includes('用户随后在账号中心只读查看并报告目标小程序已关联（未附截图）'));
-  a(sp01Doc.includes('当前授权不含导入'));
+  a(sp01Doc.includes('随后报告已导入'));
   a(sp04Doc.includes('菜单仍为空'));
+  a(sp04Doc.includes('随后报告已导入'));
   a.equal(sp04.cloudWritesOrDeploymentPerformed, false);
 });
 test('current plan entry points preserve legacy rows and point to the new execution document',()=>{for(const file of ['docs/development-plan.md','docs/post-registration-development.md','docs/module-specs/current-development-basis-20261015.md','CONTEXT.md'])a(read(file).includes('v1-executable-development-plan-20261027.md'),file);const p=load();a(p.legacyOverrides.some(x=>x.legacy.includes('DP14')&&x.decision==='provider-profiles-only-no-people-directory'));a(p.legacyOverrides.some(x=>x.legacy.includes('DP25')&&x.decision==='existing-legal-history-only-v17-archived'));a.equal(p.tasks.flatMap(t=>t.pages).includes('V17'),false);a(!scope.remainingDecisionsOrEvidence.includes('new-onboarding-and-coupon-ascii-html-design'));a.equal(scope.prototypeDelivery.realAbilitiesVerified,false);a.equal(scope.formalDevelopmentReady,false);});
@@ -733,7 +735,7 @@ test('SP01 separates confirmed runtime and user-reported database mode from runt
  a(!planDoc.includes('运行时选择、数据库模式、小程序端运行时'));
  a(!sp04Doc.includes('运行时选择和数据库模式仍未验证'));
 });
-test('SP01 records the user-reported account association and keeps importing cloud1 as an unperformed state change',()=>{
+test('SP01 separates the account-association report from the later cloud1 import report',()=>{
  const p=load(),sp01=p.tasks.find(t=>t.id==='SP01'),sp04=p.tasks.find(t=>t.id==='SP04');
  const techDoc=read('docs/sp01-technical-environment-20261027.md');
  const planDoc=read('docs/v1-executable-development-plan-20261027.md');
@@ -743,26 +745,47 @@ test('SP01 records the user-reported account association and keeps importing clo
  a.equal(association.targetAppId,'wx2414399d423dfb65');
  a.equal(association.screenshotProvided,false);
  a.equal(association.environmentImportPerformed,false);
+ a.equal(sp01.executionProgress.latestUserReportedEnvironmentImport.result,'user-reported-imported');
+ a.equal(sp01.executionProgress.latestUserReportedEnvironmentImport.deploymentPerformed,false);
+ a.equal(sp04.executionProgress.latestUserReportedEnvironmentImport.result,'user-reported-imported');
  a(!sp01.executionProgress.nextAction.includes('账号关联尚未核实'));
  a(!sp01.executionProgress.nextAction.includes('先只读核对腾讯云账号中心'));
  a(!sp04.executionProgress.blockedChecks.some(check=>check.includes('需先核对与app.js绑定的模板关系')));
- a(sp04.executionProgress.blockedChecks.some(check=>check.includes('账号中心关联已由用户报告为已关联')));
+ a(sp04.executionProgress.blockedChecks.some(check=>check.includes('用户报告已将cloud1导入')));
  for(const doc of [techDoc,planDoc,sp04Doc]){
   a(doc.includes('账号中心')||doc.includes('腾讯云账号中心'));
   a(doc.includes('未附截图'));
   a(doc.includes('尚未执行')||doc.includes('未执行'));
  }
 });
-test('SP04 E06 distinguishes reported account association from the pending cloud1 import',()=>{
+test('SP01 records the later user-reported cloud1 import separately from read-only CLI visibility and deployment',()=>{
+ const plan=load(),sp01=plan.tasks.find(task=>task.id==='SP01'),sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
+ const imported={date:'2026-10-28',source:'user-reply',projectPath:'E:\\O2O\\miniprogram',targetAppId:'wx2414399d423dfb65',environmentId:'cloud1-d2gjahlq39bf141c7',result:'user-reported-imported',screenshotProvided:false,deploymentPerformed:false};
+ const cliCheck={date:'2026-10-28',source:'wechatide-cli-read-only',projectPath:'E:\\O2O\\miniprogram',targetAppId:'wx2414399d423dfb65',environmentList:['cloud1-d2gjahlq39bf141c7'],projectListed:true,cloudFunctionCount:0,runtimeExecutionVerified:false,cloudWriteOrDeploymentPerformed:false};
+ a.deepEqual(sp01.executionProgress.latestUserReportedEnvironmentImport,imported);
+ a.deepEqual(sp04.latestUserReportedEnvironmentImport,imported);
+ a.deepEqual(sp01.executionProgress.latestReadOnlyCloudRecheckAfterImport,cliCheck);
+ a.deepEqual(sp04.latestReadOnlyCloudRecheckAfterImport,cliCheck);
+ a.equal(sp01.executionProgress.latestUserReportedEnvironmentMenuRecheck.existingTencentEnvironmentImported,false,'the earlier empty-menu observation remains historical');
+ a(sp01.executionProgress.nextAction.includes('随后报告已导入'));
+ a(sp01.executionProgress.nextAction.includes('cloudfunctions'));
+ a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);
+});
+test('SP04 E06 distinguishes the reported cloud1 import from unverified deployment wiring',()=>{
  const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
  const e06=sp04.evidenceGates.find(gate=>gate.id==='E06');
  const association=sp04.latestUserReportedAccountAssociationCheck;
+ const imported=sp04.latestUserReportedEnvironmentImport;
  a.equal(association.result,'associated');
  a.equal(association.environmentImportPerformed,false);
  a.equal(association.deploymentPerformed,false);
+ a.equal(imported.result,'user-reported-imported');
+ a.equal(imported.deploymentPerformed,false);
  a.equal(e06.passed,false);
  a(e06.reason.includes('用户随后报告腾讯云账号中心已关联'));
- a(e06.reason.includes('环境导入仍未执行'));
+ a(e06.reason.includes('随后报告已导入'));
+ a(e06.reason.includes('导入后菜单状态仍未复核'));
+ a(!e06.reason.includes('环境导入仍未执行'));
  a(!e06.reason.includes('关联核对和环境导入均未执行'));
 });
 test('SP01 runtime-form evidence and SP04 next actions reflect the latest confirmed state',()=>{
@@ -776,6 +799,7 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
  a(techDoc.includes('运行时候选截图及用户选择；云函数实际配置、创建与运行仍未验证'));
  a(!techDoc.includes('运行时菜单、数据库模式、事务和文件权限继续标为未知'));
  a(sp04AccountCheck.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
- a(sp04AccountCheck.includes('须先取得具体授权'));
+ a(sp04AccountCheck.includes('用户随后报告已导入'));
+ a(sp04AccountCheck.includes('导入后菜单状态仍待复核'));
  a(!sp04AccountCheck.includes('先只读核对腾讯云账号中心'));
 });
