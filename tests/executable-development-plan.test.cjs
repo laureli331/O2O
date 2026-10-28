@@ -71,7 +71,7 @@ test('SP01 distinguishes mini-program trial testing from the free CloudBase envi
 });
 test('SP01 execution record separates historical CLI failures from current read-only CloudBase results',()=>{
   const p=load(),doc=read('docs/sp01-technical-environment-20261027.md'),planDoc=read('docs/v1-executable-development-plan-20261027.md');
-  for(const text of ['Node.js 24.18.0','npm 11.16.0','login=true','code 10','system error','wx2414399d423dfb65','Node.js 24.11','Nodejs24.11','未取得环境清单','cloud1-d1g1mv89t76512a25','较早截图本身未显示AppID','未执行数据库业务写入、存储写入、支付、AI调用或生产操作','回退','CLI授权成功','CONNECT_ERROR','现有截图和只读CLI结果共同确认AppID/环境关联','用户确认重新打开微信开发者工具','安装诊断返回`compatible=true`','项目本地AppID已核验','本轮按用户要求跳过套餐、账单和到期核查'])a(doc.includes(text),text);
+  for(const text of ['Node.js 24.18.0','npm 11.16.0','login=true','code 10','system error','wx2414399d423dfb65','Node.js 24.11','Nodejs24.11','未取得环境清单','cloud1-d1g1mv89t76512a25','较早截图本身未显示AppID','截至该事务探针阶段未执行存储写入、支付、AI调用或生产操作','回退','CLI授权成功','CONNECT_ERROR','现有截图和只读CLI结果共同确认AppID/环境关联','用户确认重新打开微信开发者工具','安装诊断返回`compatible=true`','项目本地AppID已核验','本轮按用户要求跳过套餐、账单和到期核查'])a(doc.includes(text),text);
   a(planDoc.includes('之后有一次命令因Shell解析到项目内辅助CLI而返回`CONNECT_ERROR`'));
   a(planDoc.includes('改用安装目录`E:\\微信web开发者工具\\wechatide.cmd`后，状态查询成功'));
   a(doc.includes('当前查询通路已恢复'));
@@ -342,11 +342,11 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(audit.networkMetricsMeasured, false);
   a.equal(audit.cloudCapabilityTestPlan.targetAppId, 'wx2414399d423dfb65');
   a.equal(audit.cloudCapabilityTestPlan.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
-  a.equal(audit.cloudCapabilityTestPlan.currentCloudFunctionCount, 1);
+  a.equal(audit.cloudCapabilityTestPlan.currentCloudFunctionCount, 0);
   a.equal(audit.cloudCapabilityTestPlan.currentDatabaseCollectionCount, 1);
   a.equal(audit.cloudCapabilityTestPlan.currentDatabaseCollectionEvidenceSource, 'user-prepare-response-and-cli-listCollections-after-run-timeout; fixed collection exists with zero current records');
   a.equal(audit.cloudCapabilityTestPlan.separateTestEnvironmentVerified, false);
-  a.equal(audit.cloudCapabilityTestPlan.testWriteAuthorization, 'granted-for-sp01-probe-only');
+  a.equal(audit.cloudCapabilityTestPlan.testWriteAuthorization, 'granted-for-sp01-transaction-and-one-file-storage-probe');
   a.equal(audit.cloudCapabilityTestPlan.realPersonalDataAllowed, false);
   a.equal(audit.cloudCapabilityTestPlan.officialSourceCheckDate, '2026-10-28');
   const progress = record.tasks.find((task) => task.id === 'SP01').executionProgress;
@@ -448,9 +448,9 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
     'ENV-RUNTIME-01', 'ENV-DB-TX-01', 'ENV-STORE-01', 'ENV-CLEANUP-01',
   ]);
   a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-RUNTIME-01').status, 'inspect-passed-runtime-verified');
-  a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-DB-TX-01').status, 'run-timed-out-after-3-seconds; transaction-not-verified');
-  a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-CLEANUP-01').status, 'cleanup-unverified-after-run-timeout');
-  a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-STORE-01').status, 'not-executed-no-write-authorization');
+  a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-DB-TX-01').status, 'latest-30-second-transaction-probe-passed; earlier-timeout-retained-as-history');
+  a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-CLEANUP-01').status, 'authorized-record-and-file-cleanup-verified; fixed-collection-retained');
+  a.equal(audit.cloudCapabilityTestPlan.cases.find((testCase) => testCase.id === 'ENV-STORE-01').status, 'failed-second-test-account-read-and-write; exact-file-deleted; root-cause-unknown');
   a(audit.cloudCapabilityTestPlan.cases.every((testCase) => testCase.input && testCase.expected));
   a.deepEqual(audit.installedDesktopBrowsers, [
     { name: 'Google Chrome', version: '156.0.8078.47' },
@@ -459,7 +459,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   ]);
   a.equal(audit.adminBrowserSelected, true);
   a(doc.includes('CLI帮助没有提供超时配置更新或环境级运行时/数据库模式/存储权限只读查询'));
-  a(doc.includes('未调用存储文件列表、临时链接或内容读取'));
+  a(doc.includes('本轮未用CLI读取文件内容或生成临时链接'));
   a(doc.includes('未发现ADB，也未在常见Android SDK目录找到adb.exe'));
   a(doc.includes('这不证明用户没有测试手机'));
   a(doc.includes('本机注册表检测到Chrome'));
@@ -478,7 +478,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('并应避免事务期间DDL及外部调用'));
   a(doc.includes('第一次输入错误未发出云请求'));
   a(doc.includes('没有用猜测路径重试'));
-  a(doc.includes('目标环境文件清单和实际权限仍未核实'));
+  a(doc.includes('通过CLI读取的目标环境完整文件清单仍未核实'));
   a(planDoc.includes('补充只读云资源复核'));
   a(planDoc.includes('用户确认首版采用Node.js 20.19'));
   a(doc.includes('一次性云端写入授权已用完'));
@@ -518,7 +518,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(record.accountEvidence.technicalEnvironmentAudit.userConfirmedRuntimeAndDatabase.databaseMode,'文档型数据库');
   a(sp01.executionProgress.nextAction.includes('Nodejs20.19') && sp01.executionProgress.nextAction.includes('DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型'));
   a(sp01.executionProgress.nextAction.includes('超时30秒'));
-  a(sp01.executionProgress.nextAction.includes('此前一次性云端写入授权已使用'));
+  a(sp01.executionProgress.nextAction.includes('之后的一次性存储权限测试失败'));
+  a(sp01.executionProgress.nextAction.includes('进一步云端诊断/修改/复测需要新授权'));
   a(sp01.executionProgress.nextAction.includes('cloudfunctions中选中cloud1'));
 });
 
@@ -560,11 +561,41 @@ test('SP04 plan progress records no confirmed service providers as a blocker and
   a(task.executionProgress.completedChecks.some((check) => check.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
   a(task.executionProgress.completedChecks.some((check) => check.includes('CloudBase截图') && check.includes('当前环境为无') && check.includes('未改云端设置')));
   a(task.executionProgress.blockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
-  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('存储权限未作跨账号验证')));
+  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('SP01事务探针通过') && check.includes('存储跨账号客户端探针失败')));
   a(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
   a(doc.includes('开发者工具云函数菜单早期显示“当前环境：(无)”且子菜单“(空)”'));
   a.equal(p.firstProductTask, 'SP07');
   a.deepEqual(p.firstProductTaskPrerequisites, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
+});
+test('SP01 records failed second-account storage read/write and verifies exact-file cleanup without changing policy', () => {
+  const p = load();
+  const task = p.tasks.find((entry) => entry.id === 'SP01');
+  const probe = task.executionProgress.storagePermissionCrossAccountProbe;
+  const planDoc = read('docs/v1-executable-development-plan-20261027.md');
+  const technicalDoc = read('docs/sp01-technical-environment-20261027.md');
+  const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
+
+  a.equal(task.status, 'in-progress');
+  a.equal(task.productAcceptancePassed, false);
+  a.equal(probe.targetAppId, 'wx2414399d423dfb65');
+  a.equal(probe.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
+  a.equal(probe.syntheticObjectPath, 'sp01_permission_probe/owner-probe-20261028-a7c31e.txt');
+  a.equal(probe.observed.secondAccountRead, 'succeeded');
+  a.equal(probe.observed.secondAccountWrite, 'succeeded');
+  a.equal(probe.acceptancePassed, false);
+  a.equal(probe.rootCauseDetermined, false);
+  a.equal(probe.cloudPermissionSettingsChanged, false);
+  a.equal(probe.cleanup.exactFileDeleteSucceeded, true);
+  a.equal(probe.cleanup.folderReadOnlyListCountAfterDelete, 0);
+  a.equal(probe.cleanup.fileRecreated, false);
+  a(probe.nextCloudWriteOrRetestRequiresNewAuthorization);
+  a(planDoc.includes('存储跨账号权限测试'));
+  a(planDoc.includes('该验收项失败'));
+  for (const doc of [technicalDoc, runbook]) {
+    a(doc.includes('sp01_permission_probe/owner-probe-20261028-a7c31e.txt'));
+    a(doc.includes('第二测试账号成功读取并写入'));
+    a(doc.includes('根因'));
+  }
 });
 test('SP01 scopes the DevTools project-manager inventory to its visible registered projects', () => {
   const record = load();
@@ -648,7 +679,7 @@ test('SP01 separates the historical creation wizard from current environment-lis
   a.equal(sp01.productAcceptancePassed, false);
   a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);
   a(!sp01.executionProgress.blockedChecks.some((check) => check.includes('CloudBase API关联尚未核验')));
-  a(sp01.executionProgress.nextAction.includes('真实文件权限未做跨账号访问测试'));
+  a(sp01.executionProgress.nextAction.includes('之后的一次性存储权限测试失败'));
   a(sp01.executionProgress.nextAction.includes('费用核查按用户要求略过'));
   const doc = read('docs/sp01-technical-environment-20261027.md');
   a(doc.includes('用户最初提供的截图显示微信开发者工具“创建小程序”向导'));
@@ -926,7 +957,7 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
  const transactionCase=techDoc.split('\n').find(line=>line.includes('ENV-DB-TX-01')); a(transactionCase.includes('最新修正版30秒run通过探针断言'));
  a(!runtimeCase.includes('临时函数已删除'));
  a(!runtimeCase.includes('等待只读观察'));
- a(techDoc.includes('用户已取得仅针对SP01临时探针'));
+ a(techDoc.includes('**当时**的授权仅覆盖SP01临时探针'));
  a(!techDoc.includes('运行时菜单、数据库模式、事务和文件权限继续标为未知'));
  a(sp04AccountCheck.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   a(sp04AccountCheck.includes('已导入cloud1'));
