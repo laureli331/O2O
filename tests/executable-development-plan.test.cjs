@@ -973,6 +973,10 @@ test('SP01 records the selected menu separately from the deployed temporary prob
  a.deepEqual(sp01.executionProgress.latestUserReportedEnvironmentMenuAfterImport,expected);
  a.deepEqual(sp04Task.executionProgress.latestUserReportedEnvironmentMenuAfterImport,expected);
  a.deepEqual(sp04.latestUserReportedEnvironmentMenuAfterImport,expected);
+ a.deepEqual(sp04Task.executionProgress.latestIdentityProbeDeployment,sp04.latestIdentityProbeDeployment);
+ a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.postDeploymentReadOnly.runtime,'Nodejs16.13');
+ a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.clientInvocationVerified,false);
+ a(sp04Task.executionProgress.nextAction.includes('账号A创建合成文件'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);
  a(sp04.evidenceGates.find(gate=>gate.id==='E06').reason.includes('报告当前环境已选中cloud1')); a.deepEqual(sp04.latestTemporaryProbeDeployment.functionNamesAfterDeployment,['sp01EnvProbe']); a.equal(sp04.latestTemporaryProbeDeployment.runtimeInvocationVerified,false);
  a.equal(sp04.cloudWritesOrDeploymentPerformed,true);

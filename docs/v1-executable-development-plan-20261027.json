@@ -2070,11 +2070,12 @@
           "2026-10-28用户提供CloudBase截图，记录云函数运行时候选、数据库回档页、空存储根目录及仅创建者可读写选项；开发者工具菜单显示当前环境为无且子菜单为空。本地envList仍为空；已交叉记入SP04，未改云端设置或项目配置",
           "2026-10-28用户提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79；后台验收选择Chrome，网络场景为家中WiFi 5G与公共免费WiFi。用户报告不代表设备连接、兼容性或网络性能已实测",
           "历史记录（截至当时）：用户确认首版云函数运行时为Node.js 20.19；查看数据库设置后报告当前为文档型数据库。均与截图可见范围分开记载；临时SP01探针当时曾部署并收到不符合本地响应契约的测试结果，之后已由用户删除。SP04未变更CloudBase权限或数据库设置。随后DescribeEnvs回包及官方资源映射支持确认数据库模式，见SP01技术记录。",
-          "SP01恢复函数Active/Nodejs20.19、超时30秒；修正版代码已上传，inspect、prepare及新run结构化响应通过。3秒历史超时和首次30秒失败仍按历史记录保留；旧失败run的三条自有记录已核验并清理，成功run自动清理3条并完成删除后回查。最新事务探针的提交可见、回滚无部分写入、并发两笔成功且最终值为2。随后DescribeEnvs回包及官方资源映射支持确认数据库模式；SP04未修改CloudBase权限或数据库设置。"
+          "SP01恢复函数Active/Nodejs20.19、超时30秒；修正版代码已上传，inspect、prepare及新run结构化响应通过。3秒历史超时和首次30秒失败仍按历史记录保留；旧失败run的三条自有记录已核验并清理，成功run自动清理3条并完成删除后回查。最新事务探针的提交可见、回滚无部分写入、并发两笔成功且最终值为2。随后DescribeEnvs回包及官方资源映射支持确认数据库模式；SP04未修改CloudBase权限或数据库设置。",
+          "2026-10-28后续独立部署sp01IdentityProbe：代码更新首次因Creating被拒，Active后重试成功；只读详情Active/Nodejs16.13/3秒，模拟器页面已打开；客户端身份调用和存储写入尚未执行。"
         ],
         "blockedChecks": [
           "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户报告cloudfunctions文件夹当前环境已选中cloud1；活动窗口项目路径、托管/登录配置和正式域名仍未核验。SP01事务探针通过；另一次存储跨账号客户端探针在该测试文件上失败：用户确认第二测试账号未加入管理员/开发者名单且截图显示其成功读写；两个账号_openid未直接采集，文件已定向删除且权限设置未改，进一步云端诊断或复测需新授权。旧号与新号主体不同，旧cloud1不作共享候选。费用核查按用户要求略过。",
-          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；用户报告已将cloud1导入并在cloudfunctions菜单选中（无截图）。首轮SP01临时函数与不匹配测试仍为历史状态。恢复函数Active/Nodejs20.19、30秒，修正版代码包上传；inspect、prepare与一次新run通过，后者确认提交可见、回滚无部分写入、并发一致且自动清理回查通过。此前失败run遗留3条自有记录已定向清理，固定集合保留。数据库模式随后由API回包结合官方资源映射支持确认；SP04没有修改CloudBase权限或数据库设置。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过。"
+          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；用户报告已将cloud1导入并在cloudfunctions菜单选中（无截图）。首轮SP01临时函数与不匹配测试仍为历史状态。恢复函数Active/Nodejs20.19、30秒，修正版代码包上传；inspect、prepare与一次新run通过，后者确认提交可见、回滚无部分写入、并发一致且自动清理回查通过。此前失败run遗留3条自有记录已定向清理，固定集合保留。数据库模式随后由API回包结合官方资源映射支持确认；SP04没有修改CloudBase权限或数据库设置。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过。 后续已另行部署sp01IdentityProbe，实际为Active/Nodejs16.13/3秒；客户端身份摘要及存储测试未执行。"
         ],
         "evidence": [
           "docs/sp04-operations-configuration-20261027.md",
@@ -2114,7 +2115,34 @@
           "selectedEnvironmentName": "cloud1",
           "screenshotProvided": false,
           "deploymentPerformed": false
-        }
+        },
+        "latestIdentityProbeDeployment": {
+          "date": "2026-10-28",
+          "source": "authorized-wechatide-cli-deployment-and-read-only-function-info",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01IdentityProbe",
+          "functionDirectory": "E:\\O2O\\tools\\sp01-storage-probe\\cloudfunctions\\sp01IdentityProbe",
+          "preflightFunctionCount": 0,
+          "preflightStorageObjectCount": 0,
+          "firstAttempt": "code-update-rejected-while-creating",
+          "retry": {
+            "status": "success",
+            "filesCount": 5833,
+            "packSize": "6.7 MB"
+          },
+          "postDeploymentReadOnly": {
+            "status": "Active",
+            "runtime": "Nodejs16.13",
+            "timeoutSeconds": 3
+          },
+          "simulatorPageOpened": true,
+          "clientInvocationVerified": false,
+          "identityComparisonCompleted": false,
+          "cloudStorageWritePerformed": false,
+          "cloudStorageCleanupPerformed": false
+        },
+        "nextAction": "在真实微信客户端按sp01-cloud-probe-runbook-20261028.md由账号A创建合成文件、账号B先核对身份摘要；若摘要相同立即停止，若不同再执行授权内的访问测试并完成确切文件清理。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

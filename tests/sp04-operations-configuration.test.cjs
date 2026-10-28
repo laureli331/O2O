@@ -13,6 +13,46 @@ function evidence() {
   return load('docs/sp04-operations-configuration-20261027.json');
 }
 
+test('SP04 separates the current identity probe from the removed Node 20 transaction probe', () => {
+  const record = evidence();
+  const latest = record.latestIdentityProbeDeployment;
+  const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
+  const currentCheck = record.remainingChecks.find((item) => item.includes('sp01IdentityProbe'));
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+
+  assert.deepEqual(latest, {
+    date: '2026-10-28',
+    source: 'authorized-wechatide-cli-deployment-and-read-only-function-info',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    functionName: 'sp01IdentityProbe',
+    functionDirectory: 'E:\\O2O\\tools\\sp01-storage-probe\\cloudfunctions\\sp01IdentityProbe',
+    preflightFunctionCount: 0,
+    preflightStorageObjectCount: 0,
+    firstAttempt: 'code-update-rejected-while-creating',
+    retry: { status: 'success', filesCount: 5833, packSize: '6.7 MB' },
+    postDeploymentReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
+    simulatorPageOpened: true,
+    clientInvocationVerified: false,
+    identityComparisonCompleted: false,
+    cloudStorageWritePerformed: false,
+    cloudStorageCleanupPerformed: false,
+  });
+  assert.equal(record.cloudWritesOrDeploymentPerformed, true);
+  assert.equal(e06.passed, false);
+  assert.ok(e06.reason.includes('sp01IdentityProbe'));
+  assert.ok(e06.reason.includes('Nodejs16.13 / 3秒'));
+  assert.ok(e06.reason.includes('尚未从客户端调用'));
+  assert.ok(currentCheck.includes('身份摘要尚未比对'));
+  assert.ok(!currentCheck.includes('当前函数Active/Nodejs20.19'));
+  assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.result, 'no-official-results');
+  assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.categoryApplicabilityResolved, false);
+  assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.nonOfficialResultsUsedAsEvidence, false);
+  assert.ok(doc.includes('当前身份探针状态：`sp01IdentityProbe`'));
+  assert.ok(doc.includes('Nodejs16.13 / 3秒'));
+  assert.ok(doc.includes('开发者工具模拟器打开不证明小程序运行时连接或跨账号文件隔离'));
+});
+
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {
   const record = evidence();
   assert.equal(record.date, '2026-10-27');
@@ -63,7 +103,7 @@ test('SP04 reflects the target-project read-only CLI evidence without claiming a
   assert.equal(project.appJsEnvironmentValue, record.environmentDetailsScreenshot.visibleEnvironmentId);
   assert.ok(task.executionProgress.completedChecks.some((item) => item.includes('目标AppID') && item.includes('0个云函数') && item.includes('0个数据库集合')));
   assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径') && item.includes('仍未核实')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('当前环境已选中cloud1') && item.includes('当前函数Active/Nodejs20.19')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('当前环境已选中cloud1') && item.includes('sp01IdentityProbe') && item.includes('Nodejs16.13')));
   assert.ok(record.remainingChecks.some((item) => item.includes('在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('该QuickStart仍未配置EnvId')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('待只读桥接恢复后核验')));
@@ -168,6 +208,14 @@ test('SP04 keeps an inaccessible official category source separate from eligibil
     eligibilityConclusion: null,
     provesCategoryUnavailable: false,
     evidenceMethod: 'public-web-read-only',
+    latestPublicSearchAttempt: {
+      date: '2026-10-28',
+      source: 'read-only-public-web-search-and-direct-official-doc-open',
+      officialDomainsQueried: ['developers.weixin.qq.com', 'mp.weixin.qq.com'],
+      result: 'no-official-results',
+      categoryApplicabilityResolved: false,
+      nonOfficialResultsUsedAsEvidence: false,
+    },
   });
   assert.deepEqual(record.categoryPickerObservation, {
     sourceScreenshots: [
@@ -317,7 +365,8 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(accountRemaining.includes('已导入cloud1'));
   assert.ok(accountRemaining.includes('当前环境已选中cloud1'));
   assert.ok(accountRemaining.includes('首轮临时函数随后由用户删除'));
-  assert.ok(accountRemaining.includes('最新恢复状态见latestProbeDeploymentRecovery'));
+  assert.ok(record.remainingChecks.some((item) => item.includes('旧事务探针阶段的恢复状态见latestProbeDeploymentRecovery')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('latestIdentityProbeDeployment')));
   assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
   assert.equal(record.latestTemporaryProbeDeploymentAttempt.functionName, 'sp01EnvProbe');
   assert.equal(record.latestTemporaryProbeDeploymentAttempt.postDeploymentReadOnly.runtime, 'Nodejs16.13');
