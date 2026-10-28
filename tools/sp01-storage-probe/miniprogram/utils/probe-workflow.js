@@ -108,21 +108,50 @@ function createProbeWorkflow(api) {
     let localTempCleanup = 'not-created';
     try {
       localPath = await api.createLocalTextFile(ownerContent);
-      upload = await api.uploadFile(cloudPath, localPath);
     } catch (_) {
-      operationError = contract.makeProbeError('OWNER_UPLOAD_FAILED');
-    } finally {
-      if (localPath) {
-        try {
-          await api.removeLocalFile(localPath);
-          localTempCleanup = 'removed';
-        } catch (_) {
-          localTempCleanup = 'cleanup-failed';
-        }
+      operationError = contract.makeProbeError('LOCAL_TEMP_CREATE_FAILED');
+    }
+    if (!operationError) {
+      try {
+        upload = await api.uploadFile(cloudPath, localPath);
+      } catch (_) {
+        operationError = contract.makeProbeError('OWNER_UPLOAD_FAILED');
+        operationError.cloudPath = cloudPath;
       }
     }
-    if (operationError) throw operationError;
-    if (!contract.validateFileID(upload?.fileID, cloudPath)) throw contract.makeProbeError('UNEXPECTED_FILE_ID');
+    if (localPath) {
+      try {
+        await api.removeLocalFile(localPath);
+        localTempCleanup = 'removed';
+      } catch (_) {
+        localTempCleanup = 'cleanup-failed';
+      }
+    }
+    if (operationError) {
+      operationError.localTempCleanup = localTempCleanup;
+      throw operationError;
+    }
+    if (!contract.validateFileID(upload?.fileID, cloudPath)) {
+      const error = contract.makeProbeError('OWNER_CLEANUP_PENDING');
+      error.cloudPath = cloudPath;
+      throw error;
+    }
+    if (localTempCleanup !== 'removed') {
+      let deleted = false;
+      try {
+        const result = await api.deleteFile(upload.fileID);
+        deleted = result?.fileList?.some((entry) => entry?.fileID === upload.fileID && entry.status === 0) === true;
+      } catch (_) {
+        // Do not expose storage response details or broaden cleanup beyond this file ID.
+      }
+      if (!deleted) {
+        const error = contract.makeProbeError('OWNER_CLEANUP_PENDING');
+        error.cloudPath = cloudPath;
+        error.fileID = upload.fileID;
+        throw error;
+      }
+      throw contract.makeProbeError('LOCAL_TEMP_CLEANUP_FAILED');
+    }
     return {
       version: 1,
       nonce,
@@ -130,7 +159,7 @@ function createProbeWorkflow(api) {
       fileID: upload.fileID,
       cloudPath,
       ownerContent,
-      localTempCleanup,
+      localTempCleanup: 'removed',
     };
   }
 

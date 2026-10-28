@@ -24,7 +24,11 @@
 
 2026-10-28随后安装目录CLI对隔离探针工程执行`auto_preview`和`create_preview_qrcode`均返回成功，入口为`pages/index/index`，CLI报告预览包大小32120。此证据只证明预览包已推送/二维码已生成，不证明用户手机已打开、客户端已调用云函数或存储权限已验证。账号B尚未加入成员名单；若其无法打开预览，应先解决预览访问权限，不能把入口权限错误作为存储测试结果。下一步仍需账号A创建合成测试包，账号B先比对身份，之后按已授权流程执行并清理。
 
-本次进度记录与测试更新后，`node --test tests/executable-development-plan.test.cjs`为43/43通过，`node --test tests/sp01-storage-probe.test.cjs tests/sp04-operations-configuration.test.cjs`为34/34通过，`node --test tests/*.test.cjs`为1436/1436通过；三份配套JSON解析通过，`git diff --check`通过。这些是本地文档/代码回归结果，不替代真实手机或云端存储测试。
+本地清理保护修正之前的历史记录中，`node --test tests/executable-development-plan.test.cjs`为43/43通过，`node --test tests/sp01-storage-probe.test.cjs tests/sp04-operations-configuration.test.cjs`为34/34通过，`node --test tests/*.test.cjs`为1436/1436通过；三份配套JSON解析通过，`git diff --check`通过。这些是本地文档/代码回归结果，不替代真实手机或云端存储测试。
+
+### 2026-10-28 本地诊断工具清理保护修正
+
+本地复核发现账号A临时文件清理失败时仍可能保留旧测试包。已用失败测试复现并修复：开始新建时清除旧包；临时文件清理失败时只尝试删除已校验的本轮fileID；云端删除未确认则仅提示精确路径并停止分享；本机创建失败与上传结果未知分开报告。该改动只在`tools/sp01-storage-probe`本地源码，不涉及QuickStart或云端。更新后的二维码尚未生成，因此现有预览二维码对应修正前页面，不能用于当前双账号测试；需先刷新隔离探针预览。修正后本地探针测试22/22、计划测试43/43、SP01/SP04联合测试40/40、全仓Node测试1442/1442通过；JS语法、配套JSON解析及`git diff --check`也通过。该本地修正未改变SP01进行中状态或SP07前置门槛。
 
 3秒历史run（runId sp01_f4157fdc182bda6f9fd8e37395d4943e）曾返回 {"errorCode":-1,"errorMessage":"Invoking task timed out after 3 seconds","requestId":"5f15ce84-6771-432e-8d22-1d10bc53babc","statusCode":433}，事务和自动清理均未验收。超时后的历史只读查询曾显示固定集合存在、当时记录数为0；该历史读数不证明最新调用后的状态。
 

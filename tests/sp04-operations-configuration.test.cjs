@@ -75,6 +75,7 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
 test('SP04 records the generated identity-probe preview without claiming a client test', () => {
   const record = evidence();
   const preview = record.latestIdentityProbePreview;
+  const safetyFix = record.latestIdentityProbeClientSafetyFix;
   const plan = load('docs/v1-executable-development-plan-20261027.json');
   const planSp04 = plan.tasks.find((task) => task.id === 'SP04');
   const doc = read('docs/sp04-operations-configuration-20261027.md');
@@ -103,11 +104,29 @@ test('SP04 records the generated identity-probe preview without claiming a clien
     cloudStorageCleanupPerformed: false,
   });
   assert.deepEqual(planSp04.executionProgress.latestIdentityProbePreview, preview);
+  assert.deepEqual(safetyFix, {
+    date: '2026-10-28',
+    source: 'node-test-red-green',
+    scope: 'local-diagnostic-project-only',
+    localCleanupFailureStopsShare: true,
+    deletesOnlyValidatedCurrentFileId: true,
+    unconfirmedCleanupExposesOnlyExactProbePath: true,
+    staleBundleClearedBeforeCreate: true,
+    targetedTest: 'node --test tests/sp01-storage-probe.test.cjs',
+    targetedTestPassCount: 22,
+    previewIncludesFix: false,
+    clientRetestPerformed: false,
+    cloudWriteOrDeploymentPerformed: false,
+  });
+  assert.deepEqual(planSp04.executionProgress.latestIdentityProbeClientSafetyFix, safetyFix);
   assert.equal(record.evidenceGates.find((gate) => gate.id === 'E06').passed, false);
   assert.ok(read('tools/sp01-storage-probe/project.config.json').includes('"appid": "wx2414399d423dfb65"'));
   assert.ok(read('tools/sp01-storage-probe/miniprogram/utils/probe-contract.js').includes("const TARGET_ENV_ID = 'cloud1-d2gjahlq39bf141c7'"));
   assert.ok(doc.includes('预览已通过CLI推送并生成二维码'));
+  assert.ok(doc.includes('原二维码不含此修正'));
+  assert.equal(safetyFix.previewIncludesFix, false);
   assert.ok(runbook.includes('预览推送与二维码生成已成功'));
+  assert.ok(runbook.includes('不可用旧二维码继续验证'));
 });
 
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {

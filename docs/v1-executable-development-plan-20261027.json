@@ -2230,7 +2230,21 @@
           "cloudStorageWritePerformed": false,
           "cloudStorageCleanupPerformed": false
         },
-        "nextAction": "预览已由CLI推送并生成二维码；账号A在真实微信客户端打开隔离探针并创建合成测试包，私下交给账号B。B先核对身份摘要；摘要相同立即停止，只有不同才执行授权内的访问测试并完成确切文件清理。账号B尚未加入成员名单；若无法打开预览，先解决预览访问权限，不将该错误记作存储拒绝。"
+        "latestIdentityProbeClientSafetyFix": {
+          "date": "2026-10-28",
+          "source": "node-test-red-green",
+          "scope": "local-diagnostic-project-only",
+          "localCleanupFailureStopsShare": true,
+          "deletesOnlyValidatedCurrentFileId": true,
+          "unconfirmedCleanupExposesOnlyExactProbePath": true,
+          "staleBundleClearedBeforeCreate": true,
+          "targetedTest": "node --test tests/sp01-storage-probe.test.cjs",
+          "targetedTestPassCount": 22,
+          "previewIncludesFix": false,
+          "clientRetestPerformed": false,
+          "cloudWriteOrDeploymentPerformed": false
+        },
+        "nextAction": "本地安全修正后，现有二维码对应的是修正前代码，不用于本轮测试；先刷新隔离探针预览。之后账号A在真实微信客户端打开隔离探针并创建合成测试包，私下交给账号B。B先核对身份摘要；摘要相同立即停止，只有不同才执行授权内的访问测试并完成确切文件清理。账号B尚未加入成员名单；若无法打开预览，先解决预览访问权限，不将该错误记作存储拒绝。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

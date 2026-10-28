@@ -1026,8 +1026,11 @@ test('SP01 records the selected menu separately from the deployed temporary prob
  a(read('docs/v1-executable-development-plan-20261027.md').includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
  a(read('docs/v1-executable-development-plan-20261027.md').includes('真实身份函数调用及本轮文件写入尚未发生'));
  a.deepEqual(sp04Task.executionProgress.latestIdentityProbePreview,sp04.latestIdentityProbePreview);
+ a.deepEqual(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix,sp04.latestIdentityProbeClientSafetyFix);
+ a.equal(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix.previewIncludesFix,false);
  a.equal(sp04Task.executionProgress.latestIdentityProbePreview.autoPreviewPushSucceeded,true);
  a.equal(sp04Task.executionProgress.latestIdentityProbePreview.clientOpened,false);
+ a(sp04Task.executionProgress.nextAction.includes('现有二维码对应的是修正前代码'));
  a(sp04Task.executionProgress.nextAction.includes('账号A在真实微信客户端打开隔离探针'));
  a(sp04Task.executionProgress.nextAction.includes('账号B尚未加入成员名单'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);

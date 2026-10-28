@@ -4,6 +4,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const fs = require('node:fs');
+const vm = require('node:vm');
+const { createRequire } = require('node:module');
 const path = require('node:path');
 const contract = require('../tools/sp01-storage-probe/miniprogram/utils/probe-contract');
 const { createIdentityHandler } = require('../tools/sp01-storage-probe/cloudfunctions/sp01IdentityProbe/handler');
@@ -17,6 +19,20 @@ const fileID = 'cloud://cloud1-d2gjahlq39bf141c7.636c-cloud1-d2gjahlq39bf141c7-1
 const cloudPath = 'sp01_permission_probe/owner-probe-a7c31e.txt';
 const ownerContent = 'SP01-SYNTHETIC-OWNER:a7c31e';
 const bundle = { version: 1, nonce, ownerFingerprint, fileID, cloudPath, ownerContent };
+
+function loadProbePage(wx) {
+  const pagePath = path.resolve(__dirname, '../tools/sp01-storage-probe/miniprogram/pages/index/index.js');
+  let page;
+  const pageModule = { exports: {} };
+  vm.runInNewContext(fs.readFileSync(pagePath, 'utf8'), {
+    require: createRequire(pagePath),
+    module: pageModule,
+    exports: pageModule.exports,
+    Page: (definition) => { page = definition; },
+    wx,
+  }, { filename: pagePath });
+  return page;
+}
 
 test('nonce, target file ID, synthetic path, and proof are constrained to this probe', () => {
   assert.equal(contract.validateNonce(nonce), true);
@@ -123,8 +139,122 @@ test('failed owner upload still removes the local temporary file and does not re
     removeLocalFile: async (path) => calls.push(path),
     makeRunId: () => 'a7c31e',
   });
-  await assert.rejects(workflow.createOwnerFile(nonce), { code: 'OWNER_UPLOAD_FAILED' });
+  await assert.rejects(workflow.createOwnerFile(nonce), (error) => {
+    assert.equal(error.code, 'OWNER_UPLOAD_FAILED');
+    assert.equal(error.cloudPath, cloudPath);
+    return true;
+  });
   assert.deepEqual(calls, ['/tmp/probe.txt']);
+});
+
+test('local temporary file creation failure does not attempt an upload or claim a cloud orphan', async () => {
+  let uploads = 0;
+  const workflow = createProbeWorkflow({
+    getIdentity: async () => ({ success: true, fingerprint: ownerFingerprint, appMatchesTarget: true }),
+    createLocalTextFile: async () => { throw Object.assign(new Error('disk full'), { code: 'IO_ERROR' }); },
+    uploadFile: async () => { uploads += 1; return { fileID }; },
+    makeRunId: () => 'a7c31e',
+  });
+  await assert.rejects(workflow.createOwnerFile(nonce), { code: 'LOCAL_TEMP_CREATE_FAILED' });
+  assert.equal(uploads, 0);
+});
+
+test('unknown upload outcome retains the exact path and local cleanup failure without broad deletion', async () => {
+  const deleted = [];
+  const workflow = createProbeWorkflow({
+    getIdentity: async () => ({ success: true, fingerprint: ownerFingerprint, appMatchesTarget: true }),
+    createLocalTextFile: async () => '/tmp/probe.txt',
+    uploadFile: async () => { throw Object.assign(new Error('network lost after request'), { errCode: 'NETWORK_ERROR' }); },
+    removeLocalFile: async () => { throw Object.assign(new Error('unlink failed'), { code: 'IO_ERROR' }); },
+    deleteFile: async (id) => { deleted.push(id); return { fileList: [{ fileID: id, status: 0 }] }; },
+    makeRunId: () => 'a7c31e',
+  });
+  await assert.rejects(workflow.createOwnerFile(nonce), (error) => {
+    assert.equal(error.code, 'OWNER_UPLOAD_FAILED');
+    assert.equal(error.cloudPath, cloudPath);
+    assert.equal(error.localTempCleanup, 'cleanup-failed');
+    return true;
+  });
+  assert.deepEqual(deleted, []);
+});
+
+test('owner creation aborts sharing and deletes only its uploaded cloud file when local scratch cleanup fails', async () => {
+  const deleted = [];
+  const workflow = createProbeWorkflow({
+    getIdentity: async () => ({ success: true, fingerprint: ownerFingerprint, appMatchesTarget: true }),
+    createLocalTextFile: async () => '/tmp/probe.txt',
+    uploadFile: async () => ({ fileID }),
+    removeLocalFile: async () => { throw Object.assign(new Error('unlink failed'), { code: 'IO_ERROR' }); },
+    deleteFile: async (id) => { deleted.push(id); return { fileList: [{ fileID: id, status: 0 }] }; },
+    makeRunId: () => 'a7c31e',
+  });
+  await assert.rejects(workflow.createOwnerFile(nonce), { code: 'LOCAL_TEMP_CLEANUP_FAILED' });
+  assert.deepEqual(deleted, [fileID]);
+});
+
+test('owner creation reports the exact cloud path when local or cloud cleanup cannot be confirmed', async () => {
+  const workflow = createProbeWorkflow({
+    getIdentity: async () => ({ success: true, fingerprint: ownerFingerprint, appMatchesTarget: true }),
+    createLocalTextFile: async () => '/tmp/probe.txt',
+    uploadFile: async () => ({ fileID }),
+    removeLocalFile: async () => { throw Object.assign(new Error('unlink failed'), { code: 'IO_ERROR' }); },
+    deleteFile: async () => ({ fileList: [{ fileID, status: '0' }] }),
+    makeRunId: () => 'a7c31e',
+  });
+  await assert.rejects(workflow.createOwnerFile(nonce), (error) => {
+    assert.equal(error.code, 'OWNER_CLEANUP_PENDING');
+    assert.equal(error.cloudPath, cloudPath);
+    assert.equal(error.fileID, fileID);
+    return true;
+  });
+});
+
+test('owner page clears any stale share bundle and reports cleanup failure without allowing a stale copy', async () => {
+  const wx = {
+    env: { USER_DATA_PATH: '/user-data' },
+    cloud: {
+      callFunction: async () => ({ result: { success: true, fingerprint: ownerFingerprint, appMatchesTarget: true } }),
+      uploadFile: async (options) => ({ fileID: `cloud://cloud1-d2gjahlq39bf141c7.636c-cloud1-d2gjahlq39bf141c7-1518394589/${options.cloudPath}` }),
+      deleteFile: async (options) => ({ fileList: [{ fileID: options.fileList[0], status: 0 }] }),
+    },
+    getFileSystemManager: () => ({
+      writeFile: (options) => options.success(),
+      unlink: (options) => options.fail({ errMsg: 'synthetic unlink failure' }),
+    }),
+  };
+  const page = loadProbePage(wx);
+  page.data = { ...page.data, nonce, bundleText: JSON.stringify(bundle) };
+  page.setData = (update) => Object.assign(page.data, update);
+  page.generateNonce();
+  assert.equal(page.data.bundleText, '');
+  page.data.bundleText = JSON.stringify(bundle);
+  await page.createOwnerFile();
+  assert.equal(page.data.bundleText, '');
+  assert.match(page.data.report, /本机临时文件清理失败/);
+  assert.match(page.data.report, /云端测试文件已确认删除/);
+});
+
+test('owner page distinguishes local file creation failure and never attempts upload', async () => {
+  let uploads = 0;
+  const wx = {
+    env: { USER_DATA_PATH: '/user-data' },
+    cloud: {
+      callFunction: async () => ({ result: { success: true, fingerprint: ownerFingerprint, appMatchesTarget: true } }),
+      uploadFile: async () => { uploads += 1; return { fileID }; },
+    },
+    getFileSystemManager: () => ({
+      writeFile: (options) => options.fail({ errMsg: 'synthetic disk full' }),
+      unlink: () => { throw new Error('must not unlink a file that was not created'); },
+    }),
+  };
+  const page = loadProbePage(wx);
+  page.data = { ...page.data, nonce, bundleText: JSON.stringify(bundle) };
+  page.setData = (update) => Object.assign(page.data, update);
+  await page.createOwnerFile();
+  assert.equal(uploads, 0);
+  assert.equal(page.data.bundleText, '');
+  assert.match(page.data.report, /未能创建本机合成临时文件，尚未尝试上传/);
+  assert.doesNotMatch(page.data.report, new RegExp(cloudPath));
 });
 
 test('other-account storage probe refuses same identity before read, link, download, or write', async () => {

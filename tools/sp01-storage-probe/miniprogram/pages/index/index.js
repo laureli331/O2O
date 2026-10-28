@@ -63,7 +63,7 @@ Page({
   onBundleInput(event) { this.setData({ bundleText: event.detail.value, report: '' }); },
 
   generateNonce() {
-    this.setData({ nonce: `sp01-${randomHex(24)}`, report: '共享码已生成。请由账号 A 创建测试文件，再把完整测试包交给账号 B。' });
+    this.setData({ nonce: `sp01-${randomHex(24)}`, bundleText: '', report: '共享码已生成。请由账号 A 创建测试文件，再把完整测试包交给账号 B。' });
   },
 
   parseBundle() {
@@ -78,13 +78,27 @@ Page({
       this.setData({ report: '测试码格式不正确，请重新生成。' });
       return;
     }
-    this.setData({ busy: true, report: '正在读取当前账号摘要并创建一份合成文件…' });
+    this.setData({ busy: true, bundleText: '', report: '正在读取当前账号摘要并创建一份合成文件…' });
     try {
       const bundle = await workflow.createOwnerFile(this.data.nonce);
       const bundleText = JSON.stringify(bundle, null, 2);
       this.setData({ bundleText, report: `账号 A 已创建测试文件。身份摘要：${bundle.ownerFingerprint}。本机临时文件清理：${bundle.localTempCleanup}。请复制测试包给账号 B。` });
     } catch (error) {
-      this.setData({ report: `未完成，错误码：${errorCode(error)}。没有输出身份原文或临时授权信息。` });
+      const code = errorCode(error);
+      const pathNotice = contract.validateCloudPath(error?.cloudPath)
+        ? `\n只检查这一条测试路径：${error.cloudPath}。停止重试，不要分享测试包。`
+        : '';
+      const cleanupNotice = code === 'LOCAL_TEMP_CLEANUP_FAILED'
+        ? '本机临时文件清理失败；对应云端测试文件已确认删除。'
+        : code === 'OWNER_CLEANUP_PENDING'
+          ? '本轮文件清理未获确认。'
+          : code === 'OWNER_UPLOAD_FAILED'
+            ? '上传结果未确认。'
+            : code === 'LOCAL_TEMP_CREATE_FAILED'
+              ? '未能创建本机合成临时文件，尚未尝试上传。'
+            : '操作未完成。';
+      const localCleanupNotice = error?.localTempCleanup === 'cleanup-failed' ? '本机临时文件清理也未获确认。' : '';
+      this.setData({ bundleText: '', report: `${cleanupNotice}${localCleanupNotice}错误码：${code}。没有输出身份原文或临时授权信息。${pathNotice}` });
     } finally { this.setData({ busy: false }); }
   },
 

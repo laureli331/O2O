@@ -63,6 +63,8 @@ SP01事务探针仅使用固定集合和合成记录，不属于产品实现。�
 
 2026-10-28预览已通过CLI推送并生成二维码：安装目录CLI对隔离工程`E:\O2O\tools\sp01-storage-probe`的`pages/index/index`执行`auto_preview`和`create_preview_qrcode`均返回成功，预览包报告大小32120；该工程`project.config.json`中的AppID为`wx2414399d423dfb65`，探针代码固定使用EnvID `cloud1-d2gjahlq39bf141c7`。这是预览包推送/二维码生成结果，不是体验版代码上传或正式发布；用户尚未在手机打开，客户端函数调用、身份比对和本轮云存储写入仍未发生。第二测试账号尚未加入成员名单；若它无法打开预览，需先解决预览访问权限，不能把“无权打开小程序”当作存储权限拒绝。
 
+随后本地安全复核发现：账号A本机临时文件删除失败时，旧页面仍可能保留可复制的测试包。已按失败用例先红后绿修正独立诊断项目：开始新建时清空旧包；本机清理失败则只删除本轮已校验的精确fileID，不分享测试包；云端删除未确认时只显示该轮精确路径并停止；上传失败与本机文件创建失败分别报告，上传结果未知时不扩大清理范围。`node --test tests/sp01-storage-probe.test.cjs`当前22项通过。此改动仅在本地源码与测试中；原二维码不含此修正，尚未刷新预览或重新做客户端测试。不得用旧二维码继续本轮验证。
+
 在上述旧事务函数删除后，用户另行授权部署独立身份探针`sp01IdentityProbe`，路径为`E:\O2O\tools\sp01-storage-probe\cloudfunctions\sp01IdentityProbe`。部署前只读预检显示目标环境函数数为0、目标测试目录文件数为0。首次代码更新因云端函数仍处于Creating被拒；函数进入Active后，用户确认对同一目标函数更新代码，部署成功，包统计为5833个文件、6.7 MB。部署后只读函数详情为`Active / Nodejs16.13 / 3秒`，开发者工具模拟器已打开探针页。该状态属于新身份函数，不覆盖旧事务探针Node.js 20.19的执行记录；腾讯云官方[SCF更新函数配置文档](https://cloud.tencent.com/document/product/583/18580)说明运行时在创建时指定、当前不能事后修改。
 
 初次代码更新确认任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`已返回`execution_success`。之后按用户确认执行的最新代码更新任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`也已返回`success / execution_success`，部署包统计为5833个文件、6.7 MB。更新后只读CLI再次确认函数为`Active / Nodejs16.13 / 3秒`。代码部署成功仍不代表真实客户端已调用函数，身份摘要和云存储测试均未发生。
