@@ -947,7 +947,7 @@
     "clientInvocationVerified": false,
     "cloudStorageWritePerformed": false
   },
-  "latestIdentityProbePreview": {
+  "previousIdentityProbePreview": {
     "date": "2026-10-28",
     "source": "authorized-wechatide-cli-auto-preview-and-qrcode",
     "projectPath": "E:\\O2O\\tools\\sp01-storage-probe",
@@ -969,6 +969,32 @@
     "cloudStorageWritePerformed": false,
     "cloudStorageCleanupPerformed": false
   },
+  "latestIdentityProbePreview": {
+    "date": "2026-10-28",
+    "generatedAtLocal": "2026-10-28 19:39:47+08:00",
+    "source": "user-authorized-wechatide-cli-refresh-after-client-safety-fix",
+    "projectPath": "E:\\O2O\\tools\\sp01-storage-probe",
+    "targetAppId": "wx2414399d423dfb65",
+    "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+    "pagePath": "pages/index/index",
+    "autoPreviewPushSucceeded": true,
+    "autoPreviewReportedPackageSize": 33452,
+    "previewQrGenerationSucceeded": true,
+    "previewQrFormat": "image",
+    "previewQrOutputPath": "C:\\Users\\laureli\\AppData\\Local\\Temp\\O2O-SP01-preview-20261028-193939.jpg",
+    "previewQrFileBytes": 45892,
+    "previewQrEncoding": "JPEG",
+    "previewQrFileSignatureVerified": true,
+    "safetyFixIncluded": true,
+    "experienceVersionUploadPerformed": false,
+    "productionPublishPerformed": false,
+    "clientOpened": false,
+    "clientInvocationVerified": false,
+    "identityComparisonCompleted": false,
+    "secondAccountAccessVerified": false,
+    "cloudStorageWritePerformed": false,
+    "cloudStorageCleanupPerformed": false
+  },
   "latestIdentityProbeClientSafetyFix": {
     "date": "2026-10-28",
     "source": "node-test-red-green",
@@ -979,7 +1005,7 @@
     "staleBundleClearedBeforeCreate": true,
     "targetedTest": "node --test tests/sp01-storage-probe.test.cjs",
     "targetedTestPassCount": 22,
-    "previewIncludesFix": false,
+    "previewIncludesFix": true,
     "clientRetestPerformed": false,
     "cloudWriteOrDeploymentPerformed": false
   }

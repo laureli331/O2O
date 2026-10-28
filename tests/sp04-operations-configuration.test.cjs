@@ -81,7 +81,7 @@ test('SP04 records the generated identity-probe preview without claiming a clien
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
 
-  assert.deepEqual(preview, {
+  assert.deepEqual(record.previousIdentityProbePreview, {
     date: '2026-10-28',
     source: 'authorized-wechatide-cli-auto-preview-and-qrcode',
     projectPath: 'E:\\O2O\\tools\\sp01-storage-probe',
@@ -103,6 +103,33 @@ test('SP04 records the generated identity-probe preview without claiming a clien
     cloudStorageWritePerformed: false,
     cloudStorageCleanupPerformed: false,
   });
+  assert.deepEqual(preview, {
+    date: '2026-10-28',
+    generatedAtLocal: '2026-10-28 19:39:47+08:00',
+    source: 'user-authorized-wechatide-cli-refresh-after-client-safety-fix',
+    projectPath: 'E:\\O2O\\tools\\sp01-storage-probe',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    pagePath: 'pages/index/index',
+    autoPreviewPushSucceeded: true,
+    autoPreviewReportedPackageSize: 33452,
+    previewQrGenerationSucceeded: true,
+    previewQrFormat: 'image',
+    previewQrOutputPath: 'C:\\Users\\laureli\\AppData\\Local\\Temp\\O2O-SP01-preview-20261028-193939.jpg',
+    previewQrFileBytes: 45892,
+    previewQrEncoding: 'JPEG',
+    previewQrFileSignatureVerified: true,
+    safetyFixIncluded: true,
+    experienceVersionUploadPerformed: false,
+    productionPublishPerformed: false,
+    clientOpened: false,
+    clientInvocationVerified: false,
+    identityComparisonCompleted: false,
+    secondAccountAccessVerified: false,
+    cloudStorageWritePerformed: false,
+    cloudStorageCleanupPerformed: false,
+  });
+  assert.deepEqual(planSp04.executionProgress.previousIdentityProbePreview, record.previousIdentityProbePreview);
   assert.deepEqual(planSp04.executionProgress.latestIdentityProbePreview, preview);
   assert.deepEqual(safetyFix, {
     date: '2026-10-28',
@@ -114,7 +141,7 @@ test('SP04 records the generated identity-probe preview without claiming a clien
     staleBundleClearedBeforeCreate: true,
     targetedTest: 'node --test tests/sp01-storage-probe.test.cjs',
     targetedTestPassCount: 22,
-    previewIncludesFix: false,
+    previewIncludesFix: true,
     clientRetestPerformed: false,
     cloudWriteOrDeploymentPerformed: false,
   });
@@ -123,10 +150,13 @@ test('SP04 records the generated identity-probe preview without claiming a clien
   assert.ok(read('tools/sp01-storage-probe/project.config.json').includes('"appid": "wx2414399d423dfb65"'));
   assert.ok(read('tools/sp01-storage-probe/miniprogram/utils/probe-contract.js').includes("const TARGET_ENV_ID = 'cloud1-d2gjahlq39bf141c7'"));
   assert.ok(doc.includes('预览已通过CLI推送并生成二维码'));
-  assert.ok(doc.includes('原二维码不含此修正'));
-  assert.equal(safetyFix.previewIncludesFix, false);
+  assert.ok(doc.includes('旧二维码尚未包含这项修正'));
+  assert.equal(safetyFix.previewIncludesFix, true);
+  assert.ok(doc.includes('O2O-SP01-preview-20261028-193939.jpg'));
+  assert.ok(doc.includes('安全修正后的二维码包含上述保护'));
   assert.ok(runbook.includes('预览推送与二维码生成已成功'));
-  assert.ok(runbook.includes('不可用旧二维码继续验证'));
+  assert.ok(runbook.includes('不应用于本轮测试'));
+  assert.ok(runbook.includes('O2O-SP01-preview-20261028-193939.jpg'));
 });
 
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {
