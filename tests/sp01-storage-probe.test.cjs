@@ -80,6 +80,75 @@ test('identity call errors retain only a safe provider code and request ID for d
   });
 });
 
+test('identity diagnostics preserve nested numeric codes and known markers without exposing the error text', () => {
+  const diagnostics = contract.identityCallDiagnostics({
+    errCode: -1,
+    errMsg: 'Error: cloud.callFunction:fail Error: errCode: -504002 functions execute fail | errMsg: MODULE_NOT_FOUND secret-token=private-token',
+    message: 'IDENTITY_CONTEXT_MISSING raw-openid-private',
+    requestID: 'request-12345678',
+  });
+  assert.equal(diagnostics.providerCode, '-1');
+  assert.equal(diagnostics.requestId, 'request-12345678');
+  assert.deepEqual(diagnostics.nestedCodes, ['-504002']);
+  assert.ok(diagnostics.markers.includes('MODULE_NOT_FOUND'));
+  assert.ok(diagnostics.markers.includes('IDENTITY_CONTEXT_MISSING'));
+  assert.doesNotMatch(JSON.stringify(diagnostics), /private|secret-token|cloud\.callFunction|functions execute fail/);
+});
+
+test('identity diagnostics do not guess codes from arbitrary numbers or partial tokens', () => {
+  for (const error of [null, {}, { errMsg: 123 }, { message: 'openid: 12345; errCode: -504002secret; XMODULE_NOT_FOUNDY' }]) {
+    const diagnostics = contract.identityCallDiagnostics(error);
+    assert.deepEqual(diagnostics.nestedCodes, []);
+    assert.deepEqual(diagnostics.markers, []);
+  }
+  const diagnostics = contract.identityCallDiagnostics({
+    errMsg: 'errCode: -504002 | errCode: -504002 | errCode: -501000',
+    requestId: 'unsafe token with spaces',
+  });
+  assert.deepEqual(diagnostics.nestedCodes, ['-504002', '-501000']);
+  assert.equal(diagnostics.requestId, null);
+});
+
+test('identity-only page action makes exactly one call and never creates a file or shares an identity', async () => {
+  let calls = 0;
+  let release;
+  const wx = { cloud: { callFunction: async (options) => {
+    calls += 1;
+    assert.equal(options.name, 'sp01IdentityProbe');
+    assert.equal(contract.validateNonce(options.data.nonce), true);
+    await new Promise((resolve) => { release = resolve; });
+    return { result: { success: true, fingerprint: ownerFingerprint, appMatchesTarget: true } };
+  } } };
+  // No file-system or storage APIs: any accidental access makes this test fail.
+  const page = loadProbePage(wx);
+  page.setData = (update) => Object.assign(page.data, update);
+  const pending = page.checkIdentityOnly();
+  await page.checkIdentityOnly();
+  assert.equal(calls, 1);
+  release();
+  await pending;
+  assert.match(page.data.report, /身份调用成功/);
+  assert.doesNotMatch(page.data.report, new RegExp(ownerFingerprint));
+  assert.equal(page.data.bundleText, '');
+  assert.equal(page.data.busy, false);
+});
+
+test('identity-only page action reports nested failure safely, releases busy state, and does not retry', async () => {
+  let calls = 0;
+  const page = loadProbePage({ cloud: { callFunction: async () => {
+    calls += 1;
+    throw { errCode: -1, errMsg: 'errCode: -504002 | MODULE_NOT_FOUND private-token' };
+  } } });
+  page.setData = (update) => Object.assign(page.data, update);
+  await page.checkIdentityOnly();
+  assert.equal(calls, 1);
+  assert.equal(page.data.busy, false);
+  assert.equal(page.data.bundleText, '');
+  assert.match(page.data.report, /-504002/);
+  assert.match(page.data.report, /MODULE_NOT_FOUND/);
+  assert.doesNotMatch(page.data.report, /private-token/);
+});
+
 test('standalone project targets the confirmed AppID and EnvID without sharing the QuickStart root', () => {
   const root = path.resolve(__dirname, '../tools/sp01-storage-probe');
   const config = JSON.parse(fs.readFileSync(path.join(root, 'project.config.json'), 'utf8'));

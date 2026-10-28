@@ -71,7 +71,27 @@ function identityCallDiagnostics(error) {
   const requestId = typeof rawRequestId === 'string' && /^[A-Za-z0-9_-]{8,80}$/.test(rawRequestId)
     ? rawRequestId
     : null;
-  return { providerCode, requestId };
+  // WeChat can wrap a useful errCode inside errMsg while the outer code is -1.
+  // Extract tokens only; never return/log raw messages, traces, URLs or context.
+  const messages = [error?.errMsg, error?.message]
+    .filter((value) => typeof value === 'string').map((value) => value.slice(0, 8192));
+  const nestedCodes = [];
+  const markerAllowlist = [
+    'MODULE_NOT_FOUND', 'ERR_REQUIRE_ESM', 'IDENTITY_CONTEXT_MISSING',
+    'INVALID_NONCE', 'APP_ID_MISMATCH', 'FUNCTIONS_EXECUTE_FAIL',
+    'FUNCTION_NOT_FOUND', 'EXCEED_AUTHORITY', 'INVALID_ENV',
+    'SyntaxError', 'TypeError', 'ReferenceError',
+  ];
+  const markers = [];
+  for (const message of messages) {
+    for (const match of message.matchAll(/\berrCode\s*:\s*(-?\d{1,9})(?![\w.])/g)) {
+      if (!nestedCodes.includes(match[1]) && nestedCodes.length < 8) nestedCodes.push(match[1]);
+    }
+    for (const marker of markerAllowlist) {
+      if (new RegExp(`\\b${marker}\\b`).test(message) && !markers.includes(marker)) markers.push(marker);
+    }
+  }
+  return { providerCode, requestId, nestedCodes, markers };
 }
 
 function classifyStorageError(error) {

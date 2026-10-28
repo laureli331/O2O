@@ -3,6 +3,7 @@
     <view class="title">SP01 云存储权限检查</view>
     <view class="subtitle">只操作一份随机合成测试文件，不含真实用户资料。此工具不会修改权限设置。</view>
     <view class="hint warn">第二账号先核对身份摘要。摘要相同会停止；摘要不同后才测试读取与同路径写入。</view>
+    <button class="button button-secondary" hover-class="button-hover" hover-stay-time="80" bindtap="checkIdentityOnly" loading="{{busy}}" disabled="{{busy}}">仅诊断身份调用（不写文件）</button>
   </view>
 
   <view class="card">

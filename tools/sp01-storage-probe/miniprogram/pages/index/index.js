@@ -42,6 +42,12 @@ function errorCode(error) {
   return /^[A-Za-z0-9_:-]{1,60}$/.test(String(code)) ? String(code).toUpperCase() : 'UNKNOWN';
 }
 
+function identityDiagnostic(error) {
+  if (errorCode(error) !== 'IDENTITY_CALL_FAILED') return '';
+  return `云函数返回码：${error.providerCode || 'UNKNOWN'}；调用请求 ID：${error.requestId || '未提供'}。`
+    + `内层错误码：${(error.nestedCodes || []).join(', ') || '未提取到'}；已知错误标记：${(error.markers || []).join(', ') || '未提取到'}。`;
+}
+
 function accessLabel(result) {
   if (!result) return '未测试';
   if (result.kind === 'accessible') return result.matchesOwnerProof === false ? '可以访问，内容已变化' : '可以访问';
@@ -73,6 +79,17 @@ Page({
     return bundle;
   },
 
+  async checkIdentityOnly() {
+    if (this.data.busy) return;
+    this.setData({ busy: true, report: '正在单独查询身份；不会创建、上传或删除文件…' });
+    try {
+      await workflow.identify(`sp01-${randomHex(24)}`);
+      this.setData({ report: '身份调用成功，返回格式和目标 AppID 校验通过。未创建测试包或文件，未执行存储权限验证。' });
+    } catch (error) {
+      this.setData({ report: `身份调用未完成。错误码：${errorCode(error)}。${identityDiagnostic(error)}未创建测试包或文件；不要重复点击。` });
+    } finally { this.setData({ busy: false }); }
+  },
+
   async createOwnerFile() {
     if (!contract.validateNonce(this.data.nonce)) {
       this.setData({ report: '测试码格式不正确，请重新生成。' });
@@ -98,10 +115,7 @@ Page({
               ? '未能创建本机合成临时文件，尚未尝试上传。'
             : '操作未完成。';
       const localCleanupNotice = error?.localTempCleanup === 'cleanup-failed' ? '本机临时文件清理也未获确认。' : '';
-      const identityDiagnostic = code === 'IDENTITY_CALL_FAILED'
-        ? `云函数返回码：${error?.providerCode || 'UNKNOWN'}；调用请求 ID：${error?.requestId || '未提供'}。`
-        : '';
-      this.setData({ bundleText: '', report: `${cleanupNotice}${localCleanupNotice}错误码：${code}。${identityDiagnostic}没有输出身份原文或临时授权信息。${pathNotice}` });
+      this.setData({ bundleText: '', report: `${cleanupNotice}${localCleanupNotice}错误码：${code}。${identityDiagnostic(error)}没有输出身份原文或临时授权信息。${pathNotice}` });
     } finally { this.setData({ busy: false }); }
   },
 
