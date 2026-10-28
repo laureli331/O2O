@@ -10,9 +10,9 @@
 
 ### 2026-10-28本地双账号身份探针：模拟器编译通过，临时函数已部署，真实账号验证待执行
 
-用户确认本次代码更新后，本轮安装目录CLI使用明确的目标AppID和EnvID只读执行`cloud_fn_list`与`cloud_fn_info`：列表总数为1，仅有`sp01IdentityProbe`，详情为Active / Nodejs16.13 / 3秒。该检查未调用函数；不能证明微信客户端身份通路或文件权限。
+此前代码更新后，安装目录CLI使用明确的目标AppID和EnvID只读执行`cloud_fn_list`与`cloud_fn_info`：列表总数为1，仅有`sp01IdentityProbe`，详情为Active / Nodejs16.13 / 3秒。该检查未调用函数；不能证明微信客户端身份通路或文件权限。
 
-对应的部署确认任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`现已返回`success / execution_success`，上传5833个文件、6.7 MB；部署后函数仍为Active / Nodejs16.13 / 3秒。客户端身份函数调用及本轮文件写入尚未发生。
+首次代码更新确认任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`返回`success / execution_success`，上传5833个文件、6.7 MB；部署后函数为Active / Nodejs16.13 / 3秒。之后用户确认最新代码更新任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`，CLI返回`success / execution_success`；更新后只读详情仍为Active / Nodejs16.13 / 3秒。两次均为函数代码部署，不代表客户端调用；真实身份函数调用及本轮文件写入尚未发生。
 
 紧邻真实手机测试前的只读预检确认目标环境仅有`sp01IdentityProbe`，状态Active / Nodejs16.13 / 3秒，且`sp01_permission_probe/`目录为0个文件；这是本轮开始前的基线，不是客户端验收结果。
 

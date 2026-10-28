@@ -36,6 +36,16 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
       packSize: '6.7 MB',
       confirmationTaskId: 'confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b',
     },
+    latestCodeUpdate: {
+      date: '2026-10-28',
+      source: 'authorized-wechatide-cli-confirmed-code-update-and-read-only-function-info',
+      confirmationTaskId: 'confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba',
+      status: 'success',
+      detail: 'execution_success',
+      filesCount: 5833,
+      packSize: '6.7 MB',
+      postUpdateReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
+    },
     postDeploymentReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
     simulatorPageOpened: true,
     clientInvocationVerified: false,
@@ -57,6 +67,7 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
   assert.ok(doc.includes('当前身份探针状态：`sp01IdentityProbe`'));
   assert.ok(doc.includes('Nodejs16.13 / 3秒'));
   assert.ok(doc.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
+  assert.ok(doc.includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
   assert.ok(doc.includes('execution_success'));
   assert.ok(doc.includes('开发者工具模拟器打开不证明小程序运行时连接或跨账号文件隔离'));
 });

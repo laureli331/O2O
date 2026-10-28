@@ -1007,7 +1007,12 @@ test('SP01 records the selected menu separately from the deployed temporary prob
  a.deepEqual(sp04.latestUserReportedEnvironmentMenuAfterImport,expected);
  a.deepEqual(sp04Task.executionProgress.latestIdentityProbeDeployment,sp04.latestIdentityProbeDeployment);
  a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.postDeploymentReadOnly.runtime,'Nodejs16.13');
+ a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.latestCodeUpdate.confirmationTaskId,'confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba');
+ a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.latestCodeUpdate.status,'success');
+ a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.latestCodeUpdate.postUpdateReadOnly.timeoutSeconds,3);
  a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.clientInvocationVerified,false);
+ a(read('docs/v1-executable-development-plan-20261027.md').includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
+ a(read('docs/v1-executable-development-plan-20261027.md').includes('真实身份函数调用及本轮文件写入尚未发生'));
  a.deepEqual(sp04Task.executionProgress.latestIdentityProbePreview,sp04.latestIdentityProbePreview);
  a.equal(sp04Task.executionProgress.latestIdentityProbePreview.autoPreviewPushSucceeded,true);
  a.equal(sp04Task.executionProgress.latestIdentityProbePreview.clientOpened,false);
