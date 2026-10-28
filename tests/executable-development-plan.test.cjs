@@ -241,6 +241,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   ]);
   a.equal(audit.androidModelConfirmed, true);
   a.equal(audit.iphoneModelConfirmed, true);
+  a.equal(audit.miniProgramBaseLibraryVersionDeclaredInProjectConfig, '2.20.1');
+  a.equal(audit.miniProgramBaseLibraryVersionConfigPath, 'miniprogram/project.config.json');
   a.equal(audit.miniProgramBaseLibraryVersionConfirmed, false);
   a.equal(audit.adminBrowserSelected, true);
   a.equal(audit.selectedAdminBrowser, 'Google Chrome');
@@ -289,7 +291,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('用户选择Google Chrome执行后台验收'));
   a(doc.includes('用户于2026-10-28提供三台测试设备信息'));
   a(doc.includes('用户选择Google Chrome执行后台验收'));
-  a(doc.includes('微信小程序基础库版本未提供'));
+  a(doc.includes('QuickStart工程配置`miniprogram/project.config.json`声明小程序基础库版本为`2.20.1`'));
+  a(doc.includes('这不是手机当前实际加载版本的证明'));
   a(doc.includes('目标环境受控验证方案（尚未执行）'));
   a(doc.includes('ENV-DB-TX-01'));
   a(doc.includes('ENV-STORE-01'));
