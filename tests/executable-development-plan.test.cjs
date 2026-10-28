@@ -16,7 +16,7 @@ function validate(p){
  const features=new Set(p.tasks.flatMap(t=>t.features));for(const f of scope.firstRelease)a(features.has(f),'missing first release '+f);for(const f of features)a(scope.firstRelease.includes(f),'unapproved first-release feature '+f);
  a.equal(p.scope.couponsIncludedInOnboarding,true);a(p.tasks.find(t=>t.id==='SP25').pages.includes('V26'));
  for(const v of Object.values(p.authorization))a.equal(v,false,'plan is not production approval');
- a.equal(p.architecture.frontend,tech.approval.frontend);a.equal(p.architecture.backend,tech.approval.backend);a.equal(p.architecture.managementAccounts,1);a.equal(p.architecture.actualHumanAttribution,false);a.equal(p.architecture.databaseMode,null);a.equal(p.architecture.cloudRuntimeVersion,null);a.equal(p.architecture.sdkVersions,null);a.equal(p.accountEvidence.licenseObtainedRecorded,tech.businessLicenseCompletion.licenseObtained);a.equal(p.accountEvidence.formalNewAppId,JSON.parse(read('docs/v1-development-preflight-20261018.json')).accountProgress.newMiniappAppId);a.equal(p.accountEvidence.liveCloudRevalidatedThisDelivery,false);
+ a.equal(p.architecture.frontend,tech.approval.frontend);a.equal(p.architecture.backend,tech.approval.backend);a.equal(p.architecture.managementAccounts,1);a.equal(p.architecture.actualHumanAttribution,false);a.equal(p.architecture.databaseMode,null);a.equal(p.architecture.cloudRuntimeVersion,null);a.equal(p.architecture.sdkVersions,null);a.equal(p.accountEvidence.licenseObtainedRecorded,tech.businessLicenseCompletion.licenseObtained);a.equal(p.accountEvidence.formalNewAppId,JSON.parse(read('docs/v1-development-preflight-20261018.json')).accountProgress.newMiniappAppId);a.equal(p.accountEvidence.liveCloudRevalidatedThisDelivery,true);
  a.equal(p.openItems.length,8);for(const x of p.openItems){a(x.title&&x.kind);a.equal(typeof x.humanDecisionNeeded,'boolean');for(const id of x.tasks)a(byId.has(id));}
  for(const source of p.sources)a(fs.existsSync(path.join(root,source)),source);
  return true;
@@ -24,8 +24,16 @@ function validate(p){
 test('executable plan covers all first-release modules and all 60 legacy references with a gated acyclic task graph',()=>a.equal(validate(load()),true));
 test('human plan and structured 36 delivery cards agree on work, dependencies and acceptance',()=>{const p=load(),s=read(p.document);for(const t of p.tasks){const start=s.indexOf('### '+t.id+' '+t.title);a(start>=0,t.id);const next=s.indexOf('\n### ',start+1),block=s.slice(start,next<0?s.indexOf('\n## 7.',start):next);a(block.includes(t.deliverable),t.id+' deliverable');for(const v of [...t.dependsOn,...t.steps,...t.acceptance])a(block.includes(v),t.id+' '+v);}for(const [,target]of s.matchAll(/\]\(([^)]+)\)/g))if(!/^https?:/.test(target))a(fs.existsSync(path.resolve(path.dirname(path.join(root,p.document)),target.split('#')[0])),target);a(s.indexOf('## 1. 验证方案')<s.indexOf('## 6. 36张'));});
 test('repository inventory is an as-of source snapshot and does not prohibit creating a future product',()=>{const p=load();a.match(p.sourceCommit,/^[a-f0-9]{40}$/);const names=cp.execFileSync('git',['ls-tree','--name-only',p.sourceCommit],{cwd:root,encoding:'utf8'}).split(/\r?\n/);for(const name of ['miniprogram','cloudfunctions','packages','package.json','project.config.json'])a(!names.includes(name));a.equal(p.inventory.formalProjectPresent,false);a.equal(p.inventory.localVersionsAreCloudVersions,false);});
-test('plan records the user-confirmed target CloudBase environment ID without claiming API verification',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-confirmed-created-associated-not-api-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-console-screenshot-visible-appid-and-envid-not-platform-api-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'in-progress');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,4);a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('最新只读观察下窗口标题与目标本地项目配置')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
-test('SP01 records CloudBase screenshots separately from the user-confirmed target-project association',()=>{const p=load(),scaffold=p.inventory.userCreatedQuickStartScaffold,current=p.accountEvidence.latestUserCreatedProjectAndCloudConsoleObservation,task=p.tasks.find(x=>x.id==='SP01'),doc=read('docs/sp01-technical-environment-20261027.md'),plan=read('docs/v1-executable-development-plan-20261027.md'),settings=current.latestSettingsScreenshot,fees=current.latestFeeManagementScreenshot;a.equal(scaffold.present,true);a.equal(scaffold.createdByUser,true);a.equal(scaffold.appId,p.accountEvidence.formalNewAppId);a.equal(scaffold.matchesFormalTargetAppId,true);a.equal(scaffold.containsProductImplementation,false);a.equal(scaffold.cloudEnvironmentIdConfigured,true);a.equal(scaffold.appJsEnvironmentValue,'cloud1-d2gjahlq39bf141c7');a.equal(scaffold.envListIsEmpty,true);a.equal(current.configuredAppIdMatchesFormalTarget,true);a.equal(current.scaffoldOnly,true);a.equal(current.environmentIdConfigured,true);a.equal(current.confirmedCloudEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(current.userConfirmedCloudEnvironmentCreatedFromTargetProject,true);a.equal(current.cloudEnvironmentBindingApiVerified,false);a.equal(current.cloudConsoleScreenshot.visibleEnvironmentLabel,'cloud1');a.equal(current.cloudConsoleScreenshot.visiblePlanLabel,'微信体验版');a.equal(current.cloudConsoleScreenshot.visibleDatabaseState,'not-shown-in-this-screenshot');a.equal(current.cloudConsoleScreenshot.appIdVisible,false);a.equal(current.cloudConsoleScreenshot.exactEnvironmentIdVisible,false);a.equal(current.cloudConsoleScreenshot.expiryVisible,false);a.equal(current.cloudConsoleScreenshot.billingOrAutoRenewalVisible,false);a.equal(current.cloudConsoleScreenshot.userReportsNoPayment,true);a.equal(current.cloudConsoleScreenshot.provesBindingToFormalTargetAppId,false);a.equal(settings.visibleEnvironmentLabel,'cloud1');a.equal(settings.visibleEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(settings.visiblePlanLabel,'微信体验版');a.equal(settings.visibleSettingsTab,'权限设置');a.equal(settings.appIdVisible,false);a.equal(settings.expiryVisible,false);a.equal(settings.billingOrAutoRenewalVisible,false);a.equal(settings.provesBindingToFormalTargetAppId,false);a.equal(fees.visibleEnvironmentLabel,'cloud1');a.equal(fees.visibleEnvironmentId,null);a.equal(fees.visiblePlanLabel,'微信体验版');a.equal(fees.visibleSection,'费用管理');a.equal(fees.visibleTab,'套餐管理');a.equal(fees.displayedMonthlyResourcePoints,40000);a.equal(fees.displayedMonthlyPriceRmb,19.9);a.equal(fees.purchaseButtonVisible,true);a.equal(fees.payAsYouGoEnabled,false);a.equal(fees.autoRenewalEnabled,false);a.equal(fees.expiryVisible,false);a.equal(fees.appIdVisible,false);a.equal(fees.provesPaidSubscription,false);a.equal(fees.provesBindingToFormalTargetAppId,false);a.equal(current.currentRecommendation,'use-free-experience-for-development-and-testing; do-not-buy-paid-plan-until-capability-or-quota-need-is-evidenced');a.equal(task.status,'in-progress');a.equal(task.productAcceptancePassed,false);a(task.executionProgress.nextAction.includes('本轮不再核对费用'));a(task.executionProgress.nextAction.includes('CONNECT_ERROR'));a(!task.executionProgress.nextAction.includes('DescribeBillingInfo'));a(doc.includes('cloud1-d2gjahlq39bf141c7'));a(doc.includes('用户之后明确确认该`cloud1`是在目标AppID项目中创建'));a(doc.includes('到期日'));a(doc.includes('购买按钮旁的价格不是已扣款证据'));a(doc.includes('按量付费与自动续费均关闭'));a(doc.includes('新建环境没有集合和调用数据是正常空态'));a(plan.includes('不能据截图的配额、价格按钮或套餐标签推断实际扣款和到期'));a(doc.includes('用户自行处理后续平台付费提示'));a(plan.includes('用户手动创建了'));a(plan.includes('套餐/账单截图显示“微信体验版”'));});
+test('plan records the user-confirmed target CloudBase environment and appid-scoped API confirmation',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-screenshot-and-cli-environment-list-visible-appid-and-envid-not-runtime-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'in-progress');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,3);a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('目标环境运行时、数据库模式、事务和私密文件权限仍未验证')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
+test('SP01 records CloudBase screenshots separately from the user-confirmed target-project association',()=>{
+  const p=load(),scaffold=p.inventory.userCreatedQuickStartScaffold,current=p.accountEvidence.latestUserCreatedProjectAndCloudConsoleObservation,task=p.tasks.find(x=>x.id==='SP01'),doc=read('docs/sp01-technical-environment-20261027.md'),plan=read('docs/v1-executable-development-plan-20261027.md'),settings=current.latestSettingsScreenshot,fees=current.latestFeeManagementScreenshot;
+  a.equal(scaffold.present,true);a.equal(scaffold.createdByUser,true);a.equal(scaffold.appId,p.accountEvidence.formalNewAppId);a.equal(scaffold.matchesFormalTargetAppId,true);a.equal(scaffold.containsProductImplementation,false);a.equal(scaffold.cloudEnvironmentIdConfigured,true);a.equal(scaffold.appJsEnvironmentValue,'cloud1-d2gjahlq39bf141c7');a.equal(scaffold.envListIsEmpty,true);a.equal(current.configuredAppIdMatchesFormalTarget,true);a.equal(current.scaffoldOnly,true);a.equal(current.environmentIdConfigured,true);a.equal(current.confirmedCloudEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(current.userConfirmedCloudEnvironmentCreatedFromTargetProject,true);a.equal(current.cloudEnvironmentBindingApiVerified,true);a.equal(current.cloudEnvironmentBindingApiEvidenceDate,'2026-10-28');a.equal(current.cloudEnvironmentBindingApiEvidenceMethod,'target-appid-scoped-cloud-env-list');
+  a.equal(current.cloudConsoleScreenshot.visibleEnvironmentLabel,'cloud1');a.equal(current.cloudConsoleScreenshot.visiblePlanLabel,'微信体验版');a.equal(current.cloudConsoleScreenshot.visibleDatabaseState,'not-shown-in-this-screenshot');a.equal(current.cloudConsoleScreenshot.appIdVisible,false);a.equal(current.cloudConsoleScreenshot.exactEnvironmentIdVisible,false);a.equal(current.cloudConsoleScreenshot.expiryVisible,false);a.equal(current.cloudConsoleScreenshot.billingOrAutoRenewalVisible,false);a.equal(current.cloudConsoleScreenshot.userReportsNoPayment,true);a.equal(current.cloudConsoleScreenshot.provesBindingToFormalTargetAppId,false);
+  a.equal(settings.visibleEnvironmentLabel,'cloud1');a.equal(settings.visibleEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(settings.visiblePlanLabel,'微信体验版');a.equal(settings.visibleSettingsTab,'权限设置');a.equal(settings.appIdVisible,false);a.equal(settings.expiryVisible,false);a.equal(settings.billingOrAutoRenewalVisible,false);a.equal(settings.provesBindingToFormalTargetAppId,false);
+  a.equal(fees.visibleEnvironmentLabel,'cloud1');a.equal(fees.visibleEnvironmentId,null);a.equal(fees.visiblePlanLabel,'微信体验版');a.equal(fees.visibleSection,'费用管理');a.equal(fees.visibleTab,'套餐管理');a.equal(fees.displayedMonthlyResourcePoints,40000);a.equal(fees.displayedMonthlyPriceRmb,19.9);a.equal(fees.purchaseButtonVisible,true);a.equal(fees.payAsYouGoEnabled,false);a.equal(fees.autoRenewalEnabled,false);a.equal(fees.expiryVisible,false);a.equal(fees.appIdVisible,false);a.equal(fees.provesPaidSubscription,false);a.equal(fees.provesBindingToFormalTargetAppId,false);
+  a.equal(current.currentRecommendation,'use-free-experience-for-development-and-testing; do-not-buy-paid-plan-until-capability-or-quota-need-is-evidenced');a.equal(task.status,'in-progress');a.equal(task.productAcceptancePassed,false);a(task.executionProgress.nextAction.includes('本轮不再核对费用'));a(task.executionProgress.nextAction.includes('cloud_env_list'));a(!task.executionProgress.nextAction.includes('CONNECT_ERROR'));a(!task.executionProgress.nextAction.includes('DescribeBillingInfo'));
+  a(doc.includes('cloud1-d2gjahlq39bf141c7'));a(doc.includes('用户之后明确确认该`cloud1`是在目标AppID项目中创建'));a(doc.includes('到期日'));a(doc.includes('购买按钮旁的价格不是已扣款证据'));a(doc.includes('按量付费与自动续费均关闭'));a(doc.includes('新建环境没有集合和调用数据是正常空态'));a(plan.includes('不能据截图的配额、价格按钮或套餐标签推断实际扣款和到期'));a(doc.includes('用户表示若上线后出现实际付费提示，将自行办理'));a(plan.includes('用户手动创建了'));a(plan.includes('套餐/账单截图显示“微信体验版”'));
+});
 test('SP01 distinguishes mini-program trial testing from the free CloudBase environment expiry and paid conversion rule',()=>{
   const p=load(),r=p.accountEvidence.miniProgramExperienceAndCloudBasePlanDistinction;
   const doc=read('docs/sp01-technical-environment-20261027.md'),plan=read('docs/v1-executable-development-plan-20261027.md');
@@ -40,7 +48,7 @@ test('SP01 distinguishes mini-program trial testing from the free CloudBase envi
   a.equal(r.officialCloudBaseEvidence.personalPlanPublicMonthlyPriceRmb,19.9);
   a.equal(r.officialCloudBaseEvidence.personalPlanPriceIsPromotional,true);
   a.equal(r.officialCloudBaseEvidence.priceRequiresPurchase,true);
-  a.equal(r.currentTargetEnvironment.environmentBindingToTargetAppIdVerified,true);a.equal(r.currentTargetEnvironment.environmentBindingToTargetAppIdApiVerified,false);
+  a.equal(r.currentTargetEnvironment.environmentBindingToTargetAppIdVerified,true);a.equal(r.currentTargetEnvironment.environmentBindingToTargetAppIdApiVerified,true);
   a.equal(r.currentTargetEnvironment.userConfirmedCloudEnvironmentCreatedFromTargetProject,true);
   a.equal(r.currentTargetEnvironment.environmentIdFromUserEvidence,'cloud1-d2gjahlq39bf141c7');
   a.equal(r.currentTargetEnvironment.freeEnvironmentStatusVerified,false);
@@ -48,8 +56,8 @@ test('SP01 distinguishes mini-program trial testing from the free CloudBase envi
   a.equal(r.currentTargetEnvironment.paidOrderVerified,false);
   a(r.interpretation.includes('distinct'));
   a(r.interpretation.includes('If the bound environment is a free CloudBase environment'));
-  a(r.interpretation.includes('Screenshot-level app/environment association is evidenced'));
-  a(r.interpretation.includes('platform API binding'));
+  a(r.interpretation.includes('Screenshot and CLI environment-list results confirm app/environment association'));
+  a(r.interpretation.includes('runtime access'));
   a(r.interpretation.includes('free-environment status, and exact expiry remain unverified'));
   a(doc.includes('小程序体验版本与CloudBase环境套餐分开判断'));
   a(doc.includes('用户报告'));
@@ -61,33 +69,48 @@ test('SP01 distinguishes mini-program trial testing from the free CloudBase envi
   a(plan.includes('最新详情截图同屏显示目标AppID `wx2414399d423dfb65` 与环境ID `cloud1-d2gjahlq39bf141c7`'));
   a(plan.includes('应在发布准备中安排转付费以避免到期停服'));
 });
-test('SP01 execution record distinguishes local evidence, official candidates, and failed live cloud lookup',()=>{const p=load(),doc=read('docs/sp01-technical-environment-20261027.md'),planDoc=read('docs/v1-executable-development-plan-20261027.md');for(const text of ['Node.js 24.18.0','npm 11.16.0','login=true','code 10','system error','wx2414399d423dfb65','Node.js 24.11','Nodejs24.11','未取得环境清单','cloud1-d1g1mv89t76512a25','wx358290e451cb06e7','截图本身未显示AppID','没有创建/修改云资源','回退','Codex CLI客户端已受信任','CONNECT_ERROR','EnvId和其与目标项目的关系已由用户确认','用户确认重新打开微信开发者工具','再次显式授权后','安装诊断返回 compatible=true','项目本地AppID已核验','本轮按用户要求跳过套餐、账单和到期核查'])a(doc.includes(text),text);a(planDoc.includes('重试仍在本地连接层返回`CONNECT_ERROR`'));for(const url of ['https://docs.cloudbase.net/en/cloud-function/runtime-support','https://docs.cloudbase.net/cli-v1/functions/configs','https://docs.cloudbase.net/en/database/transaction','https://docs.cloudbase.net/storage/data-permission'])a(doc.includes(url),url);a.equal(p.architecture.cloudRuntimeVersion,null);a.equal(p.architecture.databaseMode,null);a.equal(p.architecture.sdkVersions,null);a.equal(p.accountEvidence.liveCloudRevalidatedThisDelivery,false);a.equal(p.accountEvidence.latestReadOnlyQueryAttempt.clientName,'Codex');a.equal(p.accountEvidence.latestReadOnlyQueryAttempt.cliAuthorization,'already-trusted');a.equal(p.accountEvidence.latestReadOnlyQueryAttempt.queryStatus,'connect-error-before-cloud-response');a.equal(p.accountEvidence.latestReadOnlyQueryAttempt.environmentListRetrieved,false);a.equal(p.accountEvidence.latestReadOnlyQueryAttempt.devtoolsRestartConfirmedByUser,true);a.deepEqual(p.accountEvidence.latestReadOnlyQueryAttempt.processObservationAfterRestart,{processId:51712,startedAtLocal:'2026-10-27 20:06:15'});a.equal(p.accountEvidence.latestReadOnlyQueryAttempt.postRestartAuthorization.authorized,true);a.equal(p.accountEvidence.latestReadOnlyQueryAttempt.postRestartAuthorization.alreadyTrusted,true);a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.compatible,true);a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.version,'2.02.2608080');a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.provesBridgeConnection,false);a(p.tasks.find(t=>t.id==='SP01').executionProgress.blockedChecks[0].includes('重启后再次查询仍返回CONNECT_ERROR'));a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.appId,'wx358290e451cb06e7');a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.environmentId,'cloud1-d1g1mv89t76512a25');a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.scope,'development-and-controlled-testing-only');a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.screenshotAppIdVisible,false);});
+test('SP01 execution record separates historical CLI failures from current read-only CloudBase results',()=>{
+  const p=load(),doc=read('docs/sp01-technical-environment-20261027.md'),planDoc=read('docs/v1-executable-development-plan-20261027.md');
+  for(const text of ['Node.js 24.18.0','npm 11.16.0','login=true','code 10','system error','wx2414399d423dfb65','Node.js 24.11','Nodejs24.11','未取得环境清单','cloud1-d1g1mv89t76512a25','较早截图本身未显示AppID','没有创建/修改云资源','回退','CLI授权成功','CONNECT_ERROR','现有截图和只读CLI结果共同确认AppID/环境关联','用户确认重新打开微信开发者工具','安装诊断返回`compatible=true`','项目本地AppID已核验','本轮按用户要求跳过套餐、账单和到期核查'])a(doc.includes(text),text);
+  a(planDoc.includes('之后有一次命令因Shell解析到项目内辅助CLI而返回`CONNECT_ERROR`'));
+  a(planDoc.includes('改用安装目录`E:\\微信web开发者工具\\wechatide.cmd`后，状态查询成功'));
+  a(planDoc.includes('云环境列表查询已恢复'));
+  a(!planDoc.includes('本轮新AppID环境列表查询失败'));
+  a(!planDoc.includes('云环境清单查询受阻'));
+  a(!planDoc.includes('当前开发者工具“查看所有项目”列表只显示'));
+  for(const url of ['https://docs.cloudbase.net/en/cloud-function/runtime-support','https://docs.cloudbase.net/cli-v1/functions/configs','https://docs.cloudbase.net/en/database/transaction','https://docs.cloudbase.net/storage/data-permission'])a(doc.includes(url),url);
+  a.equal(p.architecture.cloudRuntimeVersion,null);a.equal(p.architecture.databaseMode,null);a.equal(p.architecture.sdkVersions,null);a.equal(p.accountEvidence.liveCloudRevalidatedThisDelivery,true);
+  a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.clientName,'Codex');a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.cliAuthorization,'already-trusted');a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.queryStatus,'connect-error-before-cloud-response');a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.environmentListRetrieved,false);a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.devtoolsRestartConfirmedByUser,true);a.deepEqual(p.accountEvidence.previousReadOnlyQueryAttempt.processObservationAfterRestart,{processId:51712,startedAtLocal:'2026-10-27 20:06:15'});a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.postRestartAuthorization.authorized,true);a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.postRestartAuthorization.alreadyTrusted,true);
+  a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.compatible,true);a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.version,'2.02.2608080');a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.provesBridgeConnection,false);
+  a(p.tasks.find(t=>t.id==='SP01').executionProgress.blockedChecks.some((check)=>check.includes('目标环境运行时、数据库模式、事务和私密文件权限仍未验证')));
+  a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.appId,'wx358290e451cb06e7');a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.environmentId,'cloud1-d1g1mv89t76512a25');a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.scope,'development-and-controlled-testing-only');a.equal(p.accountEvidence.oldCloudEnvironmentReadOnlyEvidence.screenshotAppIdVisible,false);
+});
 
 test('SP01 labels the missing DevTools project-list entry as a historical observation', () => {
   const doc = read('docs/sp01-technical-environment-20261027.md');
-  a(doc.includes('当时只显示`O2O environment verification`'));
-  a(doc.includes('目标新AppID对应工程在该次列表快照中未出现'));
+  a(doc.includes('2026-10-27那次列表快照只显示1个已登记工程`O2O environment verification`'));
+  a(doc.includes('目标新AppID对应工程在该次快照未列出'));
   a(doc.includes('2026-10-27那次列表快照只显示1个已登记工程'));
   a(!doc.includes('当前只显示`O2O environment verification`'));
-  a(doc.includes('当时目标新号自己的环境是否已创建尚未验证'));
+  a(doc.includes('本次直接CLI的`project_list`已列出目标'));
 });
 
 test('SP01 keeps the post-restart CLI status error separate from login state', () => {
   const record = load();
   const doc = read('docs/sp01-technical-environment-20261027.md');
-  a.deepEqual(record.accountEvidence.latestReadOnlyQueryAttempt.postRestartStatusCheck, {
+  a.deepEqual(record.accountEvidence.previousReadOnlyQueryAttempt.postRestartStatusCheck, {
     tool: 'check_wechatide_status',
     errorType: 'CONNECT_ERROR',
     loginExpired: null,
     versionRelation: null,
   });
-  a(doc.includes('重启后的CLI状态检查'));
-  a(doc.includes('未取得`versionRelation`或`loginExpired`字段'));
+  a(doc.includes('初始新主体云环境查询（历史）'));
+  a(doc.includes('这些是历史命令入口结果'));
 });
 
-test('SP01 records current CLI authorization and listener separately from failed IDE tool calls', () => {
+test('SP01 preserves the historical CLI authorization, listener and project-wrapper failures', () => {
   const record = load();
-  const attempt = record.accountEvidence.latestReadOnlyQueryAttempt;
+  const attempt = record.accountEvidence.previousReadOnlyQueryAttempt;
   a.deepEqual(attempt.bridgeListenerObserved, {
     address: '127.0.0.1',
     port: 31781,
@@ -102,41 +125,86 @@ test('SP01 records current CLI authorization and listener separately from failed
     { tool: 'check_wechatide_status', errorType: 'CONNECT_ERROR', cloudResponseReceived: false },
   ]);
   const doc = read('docs/sp01-technical-environment-20261027.md');
-  a.ok(doc.includes('本机`127.0.0.1:31781`仍由PID `51712`监听'));
-  a.ok(doc.includes('本次再次显式授权后仍为'));
-  a.ok(doc.includes('`cloud_env_list`和`check_wechatide_status`均继续在本地连接层返回`CONNECT_ERROR`'));
+  a.ok(doc.includes('历史连接记录：用户确认重新打开微信开发者工具后，本机端口PID'));
+  a.ok(doc.includes('此前Shell命令解析到项目内辅助入口'));
+  a.ok(doc.includes('改用真实安装目录入口'));
 });
 
-test('SP01 records the target-titled DevTools window separately from the still-unreachable CloudBase bridge', () => {
+test('SP01 resolves the CLI wrapper path and records the read-only target environment checks', () => {
   const record = load();
   a.deepEqual(record.accountEvidence.latestBridgeRecheck, {
     date: '2026-10-28',
-    evidenceMethod: 'read-only-process-inventory-and-CLI',
+    evidenceMethod: 'read-only-process-inventory-and-direct-installed-CLI',
     processId: 51712,
     activeWindowTitle: '湘邻湘友',
     executablePath: 'E:\\微信web开发者工具\\微信开发者工具.exe',
     localProjectPath: 'E:\\O2O\\miniprogram',
     localProjectAppId: 'wx2414399d423dfb65',
-    openProjectPathVerified: false,
+    activeProjectPathVerified: false,
+    registeredTargetProjectVerified: true,
     installationDiagnostic: { compatible: true, version: '2.02.2608080' },
     cliAuthorization: { authorized: true, alreadyTrusted: true, cliTokenRequired: false },
-    statusCheck: { ok: false, errorType: 'CONNECT_ERROR', cloudResponseReceived: false },
-    environmentList: { ok: false, errorType: 'CONNECT_ERROR', cloudResponseReceived: false },
-    environmentApiVerified: false,
+    pathResolvedCli: { path: 'E:\\O2O\\.local\\tools\\wechat-devtools\\wechatide.cmd', statusCheckError: 'CONNECT_ERROR', environmentListError: 'CONNECT_ERROR' },
+    installedCliPath: 'E:\\微信web开发者工具\\wechatide.cmd',
+    statusCheck: { ok: true, loginExpired: false, versionRelation: 'equal' },
+    environmentList: { ok: true, appId: 'wx2414399d423dfb65', environmentIds: ['cloud1-d2gjahlq39bf141c7'] },
+    projectList: { ok: true, targetProjectPath: 'E:\\O2O\\miniprogram', targetProjectAppId: 'wx2414399d423dfb65', activeProjectPathVerified: false },
+    initialResourceQueryFailure: {
+      tools: ['cloud_fn_list', 'cloud_db_read_struct'],
+      errorType: 'INPUT_ERROR',
+      reason: 'missing_client',
+      cloudRequestIssued: false,
+      recovery: 'CLI help confirmed the required client flag; retried with -c Codex',
+    },
+    functionList: {
+      ok: true,
+      tool: 'cloud_fn_list',
+      clientName: 'Codex',
+      queryAppId: 'wx2414399d423dfb65',
+      queryEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+      responseAppId: 'wx2414399d423dfb65',
+      total: 0,
+    },
+    databaseCollections: {
+      ok: true,
+      tool: 'cloud_db_read_struct',
+      clientName: 'Codex',
+      action: 'listCollections',
+      queryAppId: 'wx2414399d423dfb65',
+      queryEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+      requestId: '273b6a14-fb31-4dba-91ab-69418f65f135',
+      total: 0,
+    },
+    environmentApiVerified: true,
     runtimeVerified: false,
   });
   const doc = read('docs/sp01-technical-environment-20261027.md');
   a(doc.includes('主窗口标题为“湘邻湘友”'));
-  a(doc.includes('兼容性诊断返回`compatible=true`、版本`2.02.2608080`'));
-  a(doc.includes('`cloud_env_list --appid wx2414399d423dfb65`仍在连接层返回`CONNECT_ERROR`'));
-  a(doc.includes('当前窗口实际加载的工程路径'));
+  a(doc.includes('开发者工具安装诊断返回`compatible=true`、版本`2.02.2608080`'));
+  a(doc.includes('此前Shell命令解析到项目内辅助入口'));
+  a(doc.includes('`cloud_env_list`返回环境ID `cloud1-d2gjahlq39bf141c7`'));
+  a(doc.includes('云函数响应回显目标AppID且总数为0'));
+  a(doc.includes('数据库响应返回空集合列表'));
+  a(doc.includes('`-c Codex --appid wx2414399d423dfb65 --env cloud1-d2gjahlq39bf141c7`'));
+  a(doc.includes('这两个响应没有回显EnvID，EnvID作用域由命令参数记录'));
+  a(doc.includes('本轮云资源查询首次因漏传CLI必需参数`-c Codex`返回输入校验错误'));
+  a(doc.includes('活动窗口实际加载路径仍未确认'));
+  a(doc.includes('随后通过目标AppID执行的`cloud_env_list`也返回同一EnvID'));
+  a(!doc.includes('该项目与环境的创建关系仍未通过开发者工具接口核验'));
+  a(!doc.includes('平台API和运行时仍未核验；`envList`仍为空'));
+  a(!doc.includes('当前阻塞是历史CLI连接层报错'));
+  a(doc.includes('当前查询通路已恢复'));
+  a(doc.includes('当前阻塞是目标环境运行时、数据库模式、事务及私密文件权限仍未实测'));
   const targetEnvironment = record.accountEvidence.miniProgramExperienceAndCloudBasePlanDistinction.currentTargetEnvironment;
   a.equal(targetEnvironment.environmentBindingToTargetAppIdVerified, true);
-  a.equal(targetEnvironment.environmentBindingToTargetAppIdApiVerified, false);
-  a.match(record.accountEvidence.miniProgramExperienceAndCloudBasePlanDistinction.interpretation, /Screenshot-level app\/environment association is evidenced; platform API binding, free-environment status, and exact expiry remain unverified\./);
+  a.equal(targetEnvironment.environmentBindingToTargetAppIdApiVerified, true);
+  a.match(record.accountEvidence.miniProgramExperienceAndCloudBasePlanDistinction.interpretation, /Screenshot and CLI environment-list results confirm app\/environment association; runtime access, free-environment status, and exact expiry remain unverified\./);
   const latestChecks = record.tasks.find((task) => task.id === 'SP01').executionProgress.completedChecks;
   a(latestChecks.some((check) => check.includes('较早概览、设置和费用截图未证明目标环境归属')));
   a(!latestChecks.some((check) => check.includes('当前截图仍未证明目标环境归属')));
+  a(latestChecks.some((check) => check.includes('直接使用微信开发者工具安装目录')));
+  a(latestChecks.some((check) => check.includes('cloud_fn_list和cloud_db_read_struct命令显式传入目标AppID')));
+  a(record.tasks.find((task) => task.id === 'SP01').executionProgress.blockedChecks.some((check) => check.includes('目标环境运行时、数据库模式、事务和私密文件权限仍未验证')));
 });
 
 test('SP01 records the local diagnostic project AppID separately from the new target AppID', () => {
@@ -199,7 +267,7 @@ test('SP01 scopes the DevTools project-manager inventory to its visible register
   a.ok(doc.includes('“项目→查看所有项目”列表'));
   a.ok(doc.includes('列表外、其他目录、账号或设备中的工程是否存在仍未核实'));
 });
-test('SP01 separates the historical creation wizard from screenshot-confirmed association and unverified API access', () => {
+test('SP01 separates the historical creation wizard from current environment-list confirmation and unverified runtime access', () => {
   const record = load();
   const observation = record.accountEvidence.devtoolsProjectCreationWizardObservation;
   a.deepEqual(observation, {
@@ -255,14 +323,14 @@ test('SP01 separates the historical creation wizard from screenshot-confirmed as
     },
   });
   a.equal(record.accountEvidence.formalNewEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
-  a.equal(record.accountEvidence.formalNewEnvironmentStatus, 'screenshot-confirmed-created-associated-not-api-verified');
-  a.equal(record.accountEvidence.liveCloudRevalidatedThisDelivery, false);
+  a.equal(record.accountEvidence.formalNewEnvironmentStatus, 'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');
+  a.equal(record.accountEvidence.liveCloudRevalidatedThisDelivery, true);
   const sp01 = record.tasks.find((task) => task.id === 'SP01');
   a.equal(sp01.status, 'in-progress');
   a.equal(sp01.productAcceptancePassed, false);
-  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('用户明确确认cloud1')));
-  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('CloudBase API关联尚未核验')));
-  a(sp01.executionProgress.nextAction.includes('用户自行处理后续平台付费提示'));
+  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('目标环境运行时、数据库模式、事务和私密文件权限仍未验证')));
+  a(!sp01.executionProgress.blockedChecks.some((check) => check.includes('CloudBase API关联尚未核验')));
+  a(sp01.executionProgress.nextAction.includes('任何云端部署或写入测试须先取得具体授权'));
   a(sp01.executionProgress.nextAction.includes('本轮不再核对费用'));
   const doc = read('docs/sp01-technical-environment-20261027.md');
   a(doc.includes('用户最初提供的截图显示微信开发者工具“创建小程序”向导'));
@@ -274,7 +342,7 @@ test('SP01 separates the historical creation wizard from screenshot-confirmed as
   a(doc.includes('微信开发者工具创建的免费期环境可能仍属历史套餐'));
   a(doc.includes('发布后第15天'));
   a(doc.includes('最新用户截图同屏显示小程序名“湘邻湘友”、目标AppID、`cloud1`、环境ID'));
-  a(doc.includes('不替代平台API关联或运行时验证'));
+  a(doc.includes('现有截图和只读CLI结果共同确认AppID/环境关联；不证明小程序运行时'));
   a(doc.includes('初次使用可免费体验1个月个人版环境'));
   a(doc.includes('本轮跳过套餐、账单和到期核对'));
   a(doc.includes('本轮按用户要求不核对套餐、账单或到期信息'));
@@ -321,7 +389,7 @@ test('SP01 excludes old cloud1 after the user reports different subjects and kee
   a.equal(task.status, 'in-progress');
   a.equal(task.productAcceptancePassed, false);
   a(task.executionProgress.nextAction.includes('本轮不再核对费用'));
-  a(task.executionProgress.nextAction.includes('旧号个人主体的cloud1不再作为新号共享候选'));
+  a(task.executionProgress.nextAction.includes('旧号个人主体的cloud1不作新号共享候选'));
   a(task.executionProgress.nextAction.includes('用户自行处理后续平台付费提示'));
   a(task.executionProgress.nextAction.includes('本轮不再核对费用'));
   const sp01 = read('docs/sp01-technical-environment-20261027.md');
