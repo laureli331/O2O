@@ -457,7 +457,16 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
     status: 'Active', runtime: 'Nodejs20.19', timeoutSeconds: 30,
   });
   assert.equal(recovery.correctedFunctionDeployed, true);
-  assert.equal(recovery.legacyRecordsInspected, false);
+  assert.equal(recovery.legacyRecordsInspected, true);
+  assert.equal(recovery.legacyRecordsInspectionResult.safeToClean, true);
+  assert.equal(recovery.legacyRecordsInspectionResult.presentCount, 3);
+  assert.deepEqual(recovery.legacyRecordsInspectionResult.documents.map(({ id, state, format }) => ({ id, state, format })), [
+    { id: `${recovery.legacyRunId}_commit_a`, state: 'owned', format: 'legacy-nested' },
+    { id: `${recovery.legacyRunId}_commit_b`, state: 'owned', format: 'legacy-nested' },
+    { id: `${recovery.legacyRunId}_rollback_a`, state: 'missing', format: undefined },
+    { id: `${recovery.legacyRunId}_rollback_b`, state: 'missing', format: undefined },
+    { id: `${recovery.legacyRunId}_concurrency`, state: 'owned', format: 'legacy-nested' },
+  ]);
   assert.equal(recovery.legacyRecordsCleaned, false);
   assert.equal(recovery.newRunExecuted, false);
   assert.equal(recovery.cloudTransactionAcceptancePassed, false);

@@ -1548,7 +1548,21 @@
           },
           "correctedFunctionDeployed": true,
           "legacyRunId": "sp01_f892f63b9fdc4c11ae1254800a9e83cf",
-          "legacyRecordsInspected": false,
+          "legacyRecordsInspected": true,
+          "legacyRecordsInspectionResult": {
+            "success": true,
+            "runId": "sp01_f892f63b9fdc4c11ae1254800a9e83cf",
+            "collection": "sp01_probe_20261028",
+            "safeToClean": true,
+            "presentCount": 3,
+            "documents": [
+              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_a", "state": "owned", "format": "legacy-nested" },
+              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_b", "state": "owned", "format": "legacy-nested" },
+              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_a", "state": "missing" },
+              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_b", "state": "missing" },
+              { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_concurrency", "state": "owned", "format": "legacy-nested" }
+            ]
+          },
           "legacyRecordsCleaned": false,
           "newRunExecuted": false,
           "cloudTransactionAcceptancePassed": false
