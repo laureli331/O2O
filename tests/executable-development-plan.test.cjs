@@ -608,7 +608,15 @@ test('SP01 records simulator compilation separately from cloud identity, storage
   a.equal(probe.latestIdentityProbeClientAttempt.cloudStorageWritePerformed, false);
   a.equal(probe.latestIdentityProbeLogInspection.runtime, 'Nodejs16.13');
   a.equal(probe.latestIdentityProbeLogInspection.timeoutSeconds, 3);
-  a.equal(probe.latestIdentityProbeLogInspection.logConfigurationOrTopicVisible, false);
+  a.equal(probe.latestIdentityProbeLogInspection.functionDetailLogConfigurationOrTopicVisible, false);
+  a.deepEqual(probe.latestIdentityProbeLogInspection.logsPageUi, {
+    functionFilter: '全部云函数',
+    timeRange: '最近24小时',
+    logSettingsControlVisible: true,
+    logSettingsMenuOpened: false,
+    searchButtonVisible: true,
+    searchAction: 'not-reported',
+  });
   a.equal(probe.latestIdentityProbeLogInspection.logsPageOpenedAfterClientAttempt, true);
   a.equal(probe.latestIdentityProbeLogInspection.queryOrRefreshAction, 'not-reported');
   a.equal(probe.latestIdentityProbeLogInspection.invocationArrivalConfirmed, false);
@@ -1056,12 +1064,21 @@ test('SP01 records the selected menu separately from the deployed temporary prob
  a.equal(sp04.latestIdentityProbeClientAttempt.cloudStorageWritePerformed,false);
  a.equal(sp04.latestIdentityProbeLogInspection.runtime,'Nodejs16.13');
  a.equal(sp04.latestIdentityProbeLogInspection.timeoutSeconds,3);
+ a.equal(sp04.latestIdentityProbeLogInspection.functionDetailLogConfigurationOrTopicVisible,false);
+ a.deepEqual(sp04.latestIdentityProbeLogInspection.logsPageUi,{
+  functionFilter:'全部云函数',
+  timeRange:'最近24小时',
+  logSettingsControlVisible:true,
+  logSettingsMenuOpened:false,
+  searchButtonVisible:true,
+  searchAction:'not-reported',
+ });
  a.equal(sp04.latestIdentityProbeLogInspection.queryOrRefreshAction,'not-reported');
  a.equal(sp04.latestIdentityProbeLogInspection.settingsChanged,false);
  a.equal(sp04.latestIdentityProbeLogInspection.clientRetestPerformed,false);
  a.equal(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix.clientRetestPerformed,true);
  a(sp04Task.executionProgress.nextAction.includes('IDENTITY_CALL_FAILED'));
- a(sp04Task.executionProgress.nextAction.includes('只读核对日志筛选与配置可见性'));
+ a(sp04Task.executionProgress.nextAction.includes('只读查看日志设置入口并按函数名和调用时段查询'));
  a(sp04Task.executionProgress.nextAction.includes('不再次调用'));
  a(!sp04Task.executionProgress.nextAction.includes('账号A在真实微信客户端扫码打开隔离探针'));
  a(read('docs/sp01-cloud-probe-runbook-20261028.md').includes('O2O-SP01-preview-20261028-193939.jpg'));

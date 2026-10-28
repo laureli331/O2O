@@ -686,6 +686,27 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
   assert.ok(!doc.includes('22:00后或其他无人值班时段如何处理请求'));
 });
 
+test('CloudBase log-page screenshot records visible filters and settings entry without implying a query ran', () => {
+  const observation = evidence().latestIdentityProbeLogInspection;
+  assert.deepEqual(observation.logsPageUi, {
+    functionFilter: '全部云函数',
+    timeRange: '最近24小时',
+    logSettingsControlVisible: true,
+    logSettingsMenuOpened: false,
+    searchButtonVisible: true,
+    searchAction: 'not-reported',
+  });
+  assert.equal(observation.functionDetailLogConfigurationOrTopicVisible, false);
+  assert.equal(observation.invocationArrivalConfirmed, false);
+  assert.equal(observation.failureCauseDetermined, false);
+  const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
+  assert.ok(runbook.includes('筛选器为“全部云函数”、时间范围为“最近24小时”'));
+  assert.ok(runbook.includes('右上“日志设置”入口'));
+  assert.ok(runbook.includes('菜单未打开'));
+  assert.ok(read('docs/sp01-technical-environment-20261027.md').includes('日志页截图显示筛选器为“全部云函数”'));
+  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('先前截图显示筛选器为“全部云函数”'));
+});
+
 test('SP04 records the latest read-only identity-probe status without treating it as deployment or client proof', () => {
   const record = evidence();
   const expected = {

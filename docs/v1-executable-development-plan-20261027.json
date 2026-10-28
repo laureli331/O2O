@@ -1939,7 +1939,15 @@
             "timeoutSeconds": 3,
             "logsPageResult": "no-data-shown",
             "logsPageOpenedAfterClientAttempt": true,
-            "logConfigurationOrTopicVisible": false,
+            "functionDetailLogConfigurationOrTopicVisible": false,
+            "logsPageUi": {
+              "functionFilter": "全部云函数",
+              "timeRange": "最近24小时",
+              "logSettingsControlVisible": true,
+              "logSettingsMenuOpened": false,
+              "searchButtonVisible": true,
+              "searchAction": "not-reported"
+            },
             "settingsChanged": false,
             "clientRetestPerformed": false,
             "invocationArrivalConfirmed": false,
@@ -1979,7 +1987,15 @@
           "timeoutSeconds": 3,
           "logsPageResult": "no-data-shown",
           "logsPageOpenedAfterClientAttempt": true,
-          "logConfigurationOrTopicVisible": false,
+          "functionDetailLogConfigurationOrTopicVisible": false,
+          "logsPageUi": {
+            "functionFilter": "全部云函数",
+            "timeRange": "最近24小时",
+            "logSettingsControlVisible": true,
+            "logSettingsMenuOpened": false,
+            "searchButtonVisible": true,
+            "searchAction": "not-reported"
+          },
           "settingsChanged": false,
           "clientRetestPerformed": false,
           "invocationArrivalConfirmed": false,
@@ -2371,7 +2387,7 @@
           "clientRetestPerformed": true,
           "cloudWriteOrDeploymentPerformed": false
         },
-        "nextAction": "账号A已尝试真实客户端身份调用，返回IDENTITY_CALL_FAILED（云函数返回码-1、请求ID未提供）；未生成测试包、未创建或上传文件，身份摘要未比对。用户之后打开CloudBase日志页看到无数据，并报告函数详情底部未见日志配置或主题，运行时Nodejs16.13、超时3秒；未改设置、未重跑。请求是否到达及失败根因未知。下一步只读核对日志筛选与配置可见性；没有到达证据前不再次调用。SP01身份/存储验收及SP04运营就绪门槛保持未通过。",
+        "nextAction": "账号A已尝试真实客户端身份调用，返回IDENTITY_CALL_FAILED（云函数返回码-1、请求ID未提供）；未生成测试包、未创建或上传文件，身份摘要未比对。用户之后打开CloudBase日志页看到无数据；该页截图显示筛选器为“全部云函数”、时间范围为“最近24小时”，右上可见“日志设置”入口和查询按钮，但菜单未打开、是否查询/刷新未确认。用户报告函数详情底部未见日志配置或主题，运行时Nodejs16.13、超时3秒；未改设置、未重跑。请求是否到达及失败根因未知。下一步只读查看日志设置入口并按函数名和调用时段查询；没有到达证据前不再次调用。SP01身份/存储验收及SP04运营就绪门槛保持未通过。",
         "latestIdentityProbeClientAttempt": {
           "date": "2026-10-28",
           "source": "user-reported-real-wechat-client-result-and-local-workflow-order",
@@ -2404,7 +2420,15 @@
           "timeoutSeconds": 3,
           "logsPageResult": "no-data-shown",
           "logsPageOpenedAfterClientAttempt": true,
-          "logConfigurationOrTopicVisible": false,
+          "functionDetailLogConfigurationOrTopicVisible": false,
+          "logsPageUi": {
+            "functionFilter": "全部云函数",
+            "timeRange": "最近24小时",
+            "logSettingsControlVisible": true,
+            "logSettingsMenuOpened": false,
+            "searchButtonVisible": true,
+            "searchAction": "not-reported"
+          },
           "settingsChanged": false,
           "clientRetestPerformed": false,
           "invocationArrivalConfirmed": false,
