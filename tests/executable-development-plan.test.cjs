@@ -367,6 +367,10 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(progress.authorizedRecovery.temporaryFunctionRemovalStatus, 'user-reported-deleted-and-read-only-list-empty');
   a.deepEqual(progress.authorizedRecovery.temporaryFunctionRemovalCheck.list, []);
   a.equal(progress.authorizedRecovery.temporaryFunctionRemovalCheck.total, 0);
+  a.equal(progress.databaseModeReadOnlyApiResearch.apiName, 'DescribeEnvs');
+  a.deepEqual(progress.databaseModeReadOnlyApiResearch.responseFields, ['Databases', 'PostgreSQL', 'Meta']);
+  a.equal(progress.databaseModeReadOnlyApiResearch.directDatabaseTypeFieldDocumented, false);
+  a.equal(progress.databaseModeReadOnlyApiResearch.apiCallPerformed, false);
 
   a.deepEqual(audit.userScreenshotCloudBaseObservation, {
     date: '2026-10-28',
@@ -821,6 +825,8 @@ test('SP01 separates confirmed runtime and user-reported database mode from runt
  }
  a(techDoc.includes('临时函数`sp01EnvProbe`在事务验证期间的配置为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));a(techDoc.includes('最新修正版30秒run通过探针断言'));
  a(techDoc.includes('尚未API复核'));
+ a(techDoc.includes('DescribeEnvs 获取环境列表接口'));
+ a(techDoc.includes('未给出单一的`DatabaseType`字段'));
  a(!techDoc.includes('没有为本项目选定Node云运行时'));
  a(!planDoc.includes('运行时选择、数据库模式、小程序端运行时'));
  a(!sp04Doc.includes('运行时选择和数据库模式仍未验证'));

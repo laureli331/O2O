@@ -1038,6 +1038,27 @@
           "transactionAcceptancePassed": false,
           "cleanupVerified": false
         },
+        "databaseModeReadOnlyApiResearch": {
+          "date": "2026-10-28",
+          "source": "official-tencent-cloud-api-docs-and-local-cli-capability-check",
+          "apiName": "DescribeEnvs",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "envIdFilterSupported": true,
+          "responseFields": [
+            "Databases",
+            "PostgreSQL",
+            "Meta"
+          ],
+          "directDatabaseTypeFieldDocumented": false,
+          "localTencentCloudCliInstalled": false,
+          "developerToolsCliCanCallDescribeEnvs": false,
+          "apiCallPerformed": false,
+          "databaseModeApiVerified": false,
+          "sourceUrls": [
+            "https://cloud.tencent.com/document/api/876/34820",
+            "https://cloud.tencent.com/document/product/876/34822"
+          ]
+        },
         "latestUserScreenshotCloudBaseObservation": {
           "date": "2026-10-28",
           "evidenceSource": "user-provided-screenshots",
