@@ -645,6 +645,13 @@ test('SP01 records simulator compilation separately from cloud identity, storage
   a(runbook.includes('execution_success'));
   a.equal(probe.quickStartModified, false);
   a.equal(record.tasks.find((task) => task.id === 'SP01').productAcceptancePassed, false);
+  const latestProgressStart = plan.indexOf('### 2026-10-28 最新进度');
+  const latestProgressEnd = plan.indexOf('\n### ', latestProgressStart + 1);
+  const latestProgress = plan.slice(latestProgressStart, latestProgressEnd);
+  for (const item of ['设置列显示字段', '设置保存时长', '投递到 CLS', '删除日志']) a(latestProgress.includes(item));
+  a(latestProgress.includes('官方支持表列出Nodejs16.13'));
+  a(latestProgress.includes('根因未知'));
+  a(!latestProgress.includes('下一步为只读查看日志设置入口'));
   a(plan.includes('开发者工具 CLI 导入项目列表'));
   a(plan.includes('模拟器页面`pages/index/index`'));
   a(plan.includes('不证明云函数身份通路、云存储权限或真机行为'));
