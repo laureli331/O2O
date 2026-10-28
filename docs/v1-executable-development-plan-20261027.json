@@ -992,13 +992,13 @@
           "deploymentPerformed": false
         },
         "blockedChecks": [
-          "首版运行时仍选用Node.js 20.19；临时探针已部署到目标AppID/EnvID，但尚未运行。此前cloudfunctions根目录菜单为空是导入前历史观察，之后用户报告已选中cloud1。数据库模式为用户报告的文档型数据库，CLI没有模式查询且尚未API复核；事务及私密文件角色、临时链接和撤权仍未实测。该文件夹部署目标与app.js运行时环境分开。用户已授权探针部署和指定合成数据库测试；存储测试仍未授权",
+          "首版运行时选择Node.js 20.19已确认；用户提交inspect、prepare、run事件的测试截图回显输入事件并显示Hello World/运行上下文，和本地探针不符。临时函数已删除，删除后只读函数列表为空；删除后数据库集合列表也为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），固定集合当前不存在且没有可见记录，但不能反推调用期间是否曾短暂创建。已只读核对CLI部署帮助要求绝对函数目录、目标工程cloudfunctionRoot、探针package入口和SDK锁文件，并新增本地包预检测试；历史部署path参数与上传包摘要未留存，Hello World根因仍未知。未来任何重试前重新检查固定集合与本轮文档ID，部署路径须指向函数目录本身，部署后先检查inspect响应。数据库模式为用户报告的文档型数据库，尚未API复核；事务与私密文件权限仍未实测。",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
           "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；公开项目配置声明基础库2.20.1、私有配置声明3.17.5，DevTools模拟器systemInfo报告SDKVersion 3.17.5；本机未发现ADB，实际设备连接、手机运行基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞",
-          "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；之后用户报告目标小程序已关联、cloud1已导入并在菜单中选中。该历史菜单核对不是当前部署状态；本轮随后已按明确授权部署sp01EnvProbe，并通过只读云函数列表确认仅此函数存在。"
+          "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；之后用户报告目标小程序已关联、cloud1已导入并在菜单中选中。该历史菜单核对不是当前部署状态；临时探针曾部署，测试截图不符合本地代码响应契约，用户已删除，之后只读函数列表为空。"
         ],
-        "nextAction": "目标AppID wx2414399d423dfb65 的 cloud1 环境 cloud1-d2gjahlq39bf141c7 已通过 CLI 只读复核；部署前云函数和集合均为空。用户明确授权并确认后，仅部署临时函数 sp01EnvProbe；部署后只读函数列表恰有该函数，集合列表仍为空。下一步由用户在开发者工具/CloudBase 控制台依次运行 inspect、prepare、run 事件并提供原始JSON回包；prepare或运行发生异常时停止并审查，不换集合或运行ID重试。run必须验证提交、回滚、并发初始读取重叠及最终一致性，并回查本轮记录全部清理。审阅结果后由用户在函数管理页删除sp01EnvProbe，保留测试集合为空。云函数运行时实证、事务通过、存储逐角色访问、私密文件临时链接/撤权、手机和网络性能仍未验收。数据库模式为用户报告的文档型数据库，尚未API复核；公开/私有基础库版本声明不一致，手机实际版本及实际浏览器兼容性须实测。旧号个人主体的cloud1不作为新号候选；套餐、账单及到期核查按用户要求略过。SP01保持进行中、产品验收未通过，SP07不得越过SP01—SP06门槛。 此前用户报告腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并报告当前环境已选中cloud1；较早cloudfunctions根目录空菜单是导入前记录。费用核查按用户要求略过。 已通过cloud_env_list只读确认目标环境；旧号个人主体的cloud1不作新号共享候选；剩余存储写入仍须单独授权。 用户确认Node.js 20.19；用户查看数据库设置后报告数据库模式为文档型数据库。若上线后有平台实际付费提示，用户自行办理。",
+        "nextAction": "目标AppID wx2414399d423dfb65 的 cloud1 环境 cloud1-d2gjahlq39bf141c7 已通过CLI只读复核；此前部署前云函数和集合均为空。用户随后报告腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并报告当前环境已选中cloud1（后两项无截图）。临时探针曾按明确授权部署；用户提交inspect、prepare、run事件，但截图显示输入事件回显及Hello World/运行上下文日志，与本地处理器预期不符，不能验收。用户已删除探针，删除后只读函数列表和数据库集合列表均为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），固定集合当前不存在、没有可见记录，但不能反推调用期间是否曾短暂创建。已只读核对CLI要求绝对函数目录、工程cloudfunctionRoot、miniprogram/cloudfunctions内探针index.js入口及固定SDK锁文件，并加入本地包预检；历史部署path参数和上传包摘要未留存，故Hello World根因仍未知。用户决定重试时，先重新只读检查固定集合及本轮五个确切ID，使用函数目录本身作为部署path，部署后先看结构化inspect响应；未匹配即停止并删除临时函数。测试时只分享脱敏结构化返回JSON，不分享运行日志；若响应仍不匹配，立即停止并删除临时函数。已通过cloud_env_list只读确认目标环境；用户确认Node.js 20.19并报告数据库模式为文档型数据库，尚未API复核；旧号个人主体的cloud1不作新号共享候选；剩余存储写入仍须单独授权。若上线后有平台实际付费提示，用户自行办理；费用核查按用户要求略过且不构成当前开发阻塞。SP01保持进行中、产品验收未通过，SP07不得越过SP01—SP06门槛。云端运行时、事务和清理未验收。",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -1068,15 +1068,15 @@
           ],
           "runIdentifierPattern": "^sp01_[0-9a-f]{32}$",
           "localTestCommand": "node --test tests/sp01-environment-probe.test.cjs",
-          "localTestCount": 11,
-          "localTestsPassed": 11,
+          "localTestCount": 13,
+          "localTestsPassed": 13,
           "localTestsFailed": 0,
           "testBackend": "in-memory-database-mock",
           "cloudRuntimeExecuted": false,
           "cloudTransactionTestExecuted": false,
           "cloudFunctionDeployed": true,
-          "cloudCollectionCreated": false,
-          "cloudRecordsWrittenOrDeleted": false,
+          "cloudCollectionCreated": null,
+          "cloudRecordsWrittenOrDeleted": null,
           "cloudStorageWritten": false,
           "cloudWriteAndDeploymentAuthorization": "granted-for-sp01EnvProbe-and-sp01_probe_20261028-synthetic-records-only",
           "collectionCleanup": "records-only; retain-empty-collection",
@@ -1099,6 +1099,11 @@
           "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
           "functionName": "sp01EnvProbe",
           "deploymentTaskId": "confirmation_cloud_fn_deploy_7c6b0dad-c620-4cf9-bd2e-aaeb8478e801",
+          "cliPathRequirement": "absolute-cloud-function-directory; directory-name-is-function-name; one-function-directory-per-deploy",
+          "expectedLocalFunctionDirectory": "E:\\O2O\\miniprogram\\cloudfunctions\\sp01EnvProbe",
+          "historicalDeploymentPathCaptured": false,
+          "historicalPackageDigestCaptured": false,
+          "helloWorldRootCause": "unknown-historical-deployment-artifact-not-inspectable-after-user-deletion",
           "initialTaskStatus": "pending-user-confirmation",
           "userConfirmed": true,
           "preflightFunctionCount": 0,
@@ -1121,6 +1126,46 @@
           ],
           "userRunsFunctionTests": true,
           "userDeletesTemporaryFunctionAfterReview": true
+        },
+        "latestCloudTestAttempt": {
+          "date": "2026-10-28",
+          "source": "user-provided-cloud-function-test-screenshots",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "functionName": "sp01EnvProbe",
+          "submittedActions": [
+            "inspect",
+            "prepare",
+            "run"
+          ],
+          "runId": "sp01_f95243389fa9ca4f7a407c90ce2052ef",
+          "consoleDisplayedStatus": "success",
+          "responseMatchedExpectedProbeContract": false,
+          "logsIncludedHelloWorld": true,
+          "logsIncludedRuntimeContext": true,
+          "temporaryCredentialValuesVisibleInScreenshots": true,
+          "probeExecutionVerified": false,
+          "transactionAcceptancePassed": false,
+          "cleanupVerified": false,
+          "postAttemptCollectionState": "not-present-on-read-only-recheck",
+          "userDeletedFunction": true,
+          "functionCurrentlyPresent": false,
+          "functionNamesAfterDeletion": [],
+          "postAttemptCollectionCount": 0,
+          "postAttemptCollectionRequestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
+          "postAttemptCollectionReadScope": "target-appid-and-environment-explicitly-passed-to-read-only-cli",
+          "cloudFunctionTestEventsSubmitted": true
+        },
+        "latestPostProbeReadOnlyDatabaseCheck": {
+          "date": "2026-10-28",
+          "source": "wechatide-cli-cloud-db-read-struct-listCollections",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "collections": [],
+          "collectionCount": 0,
+          "requestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
+          "writePerformed": false,
+          "provesFunctionDidNotTransientlyCreateCollectionDuringAttempt": false
         }
       },
       "qualityContract": {
@@ -1337,11 +1382,11 @@
           "2026-10-28按目标AppID wx2414399d423dfb65查询cloud_env_list返回cloud1-d2gjahlq39bf141c7；project_list列出E:\\O2O\\miniprogram，cloud_fn_list与cloud_db_read_struct显式限定AppID/EnvID后分别返回0个云函数和0个数据库集合；QuickStart app.js已配置该EnvID。以上为只读/本地配置证据，不证明活动项目路径或小程序运行时",
           "2026-10-28用户提供CloudBase截图，记录云函数运行时候选、数据库回档页、空存储根目录及仅创建者可读写选项；开发者工具菜单显示当前环境为无且子菜单为空。本地envList仍为空；已交叉记入SP04，未改云端设置或项目配置",
           "2026-10-28用户提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79；后台验收选择Chrome，网络场景为家中WiFi 5G与公共免费WiFi。用户报告不代表设备连接、兼容性或网络性能已实测",
-          "用户确认首版云函数运行时为Node.js 20.19；查看数据库设置后报告当前为文档型数据库。均与截图可见范围分开记载，云函数未创建/运行，数据库模式未API复核"
+          "用户确认首版云函数运行时为Node.js 20.19；查看数据库设置后报告当前为文档型数据库。均与截图可见范围分开记载；临时SP01探针曾部署并收到不符合本地响应契约的测试结果，之后已由用户删除。SP04未变更CloudBase权限或数据库设置；数据库模式未API复核"
         ],
         "blockedChecks": [
           "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户已确认Node.js 20.19并报告数据库为文档型数据库，但函数未创建/运行、数据库模式尚未API复核；用户报告cloudfunctions文件夹当前环境已选中cloud1，活动窗口项目路径、托管/登录配置和正式域名仍未核验。旧号与新号主体不同，旧cloud1不作为共享候选。费用核查按用户要求略过",
-          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；最新只读CLI仍返回cloud1、project_list列出目标工程、cloud_fn_list返回0个函数。用户报告已将cloud1导入（无截图），用户报告菜单已选中cloud1，但云函数尚未部署且部署结果未验证；本地envList仍为空。Node.js 20.19选择已确认，但云函数未创建/运行；文档型数据库为用户报告，尚未API复核。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
+          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；最新只读CLI仍返回cloud1、project_list列出目标工程、cloud_fn_list返回0个函数。用户报告已将cloud1导入（无截图），用户报告cloudfunctions文件夹当前环境已选中cloud1。SP01临时探针曾按授权部署，但测试输出不符合本地响应契约，用户已删除；删除后函数和集合列表均为空。Node.js 20.19选择已确认，文档型数据库为用户报告，尚未API复核；SP04没有修改CloudBase权限或数据库设置。小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
         ],
         "evidence": [
           "docs/sp04-operations-configuration-20261027.md",

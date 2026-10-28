@@ -287,8 +287,8 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(task.status, 'in-progress');
   assert.equal(task.productAcceptancePassed, false);
   assert.equal(harness.functionName, 'sp01EnvProbe');
-  assert.equal(harness.localTestCount, 11);
-  assert.equal(harness.localTestsPassed, 11);
+  assert.equal(harness.localTestCount, 13);
+  assert.equal(harness.localTestsPassed, 13);
   assert.equal(harness.concurrencyBarrierTimeoutMs, 1500);
   assert.equal(harness.concurrencyRequiresOverlappingInitialReads, true);
   assert.equal(harness.sdkVersionRuntimeSource, 'require(@cloudbase/node-sdk/package.json).version');
@@ -297,8 +297,8 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(harness.cloudRuntimeExecuted, false);
   assert.equal(harness.cloudTransactionTestExecuted, false);
   assert.equal(harness.cloudFunctionDeployed, true);
-  assert.equal(harness.cloudCollectionCreated, false);
-  assert.equal(harness.cloudRecordsWrittenOrDeleted, false);
+  assert.equal(harness.cloudCollectionCreated, null);
+  assert.equal(harness.cloudRecordsWrittenOrDeleted, null);
   assert.equal(harness.cloudWriteAndDeploymentAuthorization, 'granted-for-sp01EnvProbe-and-sp01_probe_20261028-synthetic-records-only');
   assert.equal(harness.collectionCleanup, 'records-only; retain-empty-collection');
   assert.equal(harness.storageRoleTestPrepared, false);
@@ -306,12 +306,63 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(deployment.targetAppId, 'wx2414399d423dfb65');
   assert.equal(deployment.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
   assert.deepEqual(deployment.postDeploymentFunctionNames, ['sp01EnvProbe']);
+  assert.equal(deployment.cliPathRequirement, 'absolute-cloud-function-directory; directory-name-is-function-name; one-function-directory-per-deploy');
+  assert.equal(deployment.expectedLocalFunctionDirectory, 'E:\\O2O\\miniprogram\\cloudfunctions\\sp01EnvProbe');
+  assert.equal(deployment.historicalDeploymentPathCaptured, false);
+  assert.equal(deployment.historicalPackageDigestCaptured, false);
+  assert.equal(deployment.helloWorldRootCause, 'unknown-historical-deployment-artifact-not-inspectable-after-user-deletion');
   assert.equal(deployment.postDeploymentCollectionCount, 0);
   assert.equal(deployment.cloudRuntimeExecuted, false);
   assert.equal(deployment.cloudRecordsWrittenOrDeleted, false);
-  assert.match(runbook, /临时探针已部署；等待用户在开发者工具\/CloudBase 控制台执行云端测试/);
+  const attempt = task.executionProgress.latestCloudTestAttempt;
+  assert.equal(attempt.responseMatchedExpectedProbeContract, false);
+  assert.equal(attempt.probeExecutionVerified, false);
+  assert.equal(attempt.transactionAcceptancePassed, false);
+  assert.equal(attempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
+  assert.equal(attempt.postAttemptCollectionCount, 0);
+  assert.equal(attempt.postAttemptCollectionRequestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
+  assert.equal(attempt.userDeletedFunction, true);
+  assert.deepEqual(attempt.functionNamesAfterDeletion, []);
+  assert.equal(task.executionProgress.latestPostProbeReadOnlyDatabaseCheck.collectionCount, 0);
+  assert.equal(task.executionProgress.latestPostProbeReadOnlyDatabaseCheck.requestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
+  assert.equal(task.executionProgress.latestPostProbeReadOnlyDatabaseCheck.provesFunctionDidNotTransientlyCreateCollectionDuringAttempt, false);
+  assert.match(runbook, /临时函数已删除；截图中的三次调用虽显示“成功”，但返回内容和日志与本地探针契约不符/);
+  assert.match(runbook, /删除后的只读查询返回数据库集合列表为空/);
+  assert.match(runbook, /固定测试集合当前不存在/);
+  assert.match(runbook, /临时授权凭据字段和值/);
+  assert.doesNotMatch(runbook, /TENCENTCLOUD_SECRETKEY\s*[:=]\s*[^`\s]+/);
   assert.match(runbook, /sp01_f95243389fa9ca4f7a407c90ce2052ef/);
   assert.match(runbook, /不删除集合或任何非本轮记录/);
   assert.match(runbook, /删除后重新读取五个确切 ID/);
+  assert.match(runbook, /--path` 必须是函数目录的绝对路径/);
+  assert.match(runbook, /历史部署调用的完整 `--path` 参数或上传包内容摘要/);
   assert.match(runbook, /测试云函数/);
+});
+
+test('probe source never logs runtime context or reads credential environment variables', () => {
+  const root = path.resolve(__dirname, '..');
+  const source = ['index.js', 'handler.js'].map((name) =>
+    fs.readFileSync(path.join(root, 'miniprogram/cloudfunctions/sp01EnvProbe', name), 'utf8')).join('\n');
+  assert.doesNotMatch(source, /console\s*\.\s*(?:log|info|debug|dir)\s*\(/);
+  assert.doesNotMatch(source, /TENCENTCLOUD_(?:SECRETID|SECRETKEY|SESSIONTOKEN)/);
+});
+
+test('probe deployment package points to the handler entry and pinned CloudBase SDK', () => {
+  const root = path.resolve(__dirname, '..');
+  const functionDir = path.join(root, 'miniprogram/cloudfunctions/sp01EnvProbe');
+  const packageJson = JSON.parse(fs.readFileSync(path.join(functionDir, 'package.json'), 'utf8'));
+  const lock = JSON.parse(fs.readFileSync(path.join(functionDir, 'package-lock.json'), 'utf8'));
+  const entry = fs.readFileSync(path.join(functionDir, packageJson.main), 'utf8');
+  const handler = fs.readFileSync(path.join(functionDir, 'handler.js'), 'utf8');
+
+  assert.equal(path.basename(functionDir), 'sp01EnvProbe');
+  assert.equal(packageJson.main, 'index.js');
+  assert.equal(packageJson.dependencies['@cloudbase/node-sdk'], '3.18.7');
+  assert.equal(lock.name, packageJson.name);
+  assert.equal(lock.version, packageJson.version);
+  assert.equal(lock.packages[''].dependencies['@cloudbase/node-sdk'], '3.18.7');
+  assert.equal(lock.packages['node_modules/@cloudbase/node-sdk'].version, '3.18.7');
+  assert.match(entry, /exports\.main\s*=/);
+  assert.match(entry, /require\(['"]\.\/handler['"]\)/);
+  assert.doesNotMatch(`${entry}\n${handler}`, /Hello\s+World/i);
 });

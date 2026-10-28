@@ -383,7 +383,7 @@
     {
       "id": "E06",
       "passed": false,
-      "reason": "服务范围、服务时段和当前供给缺口已按用户确认记录。目标AppID范围的只读环境查询已返回cloud1，本地app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js。较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1，并报告当前环境已选中cloud1（均未附截图）。2026-10-28按明确授权部署了临时SP01探针，部署后只读函数列表仅有sp01EnvProbe；但该探针尚未调用，不能证明产品函数实现、云端运行时或事务通过。数据库模式由用户查看后报告为文档型数据库，尚未接口复核；事务和私密文件权限未测试。托管/登录和正式域名尚未核验。费用核查按用户要求略过。"
+      "reason": "服务范围、服务时段和当前供给缺口已按用户确认记录。目标AppID范围的只读环境查询已返回cloud1，本地app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js。较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空；用户随后报告腾讯云账号中心已关联目标小程序、已导入cloud1并报告当前环境已选中cloud1（均未附截图）。2026-10-28曾按明确授权部署了临时SP01探针，但用户提供的测试截图回显输入事件并显示Hello World/运行上下文，不符合本地探针响应契约；不能证明本地探针、云端运行时或事务通过。用户已删除函数，之后CLI只读函数列表为空。删除后固定集合查询为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），当前无可见记录；该结果不能反推调用期间是否曾短暂创建集合；产品功能仍未验收。数据库模式由用户查看后报告为文档型数据库，尚未接口复核；私密文件权限未测试。托管/登录和正式域名尚未核验。费用核查按用户要求略过。"
     }
   ],
   "cloudWritesOrDeploymentPerformed": true,
@@ -398,19 +398,21 @@
     "databaseCollectionCountAfterDeployment": 0,
     "runtimeInvocationVerified": false,
     "productAcceptancePassed": false,
-    "scopeExcludesStorageAndProduction": true
+    "scopeExcludesStorageAndProduction": true,
+    "functionCurrentlyPresent": false,
+    "functionNamesAfterDeletion": []
   },
   "remainingChecks": [
     "核实微信官方类目适用性及真实运营/供应能力，不从项目服务名称推定平台准入。",
     "目前没有已确认愿意接单的维修或代买代取服务者；后续需确认服务者资质审核状态及十个地点的实际覆盖。",
     "旧cloud1因旧号个人、新号为个体工商户/公司主体（用户报告）不符合官方同主体共享条件，不再按该资源共享路径推进；目标AppID范围的CLI只读环境列表已返回新号自己的CloudBase环境cloud1，云函数和数据库集合查询均返回0项；小程序端运行时和实际项目访问能力仍待核验。",
-    "较早的开发者工具项目列表观察未显示目标工程；列表外或其他账号/设备中的项目是否存在未由该列表核实。后续project_list已列出E:\\O2O\\miniprogram及目标AppID，本地QuickStart app.js也已配置对应EnvId。先前截图显示cloudfunctions根目录当前环境为无且子菜单为空；该菜单决定云函数上传/部署目标，不等于app.js的小程序运行时EnvID配置。用户随后报告已导入cloud1；最新只读CLI的环境列表能看到cloud1，用户报告导入后菜单已选中cloud1。临时SP01探针已单独部署并由只读列表复核，但尚未运行，不代表产品函数或业务访问能力已验收。当前活动窗口加载路径（实际路径）、托管/登录配置和正式域名仍未核实；该登记与本地配置不能代替产品云函数、托管或登录验收。",
-    "最新控制台截图交叉记录至SP01：运行时下拉选项已记录，用户确认采用Node.js 20.19；截图当时未见云函数。数据库设置由用户查看后报告为文档型数据库，尚未接口复核；存储根目录为空且权限页显示“仅创建者可读写”；早期开发者工具cloudfunctions文件夹菜单截图显示当前环境为无且子菜单为空。用户随后报告已导入cloud1并选中cloud1。之后按SP01范围部署了临时sp01EnvProbe，但尚未执行函数测试；产品运行、数据库事务和存储权限仍未验证。",
+    "较早的开发者工具项目列表观察未显示目标工程；此结果仅适用于当时的已登记列表，列表外或其他账号/设备中的工程是否存在仍未核实。之后project_list已列出E:\\O2O\\miniprogram和目标AppID，本地QuickStart app.js已配置对应EnvID。开发者工具CLI项目配置cloudfunctionRoot为cloudfunctions/；临时探针测试输出不符合本地响应契约，实际上传入口或打包内容仍待核实。用户已删除临时函数；删除后CLI函数列表为空，集合列表也为空。未来重试前再次核对固定集合和五个确切文档ID；不得将测试面板“成功”视为产品函数、运行时或事务验收。用户报告导入后菜单已选中cloud1；临时SP01探针已单独部署并删除，当前环境未显示该函数。当前活动窗口加载路径（实际路径）、托管/登录配置和正式域名仍未核实。",
+    "最新控制台截图交叉记录至SP01：用户确认采用Node.js 20.19；测试事件回显输入且日志出现Hello World/运行上下文，与本地探针不符。用户已删除函数，删除后CLI函数列表和数据库集合列表均为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c），固定测试集合当前不存在、没有可见记录。数据库模式为用户报告的文档型数据库，尚未API复核；产品运行、事务和存储权限未验证。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
-    "按用户提供的真实设备与Chrome浏览器执行网页后台登录、权限和页面验收；在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标。",
-    "用户已复查cloudfunctions根目录环境菜单并报告仍为空（导入前）。用户随后报告腾讯云账号中心已关联目标小程序（未附截图）。用户随后报告已导入cloud1（未附截图）；导入后的只读CLI环境列表返回cloud1、云函数列表为0项，且用户报告当前环境已选中cloud1。之后仅部署了SP01临时探针，等待用户执行函数测试；产品函数实现与运行、数据库事务和权限仍未验收。运行时选择已确认但实际云端运行时尚未验证，数据库模式为用户报告且未API复核。"
+    "用户已复查cloudfunctions根目录环境菜单并报告仍为空（导入前）。用户随后报告腾讯云账号中心已关联目标小程序；用户随后报告已导入cloud1，用户报告当前环境已选中cloud1（无截图），导入后的只读CLI环境列表返回该环境。临时SP01探针已单独部署；用户测试截图与本地响应契约不符，之后用户删除函数；删除后CLI函数列表为空，数据库集合列表也为空（requestId cf8e9a09-ac8a-4d7a-8359-43886e31874c）。产品函数实现与运行、数据库事务和权限仍未验收。",
+    "按用户提供的真实设备与Chrome浏览器执行网页后台登录、权限和页面验收；在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标。"
   ],
-  "rollback": "本阶段仅新增证据文档、计划状态和文档测试；回退时只回退本阶段提交或恢复这些自有文件，不重置整个工作区、不触碰用户已有改动，也没有云端测试数据需要清理。",
+  "rollback": "本阶段只回退本阶段产生的文档和测试提交，不重置整个工作区、不触碰用户已有改动。临时云函数已由用户删除；删除后只读查询的数据库集合列表为空，当前没有可见集合或记录。该查询不能反推测试期间是否曾短暂创建集合；任何后续部署前仍须复核，不得删除未知数据。",
   "latestUserReportedAccountAssociationCheck": {
     "date": "2026-10-28",
     "source": "user-reply-to-read-only-check",
@@ -455,5 +457,40 @@
     "selectedEnvironmentName": "cloud1",
     "screenshotProvided": false,
     "deploymentPerformed": false
+  },
+  "latestTemporaryProbeTestAttempt": {
+    "date": "2026-10-28",
+    "source": "user-provided-cloud-function-test-screenshots-and-post-deletion-read-only-list",
+    "targetAppId": "wx2414399d423dfb65",
+    "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+    "functionName": "sp01EnvProbe",
+    "submittedActions": [
+      "inspect",
+      "prepare",
+      "run"
+    ],
+    "runId": "sp01_f95243389fa9ca4f7a407c90ce2052ef",
+    "responseMatchedExpectedProbeContract": false,
+    "logsIncludedHelloWorldAndRuntimeContext": true,
+    "temporaryCredentialValuesVisibleInScreenshots": true,
+    "functionDeletedByUser": true,
+    "functionListAfterDeletion": [],
+    "postAttemptCollectionState": "not-present-on-read-only-recheck",
+    "productAcceptancePassed": false,
+    "postAttemptCollectionCount": 0,
+    "postAttemptCollectionRequestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
+    "postAttemptVisibleDocuments": 0,
+    "cloudFunctionTestEventsSubmitted": true
+  },
+  "latestPostProbeReadOnlyDatabaseCheck": {
+    "date": "2026-10-28",
+    "source": "wechatide-cli-cloud-db-read-struct-listCollections",
+    "targetAppId": "wx2414399d423dfb65",
+    "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+    "collections": [],
+    "collectionCount": 0,
+    "requestId": "cf8e9a09-ac8a-4d7a-8359-43886e31874c",
+    "writePerformed": false,
+    "provesFunctionDidNotTransientlyCreateCollectionDuringAttempt": false
   }
 }

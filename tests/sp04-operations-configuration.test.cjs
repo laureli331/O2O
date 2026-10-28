@@ -294,7 +294,9 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(e06.reason.includes('较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空'));
   assert.ok(e06.reason.includes('已导入cloud1'));
   assert.ok(e06.reason.includes('报告当前环境已选中cloud1'));
-  assert.ok(e06.reason.includes('该探针尚未调用，不能证明产品函数实现、云端运行时或事务通过'));
+  assert.ok(e06.reason.includes('测试截图回显输入事件并显示Hello World/运行上下文'));
+  assert.ok(e06.reason.includes('不能证明本地探针、云端运行时或事务通过'));
+  assert.ok(e06.reason.includes('用户已删除函数'));
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
   assert.ok(e06.reason.includes('临时SP01探针'));
   assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
@@ -312,8 +314,13 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(accountRemaining.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   assert.ok(accountRemaining.includes('用户随后报告已导入cloud1'));
   assert.ok(accountRemaining.includes('当前环境已选中cloud1'));
-  assert.ok(accountRemaining.includes('之后仅部署了SP01临时探针，等待用户执行函数测试'));
+  assert.ok(accountRemaining.includes('用户测试截图与本地响应契约不符'));
+  assert.ok(accountRemaining.includes('删除后CLI函数列表为空，数据库集合列表也为空'));
   assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
+  assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
+  assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionCount, 0);
+  assert.equal(record.latestTemporaryProbeTestAttempt.postAttemptCollectionRequestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
+  assert.equal(record.latestPostProbeReadOnlyDatabaseCheck.writePerformed, false);
   assert.equal(record.cloudWritesOrDeploymentPerformed, true);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));
@@ -453,7 +460,9 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
     '不承诺24小时值守',
     '正式环境必须绑定已完成备案的自定义域名',
     '目标`cloud1`环境由用户于2026-10-27在目标项目中创建',
-    '未执行云端写入、部署托管、数据库写入或域名配置',
+    'SP04未执行运营数据写入、托管部署、数据库业务写入或域名配置',
+    'SP01曾按单独授权部署临时探针',
+    '用户测试截图与本地响应不符后已删除',
     '回退',
     '服务范围、三类项目服务、管理值班、09:00—22:00服务时段及22:00后次日处理均已由用户确认',
     '用户另确认顾客服务时段为09:00—22:00，22:00后收到的请求次日处理',
