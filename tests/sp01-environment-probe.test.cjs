@@ -21,17 +21,18 @@ function createMemoryDatabase({ transactionMode = 'snapshot', failOnQueryForIdAt
       async get() {
         return { data: clone(docs.get(id)) ?? null };
       },
-      async set({ data }) {
-        docs.set(id, { _id: id, ...clone(data) });
+      async set(fields) {
+        docs.set(id, { _id: id, ...clone(fields) });
         return { _id: id };
       },
-      async update({ data }) {
+      async update(fields) {
         const current = docs.get(id);
         if (!current) throw new Error(`missing document ${id}`);
-        docs.set(id, { ...current, ...clone(data) });
+        docs.set(id, { ...current, ...clone(fields) });
         return { updated: 1 };
       },
       async remove() {
+        if (id === skipRemoveForId) return { deleted: 0 };
         return { deleted: docs.delete(id) ? 1 : 0 };
       },
     };
@@ -239,7 +240,7 @@ test('run refuses to overwrite documents belonging to an earlier or different ru
   const handler = createHandler({ db, nodeVersion: 'v20.19.0', sdkVersion: '3.18.7' });
   await handler({ action: 'prepare' });
   await db.collection(COLLECTION).doc(`${runId}_commit_a`).set({
-    data: { sp01Probe: COLLECTION, sp01RunId: 'sp01_' + 'b'.repeat(32) },
+    sp01Probe: COLLECTION, sp01RunId: 'sp01_' + 'b'.repeat(32),
   });
 
   await assert.rejects(handler({ action: 'run', runId }), /Probe document already exists/);
@@ -250,11 +251,11 @@ test('cleanup deletes only this run’s allowlisted documents and leaves the col
   const handler = createHandler({ db, nodeVersion: 'v20.19.0', sdkVersion: '3.18.7' });
   await handler({ action: 'prepare' });
   await db.collection(COLLECTION).doc(`${runId}_commit_a`).set({
-    data: { sp01Probe: COLLECTION, sp01RunId: runId },
+    sp01Probe: COLLECTION, sp01RunId: runId,
   });
-  await db.collection(COLLECTION).doc('unrelated').set({ data: { keep: true } });
+  await db.collection(COLLECTION).doc('unrelated').set({ keep: true });
   await db.collection(COLLECTION).doc(`${runId}_rollback_a`).set({
-    data: { sp01Probe: COLLECTION, sp01RunId: 'sp01_' + 'b'.repeat(32) },
+    sp01Probe: COLLECTION, sp01RunId: 'sp01_' + 'b'.repeat(32),
   });
 
   await assert.rejects(handler({ action: 'cleanup', runId }), /Refusing to clean non-owned probe document/);
@@ -268,6 +269,34 @@ test('cleanup deletes only this run’s allowlisted documents and leaves the col
   assert.equal((await db.collection(COLLECTION).doc(`${runId}_commit_a`).get()).data, null);
   assert.equal((await db.collection(COLLECTION).doc('unrelated').get()).data.keep, true);
   assert.equal(db.collections.has(COLLECTION), true, 'cleanup must not delete collections');
+});
+
+test('cleanup safely recognizes and removes only this run’s legacy nested SDK-payload document', async () => {
+  const db = createMemoryDatabase();
+  const handler = createHandler({ db, nodeVersion: 'v20.19.0', sdkVersion: '3.18.7' });
+  await handler({ action: 'prepare' });
+  const legacyId = `${runId}_commit_a`;
+  await db.collection(COLLECTION).doc(legacyId).set({
+    data: { sp01Probe: COLLECTION, sp01RunId: runId, marker: 'legacy-nested-payload' },
+  });
+  await db.collection(COLLECTION).doc('unrelated').set({
+    data: { sp01Probe: COLLECTION, sp01RunId: runId },
+  });
+
+  const cleaned = await handler({ action: 'cleanup', runId });
+
+  assert.deepEqual(cleaned, {
+    success: true,
+    runId,
+    collection: COLLECTION,
+    deletedCount: 1,
+  });
+  assert.equal((await db.collection(COLLECTION).doc(legacyId).get()).data, null);
+  assert.deepEqual((await db.collection(COLLECTION).doc('unrelated').get()).data.data, {
+    sp01Probe: COLLECTION,
+    sp01RunId: runId,
+  });
+  assert.equal(db.collections.has(COLLECTION), true);
 });
 
 test('run identifier contract is narrowly scoped to generated SP01 identifiers', () => {
@@ -348,11 +377,18 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(attempt.transactionAcceptancePassed, false);
   assert.equal(attempt.databaseWritePerformed, true);
   const runAttempt = task.executionProgress.latestCloudRunAttempt;
-  assert.deepEqual(runAttempt.event, { action: 'run', runId: 'sp01_f4157fdc182bda6f9fd8e37395d4943e' });
-  assert.deepEqual(runAttempt.response, { errorCode: -1, errorMessage: 'Invoking task timed out after 3 seconds', requestId: '5f15ce84-6771-432e-8d22-1d10bc53babc', statusCode: 433 });
+  assert.deepEqual(runAttempt.event, { action: 'run', runId: 'sp01_f892f63b9fdc4c11ae1254800a9e83cf' });
+  assert.equal(runAttempt.functionTimeoutSeconds, 30);
+  assert.equal(runAttempt.response.success, false);
+  assert.equal(runAttempt.response.commit.allDocumentsVisible, false);
+  assert.deepEqual(runAttempt.response.rollback, { abortObserved: true, noPartialWrites: true });
+  assert.deepEqual(runAttempt.response.concurrency.outcomes.map((item) => item.reasonCode), ['INVALID_PARAM', 'INVALID_PARAM']);
+  assert.equal(runAttempt.response.cleanup.success, false);
   assert.equal(runAttempt.transactionAcceptancePassed, false);
   assert.equal(runAttempt.cleanupVerified, false);
-  assert.equal(runAttempt.postTimeoutReadOnlyRecordCount, 0);
+  assert.equal(runAttempt.recordStateAfterFailedCleanup, 'unknown; no post-run read-only record query');
+  assert.equal(task.executionProgress.previousCloudRunAttemptAtThreeSeconds.event.runId, 'sp01_f4157fdc182bda6f9fd8e37395d4943e');
+  assert.equal(task.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud, false);
   assert.equal(previousAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
   assert.equal(previousAttempt.postAttemptCollectionCount, 0);
   assert.equal(previousAttempt.postAttemptCollectionRequestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
@@ -363,14 +399,16 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.provesFunctionDidNotTransientlyCreateCollectionDuringAttempt, false);
   assert.match(runbook, /最新只读详情确认临时函数`sp01EnvProbe`为`Active \/ Nodejs20.19`、超时配置30秒/);
   assert.match(runbook, /安装目录CLI只读详情确认当前配置为30秒/);
-  assert.match(runbook, /调整后尚未重跑/);
+  assert.match(runbook, /最新 run（30秒配置）/);
   assert.match(runbook, /inspect.*结构化响应通过/);
-  assert.match(runbook, /prepare.*固定集合sp01_probe_20261028已创建/);
-  assert.match(runbook, /run.*3秒.*433.*超时/);
-  assert.match(runbook, /当前记录数为0/);
-  assert.match(runbook, /清理未验收/);
+  assert.ok(runbook.includes('prepare') && runbook.includes('固定集合`sp01_probe_20261028`已创建'));
+  assert.match(runbook, /sp01_f892f63b9fdc4c11ae1254800a9e83cf/);
+  assert.match(runbook, /两个并发事务均以 `INVALID_PARAM` 拒绝/);
+  assert.match(runbook, /本地SDK接口形状契约模拟测试复现并修复/);
+  assert.match(runbook, /云端根因尚未确认/);
+  assert.match(runbook, /调用后记录状态未知/);
   assert.match(runbook, /删除后的只读查询返回数据库集合列表为空/);
-  assert.match(runbook, /固定集合sp01_probe_20261028已创建/);
+  assert.ok(runbook.includes('固定集合`sp01_probe_20261028`已创建'));
   assert.match(runbook, /临时授权凭据字段和值/);
   assert.doesNotMatch(runbook, /TENCENTCLOUD_SECRETKEY\s*[:=]\s*[^`\s]+/);
   assert.match(runbook, /sp01_f95243389fa9ca4f7a407c90ce2052ef/);
@@ -407,4 +445,6 @@ test('probe deployment package points to the handler entry and pinned CloudBase 
   assert.match(entry, /exports\.main\s*=/);
   assert.match(entry, /require\(['"]\.\/handler['"]\)/);
   assert.doesNotMatch(`${entry}\n${handler}`, /Hello\s+World/i);
+  assert.doesNotMatch(handler, /\.set\(\{\s*data\s*:/);
+  assert.doesNotMatch(handler, /\.update\(\{\s*data\s*:/);
 });

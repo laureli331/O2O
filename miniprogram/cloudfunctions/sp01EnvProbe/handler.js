@@ -29,7 +29,10 @@ function queryForRunDocument(db, id) {
 }
 
 function isOwnedByRun(data, runId) {
-  return data?.sp01Probe === COLLECTION && data?.sp01RunId === runId;
+  const fields = data?.sp01Probe === COLLECTION && data?.sp01RunId === runId
+    ? data
+    : data?.data;
+  return fields?.sp01Probe === COLLECTION && fields?.sp01RunId === runId;
 }
 
 async function assertRunIsUnused(db, runId) {
@@ -46,10 +49,10 @@ async function checkCommit(db, runId) {
 
   await db.runTransaction(async (transaction) => {
     await transaction.collection(COLLECTION).doc(firstId).set({
-      data: { sp01Probe: COLLECTION, sp01RunId: runId, marker: 'commit-a' },
+      sp01Probe: COLLECTION, sp01RunId: runId, marker: 'commit-a',
     });
     await transaction.collection(COLLECTION).doc(secondId).set({
-      data: { sp01Probe: COLLECTION, sp01RunId: runId, marker: 'commit-b' },
+      sp01Probe: COLLECTION, sp01RunId: runId, marker: 'commit-b',
     });
   });
 
@@ -70,10 +73,10 @@ async function checkRollback(db, runId) {
   try {
     await db.runTransaction(async (transaction) => {
       await transaction.collection(COLLECTION).doc(firstId).set({
-        data: { sp01Probe: COLLECTION, sp01RunId: runId, marker: 'rollback-a' },
+        sp01Probe: COLLECTION, sp01RunId: runId, marker: 'rollback-a',
       });
       await transaction.collection(COLLECTION).doc(secondId).set({
-        data: { sp01Probe: COLLECTION, sp01RunId: runId, marker: 'rollback-b' },
+        sp01Probe: COLLECTION, sp01RunId: runId, marker: 'rollback-b',
       });
       throw new Error(ABORT_SENTINEL);
     });
@@ -92,7 +95,7 @@ async function checkRollback(db, runId) {
 async function checkConcurrentWrites(db, runId) {
   const counterId = documentId(runId, 'concurrency');
   await db.collection(COLLECTION).doc(counterId).set({
-    data: { sp01Probe: COLLECTION, sp01RunId: runId, value: 0 },
+    sp01Probe: COLLECTION, sp01RunId: runId, value: 0,
   });
 
   let readers = 0;
@@ -120,7 +123,7 @@ async function checkConcurrentWrites(db, runId) {
         }
         await readersReady;
       }
-      await reference.update({ data: { value: current.data.value + 1 } });
+      await reference.update({ value: current.data.value + 1 });
     });
   };
 
@@ -203,7 +206,7 @@ async function cleanupRun(db, runId) {
     const id = documentId(runId, suffix);
     const result = await queryForRunDocument(db, id);
     const record = result.data?.[0];
-    if (record && !isOwnedByRun(record, runId)) {
+    if (record && (record._id !== id || !isOwnedByRun(record, runId))) {
       throw new Error(`Refusing to clean non-owned probe document: ${id}`);
     }
     if (record) records.push(id);
@@ -211,11 +214,7 @@ async function cleanupRun(db, runId) {
 
   let deletedCount = 0;
   for (const id of records) {
-    const result = await db.collection(COLLECTION).where({
-      _id: id,
-      sp01Probe: COLLECTION,
-      sp01RunId: runId,
-    }).remove();
+    const result = await db.collection(COLLECTION).doc(id).remove();
     deletedCount += result.deleted || 0;
   }
 
