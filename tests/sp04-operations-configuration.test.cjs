@@ -45,6 +45,33 @@ test('SP04 records the CloudBase detail screenshot as visible AppID-to-environme
   assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('页面同屏显示目标 AppID `wx2414399d423dfb65` 和环境 ID `cloud1-d2gjahlq39bf141c7`'));
 });
 
+test('SP04 reflects the target-project read-only CLI evidence without claiming active-window or runtime verification', () => {
+  const record = evidence();
+  const plan = load('docs/v1-executable-development-plan-20261027.json');
+  const latest = plan.accountEvidence.latestBridgeRecheck;
+  const project = plan.accountEvidence.latestUserCreatedProjectAndCloudConsoleObservation;
+  const task = plan.tasks.find((entry) => entry.id === 'SP04');
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+
+  assert.equal(latest.environmentApiVerified, true);
+  assert.equal(latest.runtimeVerified, false);
+  assert.equal(latest.activeProjectPathVerified, false);
+  assert.equal(latest.environmentList.environmentIds[0], record.environmentDetailsScreenshot.visibleEnvironmentId);
+  assert.equal(latest.functionList.total, 0);
+  assert.equal(latest.databaseCollections.total, 0);
+  assert.equal(project.environmentIdConfigured, true);
+  assert.equal(project.appJsEnvironmentValue, record.environmentDetailsScreenshot.visibleEnvironmentId);
+  assert.ok(task.executionProgress.completedChecks.some((item) => item.includes('目标AppID') && item.includes('0个云函数') && item.includes('0个数据库集合')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径仍未核实')));
+  assert.ok(!record.remainingChecks.some((item) => item.includes('该QuickStart仍未配置EnvId')));
+  assert.ok(!record.remainingChecks.some((item) => item.includes('待只读桥接恢复后核验')));
+  assert.ok(doc.includes('cloud_fn_list'));
+  assert.ok(doc.includes('cloud_db_read_struct'));
+  assert.ok(doc.includes('显式传入目标AppID及EnvID'));
+  assert.ok(doc.includes('不证明当前开发者工具活动窗口加载了该项目'));
+  assert.ok(!doc.includes('该QuickStart仍未配置EnvId'));
+});
+
 test('SP04 records that the open diagnostic project uses the old AppID, not the new target', () => {
   const crossCheck = evidence().appIdCrossCheck;
   assert.deepEqual(crossCheck, {
@@ -328,6 +355,16 @@ test('SP04 records browser installation separately from tested support and block
   assert.equal(record.localDevice.environment, 'Windows 11');
   assert.ok(record.localDevice.installedBrowsers.length >= 1);
   assert.ok(record.localDevice.installedBrowsers.every((browser) => browser.version && browser.compatibilityTested === false));
+  assert.deepEqual(record.localDevice.userReportedTestDevices, [
+    { brand: 'OPPO', model: 'Find X9', operatingSystem: 'ColorOS 17.0', wechatVersion: '8.0.79' },
+    { brand: 'Huawei', model: 'nova 11 SE', operatingSystem: 'HarmonyOS 4.2.0', wechatVersion: '8.0.79' },
+    { brand: 'Apple', model: 'iPhone XR', operatingSystem: 'iOS 16', wechatVersion: '8.0.79' },
+  ]);
+  assert.equal(record.localDevice.selectedAdminBrowser, 'Google Chrome');
+  assert.equal(record.localDevice.adminBrowserTested, false);
+  assert.equal(record.localDevice.normalNetworkScenario, '家中 WiFi 5G（用户描述）');
+  assert.equal(record.localDevice.weakNetworkScenario, '公共免费 WiFi（用户指定为较弱场景）');
+  assert.equal(record.localDevice.networkMetricsMeasured, false);
   assert.equal(record.localDevice.webHostingAndLoginTested, false);
   assert.deepEqual(record.evidenceGates.map((gate) => gate.passed), [false, false]);
   assert.equal(record.cloudWritesOrDeploymentPerformed, false);
@@ -359,7 +396,8 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
     '不能识别具体自然人',
     '不承诺24小时值守',
     '正式环境必须绑定已完成备案的自定义域名',
-    '没有创建云环境、部署托管',
+    '目标`cloud1`环境由用户于2026-10-27在目标项目中创建',
+    '未执行云端写入、部署托管、数据库写入或域名配置',
     '回退',
     '服务范围、三类项目服务、管理值班、09:00—22:00服务时段及22:00后次日处理均已由用户确认',
     '用户另确认顾客服务时段为09:00—22:00，22:00后收到的请求次日处理',

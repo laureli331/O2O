@@ -219,8 +219,31 @@
       "androidDebugBridgeFound": false,
       "androidDebugBridgeSearch": "Get-Command and standard Android SDK platform-tools paths",
       "physicalDeviceInventoryVerified": false,
-      "androidModelConfirmed": false,
-      "iphoneModelConfirmed": false,
+      "deviceInventoryReportedByUser": true,
+      "deviceInventoryReportDate": "2026-10-28",
+      "userReportedTestDevices": [
+        {
+          "brand": "OPPO",
+          "model": "Find X9",
+          "operatingSystem": "ColorOS 17.0",
+          "wechatVersion": "8.0.79"
+        },
+        {
+          "brand": "Huawei",
+          "model": "nova 11 SE",
+          "operatingSystem": "HarmonyOS 4.2.0",
+          "wechatVersion": "8.0.79"
+        },
+        {
+          "brand": "Apple",
+          "model": "iPhone XR",
+          "operatingSystem": "iOS 16",
+          "wechatVersion": "8.0.79"
+        }
+      ],
+      "androidModelConfirmed": true,
+      "iphoneModelConfirmed": true,
+      "miniProgramBaseLibraryVersionConfirmed": false,
       "installedDesktopBrowsers": [
         {
           "name": "Google Chrome",
@@ -235,9 +258,12 @@
           "version": "153.0"
         }
       ],
-      "adminBrowserSelected": false,
-      "normalNetworkScenario": null,
-      "weakNetworkScenario": null
+      "adminBrowserSelected": true,
+      "selectedAdminBrowser": "Google Chrome",
+      "adminBrowserTested": false,
+      "normalNetworkScenario": "家中 WiFi 5G（用户描述）",
+      "weakNetworkScenario": "公共免费 WiFi（用户指定为较弱场景）",
+      "networkMetricsMeasured": false
     },
     "devtoolsProjectCreationWizardObservation": {
       "observationDate": "2026-10-27",
@@ -756,15 +782,15 @@
           "此前shell将wechatide解析到E:\\O2O\\.local\\tools\\wechat-devtools\\wechatide.cmd，该路径调用status与cloud_env_list返回CONNECT_ERROR；直接使用微信开发者工具安装目录E:\\微信web开发者工具\\wechatide.cmd后，status返回success/loginExpired=false/versionRelation=equal，按目标AppID的cloud_env_list返回cloud1-d2gjahlq39bf141c7",
           "首次云资源查询因遗漏必需的-c Codex参数返回INPUT_ERROR/missing_client，没有发出云请求；根据CLI帮助补齐参数后重试。直接使用安装目录CLI进行只读核验：project_list包含E:\\O2O\\miniprogram及目标AppID wx2414399d423dfb65；cloud_fn_list和cloud_db_read_struct命令显式传入目标AppID wx2414399d423dfb65及EnvID cloud1-d2gjahlq39bf141c7，分别返回0个云函数和0个数据库集合。响应未回显EnvID，查询作用域由命令参数记录。没有部署或写入云端资源",
           "CLI技能版本为0.3.11；结构查询只列出集合/索引读取操作，未提供环境级运行时、数据库模式或存储权限配置的只读查询；帮助显示的云函数部署、数据库写入及存储上传/删除是变更操作。本轮未读取云存储文件列表、临时链接或内容",
-          "本机设备清点未发现ADB命令或常见Android SDK路径中的adb.exe；这不证明用户没有测试手机。注册表发现Chrome 156.0.8078.47、Edge 156.0.4314.50、Firefox 153.0，均仅证明已安装，实际后台浏览器未确认"
+          "本机设备清点未发现ADB命令或常见Android SDK路径中的adb.exe；用户于2026-10-28提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79，并选择Chrome作为后台验收浏览器；实际设备连接、微信小程序基础库版本和浏览器兼容性仍未核验。用户提供家中WiFi 5G作为常规场景、公共免费WiFi作为较弱场景，网络性能指标尚未测量"
         ],
         "blockedChecks": [
           "目标环境运行时、数据库模式、事务和私密文件权限仍未验证；本次只读检查显示尚无云函数和集合，按已授权范围未部署测试函数或写入数据",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
-          "手机型号、系统/微信基础库、后台浏览器及正常/弱网条件仍待用户确认；本机未发现ADB，因此不能自动枚举实机；缺失设备组不能记性能通过",
+          "用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景；本机未发现ADB，实际设备连接、微信小程序基础库版本、浏览器兼容性和网络性能仍未实测，不能记录实机或弱网验收通过",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞"
         ],
-        "nextAction": "目标AppID的cloud_env_list已通过微信开发者工具安装目录内CLI返回cloud1-d2gjahlq39bf141c7；project_list确认E:\\O2O\\miniprogram已登记且AppID匹配。云函数和数据库集合只读查询均显式传入目标AppID及EnvID，分别返回0个函数和0个集合，响应未回显EnvID，查询作用域由命令参数留证。CLI帮助没有环境级运行时、数据库模式或存储权限配置查询，本轮未读取存储文件；实际运行时、事务与私密文件权限需后续受控测试。当前活动窗口加载路径仍未确认。下一步请用户确认Android/iPhone实机型号、系统/微信基础库、后台验收浏览器及正常/弱网条件；之后继续完成SP01能力证据与受控测试清单。任何云端部署或写入测试须先取得具体授权。旧号个人主体的cloud1不作新号共享候选。用户要求本轮不再核对费用；若上线后出现实际付费提示，用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
+        "nextAction": "目标AppID的cloud_env_list已通过微信开发者工具安装目录内CLI返回cloud1-d2gjahlq39bf141c7；project_list确认E:\\O2O\\miniprogram已登记且AppID匹配。云函数和数据库集合只读查询均显式传入目标AppID及EnvID，分别返回0个函数和0个集合，响应未回显EnvID，查询作用域由命令参数留证。CLI帮助没有环境级运行时、数据库模式或存储权限配置查询，本轮未读取存储文件；实际运行时、事务与私密文件权限需后续受控测试。当前活动窗口加载路径仍未确认。用户已提供设备/浏览器和网络场景，下一步继续整理环境能力的只读证据和受控验证方案；物理设备、浏览器兼容性及网络性能须在执行后留证，微信小程序基础库版本尚未确认。任何云端部署或写入测试须先取得具体授权。旧号个人主体的cloud1不作新号共享候选。用户要求本轮不再核对费用；若上线后出现实际付费提示，用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
@@ -967,20 +993,22 @@
       "status": "in-progress",
       "productAcceptancePassed": false,
       "executionProgress": {
-        "date": "2026-10-27",
+        "date": "2026-10-28",
         "completedChecks": [
           "用户截图中的cloud1名称、微信体验版标记和空态已记录；截图未显示AppID，未将其归属到新AppID",
-          "2026-10-28用户明确确认目标AppID wx2414399d423dfb65的E:\\O2O\\miniprogram项目创建了cloud1；设置截图显示EnvId cloud1-d2gjahlq39bf141c7，归属为用户确认、尚未由平台接口核验",
+          "2026-10-28用户明确确认目标AppID wx2414399d423dfb65的E:\\O2O\\miniprogram项目创建了cloud1；详情截图同屏显示AppID与EnvID，提供截图级应用/环境关联证据",
           "既有确认的共用管理账号、账号级日志、无双人复核和不承诺24小时值守规则已核对",
           "用户确认首发开放湘阴渡社区、高矿社区、松柏村、堡口村、油塘村、滩头村、田心村、南塘村、胜利村、湘阴村，并开放家电维修、二手信息、代买代取代送三类项目服务",
           "用户确认伙伴09:00—17:00、本人17:00—22:00为管理查看/交接时段，顾客服务时段09:00—22:00，22:00后请求次日处理",
           "用户确认首发目前没有已确认愿意接单的家电维修或代买代取服务者；两类已确认数量均为0",
           "CloudBase静态托管与HTTP访问公开文档已核实；本机Windows 11及已安装浏览器版本已记录为候选测试环境",
-          "复核CloudBase资源点价格页（2026-10-26更新）与新手指引（2026-04-21更新），将控制台兑换码体验规则与初次使用个人版一个月免费说明分开记录；当前向导及截图的实际套餐/费用仍未核实"
+          "复核CloudBase资源点价格页（2026-10-26更新）与新手指引（2026-04-21更新），将控制台兑换码体验规则与初次使用个人版一个月免费说明分开记录；当前向导及截图的实际套餐/费用仍未核实",
+          "2026-10-28按目标AppID wx2414399d423dfb65查询cloud_env_list返回cloud1-d2gjahlq39bf141c7；project_list列出E:\\O2O\\miniprogram，cloud_fn_list与cloud_db_read_struct显式限定AppID/EnvID后分别返回0个云函数和0个数据库集合；QuickStart app.js已配置该EnvID。以上为只读/本地配置证据，不证明活动项目路径或小程序运行时",
+          "2026-10-28用户提供OPPO Find X9/ColorOS 17.0、Huawei nova 11 SE/HarmonyOS 4.2.0、iPhone XR/iOS 16，三台微信版本均为8.0.79；后台验收选择Chrome，网络场景为家中WiFi 5G与公共免费WiFi。用户报告不代表设备连接、兼容性或网络性能已实测"
         ],
         "blockedChecks": [
           "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认",
-          "目标新AppID自己的CloudBase环境已由用户确认创建，但开发者工具接口、运行时、项目托管/登录配置和自定义域名仍未验证；旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
+          "目标新AppID自己的CloudBase环境已由用户确认创建，目标AppID范围CLI只读环境列表已返回对应EnvID；但小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名仍未验证。旧cloud1按用户报告的不同主体关系不符合官方同主体共享前提。套餐、账单和到期核查按用户要求本轮略过"
         ],
         "evidence": [
           "docs/sp04-operations-configuration-20261027.md",

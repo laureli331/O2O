@@ -84,7 +84,7 @@ CloudBase[创建环境文档](https://docs.cloudbase.net/quick-start/create-env)
 
 CLI还提供存储list、info、url和read查询；本轮未调用存储文件列表、临时链接或内容读取，避免无必要地暴露云文件元数据或内容。CloudBase[存储权限文档](https://docs.cloudbase.net/storage/data-permission)说明传统模式按_openid判定文件归属，PG模式使用PostgreSQL RLS策略；这只是通用规则说明，未揭示目标环境当前模式或配置。存储私密性仍须在受控测试中以匿名、所有者、其他用户和管理员角色验证读取、写入、链接失效及撤权。
 
-本机验收设备盘点使用PowerShell检查ADB命令及常见Android SDK platform-tools目录，未发现ADB，也未在常见Android SDK目录找到adb.exe。这不证明用户没有测试手机，也不能据此记录任何实际手机型号。注册表中检测到本机安装的桌面浏览器为Chrome 156.0.8078.47、Edge 156.0.4314.50、Firefox 153.0；这仅是安装版本，未确认正在使用哪个浏览器执行后台验收。实际后台验收浏览器仍待确认。Android/iPhone品牌型号、系统与微信基础库、实际浏览器、正常/弱网参数、设备可用性及缓存/测试数据条件继续按质量合同ENV01留空；缺失设备组不能记性能通过。
+本机验收设备盘点使用PowerShell检查ADB命令及常见Android SDK platform-tools目录，未发现ADB，也未在常见Android SDK目录找到adb.exe。这不证明用户没有测试手机。用户于2026-10-28提供三台测试设备信息：OPPO Find X9（ColorOS 17.0，微信8.0.79）、Huawei nova 11 SE（HarmonyOS 4.2.0，微信8.0.79）和iPhone XR（iOS 16，微信8.0.79）；iOS具体补丁版本和微信小程序基础库版本未提供。用户选择Google Chrome执行后台验收；本机注册表检测到Chrome 156.0.8078.47、Edge 156.0.4314.50、Firefox 153.0，但尚未运行浏览器兼容性测试。用户提供家中WiFi 5G作为常规网络场景、公共免费WiFi作为较弱网络场景；这只是场景描述，未测吞吐、延迟、丢包或断网恢复。当前未连接/枚举实机，设备型号和浏览器选择均是用户报告，不等于测试已执行。缓存、测试数据条件及实测结果继续按质量合同ENV01记录；缺少实际运行证据时不能记性能通过。
 
 ## 验证与恢复
 
