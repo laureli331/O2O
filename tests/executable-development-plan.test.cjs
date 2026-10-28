@@ -753,6 +753,18 @@ test('SP01 records the user-reported account association and keeps importing clo
   a(doc.includes('尚未执行')||doc.includes('未执行'));
  }
 });
+test('SP04 E06 distinguishes reported account association from the pending cloud1 import',()=>{
+ const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
+ const e06=sp04.evidenceGates.find(gate=>gate.id==='E06');
+ const association=sp04.latestUserReportedAccountAssociationCheck;
+ a.equal(association.result,'associated');
+ a.equal(association.environmentImportPerformed,false);
+ a.equal(association.deploymentPerformed,false);
+ a.equal(e06.passed,false);
+ a(e06.reason.includes('用户随后报告腾讯云账号中心已关联'));
+ a(e06.reason.includes('环境导入仍未执行'));
+ a(!e06.reason.includes('关联核对和环境导入均未执行'));
+});
 test('SP01 runtime-form evidence and SP04 next actions reflect the latest confirmed state',()=>{
  const techDoc=read('docs/sp01-technical-environment-20261027.md');
  const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
