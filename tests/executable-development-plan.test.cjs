@@ -154,7 +154,9 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   });
   a.equal(p.accountEvidence.technicalEnvironmentAudit.cloudCapabilityTestPlan.preDeploymentCloudFunctionCount,0);
   a(tech.includes('Nodejs16.13') && tech.includes('历史状态'));
-  a(tech.includes('临时函数`sp01EnvProbe`在事务验证期间的配置为Active / Nodejs20.19'));
+  a(tech.includes('事务验证期间临时函数`sp01EnvProbe`为Active / Nodejs20.19'));
+  a(tech.includes('`sp01IdentityProbe`首次代码更新因函数尚处于Creating被拒'));
+  a(tech.includes('当前只读详情为Active / Nodejs16.13 / 3秒'));
   a(tech.includes('用户报告已删除临时函数'));
   a(runbook.includes('目标环境`sp01EnvProbe`（Nodejs20.19 / 30秒）的最新事务探针通过'));
   a(runbook.includes('`inspectRun`只读事件'));
@@ -549,14 +551,26 @@ test('SP01 records simulator compilation separately from cloud identity, storage
     diffCheck: 'passed',
   });
   a.equal(probe.cloudIdentityComparisonCompleted, false);
-  a.equal(probe.cloudFunctionDeployed, false);
+  a.equal(probe.cloudFunctionDeployed, true);
+  a.deepEqual(probe.cloudFunctionDeployment, {
+    preflightFunctionCount: 0,
+    preflightStorageFileCount: 0,
+    firstAttempt: 'code-update-rejected-while-creating',
+    retry: { status: 'success', filesCount: 5833, packSize: '6.7 MB' },
+    postDeploymentReadOnly: { status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 },
+  });
+  a.equal(probe.clientInvocationCompleted, false);
   a.equal(probe.probeCloudStorageWrittenOrDeleted, false);
   a.equal(probe.realDeviceRun, false);
+  a.equal(probe.nextCloudActionRequiresNewAuthorization, false);
+  a.equal(probe.pendingCloudStep, 'account-A-create-synthetic-file-then-account-B-identity-comparison-and-conditional-access-test');
   a.equal(probe.quickStartModified, false);
   a.equal(record.tasks.find((task) => task.id === 'SP01').productAcceptancePassed, false);
   a(plan.includes('开发者工具 CLI 导入项目列表'));
   a(plan.includes('模拟器页面`pages/index/index`'));
   a(plan.includes('不证明云函数身份通路、云存储权限或真机行为'));
+  a(plan.includes('首次部署先创建了函数但代码更新因函数仍处于Creating而失败'));
+  a(plan.includes('函数代码尚未从小程序客户端调用'));
   a(!plan.includes('该阶段未导入开发者工具'));
 });
 
@@ -637,7 +651,7 @@ test('SP01 records non-admin second-account storage isolation failure and exact-
   a(planDoc.includes('该测试文件的隔离验收失败'));
   for (const doc of [technicalDoc, runbook]) {
     a(doc.includes('sp01_permission_probe/owner-probe-20261028-a7c31e.txt'));
-    a(doc.includes('第二测试账号成功读取并写入'));
+    a(doc.includes('第二测试账号成功读写合成文件'));
     a(doc.includes('openid') || doc.includes('_openid'));
     a(doc.includes('管理员'));
   }
@@ -907,7 +921,7 @@ test('SP01 separates confirmed runtime and user-reported database mode from runt
   a(doc.includes('用户报告')||doc.includes('用户查看'));
   a(doc.includes('文档型数据库'));
  }
- a(techDoc.includes('临时函数`sp01EnvProbe`在事务验证期间的配置为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));a(techDoc.includes('最新修正版30秒run通过探针断言'));
+ a(techDoc.includes('事务验证期间临时函数`sp01EnvProbe`为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为v20.19.3和SDK 3.18.7'));a(techDoc.includes('最新修正版事务探针的提交、回滚、并发和自动清理断言也通过'));a(techDoc.includes('当前只读详情为Active / Nodejs16.13 / 3秒'));
  a(techDoc.includes('当时尚未收到只读API回包'));
  a(techDoc.includes('DescribeEnvs 获取环境列表接口'));
  a(techDoc.includes('API没有直接返回类型名'));
