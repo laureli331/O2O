@@ -1141,13 +1141,14 @@
           "allowedActions": [
             "inspect",
             "prepare",
+            "inspectRun",
             "run",
             "cleanup"
           ],
           "runIdentifierPattern": "^sp01_[0-9a-f]{32}$",
           "localTestCommand": "node --test tests/sp01-environment-probe.test.cjs",
-          "localTestCount": 13,
-          "localTestsPassed": 13,
+          "localTestCount": 16,
+          "localTestsPassed": 16,
           "localTestsFailed": 0,
           "testBackend": "in-memory-database-mock",
           "cloudRuntimeExecuted": true,
@@ -1512,6 +1513,33 @@
           "recordStateAfterFailedCleanup": "unknown; no post-run read-only record query",
           "cloudFunctionFixDeployed": false,
           "userReportsTimeoutChangeCompleted": true
+        },
+        "authorizedRecovery": {
+          "date": "2026-10-28",
+          "authorization": "granted-for-target-sp01EnvProbe-fixed-collection-owned-record-cleanup-and-one-new-synthetic-run",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "readOnlyEnvironmentList": ["cloud1-d2gjahlq39bf141c7"],
+          "readOnlyFunctionList": ["sp01EnvProbe"],
+          "functionInfo": {
+            "status": "Active",
+            "runtime": "Nodejs20.19",
+            "timeoutSeconds": 30
+          },
+          "databaseDocumentReadViaCli": "unavailable-no-database-read-or-function-invoke-command",
+          "inspectRunAction": {
+            "implementedLocally": true,
+            "readOnly": true,
+            "fixedDocumentIdsOnly": true,
+            "returnsDocumentContents": false,
+            "localTestsPassed": 2
+          },
+          "correctedFunctionDeployed": false,
+          "legacyRunId": "sp01_f892f63b9fdc4c11ae1254800a9e83cf",
+          "legacyRecordsInspected": false,
+          "legacyRecordsCleaned": false,
+          "newRunExecuted": false,
+          "cloudTransactionAcceptancePassed": false
         },
         "latestLocalSdkCompatibilityDiagnosis": {
           "date": "2026-10-28",

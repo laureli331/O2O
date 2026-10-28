@@ -227,6 +227,51 @@ async function cleanupRun(db, runId) {
   return { success: true, runId, collection: COLLECTION, deletedCount };
 }
 
+async function inspectRun(db, runId) {
+  const documents = [];
+  let safeToClean = true;
+
+  for (const suffix of DOCUMENT_SUFFIXES) {
+    const id = documentId(runId, suffix);
+    const result = await queryForRunDocument(db, id);
+    const matches = result.data;
+    if (!Array.isArray(matches)) throw new Error(`Invalid probe lookup result: ${id}`);
+
+    if (matches.length === 0) {
+      documents.push({ id, state: 'missing' });
+      continue;
+    }
+
+    if (matches.length !== 1) {
+      documents.push({ id, state: 'ambiguous', count: matches.length });
+      safeToClean = false;
+      continue;
+    }
+
+    const record = matches[0];
+    const ownsRecord = record?._id === id && isOwnedByRun(record, runId);
+    const isFlat = record?.sp01Probe === COLLECTION && record?.sp01RunId === runId;
+    const isLegacyNested = record?.data?.sp01Probe === COLLECTION && record?.data?.sp01RunId === runId;
+    const format = isFlat ? 'flat' : isLegacyNested ? 'legacy-nested' : 'invalid';
+
+    documents.push({
+      id,
+      state: ownsRecord ? 'owned' : 'foreign-or-mismatched',
+      format,
+    });
+    if (!ownsRecord) safeToClean = false;
+  }
+
+  return {
+    success: safeToClean,
+    runId,
+    collection: COLLECTION,
+    safeToClean,
+    presentCount: documents.filter(({ state }) => state === 'owned' || state === 'foreign-or-mismatched' || state === 'ambiguous').length,
+    documents,
+  };
+}
+
 function createHandler({ db, nodeVersion, sdkVersion }) {
   if (!db || typeof db.collection !== 'function' || typeof db.runTransaction !== 'function') {
     throw new Error('SP01 probe requires the CloudBase document database');
@@ -251,6 +296,10 @@ function createHandler({ db, nodeVersion, sdkVersion }) {
         if (typeof db.createCollection !== 'function') throw new Error('CloudBase SDK does not expose createCollection');
         await db.createCollection(COLLECTION);
         return { success: true, collection: COLLECTION, created: true };
+      case 'inspectRun':
+        assertEvent(event, ['action', 'runId']);
+        assertRunId(event.runId);
+        return inspectRun(db, event.runId);
       case 'run':
       case 'cleanup':
         assertEvent(event, ['action', 'runId']);

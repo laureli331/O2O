@@ -1,6 +1,12 @@
 # SP01 CloudBase 受控探针操作记录
 
-日期：2026-10-28。状态：最新只读详情确认临时函数`sp01EnvProbe`为`Active / Nodejs20.19`、超时配置30秒；用户提供的最新30秒`run`已执行完毕，但事务验收失败且清理失败。修正后的本地代码尚未上传，云端原因尚未确认。SP01未通过，云端函数部署、遗留记录清理和新一轮事务测试须先获用户明确授权。
+日期：2026-10-28。状态：最新只读核对确认目标环境仅有`sp01EnvProbe`（Active / Nodejs20.19 / 30秒）；旧run失败且清理失败后的文档状态仍未知。用户已授权在此环境恢复临时探针、只清理旧runId的归属记录，并以新runId进行一次合成数据复验。SP01仍未通过。
+
+## 最新恢复进度（授权后）
+
+用户明确授权的范围仅为目标AppID `wx2414399d423dfb65`、EnvID `cloud1-d2gjahlq39bf141c7`、临时函数`sp01EnvProbe`与固定集合`sp01_probe_20261028`中的合成记录；不得改动其他函数、集合、记录或存储。通过微信开发者工具 CLI（项目`E:\O2O\miniprogram`）只读核对：环境列表仅含目标EnvID，函数列表仅含`sp01EnvProbe`；函数状态`Active`、运行时`Nodejs20.19`、超时30秒。CLI没有数据库记录查询或函数调用命令，不能据此判断旧run的记录是否仍存在。
+
+为避免先清理再判断，已在本地探针加入`inspectRun`只读事件：只读取该runId对应的五个固定文档ID，返回存在状态、记录归属/格式摘要，不返回记录内容，也不写入或删除。`tests/sp01-environment-probe.test.cjs`及`tests/sp01-cloudbase-sdk-contract.test.cjs`本轮共17项通过。下一步是部署这份更新并运行事件`{"action":"inspectRun","runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf"}`；只有`safeToClean:true`时才运行该旧runId的`cleanup`，然后对新runId执行一次run。若检查结果不安全、返回错误或出现付费提示，立即停止，不扩大操作范围。当前修正版尚未部署，旧记录尚未检查或清理。
 
 此前恢复包上传成功（4个文件、12.6 KB）；`inspect`结构化响应通过，返回Node.js v20.19.3和SDK 3.18.7；`prepare`结构化响应通过，固定集合`sp01_probe_20261028`已创建。之后用户将超时调为30秒。下面分开记录3秒历史超时和最新30秒失败结果。
 
@@ -80,7 +86,7 @@
 
 ## 本地验证证据
 
-`node --test tests/sp01-environment-probe.test.cjs`：15项本地测试通过；`node --test tests/sp01-cloudbase-sdk-contract.test.cjs`：1项锁定SDK字段形状模拟测试通过。测试覆盖事件白名单、探针流程、异常后清理、旧格式本轮记录安全清理、集合保留、运行标识及凭据边界、部署包入口和字段对象契约。结果只证明本地逻辑和模拟行为，不替代云端复验。最新30秒run明确未通过，失败输出及调用后记录状态未知如上；本地SDK形状修复尚未上传。
+`node --test tests/sp01-environment-probe.test.cjs`：16项本地测试通过；`node --test tests/sp01-cloudbase-sdk-contract.test.cjs`：1项锁定SDK字段形状模拟测试通过。测试覆盖事件白名单、只读归属检查、探针流程、异常后清理、旧格式本轮记录安全清理、集合保留、运行标识及凭据边界、部署包入口和字段对象契约。结果只证明本地逻辑和模拟行为，不替代云端复验。最新30秒run明确未通过，失败输出及调用后记录状态未知如上；本地SDK字段形状修复尚未上传。
 
 ## 参考
 

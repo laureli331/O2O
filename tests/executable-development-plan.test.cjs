@@ -155,7 +155,8 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   a.equal(p.accountEvidence.technicalEnvironmentAudit.cloudCapabilityTestPlan.preDeploymentCloudFunctionCount,0);
   a(tech.includes('Nodejs16.13') && tech.includes('历史状态'));
   a(tech.includes('恢复函数为Active / Nodejs20.19'));
-  a(runbook.includes('最新只读详情确认临时函数`sp01EnvProbe`为`Active / Nodejs20.19`、超时配置30秒'));
+  a(runbook.includes('最新只读核对确认目标环境仅有`sp01EnvProbe`（Active / Nodejs20.19 / 30秒）'));
+  a(runbook.includes('`inspectRun`只读事件'));
   a(runbook.includes('最新 run（30秒配置）'));
   a(runbook.includes('旧形状导致提交标记不可见') && runbook.includes('改为平铺字段'));
   a(runbook.includes('云端根因尚未确认'));

@@ -114,6 +114,8 @@ test('probe accepts only fixed actions and a synthetic run identifier', async ()
   await assert.rejects(handler({ action: 'run', runId: 'user-data' }), /Invalid SP01 run identifier/);
   await assert.rejects(handler({ action: 'run', runId, collection: 'orders' }), /Unexpected event field/);
   await assert.rejects(handler({ action: 'inspect', extra: 'value' }), /Unexpected event field/);
+  await assert.rejects(handler({ action: 'inspectRun', runId: 'user-data' }), /Invalid SP01 run identifier/);
+  await assert.rejects(handler({ action: 'inspectRun', runId, extra: 'value' }), /Unexpected event field/);
 });
 
 test('runtime inspection reports only the Node and pinned SDK versions', async () => {
@@ -131,6 +133,57 @@ test('runtime inspection reports only the Node and pinned SDK versions', async (
     nodeRuntimeMatch: false,
     sdkVersion: '3.18.7',
   });
+});
+
+test('inspectRun reads only the five allowlisted records and reports ownership without document contents', async () => {
+  const db = createMemoryDatabase();
+  const handler = createHandler({ db, nodeVersion: 'v20.19.0', sdkVersion: '3.18.7' });
+  await handler({ action: 'prepare' });
+  const firstId = `${runId}_commit_a`;
+  const legacyId = `${runId}_rollback_a`;
+  await db.collection(COLLECTION).doc(firstId).set({
+    sp01Probe: COLLECTION, sp01RunId: runId, privateField: 'must not escape the probe',
+  });
+  await db.collection(COLLECTION).doc(legacyId).set({
+    data: { sp01Probe: COLLECTION, sp01RunId: runId, marker: 'legacy' },
+  });
+  await db.collection(COLLECTION).doc('unrelated').set({ keep: true });
+  const before = [...db.collections.get(COLLECTION).entries()].map(([id, record]) => [id, structuredClone(record)]);
+
+  const result = await handler({ action: 'inspectRun', runId });
+
+  assert.equal(result.success, true);
+  assert.equal(result.safeToClean, true);
+  assert.equal(result.presentCount, 2);
+  assert.equal(result.documents.length, 5);
+  assert.deepEqual(result.documents.find(({ id }) => id === firstId), {
+    id: firstId, state: 'owned', format: 'flat',
+  });
+  assert.deepEqual(result.documents.find(({ id }) => id === legacyId), {
+    id: legacyId, state: 'owned', format: 'legacy-nested',
+  });
+  assert.equal(JSON.stringify(result).includes('must not escape'), false);
+  assert.deepEqual([...db.collections.get(COLLECTION).entries()], before, 'inspection must not mutate any record');
+});
+
+test('inspectRun blocks cleanup when any allowlisted ID is not owned by the requested run', async () => {
+  const db = createMemoryDatabase();
+  const handler = createHandler({ db, nodeVersion: 'v20.19.0', sdkVersion: '3.18.7' });
+  await handler({ action: 'prepare' });
+  const foreignId = `${runId}_commit_a`;
+  await db.collection(COLLECTION).doc(foreignId).set({
+    sp01Probe: COLLECTION, sp01RunId: `sp01_${'b'.repeat(32)}`,
+  });
+
+  const result = await handler({ action: 'inspectRun', runId });
+
+  assert.equal(result.success, false);
+  assert.equal(result.safeToClean, false);
+  assert.equal(result.presentCount, 1);
+  assert.deepEqual(result.documents[0], {
+    id: foreignId, state: 'foreign-or-mismatched', format: 'invalid',
+  });
+  assert.equal((await db.collection(COLLECTION).doc(foreignId).get()).data.sp01RunId, `sp01_${'b'.repeat(32)}`);
 });
 
 test('prepare creates only the fixed isolated probe collection and refuses reuse', async () => {
@@ -305,7 +358,7 @@ test('run identifier contract is narrowly scoped to generated SP01 identifiers',
   assert.equal(RUN_ID_PATTERN.test('sp01_' + 'a'.repeat(31)), false);
 });
 
-test('SP01 progress distinguishes the deployed function from pending cloud acceptance', () => {
+test('SP01 progress distinguishes authorized recovery work from cloud acceptance', () => {
   const root = path.resolve(__dirname, '..');
   const plan = JSON.parse(fs.readFileSync(path.join(root, 'docs/v1-executable-development-plan-20261027.json'), 'utf8'));
   const task = plan.tasks.find((item) => item.id === 'SP01');
@@ -318,8 +371,9 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(task.status, 'in-progress');
   assert.equal(task.productAcceptancePassed, false);
   assert.equal(harness.functionName, 'sp01EnvProbe');
-  assert.equal(harness.localTestCount, 13);
-  assert.equal(harness.localTestsPassed, 13);
+  assert.equal(harness.localTestCount, 16);
+  assert.equal(harness.localTestsPassed, 16);
+  assert.deepEqual(harness.allowedActions, ['inspect', 'prepare', 'inspectRun', 'run', 'cleanup']);
   assert.equal(harness.concurrencyBarrierTimeoutMs, 1500);
   assert.equal(harness.concurrencyRequiresOverlappingInitialReads, true);
   assert.equal(harness.sdkVersionRuntimeSource, 'require(@cloudbase/node-sdk/package.json).version');
@@ -387,6 +441,19 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(runAttempt.transactionAcceptancePassed, false);
   assert.equal(runAttempt.cleanupVerified, false);
   assert.equal(runAttempt.recordStateAfterFailedCleanup, 'unknown; no post-run read-only record query');
+  const recovery = task.executionProgress.authorizedRecovery;
+  assert.equal(recovery.authorization, 'granted-for-target-sp01EnvProbe-fixed-collection-owned-record-cleanup-and-one-new-synthetic-run');
+  assert.deepEqual(recovery.readOnlyEnvironmentList, ['cloud1-d2gjahlq39bf141c7']);
+  assert.deepEqual(recovery.readOnlyFunctionList, ['sp01EnvProbe']);
+  assert.deepEqual(recovery.functionInfo, { status: 'Active', runtime: 'Nodejs20.19', timeoutSeconds: 30 });
+  assert.equal(recovery.inspectRunAction.implementedLocally, true);
+  assert.equal(recovery.inspectRunAction.readOnly, true);
+  assert.equal(recovery.inspectRunAction.returnsDocumentContents, false);
+  assert.equal(recovery.correctedFunctionDeployed, false);
+  assert.equal(recovery.legacyRecordsInspected, false);
+  assert.equal(recovery.legacyRecordsCleaned, false);
+  assert.equal(recovery.newRunExecuted, false);
+  assert.equal(recovery.cloudTransactionAcceptancePassed, false);
   assert.equal(task.executionProgress.previousCloudRunAttemptAtThreeSeconds.event.runId, 'sp01_f4157fdc182bda6f9fd8e37395d4943e');
   assert.equal(task.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud, false);
   assert.equal(previousAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
@@ -397,7 +464,8 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.collectionCount, 0);
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.requestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.provesFunctionDidNotTransientlyCreateCollectionDuringAttempt, false);
-  assert.match(runbook, /最新只读详情确认临时函数`sp01EnvProbe`为`Active \/ Nodejs20.19`、超时配置30秒/);
+  assert.match(runbook, /最新只读核对确认目标环境仅有`sp01EnvProbe`（Active \/ Nodejs20.19 \/ 30秒）/);
+  assert.match(runbook, /`inspectRun`只读事件/);
   assert.match(runbook, /安装目录CLI只读详情确认当前配置为30秒/);
   assert.match(runbook, /最新 run（30秒配置）/);
   assert.match(runbook, /inspect.*结构化响应通过/);
