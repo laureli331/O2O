@@ -63,7 +63,7 @@ test('SP04 reflects the target-project read-only CLI evidence without claiming a
   assert.equal(project.appJsEnvironmentValue, record.environmentDetailsScreenshot.visibleEnvironmentId);
   assert.ok(task.executionProgress.completedChecks.some((item) => item.includes('目标AppID') && item.includes('0个云函数') && item.includes('0个数据库集合')));
   assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径') && item.includes('仍未核实')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('导入后菜单已选中cloud1') && item.includes('上传/部署')));
+  assert.ok(record.remainingChecks.some((item) => item.includes('导入后菜单已选中cloud1') && item.includes('临时SP01探针已单独部署')));
   assert.ok(record.remainingChecks.some((item) => item.includes('在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('该QuickStart仍未配置EnvId')));
   assert.ok(!record.remainingChecks.some((item) => item.includes('待只读桥接恢复后核验')));
@@ -294,9 +294,9 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(e06.reason.includes('较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空'));
   assert.ok(e06.reason.includes('已导入cloud1'));
   assert.ok(e06.reason.includes('报告当前环境已选中cloud1'));
-  assert.ok(e06.reason.includes('未证明函数上传、部署或运行'));
+  assert.ok(e06.reason.includes('该探针尚未调用，不能证明产品函数实现、云端运行时或事务通过'));
   assert.ok(e06.reason.includes('app.js已为小程序运行时绑定EnvID，当前模板代码未引用envList.js'));
-  assert.ok(e06.reason.includes('用户已确认Node.js 20.19，但云函数尚未创建或运行'));
+  assert.ok(e06.reason.includes('临时SP01探针'));
   assert.ok(e06.reason.includes('数据库模式由用户查看后报告为文档型数据库，尚未接口复核'));
   assert.deepEqual(record.latestUserReportedAccountAssociationCheck, {
     date: '2026-10-28',
@@ -312,16 +312,16 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(accountRemaining.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   assert.ok(accountRemaining.includes('用户随后报告已导入cloud1'));
   assert.ok(accountRemaining.includes('当前环境已选中cloud1'));
-  assert.ok(accountRemaining.includes('函数上传/部署和运行仍未执行或验证'));
+  assert.ok(accountRemaining.includes('之后仅部署了SP01临时探针，等待用户执行函数测试'));
   assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
-  assert.equal(record.cloudWritesOrDeploymentPerformed, false);
+  assert.equal(record.cloudWritesOrDeploymentPerformed, true);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));
   assert.ok(doc.includes('开发者工具早期截图显示项目根目录`cloudfunctions`文件夹的右键菜单为“当前环境：(无)”'));
   assert.ok(doc.includes('`cloudfunctions`根目录的“当前环境”菜单决定云函数上传部署目标'));
   assert.ok(doc.includes('用户已确认首版采用Node.js 20.19'));
   assert.ok(doc.includes('用户随后查看“数据库→数据库设置”并报告为“文档型数据库”，该信息尚未由只读API复核'));
-  assert.ok(doc.includes('未修改项目配置或云端设置'));
+  assert.ok(doc.includes('未修改QuickStart业务配置或云端数据库/存储设置'));
 });
 
 test('SP04 preserves the confirmed shared-account and no-24-hour operating rules', () => {
@@ -423,7 +423,7 @@ test('SP04 records browser installation separately from tested support and block
   assert.equal(record.localDevice.networkMetricsMeasured, false);
   assert.equal(record.localDevice.webHostingAndLoginTested, false);
   assert.deepEqual(record.evidenceGates.map((gate) => gate.passed), [false, false]);
-  assert.equal(record.cloudWritesOrDeploymentPerformed, false);
+  assert.equal(record.cloudWritesOrDeploymentPerformed, true);
 
   const plan = load('docs/v1-executable-development-plan-20261027.json');
   const task = plan.tasks.find((entry) => entry.id === 'SP04');

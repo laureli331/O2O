@@ -276,11 +276,12 @@ test('run identifier contract is narrowly scoped to generated SP01 identifiers',
   assert.equal(RUN_ID_PATTERN.test('sp01_' + 'a'.repeat(31)), false);
 });
 
-test('SP01 progress records the harness as local-only and keeps cloud acceptance pending', () => {
+test('SP01 progress distinguishes the deployed function from pending cloud acceptance', () => {
   const root = path.resolve(__dirname, '..');
   const plan = JSON.parse(fs.readFileSync(path.join(root, 'docs/v1-executable-development-plan-20261027.json'), 'utf8'));
   const task = plan.tasks.find((item) => item.id === 'SP01');
   const harness = task.executionProgress.localProbeHarness;
+  const deployment = task.executionProgress.latestCloudDeployment;
   const runbook = fs.readFileSync(path.join(root, 'docs/sp01-cloud-probe-runbook-20261028.md'), 'utf8');
 
   assert.equal(task.status, 'in-progress');
@@ -295,13 +296,21 @@ test('SP01 progress records the harness as local-only and keeps cloud acceptance
   assert.equal(harness.cleanupFailsWhenRunDocumentRemains, true);
   assert.equal(harness.cloudRuntimeExecuted, false);
   assert.equal(harness.cloudTransactionTestExecuted, false);
-  assert.equal(harness.cloudFunctionDeployed, false);
+  assert.equal(harness.cloudFunctionDeployed, true);
   assert.equal(harness.cloudCollectionCreated, false);
   assert.equal(harness.cloudRecordsWrittenOrDeleted, false);
-  assert.equal(harness.cloudWriteAndDeploymentAuthorization, 'not-yet-granted');
+  assert.equal(harness.cloudWriteAndDeploymentAuthorization, 'granted-for-sp01EnvProbe-and-sp01_probe_20261028-synthetic-records-only');
   assert.equal(harness.collectionCleanup, 'records-only; retain-empty-collection');
   assert.equal(harness.storageRoleTestPrepared, false);
-  assert.match(runbook, /尚未部署或执行任何云端写入/);
+  assert.equal(deployment.cloudFunctionDeployed, true);
+  assert.equal(deployment.targetAppId, 'wx2414399d423dfb65');
+  assert.equal(deployment.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
+  assert.deepEqual(deployment.postDeploymentFunctionNames, ['sp01EnvProbe']);
+  assert.equal(deployment.postDeploymentCollectionCount, 0);
+  assert.equal(deployment.cloudRuntimeExecuted, false);
+  assert.equal(deployment.cloudRecordsWrittenOrDeleted, false);
+  assert.match(runbook, /临时探针已部署；等待用户在开发者工具\/CloudBase 控制台执行云端测试/);
+  assert.match(runbook, /sp01_f95243389fa9ca4f7a407c90ce2052ef/);
   assert.match(runbook, /不删除集合或任何非本轮记录/);
   assert.match(runbook, /删除后重新读取五个确切 ID/);
   assert.match(runbook, /测试云函数/);
