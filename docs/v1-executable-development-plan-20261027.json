@@ -1534,7 +1534,19 @@
             "returnsDocumentContents": false,
             "localTestsPassed": 2
           },
-          "correctedFunctionDeployed": false,
+          "correctedFunctionDeployment": {
+            "success": true,
+            "uploadedFiles": 4,
+            "packageSize": "13.0 KB",
+            "remoteNpmInstall": true,
+            "postDeploymentFunctionNames": ["sp01EnvProbe"],
+            "postDeploymentInfo": {
+              "status": "Active",
+              "runtime": "Nodejs20.19",
+              "timeoutSeconds": 30
+            }
+          },
+          "correctedFunctionDeployed": true,
           "legacyRunId": "sp01_f892f63b9fdc4c11ae1254800a9e83cf",
           "legacyRecordsInspected": false,
           "legacyRecordsCleaned": false,

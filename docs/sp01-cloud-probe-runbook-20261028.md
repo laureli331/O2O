@@ -6,7 +6,7 @@
 
 用户明确授权的范围仅为目标AppID `wx2414399d423dfb65`、EnvID `cloud1-d2gjahlq39bf141c7`、临时函数`sp01EnvProbe`与固定集合`sp01_probe_20261028`中的合成记录；不得改动其他函数、集合、记录或存储。通过微信开发者工具 CLI（项目`E:\O2O\miniprogram`）只读核对：环境列表仅含目标EnvID，函数列表仅含`sp01EnvProbe`；函数状态`Active`、运行时`Nodejs20.19`、超时30秒。CLI没有数据库记录查询或函数调用命令，不能据此判断旧run的记录是否仍存在。
 
-为避免先清理再判断，已在本地探针加入`inspectRun`只读事件：只读取该runId对应的五个固定文档ID，返回存在状态、记录归属/格式摘要，不返回记录内容，也不写入或删除。`tests/sp01-environment-probe.test.cjs`及`tests/sp01-cloudbase-sdk-contract.test.cjs`本轮共17项通过。下一步是部署这份更新并运行事件`{"action":"inspectRun","runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf"}`；只有`safeToClean:true`时才运行该旧runId的`cleanup`，然后对新runId执行一次run。若检查结果不安全、返回错误或出现付费提示，立即停止，不扩大操作范围。当前修正版尚未部署，旧记录尚未检查或清理。
+为避免先清理再判断，已在本地探针加入`inspectRun`只读事件：只读取该runId对应的五个固定文档ID，返回存在状态、记录归属/格式摘要，不返回记录内容，也不写入或删除。`tests/sp01-environment-probe.test.cjs`及`tests/sp01-cloudbase-sdk-contract.test.cjs`本轮共17项通过。修正版已通过开发者工具CLI更新到目标环境，上传4个文件、13.0 KB；部署后只读复核函数仍为`Active / Nodejs20.19 / 30秒`，函数列表仍仅含`sp01EnvProbe`。下一步是运行事件`{"action":"inspectRun","runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf"}`；只有`safeToClean:true`时才运行该旧runId的`cleanup`，然后对新runId执行一次run。若检查结果不安全、返回错误或出现付费提示，立即停止，不扩大操作范围。旧记录尚未检查或清理。
 
 此前恢复包上传成功（4个文件、12.6 KB）；`inspect`结构化响应通过，返回Node.js v20.19.3和SDK 3.18.7；`prepare`结构化响应通过，固定集合`sp01_probe_20261028`已创建。之后用户将超时调为30秒。下面分开记录3秒历史超时和最新30秒失败结果。
 
@@ -24,7 +24,7 @@
 
 目标工程锁定`@cloudbase/node-sdk` 3.18.7，其数据库依赖为`@cloudbase/database` 1.4.3。该依赖源码的文档`set`和`update`接口接收平铺字段对象；旧探针传入`{data: fields}`，会把业务字段嵌套到`data`属性。本地SDK接口形状契约模拟测试复现并修复了字段对象问题：旧形状导致提交标记不可见、并发读取`value`缺失后更新参数不合法；改为平铺字段后，本地模拟接受请求并清理本轮记录。该模拟只核对SDK调用字段形状，不模拟CloudBase事务隔离或云端实现，不能作为事务验收通过证据。清理逻辑也增加了对本轮旧格式嵌套记录的精确归属识别，只允许删除五个固定ID中归属本runId的文档并逐个回查。
 
-这是受锁定SDK源码和本地回归支持的根因判断，**云端根因尚未确认**，因为修正代码还未上传，且最新云端清理失败没有带回详细错误消息。当前本地修复不会修改数据库集合、其他运行ID、QuickStart模板函数或存储。
+这是受锁定SDK源码和本地回归支持的根因判断，**云端根因尚未确认**：修正代码已上传，但尚未运行`inspectRun`或云端事务复验；此前清理失败也没有带回详细错误消息。当前上传只更新了`sp01EnvProbe`，没有修改集合、其他运行ID、QuickStart模板函数或存储。
 
 腾讯云[函数概述](https://cloud.tencent.com/document/product/583/19805)说明普通事件函数默认超时3秒、可配置范围为1至900秒；[云函数测试文档](https://cloud.tencent.com/document/product/583/56125)说明433/TimeLimitReached表示函数执行超过超时配置。用户报告已调高此临时函数超时，安装目录CLI只读详情确认当前配置为30秒。配置查询未调用函数；不自动重试此前失败的run。
 

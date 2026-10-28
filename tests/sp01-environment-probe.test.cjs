@@ -449,7 +449,14 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   assert.equal(recovery.inspectRunAction.implementedLocally, true);
   assert.equal(recovery.inspectRunAction.readOnly, true);
   assert.equal(recovery.inspectRunAction.returnsDocumentContents, false);
-  assert.equal(recovery.correctedFunctionDeployed, false);
+  assert.equal(recovery.correctedFunctionDeployment.success, true);
+  assert.equal(recovery.correctedFunctionDeployment.uploadedFiles, 4);
+  assert.equal(recovery.correctedFunctionDeployment.remoteNpmInstall, true);
+  assert.deepEqual(recovery.correctedFunctionDeployment.postDeploymentFunctionNames, ['sp01EnvProbe']);
+  assert.deepEqual(recovery.correctedFunctionDeployment.postDeploymentInfo, {
+    status: 'Active', runtime: 'Nodejs20.19', timeoutSeconds: 30,
+  });
+  assert.equal(recovery.correctedFunctionDeployed, true);
   assert.equal(recovery.legacyRecordsInspected, false);
   assert.equal(recovery.legacyRecordsCleaned, false);
   assert.equal(recovery.newRunExecuted, false);
