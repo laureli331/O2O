@@ -241,9 +241,21 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   ]);
   a.equal(audit.androidModelConfirmed, true);
   a.equal(audit.iphoneModelConfirmed, true);
-  a.equal(audit.miniProgramBaseLibraryVersionDeclaredInProjectConfig, '2.20.1');
-  a.equal(audit.miniProgramBaseLibraryVersionConfigPath, 'miniprogram/project.config.json');
-  a.equal(audit.miniProgramBaseLibraryVersionConfirmed, false);
+  a.equal(audit.publicProjectConfigBaseLibraryVersion, '2.20.1');
+  a.equal(audit.privateProjectConfigBaseLibraryVersion, '3.17.5');
+  a.equal(audit.devtoolsSimulatorBaseLibraryVersion, '3.17.5');
+  a.equal(audit.devtoolsSimulatorBaseLibraryVersionConfirmed, true);
+  a.equal(audit.physicalDeviceBaseLibraryVersionConfirmed, false);
+  a.deepEqual(audit.devtoolsSimulatorRuntimeObservation, {
+    projectPath: 'E:\\O2O\\miniprogram',
+    platform: 'devtools',
+    model: 'iPhone 12/13 (Pro)',
+    system: 'iOS 10.0.1',
+    version: '8.0.5',
+    SDKVersion: '3.17.5',
+    currentPageRoute: '/pages/index/index',
+    currentPageTitle: '基础能力',
+  });
   a.equal(audit.adminBrowserSelected, true);
   a.equal(audit.selectedAdminBrowser, 'Google Chrome');
   a.equal(audit.adminBrowserTested, false);
@@ -291,8 +303,11 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('用户选择Google Chrome执行后台验收'));
   a(doc.includes('用户于2026-10-28提供三台测试设备信息'));
   a(doc.includes('用户选择Google Chrome执行后台验收'));
-  a(doc.includes('QuickStart工程配置`miniprogram/project.config.json`声明小程序基础库版本为`2.20.1`'));
-  a(doc.includes('这不是手机当前实际加载版本的证明'));
+  a(doc.includes('公开配置`miniprogram/project.config.json`声明基础库`2.20.1`'));
+  a(doc.includes('私有配置`miniprogram/project.private.config.json`声明`3.17.5`'));
+  a(doc.includes('CLI对目标工程执行只读`automation_runtime_info --action systemInfo`报告DevTools模拟器`SDKVersion=3.17.5`'));
+  a(doc.includes('三台真机当前实际基础库仍未实测'));
+  a(planDoc.includes('公开项目配置声明基础库`2.20.1`，私有配置声明`3.17.5`'));
   a(doc.includes('目标环境受控验证方案（尚未执行）'));
   a(doc.includes('ENV-DB-TX-01'));
   a(doc.includes('ENV-STORE-01'));
@@ -311,7 +326,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(sp01.status, 'in-progress');
   a.equal(sp01.productAcceptancePassed, false);
   a(sp01.executionProgress.blockedChecks.some((check) => check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景') && check.includes('网络性能仍未实测')));
-  a(sp01.executionProgress.nextAction.includes('继续整理环境能力的只读证据和受控验证方案'));
+  a(sp01.executionProgress.nextAction.includes('结合用户正在查看的云函数、数据库设置和存储页完成只读核对'));
 });
 
 test('SP01 records the local diagnostic project AppID separately from the new target AppID', () => {

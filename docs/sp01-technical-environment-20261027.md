@@ -86,7 +86,7 @@ CloudBase[创建环境文档](https://docs.cloudbase.net/quick-start/create-env)
 
 ### 目标环境受控验证方案（尚未执行）
 
-当前目标环境只读查询为0个云函数、0个数据库集合；没有另一个已核实的隔离测试环境。云函数运行时下拉选项需要在目标项目的“云函数”新建表单中只读查看，表单不提交、不创建函数；CLI当前没有返回该选项列表的查询。用户提供三台设备及验收浏览器/网络场景；`miniprogram/project.config.json`声明小程序基础库版本`2.20.1`，但这不是手机当前实际加载版本的证明。设备连接、真机实际基础库、浏览器兼容性和网络指标仍未实测。
+当前目标环境只读查询为0个云函数、0个数据库集合；没有另一个已核实的隔离测试环境。云函数运行时下拉选项需要在目标项目的“云函数”新建表单中只读查看，表单不提交、不创建函数；CLI当前没有返回该选项列表的查询。用户提供三台设备及验收浏览器/网络场景。公开配置`miniprogram/project.config.json`声明基础库`2.20.1`，私有配置`miniprogram/project.private.config.json`声明`3.17.5`；CLI对目标工程执行只读`automation_runtime_info --action systemInfo`报告DevTools模拟器`SDKVersion=3.17.5`，当前页为`/pages/index/index`（“基础能力”）。因此已确认的是模拟器运行值；三台真机当前实际基础库仍未实测，且公开配置与私有配置的声明值不一致，尚未修改用户配置。
 
 | 用例 | 输入与操作 | 预期 | 当前状态与回退边界 |
 | --- | --- | --- | --- |
@@ -103,7 +103,7 @@ CloudBase[创建环境文档](https://docs.cloudbase.net/quick-start/create-env)
 
 CLI还提供存储list、info、url和read查询；本轮未调用存储文件列表、临时链接或内容读取，避免无必要地暴露云文件元数据或内容。CloudBase[存储权限文档](https://docs.cloudbase.net/storage/data-permission)说明传统模式按_openid判定文件归属，PG模式使用PostgreSQL RLS策略；这只是通用规则说明，未揭示目标环境当前模式或配置。存储私密性仍须在受控测试中以匿名、所有者、其他用户和管理员角色验证读取、写入、链接失效及撤权。
 
-本机验收设备盘点使用PowerShell检查ADB命令及常见Android SDK platform-tools目录，未发现ADB，也未在常见Android SDK目录找到adb.exe。这不证明用户没有测试手机。用户于2026-10-28提供三台测试设备信息：OPPO Find X9（ColorOS 17.0，微信8.0.79）、Huawei nova 11 SE（HarmonyOS 4.2.0，微信8.0.79）和iPhone XR（iOS 16，微信8.0.79）；QuickStart工程配置`miniprogram/project.config.json`声明小程序基础库版本为`2.20.1`，这不是手机当前实际加载版本的证明，真机实际基础库版本仍未核验。iOS具体补丁版本未提供。用户选择Google Chrome执行后台验收；本机注册表检测到Chrome 156.0.8078.47、Edge 156.0.4314.50、Firefox 153.0，但尚未运行浏览器兼容性测试。用户提供家中WiFi 5G作为常规网络场景、公共免费WiFi作为较弱网络场景；这只是场景描述，未测吞吐、延迟、丢包或断网恢复。当前未连接/枚举实机，设备型号和浏览器选择均是用户报告，不等于测试已执行。缓存、测试数据条件及实测结果继续按质量合同ENV01记录；缺少实际运行证据时不能记性能通过。
+本机验收设备盘点使用PowerShell检查ADB命令及常见Android SDK platform-tools目录，未发现ADB，也未在常见Android SDK目录找到adb.exe。这不证明用户没有测试手机。用户于2026-10-28提供三台测试设备信息：OPPO Find X9（ColorOS 17.0，微信8.0.79）、Huawei nova 11 SE（HarmonyOS 4.2.0，微信8.0.79）和iPhone XR（iOS 16，微信8.0.79）。目标QuickStart公开配置`miniprogram/project.config.json`声明基础库`2.20.1`，私有配置`miniprogram/project.private.config.json`声明`3.17.5`；指定目标工程的只读CLI模拟器`systemInfo`报告`SDKVersion=3.17.5`、`platform=devtools`、模拟机型iPhone 12/13 (Pro)、系统iOS 10.0.1、运行页`/pages/index/index`（“基础能力”）。这确认当前DevTools模拟器运行值，不代表三台真机的基础库版本已验证；公开与私有配置声明值不一致，尚未修改用户配置。iOS具体补丁版本未提供。用户选择Google Chrome执行后台验收；本机注册表检测到Chrome 156.0.8078.47、Edge 156.0.4314.50、Firefox 153.0，但尚未运行浏览器兼容性测试。用户提供家中WiFi 5G作为常规网络场景、公共免费WiFi作为较弱网络场景；这只是场景描述，未测吞吐、延迟、丢包或断网恢复。当前未连接/枚举实机，设备型号和浏览器选择均是用户报告，不等于测试已执行。缓存、测试数据条件及实测结果继续按质量合同ENV01记录；缺少实际运行证据时不能记性能通过。
 
 ## 验证与恢复
 
