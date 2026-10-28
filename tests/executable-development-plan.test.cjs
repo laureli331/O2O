@@ -428,8 +428,11 @@ test('SP04 plan progress records no confirmed service providers as a blocker and
   a.equal(task.status, 'in-progress');
   a.equal(task.productAcceptancePassed, false);
   a(task.executionProgress.completedChecks.some((check) => check.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
+  a(task.executionProgress.completedChecks.some((check) => check.includes('CloudBase截图') && check.includes('当前环境为无') && check.includes('未改云端设置')));
   a(task.executionProgress.blockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
+  a(task.executionProgress.blockedChecks.some((check) => check.includes('需先核对与app.js绑定的模板关系') && check.includes('数据库模式')));
   a(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
+  a(doc.includes('开发者工具菜单显示当前环境“(无)”且子菜单为空'));
   a.equal(p.firstProductTask, 'SP07');
   a.deepEqual(p.firstProductTaskPrerequisites, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
 });

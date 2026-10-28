@@ -268,6 +268,32 @@ test('SP04 records no confirmed repair or errand providers without inventing cre
   assert.ok(doc.includes('资质审核状态和十个地点的实际覆盖尚未确认'));
 });
 
+test('SP04 cross-references the latest CloudBase screenshots while keeping runtime and operations readiness unverified', () => {
+  const record = evidence();
+  assert.deepEqual(record.latestCloudBaseScreenshotCrossReference, {
+    date: '2026-10-28',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    sourceRecord: 'docs/sp01-technical-environment-20261027.md',
+    runtimeOptionsRecorded: true,
+    runtimeChoiceConfirmed: false,
+    databaseModeConfirmed: false,
+    storageRootEmptyAndPermissionObserved: true,
+    devtoolsEnvironmentSelectorEmpty: true,
+    cloudSettingsChanged: false,
+  });
+  const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
+  assert.equal(e06.passed, false);
+  assert.ok(e06.reason.includes('最新开发者工具截图显示当前环境为无、函数子菜单为空，本地envList仍为空'));
+  assert.ok(e06.reason.includes('运行时选择和数据库模式仍未确认'));
+  assert.ok(record.remainingChecks.some((item) => item.includes('核对envList与app.js环境绑定的关系')));
+  assert.equal(record.cloudWritesOrDeploymentPerformed, false);
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  assert.ok(doc.includes('最新控制台截图与SP01技术环境记录交叉引用'));
+  assert.ok(doc.includes('开发者工具截图的云函数菜单显示“当前环境：(无)”'));
+  assert.ok(doc.includes('运行时选择和数据库模式仍未确认'));
+  assert.ok(doc.includes('未修改云端设置'));
+});
+
 test('SP04 preserves the confirmed shared-account and no-24-hour operating rules', () => {
   const record = evidence();
   assert.equal(record.operations.managementAccounts, 1);

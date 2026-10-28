@@ -43,6 +43,17 @@
     "provesTargetAppEnvironmentAssociation": true,
     "provesCloudBaseApiOrRuntimeAccess": false
   },
+  "latestCloudBaseScreenshotCrossReference": {
+    "date": "2026-10-28",
+    "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+    "sourceRecord": "docs/sp01-technical-environment-20261027.md",
+    "runtimeOptionsRecorded": true,
+    "runtimeChoiceConfirmed": false,
+    "databaseModeConfirmed": false,
+    "storageRootEmptyAndPermissionObserved": true,
+    "devtoolsEnvironmentSelectorEmpty": true,
+    "cloudSettingsChanged": false
+  },
   "appIdCrossCheck": {
     "currentProjectAppId": "wx358290e451cb06e7",
     "currentProjectAppIdConfirmedByUser": false,
@@ -354,7 +365,7 @@
     {
       "id": "E06",
       "passed": false,
-      "reason": "用户报告旧号为个人主体、新号为个体工商户/公司主体，旧cloud1不符合官方同主体共享前提；目标AppID范围的CLI只读环境列表已返回cloud1-d2gjahlq39bf141c7，云函数和数据库集合查询均为空，本地QuickStart已配置该EnvID，但小程序端运行时、活动窗口项目路径、托管/登录配置和正式域名尚未核验；套餐、账单与到期核查按用户要求本轮略过。"
+      "reason": "用户报告旧号为个人主体、新号为个体工商户/公司主体，旧cloud1不符合官方同主体共享前提；目标AppID范围的CLI只读环境列表已返回cloud1-d2gjahlq39bf141c7，云函数和数据库集合查询均为空，本地QuickStart已配置该EnvID，但最新开发者工具截图显示当前环境为无、函数子菜单为空，本地envList仍为空，二者与app.js绑定关系尚待核对；运行时选择和数据库模式仍未确认，活动窗口项目路径、托管/登录配置和正式域名尚未核验；套餐、账单与到期核查按用户要求本轮略过。"
     }
   ],
   "cloudWritesOrDeploymentPerformed": false,
@@ -362,9 +373,11 @@
     "核实微信官方类目适用性及真实运营/供应能力，不从项目服务名称推定平台准入。",
     "目前没有已确认愿意接单的维修或代买代取服务者；后续需确认服务者资质审核状态及十个地点的实际覆盖。",
     "旧cloud1因旧号个人、新号为个体工商户/公司主体（用户报告）不符合官方同主体共享条件，不再按该资源共享路径推进；目标AppID范围的CLI只读环境列表已返回新号自己的CloudBase环境cloud1，云函数和数据库集合查询均返回0项；小程序端运行时和实际项目访问能力仍待核验。",
-    "较早的开发者工具项目列表观察未显示目标工程；列表外或其他账号/设备中的项目是否存在未由该列表核实。后续project_list已列出E:\\O2O\\miniprogram及目标AppID，本地QuickStart app.js也已配置对应EnvId。当前活动窗口加载路径仍未核实；该登记与本地配置不能代替小程序端运行时、网页托管或登录验收。",
+    "较早的开发者工具项目列表观察未显示目标工程；列表外或其他账号/设备中的项目是否存在未由该列表核实。后续project_list已列出E:\\O2O\\miniprogram及目标AppID，本地QuickStart app.js也已配置对应EnvId。最新菜单截图显示“当前环境：(无)”且子菜单为空，本地envList仍为空；先核对envList与app.js环境绑定的关系及模板契约，不据此改配置。当前活动窗口加载路径仍未核实；该登记与本地配置不能代替小程序端运行时、网页托管或登录验收。",
+    "最新控制台截图已交叉记录至SP01：云函数运行时选项可见但选择/执行未确认；数据库回档页未显示数据库模式；存储根目录为空且权限页显示“仅创建者可读写”；开发者工具菜单显示当前环境为无且函数子菜单为空。未修改云端设置；运行时选择和数据库模式仍未确认。",
     "根据真实托管与域名选项核实费用，并与500元/月预算上限对齐后再作选择。",
-    "按用户提供的真实设备与Chrome浏览器执行网页后台登录、权限和页面验收；在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标。"
+    "按用户提供的真实设备与Chrome浏览器执行网页后台登录、权限和页面验收；在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标。",
+    "核对envList与app.js环境绑定的关系及QuickStart模板契约后，再确认开发者工具环境选择器空态的原因；运行时选择和数据库模式仍需明确证据。"
   ],
   "rollback": "本阶段仅新增证据文档、计划状态和文档测试；回退时只回退本阶段提交或恢复这些自有文件，不重置整个工作区、不触碰用户已有改动，也没有云端测试数据需要清理。"
 }
