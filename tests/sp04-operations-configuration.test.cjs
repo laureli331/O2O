@@ -57,14 +57,14 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
   assert.equal(e06.passed, false);
   assert.ok(e06.reason.includes('sp01IdentityProbe'));
   assert.ok(e06.reason.includes('Nodejs16.13 / 3秒'));
-  assert.ok(e06.reason.includes('用户尚未在手机打开'));
-  assert.ok(e06.reason.includes('客户端身份函数仍未调用'));
-  assert.ok(currentCheck.includes('身份摘要尚未比对'));
+  assert.ok(e06.reason.includes('用户已在真实客户端打开预览并尝试身份调用'));
+  assert.ok(e06.reason.includes('IDENTITY_CALL_FAILED'));
+  assert.ok(currentCheck.includes('身份摘要未比对'));
   assert.ok(!currentCheck.includes('当前函数Active/Nodejs20.19'));
   assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.result, 'no-official-results');
   assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.categoryApplicabilityResolved, false);
   assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.nonOfficialResultsUsedAsEvidence, false);
-  assert.ok(doc.includes('当前身份探针状态：`sp01IdentityProbe`'));
+  assert.ok(doc.includes('历史状态（真实客户端调用前）：`sp01IdentityProbe`'));
   assert.ok(doc.includes('Nodejs16.13 / 3秒'));
   assert.ok(doc.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
   assert.ok(doc.includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
@@ -72,7 +72,7 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
   assert.ok(doc.includes('开发者工具模拟器打开不证明小程序运行时连接或跨账号文件隔离'));
 });
 
-test('SP04 records the generated identity-probe preview without claiming a client test', () => {
+test('SP04 records the generated preview and separates the failed client attempt from verified identity or storage access', () => {
   const record = evidence();
   const preview = record.latestIdentityProbePreview;
   const safetyFix = record.latestIdentityProbeClientSafetyFix;
@@ -122,12 +122,13 @@ test('SP04 records the generated identity-probe preview without claiming a clien
     safetyFixIncluded: true,
     experienceVersionUploadPerformed: false,
     productionPublishPerformed: false,
-    clientOpened: false,
+    clientOpened: true,
     clientInvocationVerified: false,
     identityComparisonCompleted: false,
     secondAccountAccessVerified: false,
     cloudStorageWritePerformed: false,
     cloudStorageCleanupPerformed: false,
+    clientInvocationAttempted: true,
   });
   assert.deepEqual(planSp04.executionProgress.previousIdentityProbePreview, record.previousIdentityProbePreview);
   assert.deepEqual(planSp04.executionProgress.latestIdentityProbePreview, preview);
@@ -142,7 +143,7 @@ test('SP04 records the generated identity-probe preview without claiming a clien
     targetedTest: 'node --test tests/sp01-storage-probe.test.cjs',
     targetedTestPassCount: 22,
     previewIncludesFix: true,
-    clientRetestPerformed: false,
+    clientRetestPerformed: true,
     cloudWriteOrDeploymentPerformed: false,
   });
   assert.deepEqual(planSp04.executionProgress.latestIdentityProbeClientSafetyFix, safetyFix);
@@ -154,6 +155,7 @@ test('SP04 records the generated identity-probe preview without claiming a clien
   assert.equal(safetyFix.previewIncludesFix, true);
   assert.ok(doc.includes('O2O-SP01-preview-20261028-193939.jpg'));
   assert.ok(doc.includes('安全修正后的二维码包含上述保护'));
+  assert.ok(doc.includes('返回`IDENTITY_CALL_FAILED`'));
   assert.ok(runbook.includes('预览推送与二维码生成已成功'));
   assert.ok(runbook.includes('不应用于本轮测试'));
   assert.ok(runbook.includes('O2O-SP01-preview-20261028-193939.jpg'));
@@ -707,7 +709,7 @@ test('SP04 records the latest read-only identity-probe status without treating i
   assert.ok(sp01.executionProgress.completedChecks.includes(evidenceText));
   assert.ok(sp04.executionProgress.completedChecks.includes(evidenceText));
   assert.deepEqual(sp04.executionProgress.latestIdentityProbePostConfirmationReadOnlyCheck, expected);
-  assert.deepEqual(record.remainingChecks.at(-1), '确认卡片后的只读查询仍未证明代码更新成功或客户端身份调用：再次查询显示sp01IdentityProbe为Active / Nodejs16.13 / 3秒，没有回报本次代码包的执行结果。');
+  assert.deepEqual(record.remainingChecks.at(-1), '真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户调用后打开日志页看到无数据，函数详情底部未见日志配置/主题，运行时Nodejs16.13、超时3秒；未改设置、未重跑。当前不能判定请求是否到达或失败根因；仅继续只读核对日志筛选/配置。');
   const doc = read('docs/sp04-operations-configuration-20261027.md');
-  assert.ok(doc.includes('确认卡片后的只读查询仍未证明代码更新成功或客户端身份调用'));
+  assert.ok(doc.includes('用户报告真实客户端调用返回`IDENTITY_CALL_FAILED`'));
 });

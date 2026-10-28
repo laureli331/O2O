@@ -156,7 +156,7 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   a(tech.includes('Nodejs16.13') && tech.includes('历史状态'));
   a(tech.includes('事务验证期间临时函数`sp01EnvProbe`为Active / Nodejs20.19'));
   a(tech.includes('`sp01IdentityProbe`首次代码更新因函数尚处于Creating被拒'));
-  a(tech.includes('当前只读详情为Active / Nodejs16.13 / 3秒'));
+  a(tech.includes('只读详情为Active / Nodejs16.13 / 3秒'));
   a(tech.includes('只读执行`cloud_fn_list`与`cloud_fn_info`'));
   a(tech.includes('列表总数为1，仅含`sp01IdentityProbe`'));
   a(tech.includes('此查询未调用函数'));
@@ -599,10 +599,23 @@ test('SP01 records simulator compilation separately from cloud identity, storage
     storageObjectCount: 0,
   });
   a.equal(probe.clientInvocationCompleted, false);
+  a.equal(probe.clientInvocationAttempted, true);
+  a.equal(probe.latestIdentityProbeClientAttempt.result, 'IDENTITY_CALL_FAILED');
+  a.equal(probe.latestIdentityProbeClientAttempt.cloudFunctionReturnCode, -1);
+  a.equal(probe.latestIdentityProbeClientAttempt.requestId, null);
+  a.equal(probe.latestIdentityProbeClientAttempt.testBundleGenerated, false);
+  a.equal(probe.latestIdentityProbeClientAttempt.localTemporaryFileCreated, false);
+  a.equal(probe.latestIdentityProbeClientAttempt.cloudStorageWritePerformed, false);
+  a.equal(probe.latestIdentityProbeLogInspection.runtime, 'Nodejs16.13');
+  a.equal(probe.latestIdentityProbeLogInspection.timeoutSeconds, 3);
+  a.equal(probe.latestIdentityProbeLogInspection.logConfigurationOrTopicVisible, false);
+  a.equal(probe.latestIdentityProbeLogInspection.logsPageOpenedAfterClientAttempt, true);
+  a.equal(probe.latestIdentityProbeLogInspection.queryOrRefreshAction, 'not-reported');
+  a.equal(probe.latestIdentityProbeLogInspection.invocationArrivalConfirmed, false);
   a.equal(probe.probeCloudStorageWrittenOrDeleted, false);
   a.equal(probe.realDeviceRun, false);
   a.equal(probe.nextCloudActionRequiresNewAuthorization, false);
-  a.equal(probe.pendingCloudStep, 'account-A-create-synthetic-file-then-account-B-identity-comparison-and-conditional-access-test');
+  a.equal(probe.pendingCloudStep, 'read-only-check-cloudbase-log-query-filters-and-function-log-configuration-visibility; do-not-retry');
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
   a(runbook.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
   a(runbook.includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
@@ -614,7 +627,7 @@ test('SP01 records simulator compilation separately from cloud identity, storage
   a(plan.includes('模拟器页面`pages/index/index`'));
   a(plan.includes('不证明云函数身份通路、云存储权限或真机行为'));
   a(plan.includes('首次部署先创建了函数但代码更新因函数仍处于Creating而失败'));
-  a(plan.includes('函数代码尚未从小程序客户端调用'));
+  a(plan.includes('账号A在真实微信客户端点击“查询身份并创建合成文件”'));
   a(!plan.includes('该阶段未导入开发者工具'));
 });
 
@@ -965,7 +978,7 @@ test('SP01 separates confirmed runtime and user-reported database mode from runt
   a(doc.includes('用户报告')||doc.includes('用户查看'));
   a(doc.includes('文档型数据库'));
  }
- a(techDoc.includes('事务验证期间临时函数`sp01EnvProbe`为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为v20.19.3和SDK 3.18.7'));a(techDoc.includes('最新修正版事务探针的提交、回滚、并发和自动清理断言也通过'));a(techDoc.includes('当前只读详情为Active / Nodejs16.13 / 3秒'));
+ a(techDoc.includes('事务验证期间临时函数`sp01EnvProbe`为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为v20.19.3和SDK 3.18.7'));a(techDoc.includes('最新修正版事务探针的提交、回滚、并发和自动清理断言也通过'));a(techDoc.includes('只读详情为Active / Nodejs16.13 / 3秒'));
  a(techDoc.includes('当时尚未收到只读API回包'));
  a(techDoc.includes('DescribeEnvs 获取环境列表接口'));
  a(techDoc.includes('API没有直接返回类型名'));
@@ -1024,7 +1037,7 @@ test('SP01 records the selected menu separately from the deployed temporary prob
  a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.latestCodeUpdate.postUpdateReadOnly.timeoutSeconds,3);
  a.equal(sp04Task.executionProgress.latestIdentityProbeDeployment.clientInvocationVerified,false);
  a(read('docs/v1-executable-development-plan-20261027.md').includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
- a(read('docs/v1-executable-development-plan-20261027.md').includes('真实身份函数调用及本轮文件写入尚未发生'));
+ a(read('docs/v1-executable-development-plan-20261027.md').includes('账号A在真实微信客户端点击“查询身份并创建合成文件”'));
  a.deepEqual(sp04Task.executionProgress.latestIdentityProbePreview,sp04.latestIdentityProbePreview);
  a.deepEqual(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix,sp04.latestIdentityProbeClientSafetyFix);
  a.equal(sp04Task.executionProgress.previousIdentityProbePreview.autoPreviewReportedPackageSize,32120);
@@ -1033,12 +1046,25 @@ test('SP01 records the selected menu separately from the deployed temporary prob
  a.equal(sp04Task.executionProgress.latestIdentityProbePreview.previewQrOutputPath,'C:\\Users\\laureli\\AppData\\Local\\Temp\\O2O-SP01-preview-20261028-193939.jpg');
  a.equal(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix.previewIncludesFix,true);
  a.equal(sp04Task.executionProgress.latestIdentityProbePreview.autoPreviewPushSucceeded,true);
- a.equal(sp04Task.executionProgress.latestIdentityProbePreview.clientOpened,false);
- a(sp04Task.executionProgress.nextAction.includes('最新预览二维码已刷新'));
- a(!sp04Task.executionProgress.nextAction.includes('现有二维码对应的是修正前代码'));
+ a.equal(sp04Task.executionProgress.latestIdentityProbePreview.clientOpened,true);
+ a.equal(sp04Task.executionProgress.latestIdentityProbePreview.clientInvocationAttempted,true);
+ a.deepEqual(sp04Task.executionProgress.latestIdentityProbeClientAttempt,sp04.latestIdentityProbeClientAttempt);
+ a.deepEqual(sp04Task.executionProgress.latestIdentityProbeLogInspection,sp04.latestIdentityProbeLogInspection);
+ a.equal(sp04.latestIdentityProbeClientAttempt.result,'IDENTITY_CALL_FAILED');
+ a.equal(sp04.latestIdentityProbeClientAttempt.requestId,null);
+ a.equal(sp04.latestIdentityProbeClientAttempt.testBundleGenerated,false);
+ a.equal(sp04.latestIdentityProbeClientAttempt.cloudStorageWritePerformed,false);
+ a.equal(sp04.latestIdentityProbeLogInspection.runtime,'Nodejs16.13');
+ a.equal(sp04.latestIdentityProbeLogInspection.timeoutSeconds,3);
+ a.equal(sp04.latestIdentityProbeLogInspection.queryOrRefreshAction,'not-reported');
+ a.equal(sp04.latestIdentityProbeLogInspection.settingsChanged,false);
+ a.equal(sp04.latestIdentityProbeLogInspection.clientRetestPerformed,false);
+ a.equal(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix.clientRetestPerformed,true);
+ a(sp04Task.executionProgress.nextAction.includes('IDENTITY_CALL_FAILED'));
+ a(sp04Task.executionProgress.nextAction.includes('只读核对日志筛选与配置可见性'));
+ a(sp04Task.executionProgress.nextAction.includes('不再次调用'));
+ a(!sp04Task.executionProgress.nextAction.includes('账号A在真实微信客户端扫码打开隔离探针'));
  a(read('docs/sp01-cloud-probe-runbook-20261028.md').includes('O2O-SP01-preview-20261028-193939.jpg'));
- a(sp04Task.executionProgress.nextAction.includes('账号A在真实微信客户端扫码打开隔离探针'));
- a(sp04Task.executionProgress.nextAction.includes('账号B尚未加入成员名单'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);
  a(sp04.evidenceGates.find(gate=>gate.id==='E06').reason.includes('报告当前环境已选中cloud1')); a.deepEqual(sp04.latestTemporaryProbeDeployment.functionNamesAfterDeployment,['sp01EnvProbe']); a.equal(sp04.latestTemporaryProbeDeployment.runtimeInvocationVerified,false);
  a.equal(sp04.cloudWritesOrDeploymentPerformed,true);
