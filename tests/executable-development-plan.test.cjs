@@ -384,7 +384,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('没有用猜测路径重试'));
   a(doc.includes('目标环境文件清单和实际权限仍未核实'));
   a(planDoc.includes('补充只读云资源复核'));
-  a(planDoc.includes('用户截图已记录运行时选项与存储权限选择'));
+  a(planDoc.includes('用户截图已记录运行时选项，且用户已确认选择Node.js 20.19'));
   a(doc.includes('清理也是云端变更'));
   a(doc.includes('运行时下拉当前选择Node.js 20.19'));
   a(doc.includes('Node.js 24.11和22.21标注“公测中”'));
@@ -671,13 +671,18 @@ test('SP01 records the user-reported empty environment menu and keeps account im
   };
   a.deepEqual(sp01.executionProgress.latestUserReportedEnvironmentMenuRecheck, expected);
   a.deepEqual(sp04.latestUserReportedEnvironmentMenuRecheck, expected);
+  const association={date:'2026-10-28',source:'user-reply-to-read-only-check',targetAppId:'wx2414399d423dfb65',result:'associated',screenshotProvided:false,environmentImportPerformed:false,deploymentPerformed:false};
+  a.deepEqual(sp01.executionProgress.latestUserReportedAccountAssociationCheck,association);
+  a.deepEqual(sp04.latestUserReportedAccountAssociationCheck,{...association,accountCenterPath:'account-information/login-method/wechat-official-account'});
   a.equal(sp01.status, 'in-progress');
   a.equal(sp01.productAcceptancePassed, false);
-  a(sp01.executionProgress.nextAction.includes('先只读核对腾讯云账号中心中微信公众平台账号关联'));
-  a(sp01.executionProgress.nextAction.includes('已有腾讯云环境尚未导入'));
+  a(sp01.executionProgress.nextAction.includes('腾讯云账号中心已关联目标小程序'));
+  a(sp01.executionProgress.nextAction.includes('导入现有cloud1'));
+  a(sp01.executionProgress.nextAction.includes('当前尚未获得明确授权'));
   a(sp01Doc.includes('回复“菜单仍为空”'));
   a(sp01Doc.includes('https://docs.cloudbase.net/faq/account'));
-  a(sp01Doc.includes('要求先核对小程序与腾讯云账号是否关联一致'));
+  a(sp01Doc.includes('用户随后在账号中心只读查看并报告目标小程序已关联（未附截图）'));
+  a(sp01Doc.includes('当前授权不含导入'));
   a(sp04Doc.includes('菜单仍为空'));
   a.equal(sp04.cloudWritesOrDeploymentPerformed, false);
 });
@@ -712,4 +717,39 @@ test('all current execution entry documents expose the completed UI baseline and
 });
 test('UI progress cannot claim real-device completion or omit accepted page coverage',()=>{
  for(const mutate of [p=>p.prototypeUiDelivery.realMiniProgramTested=true,p=>p.prototypeUiDelivery.activePages.pop(),p=>p.tasks.find(t=>t.id==='SP05').status='complete']){const p=load();mutate(p);a.throws(()=>validateUiProgress(p));}
+});
+test('SP01 separates confirmed runtime and user-reported database mode from runtime execution and API verification',()=>{
+ const techDoc=read('docs/sp01-technical-environment-20261027.md');
+ const planDoc=read('docs/v1-executable-development-plan-20261027.md');
+ const sp04Doc=read('docs/sp04-operations-configuration-20261027.md');
+ for(const doc of [techDoc,planDoc,sp04Doc]){
+  a(doc.includes('Node.js 20.19'));
+  a(doc.includes('用户报告')||doc.includes('用户查看'));
+  a(doc.includes('文档型数据库'));
+ }
+ a(techDoc.includes('不等于云函数已创建、部署或运行'));
+ a(techDoc.includes('尚未API复核'));
+ a(!techDoc.includes('没有为本项目选定Node云运行时'));
+ a(!planDoc.includes('运行时选择、数据库模式、小程序端运行时'));
+ a(!sp04Doc.includes('运行时选择和数据库模式仍未验证'));
+});
+test('SP01 records the user-reported account association and keeps importing cloud1 as an unperformed state change',()=>{
+ const p=load(),sp01=p.tasks.find(t=>t.id==='SP01'),sp04=p.tasks.find(t=>t.id==='SP04');
+ const techDoc=read('docs/sp01-technical-environment-20261027.md');
+ const planDoc=read('docs/v1-executable-development-plan-20261027.md');
+ const sp04Doc=read('docs/sp04-operations-configuration-20261027.md');
+ const association=sp01.executionProgress.latestUserReportedAccountAssociationCheck;
+ a.equal(association.result,'associated');
+ a.equal(association.targetAppId,'wx2414399d423dfb65');
+ a.equal(association.screenshotProvided,false);
+ a.equal(association.environmentImportPerformed,false);
+ a(!sp01.executionProgress.nextAction.includes('账号关联尚未核实'));
+ a(!sp01.executionProgress.nextAction.includes('先只读核对腾讯云账号中心'));
+ a(!sp04.executionProgress.blockedChecks.some(check=>check.includes('需先核对与app.js绑定的模板关系')));
+ a(sp04.executionProgress.blockedChecks.some(check=>check.includes('账号中心关联已由用户报告为已关联')));
+ for(const doc of [techDoc,planDoc,sp04Doc]){
+  a(doc.includes('账号中心')||doc.includes('腾讯云账号中心'));
+  a(doc.includes('未附截图'));
+  a(doc.includes('尚未执行')||doc.includes('未执行'));
+ }
 });

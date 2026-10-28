@@ -397,5 +397,15 @@
     "按用户提供的真实设备与Chrome浏览器执行网页后台登录、权限和页面验收；在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标。",
     "用户已复查cloudfunctions根目录环境菜单并报告仍为空。下一步先只读核对腾讯云账号中心的微信公众平台关联；若关联一致，再依据CloudBase官方流程查看开发者工具“设置→环境设置→管理我的环境→使用已有腾讯云环境”。导入属于环境配置变更，本轮未执行，须由用户决定后再操作；导入后复核菜单。运行时选择已确认但未创建/运行，数据库模式为用户报告且未API复核。"
   ],
-  "rollback": "本阶段仅新增证据文档、计划状态和文档测试；回退时只回退本阶段提交或恢复这些自有文件，不重置整个工作区、不触碰用户已有改动，也没有云端测试数据需要清理。"
+  "rollback": "本阶段仅新增证据文档、计划状态和文档测试；回退时只回退本阶段提交或恢复这些自有文件，不重置整个工作区、不触碰用户已有改动，也没有云端测试数据需要清理。",
+  "latestUserReportedAccountAssociationCheck": {
+    "date": "2026-10-28",
+    "source": "user-reply-to-read-only-check",
+    "accountCenterPath": "account-information/login-method/wechat-official-account",
+    "targetAppId": "wx2414399d423dfb65",
+    "result": "associated",
+    "screenshotProvided": false,
+    "environmentImportPerformed": false,
+    "deploymentPerformed": false
+  }
 }
