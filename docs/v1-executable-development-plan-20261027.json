@@ -940,7 +940,11 @@
           "2026-10-28用户在腾讯云账号中心只读查看后报告目标小程序已关联；未附截图。环境导入和云函数部署均未执行",
           "2026-10-28用户报告已将目标AppID的cloud1导入开发者工具（无截图）；导入后直接安装目录CLI按目标AppID及项目路径列出的环境均包含cloud1-d2gjahlq39bf141c7，project_list列出E:\\O2O\\miniprogram，cloud_fn_list返回0个函数。该只读CLI不能证明cloudfunctions文件夹菜单已更新；未部署或写入云资源。",
           "2026-10-28用户报告：导入后在目标工程E:\\O2O\\miniprogram的cloudfunctions根目录“当前环境”菜单中现在能选到cloud1（无截图）。仅记录菜单选项可选，不代表已选中、部署目标已设置或已部署；未执行云端写入/部署。",
-          "2026-10-28用户报告：导入后在目标工程E:\\O2O\\miniprogram的cloudfunctions根目录“当前环境”菜单中已选中cloud1（无截图）。这记录的是当前环境选中状态，不代表云函数已上传/部署或运行；本轮未执行云端写入/部署。"
+          "2026-10-28用户报告：导入后在目标工程E:\\O2O\\miniprogram的cloudfunctions根目录“当前环境”菜单中已选中cloud1（无截图）。这记录的是当前环境选中状态，不代表云函数已上传/部署或运行；本轮未执行云端写入/部署。",
+          "2026-10-28新增临时SP01云事务探针源码，固定Node.js 20.19.x及@cloudbase/node-sdk 3.18.7并锁定传递依赖；只访问sp01_probe_20261028和随机合成运行记录，不改动QuickStart示例函数",
+          "2026-10-28 node --test tests/sp01-environment-probe.test.cjs：11项本地测试通过，含提交/注入回滚/并发丢更新识别/屏障超时后串行假阳性保护/异常后自动清理/删除后回查/清理遗留失败/保留空集合；仅使用内存模拟数据库，不是目标云端运行证据",
+          "2026-10-28受控云端操作手册已列明目标AppID、EnvID、输入/预期、预检、清理与停机边界；本轮未部署函数、未创建集合、未写入或删除云端记录/存储",
+          "2026-10-28重新检查本地预览入口http://127.0.0.1:8765/返回连接被拒绝；未启动或修改预览服务"
         ],
         "latestReadOnlyCloudRecheck": {
           "date": "2026-10-28",
@@ -994,7 +998,7 @@
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞",
           "较早复查目标工程cloudfunctions根目录菜单后用户报告仍为空；用户随后报告腾讯云账号中心已关联目标小程序并已导入cloud1（均未附截图）。导入后的目标AppID只读环境列表仍返回cloud1，云函数列表为0；用户报告导入后菜单已选中cloud1（无截图），但云函数部署和运行尚未执行/验证；云写入/部署测试未获具体授权。"
         ],
-        "nextAction": "目标AppID的cloud_env_list按AppID和项目路径均返回cloud1-d2gjahlq39bf141c7，project_list确认E:\\O2O\\miniprogram已登记且AppID匹配；cloud_fn_list返回0个函数，数据库集合列表返回0项。用户此前报告cloudfunctions根目录菜单仍为空（导入前）；其后报告腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并报告当前环境已选中cloud1（均未附截图）。选择状态按用户报告记录；活动窗口实际加载路径仍待核实。用户已确认首版Node.js 20.19，并报告数据库模式为文档型；函数尚未创建/部署/运行，数据库模式尚未API复核，事务与私密文件权限边界仍需验证。后续云端写入/部署测试须先取得具体授权。公开/私有配置声明基础库2.20.1/3.17.5不一致，手机实际版本、浏览器兼容性与网络性能须实测。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理；不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。",
+        "nextAction": "目标AppID的cloud_env_list按AppID和项目路径均返回cloud1-d2gjahlq39bf141c7，project_list确认E:\\O2O\\miniprogram已登记且AppID匹配；cloud_fn_list返回0个函数，数据库集合列表返回0项。用户此前报告cloudfunctions根目录菜单仍为空（导入前）；其后报告腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并报告当前环境已选中cloud1（均未附截图）。选择状态按用户报告记录；活动窗口实际加载路径仍待核实。用户已确认首版Node.js 20.19，并报告数据库模式为文档型；函数尚未创建/部署/运行，数据库模式尚未API复核，事务与私密文件权限边界仍需验证。后续云端写入/部署测试须先取得具体授权。公开/私有配置声明基础库2.20.1/3.17.5不一致，手机实际版本、浏览器兼容性与网络性能须实测。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理；不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。 本地SP01事务探针已就绪，11项本地测试通过，但云端运行时和事务仍未实测。具体授权后仅部署sp01EnvProbe，复查目标资源空态，在sp01_probe_20261028创建并自动清理本轮随机合成文档，保留空集合；控制台测试后用户在函数管理页删除本轮临时函数。存储逐角色测试还需确认第二测试身份并单独授权。当前预览入口不可访问。SP01保持进行中、产品验收未通过，SP07不得越过SP01—SP06门槛。",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -1038,6 +1042,53 @@
           "selectedEnvironmentName": "cloud1",
           "screenshotProvided": false,
           "deploymentPerformed": false
+        },
+        "localProbeHarness": {
+          "date": "2026-10-28",
+          "functionPath": "miniprogram/cloudfunctions/sp01EnvProbe",
+          "functionName": "sp01EnvProbe",
+          "isProductImplementation": false,
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "targetEnvironmentSelection": "user-reported-selected-cloud1-no-screenshot",
+          "runtime": "Node.js 20.19.x",
+          "runtimeChoiceSource": "user-confirmed-2026-10-28",
+          "directDependency": {
+            "name": "@cloudbase/node-sdk",
+            "version": "3.18.7",
+            "exactPin": true,
+            "lockfilePresent": true
+          },
+          "collection": "sp01_probe_20261028",
+          "allowedActions": [
+            "inspect",
+            "prepare",
+            "run",
+            "cleanup"
+          ],
+          "runIdentifierPattern": "^sp01_[0-9a-f]{32}$",
+          "localTestCommand": "node --test tests/sp01-environment-probe.test.cjs",
+          "localTestCount": 11,
+          "localTestsPassed": 11,
+          "localTestsFailed": 0,
+          "testBackend": "in-memory-database-mock",
+          "cloudRuntimeExecuted": false,
+          "cloudTransactionTestExecuted": false,
+          "cloudFunctionDeployed": false,
+          "cloudCollectionCreated": false,
+          "cloudRecordsWrittenOrDeleted": false,
+          "cloudStorageWritten": false,
+          "cloudWriteAndDeploymentAuthorization": "not-yet-granted",
+          "collectionCleanup": "records-only; retain-empty-collection",
+          "storageRoleTestPrepared": false,
+          "storageRoleTestBlocker": "second-test-identity-not-confirmed-and-storage-write-authorization-not-granted",
+          "runbook": "docs/sp01-cloud-probe-runbook-20261028.md",
+          "concurrencyBarrierTimeoutMs": 1500,
+          "concurrencyRequiresOverlappingInitialReads": true,
+          "timeoutOrSequentialBehavior": "reported-as-not-passed",
+          "sdkVersionRuntimeSource": "require(@cloudbase/node-sdk/package.json).version",
+          "cleanupPostDeleteReadback": true,
+          "cleanupFailsWhenRunDocumentRemains": true
         }
       },
       "qualityContract": {
