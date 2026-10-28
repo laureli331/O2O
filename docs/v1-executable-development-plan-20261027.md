@@ -2,11 +2,11 @@
 
 日期：2026-10-27。版本：执行清单1.2（高质量验收合同）。状态：任务已拆分，开工前置仍待完成；不表示产品代码、真实能力或上线条件已经验收。
 
-### 2026-10-28最新进度：旧记录归属已确认，待定向清理
+### 2026-10-28最新进度：旧记录已清理，待一次新ID事务复测
 
 目标函数 sp01EnvProbe 此前只读详情为 Active / Nodejs20.19、超时配置30秒。恢复部署代码包上传成功（4个文件、12.6 KB）；用户提供的 inspect 返回 v20.19.3、SDK 3.18.7，prepare 返回成功并创建固定集合 sp01_probe_20261028。最新run（sp01_f892f63b9fdc4c11ae1254800a9e83cf）在30秒配置下执行完成但失败：回滚通过，提交可见性失败，并发事务均返回 INVALID_PARAM，清理失败；调用后记录状态未知。
 
-用户已授权仅在目标AppID/EnvID恢复临时探针、检查并清理旧runId对应的自有记录、再用新runId运行一次合成探针。授权后开发者工具CLI只读确认环境列表仅含目标cloud1，函数列表仅含sp01EnvProbe（Active、Nodejs20.19、30秒）；CLI不能读取数据库文档。只读`inspectRun`现已确认旧run的五个固定ID中三条归属标记匹配、格式为旧版嵌套结构，另外两条不存在，返回`safeToClean:true`。下一步按授权只清理这三条记录并回查，再运行一次新ID测试；本次清理尚待在函数测试面板执行，SP01仍未通过。
+用户已授权仅在目标AppID/EnvID恢复临时探针、检查并清理旧runId对应的自有记录、再用新runId运行一次合成探针。授权后开发者工具CLI只读确认环境列表仅含目标cloud1，函数列表仅含sp01EnvProbe（Active、Nodejs20.19、30秒）；CLI不能读取数据库文档。只读`inspectRun`确认旧run的五个固定ID中三条归属标记匹配、格式为旧版嵌套结构，另外两条不存在，返回`safeToClean:true`。用户随后运行`cleanup`，返回`success:true`、`deletedCount:3`；按函数的成功响应契约，这表示已复查确认五个固定ID均无遗留。本轮新runId为`sp01_3db660bc5eb548559f4f6966a34209a2`，尚未运行；SP01仍未通过。
 
 3秒历史run（runId sp01_f4157fdc182bda6f9fd8e37395d4943e）曾返回 {"errorCode":-1,"errorMessage":"Invoking task timed out after 3 seconds","requestId":"5f15ce84-6771-432e-8d22-1d10bc53babc","statusCode":433}，事务和自动清理均未验收。超时后的历史只读查询曾显示固定集合存在、当时记录数为0；该历史读数不证明最新调用后的状态。
 

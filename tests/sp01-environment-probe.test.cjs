@@ -467,7 +467,16 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
     { id: `${recovery.legacyRunId}_rollback_b`, state: 'missing', format: undefined },
     { id: `${recovery.legacyRunId}_concurrency`, state: 'owned', format: 'legacy-nested' },
   ]);
-  assert.equal(recovery.legacyRecordsCleaned, false);
+  assert.equal(recovery.legacyRecordsCleaned, true);
+  assert.deepEqual(recovery.legacyCleanupResult, {
+    success: true,
+    runId: recovery.legacyRunId,
+    collection: 'sp01_probe_20261028',
+    deletedCount: 3,
+    postDeleteVerification: 'handler-reported-success-means-all-five-fixed-ids-absent',
+    collectionRetained: true,
+  });
+  assert.equal(recovery.newRunId, 'sp01_3db660bc5eb548559f4f6966a34209a2');
   assert.equal(recovery.newRunExecuted, false);
   assert.equal(recovery.cloudTransactionAcceptancePassed, false);
   assert.equal(task.executionProgress.previousCloudRunAttemptAtThreeSeconds.event.runId, 'sp01_f4157fdc182bda6f9fd8e37395d4943e');
@@ -485,6 +494,8 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   assert.match(runbook, /安装目录CLI只读详情确认当前配置为30秒/);
   assert.match(runbook, /最新 run（30秒配置）/);
   assert.match(runbook, /inspect.*结构化响应通过/);
+  assert.match(runbook, /定向清理返回值/);
+  assert.match(runbook, /sp01_3db660bc5eb548559f4f6966a34209a2/);
   assert.ok(runbook.includes('prepare') && runbook.includes('固定集合`sp01_probe_20261028`已创建'));
   assert.match(runbook, /sp01_f892f63b9fdc4c11ae1254800a9e83cf/);
   assert.match(runbook, /两个并发事务均以 `INVALID_PARAM` 拒绝/);

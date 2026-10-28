@@ -1,17 +1,23 @@
 # SP01 CloudBase 受控探针操作记录
 
-日期：2026-10-28。状态：最新只读核对确认目标环境仅有`sp01EnvProbe`（Active / Nodejs20.19 / 30秒）；旧run失败且清理失败后的文档状态仍未知。用户已授权在此环境恢复临时探针、只清理旧runId的归属记录，并以新runId进行一次合成数据复验。SP01仍未通过。
+日期：2026-10-28。状态：最新只读核对确认目标环境仅有`sp01EnvProbe`（Active / Nodejs20.19 / 30秒）；旧run遗留的三条自有记录已定向清理，函数返回成功并回查无遗留。用户已授权以一个全新runId进行一次合成数据复验；SP01仍未通过。
 
 ## 最新恢复进度（授权后）
 
 用户明确授权的范围仅为目标AppID `wx2414399d423dfb65`、EnvID `cloud1-d2gjahlq39bf141c7`、临时函数`sp01EnvProbe`与固定集合`sp01_probe_20261028`中的合成记录；不得改动其他函数、集合、记录或存储。通过微信开发者工具 CLI（项目`E:\O2O\miniprogram`）只读核对：环境列表仅含目标EnvID，函数列表仅含`sp01EnvProbe`；函数状态`Active`、运行时`Nodejs20.19`、超时30秒。CLI没有数据库记录查询或函数调用命令，不能据此判断旧run的记录是否仍存在。
 
-为避免先清理再判断，已在本地探针加入`inspectRun`只读事件：只读取该runId对应的五个固定文档ID，返回存在状态、记录归属/格式摘要，不返回记录内容，也不写入或删除。`tests/sp01-environment-probe.test.cjs`及`tests/sp01-cloudbase-sdk-contract.test.cjs`本轮共17项通过。修正版已通过开发者工具CLI更新到目标环境，上传4个文件、13.0 KB；部署后只读复核函数仍为`Active / Nodejs20.19 / 30秒`，函数列表仍仅含`sp01EnvProbe`。用户提供的只读`inspectRun`返回`safeToClean:true`、`presentCount:3`；五个指定ID中三条均标记为`owned / legacy-nested`，其余两条为`missing`。下一步只运行事件`{"action":"cleanup","runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf"}`，预期删除这三条旧记录并回查确认无遗留，保留集合及其他记录；清理回包通过后才以新runId执行一次事务测试。若返回不安全、错误或出现付费提示，立即停止，不扩大操作范围。
+为避免先清理再判断，已在本地探针加入`inspectRun`只读事件：只读取该runId对应的五个固定文档ID，返回存在状态、记录归属/格式摘要，不返回记录内容，也不写入或删除。`tests/sp01-environment-probe.test.cjs`及`tests/sp01-cloudbase-sdk-contract.test.cjs`本轮共17项通过。修正版已通过开发者工具CLI更新到目标环境，上传4个文件、13.0 KB；部署后只读复核函数仍为`Active / Nodejs20.19 / 30秒`，函数列表仍仅含`sp01EnvProbe`。用户提供的只读`inspectRun`返回`safeToClean:true`、`presentCount:3`；五个指定ID中三条均标记为`owned / legacy-nested`，其余两条为`missing`。用户随后提供`cleanup`成功回包，报告删除3条记录；按处理器契约，成功响应同时表示五个固定ID的删除后回查无遗留。集合及其他记录均保留。下一步只以新runId `sp01_3db660bc5eb548559f4f6966a34209a2`运行一次`run`。若返回错误或出现付费提示，立即停止，不扩大操作范围。
 
 用户提供的只读检查返回值：
 
 ```json
 {"success":true,"runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf","collection":"sp01_probe_20261028","safeToClean":true,"presentCount":3,"documents":[{"id":"sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_a","state":"owned","format":"legacy-nested"},{"id":"sp01_f892f63b9fdc4c11ae1254800a9e83cf_commit_b","state":"owned","format":"legacy-nested"},{"id":"sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_a","state":"missing"},{"id":"sp01_f892f63b9fdc4c11ae1254800a9e83cf_rollback_b","state":"missing"},{"id":"sp01_f892f63b9fdc4c11ae1254800a9e83cf_concurrency","state":"owned","format":"legacy-nested"}]}
+```
+
+用户提供的定向清理返回值：
+
+```json
+{"success":true,"runId":"sp01_f892f63b9fdc4c11ae1254800a9e83cf","collection":"sp01_probe_20261028","deletedCount":3}
 ```
 
 此前恢复包上传成功（4个文件、12.6 KB）；`inspect`结构化响应通过，返回Node.js v20.19.3和SDK 3.18.7；`prepare`结构化响应通过，固定集合`sp01_probe_20261028`已创建。之后用户将超时调为30秒。下面分开记录3秒历史超时和最新30秒失败结果。

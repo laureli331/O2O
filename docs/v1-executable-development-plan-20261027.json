@@ -1563,7 +1563,16 @@
               { "id": "sp01_f892f63b9fdc4c11ae1254800a9e83cf_concurrency", "state": "owned", "format": "legacy-nested" }
             ]
           },
-          "legacyRecordsCleaned": false,
+          "legacyRecordsCleaned": true,
+          "legacyCleanupResult": {
+            "success": true,
+            "runId": "sp01_f892f63b9fdc4c11ae1254800a9e83cf",
+            "collection": "sp01_probe_20261028",
+            "deletedCount": 3,
+            "postDeleteVerification": "handler-reported-success-means-all-five-fixed-ids-absent",
+            "collectionRetained": true
+          },
+          "newRunId": "sp01_3db660bc5eb548559f4f6966a34209a2",
           "newRunExecuted": false,
           "cloudTransactionAcceptancePassed": false
         },
