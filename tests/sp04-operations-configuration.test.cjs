@@ -348,7 +348,17 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.equal(record.latestProbeRunRecovery.response.cleanup.deletedCount, 3);
   assert.equal(record.latestProbeRunRecovery.transactionProbePassed, true);
   assert.equal(record.latestProbeRunRecovery.cleanupVerified, true);
-  assert.equal(record.latestProbeRunRecovery.temporaryFunctionDeletionStatus, 'not-confirmed-after-latest-run');
+  assert.equal(record.latestProbeRunRecovery.temporaryFunctionDeletionStatus, 'user-reported-deleted-and-read-only-list-empty');
+  assert.deepEqual(record.latestProbeRunRecovery.temporaryFunctionDeletionCheck, {
+    date: '2026-10-28',
+    source: 'wechatide-cli-cloud_fn_list-read-only-after-user-reported-deletion',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    functionName: 'sp01EnvProbe',
+    total: 0,
+    list: [],
+    cloudWritePerformed: false,
+  });
   assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.functionStatus, 'Active');
   assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.runtime, 'Nodejs20.19');
   assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.timeoutSeconds, 30);

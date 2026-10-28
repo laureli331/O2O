@@ -505,7 +505,17 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   assert.equal(recovery.newRunResponseMatchedExpectedProbeContract, true);
   assert.equal(recovery.newRunCleanupVerified, true);
   assert.equal(recovery.cloudTransactionAcceptancePassed, true);
-  assert.equal(recovery.temporaryFunctionRemovalStatus, 'not-confirmed-after-latest-run');
+  assert.equal(recovery.temporaryFunctionRemovalStatus, 'user-reported-deleted-and-read-only-list-empty');
+  assert.deepEqual(recovery.temporaryFunctionRemovalCheck, {
+    date: '2026-10-28',
+    source: 'wechatide-cli-cloud_fn_list-read-only-after-user-reported-deletion',
+    targetAppId: 'wx2414399d423dfb65',
+    targetEnvironmentId: 'cloud1-d2gjahlq39bf141c7',
+    functionName: 'sp01EnvProbe',
+    total: 0,
+    list: [],
+    cloudWritePerformed: false,
+  });
   assert.equal(task.status, 'in-progress');
   assert.equal(task.productAcceptancePassed, false);
   assert.equal(task.executionProgress.previousCloudRunAttemptAtThreeSeconds.event.runId, 'sp01_f4157fdc182bda6f9fd8e37395d4943e');
@@ -527,7 +537,8 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   assert.match(runbook, /全部断言/);
   assert.match(runbook, /inspect.*结构化响应通过/);
   assert.match(runbook, /定向清理返回值/);
-  assert.match(runbook, /最新run结束后的删除状态尚未由用户确认/);
+  assert.match(runbook, /用户报告已删除临时`sp01EnvProbe`/);
+  assert.match(runbook, /`cloud_fn_list`，返回`total:0`、`list:\[\]`/);
   assert.match(runbook, /sp01_3db660bc5eb548559f4f6966a34209a2/);
   assert.ok(runbook.includes('prepare') && runbook.includes('固定集合`sp01_probe_20261028`已创建'));
   assert.match(runbook, /sp01_f892f63b9fdc4c11ae1254800a9e83cf/);

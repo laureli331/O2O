@@ -154,7 +154,8 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   });
   a.equal(p.accountEvidence.technicalEnvironmentAudit.cloudCapabilityTestPlan.preDeploymentCloudFunctionCount,0);
   a(tech.includes('Nodejs16.13') && tech.includes('历史状态'));
-  a(tech.includes('目标函数`sp01EnvProbe`已确认Active / Nodejs20.19'));
+  a(tech.includes('临时函数`sp01EnvProbe`在事务验证期间的配置为Active / Nodejs20.19'));
+  a(tech.includes('用户报告已删除临时函数'));
   a(runbook.includes('目标环境`sp01EnvProbe`（Nodejs20.19 / 30秒）的最新事务探针通过'));
   a(runbook.includes('`inspectRun`只读事件'));
   a(runbook.includes('最新 run（30秒配置）'));
@@ -359,10 +360,13 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.deepEqual(latestReadOnly.databaseCollectionNames, ['sp01_probe_20261028']);
   a.equal(latestReadOnly.databaseRecordCount, 0);
   a.equal(latestReadOnly.provesRunCleanupCompleted, false);
-  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionStatus, 'Active');
-  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionRuntime, 'Nodejs20.19');
-  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionTimeoutSeconds, 30);
-  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionInvocationPerformed, false);
+  a.equal(progress.functionConfigurationReadOnlyCheckBeforeDeletion.functionStatus, 'Active');
+  a.equal(progress.functionConfigurationReadOnlyCheckBeforeDeletion.functionRuntime, 'Nodejs20.19');
+  a.equal(progress.functionConfigurationReadOnlyCheckBeforeDeletion.functionTimeoutSeconds, 30);
+  a.equal(progress.functionConfigurationReadOnlyCheckBeforeDeletion.functionInvocationPerformed, false);
+  a.equal(progress.authorizedRecovery.temporaryFunctionRemovalStatus, 'user-reported-deleted-and-read-only-list-empty');
+  a.deepEqual(progress.authorizedRecovery.temporaryFunctionRemovalCheck.list, []);
+  a.equal(progress.authorizedRecovery.temporaryFunctionRemovalCheck.total, 0);
 
   a.deepEqual(audit.userScreenshotCloudBaseObservation, {
     date: '2026-10-28',
@@ -815,7 +819,7 @@ test('SP01 separates confirmed runtime and user-reported database mode from runt
   a(doc.includes('用户报告')||doc.includes('用户查看'));
   a(doc.includes('文档型数据库'));
  }
- a(techDoc.includes('目标函数`sp01EnvProbe`已确认Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));a(techDoc.includes('最新修正版30秒run通过探针断言'));
+ a(techDoc.includes('临时函数`sp01EnvProbe`在事务验证期间的配置为Active / Nodejs20.19'));a(techDoc.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));a(techDoc.includes('最新修正版30秒run通过探针断言'));
  a(techDoc.includes('尚未API复核'));
  a(!techDoc.includes('没有为本项目选定Node云运行时'));
  a(!planDoc.includes('运行时选择、数据库模式、小程序端运行时'));
@@ -902,7 +906,8 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
  a(runtimeCase.includes('运行时验收通过：只读详情为Active / Nodejs20.19'));
  a(runtimeCase.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));
  a(!runtimeCase.includes('临时函数已删除'));
- a(runtimeCase.includes('最新run后的临时函数删除状态尚未确认'));
+ a(runtimeCase.includes('用户报告函数已删除'));
+ a(runtimeCase.includes('`cloud_fn_list`返回`total:0`、`list:[]`'));
  const transactionCase=techDoc.split('\n').find(line=>line.includes('ENV-DB-TX-01')); a(transactionCase.includes('最新修正版30秒run通过探针断言'));
  a(!runtimeCase.includes('临时函数已删除'));
  a(!runtimeCase.includes('等待只读观察'));
