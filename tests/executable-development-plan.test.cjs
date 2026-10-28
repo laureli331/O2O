@@ -151,7 +151,8 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
   a.equal(p.accountEvidence.technicalEnvironmentAudit.cloudCapabilityTestPlan.preDeploymentCloudFunctionCount,0);
   a(tech.includes('Nodejs16.13') && tech.includes('历史状态'));
   a(tech.includes('恢复函数为Active / Nodejs20.19'));
-  a(runbook.includes('最新临时函数`sp01EnvProbe`为`Active / Nodejs20.19`'));
+  a(runbook.includes('最新只读详情确认临时函数`sp01EnvProbe`为`Active / Nodejs20.19`、超时配置30秒'));
+  a(runbook.includes('调整后尚未重跑'));
   a(plan.includes('曾因函数处于Creating状态返回 FailedOperation.UpdateFunctionCode'));
 });
 
@@ -340,7 +341,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(audit.cloudCapabilityTestPlan.testWriteAuthorization, 'granted-for-sp01-probe-only');
   a.equal(audit.cloudCapabilityTestPlan.realPersonalDataAllowed, false);
   a.equal(audit.cloudCapabilityTestPlan.officialSourceCheckDate, '2026-10-28');
-  const latestReadOnly = record.tasks.find((task) => task.id === 'SP01').executionProgress.latestReadOnlyCloudRecheck;
+  const progress = record.tasks.find((task) => task.id === 'SP01').executionProgress;
+  const latestReadOnly = progress.postRunTimeoutReadOnlyCloudRecheckBeforeTimeoutAdjustment;
   a.equal(latestReadOnly.source, 'wechatide-cli-read-only-after-user-run-timeout');
   a.equal(latestReadOnly.functionName, 'sp01EnvProbe');
   a.equal(latestReadOnly.functionStatus, 'Active');
@@ -350,6 +352,10 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.deepEqual(latestReadOnly.databaseCollectionNames, ['sp01_probe_20261028']);
   a.equal(latestReadOnly.databaseRecordCount, 0);
   a.equal(latestReadOnly.provesRunCleanupCompleted, false);
+  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionStatus, 'Active');
+  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionRuntime, 'Nodejs20.19');
+  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionTimeoutSeconds, 30);
+  a.equal(progress.latestFunctionConfigurationReadOnlyCheck.functionInvocationPerformed, false);
 
   a.deepEqual(audit.userScreenshotCloudBaseObservation, {
     date: '2026-10-28',
@@ -488,6 +494,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);
   a.equal(record.accountEvidence.technicalEnvironmentAudit.userConfirmedRuntimeAndDatabase.databaseMode,'文档型数据库');
   a(sp01.executionProgress.nextAction.includes('Nodejs20.19') && sp01.executionProgress.nextAction.includes('用户报告数据库模式为文档型，尚未API复核'));
+  a(sp01.executionProgress.nextAction.includes('最新只读详情确认超时30秒'));
+  a(sp01.executionProgress.nextAction.includes('须先重新确认下一次云端测试步骤'));
   a(sp01.executionProgress.nextAction.includes('报告当前环境已选中cloud1'));
 });
 

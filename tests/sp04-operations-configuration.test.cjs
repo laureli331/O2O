@@ -332,6 +332,12 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.equal(record.latestProbeRunAttempt.cleanupVerified, false);
   assert.equal(record.latestProbeRunAttempt.currentReadOnlyRecordCount, 0);
   assert.equal(record.latestProbeRunAttempt.currentReadOnlyRequestId, '7fb04c35-77aa-4f5f-bd6c-666a87db5b3d');
+  assert.equal(record.latestProbeRunAttempt.userReportsChangeCompleted, true);
+  assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.functionStatus, 'Active');
+  assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.runtime, 'Nodejs20.19');
+  assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.timeoutSeconds, 30);
+  assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.functionInvocationPerformed, false);
+  assert.equal(record.latestTimeoutAdjustmentReadOnlyCheck.cleanupVerified, false);
   assert.equal(record.latestCloudFunctionRecheck.functionStatus, 'Active');
   assert.equal(record.latestCloudFunctionRecheck.databaseCollectionCount, 0);
   assert.equal(record.previousTemporaryProbeTestAttempt.postAttemptCollectionState, 'not-present-on-read-only-recheck');
@@ -347,6 +353,8 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   assert.ok(doc.includes('该菜单决定函数上传/部署目标'));
   assert.ok(doc.includes('用户确认首版Node.js20.19'));
   assert.ok(doc.includes('报告数据库为文档型但尚未API复核'));
+  assert.ok(doc.includes('最新只读详情确认超时30秒'));
+  assert.ok(doc.includes('调整后尚未重跑'));
   assert.ok(doc.includes('未修改QuickStart业务配置或云端数据库/存储设置'));
 });
 

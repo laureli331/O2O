@@ -361,11 +361,13 @@ test('SP01 progress distinguishes the deployed function from pending cloud accep
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.collectionCount, 0);
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.requestId, 'cf8e9a09-ac8a-4d7a-8359-43886e31874c');
   assert.equal(task.executionProgress.previousPostProbeReadOnlyDatabaseCheck.provesFunctionDidNotTransientlyCreateCollectionDuringAttempt, false);
-  assert.match(runbook, /最新临时函数`sp01EnvProbe`为`Active \/ Nodejs20.19`/);
+  assert.match(runbook, /最新只读详情确认临时函数`sp01EnvProbe`为`Active \/ Nodejs20.19`、超时配置30秒/);
+  assert.match(runbook, /安装目录CLI只读详情确认当前配置为30秒/);
+  assert.match(runbook, /调整后尚未重跑/);
   assert.match(runbook, /inspect.*结构化响应通过/);
   assert.match(runbook, /prepare.*固定集合sp01_probe_20261028已创建/);
   assert.match(runbook, /run.*3秒.*433.*超时/);
-  assert.match(runbook, /当前只读集合记录数为0/);
+  assert.match(runbook, /当前记录数为0/);
   assert.match(runbook, /清理未验收/);
   assert.match(runbook, /删除后的只读查询返回数据库集合列表为空/);
   assert.match(runbook, /固定集合sp01_probe_20261028已创建/);
