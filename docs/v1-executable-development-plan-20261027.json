@@ -272,6 +272,7 @@
         "separateTestEnvironmentVerified": false,
         "testWriteAuthorization": "read-only-only",
         "realPersonalDataAllowed": false,
+        "officialSourceCheckDate": "2026-10-28",
         "cases": [
           {
             "id": "ENV-RUNTIME-01",
@@ -283,8 +284,8 @@
           {
             "id": "ENV-DB-TX-01",
             "operation": "cloud-write-requires-explicit-authorization",
-            "input": "隔离测试环境中的无个人信息测试记录：事务成功提交、事务中途注入失败、并发版本冲突；重复请求仅在业务契约确定幂等键后执行",
-            "expected": "依据实际数据库模式和已确认事务契约核对提交/回滚及并发结果，不允许部分写入；不预设未知数据库模式或冲突策略",
+            "input": "隔离测试环境中的无个人信息测试记录：服务端Node SDK事务成功提交、事务中途注入失败、并发写冲突；重复请求仅在业务契约确定幂等键后执行。单次事务遵守官方已公布的100次操作、30秒、doc方法限制，不在事务内调用外部服务",
+            "expected": "依据实际数据库模式和已确认事务契约核对提交/回滚及写冲突结果，不允许部分写入；不预设未知数据库模式或业务冲突策略",
             "status": "not-executed-no-write-authorization"
           },
           {

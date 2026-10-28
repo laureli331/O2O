@@ -78,7 +78,7 @@ test('SP01 execution record separates historical CLI failures from current read-
   a(!planDoc.includes('本轮新AppID环境列表查询失败'));
   a(!planDoc.includes('云环境清单查询受阻'));
   a(!planDoc.includes('当前开发者工具“查看所有项目”列表只显示'));
-  for(const url of ['https://docs.cloudbase.net/en/cloud-function/runtime-support','https://docs.cloudbase.net/cli-v1/functions/configs','https://docs.cloudbase.net/en/database/transaction','https://docs.cloudbase.net/storage/data-permission'])a(doc.includes(url),url);
+  for(const url of ['https://docs.cloudbase.net/en/cloud-function/runtime-support','https://docs.cloudbase.net/cli-v1/functions/configs','https://docs.cloudbase.net/database/transaction','https://docs.cloudbase.net/storage/data-permission'])a(doc.includes(url),url);
   a.equal(p.architecture.cloudRuntimeVersion,null);a.equal(p.architecture.databaseMode,null);a.equal(p.architecture.sdkVersions,null);a.equal(p.accountEvidence.liveCloudRevalidatedThisDelivery,true);
   a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.clientName,'Codex');a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.cliAuthorization,'already-trusted');a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.queryStatus,'connect-error-before-cloud-response');a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.environmentListRetrieved,false);a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.devtoolsRestartConfirmedByUser,true);a.deepEqual(p.accountEvidence.previousReadOnlyQueryAttempt.processObservationAfterRestart,{processId:51712,startedAtLocal:'2026-10-27 20:06:15'});a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.postRestartAuthorization.authorized,true);a.equal(p.accountEvidence.previousReadOnlyQueryAttempt.postRestartAuthorization.alreadyTrusted,true);
   a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.compatible,true);a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.version,'2.02.2608080');a.equal(p.inventory.wechatDevToolsInstallationDiagnostic.provesBridgeConnection,false);
@@ -244,6 +244,7 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a.equal(audit.cloudCapabilityTestPlan.separateTestEnvironmentVerified, false);
   a.equal(audit.cloudCapabilityTestPlan.testWriteAuthorization, 'read-only-only');
   a.equal(audit.cloudCapabilityTestPlan.realPersonalDataAllowed, false);
+  a.equal(audit.cloudCapabilityTestPlan.officialSourceCheckDate, '2026-10-28');
   a.deepEqual(audit.cloudCapabilityTestPlan.cases.map((testCase) => testCase.id), [
     'ENV-RUNTIME-01', 'ENV-DB-TX-01', 'ENV-STORE-01', 'ENV-CLEANUP-01',
   ]);
@@ -268,6 +269,8 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(doc.includes('目标环境受控验证方案（尚未执行）'));
   a(doc.includes('ENV-DB-TX-01'));
   a(doc.includes('ENV-STORE-01'));
+  a(doc.includes('单事务最多100个操作、最长30秒'));
+  a(doc.includes('并应避免事务期间DDL及外部调用'));
   a(doc.includes('清理也是云端变更'));
   a(planDoc.includes('CLI技能版本为'));
   a(planDoc.includes('PowerShell清点未发现ADB'));
