@@ -107,6 +107,14 @@ test('standalone project targets the confirmed AppID and EnvID without sharing t
   assert.doesNotMatch(entry, /\.\.\//);
 });
 
+test('probe README reflects the latest log-settings inspection instead of asking for a completed check', () => {
+  const readme = fs.readFileSync(path.resolve(__dirname, '../tools/sp01-storage-probe/README.md'), 'utf8');
+  assert.ok(readme.includes('投递到 CLS'));
+  assert.ok(readme.includes('Nodejs16.13'));
+  assert.ok(readme.includes('失败根因仍未确认'));
+  assert.ok(!readme.includes('下一步先只读核对日志筛选与配置可见性'));
+});
+
 test('identity handler hashes only trusted per-request WX context and never returns raw identifiers', async () => {
   const trustedOpenId = 'raw-openid-must-never-escape';
   const handler = createIdentityHandler({
