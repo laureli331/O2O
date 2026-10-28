@@ -24,7 +24,7 @@ function validate(p){
 test('executable plan covers all first-release modules and all 60 legacy references with a gated acyclic task graph',()=>a.equal(validate(load()),true));
 test('human plan and structured 36 delivery cards agree on work, dependencies and acceptance',()=>{const p=load(),s=read(p.document);for(const t of p.tasks){const start=s.indexOf('### '+t.id+' '+t.title);a(start>=0,t.id);const next=s.indexOf('\n### ',start+1),block=s.slice(start,next<0?s.indexOf('\n## 7.',start):next);a(block.includes(t.deliverable),t.id+' deliverable');for(const v of [...t.dependsOn,...t.steps,...t.acceptance])a(block.includes(v),t.id+' '+v);}for(const [,target]of s.matchAll(/\]\(([^)]+)\)/g))if(!/^https?:/.test(target))a(fs.existsSync(path.resolve(path.dirname(path.join(root,p.document)),target.split('#')[0])),target);a(s.indexOf('## 1. 验证方案')<s.indexOf('## 6. 36张'));});
 test('repository inventory is an as-of source snapshot and does not prohibit creating a future product',()=>{const p=load();a.match(p.sourceCommit,/^[a-f0-9]{40}$/);const names=cp.execFileSync('git',['ls-tree','--name-only',p.sourceCommit],{cwd:root,encoding:'utf8'}).split(/\r?\n/);for(const name of ['miniprogram','cloudfunctions','packages','package.json','project.config.json'])a(!names.includes(name));a.equal(p.inventory.formalProjectPresent,false);a.equal(p.inventory.localVersionsAreCloudVersions,false);});
-test('plan records the user-confirmed target CloudBase environment and appid-scoped API confirmation',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-screenshot-and-cli-environment-list-visible-appid-and-envid-not-runtime-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'in-progress');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,3);a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('目标环境运行时、数据库模式、事务和私密文件权限仍未验证')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
+test('plan records the user-confirmed target CloudBase environment and appid-scoped API confirmation',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-screenshot-and-cli-environment-list-visible-appid-and-envid-not-runtime-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'in-progress');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,4);a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('目标环境运行时、数据库模式、事务和私密文件权限仍未验证')));a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('手机型号、系统/微信基础库、后台浏览器及正常/弱网条件仍待用户确认')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
 test('SP01 records CloudBase screenshots separately from the user-confirmed target-project association',()=>{
   const p=load(),scaffold=p.inventory.userCreatedQuickStartScaffold,current=p.accountEvidence.latestUserCreatedProjectAndCloudConsoleObservation,task=p.tasks.find(x=>x.id==='SP01'),doc=read('docs/sp01-technical-environment-20261027.md'),plan=read('docs/v1-executable-development-plan-20261027.md'),settings=current.latestSettingsScreenshot,fees=current.latestFeeManagementScreenshot;
   a.equal(scaffold.present,true);a.equal(scaffold.createdByUser,true);a.equal(scaffold.appId,p.accountEvidence.formalNewAppId);a.equal(scaffold.matchesFormalTargetAppId,true);a.equal(scaffold.containsProductImplementation,false);a.equal(scaffold.cloudEnvironmentIdConfigured,true);a.equal(scaffold.appJsEnvironmentValue,'cloud1-d2gjahlq39bf141c7');a.equal(scaffold.envListIsEmpty,true);a.equal(current.configuredAppIdMatchesFormalTarget,true);a.equal(current.scaffoldOnly,true);a.equal(current.environmentIdConfigured,true);a.equal(current.confirmedCloudEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(current.userConfirmedCloudEnvironmentCreatedFromTargetProject,true);a.equal(current.cloudEnvironmentBindingApiVerified,true);a.equal(current.cloudEnvironmentBindingApiEvidenceDate,'2026-10-28');a.equal(current.cloudEnvironmentBindingApiEvidenceMethod,'target-appid-scoped-cloud-env-list');
@@ -205,6 +205,48 @@ test('SP01 resolves the CLI wrapper path and records the read-only target enviro
   a(latestChecks.some((check) => check.includes('直接使用微信开发者工具安装目录')));
   a(latestChecks.some((check) => check.includes('cloud_fn_list和cloud_db_read_struct命令显式传入目标AppID')));
   a(record.tasks.find((task) => task.id === 'SP01').executionProgress.blockedChecks.some((check) => check.includes('目标环境运行时、数据库模式、事务和私密文件权限仍未验证')));
+});
+
+test('SP01 records read-only CLI capability limits and detectable equipment without inventing runtime or device verification', () => {
+  const record = load();
+  const audit = record.accountEvidence.technicalEnvironmentAudit;
+  const doc = read('docs/sp01-technical-environment-20261027.md');
+  const planDoc = read('docs/v1-executable-development-plan-20261027.md');
+
+  a.equal(audit.cliSkillVersion, '0.3.11');
+  a.deepEqual(audit.databaseStructureReadActions, ['listCollections', 'describeCollection', 'checkCollection', 'listIndexes', 'checkIndex']);
+  a.equal(audit.cliExposesEnvironmentRuntimeConfigurationQuery, false);
+  a.equal(audit.cliExposesDatabaseModeQuery, false);
+  a.equal(audit.cliExposesStoragePermissionConfigurationQuery, false);
+  a.deepEqual(audit.storageReadActions, ['list', 'info', 'url', 'read']);
+  a.equal(audit.storageContentReadThisTurn, false);
+  a.equal(audit.androidDebugBridgeFound, false);
+  a.equal(audit.physicalDeviceInventoryVerified, false);
+  a.equal(audit.adminBrowserSelected, false);
+  a.equal(audit.normalNetworkScenario, null);
+  a.equal(audit.weakNetworkScenario, null);
+  a.equal(audit.androidModelConfirmed, false);
+  a.equal(audit.iphoneModelConfirmed, false);
+  a.deepEqual(audit.installedDesktopBrowsers, [
+    { name: 'Google Chrome', version: '156.0.8078.47' },
+    { name: 'Microsoft Edge', version: '156.0.4314.50' },
+    { name: 'Mozilla Firefox (x64 zh-CN)', version: '153.0' },
+  ]);
+  a.equal(audit.adminBrowserSelected, false);
+  a(doc.includes('CLI帮助没有提供环境级运行时、数据库模式或存储权限配置的只读查询'));
+  a(doc.includes('未调用存储文件列表、临时链接或内容读取'));
+  a(doc.includes('未发现ADB，也未在常见Android SDK目录找到adb.exe'));
+  a(doc.includes('这不证明用户没有测试手机'));
+  a(doc.includes('本机安装的桌面浏览器为Chrome'));
+  a(doc.includes('实际后台验收浏览器仍待确认'));
+  a(planDoc.includes('CLI技能版本为'));
+  a(planDoc.includes('PowerShell清点未发现ADB，也未在常见Android SDK目录找到'));
+  a(planDoc.includes('手机型号、系统/微信基础库与正常/弱网条件也未核实'));
+  const sp01 = record.tasks.find((task) => task.id === 'SP01');
+  a.equal(sp01.status, 'in-progress');
+  a.equal(sp01.productAcceptancePassed, false);
+  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('手机型号、系统/微信基础库、后台浏览器及正常/弱网条件仍待用户确认')));
+  a(sp01.executionProgress.nextAction.includes('确认Android/iPhone实机型号'));
 });
 
 test('SP01 records the local diagnostic project AppID separately from the new target AppID', () => {

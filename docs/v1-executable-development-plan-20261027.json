@@ -195,6 +195,50 @@
       "environmentApiVerified": true,
       "runtimeVerified": false
     },
+    "technicalEnvironmentAudit": {
+      "date": "2026-10-28",
+      "method": "installed-wechatide-cli-help-and-read-only-windows-host-inventory",
+      "cliSkillVersion": "0.3.11",
+      "databaseStructureReadActions": [
+        "listCollections",
+        "describeCollection",
+        "checkCollection",
+        "listIndexes",
+        "checkIndex"
+      ],
+      "cliExposesEnvironmentRuntimeConfigurationQuery": false,
+      "cliExposesDatabaseModeQuery": false,
+      "cliExposesStoragePermissionConfigurationQuery": false,
+      "storageReadActions": [
+        "list",
+        "info",
+        "url",
+        "read"
+      ],
+      "storageContentReadThisTurn": false,
+      "androidDebugBridgeFound": false,
+      "androidDebugBridgeSearch": "Get-Command and standard Android SDK platform-tools paths",
+      "physicalDeviceInventoryVerified": false,
+      "androidModelConfirmed": false,
+      "iphoneModelConfirmed": false,
+      "installedDesktopBrowsers": [
+        {
+          "name": "Google Chrome",
+          "version": "156.0.8078.47"
+        },
+        {
+          "name": "Microsoft Edge",
+          "version": "156.0.4314.50"
+        },
+        {
+          "name": "Mozilla Firefox (x64 zh-CN)",
+          "version": "153.0"
+        }
+      ],
+      "adminBrowserSelected": false,
+      "normalNetworkScenario": null,
+      "weakNetworkScenario": null
+    },
     "devtoolsProjectCreationWizardObservation": {
       "observationDate": "2026-10-27",
       "screenshot": "codex-clipboard-1a1ebb2d-4268-435e-8f86-40237ba5cd56.png",
@@ -710,14 +754,17 @@
           "复核腾讯云官方资源点价格文档：免费CloudBase环境在小程序发布后第15天到期并进入停服隔离，隔离期仍未转付费将销毁；如目标环境确属该免费环境且需持续使用，应在发布准备中安排付费转换。个人版当前¥19.9/月为限时优惠，规则未指定唯一套餐；较早概览、设置和费用截图未证明目标环境归属，最新详情截图已提供截图级应用/环境关联证据，但环境类型和到期日仍未验证。",
           "2026-10-28只读进程清单显示开发者工具主窗口标题为湘邻湘友；本地目标项目配置为wx2414399d423dfb65。project_list确认该目标项目已登记，但没有证明它是活动窗口当前加载的路径",
           "此前shell将wechatide解析到E:\\O2O\\.local\\tools\\wechat-devtools\\wechatide.cmd，该路径调用status与cloud_env_list返回CONNECT_ERROR；直接使用微信开发者工具安装目录E:\\微信web开发者工具\\wechatide.cmd后，status返回success/loginExpired=false/versionRelation=equal，按目标AppID的cloud_env_list返回cloud1-d2gjahlq39bf141c7",
-    "首次云资源查询因遗漏必需的-c Codex参数返回INPUT_ERROR/missing_client，没有发出云请求；根据CLI帮助补齐参数后重试。直接使用安装目录CLI进行只读核验：project_list包含E:\\O2O\\miniprogram及目标AppID wx2414399d423dfb65；cloud_fn_list和cloud_db_read_struct命令显式传入目标AppID wx2414399d423dfb65及EnvID cloud1-d2gjahlq39bf141c7，分别返回0个云函数和0个数据库集合。响应未回显EnvID，查询作用域由命令参数记录。没有部署或写入云端资源"
+          "首次云资源查询因遗漏必需的-c Codex参数返回INPUT_ERROR/missing_client，没有发出云请求；根据CLI帮助补齐参数后重试。直接使用安装目录CLI进行只读核验：project_list包含E:\\O2O\\miniprogram及目标AppID wx2414399d423dfb65；cloud_fn_list和cloud_db_read_struct命令显式传入目标AppID wx2414399d423dfb65及EnvID cloud1-d2gjahlq39bf141c7，分别返回0个云函数和0个数据库集合。响应未回显EnvID，查询作用域由命令参数记录。没有部署或写入云端资源",
+          "CLI技能版本为0.3.11；结构查询只列出集合/索引读取操作，未提供环境级运行时、数据库模式或存储权限配置的只读查询；帮助显示的云函数部署、数据库写入及存储上传/删除是变更操作。本轮未读取云存储文件列表、临时链接或内容",
+          "本机设备清点未发现ADB命令或常见Android SDK路径中的adb.exe；这不证明用户没有测试手机。注册表发现Chrome 156.0.8078.47、Edge 156.0.4314.50、Firefox 153.0，均仅证明已安装，实际后台浏览器未确认"
         ],
         "blockedChecks": [
           "目标环境运行时、数据库模式、事务和私密文件权限仍未验证；本次只读检查显示尚无云函数和集合，按已授权范围未部署测试函数或写入数据",
           "project_list确认目标本地工程已登记且AppID匹配，但当前活动窗口实际加载路径仍未验证；截图级和cloud_env_list的应用/环境关联已确认",
+          "手机型号、系统/微信基础库、后台浏览器及正常/弱网条件仍待用户确认；本机未发现ADB，因此不能自动枚举实机；缺失设备组不能记性能通过",
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不符合官方同主体共享前提，不作为新号候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞"
         ],
-  "nextAction": "目标AppID的cloud_env_list已通过微信开发者工具安装目录内CLI返回cloud1-d2gjahlq39bf141c7；project_list确认E:\\O2O\\miniprogram已登记且AppID匹配。云函数和数据库集合只读查询均显式传入目标AppID及EnvID，分别返回0个函数和0个集合，响应未回显EnvID，查询作用域由命令参数留证。当前活动窗口加载路径仍未确认；目标环境运行时、数据库模式、事务与私密文件权限未实测。下一步按SP01检查官方运行时/能力资料并列出需要的受控验证；任何云端部署或写入测试须先取得具体授权。旧号个人主体的cloud1不作新号共享候选。用户要求本轮不再核对费用；若上线后出现实际付费提示，用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
+        "nextAction": "目标AppID的cloud_env_list已通过微信开发者工具安装目录内CLI返回cloud1-d2gjahlq39bf141c7；project_list确认E:\\O2O\\miniprogram已登记且AppID匹配。云函数和数据库集合只读查询均显式传入目标AppID及EnvID，分别返回0个函数和0个集合，响应未回显EnvID，查询作用域由命令参数留证。CLI帮助没有环境级运行时、数据库模式或存储权限配置查询，本轮未读取存储文件；实际运行时、事务与私密文件权限需后续受控测试。当前活动窗口加载路径仍未确认。下一步请用户确认Android/iPhone实机型号、系统/微信基础库、后台验收浏览器及正常/弱网条件；之后继续完成SP01能力证据与受控测试清单。任何云端部署或写入测试须先取得具体授权。旧号个人主体的cloud1不作新号共享候选。用户要求本轮不再核对费用；若上线后出现实际付费提示，用户自行处理后续平台付费提示。本轮不购买、不启用按量付费或自动续费。SP01保持进行中，SP07不得越过SP01—SP06门槛。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

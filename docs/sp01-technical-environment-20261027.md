@@ -78,6 +78,14 @@ CloudBase[创建环境文档](https://docs.cloudbase.net/quick-start/create-env)
 
 没有为本项目选定Node云运行时、CloudBase数据库模式、SDK版本或额外依赖。SP07若获准进入，依赖选择须读取目标环境和实际构建工具证据，固定直接/传递版本及锁文件，并通过干净工作区复现安装与测试；不能从本机Node版本反推云端配置。
 
+## CLI能力与本机验收设备清点
+
+2026-10-28通过安装目录CLI帮助读取技能版本0.3.11及工具参数，不调用云端写操作。帮助列出cloud_db_read_struct的listCollections、describeCollection、checkCollection、listIndexes、checkIndex只读操作；当前目标环境集合数为0，因此没有结构可描述。cloud_fn_info要求已存在函数名；目标环境函数数为0，不能从中读取运行时配置。CLI帮助没有提供环境级运行时、数据库模式或存储权限配置的只读查询；部署云函数、写数据库和上传/删除存储文件属于变更操作。由此只能确认当前CLI暴露的查询面，不能推断平台不存在其他管理入口或目标环境已通过这些能力验收。
+
+CLI还提供存储list、info、url和read查询；本轮未调用存储文件列表、临时链接或内容读取，避免无必要地暴露云文件元数据或内容。CloudBase[存储权限文档](https://docs.cloudbase.net/storage/data-permission)说明传统模式按_openid判定文件归属，PG模式使用PostgreSQL RLS策略；这只是通用规则说明，未揭示目标环境当前模式或配置。存储私密性仍须在受控测试中以匿名、所有者、其他用户和管理员角色验证读取、写入、链接失效及撤权。
+
+本机验收设备盘点使用PowerShell检查ADB命令及常见Android SDK platform-tools目录，未发现ADB，也未在常见Android SDK目录找到adb.exe。这不证明用户没有测试手机，也不能据此记录任何实际手机型号。注册表中检测到本机安装的桌面浏览器为Chrome 156.0.8078.47、Edge 156.0.4314.50、Firefox 153.0；这仅是安装版本，未确认正在使用哪个浏览器执行后台验收。实际后台验收浏览器仍待确认。Android/iPhone品牌型号、系统与微信基础库、实际浏览器、正常/弱网参数、设备可用性及缓存/测试数据条件继续按质量合同ENV01留空；缺失设备组不能记性能通过。
+
 ## 验证与恢复
 
 计划测试将验证：截图中的目标AppID/EnvID关联、QuickStart本地绑定和未完成的API/运行时验证彼此区分；脚手架不误记为产品实现；较早截图不冒认归属、收费或到期条款；旧AppID共享限制、SP01进行中状态和失败查询边界保留；运行时/模式/SDK未核验仍为空。文档测试只核实记录一致性，不替代CloudBase实测。
