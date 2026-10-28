@@ -609,21 +609,23 @@ test('SP01 records simulator compilation separately from cloud identity, storage
   a.equal(probe.latestIdentityProbeLogInspection.runtime, 'Nodejs16.13');
   a.equal(probe.latestIdentityProbeLogInspection.timeoutSeconds, 3);
   a.equal(probe.latestIdentityProbeLogInspection.functionDetailLogConfigurationOrTopicVisible, false);
+  a.equal(probe.latestIdentityProbeLogInspection.logsPageResult, 'no-records-after-filtered-query');
   a.deepEqual(probe.latestIdentityProbeLogInspection.logsPageUi, {
-    functionFilter: '全部云函数',
+    functionFilter: 'sp01IdentityProbe',
     timeRange: '最近24小时',
     logSettingsControlVisible: true,
     logSettingsMenuOpened: false,
     searchButtonVisible: true,
-    searchAction: 'not-reported',
+    searchAction: 'queried',
+    searchResult: 'no-records-reported',
   });
   a.equal(probe.latestIdentityProbeLogInspection.logsPageOpenedAfterClientAttempt, true);
-  a.equal(probe.latestIdentityProbeLogInspection.queryOrRefreshAction, 'not-reported');
+  a.equal(probe.latestIdentityProbeLogInspection.queryOrRefreshAction, 'user-reported-filtered-query');
   a.equal(probe.latestIdentityProbeLogInspection.invocationArrivalConfirmed, false);
   a.equal(probe.probeCloudStorageWrittenOrDeleted, false);
   a.equal(probe.realDeviceRun, false);
   a.equal(probe.nextCloudActionRequiresNewAuthorization, false);
-  a.equal(probe.pendingCloudStep, 'read-only-check-cloudbase-log-query-filters-and-function-log-configuration-visibility; do-not-retry');
+  a.equal(probe.pendingCloudStep, 'read-only-inspect-cloudbase-log-settings-menu; do-not-retry');
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
   a(runbook.includes('confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b'));
   a(runbook.includes('confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba'));
@@ -1066,20 +1068,21 @@ test('SP01 records the selected menu separately from the deployed temporary prob
  a.equal(sp04.latestIdentityProbeLogInspection.timeoutSeconds,3);
  a.equal(sp04.latestIdentityProbeLogInspection.functionDetailLogConfigurationOrTopicVisible,false);
  a.deepEqual(sp04.latestIdentityProbeLogInspection.logsPageUi,{
-  functionFilter:'全部云函数',
+  functionFilter:'sp01IdentityProbe',
   timeRange:'最近24小时',
   logSettingsControlVisible:true,
   logSettingsMenuOpened:false,
   searchButtonVisible:true,
-  searchAction:'not-reported',
+  searchAction:'queried',
+  searchResult:'no-records-reported',
  });
- a.equal(sp04.latestIdentityProbeLogInspection.queryOrRefreshAction,'not-reported');
+ a.equal(sp04.latestIdentityProbeLogInspection.queryOrRefreshAction,'user-reported-filtered-query');
  a.equal(sp04.latestIdentityProbeLogInspection.settingsChanged,false);
  a.equal(sp04.latestIdentityProbeLogInspection.clientRetestPerformed,false);
  a.equal(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix.clientRetestPerformed,true);
  a(sp04Task.executionProgress.nextAction.includes('IDENTITY_CALL_FAILED'));
- a(sp04Task.executionProgress.nextAction.includes('只读查看日志设置入口并按函数名和调用时段查询'));
- a(sp04Task.executionProgress.nextAction.includes('不再次调用'));
+ a(sp04Task.executionProgress.nextAction.includes('仅继续只读核对日志设置入口'));
+ a(sp04Task.executionProgress.nextAction.includes('不重复调用'));
  a(!sp04Task.executionProgress.nextAction.includes('账号A在真实微信客户端扫码打开隔离探针'));
  a(read('docs/sp01-cloud-probe-runbook-20261028.md').includes('O2O-SP01-preview-20261028-193939.jpg'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);

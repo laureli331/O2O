@@ -686,25 +686,28 @@ test('SP04 report includes evidence limits, rollback, and every remaining user o
   assert.ok(!doc.includes('22:00后或其他无人值班时段如何处理请求'));
 });
 
-test('CloudBase log-page screenshot records visible filters and settings entry without implying a query ran', () => {
+test('CloudBase filtered log query records no matching events without inferring invocation failure', () => {
   const observation = evidence().latestIdentityProbeLogInspection;
+  assert.equal(observation.logsPageResult, 'no-records-after-filtered-query');
   assert.deepEqual(observation.logsPageUi, {
-    functionFilter: '全部云函数',
+    functionFilter: 'sp01IdentityProbe',
     timeRange: '最近24小时',
     logSettingsControlVisible: true,
     logSettingsMenuOpened: false,
     searchButtonVisible: true,
-    searchAction: 'not-reported',
+    searchAction: 'queried',
+    searchResult: 'no-records-reported',
   });
   assert.equal(observation.functionDetailLogConfigurationOrTopicVisible, false);
   assert.equal(observation.invocationArrivalConfirmed, false);
   assert.equal(observation.failureCauseDetermined, false);
+  assert.equal(observation.queryOrRefreshAction, 'user-reported-filtered-query');
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
-  assert.ok(runbook.includes('筛选器为“全部云函数”、时间范围为“最近24小时”'));
+  assert.ok(runbook.includes('用户随后按函数筛选`sp01IdentityProbe`并查询最近24小时，报告无记录'));
   assert.ok(runbook.includes('右上“日志设置”入口'));
   assert.ok(runbook.includes('菜单未打开'));
-  assert.ok(read('docs/sp01-technical-environment-20261027.md').includes('日志页截图显示筛选器为“全部云函数”'));
-  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('先前截图显示筛选器为“全部云函数”'));
+  assert.ok(read('docs/sp01-technical-environment-20261027.md').includes('按`sp01IdentityProbe`筛选并查询最近24小时，报告无记录'));
+  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('按`sp01IdentityProbe`筛选并查询最近24小时后报告无记录'));
 });
 
 test('SP04 records the latest read-only identity-probe status without treating it as deployment or client proof', () => {
@@ -730,7 +733,7 @@ test('SP04 records the latest read-only identity-probe status without treating i
   assert.ok(sp01.executionProgress.completedChecks.includes(evidenceText));
   assert.ok(sp04.executionProgress.completedChecks.includes(evidenceText));
   assert.deepEqual(sp04.executionProgress.latestIdentityProbePostConfirmationReadOnlyCheck, expected);
-  assert.deepEqual(record.remainingChecks.at(-1), '真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户调用后打开日志页看到无数据，函数详情底部未见日志配置/主题，运行时Nodejs16.13、超时3秒；未改设置、未重跑。当前不能判定请求是否到达或失败根因；仅继续只读核对日志筛选/配置。');
+  assert.deepEqual(record.remainingChecks.at(-1), '真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；函数详情底部未见日志配置/主题，运行时Nodejs16.13、超时3秒；未改设置、未重跑。当前不能判定请求是否到达或失败根因；仅继续只读核对日志设置入口。');
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('用户报告真实客户端调用返回`IDENTITY_CALL_FAILED`'));
 });
