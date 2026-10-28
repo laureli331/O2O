@@ -1,0 +1,15 @@
+{
+  "appid": "wx2414399d423dfb65",
+  "projectname": "SP01-storage-permission-probe",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "libVersion": "2.20.1",
+  "setting": {
+    "urlCheck": true,
+    "es6": true,
+    "enhance": true,
+    "minified": true,
+    "nodeModules": false
+  }
+}

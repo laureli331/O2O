@@ -1,0 +1,10 @@
+{
+  "name": "sp01-identity-probe",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "description": "Temporary identity fingerprint endpoint for the SP01 two-account storage probe.",
+  "dependencies": {
+    "wx-server-sdk": "4.0.2"
+  }
+}
