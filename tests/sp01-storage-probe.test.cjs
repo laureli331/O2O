@@ -22,6 +22,23 @@ const cloudPath = 'sp01_permission_probe/owner-probe-a7c31e.txt';
 const ownerContent = 'SP01-SYNTHETIC-OWNER:a7c31e';
 const bundle = { version: 1, nonce, ownerFingerprint, fileID, cloudPath, ownerContent };
 
+test('storage review preserves specification-stage gates and current unaccepted product state', () => {
+  const root = path.resolve(__dirname, '..');
+  const readJson = (name) => JSON.parse(fs.readFileSync(path.join(root, 'docs', name), 'utf8'));
+  const plan = readJson('v1-executable-development-plan-20261027.json');
+  const quality = readJson('v1-quality-acceptance-20261027.json');
+  assert.equal(quality.taskContracts.find((item) => item.task === 'SP01').reviewPhaseOnly, true);
+  assert.equal(plan.tasks.find((item) => item.id === 'SP01').productAcceptancePassed, false);
+  assert.deepEqual(plan.tasks.find((item) => item.id === 'SP07').dependsOn, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
+  const review = fs.readFileSync(path.join(root, 'docs/sp01-storage-acceptance-review-20261029.md'), 'utf8');
+  const ids = [...review.matchAll(/^\| (FS\d+) \|/gm)].map((match) => match[1]);
+  assert.equal(ids.length, 11);
+  assert.equal(new Set(ids).size, ids.length);
+  for (const link of review.matchAll(/\]\(([^)]+)\)/g)) {
+    if (!/^https?:/.test(link[1])) assert.ok(fs.existsSync(path.resolve(root, 'docs', link[1])), link[1]);
+  }
+});
+
 test('owner delete explains modal failure and cancellation without cloud calls', () => {
   for (const failed of [true, false]) {
     const page = loadProbePage({ showModal: (options) => {
