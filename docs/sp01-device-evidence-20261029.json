@@ -41,6 +41,25 @@
       "marketingModelMappingVerified": true,
       "historicalStorageRequestDeviceAssociationVerified": false,
       "performanceTestExecuted": false
+    },
+    {
+      "id": "DEVICE03",
+      "brand": "HUAWEI",
+      "reportedModel": "BON-AL00",
+      "system": "Android 12",
+      "wechatVersion": "8.0.79",
+      "sdkVersion": "3.17.5",
+      "platform": "android",
+      "screenWidth": 360,
+      "screenHeight": 800,
+      "windowWidth": 360,
+      "fontSizeSetting": 16,
+      "refreshRateHz": null,
+      "renderEngine": null,
+      "performanceSamplingCapability": null,
+      "marketingModelMappingVerified": false,
+      "historicalStorageRequestDeviceAssociationVerified": false,
+      "performanceTestExecuted": false
     }
   ]
 }

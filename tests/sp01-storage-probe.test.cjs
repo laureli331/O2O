@@ -25,6 +25,9 @@ const bundle = { version: 1, nonce, ownerFingerprint, fileID, cloudPath, ownerCo
 test('physical device evidence remains distinct from simulator and historical download attribution', () => {
   const evidence = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../docs/sp01-device-evidence-20261029.json'), 'utf8'));
   assert.equal(evidence.productAcceptancePassed, false);
+  assert.equal(evidence.devices.length, 3);
+  assert.equal(evidence.devices.filter((device) => device.platform === 'android').length, 2);
+  assert.equal(evidence.devices.filter((device) => device.platform === 'ios').length, 1);
   assert.equal(new Set(evidence.devices.map((device) => device.id)).size, evidence.devices.length);
   for (const device of evidence.devices) {
     assert.notEqual(device.platform, 'devtools');
