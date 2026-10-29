@@ -8,7 +8,7 @@ const SIZE = 5 * 1024 * 1024;
 // Temporary console-operated synthetic transport test; no user identity/permission conclusion.
 function createHandler({ app, readRange, randomId = () => crypto.randomBytes(16).toString('hex'), now = Date.now }) {
   return async (event = {}) => {
-    if (event.action === 'inspect') return { success: true, version: 'range-probe-v1', nodeVersion: process.version, writes: false };
+    if (event.action === 'inspect') return { success: true, version: 'range-probe-v2', nodeVersion: process.version, writes: false };
     if (event.action !== 'run') return { success: false, code: 'INVALID_ACTION' };
     const id = randomId();
     if (!/^[a-f0-9]{32}$/.test(id)) return { success: false, code: 'INVALID_RUN_ID' };
@@ -17,7 +17,7 @@ function createHandler({ app, readRange, randomId = () => crypto.randomBytes(16)
     const content = Buffer.alloc(SIZE);
     for (let i = 0; i < SIZE; i++) content[i] = i % 251;
     const etag = `"${crypto.createHash('md5').update(content).digest('hex')}"`;
-    const report = { success: false, version: 'range-probe-v1', cloudPath, binaryBytes: SIZE, ranges: [], cleanupConfirmed: false };
+    const report = { success: false, version: 'range-probe-v2', cloudPath, binaryBytes: SIZE, ranges: [], cleanupConfirmed: false };
     let uploadAttempted = false;
     let phase = 'upload';
     try {
@@ -43,10 +43,17 @@ function createHandler({ app, readRange, randomId = () => crypto.randomBytes(16)
         if (!matches) throw Error('CONTENT_MISMATCH');
       }
       phase = 'etag';
+      report.wrongEtagHttpStatus = null;
       try {
         await readRange({ ...options, etag: '"sp01-invalid-etag"', start: 0, end: 0 });
         report.wrongEtagRejected = false;
-      } catch (error) { report.wrongEtagRejected = error.statusCode === 412; }
+        report.wrongEtagOutcome = 'unexpected-success';
+      } catch (error) {
+        const status = error?.statusCode;
+        report.wrongEtagHttpStatus = Number.isInteger(status) && status >= 100 && status <= 599 ? status : null;
+        report.wrongEtagOutcome = report.wrongEtagHttpStatus === null ? 'unknown-error' : 'http-error';
+        report.wrongEtagRejected = report.wrongEtagHttpStatus === 412;
+      }
       report.success = report.wrongEtagRejected === true;
     } catch (_) { report.failurePhase = phase; }
     finally {

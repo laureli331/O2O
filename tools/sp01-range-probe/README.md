@@ -49,3 +49,13 @@
 range-entry-v2 将无依赖 inspect 与 dependencies、run 分离。新增入口隔离测试在旧实现下失败，证明旧 inspect 会提前加载 SDK；这是诊断耦合问题的复现，不是云端退出根因复现。需要云端新版本返回结果后才能缩小故障范围。不修改运行时、内存或权限；不自动重跑文件实验。
 
 用户随后回传：range-entry-v2 inspect 成功，运行时 v20.19.3、dependenciesLoaded:false；dependencies 返回 INITIALIZATION_FAILED / sdk-load / writes:false。因此入口可执行，异常发生于 require SDK，尚未执行 init；缺失依赖或兼容性根因仍未知。range-entry-v3 仅增加白名单异常类型/标准码/安全包名，不输出堆栈、原始消息或路径。该异常诊断用例先失败后修复，不能当作真实云端问题已修复。
+
+## 首次真实分段实验结果（2026-10-29）
+
+用户回传 range-entry-v3 的 MODULE_NOT_FOUND，缺少包为 @cloudbase/node-sdk。随后启用远程 npm 安装的完整部署请求，任务包装状态 success，但函数内层错误为 FailedOperation.UpdateFunctionCode（Updating 状态）；不得将该请求记为完整部署成功。只读核对函数恢复 Active 后，用户 dependencies 实测成功、writes:false，证明当次依赖加载及初始化可用。
+
+用户随后运行一次 run，返回 success:false / range-probe-v1；路径 `sp01_range_probe/range-e0aa22db61169ff71f272d7baf164fc3.bin`；原文件 5242880 字节。首、中、末三段各262144字节，均 matches:true，耗时分别484、318、126毫秒。wrongEtagRejected:false，cleanupConfirmed:true。随后 CLI 只读目录列表为0项，确认本轮无残留。
+
+以上支持本环境本轮三段内容读取正确及清理完成，不证明条件头生效、用户授权正确或性能达标。v1 丢弃了错误 ETag 请求的实际状态码，不能从 false 判断是206、403、网络错误还是其它结果。官方 [GET Object](https://cloud.tencent.com/document/api/436/7753)规定不匹配 If-Match 返回412；不能假设 CloudBase 返回的地址等同原生 COS 端点。
+
+range-probe-v2 只新增错误 ETag 的数值状态码和有限枚举诊断，仍要求412才通过；不输出地址、响应正文或身份。相关用例先失败后修复，不降低原断言。更新后尚未执行新云端实验，禁止将其写成已修复或通过。

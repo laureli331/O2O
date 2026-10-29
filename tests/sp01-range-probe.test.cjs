@@ -40,6 +40,7 @@ test('cloud probe checks three exact segments and wrong ETag, then cleans only i
   assert.equal(result.ranges.reduce((sum, range) => sum + range.bytes, 0), 3 * 256 * 1024);
   assert.ok(result.ranges.every((range) => range.matches));
   assert.equal(result.wrongEtagRejected, true);
+  assert.equal(result.wrongEtagHttpStatus, 412);
   assert.equal(f.calls.at(-1), 'delete');
   assert.doesNotMatch(JSON.stringify(result), /sign=|tempFileURL|cloud:\/\//);
 });
@@ -62,6 +63,24 @@ test('cleanup errors and non-412 failures cannot be counted as a passing probe',
   const result = await missing.handler({ action: 'run' });
   assert.equal(result.ranges.length, 3);
   assert.equal(result.wrongEtagRejected, false);
+  assert.equal(result.wrongEtagHttpStatus, 403);
   assert.equal(result.cleanupConfirmed, true);
   assert.equal(result.success, false);
+});
+
+test('wrong ETag diagnostics distinguish rejected 206, unknown errors and unexpected success', async () => {
+  for (const status of [206, null, 'success']) {
+    const f = fixture({ readRange: async (request, source) => {
+      if (request.etag !== '"sp01-invalid-etag"') return source.subarray(request.start, request.end + 1);
+      if (status === 'success') return Buffer.alloc(1);
+      throw Object.assign(Error('private signed url'), { statusCode: status });
+    } });
+    const result = await f.handler({ action: 'run' });
+    assert.equal(result.success, false);
+    assert.equal(result.wrongEtagRejected, false);
+    assert.equal(result.wrongEtagHttpStatus, typeof status === 'number' ? status : null);
+    assert.equal(result.wrongEtagOutcome, status === 'success' ? 'unexpected-success' : status === null ? 'unknown-error' : 'http-error');
+    assert.equal(result.cleanupConfirmed, true);
+    assert.doesNotMatch(JSON.stringify(result), /private signed url/);
+  }
 });
