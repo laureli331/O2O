@@ -2065,6 +2065,56 @@
           "productAcceptancePassed": false,
           "nextCloudAction": "fresh synthetic file plus B direct-download-only run; requires explicit authorization"
         },
+        "latest20261029ClientIdentityAndStorageEvidence": {
+          "date": "2026-10-29",
+          "source": "user-reported real-client result cards and exact-file cleanup confirmations",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "identityProbe": {
+            "initialFailure": {
+              "outerCode": "IDENTITY_CALL_FAILED",
+              "innerCode": -504002,
+              "knownMarker": "FUNCTIONS_EXECUTE_FAIL"
+            },
+            "dependencyFailureConfirmed": {
+              "errorCode": 1,
+              "message": "Cannot find module 'wx-server-sdk'",
+              "runtime": "node16"
+            },
+            "accountAResolution": {
+              "identityCallSucceeded": true,
+              "appIdMatched": true,
+              "testBundleCreated": false,
+              "cloudStorageWritePerformed": false,
+              "temporaryAuthorizationExposed": false
+            }
+          },
+          "ownerRead": {
+            "probeVersion": "owner-read-v3",
+            "account": "account-A",
+            "readSucceeded": true,
+            "contentMatchedOwnerProof": true,
+            "expectedCharacterCount": 37,
+            "actualCharacterCount": 37,
+            "textType": "OWNER"
+          },
+          "accountB": {
+            "identityDifferent": true,
+            "temporaryLinkResult": "undetermined",
+            "temporaryLinkInnerCode": 1,
+            "directDownloadResult": "undetermined",
+            "directDownloadInnerCode": -403003,
+            "samePathWriteResult": "undetermined",
+            "samePathWriteInnerCode": -503002,
+            "rawUpstreamResponseCaptured": false
+          },
+          "cleanup": {
+            "exactSyntheticFilesRemoved": true,
+            "storageDirectoryReadOnlyFileCount": 0,
+            "permissionSettingsChanged": false
+          },
+          "interpretation": "身份通路和创建者读取已得到成功证据；B的直接下载、临时链接和同路径写入结果仍无法区分权限拒绝、文件/链接状态或调用链错误，不能据此通过跨账号隔离。"
+        },
         "pendingCloudStep": "no-cloud-retest-or-settings-change-without-new-authorization"
       },
       "qualityContract": {

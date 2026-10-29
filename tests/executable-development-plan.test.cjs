@@ -1189,4 +1189,15 @@ test('SP01 records the confirmed 2026-10-29 cleanup and keeps direct-download at
   a.equal(evidence.download.installedSdkVersion, '3.17.5');
   a.equal(evidence.download.isolatedReplayPassed, 4);
   a.equal(evidence.productAcceptancePassed, false);
+  const latestClient = plan.tasks.find((task) => task.id === 'SP01').executionProgress.latest20261029ClientIdentityAndStorageEvidence;
+  a.equal(latestClient.identityProbe.accountAResolution.identityCallSucceeded, true);
+  a.equal(latestClient.identityProbe.accountAResolution.appIdMatched, true);
+  a.equal(latestClient.ownerRead.probeVersion, 'owner-read-v3');
+  a.equal(latestClient.ownerRead.contentMatchedOwnerProof, true);
+  a.equal(latestClient.accountB.identityDifferent, true);
+  a.equal(latestClient.accountB.directDownloadInnerCode, -403003);
+  a.equal(latestClient.accountB.samePathWriteInnerCode, -503002);
+  a.equal(latestClient.accountB.rawUpstreamResponseCaptured, false);
+  a.equal(latestClient.cleanup.storageDirectoryReadOnlyFileCount, 0);
+  a.equal(latestClient.cleanup.permissionSettingsChanged, false);
 });

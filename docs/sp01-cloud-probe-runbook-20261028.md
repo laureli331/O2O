@@ -1,5 +1,15 @@
 # SP01 CloudBase 受控探针操作记录
 
+## 2026-10-29 客户端身份与存储诊断最新证据
+
+早先账号 A 的调用曾返回 `IDENTITY_CALL_FAILED`，随后一次函数返回明确错误：`Cannot find module 'wx-server-sdk'`（Node.js 16 运行时）。这解释了那一轮函数执行失败；它不是权限拒绝证据。修正依赖后，账号 A 的本机结果显示身份调用成功、返回格式和目标 AppID 校验通过，且本轮没有创建测试包、创建本机临时文件或写入云存储。
+
+之后账号 A 的创建者文件复验使用 `owner-read-v3`：文件可以访问，内容与原始证明一致，预期/实际字符数均为 37，文本类型为 `OWNER`。这是创建者读取成功证据，不是跨账号隔离通过证据。
+
+账号 B 的一次核对显示身份不同，但临时链接结果为无法判定（内层码 `1`）、直接下载为无法判定（内层码 `-403003`）、同路径写入为无法判定（内层码 `-503002`）。本轮没有保留历史请求的上游回包，不能把 `-403003` 或 `-503002` 直接解释为权限拒绝。七份合成文件已按确切路径提交删除并由用户确认，`sp01_permission_probe/` 只读查询为空；未修改权限设置。
+
+因此，当前已确认身份通路和创建者读取，B 的直接下载/临时链接/同路径写入仍是证据不足，SP01 跨账号隔离和整卡验收保持未通过。后续云端复测、部署或设置变更需要新的具体授权。
+
 2026-10-28最新代码更新确认任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`返回`success / execution_success`。安装目录CLI随后只读确认`sp01IdentityProbe`为Active / Nodejs16.13 / 3秒，并列出`sp01_permission_probe/`为0个文件。此次只读核对未调用函数，不证明小程序身份通路或存储权限。
 
 初次代码更新任务`confirmation_cloud_fn_deploy_bf930b45-03a9-4b9b-841d-bf63d005d38b`返回`success / execution_success`，包统计为5833个文件、6.7 MB。之后最新代码更新任务`confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba`也返回`success / execution_success`，包统计相同，更新后只读详情仍为`Active / Nodejs16.13 / 3秒`。这证明代码包已部署，不证明客户端调用成功；目前没有本轮云存储写入。便于手机扫码的预览二维码图片保存在本地忽略目录`tools/sp01-storage-probe/.local/sp01-identity-probe-preview-20261028.jpg`，未纳入版本控制。
