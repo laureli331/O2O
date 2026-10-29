@@ -18,6 +18,10 @@ test('guarded cloud evidence preserves transport arithmetic and independent exac
   assert.equal(result.cleanupConfirmed, true);
   assert.equal(evidence.independentCleanupRead.files.length, evidence.independentCleanupRead.totalCount);
   assert.equal(evidence.independentCleanupRead.totalCount, 0);
+  assert.equal(evidence.temporaryFunctionDeleted, true);
+  assert.equal(evidence.functionDeletionEvidence.deletedFunctionAbsent, true);
+  assert.equal(evidence.functionDeletionEvidence.remainingFunctions.includes(evidence.functionName), false);
+  assert.ok(evidence.functionDeletionEvidence.remainingFunctions.includes('sp01IdentityProbe'));
 });
 
 test('synthetic grant evidence cannot silently become real user or product acceptance', () => {

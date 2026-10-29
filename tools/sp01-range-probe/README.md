@@ -97,3 +97,5 @@ range-probe-v2 只新增错误 ETag 的数值状态码和有限枚举诊断，�
 ### guarded模式真实结果
 
 构建19e30a5的两文件增量更新经工具确认成功。用户运行一次guarded模式，返回success:true，完整5MiB匹配、20段20次正常源请求、正常源字节5242880、最大JSON349601，七个合成授权场景均通过。函数清理报告成功后，CLI独立确认目录0项。[完整返回JSON](../../docs/sp01-guarded-range-evidence-20261029.json)保留构建、范围、原始字段与证据限制。该模式能力实验通过；真实账号授权与SP01整卡未因此通过。临时函数尚保留，下一步精确删除sp01RangeProbe并复核，不触碰sp01IdentityProbe或其它资源。
+
+后续收尾：用户报告已删除临时函数；CLI只读列表仅剩sp01IdentityProbe，sp01RangeProbe已不在列表；再次只读确认sp01_range_probe/为0项。本轮清理完成，上段待删除状态是过程历史，已由本记录覆盖。保留本地源码、锁文件和证据，不自动重建云端探针。

@@ -44,7 +44,13 @@
     "files": [],
     "totalCount": 0
   },
-  "temporaryFunctionDeleted": false,
+  "temporaryFunctionDeleted": true,
+  "functionDeletionEvidence": {
+    "userReportedDeleted": true,
+    "source": "wechatide-cloud_fn_list",
+    "remainingFunctions": ["sp01IdentityProbe"],
+    "deletedFunctionAbsent": true
+  },
   "limitations": [
     "Authorization identities and changes were synthetic in-memory state, not real client identities or persisted business grants.",
     "No phone client chunk reassembly, performance acceptance, production permission rule or original 412 experiment was passed by this evidence.",
