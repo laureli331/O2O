@@ -34,6 +34,40 @@ function loadProbePage(wx) {
   return page;
 }
 
+for (const scenario of [
+  { name: 'matching content', response: { data: ownerContent }, expected: /内容与原证明一致/ },
+  { name: 'changed content', response: { data: 'SP01-SYNTHETIC-OTHER:b5e209' }, expected: /内容已变化/ },
+  { name: 'missing data', response: {}, expected: /内容未能核验/ },
+  { name: 'non-text data', response: { data: new ArrayBuffer(4) }, expected: /内容未能核验/ },
+  { name: 'read failure', failed: true, expected: /内容未能核验/ },
+]) {
+  test(`owner verification uses the readFile callback data: ${scenario.name}`, async () => {
+    const page = loadProbePage({
+      cloud: {
+        callFunction: async () => ({ result: { success: true, fingerprint: ownerFingerprint, appMatchesTarget: true } }),
+        downloadFile: async ({ fileID: requested }) => {
+          assert.equal(requested, fileID);
+          return { tempFilePath: '/tmp/owner-proof.txt', statusCode: 200 };
+        },
+      },
+      getFileSystemManager: () => ({
+        readFile: (options) => {
+          assert.equal(options.encoding, 'utf8');
+          assert.equal(options.filePath, '/tmp/owner-proof.txt');
+          if (scenario.failed) options.fail({ errMsg: 'synthetic-read-failure' });
+          else options.success(scenario.response);
+        },
+      }),
+    });
+    page.data = { ...page.data, bundleText: JSON.stringify(bundle) };
+    page.setData = (update) => Object.assign(page.data, update);
+    await page.verifyOwnerFile();
+    assert.match(page.data.report, scenario.expected);
+    assert.doesNotMatch(page.data.report, /SP01-SYNTHETIC|synthetic-read-failure/);
+    assert.equal(page.data.busy, false);
+  });
+}
+
 test('nonce, target file ID, synthetic path, and proof are constrained to this probe', () => {
   assert.equal(contract.validateNonce(nonce), true);
   for (const invalid of ['', 'short', 'contains spaces 123', 'x'.repeat(65), '真实姓名-测试码-2026']) {

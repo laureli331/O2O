@@ -32,7 +32,11 @@ const workflow = createProbeWorkflow({
   uploadFile: (cloudPath, filePath) => wx.cloud.uploadFile({ cloudPath, filePath }),
   getTempFileURL: (fileID) => wx.cloud.getTempFileURL({ fileList: [fileID] }),
   downloadFile: (fileID) => wx.cloud.downloadFile({ fileID }),
-  readDownloadedText: (filePath) => wxCall(wx.getFileSystemManager().readFile.bind(wx.getFileSystemManager()), { filePath, encoding: 'utf8' }),
+  readDownloadedText: async (filePath) => {
+    const result = await wxCall(wx.getFileSystemManager().readFile.bind(wx.getFileSystemManager()), { filePath, encoding: 'utf8' });
+    if (typeof result?.data !== 'string') throw new Error('CONTENT_CHECK_FAILED');
+    return result.data;
+  },
   deleteFile: (fileID) => wx.cloud.deleteFile({ fileList: [fileID] }),
   makeRunId: () => randomHex(16),
 });
@@ -50,7 +54,12 @@ function identityDiagnostic(error) {
 
 function accessLabel(result) {
   if (!result) return '未测试';
-  if (result.kind === 'accessible') return result.matchesOwnerProof === false ? '可以访问，内容已变化' : '可以访问';
+  if (result.kind === 'accessible') {
+    if (result.matchesOwnerProof === true) return '可以访问，内容与原证明一致';
+    if (result.matchesOwnerProof === false) return '可以访问，内容已变化';
+    if (result.matchesOwnerProof === null) return '可以访问，内容未能核验';
+    return '可以访问';
+  }
   if (result.kind === 'denied') return `明确权限拒绝（${result.code}）`;
   return `无法判定（${result.code || 'UNKNOWN'}）`;
 }
