@@ -28,7 +28,10 @@
     "taro": { "version": "4.3.1", "cliNodeEngine": ">= 18", "reactPeer": "^18" },
     "reactVersion": "18.3.1",
     "versionsFrozen": false,
-    "buildVerified": false,
+    "buildVerified": true,
+    "buildEvidence": "docs/sp01-taro-reuse-review-20261029.json",
+    "typecheckVerified": false,
+    "dependencyCompatibilityAccepted": false,
     "twoPlatformUiReuseGuaranteed": false,
     "typescript7CompatibilityWithTaroVerified": false
   },

@@ -38,6 +38,8 @@ test('Taro React candidate records actual peer constraint rather than assuming l
   assert.equal(d.candidates.taro.reactPeer, '^18');
   assert.equal(d.candidates.reactVersion, '18.3.1');
   assert.equal(d.candidates.versionsFrozen, false);
-  assert.equal(d.candidates.buildVerified, false);
+  assert.equal(d.candidates.buildVerified, true);
+  assert.equal(d.candidates.typecheckVerified, false);
+  assert.equal(d.candidates.dependencyCompatibilityAccepted, false);
   assert.equal(d.candidates.twoPlatformUiReuseGuaranteed, false);
 });

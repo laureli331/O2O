@@ -1,0 +1,35 @@
+{
+  "name": "sp01-taro-probe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Isolated adaptation of the official Taro 4.3.1 React TypeScript template",
+  "engines": { "node": ">=20.19.0" },
+  "scripts": { "build:weapp": "taro build --type weapp", "typecheck": "tsc --noEmit" },
+  "dependencies": {
+    "@babel/runtime": "7.24.4",
+    "@tarojs/components": "4.3.1",
+    "@tarojs/helper": "4.3.1",
+    "@tarojs/plugin-platform-weapp": "4.3.1",
+    "@tarojs/runtime": "4.3.1",
+    "@tarojs/shared": "4.3.1",
+    "@tarojs/taro": "4.3.1",
+    "@tarojs/plugin-framework-react": "4.3.1",
+    "@tarojs/react": "4.3.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.24.4",
+    "@babel/preset-react": "7.24.1",
+    "@babel/plugin-transform-class-properties": "7.25.9",
+    "@tarojs/cli": "4.3.1",
+    "@tarojs/taro-loader": "4.3.1",
+    "@tarojs/webpack5-runner": "4.3.1",
+    "@types/node": "18.19.86",
+    "@types/react": "18.3.3",
+    "babel-preset-taro": "4.3.1",
+    "postcss": "8.5.6",
+    "typescript": "5.9.3",
+    "webpack": "5.91.0"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "task": "SP01",
+  "status": "minimal-build-passed-candidate-not-ready",
+  "requirement": "Reuse an existing React-to-WeChat toolchain rather than implement a renderer or compiler",
+  "investigation": [
+    { "priority": 1, "scope": "project", "finding": "QuickStart and existing isolated probes are native; no existing Taro compiler or product engineering found" },
+    { "priority": 2, "scope": "official-platform-and-sdk", "finding": "CloudBase SDK covers backend services, not React rendering; Taro official default template and compiler support the WeChat build target" },
+    { "priority": 3, "scope": "third-party", "finding": "Use the user-approved Taro adapter; do not add an unrelated admin system or renderer. Official template covers the minimum build experiment, so no broad template search is needed" },
+    { "priority": 4, "scope": "necessary-local-glue", "finding": "Only prepare isolated paths and inspect generated artifacts; do not reimplement compilation, platform components or lifecycle runtime" }
+  ],
+  "sources": [
+    "https://github.com/NervJS/taro",
+    "https://raw.githubusercontent.com/NervJS/taro/v4.3.1/LICENSE",
+    "npm:@tarojs/cli@4.3.1/templates/default/package.json.tmpl",
+    "npm:@tarojs/cli@4.3.1/templates/default/config/index.js",
+    "npm:@tarojs/cli@4.3.1/templates/default/src/app.js",
+    "npm:@tarojs/cli@4.3.1/templates/default/src/pages/index/index.jsx"
+  ],
+  "sourceArchiveIntegrity": "sha512-Ou6IsFKY8QHG7okbxuHN/tQ0hKtyP/EPXy0KAO8BhJO+M+FA5Y5mh+A1HuuDbOJV89PtLtBDK5/eKCm5Hvqwsw==",
+  "maintenance": { "npmVersion": "4.3.1", "npmPublishedAt": "2026-10-23T07:01:17.621Z", "qualityInferredFromPopularity": false },
+  "adoption": "Adapt official React/TypeScript template for an isolated WeChat-only build; do not freeze product versions",
+  "adaptation": ["Remove unused platforms, CSS preprocessors, generator and Git hooks", "Keep official compiler, React renderer and components", "Use touristappid and a synthetic page without cloud calls", "Retain template license and attribution"],
+  "licenses": {
+    "template": "MIT",
+    "templateLicenseRetained": true,
+    "directPackagesReviewed": ["MIT", "Apache-2.0"],
+    "observedTransitivePackage": { "name": "webpack-chain", "version": "6.5.1", "license": "MPL-2.0", "sourceModified": false },
+    "fullTransitiveDistributionReviewComplete": false
+  },
+  "comparison": {
+    "directTemplate": "Lowest initial generation effort, but includes unnecessary platform/tooling options and does not establish compatibility or security",
+    "localAdaptation": "Selected for experiment; small config/source changes, independent removal and official runtime updates; still must resolve type and dependency issues",
+    "ownRenderer": "Rejected: highest compiler, runtime, platform API and upgrade/regression burden with no demonstrated need"
+  },
+  "validation": {
+    "nodeVersion": "v20.19.3",
+    "taroVersion": "4.3.1",
+    "reactVersion": "18.3.1",
+    "typescriptVersion": "5.9.3",
+    "webpackVersion": "5.91.0",
+    "weappBuildExitCode": 0,
+    "npmCiExitCode": 0,
+    "weappBuildAfterNpmCiExitCode": 0,
+    "artifactFileCount": 17,
+    "artifactTotalBytes": 307122,
+    "artifactChecksPassed": true,
+    "typecheckExitCode": 2,
+    "diagnosticLineCount": 1077,
+    "strict": true,
+    "skipLibCheck": false,
+    "dependencyTreeExitCode": 1,
+    "peerConflict": { "package": "schema-utils", "version": "4.8.1", "requiresWebpack": "^5.112.0", "templateAndRunnerRequireWebpack": "5.91.0" },
+    "audit": {
+      "mirrorEndpointSupported": false,
+      "officialRegistryQuerySucceeded": true,
+      "counts": { "info": 0, "low": 1, "moderate": 22, "high": 15, "critical": 4, "total": 42 },
+      "individualReachabilityAndProductionExposureTriaged": false
+    },
+    "devtoolsCompilationVerified": false,
+    "realDeviceVerified": false,
+    "cloudConnectionVerified": false,
+    "runtimeInteractionVerified": false,
+    "performanceAcceptancePassed": false
+  },
+  "versionsFrozen": false,
+  "candidateCompatibilityAccepted": false,
+  "formalProjectCreated": false,
+  "cloudResourcesChanged": false,
+  "sp01Passed": false,
+  "productAcceptancePassed": false
+}
