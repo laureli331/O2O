@@ -1,5 +1,13 @@
 # SP01 身份调用诊断修复 — 2026-10-28
 
+## 2026-10-29 手动真机调试与本轮清理待确认
+
+用户确认手动真机调试Network中有身份调用且可见响应正文；随后B执行direct-only-v1，身份不同、直接下载仍为-403003且无权限标记。用户报告Network只见身份调用，未见下载内部响应。本轮不能从该面板取得所需上游证据，停止相同流程重试，不宣称平台内部请求未发生，也不将重启报告当作已证实根因。
+
+用户报告已删除，回查仍有且仅有`sp01_permission_probe/owner-probe-b4c8fb44dff8b553.txt`。用户进一步说明点击删除没有本机结果。本地确认页面缺少showModal失败与取消反馈，先用回归测试复现，再补等待、失败、取消反馈与忙碌防重。此修复不证明手机本次具体失败原因，且尚未推送新预览。
+
+只读核对确切文件原文为`SP01-SYNTHETIC-OWNER:b4c8fb44dff8b553`，UTF-8、37字节、无截断。沿用本轮清理授权提交该文件定向删除，未删除目录。pendingTask：`confirmation_cloud_manage_storage_11e84ff5-4383-48e0-9b0e-4a81e6d61bfe`；工具`cloud_manage_storage`；AppID`wx2414399d423dfb65`、环境`cloud1-d2gjahlq39bf141c7`、action`delete`、上述确切路径；返回`pending`，尚未轮询。需用户确认工具卡片后查询原taskId，再回查目录，不重发删除。
+
 ## 2026-10-29 真机调试取证通道准备
 
 用户确认SDK组合并要求继续解决、必要支持直接提出。只读核对当前开发者工具随附调试技能及CLI，登录未过期、技能版本0.3.11一致。静态检查安装包`app.asar`：`js/d6d539cfa0c891e0ed30e883810ce030.js`的network工具读取workspace缓存；`js/c798bafdb858bb29290830b0a0766d89.js`的`buildInspectorNetworkMessage`只将wx.cloud请求/响应事件转换为`detail:params.request/response`，丢弃外层requestId，没有提供读取响应正文的工具操作。源码只读，不改安装目录。此证据解释现有CLI路径的限制，但不证明手动真机调试面板不能查看正文。

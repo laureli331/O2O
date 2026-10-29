@@ -22,6 +22,22 @@ const cloudPath = 'sp01_permission_probe/owner-probe-a7c31e.txt';
 const ownerContent = 'SP01-SYNTHETIC-OWNER:a7c31e';
 const bundle = { version: 1, nonce, ownerFingerprint, fileID, cloudPath, ownerContent };
 
+test('owner delete explains modal failure and cancellation without cloud calls', () => {
+  for (const failed of [true, false]) {
+    const page = loadProbePage({ showModal: (options) => {
+      assert.match(page.data.report, /等待删除确认/);
+      if (failed) options.fail({ errMsg: 'private-modal-error' });
+      else options.success({ confirm: false });
+    } });
+    page.data = { ...page.data, bundleText: JSON.stringify(bundle) };
+    page.setData = (update) => Object.assign(page.data, update);
+    page.cleanupOwnerFile();
+    assert.match(page.data.report, failed ? /确认框未能打开/ : /已取消删除/);
+    assert.equal(page.data.busy, false);
+    assert.doesNotMatch(page.data.report, /private-modal-error/);
+  }
+});
+
 test('direct-only other-account probe never requests links, uploads or deletes', async () => {
   for (const fingerprint of [ownerFingerprint, otherFingerprint]) {
     const calls = [];

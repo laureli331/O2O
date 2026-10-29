@@ -201,18 +201,23 @@ Page({
   },
 
   cleanupOwnerFile() {
+    if (this.data.busy) return;
     let bundle;
     try { bundle = this.parseBundle(); } catch (error) {
       this.setData({ report: `测试包无效，错误码：${errorCode(error)}。没有发起云端请求。` });
       return;
     }
+    this.setData({ busy: true, report: '等待删除确认框；确认前尚未发送删除请求。' });
     wx.showModal({
       title: '删除一份合成文件',
       content: `只删除这份文件：${bundle.cloudPath}`,
       confirmText: '删除文件',
       confirmColor: '#b42318',
       success: async (response) => {
-        if (!response.confirm) return;
+        if (!response.confirm) {
+          this.setData({ busy: false, report: '已取消删除，没有发送删除请求。' });
+          return;
+        }
         this.setData({ busy: true, report: '正在重新核对创建者身份，然后删除测试包中的确切 fileID…' });
         try {
           const result = await workflow.cleanupOwnerFile(bundle);
@@ -220,6 +225,9 @@ Page({
         } catch (error) {
           this.setData({ report: `删除未完成，错误码：${errorCode(error)}。没有扩大删除范围。` });
         } finally { this.setData({ busy: false }); }
+      },
+      fail: () => {
+        this.setData({ busy: false, report: '删除确认框未能打开，没有发送删除请求。请保留本轮测试包并反馈此结果。' });
       },
     });
   },
