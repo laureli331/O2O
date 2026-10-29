@@ -60,6 +60,26 @@
       "marketingModelMappingVerified": false,
       "historicalStorageRequestDeviceAssociationVerified": false,
       "performanceTestExecuted": false
+    },
+    {
+      "id": "DEVICE04",
+      "backupFor": "DEVICE03",
+      "brand": "HUAWEI",
+      "reportedModel": "SEA-AL10",
+      "system": "Android 10",
+      "wechatVersion": "8.0.78",
+      "sdkVersion": "3.17.4",
+      "platform": "android",
+      "screenWidth": 360,
+      "screenHeight": 780,
+      "windowWidth": 360,
+      "fontSizeSetting": 16,
+      "refreshRateHz": null,
+      "renderEngine": null,
+      "performanceSamplingCapability": null,
+      "marketingModelMappingVerified": false,
+      "historicalStorageRequestDeviceAssociationVerified": false,
+      "performanceTestExecuted": false
     }
   ]
 }
