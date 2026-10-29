@@ -1,5 +1,9 @@
 # SP01 身份调用诊断修复 — 2026-10-28
 
+## 2026-10-29 本轮清理执行已核实
+
+用户确认删除卡片后，查询原任务`confirmation_cloud_manage_storage_11e84ff5-4383-48e0-9b0e-4a81e6d61bfe`返回`status:success`、`detail:execution_success`，结构化结果明确`deleted:true`，路径为`sp01_permission_probe/owner-probe-b4c8fb44dff8b553.txt`。随后按目标AppID/EnvID只读回查测试目录，返回`files:[]`、`totalCount:0`。该pendingTask已结束，无需重发删除。本轮文件清理完成；删除是合成数据清理，原文件所有者元数据不能保证通过重建恢复。未删除目录或其他文件，未修改权限。直接下载上游归因仍未解决，停止重复相同手机流程。
+
 ## 2026-10-29 手动真机调试与本轮清理待确认
 
 用户确认手动真机调试Network中有身份调用且可见响应正文；随后B执行direct-only-v1，身份不同、直接下载仍为-403003且无权限标记。用户报告Network只见身份调用，未见下载内部响应。本轮不能从该面板取得所需上游证据，停止相同流程重试，不宣称平台内部请求未发生，也不将重启报告当作已证实根因。
