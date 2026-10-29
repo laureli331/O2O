@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "source": "user-provided-device-info-v1-screenshot",
+  "productAcceptancePassed": false,
+  "devices": [
+    {
+      "id": "DEVICE01",
+      "brand": "OPPO",
+      "reportedModel": "PLJ110",
+      "system": "Android 17",
+      "wechatVersion": "8.0.79",
+      "sdkVersion": "3.17.5",
+      "platform": "android",
+      "screenWidth": 360,
+      "screenHeight": 776,
+      "windowWidth": 360,
+      "fontSizeSetting": 16,
+      "refreshRateHz": null,
+      "renderEngine": null,
+      "performanceSamplingCapability": null,
+      "marketingModelMappingVerified": false,
+      "historicalStorageRequestDeviceAssociationVerified": false,
+      "performanceTestExecuted": false
+    }
+  ]
+}

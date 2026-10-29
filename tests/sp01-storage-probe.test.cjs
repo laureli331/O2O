@@ -22,6 +22,20 @@ const cloudPath = 'sp01_permission_probe/owner-probe-a7c31e.txt';
 const ownerContent = 'SP01-SYNTHETIC-OWNER:a7c31e';
 const bundle = { version: 1, nonce, ownerFingerprint, fileID, cloudPath, ownerContent };
 
+test('physical device evidence remains distinct from simulator and historical download attribution', () => {
+  const evidence = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../docs/sp01-device-evidence-20261029.json'), 'utf8'));
+  assert.equal(evidence.productAcceptancePassed, false);
+  assert.equal(new Set(evidence.devices.map((device) => device.id)).size, evidence.devices.length);
+  for (const device of evidence.devices) {
+    assert.notEqual(device.platform, 'devtools');
+    assert.equal(device.performanceTestExecuted, false);
+    assert.equal(device.historicalStorageRequestDeviceAssociationVerified, false);
+    assert.equal(device.refreshRateHz, null);
+    assert.equal(device.renderEngine, null);
+    assert.equal(device.performanceSamplingCapability, null);
+  }
+});
+
 test('storage review preserves specification-stage gates and current unaccepted product state', () => {
   const root = path.resolve(__dirname, '..');
   const readJson = (name) => JSON.parse(fs.readFileSync(path.join(root, 'docs', name), 'utf8'));
