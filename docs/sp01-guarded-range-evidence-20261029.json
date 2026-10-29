@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "source": "user-returned-cloud-console-json",
+  "buildCommit": "19e30a5",
+  "appid": "wx2414399d423dfb65",
+  "env": "cloud1-d2gjahlq39bf141c7",
+  "functionName": "sp01RangeProbe",
+  "runtimeVerifiedBeforeRun": "Nodejs20.19",
+  "requestId": null,
+  "event": { "action": "run", "mode": "guarded" },
+  "sp01Passed": false,
+  "productAcceptancePassed": false,
+  "realUserAuthorizationVerified": false,
+  "result": {
+    "success": true,
+    "version": "guarded-range-v1",
+    "cloudPath": "sp01_range_probe/range-82ad2786f414676780f62dcbb24eefe4.bin",
+    "binaryBytes": 5242880,
+    "ranges": [],
+    "cleanupConfirmed": true,
+    "evidenceScope": "real-storage/synthetic-grants",
+    "guarded": {
+      "fullContentMatch": true,
+      "chunkCount": 20,
+      "normalSourceRequests": 20,
+      "normalSourceBytes": 5242880,
+      "maxResponseBytes": 349601,
+      "responseLimitBytes": 524288,
+      "cases": [
+        { "name": "unauthorized-B", "code": "FORBIDDEN", "sourceRequests": 0, "noContent": true, "passed": true },
+        { "name": "stale-request-version", "code": "VERSION_CONFLICT", "sourceRequests": 0, "noContent": true, "passed": true },
+        { "name": "revoke-during-read", "code": "FORBIDDEN", "sourceRequests": 1, "noContent": true, "passed": true },
+        { "name": "version-during-read", "code": "VERSION_CONFLICT", "sourceRequests": 1, "noContent": true, "passed": true },
+        { "name": "wrong-response-version", "code": "VERSION_CONFLICT", "sourceRequests": 1, "noContent": true, "passed": true },
+        { "name": "repeat-read", "passed": true },
+        { "name": "concurrent-A-B", "passed": true }
+      ]
+    }
+  },
+  "independentCleanupRead": {
+    "source": "wechatide-cloud_query_storage-list",
+    "cloudPath": "sp01_range_probe/",
+    "files": [],
+    "totalCount": 0
+  },
+  "temporaryFunctionDeleted": false,
+  "limitations": [
+    "Authorization identities and changes were synthetic in-memory state, not real client identities or persisted business grants.",
+    "No phone client chunk reassembly, performance acceptance, production permission rule or original 412 experiment was passed by this evidence.",
+    "Request ID and per-range timings were not included in the returned report; no values are inferred."
+  ]
+}
