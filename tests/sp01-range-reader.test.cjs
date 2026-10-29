@@ -47,7 +47,7 @@ test('206 with changed ETag is rejected before consuming response body', async (
     });
     return request;
   } };
-  await assert.rejects(readRange(options, api), { message: 'RANGE_RESPONSE_REJECTED', statusCode: 206 });
+  await assert.rejects(readRange(options, api), { message: 'RANGE_RESPONSE_REJECTED', statusCode: 206, reason: 'ETAG_MISMATCH' });
   await new Promise((resolve) => setImmediate(resolve));
   assert.equal(bodyReads, 0);
   assert.equal(destroyed, true);

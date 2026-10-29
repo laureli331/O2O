@@ -18,11 +18,12 @@ async function readRange(options, transport = https) {
   return new Promise((resolve, reject) => {
     let settled = false;
     let request;
-    const fail = (statusCode) => {
+    const fail = (statusCode, reason) => {
       if (settled) return;
       settled = true;
       const error = new Error('RANGE_RESPONSE_REJECTED');
       if (Number.isInteger(statusCode) && statusCode >= 100 && statusCode <= 599) error.statusCode = statusCode;
+      if (reason === 'ETAG_MISMATCH') error.reason = reason;
       reject(error);
       request?.destroy();
     };
@@ -36,7 +37,10 @@ async function readRange(options, transport = https) {
           || response.headers['content-range'] !== `bytes ${start}-${end}/${totalBytes}`
           || response.headers.etag !== etag
           || (response.headers['content-encoding'] && response.headers['content-encoding'] !== 'identity')) {
-          fail(response.statusCode); response.destroy(); return;
+          const reason = response.statusCode === 206
+            && response.headers['content-range'] === `bytes ${start}-${end}/${totalBytes}`
+            && response.headers.etag !== etag ? 'ETAG_MISMATCH' : null;
+          fail(response.statusCode, reason); response.destroy(); return;
         }
         const parts = [];
         let received = 0;
