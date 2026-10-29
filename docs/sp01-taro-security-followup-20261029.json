@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "candidate": "peer-fix",
+  "scope": "isolated-toolchain-only",
+  "globOverride": { "selector": "glob@>=10.2.0 <10.5.0", "version": "10.5.0", "license": "ISC", "deprecatedWarningObserved": true },
+  "validation": {
+    "nodeVersion": "v20.19.3",
+    "installExitCode": 0,
+    "dependencyTreeExitCode": 0,
+    "applicationTypecheckExitCode": 0,
+    "buildExitCode": 0,
+    "globResolvedFromPluginDoctor": "10.5.0",
+    "globSyncMatchedConfig": true,
+    "artifacts": { "fileCount": 17, "totalBytes": 306822, "realDeviceVerified": false },
+    "audit": {
+      "registry": "https://registry.npmjs.org",
+      "before": { "moderate": 21, "high": 15, "critical": 4, "total": 40 },
+      "after": { "moderate": 21, "high": 13, "critical": 4, "total": 38 },
+      "unit": "affected-package-entries-not-unique-advisories",
+      "removedEntries": ["@tarojs/plugin-doctor", "glob"],
+      "allFindingsResolved": false
+    },
+    "stats": { "moduleEntries": 189, "unnamedEntries": 0, "filteredEntries": 0, "chunks": 7, "errors": 0, "sourceIncluded": false },
+    "buildHostCoverage": {
+      "buildExitCode": 0,
+      "coverageFiles": 10,
+      "observedPackageExamples": ["adm-zip", "download", "decompress", "got", "webpack", "esbuild"],
+      "topLevelInitializationCountsAsExecution": true,
+      "vulnerableFunctionsProvenReachable": false,
+      "absenceProvesSafety": false,
+      "performanceEvidence": false
+    },
+    "lockSha256": "24ac8ed283a8c03af1c37bbc792b1eb18ea379b83e508787e8e83b3c70b068d6"
+  },
+  "vendorDeclarationFailureRetained": true,
+  "versionsFrozen": false,
+  "cloudChanged": false,
+  "sp01Passed": false,
+  "productAcceptancePassed": false
+}

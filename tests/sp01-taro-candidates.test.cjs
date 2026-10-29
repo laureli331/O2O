@@ -10,7 +10,10 @@ test('peer candidate keeps the official Webpack requirement and changes only rev
   assert.equal(next.devDependencies['@tarojs/webpack5-runner'], '4.3.1');
   assert.equal(next.dependencies.react, '18.3.1');
   assert.equal(next.overrides['schema-utils@^4.0.0'], '4.3.3');
-  assert.equal(Object.keys(next.overrides).length, 1);
+  assert.deepEqual(next.overrides, {
+    'schema-utils@^4.0.0': '4.3.3',
+    'glob@>=10.2.0 <10.5.0': '10.5.0',
+  });
   assert.equal(next.devDependencies['@babel/core'], '7.29.7');
   assert.equal(next.dependencies['@babel/runtime'], '7.29.10');
   assert.equal(next.devDependencies.postcss, '8.5.32');

@@ -6,6 +6,8 @@ check-own-declarations.cjs仅扫描src/config/types内自有.d.ts/.d.mts/.d.cts�
 
 这是独立工具链候选检查，不是SP07工程、产品页面或已验收模板。[复用调查与失败记录](../../docs/sp01-taro-reuse-review-20261029.md)说明来源、许可、适配成本与边界。
 
+最新依赖补丁与实际构建证据见[安全跟进](../../docs/sp01-taro-security-followup-20261029.md)：peer-fix限定glob10.5.0，审计仍有38个受影响包条目。可选`SP01_CAPTURE_STATS=1`启用官方Webpack统计，不改变安全验收结论。
+
 当前：Taro4.3.1＋React18.3.1＋Webpack5.91.0＋TypeScript5.9.3的微信目标构建成功；完整类型检查及依赖树检查失败，依赖审计尚有待处理项。具体依赖未冻结，不能直接用于正式工程。真实平台/交互未验。
 
 以上是baseline结果。后续独立peer-fix候选已解决依赖树冲突并保持构建成功，完整声明检查及安全项仍未完成；见[受控对照与待确认类型策略](../../docs/sp01-taro-compatibility-20261029.md)。使用 `node tools/sp01-taro-probe/prepare.cjs peer-fix`，不会覆盖baseline运行目录。原类型配置保持strict:true、skipLibCheck:false；check-type-policy.cjs中的声明跳过选项仅为诊断对照，尚未采用。

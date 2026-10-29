@@ -11,6 +11,11 @@ export default defineConfig({
   deviceRatio: { 640: 1.17, 750: 1, 375: 2, 828: 1.81 },
   cache: { enable: false },
   mini: {
+    webpackChain(chain) {
+      if (process.env.SP01_CAPTURE_STATS === '1') {
+        chain.plugin('sp01-build-evidence').use(require('../capture-build-stats.cjs'))
+      }
+    },
     postcss: {
       pxtransform: { enable: true },
       cssModules: { enable: false },
