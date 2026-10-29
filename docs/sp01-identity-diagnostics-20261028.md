@@ -1,5 +1,11 @@
 # SP01 身份调用诊断修复 — 2026-10-28
 
+## 2026-10-29 真机调试取证通道准备
+
+用户确认SDK组合并要求继续解决、必要支持直接提出。只读核对当前开发者工具随附调试技能及CLI，登录未过期、技能版本0.3.11一致。静态检查安装包`app.asar`：`js/d6d539cfa0c891e0ed30e883810ce030.js`的network工具读取workspace缓存；`js/c798bafdb858bb29290830b0a0766d89.js`的`buildInspectorNetworkMessage`只将wx.cloud请求/响应事件转换为`detail:params.request/response`，丢弃外层requestId，没有提供读取响应正文的工具操作。源码只读，不改安装目录。此证据解释现有CLI路径的限制，但不证明手动真机调试面板不能查看正文。
+
+通过公开CLI尝试对隔离工程执行`automation_viewport_action --action remote --auto false`，返回`ok:false`，未取得成功结果或taskId。为避免输出调试连接可能携带的信息，首次输出仅保留状态，具体失败原因没有保留，不能归因为账号、网络或配置。未重复启动，不宣称手机调试已连接。接下来需要用户在现有隔离工程手动打开“真机调试”，用B扫码确认连接及Network面板可见性；本阶段只调用现有身份诊断，不新建文件、不重新执行存储测试。若界面已因前述尝试打开，应使用现有会话。只有证实响应取证能力后才设计下一次存储验证。
+
 ## 2026-10-29 后续只读诊断：现有通道无法恢复上游语义
 
 重新运行`node tools/sp01-storage-probe/check-download-sdk.cjs`并传入本机官方3.17.5基础库包，四项回放全部通过，包与提取函数SHA-256均与原记录一致，外连数为0。空数据与携带`STORAGE_EXCEED_AUTHORITY`但没有URL的合成响应均产生相同`-403003`。因此继续修改外层错误显示不能恢复SDK已丢失的信息。对隔离工程执行只读`get_simulator_network`、过滤`tcbapi_downloadfile`，返回空字符串；该缓存属于模拟器，不是B手机请求记录，不能据此判定手机请求是否发生。
