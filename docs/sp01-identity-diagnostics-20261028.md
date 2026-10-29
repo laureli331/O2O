@@ -1,5 +1,20 @@
 # SP01 身份调用诊断修复 — 2026-10-28
 
+## 最新结果：2026-10-29 只读清理盘点发现六份文件
+
+用户授权只读列出测试目录并核对合成内容。目标 AppID/EnvID 不变，`cloud_query_storage action=list cloudPath=sp01_permission_probe/` 成功返回六份文件，均为 37 字节。此次未删除文件、未改权限。
+
+| 文件名（均在 sp01_permission_probe/） | 本轮核验结果 |
+| --- | --- |
+| owner-probe-41a7ac8a59d4a79a.txt | read 成功；UTF-8 原文为 OWNER 标记加同名编号，37 字节、未截断 |
+| owner-probe-664a688b31b1b9fc.txt | read 成功；UTF-8 原文为 OWNER 标记加同名编号，37 字节、未截断 |
+| owner-probe-9eb3f08ccf06be87.txt | 本轮未完成内容核验 |
+| owner-probe-dfc480fd50595dbf.txt | 本轮未完成内容核验 |
+| owner-probe-ed4129f3c7ed102c.txt | 本轮未完成内容核验 |
+| owner-probe-f9a399e299df644d.txt | 前轮已核验 OWNER，当前轮未取得新的完成结果 |
+
+后续读取遇到 `getcosauth 请求失败: Client network socket disconnected before secure TLS connection was established`；不能把网络失败记为权限拒绝或文件不存在。未将最后修改时间最新的文件直接认定为用户最新测试包对应文件；仍需测试包路径或其他直接证据建立关联。盘点结果从预期两份修正为实际六份，清理清单尚不能整体放行。只读核验未完成，删除尚未授权；SP01 保持未通过。以下为历史记录。
+
 ## 最新结果：2026-10-29 B 返回明确权限标记，直接下载错误定义已定位
 
 用户因丢失原测试包明确授权重建，随后按 A 创建一份新合成文件、保存新包、B 执行一次完整诊断的流程回传截图 `codex-clipboard-a12fe963-6929-4d81-915a-aebb953b9467.jpg`。截图显示 `storage-errors-v1`、身份不同为“是”、临时链接外层码 `1` 且标记 `STORAGE_EXCEED_AUTHORITY`、直接下载外层及内层码均 `-403003` 且未提取到标记、同路径写入外层及内层码均 `-503002` 且标记 `STORAGE_EXCEED_AUTHORITY`，本机临时文件清理为 removed。新文件路径未出现在本张截图中，不能把旧路径当作新路径。旧文件 `owner-probe-f9a399e299df644d.txt` 未获删除确认，新文件也未获清理确认。
