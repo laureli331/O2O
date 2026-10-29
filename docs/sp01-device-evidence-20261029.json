@@ -22,6 +22,25 @@
       "marketingModelMappingVerified": false,
       "historicalStorageRequestDeviceAssociationVerified": false,
       "performanceTestExecuted": false
+    },
+    {
+      "id": "DEVICE02",
+      "brand": "iPhone",
+      "reportedModel": "iPhone XR<iPhone11,8>",
+      "system": "iOS 17.5.1",
+      "wechatVersion": "8.0.80",
+      "sdkVersion": "3.17.5",
+      "platform": "ios",
+      "screenWidth": 414,
+      "screenHeight": 896,
+      "windowWidth": 414,
+      "fontSizeSetting": 17,
+      "refreshRateHz": null,
+      "renderEngine": null,
+      "performanceSamplingCapability": null,
+      "marketingModelMappingVerified": true,
+      "historicalStorageRequestDeviceAssociationVerified": false,
+      "performanceTestExecuted": false
     }
   ]
 }
