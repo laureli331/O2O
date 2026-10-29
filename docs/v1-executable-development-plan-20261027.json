@@ -6,6 +6,8 @@
   "deliveryScope": "documentation-and-validation-only",
   "sourceCommit": "c4e4c078f7a6a14b1d23f7f028eada64f63c53e3",
   "sources": [
+    "docs/react-frontend-decision-20261029.md",
+    "docs/react-frontend-decision-20261029.json",
     "docs/development-plan.md",
     "docs/development-decisions.json",
     "docs/post-registration-development.md",
@@ -30,7 +32,10 @@
     "docs/ascii-design-prd-2.1.md"
   ],
   "architecture": {
-    "frontend": "native-wechat-typescript",
+    "frontend": "react-typescript-miniapp-adapter-pending",
+    "frontendDecisionSource": "docs/react-frontend-decision-20261029.json",
+    "adminFramework": "react",
+    "miniappAdapter": null,
     "backend": "node-cloud-functions",
     "databaseFamily": "cloudbase",
     "storage": "cloudbase-storage",

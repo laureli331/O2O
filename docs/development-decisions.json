@@ -1,4 +1,14 @@
 {
+  "currentFrontendApproval": {
+    "date": "2026-10-29",
+    "source": "docs/react-frontend-decision-20261029.json",
+    "userSelection": "2",
+    "frontend": "react-typescript-miniapp-adapter-pending",
+    "adminFramework": "react",
+    "miniappAdapter": null,
+    "previousApprovalIsHistorical": true,
+    "productAcceptancePassed": false
+  },
   "serviceOrderCenterDecision": {
     "date": "2026-10-21",
     "document": "docs/service-order-center-confirmed-20261021.md",

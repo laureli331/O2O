@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "status": "react-confirmed-miniapp-adapter-pending",
+  "userEvidence": {
+    "initialRequest": "我希望用react",
+    "clarification": "仅网页运营后台用React，还是小程序和网页后台都用React技术路线",
+    "selection": "2",
+    "selectedScope": "小程序和网页后台都用 React 技术路线"
+  },
+  "confirmed": {
+    "miniappFramework": "react",
+    "adminFramework": "react",
+    "language": "typescript",
+    "supersedesNativeMiniappDirection": true,
+    "backend": "node-cloud-functions",
+    "database": "cloudbase",
+    "existingBusinessAndVisualDecisionsRetained": true
+  },
+  "adapter": {
+    "status": "awaiting-user-confirmation",
+    "selected": null,
+    "recommended": "taro",
+    "adminBuildRecommended": "vite"
+  },
+  "candidates": {
+    "taro": { "version": "4.3.1", "cliNodeEngine": ">= 18", "reactPeer": "^18" },
+    "reactVersion": "18.3.1",
+    "versionsFrozen": false,
+    "buildVerified": false,
+    "twoPlatformUiReuseGuaranteed": false,
+    "typescript7CompatibilityWithTaroVerified": false
+  },
+  "preserved": {
+    "historicalNativeApproval": true,
+    "prototypeAndVisualAssets": true,
+    "userQuickStartAndUncommittedWork": true,
+    "sp01ToSp06PrerequisitesForSp07": true,
+    "qualityThresholds": true
+  },
+  "formalProjectCreated": false,
+  "cloudResourcesChanged": false,
+  "productAcceptancePassed": false,
+  "sources": [
+    "https://github.com/NervJS/taro",
+    "npm view @tarojs/cli@4.3.1 engines --json",
+    "npm view @tarojs/react@4.3.1 peerDependencies --json",
+    "npm view @tarojs/vite-runner@4.3.1 peerDependencies --json"
+  ]
+}
