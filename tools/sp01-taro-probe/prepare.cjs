@@ -1,11 +1,15 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
-const destination = path.resolve(__dirname, '../../.local/sp01-taro-probe');
+const { createManifest } = require('./candidate-manifest.cjs');
+const candidate = process.argv[2] || 'baseline';
+const manifest = createManifest(require('./package.json'), candidate);
+const destination = path.resolve(__dirname, '../../.local', candidate === 'baseline' ? 'sp01-taro-probe' : 'sp01-taro-probe-peer-fix');
 fs.mkdirSync(destination, { recursive: true });
 for (const name of ['package.json', 'babel.config.cjs', 'tsconfig.json', 'project.config.json', 'THIRD-PARTY-NOTICES.md', 'config', 'src']) {
   fs.cpSync(path.join(__dirname, name), path.join(destination, name), { recursive: true });
 }
-const lock = path.join(__dirname, 'package-lock.json');
+fs.writeFileSync(path.join(destination, 'package.json'), JSON.stringify(manifest, null, 2));
+const lock = path.join(__dirname, candidate === 'baseline' ? 'package-lock.json' : 'variants/peer-fix.package-lock.json');
 if (fs.existsSync(lock)) fs.copyFileSync(lock, path.join(destination, 'package-lock.json'));
-console.log(JSON.stringify({ destination, cloudChanges: false, formalProject: false }));
+console.log(JSON.stringify({ destination, candidate, cloudChanges: false, formalProject: false }));

@@ -1,0 +1,20 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const { createManifest } = require('../tools/sp01-taro-probe/candidate-manifest.cjs');
+const base = require('../tools/sp01-taro-probe/package.json');
+test('peer candidate keeps the official Webpack requirement and changes only reviewed patch dependencies', () => {
+  const snapshot = JSON.stringify(base);
+  const next = createManifest(base, 'peer-fix');
+  assert.equal(next.devDependencies.webpack, '5.91.0');
+  assert.equal(next.devDependencies['@tarojs/webpack5-runner'], '4.3.1');
+  assert.equal(next.dependencies.react, '18.3.1');
+  assert.equal(next.overrides['schema-utils@^4.0.0'], '4.3.3');
+  assert.equal(Object.keys(next.overrides).length, 1);
+  assert.equal(next.devDependencies['@babel/core'], '7.29.7');
+  assert.equal(next.dependencies['@babel/runtime'], '7.29.10');
+  assert.equal(next.devDependencies.postcss, '8.5.32');
+  assert.equal(JSON.stringify(base), snapshot);
+  assert.deepEqual(createManifest(base, 'baseline'), base);
+  assert.throws(() => createManifest(base, '../outside'), /UNKNOWN_CANDIDATE/);
+});

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "baselineEvidence": "docs/sp01-taro-reuse-review-20261029.json",
+  "candidate": "peer-fix",
+  "scope": "isolated-comparison-not-product-adoption",
+  "changes": {
+    "schemaUtils4RangePinnedTo": "4.3.3",
+    "babelCore": "7.29.7",
+    "babelRuntime": "7.29.10",
+    "postcss": "8.5.32",
+    "taro": "4.3.1",
+    "react": "18.3.1",
+    "webpack": "5.91.0"
+  },
+  "reuseChecks": {
+    "schemaUtilsArchiveIntegrity": "sha512-eflK8wEtyOE6+hsaRVPxvUKYCpRgzLqDTb8krvAsRIwOGlHoSgYLgBXoubGgLd2fT41/OUYdb48v4k4WWHQurA==",
+    "schemaUtilsLicense": "MIT",
+    "schemaUtilsValidationExportsRead": true,
+    "parentDeclaredRangeExample": "copy-webpack-plugin: ^4.2.0",
+    "schemaUtils2LeftUnchanged": true,
+    "forceOrLegacyPeerDepsUsed": false,
+    "thirdPartySourceModified": false
+  },
+  "validation": {
+    "nodeVersion": "v20.19.3",
+    "dependencyTreeExitCode": 0,
+    "weappBuildExitCode": 0,
+    "artifacts": { "fileCount": 17, "totalBytes": 306822, "checksPassed": true },
+    "audit": {
+      "registry": "https://registry.npmjs.org",
+      "counts": { "info": 0, "low": 0, "moderate": 21, "high": 15, "critical": 4, "total": 40 },
+      "countsRepresent": "affected-package-entries-not-unique-advisories",
+      "directBabelCoreAndRuntimeStillReported": false,
+      "directPostcssStillReported": false,
+      "nestedPostcssStillReported": true,
+      "allFindingsResolved": false
+    },
+    "typePolicyComparison": {
+      "fullDeclarationExitCode": 2,
+      "fullDeclarationDiagnosticLines": 1077,
+      "sourceOnlyExitCode": 0,
+      "negativeCases": [
+        { "name": "invalid-component.tsx", "exitCode": 2, "expectedDiagnosticObserved": true },
+        { "name": "invalid-api.ts", "exitCode": 2, "expectedDiagnosticObserved": true }
+      ],
+      "originalConfigUnchanged": true,
+      "policyAdopted": false,
+      "fullDeclarationCheckPassed": false
+    }
+  },
+  "typeCheckPolicyDecision": "awaiting-user-confirmation",
+  "versionsFrozen": false,
+  "candidateCompatibilityAccepted": false,
+  "cloudResourcesChanged": false,
+  "sp01Passed": false,
+  "productAcceptancePassed": false
+}
