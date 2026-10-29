@@ -7,7 +7,7 @@ const root = path.resolve(__dirname, '..');
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const json = (file) => JSON.parse(read(file));
 
-test('latest explicit user choice overrides native frontend for both clients without approving an adapter', () => {
+test('latest explicit user choice adopts React and Taro without implying build or product acceptance', () => {
   const d = json('docs/react-frontend-decision-20261029.json');
   const plan = json('docs/v1-executable-development-plan-20261027.json');
   const tech = json('docs/development-decisions.json');
@@ -15,14 +15,15 @@ test('latest explicit user choice overrides native frontend for both clients wit
   assert.equal(d.confirmed.adminFramework, 'react');
   assert.equal(d.confirmed.language, 'typescript');
   assert.equal(d.userEvidence.selection, '2');
-  assert.equal(d.adapter.status, 'awaiting-user-confirmation');
-  assert.equal(d.adapter.selected, null);
+  assert.equal(d.adapter.status, 'user-confirmed');
+  assert.equal(d.adapter.selected, 'taro');
+  assert.equal(d.adapter.approvalReply, '通过');
   assert.equal(d.adapter.recommended, 'taro');
   assert.equal(tech.approval.frontend, 'native-wechat-typescript');
-  assert.equal(tech.currentFrontendApproval.frontend, 'react-typescript-miniapp-adapter-pending');
+  assert.equal(tech.currentFrontendApproval.frontend, 'taro-react-typescript');
   assert.equal(plan.architecture.frontend, tech.currentFrontendApproval.frontend);
   assert.equal(plan.architecture.adminFramework, 'react');
-  assert.equal(plan.architecture.miniappAdapter, null);
+  assert.equal(plan.architecture.miniappAdapter, 'taro');
   assert.equal(plan.architecture.backend, 'node-cloud-functions');
   assert.equal(plan.firstProductTask, 'SP07');
   assert.equal(d.formalProjectCreated, false);

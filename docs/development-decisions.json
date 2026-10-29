@@ -3,9 +3,10 @@
     "date": "2026-10-29",
     "source": "docs/react-frontend-decision-20261029.json",
     "userSelection": "2",
-    "frontend": "react-typescript-miniapp-adapter-pending",
+    "frontend": "taro-react-typescript",
     "adminFramework": "react",
-    "miniappAdapter": null,
+    "miniappAdapter": "taro",
+    "adapterApprovalReply": "通过",
     "previousApprovalIsHistorical": true,
     "productAcceptancePassed": false
   },

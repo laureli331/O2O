@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-29",
-  "status": "react-confirmed-miniapp-adapter-pending",
+  "status": "react-and-taro-confirmed-versions-pending-verification",
   "userEvidence": {
     "initialRequest": "我希望用react",
     "clarification": "仅网页运营后台用React，还是小程序和网页后台都用React技术路线",
@@ -18,8 +18,9 @@
     "existingBusinessAndVisualDecisionsRetained": true
   },
   "adapter": {
-    "status": "awaiting-user-confirmation",
-    "selected": null,
+    "status": "user-confirmed",
+    "selected": "taro",
+    "approvalReply": "通过",
     "recommended": "taro",
     "adminBuildRecommended": "vite"
   },

@@ -32,10 +32,10 @@
     "docs/ascii-design-prd-2.1.md"
   ],
   "architecture": {
-    "frontend": "react-typescript-miniapp-adapter-pending",
+    "frontend": "taro-react-typescript",
     "frontendDecisionSource": "docs/react-frontend-decision-20261029.json",
     "adminFramework": "react",
-    "miniappAdapter": null,
+    "miniappAdapter": "taro",
     "backend": "node-cloud-functions",
     "databaseFamily": "cloudbase",
     "storage": "cloudbase-storage",
