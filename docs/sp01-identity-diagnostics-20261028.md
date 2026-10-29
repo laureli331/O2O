@@ -1,5 +1,21 @@
 # SP01 身份调用诊断修复 — 2026-10-28
 
+## 最新结果：2026-10-29 控制台确认缺失依赖
+
+用户授权一次控制台检查后，向目标环境 `cloud1-d2gjahlq39bf141c7` 的 `sp01IdentityProbe` 提交 `{"nonce":"sp01-console-check-20261029"}`，回传：
+
+```json
+{"errorCode":1,"errorMessage":"Error: Cannot find module 'wx-server-sdk'\nRequire stack:\n- /var/user/index.js\n- /data/scf/frame/node16/userFunction.js\n- /data/scf/frame/node16/runtime.js","requestId":"266b59ac-10da-45c2-940b-0cf470aaf7ac","statusCode":443}
+```
+
+已证实的当前阻塞：云端加载入口时无法解析 `wx-server-sdk`，尚未进入本地入口定义的身份处理逻辑。此前手机报告的 `-504002 / FUNCTIONS_EXECUTE_FAIL` 与此加载错误相符，但依赖修复后仍须手机复验。尚未确认依赖为何未在此前部署中可用，不能把文件统计或部署成功当作依赖已可用的证据。
+
+本地只读复核：`package.json` 固定依赖 `wx-server-sdk: 4.0.2`，`node_modules/wx-server-sdk/index.js` 存在。此前 Node.js 16.13.0 本地加载通过的结论不变；它没有覆盖云端依赖缺失。
+
+待新授权的最小修复：由用户在隔离工程中对 **sp01IdentityProbe 单个函数目录** 执行“上传并部署（云端安装依赖）”，目标 AppID `wx2414399d423dfb65`、环境 `cloud1-d2gjahlq39bf141c7`；不改版本、运行时、权限或其他函数。部署成功后只由账号 A 点击一次“仅诊断身份调用（不写文件）”，回传本机结果。依据：[腾讯云函数部署文档](https://cloud.tencent.com/document/product/583/30936)。当前尚未部署或复验；原一次控制台调用授权已使用。
+
+回退边界：本次建议只更新隔离临时函数的同版本依赖，不涉及业务数据迁移；若部署失败即停止，不删函数、不改其他资源、不扩大重试。SP01 仍未通过，双账号身份比较和存储权限实测仍待完成。下方 2026-10-28 的“根因未知”与待操作描述均为历史记录，以上述最新结果为准。
+
 范围仅为身份调用与存储验证的当前阻塞。分支 `codex/miniapp-planning`，起点 `c4325f1`；未修改用户已有的项目配置、QuickStart、原型或素材改动。SP01 仍未通过，未进入 SP07。
 
 ## 已证实与未证实
