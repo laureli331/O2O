@@ -4,6 +4,16 @@
 
 用户随后回复“ok”，确认本文第4节文件授权方向。逐次服务端授权与独立公开展示副本已确认，具体传输承载仍按平台实际能力核实，不再重复询问此方向。
 
+### 分段授权本地验证与承载限制
+
+隔离实验`tools/sp01-storage-probe/chunk-read-experiment.cjs`不导入云SDK、不访问文件或网络、不提供正式端点。以注入的可信身份、授权关系和合成Buffer验证：5MiB按256KiB分20段完整还原且每段序列化后低于容量对照；B伪造输入身份/角色/fileKey不生效；段前及I/O后分别核对授权与文件版本；段间撤权后停止；同一授权对象原位变化被快照检测；并发A/B不共用身份状态；错误不回显原始信息、不返回内容。以上7项是本地合成实验，不是目标Node20.19、真机或CloudBase权限通过证据。撤权检查后与实际返回之间仍存在并发边界，正式实现须定义撤权生效点、在途请求和版本一致性，不宣称能撤回已经返回的数据。
+
+当前实验每段读取整个版本再切片；若原样接入仅支持完整Buffer下载的SDK，5MiB分20段可能累计读取100MiB。不得把这种实现当作成本/性能合格。正式选用前应核实按范围读取或安全的不可变内容复用能力，每次仍从当前关系重新授权；不能缓存角色/授权放行结果，也不能跨对象混用内容。未确认实际支持与预算前不部署、不设产品分段参数。
+
+二进制HTTP路线仍待核实：[CloudBase小程序云函数说明](https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram)区分小程序事件入口与HTTP入口，后者不能直接假设自动取得同样的微信身份；[云托管公网说明](https://docs.cloudbase.net/run/deploy/networking/public)明确默认不提供鉴权；[Node callContainer文档](https://docs.cloudbase.net/api-reference/server/node-sdk/cloudrun)是服务端接口，不能冒充小程序二进制传输支持证据。当前没有充分依据选定云托管，也没有授权新增付费承载。读取这些文档不采用其完整上下文日志示例，身份与凭据仍按既定隐私规则处理。
+
+另据[实例复用说明](https://docs.cloudbase.net/cloud-function/instance)，不能把上次调用身份/状态保存在全局并供下次授权；正式入口需逐调用取得可信身份。该一般性风险不能被写成早期存储测试失败的已证实原因。
+
 ### 传输容量本地实验
 
 腾讯云[SCF配额](https://cloud.tencent.com/document/product/583/11637)及[函数测试状态码](https://cloud.tencent.com/document/product/583/56125)列出同步响应6MB限制。本轮按6MiB作容量对照，5MiB原图Base64加最小JSON为6,990,519字节，超过6,291,456字节；即使5MB按十进制计，Base64也超过6MiB。故不能把普通函数一次返回Base64作为已覆盖最大图片的方案。此为已知容量约束与本地计算，不替代目标CloudBase调用链实测，额外返回字段只会进一步增加体积。
