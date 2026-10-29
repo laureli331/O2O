@@ -170,9 +170,13 @@ Page({
     this.setData({ busy: true, report: '正在核对创建者身份并检查合成文件内容…' });
     try {
       const result = await workflow.verifyOwnerFile(bundle);
-      this.setData({ report: `创建者文件核验：${accessLabel(result)}。这里只比较合成证明文本，不显示文件内容。` });
+      const check = result.contentCheck;
+      const diagnostic = check
+        ? `\n预期字符数：${check.expectedLength}；实际字符数：${check.actualLength}；文本类型：${check.marker}。`
+        : '\n文本诊断不可用。';
+      this.setData({ report: `探针版本：owner-read-v3\n创建者文件核验：${accessLabel(result)}。这里只比较合成证明文本，不显示文件内容。${diagnostic}` });
     } catch (error) {
-      this.setData({ report: `核验未完成，错误码：${errorCode(error)}。` });
+      this.setData({ report: `探针版本：owner-read-v3\n核验未完成，错误码：${errorCode(error)}。` });
     } finally { this.setData({ busy: false }); }
   },
 

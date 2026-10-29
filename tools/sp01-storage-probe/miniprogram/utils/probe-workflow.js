@@ -39,7 +39,13 @@ function createProbeWorkflow(api) {
       }
       try {
         const content = await api.readDownloadedText(result.tempFilePath);
-        return { kind: 'accessible', matchesOwnerProof: content === bundle.ownerContent };
+        if (typeof content !== 'string') throw new Error('CONTENT_CHECK_FAILED');
+        const proof = content.match(/^SP01-SYNTHETIC-(OWNER|OTHER):[a-f0-9]{6,32}$/);
+        const marker = proof && proof[0] === content ? proof[1] : 'UNRECOGNIZED';
+        return {
+          kind: 'accessible', matchesOwnerProof: content === bundle.ownerContent,
+          contentCheck: { expectedLength: bundle.ownerContent.length, actualLength: content.length, marker },
+        };
       } catch (_) {
         return { kind: 'accessible', matchesOwnerProof: null, code: 'CONTENT_CHECK_FAILED' };
       }

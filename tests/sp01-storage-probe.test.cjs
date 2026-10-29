@@ -37,6 +37,9 @@ function loadProbePage(wx) {
 for (const scenario of [
   { name: 'matching content', response: { data: ownerContent }, expected: /内容与原证明一致/ },
   { name: 'changed content', response: { data: 'SP01-SYNTHETIC-OTHER:b5e209' }, expected: /内容已变化/ },
+  { name: 'trailing newline', response: { data: ownerContent + '\n' }, expected: /内容已变化/ },
+  { name: 'trailing carriage return', response: { data: ownerContent + '\r' }, expected: /内容已变化/ },
+  { name: 'unrecognized private text', response: { data: 'private-canary-must-not-escape' }, expected: /内容已变化/ },
   { name: 'missing data', response: {}, expected: /内容未能核验/ },
   { name: 'non-text data', response: { data: new ArrayBuffer(4) }, expected: /内容未能核验/ },
   { name: 'read failure', failed: true, expected: /内容未能核验/ },
@@ -63,7 +66,13 @@ for (const scenario of [
     page.setData = (update) => Object.assign(page.data, update);
     await page.verifyOwnerFile();
     assert.match(page.data.report, scenario.expected);
-    assert.doesNotMatch(page.data.report, /SP01-SYNTHETIC|synthetic-read-failure/);
+    assert.match(page.data.report, /探针版本：owner-read-v3/);
+    if (typeof scenario.response?.data === 'string') {
+      assert.ok(page.data.report.includes(`预期字符数：${ownerContent.length}；实际字符数：${scenario.response.data.length}`));
+      const marker = scenario.name === 'matching content' ? 'OWNER' : scenario.name === 'changed content' ? 'OTHER' : 'UNRECOGNIZED';
+      assert.ok(page.data.report.includes(`文本类型：${marker}`));
+    }
+    assert.doesNotMatch(page.data.report, /SP01-SYNTHETIC|synthetic-read-failure|private-canary/);
     assert.equal(page.data.busy, false);
   });
 }
@@ -542,7 +551,10 @@ test('owner verification and deletion require a fresh matching identity', async 
     readDownloadedText: async () => ownerContent,
     deleteFile: async (id) => { calls.push(['delete', id]); return { fileList: [{ fileID: id, status: 0 }] }; },
   });
-  assert.deepEqual(await ownerWorkflow.verifyOwnerFile(bundle), { kind: 'accessible', matchesOwnerProof: true });
+  assert.deepEqual(await ownerWorkflow.verifyOwnerFile(bundle), {
+    kind: 'accessible', matchesOwnerProof: true,
+    contentCheck: { expectedLength: ownerContent.length, actualLength: ownerContent.length, marker: 'OWNER' },
+  });
   assert.deepEqual(await ownerWorkflow.cleanupOwnerFile(bundle), { kind: 'deleted' });
   assert.deepEqual(calls, [['download', fileID], ['delete', fileID]]);
 
