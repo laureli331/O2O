@@ -22,7 +22,7 @@
 
 1. 在目标环境创建上述普通函数并设置 Node.js 20.19、超时 60 秒；不要运行默认示例。CLI 未提供运行时选择，不能沿用默认 Node.js 16.13。
 2. 将构建目录完整部署到同名函数；部署完成后只读核对运行时、超时、状态。
-3. 控制台测试事件 `{"action":"inspect"}`。必须返回 `version: "range-probe-v1"`、Node v20.19.x、`writes: false`，否则停止。
+3. 控制台测试事件 `{"action":"inspect"}`。必须返回 `version: "range-entry-v2"`、Node v20.19.x、`writes: false`、`dependenciesLoaded: false`，否则停止。此入口不加载 SDK；随后通过 `{"action":"dependencies"}` 单独检查依赖加载和初始化，不访问云端资源；必须成功后才执行 run。
 4. 仅运行一次 `{"action":"run"}`，只保留返回 JSON。成功需三段 `matches: true`、`wrongEtagRejected: true`、`cleanupConfirmed: true` 且总 `success: true`。
 5. 只读确认测试目录没有本轮残留，再删除本轮临时函数。若失败或超时，先记录结果、核对确切路径；不要自动重跑、批量删除或修改权限。
 
@@ -41,3 +41,9 @@
 - Node.js 20.19.3：专项 9/9 通过；完整构建包入口能加载已安装 SDK，inspect 返回预期版本、运行时及 writes:false，未调用云端。
 - 系统 Node.js 24.18.0：计划检查 44/44，全量 1489/1489 通过。
 - 以上仅本地证据。云端函数尚未部署，本轮合成云文件尚未创建；真实条件读取及清理未执行。
+
+## 部署后启动失败与诊断改动
+
+首次完整部署已由工具确认成功，函数 Active / Nodejs20.19 / 60 秒。用户 inspect 返回 `0 code exit unexpected`，请求 ID `2c00c5ce-58cc-4720-be32-b165ab19db7a`，未取得 inspect JSON；不能据此确认 SDK 是根因。用户配置截图确认执行入口 index.main、内存256MB，未显示启动堆栈。
+
+range-entry-v2 将无依赖 inspect 与 dependencies、run 分离。新增入口隔离测试在旧实现下失败，证明旧 inspect 会提前加载 SDK；这是诊断耦合问题的复现，不是云端退出根因复现。需要云端新版本返回结果后才能缩小故障范围。不修改运行时、内存或权限；不自动重跑文件实验。
