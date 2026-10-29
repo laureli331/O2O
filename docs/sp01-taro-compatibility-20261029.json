@@ -49,7 +49,25 @@
       "fullDeclarationCheckPassed": false
     }
   },
-  "typeCheckPolicyDecision": "awaiting-user-confirmation",
+  "typeCheckPolicyDecision": "user-confirmed-split",
+  "typePolicyApproval": {
+    "date": "2026-10-29",
+    "reply": "ok",
+    "applicationStrict": true,
+    "ownDeclarationsCheckedSeparately": true,
+    "vendorFailureRetained": true,
+    "securityGateBypassed": false,
+    "implementedInIsolatedProbeOnly": true,
+    "verification": {
+      "nodeVersion": "v20.19.3",
+      "npmRunTypecheckExitCode": 0,
+      "ownDeclarationInventoryCount": 0,
+      "inventoryTriggeredCompiler": false,
+      "syntheticOwnDeclarationValidExitCode": 0,
+      "syntheticOwnDeclarationInvalidExitCode": 2,
+      "vendorDeclarationCheckStillFailed": true
+    }
+  },
   "versionsFrozen": false,
   "candidateCompatibilityAccepted": false,
   "cloudResourcesChanged": false,

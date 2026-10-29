@@ -6,7 +6,7 @@ const candidate = process.argv[2] || 'baseline';
 const manifest = createManifest(require('./package.json'), candidate);
 const destination = path.resolve(__dirname, '../../.local', candidate === 'baseline' ? 'sp01-taro-probe' : 'sp01-taro-probe-peer-fix');
 fs.mkdirSync(destination, { recursive: true });
-for (const name of ['package.json', 'babel.config.cjs', 'tsconfig.json', 'project.config.json', 'THIRD-PARTY-NOTICES.md', 'config', 'src']) {
+for (const name of ['package.json', 'babel.config.cjs', 'tsconfig.json', 'tsconfig.app.json', 'check-own-declarations.cjs', 'project.config.json', 'THIRD-PARTY-NOTICES.md', 'config', 'src']) {
   fs.cpSync(path.join(__dirname, name), path.join(destination, name), { recursive: true });
 }
 fs.writeFileSync(path.join(destination, 'package.json'), JSON.stringify(manifest, null, 2));

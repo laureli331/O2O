@@ -1,10 +1,16 @@
 # SP01 Taro官方模板适配实验
 
+用户已回复“ok”采用拆分类型检查。在运行目录使用实际命令：`npm run typecheck`（自有TS/TSX strict＋自有声明独立全检）、`npm run typecheck:vendor`（完整第三方声明诊断，目前失败）。应用配置为tsconfig.app.json；原tsconfig.json的strict:true、skipLibCheck:false保留。prepare会复制独立检查脚本到运行目录。
+
+check-own-declarations.cjs仅扫描src/config/types内自有.d.ts/.d.mts/.d.cts，拒绝符号链接；有文件时执行不跳过声明的真实编译，无文件则明确报告清点0和compilerExecuted:false。它不把空库存说成实际声明类型检查通过。
+
 这是独立工具链候选检查，不是SP07工程、产品页面或已验收模板。[复用调查与失败记录](../../docs/sp01-taro-reuse-review-20261029.md)说明来源、许可、适配成本与边界。
 
 当前：Taro4.3.1＋React18.3.1＋Webpack5.91.0＋TypeScript5.9.3的微信目标构建成功；完整类型检查及依赖树检查失败，依赖审计尚有待处理项。具体依赖未冻结，不能直接用于正式工程。真实平台/交互未验。
 
 以上是baseline结果。后续独立peer-fix候选已解决依赖树冲突并保持构建成功，完整声明检查及安全项仍未完成；见[受控对照与待确认类型策略](../../docs/sp01-taro-compatibility-20261029.md)。使用 `node tools/sp01-taro-probe/prepare.cjs peer-fix`，不会覆盖baseline运行目录。原类型配置保持strict:true、skipLibCheck:false；check-type-policy.cjs中的声明跳过选项仅为诊断对照，尚未采用。
+
+上段“尚未采用”是批准前历史，已由本文顶部确认覆盖。check-type-policy现验证真实应用配置及两条负例；安全与版本冻结仍未通过。
 
 ## 已实际执行的验证
 

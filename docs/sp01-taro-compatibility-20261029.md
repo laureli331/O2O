@@ -1,5 +1,13 @@
 # SP01 Taro兼容问题的受控对照
 
+最新确认：用户在收到拆分策略建议及准确性代价说明后回复“ok”，确认采用。已在隔离探针实现独立检查命令；自有TS/TSX保持strict，自有声明全检，第三方声明失败独立留痕。下文原“待确认”描述保留为对照过程，由本段覆盖；不代表安全项或SP01放行。
+
+执行命令：typecheck:app使用tsconfig.app.json（strict:true、skipLibCheck:true）；typecheck:own-declarations扫描src/config/types下自有.d.ts/.d.mts/.d.cts，用strict:true、skipLibCheck:false且不默认注入第三方types单独检查；typecheck:vendor保留原tsconfig.json全检。组合typecheck要求前两项成功，第三方诊断不改记通过。自有声明若显式引用问题第三方类型，检查仍可能失败，不能自动排除或压制。
+
+Node20.19.3实际复验：应用检查退出0；错误组件属性、错误API参数各退出2且出现TS2322；第三方全检仍退出2、1077行诊断。当前探针无自有声明，库存清点明确报告0且未执行声明编译；另用真实编译器验证自有声明正例退出0、未定义类型负例退出2/TS2304，证明该命令不会随应用配置跳过自有声明。没有真实设备或安全通过声明。
+
+已实际执行运行目录中登记的npm run typecheck，在Node20.19.3下退出0；它组合执行应用与自有声明检查。仓库计划44/44、回归1522/1522通过；第三方声明及安全未通过与这些结果分别留痕，不混为全项通过。
+
 2026-10-29。基线[失败记录](sp01-taro-reuse-review-20261029.md)保留不变；本轮仅在独立的.local/sp01-taro-probe-peer-fix验证修复候选。[结构化结果](sp01-taro-compatibility-20261029.json)。Taro已获用户确认，但精确依赖组合没有冻结，未启动SP07。
 
 ## 已解决：peer冲突

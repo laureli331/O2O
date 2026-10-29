@@ -17,29 +17,29 @@ function runCheck() {
   const config = path.join(runtime, 'tsconfig.json');
   const original = fs.readFileSync(config);
   const hash = (buffer) => crypto.createHash('sha256').update(buffer).digest('hex');
-  const compile = (target, sourceOnly) => spawnSync(process.execPath,
-    [compiler, '--noEmit', '--pretty', 'false', '--project', target, ...(sourceOnly ? ['--skipLibCheck', 'true'] : [])],
+  const compile = (target) => spawnSync(process.execPath,
+    [compiler, '--noEmit', '--pretty', 'false', '--project', target],
     { encoding: 'utf8', timeout: 30000 });
-  const full = compile(config, false);
-  const source = compile(config, true);
+  const full = compile(config);
+  const source = compile(path.join(runtime, 'tsconfig.app.json'));
   const directory = path.join(runtime, 'validation-cases');
   fs.mkdirSync(directory, { recursive: true });
   const negativeCases = [];
   for (const file of ['invalid-component.tsx', 'invalid-api.ts']) {
     fs.copyFileSync(path.join(__dirname, 'type-policy-cases', file), path.join(directory, file));
     const negativeConfig = path.join(directory, `${file}.json`);
-    fs.writeFileSync(negativeConfig, JSON.stringify({ extends: '../tsconfig.json', include: ['../src', '../config', `./${file}`] }, null, 2));
-    const result = compile(negativeConfig, true);
+    fs.writeFileSync(negativeConfig, JSON.stringify({ extends: '../tsconfig.app.json', include: ['../src', '../config', `./${file}`] }, null, 2));
+    const result = compile(negativeConfig);
     const output = `${result.stdout || ''}${result.stderr || ''}`;
     negativeCases.push({ name: file, exitCode: result.status,
       expectedDiagnosticObserved: /\bTS2322\b/.test(output) && output.includes(file) });
     fs.writeFileSync(path.join(root, `.local/taro-policy-${file}.txt`), output);
   }
-  const report = { evidenceScope: 'local-compiler-policy-comparison-not-adoption', nodeVersion: process.version,
+  const report = { evidenceScope: 'local-approved-type-policy-verification', nodeVersion: process.version,
     fullDeclarationExitCode: full.status, fullDeclarationDiagnosticLines: full.stdout.split(/\r?\n/).filter(Boolean).length,
     sourceOnlyExitCode: source.status, negativeCases,
     originalConfigUnchanged: hash(original) === hash(fs.readFileSync(config)),
-    policyAdopted: false, fullDeclarationCheckPassed: false, productAcceptancePassed: false };
+    approvedPolicy: 'split-strict-source-own-declarations-vendor-diagnostics', fullDeclarationCheckPassed: false, productAcceptancePassed: false };
   report.comparisonConclusive = evaluate(report);
   fs.writeFileSync(path.join(root, '.local/taro-peer-full-declarations.txt'), `${full.stdout || ''}${full.stderr || ''}`);
   fs.writeFileSync(path.join(root, '.local/taro-peer-source-only.txt'), `${source.stdout || ''}${source.stderr || ''}`);

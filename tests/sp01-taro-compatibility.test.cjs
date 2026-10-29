@@ -15,7 +15,7 @@ test('peer repair evidence is separate from original failures and preserves supp
   assert.equal(report.validation.audit.counts.total, Object.entries(report.validation.audit.counts).filter(([key]) => key !== 'total').reduce((sum, [, value]) => sum + value, 0));
   assert.equal(report.validation.audit.allFindingsResolved, false);
 });
-test('policy comparison does not adopt a scope change or convert declaration failures to product acceptance', () => {
+test('historical comparison preserves declaration failure while explicit approval adopts split checking only', () => {
   const p = report.validation.typePolicyComparison;
   assert.equal(p.fullDeclarationExitCode, 2);
   assert.equal(p.sourceOnlyExitCode, 0);
@@ -23,7 +23,12 @@ test('policy comparison does not adopt a scope change or convert declaration fai
   assert.equal(p.originalConfigUnchanged, true);
   assert.equal(p.policyAdopted, false);
   assert.equal(p.fullDeclarationCheckPassed, false);
-  assert.equal(report.typeCheckPolicyDecision, 'awaiting-user-confirmation');
+  assert.equal(report.typeCheckPolicyDecision, 'user-confirmed-split');
+  assert.equal(report.typePolicyApproval.reply, 'ok');
+  assert.equal(report.typePolicyApproval.applicationStrict, true);
+  assert.equal(report.typePolicyApproval.ownDeclarationsCheckedSeparately, true);
+  assert.equal(report.typePolicyApproval.vendorFailureRetained, true);
+  assert.equal(report.typePolicyApproval.securityGateBypassed, false);
   assert.equal(report.candidateCompatibilityAccepted, false);
   assert.equal(report.productAcceptancePassed, false);
 });

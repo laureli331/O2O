@@ -4,7 +4,13 @@
   "private": true,
   "description": "Isolated adaptation of the official Taro 4.3.1 React TypeScript template",
   "engines": { "node": ">=20.19.0" },
-  "scripts": { "build:weapp": "taro build --type weapp", "typecheck": "tsc --noEmit" },
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "typecheck": "npm run typecheck:app && npm run typecheck:own-declarations",
+    "typecheck:app": "tsc --noEmit --project tsconfig.app.json",
+    "typecheck:own-declarations": "node check-own-declarations.cjs",
+    "typecheck:vendor": "tsc --noEmit --project tsconfig.json"
+  },
   "dependencies": {
     "@babel/runtime": "7.24.4",
     "@tarojs/components": "4.3.1",
