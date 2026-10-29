@@ -79,6 +79,25 @@ Page({
 
   onBundleInput(event) { this.setData({ bundleText: event.detail.value, report: '' }); },
 
+  inspectDevice() {
+    if (this.data.busy) return;
+    try {
+      const info = wx.getSystemInfoSync();
+      const fields = [
+        ['品牌', info.brand], ['型号', info.model], ['系统', info.system],
+        ['微信', info.version], ['基础库', info.SDKVersion], ['平台', info.platform],
+        ['屏幕逻辑宽', info.screenWidth], ['屏幕逻辑高', info.screenHeight],
+        ['窗口逻辑宽', info.windowWidth], ['字体设置', info.fontSizeSetting],
+      ];
+      const safeValue = (value) => typeof value === 'number' && Number.isFinite(value) ? String(value)
+        : typeof value === 'string' ? value.replace(/[\r\n\u0000-\u001f]/g, ' ').slice(0, 100) : '未提供';
+      this.setData({ report: ['设备诊断版本：device-info-v1', ...fields.map(([label, value]) => `${label}：${safeValue(value)}`),
+        '仅本机读取，未调用云服务。刷新率、渲染引擎和性能采样能力尚未验证。'].join('\n') });
+    } catch (_) {
+      this.setData({ report: '设备信息读取失败，未调用云服务。' });
+    }
+  },
+
   generateNonce() {
     this.setData({ nonce: `sp01-${randomHex(24)}`, bundleText: '', report: '共享码已生成。请由账号 A 创建测试文件，再把完整测试包交给账号 B。' });
   },

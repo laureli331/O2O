@@ -98,6 +98,22 @@ function loadProbePage(wx) {
   return page;
 }
 
+test('device evidence reports only selected local fields and performs no cloud calls', () => {
+  const page = loadProbePage({
+    getSystemInfoSync: () => ({ brand: 'synthetic', model: 'phone', system: 'OS',
+      version: '8.0.79', SDKVersion: '3.17.5', platform: 'android', screenWidth: 375,
+      deviceId: 'secret-device-id', location: 'secret-location', fontSizeSetting: undefined }),
+    cloud: { callFunction: () => assert.fail('local inspection must not call cloud') },
+  });
+  page.data = { ...page.data, bundleText: 'preserve-current-bundle' };
+  page.setData = (update) => Object.assign(page.data, update);
+  page.inspectDevice();
+  assert.match(page.data.report, /基础库：3.17.5/);
+  assert.match(page.data.report, /字体设置：未提供/);
+  assert.doesNotMatch(page.data.report, /secret-device-id|secret-location/);
+  assert.equal(page.data.bundleText, 'preserve-current-bundle');
+});
+
 test('current page exposes only the direct-only B action and preserves unknown errors', async () => {
   let downloads = 0;
   const page = loadProbePage({ cloud: {

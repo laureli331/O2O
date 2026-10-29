@@ -4,6 +4,14 @@
 
 用户随后回复“ok”，确认本文第4节文件授权方向。逐次服务端授权与独立公开展示副本已确认，具体传输承载仍按平台实际能力核实，不再重复询问此方向。
 
+### 已锁定SDK范围读取核对与下一验证候选
+
+从npm获取`@cloudbase/node-sdk@3.18.7`原包至忽略目录`.local/cloudbase-node-sdk-3.18.7.tgz`，完整性与已记录npm元数据一致，未安装或修改正式依赖。其`src/storage/index.ts`的downloadFile只接收fileID/urlType/tempFilePath，先获取临时地址后发普通GET，只接受200；类型声明亦未提供Range。身份探针现装`wx-server-sdk4.0.2`包装层仅向内部实例传fileID，其传递依赖实际为node-sdk3.17.2，不混称已验证3.18.7。两项已选直接依赖仍保持独立锁定方向。
+
+COS官方[下载对象](https://cloud.tencent.com/document/product/436/64981)公开支持Range、IfMatch和VersionId。因此下一受控验证候选为“服务端当前授权后、使用仅服务端持有的合法存储凭据执行条件Range读取”，而非把不存在的Range参数传给CloudBase SDK。实际桶权限、身份凭据来源、地域/对象绑定和206/Content-Range/ETag行为仍待核验，不从fileID猜权限，不向客户端发签名URL，不新增永久密钥；若目标环境不支持则该候选不得通过。HTTP二进制服务仍是备选，尚未决定引入新承载。
+
+本机环境采集入口`device-info-v1`仅调用wx.getSystemInfoSync，输出品牌/型号/系统/微信/基础库/平台/逻辑尺寸/字体设置白名单字段，不调用云服务，不输出其他字段，不改现有测试包。模拟器输出必须按platform=devtools归类；刷新率、渲染引擎及采样能力仍不由该入口推断。用于补齐SP01实际设备信息，不执行性能或存储验收。
+
 ### 分段授权本地验证与承载限制
 
 隔离实验`tools/sp01-storage-probe/chunk-read-experiment.cjs`不导入云SDK、不访问文件或网络、不提供正式端点。以注入的可信身份、授权关系和合成Buffer验证：5MiB按256KiB分20段完整还原且每段序列化后低于容量对照；B伪造输入身份/角色/fileKey不生效；段前及I/O后分别核对授权与文件版本；段间撤权后停止；同一授权对象原位变化被快照检测；并发A/B不共用身份状态；错误不回显原始信息、不返回内容。以上7项是本地合成实验，不是目标Node20.19、真机或CloudBase权限通过证据。撤权检查后与实际返回之间仍存在并发边界，正式实现须定义撤权生效点、在途请求和版本一致性，不宣称能撤回已经返回的数据。
