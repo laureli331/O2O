@@ -1,0 +1,8 @@
+{
+  "name": "sp01-range-probe",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "engines": { "node": "20.19.x" },
+  "dependencies": { "@cloudbase/node-sdk": "3.18.7" }
+}
