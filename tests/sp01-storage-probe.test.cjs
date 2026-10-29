@@ -103,6 +103,44 @@ test('only explicit storage permission codes count as denial; missing or unknown
   assert.equal(contract.classifyStorageError({ errCode: 'NETWORK_ERROR' }).kind, 'inconclusive');
 });
 
+test('numeric storage failures retain diagnostic tokens without inventing a permission verdict or leaking text', () => {
+  for (const code of [1, -403003, -503002]) {
+    const result = contract.classifyStorageError({ errCode: code, errMsg: 'errCode: -503002 | STORAGE_EXCEED_AUTHORITY signed-url-private-token' });
+    assert.equal(result.kind, 'inconclusive');
+    assert.equal(result.code, String(code));
+    assert.deepEqual(result.nestedCodes, ['-503002']);
+    assert.deepEqual(result.markers, ['STORAGE_EXCEED_AUTHORITY']);
+    assert.doesNotMatch(JSON.stringify(result), /signed-url|private-token/);
+  }
+  const result = contract.classifyStorageError({ status: 1, message: 'XSTORAGE_EXCEED_AUTHORITYY errCode: -503002suffix' });
+  assert.deepEqual(result.markers, []);
+  assert.deepEqual(result.nestedCodes, []);
+});
+
+test('other-account page reports safe storage diagnostics for each failure without adding requests', async () => {
+  const calls = [];
+  const page = loadProbePage({
+    env: { USER_DATA_PATH: '/tmp' },
+    cloud: {
+      callFunction: async () => { calls.push('identity'); return { result: { success: true, fingerprint: otherFingerprint, appMatchesTarget: true } }; },
+      getTempFileURL: async () => { calls.push('link'); return { fileList: [{ status: 1, errMsg: 'STORAGE_EXCEED_AUTHORITY private-canary' }] }; },
+      downloadFile: async () => { calls.push('download'); throw { errCode: -403003, errMsg: 'errCode: -503002 STORAGE_EXCEED_AUTHORITY private-canary' }; },
+      uploadFile: async () => { calls.push('upload'); throw { errCode: -503002, errMsg: 'STORAGE_EXCEED_AUTHORITY private-canary' }; },
+    },
+    getFileSystemManager: () => ({
+      writeFile: (options) => options.success(), unlink: (options) => options.success(),
+    }),
+  });
+  page.data = { ...page.data, bundleText: JSON.stringify(bundle) };
+  page.setData = (update) => Object.assign(page.data, update);
+  await page.runOtherProbe();
+  assert.match(page.data.report, /storage-errors-v1/);
+  assert.equal((page.data.report.match(/STORAGE_EXCEED_AUTHORITY/g) || []).length, 3);
+  assert.match(page.data.report, /内层码：-503002/);
+  assert.doesNotMatch(page.data.report, /private-canary/);
+  assert.deepEqual(calls, ['identity', 'link', 'download', 'upload']);
+});
+
 test('identity call errors retain only a safe provider code and request ID for diagnosis', async () => {
   const workflow = createProbeWorkflow({
     getIdentity: async () => {

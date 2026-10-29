@@ -1,5 +1,17 @@
 # SP01 身份调用诊断修复 — 2026-10-28
 
+## 最新结果：2026-10-29 owner-read-v3 真机核验通过，B 错误诊断待复验
+
+用户回传真机截图 `codex-clipboard-7411a7aa-7765-4d41-962d-efe5c4f6f8a8.jpg`，显示版本 `owner-read-v3`、创建者文件可以访问且内容与原证明一致、预期和实际字符数均为 37、文本类型 OWNER。这是本轮账号 A 使用原测试包的一次只读复验；与上一节 CLI 只读原文一致。当前创建者读取及内容一致性子项通过，先前“内容已变化”提示不再作为 B 覆盖成功的证据。此前手机包没有可识别版本标记，不能进一步断言那次一定使用了旧包或缓存。
+
+仍待完成的是 B 的访问结果判读及后续清理，SP01 整卡未通过。本轮未执行 B 请求、云函数部署、权限修改或云文件删除。B 已有数字返回码 `1`、`-403003`、`-503002` 仍未取得足够的一手映射依据；微信旧文档地址返回页面已迁移/不存在，第三方转载不用于放行。CloudBase 官方[错误码说明](https://docs.cloudbase.net/error-code/basic)及[HTTP 语义分类](https://docs.cloudbase.net/en/error-code/semantic-http-status)说明符号权限码，但不证明上述三个数字码的对应关系。
+
+本地确认存储错误分类只保存外层码，会丢弃 `errMsg/message` 中的诊断标记。补充 `storage-errors-v1`：每段最多读取 8192 字符，仅保留固定标记及最多 8 个内层数值码，不回显原始错误、身份、临时链接或正文；不增加请求、不改变权限拒绝判断，数值码即便伴随诊断标记仍保留无法判定供复核。新增两项测试先失败（39 项中原 37 项通过），修复后专项 39/39 通过；证据 `.local/sp01-storage-errors-red.log`、`.local/sp01-storage-errors-targeted.log`。这修复的是诊断信息丢失，不声称已查明云端权限根因。
+
+计划检查 43/43、全量回归 1461/1461 通过，无跳过；记录为 `.local/sp01-storage-errors-plan.log`、`.local/sp01-storage-errors-full.log`。用户截图原样保存在 `.local/sp01-owner-v3-user-pass.jpg`。本地测试不替代 B 真机结果。
+
+待新的具体授权后才刷新预览及由 B 对同一测试包执行一次完整诊断（身份、临时链接、下载、同路径合成写入；只有写入明确成功才尝试清理该次确切 fileID）。不新增第二份文件、不修改规则、不操作其他数据。若无法取得明确结果即停止，不循环重试。回退只反向提交本地诊断改动；A 本次通过证据保留。以下为历史记录。
+
 ## 最新结果：2026-10-29 云端原文一致，与手机提示矛盾
 
 用户回复“继续”后，按上一节具体范围执行一次 CLI 只读查询：`cloud_query_storage --appid wx2414399d423dfb65 --env cloud1-d2gjahlq39bf141c7 --action read --cloud-path sp01_permission_probe/owner-probe-f9a399e299df644d.txt`。返回 `success:true`、`encoding:utf8`、`sizeBytes:37`、`truncated:false`，实际合成文本为 `SP01-SYNTHETIC-OWNER:f9a399e299df644d`。本次读取时文本与路径对应的原证明一致，没有观察到 OTHER 标记；这不证明文件在此前所有时刻均未变化，也不构成 B 权限隔离通过。

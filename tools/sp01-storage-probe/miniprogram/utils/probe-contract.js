@@ -96,7 +96,13 @@ function identityCallDiagnostics(error) {
 
 function classifyStorageError(error) {
   const code = safeCode(error);
-  return { kind: DENIAL_CODES.has(code) ? 'denied' : 'inconclusive', code };
+  const { nestedCodes } = identityCallDiagnostics(error);
+  const messages = [error?.errMsg, error?.message]
+    .filter((value) => typeof value === 'string').map((value) => value.slice(0, 8192));
+  // Tokens are diagnostic evidence only: numeric/unknown codes remain inconclusive.
+  const markers = [...DENIAL_CODES, 'STORAGE_FILE_NONEXIST', 'STORAGE_REQUEST_FAIL']
+    .filter((marker) => messages.some((message) => new RegExp(`\\b${marker}\\b`).test(message)));
+  return { kind: DENIAL_CODES.has(code) ? 'denied' : 'inconclusive', code, nestedCodes, markers };
 }
 
 function makeProbeError(code) {

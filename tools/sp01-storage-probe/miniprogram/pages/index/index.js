@@ -60,8 +60,9 @@ function accessLabel(result) {
     if (result.matchesOwnerProof === null) return '可以访问，内容未能核验';
     return '可以访问';
   }
-  if (result.kind === 'denied') return `明确权限拒绝（${result.code}）`;
-  return `无法判定（${result.code || 'UNKNOWN'}）`;
+  const diagnostic = `；内层码：${(result.nestedCodes || []).join(', ') || '未提取到'}；标记：${(result.markers || []).join(', ') || '未提取到'}`;
+  if (result.kind === 'denied') return `明确权限拒绝（${result.code}）${diagnostic}`;
+  return `无法判定（${result.code || 'UNKNOWN'}）${diagnostic}`;
 }
 
 function reportFor(result) {
@@ -147,6 +148,7 @@ Page({
     try {
       const result = await workflow.testAsOther(bundle);
       const lines = [
+        '存储诊断版本：storage-errors-v1',
         reportFor(result),
         `身份不同：${result.identity.sameAccount ? '否' : '是'}`,
         `临时链接：${accessLabel(result.read?.tempLink)}`,
