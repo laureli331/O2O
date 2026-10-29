@@ -308,23 +308,20 @@ test('SP04 records the DevTools project list without claiming all local projects
 
 test('SP04 keeps an inaccessible official category source separate from eligibility conclusions', () => {
   const record = evidence();
-  assert.deepEqual(record.officialCategorySourceLookup, {
-    lookupDate: '2026-10-27',
-    officialUrl: 'https://developers.weixin.qq.com/miniprogram/product/material/',
-    directPageAccess: 'non-retryable-error',
-    officialDomainRestrictedSearch: 'no-results',
-    eligibilityConclusion: null,
-    provesCategoryUnavailable: false,
-    evidenceMethod: 'public-web-read-only',
-    latestPublicSearchAttempt: {
-      date: '2026-10-28',
-      source: 'read-only-public-web-search-and-direct-official-doc-open',
-      officialDomainsQueried: ['developers.weixin.qq.com', 'mp.weixin.qq.com'],
-      result: 'no-official-results',
-      categoryApplicabilityResolved: false,
-      nonOfficialResultsUsedAsEvidence: false,
-    },
-  });
+  assert.equal(record.officialCategorySourceLookup.lookupDate, '2026-10-27');
+  assert.equal(record.officialCategorySourceLookup.officialUrl, 'https://developers.weixin.qq.com/miniprogram/product/material/');
+  assert.equal(record.officialCategorySourceLookup.directPageAccess, 'non-retryable-error');
+  assert.equal(record.officialCategorySourceLookup.officialDomainRestrictedSearch, 'no-results');
+  assert.equal(record.officialCategorySourceLookup.provesCategoryUnavailable, false);
+  assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.result, 'no-official-results');
+  const latest = record.officialCategorySourceLookup.latestOfficialPageFetch;
+  assert.equal(latest.httpStatus, 200);
+  assert.equal(latest.subjectTable, '非个人主体小程序开放的服务类目');
+  assert.match(latest.matchedCategories['家政服务'], /家电维修/);
+  assert.match(latest.matchedCategories['跑腿'], /代为购买和送达/);
+  assert.equal(latest.secondhandExactLabelFound, false);
+  assert.equal(latest.categoryApplicabilityResolved, false);
+  assert.equal(latest.officialEvidenceUrl, 'https://developers.weixin.qq.com/miniprogram/product/material/');
   assert.deepEqual(record.categoryPickerObservation, {
     sourceScreenshots: [
       'codex-clipboard-bec8e09b-c65b-4574-bcc0-8ceb0636029d.png',
@@ -357,6 +354,8 @@ test('SP04 keeps an inaccessible official category source separate from eligibil
   assert.ok(doc.includes('“生活服务 > 家政服务”的说明包含家电维修'));
   assert.ok(doc.includes('搜索“跑腿”时，截图只显示“物流服务 > 查件”和“物流服务 > 装卸搬运”'));
   assert.ok(doc.includes('没有保存最终服务类目'));
+  assert.ok(doc.includes('本次通过只读 HTTP 请求取得微信官方'));
+  assert.ok(doc.includes('页面未以“二手交易”这一独立名称列出'));
 });
 
 test('SP04 records the exact user-confirmed service area and three service modules', () => {

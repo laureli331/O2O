@@ -121,7 +121,7 @@
     "officialUrl": "https://developers.weixin.qq.com/miniprogram/product/material/",
     "directPageAccess": "non-retryable-error",
     "officialDomainRestrictedSearch": "no-results",
-    "eligibilityConclusion": null,
+    "eligibilityConclusion": "非个人主体表明确列出家政服务和跑腿；二手交易未在本页以该独立名称出现，替代类目仍未确认",
     "provesCategoryUnavailable": false,
     "evidenceMethod": "public-web-read-only",
     "latestPublicSearchAttempt": {
@@ -134,6 +134,26 @@
       "result": "no-official-results",
       "categoryApplicabilityResolved": false,
       "nonOfficialResultsUsedAsEvidence": false
+    },
+    "latestOfficialPageFetch": {
+      "date": "2026-10-29",
+      "source": "PowerShell read-only HTTP fetch of official page",
+      "httpStatus": 200,
+      "pageTitle": "微信开放文档 / 小程序-运营-开放的服务类目",
+      "dateModified": "2026-10-29T04:18:31.107Z",
+      "subjectTable": "非个人主体小程序开放的服务类目",
+      "matchedCategories": {
+        "家政服务": "适用于提供家政服务，如保姆、月嫂、房屋保洁、家电维修、数码电器维修等在线预约等服务。",
+        "跑腿": "适用于为需求者提供委托跑腿员代为购买和送达各种物品的服务；涉及外卖配送需补充餐饮服务-外卖平台，涉及为多个经营者提供交易的平台需补充电商平台等相关类目。"
+      },
+      "personalTableCrossCheck": {
+        "家政": "列出，说明包含家电维修、数码电器维修在线预约",
+        "外送": "列出，适用于生活类外送服务，如跑腿"
+      },
+      "secondhandExactLabelFound": false,
+      "categoryApplicabilityResolved": false,
+      "categoryApplicabilityScope": "仅确认官方表中出现的名称和适用范围；不替代提交时的主体、资质和后台审核结果",
+      "officialEvidenceUrl": "https://developers.weixin.qq.com/miniprogram/product/material/"
     }
   },
   "categoryPickerObservation": {
