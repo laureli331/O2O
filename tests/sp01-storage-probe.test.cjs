@@ -271,7 +271,9 @@ test('probe README reflects the latest log-settings inspection instead of asking
   const readme = fs.readFileSync(path.resolve(__dirname, '../tools/sp01-storage-probe/README.md'), 'utf8');
   assert.ok(readme.includes('投递到 CLS'));
   assert.ok(readme.includes('Nodejs16.13'));
-  assert.ok(readme.includes('失败根因仍未确认'));
+  assert.ok(readme.includes('上游语义仍无法判定'));
+  assert.ok(readme.includes('已知的单文件跨账号隔离失败'));
+  assert.ok(readme.includes('Cannot find module'));
   assert.ok(readme.includes('七份合成文件随后已逐条确认删除'));
   assert.ok(readme.includes('owner-read-v3'));
   assert.doesNotMatch(readme, /新旧两份合成文件尚未确认清理/);
