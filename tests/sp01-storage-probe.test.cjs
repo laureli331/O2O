@@ -12,6 +12,8 @@ const { createIdentityHandler } = require('../tools/sp01-storage-probe/cloudfunc
 const identityContract = require('../tools/sp01-storage-probe/cloudfunctions/sp01IdentityProbe/identity-contract');
 const { createProbeWorkflow } = require('../tools/sp01-storage-probe/miniprogram/utils/probe-workflow');
 
+const identityFunctionDir = path.resolve(__dirname, '../tools/sp01-storage-probe/cloudfunctions/sp01IdentityProbe');
+
 const nonce = 'sp01-check-20261028-a7c31e';
 const ownerFingerprint = 'a'.repeat(24);
 const otherFingerprint = 'b'.repeat(24);
@@ -19,6 +21,14 @@ const fileID = 'cloud://cloud1-d2gjahlq39bf141c7.636c-cloud1-d2gjahlq39bf141c7-1
 const cloudPath = 'sp01_permission_probe/owner-probe-a7c31e.txt';
 const ownerContent = 'SP01-SYNTHETIC-OWNER:a7c31e';
 const bundle = { version: 1, nonce, ownerFingerprint, fileID, cloudPath, ownerContent };
+
+test('identity probe package declares the runtime SDK required by its entrypoint', () => {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(identityFunctionDir, 'package.json'), 'utf8'));
+  const lockJson = JSON.parse(fs.readFileSync(path.join(identityFunctionDir, 'package-lock.json'), 'utf8'));
+  assert.equal(packageJson.dependencies['wx-server-sdk'], '4.0.2');
+  assert.equal(lockJson.packages[''].dependencies['wx-server-sdk'], '4.0.2');
+  assert.equal(lockJson.packages['node_modules/wx-server-sdk'].version, '4.0.2');
+});
 
 function loadProbePage(wx) {
   const pagePath = path.resolve(__dirname, '../tools/sp01-storage-probe/miniprogram/pages/index/index.js');
