@@ -151,6 +151,26 @@ test('other-account page reports safe storage diagnostics for each failure witho
   assert.deepEqual(calls, ['identity', 'link', 'download', 'upload']);
 });
 
+test('direct download -403003 is explained as an empty upstream URL, not permission denial', async () => {
+  const page = loadProbePage({
+    env: { USER_DATA_PATH: '/tmp' },
+    cloud: {
+      callFunction: async () => ({ result: { success: true, fingerprint: otherFingerprint, appMatchesTarget: true } }),
+      getTempFileURL: async () => ({ fileList: [{ errCode: 'STORAGE_EXCEED_AUTHORITY' }] }),
+      downloadFile: async () => { throw { errCode: -403003 }; },
+      uploadFile: async () => { throw { errCode: 'STORAGE_EXCEED_AUTHORITY' }; },
+    },
+    getFileSystemManager: () => ({
+      writeFile: (options) => options.success(), unlink: (options) => options.success(),
+    }),
+  });
+  page.data = { ...page.data, bundleText: JSON.stringify(bundle) };
+  page.setData = (update) => Object.assign(page.data, update);
+  await page.runOtherProbe();
+  assert.match(page.data.report, /-403003：本机 SDK 机制显示上游未返回下载地址，权限未知/);
+  assert.match(page.data.report, /本轮不能判断隔离是否成立/);
+});
+
 test('identity call errors retain only a safe provider code and request ID for diagnosis', async () => {
   const workflow = createProbeWorkflow({
     getIdentity: async () => {

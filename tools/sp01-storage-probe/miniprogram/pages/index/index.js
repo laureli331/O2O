@@ -62,6 +62,7 @@ function accessLabel(result) {
   }
   const diagnostic = `；内层码：${(result.nestedCodes || []).join(', ') || '未提取到'}；标记：${(result.markers || []).join(', ') || '未提取到'}`;
   if (result.kind === 'denied') return `明确权限拒绝（${result.code}）${diagnostic}`;
+  if (result.code === '-403003') return `无法判定（-403003：本机 SDK 机制显示上游未返回下载地址，权限未知）${diagnostic}`;
   return `无法判定（${result.code || 'UNKNOWN'}）${diagnostic}`;
 }
 
