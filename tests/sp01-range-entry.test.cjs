@@ -14,9 +14,32 @@ test('deployed entry inspect returns without importing SDK or experiment depende
   vm.runInNewContext(source, context);
   const result = await context.exports.main({ action: 'inspect' });
   assert.equal(result.success, true);
-  assert.equal(result.version, 'range-entry-v2');
+  assert.equal(result.version, 'range-entry-v3');
   assert.equal(result.writes, false);
   assert.deepEqual(imports, []);
+});
+
+test('SDK load diagnostic exposes only standard code and safe package name', async () => {
+  const context = { exports: {}, process, require: () => {
+    throw Object.assign(Error("Cannot find module '@cloudbase/node-sdk'\nRequire stack: private-path"), { code: 'MODULE_NOT_FOUND' });
+  } };
+  vm.runInNewContext(source, context);
+  const result = await context.exports.main({ action: 'dependencies' });
+  assert.equal(result.errorCode, 'MODULE_NOT_FOUND');
+  assert.equal(result.missingPackage, '@cloudbase/node-sdk');
+  assert.equal(result.errorName, 'Error');
+  assert.doesNotMatch(JSON.stringify(result), /private-path|Require stack/);
+});
+
+test('arbitrary error fields and filesystem module paths are never exposed', async () => {
+  const context = { exports: {}, process, require: () => {
+    throw Object.assign(Error("Cannot find module '/var/user/private-token'"), { code: 'private-token', name: 'private-token' });
+  } };
+  vm.runInNewContext(source, context);
+  const result = await context.exports.main({ action: 'dependencies' });
+  assert.equal(result.errorCode, 'UNCLASSIFIED');
+  assert.equal(result.missingPackage, null);
+  assert.doesNotMatch(JSON.stringify(result), /private-token|var\/user/);
 });
 
 test('invalid action does not initialize dependencies', async () => {

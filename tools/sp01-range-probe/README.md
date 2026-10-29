@@ -22,7 +22,7 @@
 
 1. 在目标环境创建上述普通函数并设置 Node.js 20.19、超时 60 秒；不要运行默认示例。CLI 未提供运行时选择，不能沿用默认 Node.js 16.13。
 2. 将构建目录完整部署到同名函数；部署完成后只读核对运行时、超时、状态。
-3. 控制台测试事件 `{"action":"inspect"}`。必须返回 `version: "range-entry-v2"`、Node v20.19.x、`writes: false`、`dependenciesLoaded: false`，否则停止。此入口不加载 SDK；随后通过 `{"action":"dependencies"}` 单独检查依赖加载和初始化，不访问云端资源；必须成功后才执行 run。
+3. 控制台测试事件 `{"action":"inspect"}`。必须返回 `version: "range-entry-v3"`、Node v20.19.x、`writes: false`、`dependenciesLoaded: false`，否则停止。此入口不加载 SDK；随后通过 `{"action":"dependencies"}` 单独检查依赖加载和初始化，不访问云端资源；必须成功后才执行 run。
 4. 仅运行一次 `{"action":"run"}`，只保留返回 JSON。成功需三段 `matches: true`、`wrongEtagRejected: true`、`cleanupConfirmed: true` 且总 `success: true`。
 5. 只读确认测试目录没有本轮残留，再删除本轮临时函数。若失败或超时，先记录结果、核对确切路径；不要自动重跑、批量删除或修改权限。
 
@@ -47,3 +47,5 @@
 首次完整部署已由工具确认成功，函数 Active / Nodejs20.19 / 60 秒。用户 inspect 返回 `0 code exit unexpected`，请求 ID `2c00c5ce-58cc-4720-be32-b165ab19db7a`，未取得 inspect JSON；不能据此确认 SDK 是根因。用户配置截图确认执行入口 index.main、内存256MB，未显示启动堆栈。
 
 range-entry-v2 将无依赖 inspect 与 dependencies、run 分离。新增入口隔离测试在旧实现下失败，证明旧 inspect 会提前加载 SDK；这是诊断耦合问题的复现，不是云端退出根因复现。需要云端新版本返回结果后才能缩小故障范围。不修改运行时、内存或权限；不自动重跑文件实验。
+
+用户随后回传：range-entry-v2 inspect 成功，运行时 v20.19.3、dependenciesLoaded:false；dependencies 返回 INITIALIZATION_FAILED / sdk-load / writes:false。因此入口可执行，异常发生于 require SDK，尚未执行 init；缺失依赖或兼容性根因仍未知。range-entry-v3 仅增加白名单异常类型/标准码/安全包名，不输出堆栈、原始消息或路径。该异常诊断用例先失败后修复，不能当作真实云端问题已修复。
