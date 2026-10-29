@@ -1173,3 +1173,20 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
   a(sp04AccountCheck.includes('latestProbeDeploymentRecovery'));
  a(!sp04AccountCheck.includes('先只读核对腾讯云账号中心'));
 });
+
+test('SP01 records the confirmed 2026-10-29 cleanup and keeps direct-download attribution unresolved', () => {
+  const plan = load();
+  const evidence = plan.tasks.find((task) => task.id === 'SP01').executionProgress.latest20261029ReadOnlyCleanupAndDownloadDiagnosis;
+  a.equal(evidence.cleanup.directory, 'sp01_permission_probe/');
+  a.equal(evidence.cleanup.deletionCardsConfirmed, true);
+  a.deepEqual(evidence.cleanup.filesAfterConfirmedDeletion, []);
+  a.equal(evidence.cleanup.totalCount, 0);
+  a.equal(evidence.cleanup.permissionSettingsChanged, false);
+  a.equal(evidence.download.historicalUpstreamResponseCaptured, false);
+  a.equal(evidence.download.userObservedDirectDownloadOuterCode, -403003);
+  a.equal(evidence.download.userObservedTempLinkMarker, 'STORAGE_EXCEED_AUTHORITY');
+  a.equal(evidence.download.userObservedSamePathWriteMarker, 'STORAGE_EXCEED_AUTHORITY');
+  a.equal(evidence.download.installedSdkVersion, '3.17.5');
+  a.equal(evidence.download.isolatedReplayPassed, 4);
+  a.equal(evidence.productAcceptancePassed, false);
+});

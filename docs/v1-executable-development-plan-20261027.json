@@ -2038,6 +2038,33 @@
           },
           "queryOrRefreshAction": "user-reported-filtered-query"
         },
+        "latest20261029ReadOnlyCleanupAndDownloadDiagnosis": {
+          "date": "2026-10-29",
+          "source": "user-confirmed-storage-deletion-cards-wechatide-read-only-list-and-local-sdk-replay",
+          "targetAppId": "wx2414399d423dfb65",
+          "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+          "cleanup": {
+            "directory": "sp01_permission_probe/",
+            "deletionCardsConfirmed": true,
+            "filesAfterConfirmedDeletion": [],
+            "totalCount": 0,
+            "permissionSettingsChanged": false,
+            "otherFilesTouched": false
+          },
+          "download": {
+            "historicalUpstreamResponseCaptured": false,
+            "userObservedDirectDownloadOuterCode": -403003,
+            "userObservedTempLinkMarker": "STORAGE_EXCEED_AUTHORITY",
+            "userObservedSamePathWriteMarker": "STORAGE_EXCEED_AUTHORITY",
+            "installedSdkVersion": "3.17.5",
+            "isolatedReplayCases": 4,
+            "isolatedReplayPassed": 4,
+            "isolatedReplayExternalRequests": 0,
+            "sdkMechanism": "empty upstream download_url is wrapped as -403003; mechanism evidence is not the historical upstream response"
+          },
+          "productAcceptancePassed": false,
+          "nextCloudAction": "fresh synthetic file plus B direct-download-only run; requires explicit authorization"
+        },
         "pendingCloudStep": "no-cloud-retest-or-settings-change-without-new-authorization"
       },
       "qualityContract": {
