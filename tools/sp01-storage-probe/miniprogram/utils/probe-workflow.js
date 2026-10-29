@@ -186,6 +186,14 @@ function createProbeWorkflow(api) {
     return { identity: { ...identity, currentFingerprint }, read, overwrite, overall: overallFor(read, overwrite) };
   }
 
+  async function testDirectAsOther(bundle) {
+    validateBundleOrThrow(bundle);
+    const currentFingerprint = await identify(bundle.nonce);
+    const identity = contract.compareIdentity(bundle.ownerFingerprint, currentFingerprint);
+    if (!identity.canProbe) return { identity, overall: 'same-account-stop' };
+    return { identity, direct: await attemptDownload(bundle) };
+  }
+
   async function verifyOwnerFile(bundle) {
     validateBundleOrThrow(bundle);
     const currentFingerprint = await identify(bundle.nonce);
@@ -206,7 +214,7 @@ function createProbeWorkflow(api) {
     }
   }
 
-  return { identify, createOwnerFile, testAsOther, verifyOwnerFile, cleanupOwnerFile };
+  return { identify, createOwnerFile, testAsOther, testDirectAsOther, verifyOwnerFile, cleanupOwnerFile };
 }
 
 module.exports = { createProbeWorkflow };

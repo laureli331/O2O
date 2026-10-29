@@ -21,7 +21,8 @@
     <text class="field-label">账号 A 的测试包</text>
     <textarea value="{{bundleText}}" bindinput="onBundleInput" maxlength="1800" placeholder="粘贴 A 复制的 JSON 测试包" />
     <button class="button button-secondary" hover-class="button-hover" hover-stay-time="80" bindtap="loadBundle" disabled="{{busy}}">检查测试包</button>
-    <button class="button button-primary" hover-class="button-hover" hover-stay-time="80" bindtap="runOtherProbe" loading="{{busy}}" disabled="{{busy}}">核对身份并测试读取 / 写入</button>
+    <button class="button button-primary" hover-class="button-hover" hover-stay-time="80" bindtap="runDirectOnly" loading="{{busy}}" disabled="{{busy}}">核对身份并仅直接下载（本轮）</button>
+    <view class="hint">本轮只使用上述按钮。旧读取/写入测试入口暂停。</view>
   </view>
 
   <view class="card">

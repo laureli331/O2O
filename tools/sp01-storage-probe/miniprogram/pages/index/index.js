@@ -164,6 +164,23 @@ Page({
     } finally { this.setData({ busy: false }); }
   },
 
+  async runDirectOnly() {
+    if (this.data.busy) return;
+    let bundle;
+    try { bundle = this.parseBundle(); } catch (error) {
+      this.setData({ report: `测试包无效，错误码：${errorCode(error)}。没有发起云端请求。` });
+      return;
+    }
+    this.setData({ busy: true, report: '正在核对身份并只执行一次直接下载…' });
+    try {
+      const result = await workflow.testDirectAsOther(bundle);
+      this.setData({ report: result.overall === 'same-account-stop' ? reportFor(result)
+        : `探针版本：direct-only-v1\n身份不同：是\n直接下载：${accessLabel(result.direct)}\n本轮未请求临时链接或执行写入。请保留结果，停止重试。` });
+    } catch (error) {
+      this.setData({ report: `仅下载探针中止，错误码：${errorCode(error)}。${identityDiagnostic(error)}` });
+    } finally { this.setData({ busy: false }); }
+  },
+
   async verifyOwnerFile() {
     let bundle;
     try { bundle = this.parseBundle(); } catch (error) {

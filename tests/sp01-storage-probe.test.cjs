@@ -22,6 +22,27 @@ const cloudPath = 'sp01_permission_probe/owner-probe-a7c31e.txt';
 const ownerContent = 'SP01-SYNTHETIC-OWNER:a7c31e';
 const bundle = { version: 1, nonce, ownerFingerprint, fileID, cloudPath, ownerContent };
 
+test('direct-only other-account probe never requests links, uploads or deletes', async () => {
+  for (const fingerprint of [ownerFingerprint, otherFingerprint]) {
+    const calls = [];
+    const workflow = createProbeWorkflow({
+      getIdentity: async () => ({ success: true, fingerprint, appMatchesTarget: true }),
+      downloadFile: async (id) => { calls.push(id); throw { errCode: -403003 }; },
+      getTempFileURL: () => assert.fail('link forbidden'),
+      uploadFile: () => assert.fail('upload forbidden'),
+      deleteFile: () => assert.fail('delete forbidden'),
+    });
+    const result = await workflow.testDirectAsOther(bundle);
+    assert.equal(result.identity.sameAccount, fingerprint === ownerFingerprint);
+    assert.equal(calls.length, fingerprint === ownerFingerprint ? 0 : 1);
+    if (calls.length) {
+      assert.equal(calls[0], fileID);
+      assert.equal(result.direct.kind, 'inconclusive');
+      assert.equal(result.direct.code, '-403003');
+    }
+  }
+});
+
 test('identity probe package declares the runtime SDK required by its entrypoint', () => {
   const packageJson = JSON.parse(fs.readFileSync(path.join(identityFunctionDir, 'package.json'), 'utf8'));
   const lockJson = JSON.parse(fs.readFileSync(path.join(identityFunctionDir, 'package-lock.json'), 'utf8'));
@@ -43,6 +64,27 @@ function loadProbePage(wx) {
   }, { filename: pagePath });
   return page;
 }
+
+test('current page exposes only the direct-only B action and preserves unknown errors', async () => {
+  let downloads = 0;
+  const page = loadProbePage({ cloud: {
+    callFunction: async () => ({ result: { success: true, fingerprint: otherFingerprint, appMatchesTarget: true } }),
+    downloadFile: async () => { downloads++; throw { errCode: -403003 }; },
+  } });
+  page.data = { ...page.data, bundleText: JSON.stringify(bundle) };
+  page.setData = (update) => Object.assign(page.data, update);
+  await page.runDirectOnly();
+  assert.equal(downloads, 1);
+  assert.match(page.data.report, /direct-only-v1/);
+  assert.match(page.data.report, /权限未知/);
+  assert.equal(page.data.busy, false);
+  page.data.busy = true;
+  await page.runDirectOnly();
+  assert.equal(downloads, 1);
+  const markup = fs.readFileSync(path.resolve(__dirname, '../tools/sp01-storage-probe/miniprogram/pages/index/index.wxml'), 'utf8');
+  assert.match(markup, /bindtap="runDirectOnly"/);
+  assert.doesNotMatch(markup, /bindtap="runOtherProbe"/);
+});
 
 for (const scenario of [
   { name: 'matching content', response: { data: ownerContent }, expected: /内容与原证明一致/ },
