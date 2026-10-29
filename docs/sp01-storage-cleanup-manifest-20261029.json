@@ -1,0 +1,25 @@
+{
+  "appId": "wx2414399d423dfb65",
+  "envId": "cloud1-d2gjahlq39bf141c7",
+  "directory": "sp01_permission_probe/",
+  "observedFileCount": 7,
+  "deletionAuthorized": false,
+  "latestUserConfirmedCloudPath": "sp01_permission_probe/owner-probe-c23b0f90321a70bc.txt",
+  "files": [
+    "sp01_permission_probe/owner-probe-41a7ac8a59d4a79a.txt",
+    "sp01_permission_probe/owner-probe-664a688b31b1b9fc.txt",
+    "sp01_permission_probe/owner-probe-9eb3f08ccf06be87.txt",
+    "sp01_permission_probe/owner-probe-c23b0f90321a70bc.txt",
+    "sp01_permission_probe/owner-probe-dfc480fd50595dbf.txt",
+    "sp01_permission_probe/owner-probe-ed4129f3c7ed102c.txt",
+    "sp01_permission_probe/owner-probe-f9a399e299df644d.txt"
+  ],
+  "readEvidence": {
+    "allListedFilesReadSuccessfully": true,
+    "encoding": "utf8",
+    "sizeBytesEach": 37,
+    "truncated": false,
+    "contentRule": "Each file contains exactly SP01-SYNTHETIC-OWNER: followed by the 16 hexadecimal characters in its filename. This is observed content, not proof of historical immutability."
+  },
+  "proposedCleanup": "After specific user authorization, delete only these seven exact paths individually, then list the directory to verify remaining files. Stop on failure or changed content; do not broaden deletion to other paths or delete the directory."
+}
