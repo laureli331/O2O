@@ -164,8 +164,10 @@ test('SP04 records the generated preview and separates the failed client attempt
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {
   const record = evidence();
   assert.equal(record.date, '2026-10-27');
-  assert.equal(record.lastUpdated, '2026-10-28');
-  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('创建日期：2026-10-27；最近更新：2026-10-28'));
+  assert.equal(record.lastUpdated, '2026-10-29');
+  assert.equal(record.localPreviewAvailability.httpStatus, 200);
+  assert.equal(record.localPreviewAvailability.scope, 'local-static-directory-only');
+  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('创建日期：2026-10-27；最近更新：2026-10-29'));
   assert.equal(record.cloudConsoleScreenshot.name, 'user-provided-2026-10-27');
   assert.equal(record.cloudConsoleScreenshot.visibleEnvironmentName, 'cloud1');
   assert.equal(record.cloudConsoleScreenshot.visibleBadge, '微信体验版');

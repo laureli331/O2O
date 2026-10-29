@@ -1,11 +1,24 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-27",
-  "lastUpdated": "2026-10-28",
+  "lastUpdated": "2026-10-29",
   "taskId": "SP04",
   "status": "in-progress",
   "productAcceptancePassed": false,
   "deliveryScope": "evidence-review-only",
+  "localPreviewAvailability": {
+    "date": "2026-10-29",
+    "url": "http://127.0.0.1:8765/",
+    "server": "Python http.server bound to 127.0.0.1:8765",
+    "httpStatus": 200,
+    "rootResponseBytes": 930,
+    "scope": "local-static-directory-only",
+    "doesNotProve": [
+      "真机页面可用",
+      "云端身份或存储权限",
+      "托管、登录或正式发布"
+    ]
+  },
   "sources": [
     "docs/v1-executable-development-plan-20261027.md",
     "docs/v1-executable-development-plan-20261027.json",
