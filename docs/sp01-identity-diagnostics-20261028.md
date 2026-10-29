@@ -1,5 +1,19 @@
 # SP01 身份调用诊断修复 — 2026-10-28
 
+## 最新结果：2026-10-29 七份文件清理完成，下载 SDK 机制复现
+
+用户明确授权七份文件删除并要求继续完成两项收尾。实际轮询首批七个任务：41a7ac8a59d4a79a、664a688b31b1b9fc、9eb3f08ccf06be87、ed4129f3c7ed102c 四份 execution_success/deleted:true；c23b0f90321a70bc、dfc480fd50595dbf、f9a399e299df644d 三份 user_denied/cancelled。此前脚本错误地仅检查 success:true，未将 pending 当作需要等待的状态，导致一次产生七张卡；pending 并非删除成功。未再沿用该批处理脚本。
+
+后续按用户最新继续指令重新提交剩余三份的确切路径，用户确认工具卡后分别轮询为 execution_success/deleted:true。新任务 ID 为 `296cc52c-ee0b-48ba-a8fc-1b9c3f53c23f`、`6be606ef-4d47-4f86-ab9f-09adc7432a90`、`d5d46610-fc43-4556-a668-3363fb561ad0`（均带 confirmation_cloud_manage_storage_ 前缀）。最后 `cloud_query_storage action=list` 回包 `files:[]`、`totalCount:0`。七份合成文件清理与目录回查完成；未删除目录或其他文件，清理清单同步记录执行结果。
+
+下载诊断新增一手依据：用户私有工程配置当前基础库为 3.17.5（公开配置另为 2.20.1，未修改用户配置），本机已缓存的官方 `WeappVendor/3.17.5.wxvpkg` 也将 -403003 定义为 SDK_STORAGE_INTERNAL_SERVER_ERROR_EMPTY_DOWNLOAD_URL。其下载地址解析器向 tcbapi_downloadfile 请求，在上游 data.download_url 为空时抛出该码，然后才可能调用底层下载。因此“地址缺失”的 SDK 机制已定位；这不是 HTTP 403，也不是单凭数字即可判定的权限拒绝。
+
+`tools/sp01-storage-probe/check-download-sdk.cjs` 从实际官方包提取该解析函数，置于隔离 VM，拦截请求并注入四个合成回包：空 data、带 STORAGE_EXCEED_AUTHORITY 且无 URL、正常 URL、请求直接网络拒绝。前两项均产生 -403003，正常 URL 返回地址，网络拒绝保留原错误；4/4 断言通过，实际外连数为 0。包 SHA-256 为 `62516353cb6e85dfe680d80b3ea81c435b2ff8d7093ed55d023e68979e21b91b`，提取函数 SHA-256 为 `3aa4062b3815f6814b130c624765eb63be83532d4c682e1b1ec408fc9f92cc8c`，输出为 `.local/sp01-download-sdk-final-replay.json`。
+
+证据边界仍然保留：此受控复现证明实际 SDK 的丢失上游错误语义机制，不能还原历史手机请求的上游原始回包，也未证明手机实际基础库版本。B 获取临时链接和写入的权限拒绝已确认；将 B 下载地址为空唯一归因于权限拒绝仍缺逐请求证据，不能把本地合成复现冒充真机验收通过。历史文件已清理，再次真机取证需要新的一份隔离测试文件及一次 B 只读下载，不得自动新建或重跑写入。SP01 整卡继续未通过。
+
+身份调用与原始对象/字符串误比的缺陷均已修复且有真机成功证据；当前未解决范围仅为 B 历史下载失败的上游精确归因（不是身份连接失败）。以下为历史记录。
+
 ## 最新结果：2026-10-29 新测试路径确认，七份合成文件核验完成
 
 用户提供新测试包的确切 `cloudPath`：`sp01_permission_probe/owner-probe-c23b0f90321a70bc.txt`。沿用只读授权，对此路径执行 read 成功，内容为 `SP01-SYNTHETIC-OWNER:c23b0f90321a70bc`，UTF-8、37 字节、未截断。随后 list 成功返回七份文件，包含前轮六份及这个新路径。前轮未完成的 `9eb3f08ccf06be87`、`dfc480fd50595dbf`、`ed4129f3c7ed102c`、`f9a399e299df644d` 四份本轮 read 均成功，内容各为 OWNER 标记加同名编号、37 字节、未截断；此前两份已成功 read 的证据继续保留。七份均已取得内容证据，前轮 TLS 失败不再阻塞清单核对。

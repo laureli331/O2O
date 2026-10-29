@@ -3,7 +3,14 @@
   "envId": "cloud1-d2gjahlq39bf141c7",
   "directory": "sp01_permission_probe/",
   "observedFileCount": 7,
-  "deletionAuthorized": false,
+  "deletionAuthorized": true,
+  "cleanupResult": {
+    "allSevenExactPathsDeleted": true,
+    "directoryRecheckTotalCount": 0,
+    "directoryDeleted": false,
+    "firstAttempt": "Four tasks execution_success; three tasks user_denied. Pending was not deletion success.",
+    "remainingThreeAfterRenewedInstruction": "c23b0f90321a70bc, dfc480fd50595dbf, f9a399e299df644d: each execution_success with deleted:true; subsequent directory list files:[] and totalCount:0."
+  },
   "latestUserConfirmedCloudPath": "sp01_permission_probe/owner-probe-c23b0f90321a70bc.txt",
   "files": [
     "sp01_permission_probe/owner-probe-41a7ac8a59d4a79a.txt",
