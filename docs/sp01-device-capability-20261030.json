@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-30",
   "task": "SP01",
-  "status": "four-device-capability-and-oppo-fresh-entry-observed-duration-retest-pending",
+  "status": "four-device-capability-and-oppo-timings-observed-snapshot-confirmation-pending",
   "scope": "isolated-local-device-diagnostic-only",
   "targetAppId": "wx2414399d423dfb65",
   "probe": "tools/sp01-device-probe",
@@ -73,6 +73,40 @@
       "fpsOrFrameMetricReported": false,
       "cloudOrNetworkUsed": false,
       "interpretation": "The revised observer/read path captured 20 report rows on OPPO. The report intentionally redacts unrecognized names. The missing displayed durations are inconclusive because of a probe formatting defect; neither entry semantics nor FPS can be inferred from this output."
+    },
+    {
+      "id": "DEVICE01-DURATION-FIX-1",
+      "deviceId": "DEVICE01",
+      "model": "OPPO PLJ110",
+      "date": "2026-10-30",
+      "probeCommit": "6c4636a",
+      "source": "user-provided local report after the duration-formatting correction",
+      "reportedEntryRowCount": 20,
+      "entryTypeCounts": { "script": 1, "navigation": 2, "render": 10, "interaction": 6, "loadPackage": 1, "resource": 0 },
+      "recognizedEntryRows": [
+        { "name": "firstContentfulPaint", "entryType": "render", "durationMs": null },
+        { "name": "largestContentfulPaint", "entryType": "render", "durationMs": null },
+        { "name": "appLaunch", "entryType": "navigation", "durationMs": 865 },
+        { "name": "downloadPackage", "entryType": "loadPackage", "durationMs": 373 },
+        { "name": "evaluateScript", "entryType": "script", "durationMs": 5 },
+        { "name": "route", "entryType": "navigation", "durationMs": null },
+        { "name": "firstRender", "entryType": "render", "durationMs": 129 },
+        { "name": "firstPaint", "entryType": "render", "durationMs": null },
+        { "name": "firstContentfulPaint", "entryType": "render", "durationMs": null },
+        { "name": "largestContentfulPaint", "entryType": "render", "durationMs": null }
+      ],
+      "recognizedEntryCount": 10,
+      "unrecognizedEntryCountsByType": { "render": 4, "interaction": 6 },
+      "unrecognizedDurationSamplesMsByType": { "render": [569, 560, 569, 560], "interaction": [4, 1, 1, 4, 1, 1] },
+      "rowsWithDisplayedDurationCount": 14,
+      "rowsWithoutDisplayedDurationCount": 6,
+      "routeDurationMissing": true,
+      "bufferAndObserverSourcesWereMerged": true,
+      "repeatedOutputPatternsRequireDeduplication": true,
+      "fpsOrFrameMetricReported": false,
+      "cloudOrNetworkUsed": false,
+      "mergedSourcesMayDuplicateRows": true,
+      "interpretation": "The duration-field correction is reflected in multiple rows. firstPaint, firstContentfulPaint and largestContentfulPaint are documented time points without duration; the route row still lacks a duration and remains unexplained. The report merged buffer and observer snapshots, and repeated output patterns could be duplicates. The probe now prefers the full buffer snapshot when nonempty; a phone run is needed to verify the cleaned output. Unrecognized render/interaction names are not interpreted as latency or FPS."
     }
   ],
   "runtimeVersionDiscrepancies": [
@@ -89,8 +123,8 @@
     "oldCopyButtonRefreshedSnapshot": false,
     "revisedProbeObservesRuntimeReportedTypes": true,
     "revisedCopyButtonRefreshesBeforeCopy": true,
-    "oneDeviceRetest": "first revised-probe OPPO run completed; corrected-duration retest pending",
-    "retestEvidenceId": "DEVICE01-REVISED-1",
+    "oneDeviceRetest": "corrected-duration OPPO run completed; buffer-snapshot confirmation pending",
+    "retestEvidenceId": "DEVICE01-DURATION-FIX-1",
     "oldOutputs": "keep as first-run evidence, not proof that the current runtime buffer stays empty"
   },
   "cliCapabilityCheck": {
@@ -102,20 +136,20 @@
   },
   "localTests": {
     "formatterAndAllowlist": "passed",
-    "allDeviceProbeTests": "6/6 passed",
+    "allDeviceProbeTests": "7/7 passed",
     "normalizedObserverDurationRegression": "passed; formatter retains the sanitized durationMs field",
     "javascriptSyntax": "node --check passed for 3 JavaScript files",
     "jsonParse": "passed for 5 project/evidence JSON files",
     "testRuns": {
-      "focused": { "command": "node --test tests/sp01-device-probe.test.cjs tests/sp01-readiness-review.test.cjs", "passed": 8, "failed": 0 },
+      "focused": { "command": "node --test tests/sp01-device-probe.test.cjs tests/sp01-readiness-review.test.cjs", "passed": 9, "failed": 0 },
       "developmentPlan": { "command": "node --test tests/executable-development-plan.test.cjs", "passed": 44, "failed": 0 },
-      "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1547, "failed": 0 }
+      "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1548, "failed": 0 }
     },
     "miniProgramIDECompile": "user-provided outputs confirm execution on four phones; separate IDE compile artifact not captured",
-    "realPhoneRuns": "4 unique devices; 5 user-provided capability reports including one revised OPPO retest",
+    "realPhoneRuns": "4 unique devices; 6 user-provided capability reports including two revised OPPO retests",
     "phoneRendererValues": "webview on all 4 reported devices",
     "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
-    "freshEntriesAfterRevisedProbe": "OPPO returned 20 rows; duration-formatting fix is locally tested; corrected phone retest pending",
+    "freshEntriesAfterRevisedProbe": "OPPO report shows durations for 14 of 20 rows; buffer-snapshot selection is locally tested; phone confirmation pending",
     "measuredRefreshTiming": "unknown",
     "fpsMeasurementTool": "no item in IDE Tools menu per user; alternative measurement method not confirmed"
   },
@@ -123,8 +157,8 @@
     "Selected display refresh settings are not measured display timing or FPS.",
     "The probe reads its own page renderer, not a later formal product page's renderer.",
     "Startup and first-render entries do not measure scroll FPS or button-to-visible-feedback latency.",
-    "The first four reports came from a version whose copy button did not refresh the page snapshot; preserve them as first-run evidence. The first revised OPPO report contained 20 rows and 16 redacted names, but a formatter defect may have dropped normalized observer durations. A corrected OPPO retest is required. The other three devices have not been rerun on the revised probe.",
-    "The revised OPPO report does not establish the meaning of the interaction/render entries, quantitative render latency, or FPS until a corrected output is collected.",
+    "The first four reports came from a version whose copy button did not refresh the page snapshot; preserve them as first-run evidence. The first revised OPPO report was affected by the duration formatter defect. A later report showed durations on 14 of 20 output rows, but buffer and observer snapshots had been merged and repeated patterns could duplicate the same entries. The probe now selects the full buffer when available; a final OPPO confirmation is required. The other three devices have not been rerun on the revised probe.",
+    "The meaning of unrecognized interaction/render entries, why the route row lacks duration, clean unique entry counts, quantitative render latency, and FPS remain unverified.",
     "The backup Huawei's earlier reported base library 3.17.4 conflicts with the latest probe output 3.17.5; support baseline remains unresolved.",
     "No minimum product base-library floor or device group is frozen by this evidence."
   ],

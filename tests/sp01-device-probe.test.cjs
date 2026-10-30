@@ -46,6 +46,23 @@ test('already-sanitized observer entries retain durationMs when rendered again',
   assert.match(report, /route\/navigation\/84\.5ms/);
 });
 
+test('the full performance buffer snapshot takes precedence over overlapping observer rows', () => {
+  const report = buildDeviceReport({
+    info: { brand: 'OPPO', model: 'PLJ110', system: 'Android 17', version: '8.0.79', SDKVersion: '3.17.5', platform: 'android', screenWidth: 360, screenHeight: 776, windowWidth: 360, fontSizeSetting: 16 },
+    renderer: 'webview',
+    performanceApiAvailable: true,
+    observerAvailable: true,
+    supportedTypes: ['interaction', 'navigation'],
+    entries: [{ name: 'route', entryType: 'navigation', duration: 84.5 }],
+    observedEntries: [
+      { name: 'route', entryType: 'navigation', durationMs: 84.5 },
+      { name: 'tap', entryType: 'interaction', durationMs: 4 },
+    ],
+  });
+  assert.equal((report.match(/route\/navigation\/84\.5ms/g) || []).length, 1);
+  assert.doesNotMatch(report, /interaction\/4ms/);
+});
+
 test('capability normalizers redact unknown names and retain only finite safe durations', () => {
   assert.deepEqual(summarizeSupportedTypes(['render', { entryType: 'navigation' }, 'bad label', 5]), ['navigation', 'render']);
   assert.deepEqual(summarizeEntries([

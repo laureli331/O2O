@@ -67,7 +67,8 @@ function buildDeviceReport({
     ['窗口逻辑宽', info.windowWidth], ['字体设置', info.fontSizeSetting],
   ];
   const types = summarizeSupportedTypes(supportedTypes);
-  const metrics = summarizeEntries([...(entries || []), ...(observedEntries || [])], types);
+  const entrySnapshot = Array.isArray(entries) && entries.length > 0 ? entries : observedEntries;
+  const metrics = summarizeEntries(entrySnapshot, types);
   const hasFrameMetric = [...types, ...metrics.map((item) => item.name)]
     .some((name) => /fps|frame/i.test(name));
   return [
