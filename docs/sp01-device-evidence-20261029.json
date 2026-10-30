@@ -2,6 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-29",
   "source": "user-provided-device-info-v1-screenshot",
+  "laterRefreshRateReport": "docs/sp01-refresh-rate-report-20261030.json",
   "productAcceptancePassed": false,
   "devices": [
     {

@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-30",
+  "source": "user-message",
+  "rawReport": "oppo是120；华为是90；苹果是60",
+  "reportedRates": [
+    { "brand": "OPPO", "reportedHz": 120, "knownDevice": "DEVICE01" },
+    { "brand": "HUAWEI", "reportedHz": 90, "knownDevice": null, "possibleDeviceIds": ["DEVICE03", "DEVICE04"] },
+    { "brand": "iPhone", "reportedHz": 60, "knownDevice": "DEVICE02" }
+  ],
+  "currentSettingOrMaximumCapabilityConfirmed": false,
+  "huaweiModelAssociationConfirmed": false,
+  "physicalRefreshTimingMeasured": false,
+  "renderedFpsMeasured": false,
+  "measurementGroupsFrozen": false,
+  "existing60HzAcceptanceThresholdChanged": false,
+  "deviceSettingsChanged": false,
+  "productAcceptancePassed": false
+}
