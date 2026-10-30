@@ -25,6 +25,7 @@
     "androidDumpsys": "https://developer.android.com/tools/dumpsys",
     "androidGfxinfoResetGuidance": "https://android.googlesource.com/platform/frameworks/base/+/562ae3a/docs/html/training/testing/performance.jd",
     "androidAospInputShellSwipe": "https://android.googlesource.com/platform/frameworks/base/+/81f52b053da6/services/core/java/com/android/server/input/InputShellCommand.java",
+    "perfettoAndroidTracing": "https://perfetto.dev/docs/learning-more/android",
     "androidSlowSessions": "https://developer.android.com/topic/performance/issues/slow-session",
     "aospAndroid10SurfaceFlinger": "https://android.googlesource.com/platform/frameworks/native/+/refs/heads/android10-release/services/surfaceflinger/SurfaceFlinger.cpp",
     "aospAndroid10TimeStats": "https://android.googlesource.com/platform/frameworks/native/+/refs/heads/android10-release/services/surfaceflinger/TimeStats/TimeStats.cpp",
@@ -415,6 +416,29 @@
         "acceptanceEvidence": false,
         "interpretation": "This confirms a successful, guarded five-second synthetic swipe and nonzero gfxinfo output from the visible AppBrand host ViewRoot. The aggregate frame count is not an FPS measure: the latest rows contain no input-event timestamps, gfxinfo does not isolate the embedded WebView compositor, and the command wall time includes ADB overhead. The zero janky count and percentiles are host-process feasibility data only. Do not infer FPS or QP05 pass/fail."
       },
+      "localTraceFeasibilitySample": {
+        "deviceModel": "SEA-AL10",
+        "androidVersion": "10",
+        "foregroundActivityBeforeCapture": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "perfettoServiceResult": "Disconnected from the Perfetto traced service",
+        "perfettoTraceCaptured": false,
+        "atraceLargeBufferResult": "unable to start tracing: record-tgid Out of memory (12)",
+        "atraceSmallBufferKb": 1024,
+        "atraceDurationSeconds": 7,
+        "atraceExitCode": 0,
+        "syntheticSwipeExitCode": 0,
+        "traceEntriesInBuffer": 61017,
+        "traceEntriesWritten": 61017,
+        "inputDispatcherNameOccurrences": 42820,
+        "appBrandDoFrameMarkerCount": 262,
+        "appBrandDeliverInputMarkerCount": 1236,
+        "surfaceFlingerVsyncMarkerCount": 27,
+        "isolatedWebviewPresentFramesFound": false,
+        "fpsInterpretable": false,
+        "acceptanceEvidence": false,
+        "rawTracePath": ".local/sp01-trace/atrace-20261030-smallbuffer.txt",
+        "interpretation": "A seven-second local atrace overlapped a completed five-second synthetic swipe and retained input, AppBrand Choreographer and SurfaceFlinger vsync markers without buffer loss. It did not expose a separately attributable WebView presented-frame stream, so marker counts cannot be converted into application scroll FPS or QP05 pass/fail. Raw trace remains local and ignored by Git; no persistent phone setting was changed."
+      },
       "resetCommandVerifiedOnHuawei": true,
       "acceptanceEvidence": false,
       "limitations": [
@@ -422,17 +446,18 @@
         "The 115.81ms adjacent IntendedVsync interval came from ten recent rows without a synchronized gesture and cannot be treated as an app-attributable stall.",
         "AOSP describes framestats as recent 120-frame timing data; it does not alone establish average FPS across the full product scroll segment or QP05's required repeated sample set.",
         "The AppBrandUI00 host ViewRoot is attributable, but gfxinfo does not isolate the mini-program WebView renderer from the containing AppBrand UI.",
-        "A five-second synthetic ADB input swipe produced 93 host-process frames and 0 janky frames, but no input timestamps and no isolated WebView frame stream; this is not a scroll FPS result."
+        "A five-second synthetic ADB input swipe produced 93 host-process frames and 0 janky frames, but no input timestamps and no isolated WebView frame stream; this is not a scroll FPS result.",
+        "A local seven-second atrace retained input, AppBrand doFrame and SurfaceFlinger vsync markers without buffer loss but no separately attributable WebView presented frames."
       ],
-        "nextStep": "A guarded five-second synthetic swipe now confirms gfxinfo output for the visible AppBrand host ViewRoot, but no input timestamps were retained and the embedded WebView compositor is not isolated. Do not calculate FPS from its 93-frame aggregate. Next, test a local Android system trace that captures input plus app/WebView and SurfaceFlinger frame tracks; if that cannot attribute the webview segment on this Android 10 Huawei, keep R03 pending and seek a supported frame sampler rather than repeating unsynchronized swipes.",
-      "scope": "Read-only diagnostic queries plus a transient reset of Android graphics diagnostic counters for com.tencent.mm:appbrand0 only; no cloud, storage, network, app data, permissions, or persistent setting is touched."
+        "nextStep": "Local atrace can timestamp input and AppBrand host doFrame events but did not expose a separately attributable WebView presented-frame stream. Keep R03 pending; identify a supported frame-present sampler for the actual mini-program renderer before QP05 measurement. Do not repeat unsynchronized swipes or infer FPS from host marker counts.",
+      "scope": "Local diagnostic queries, transient graphics-counter reset, guarded synthetic swipes and a short Android trace saved under Git-ignored .local/sp01-trace only; no cloud, app data, permissions or persistent phone setting was changed."
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
     "iosCandidate": {
       "method": "Apple Instruments Animation Hitches",
       "limitation": "Official documentation describes frame-lifetime and hitch analysis, but the tooling requires Xcode/Instruments on macOS, unavailable in the user's Windows 11 environment; profiling WeChat's embedded mini-program renderer is also unverified."
     },
-    "sources": ["androidOnDeviceSystemTracing", "androidUiJankDetection", "androidGpuRendering", "androidDumpsys", "androidGfxinfoResetGuidance", "androidAospInputShellSwipe", "androidSlowSessions", "aospAndroid10SurfaceFlinger", "aospAndroid10TimeStats", "aospAndroid10TimeStatsOutput", "perfettoLocalUi", "appleAnimationHitches"]
+    "sources": ["androidOnDeviceSystemTracing", "androidUiJankDetection", "androidGpuRendering", "androidDumpsys", "androidGfxinfoResetGuidance", "androidAospInputShellSwipe", "perfettoAndroidTracing", "androidSlowSessions", "aospAndroid10SurfaceFlinger", "aospAndroid10TimeStats", "aospAndroid10TimeStatsOutput", "perfettoLocalUi", "appleAnimationHitches"]
   },
   "freshEntryFollowUp": {
     "oldProbeObservedOnly": ["navigation", "render", "script"],
