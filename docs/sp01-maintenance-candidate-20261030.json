@@ -105,6 +105,23 @@
     "unit": "affected-package-entries-not-unique-advisories",
     "allFindingsResolved": false
   },
+  "remainingRiskPathCheck": {
+    "package": "webpack-dev-server@4.15.2",
+    "installedConsumer": "@tarojs/webpack5-runner@4.3.1",
+    "sourceSelector": ".local/sp01-shared-react18-maintenance-probe/node_modules/@tarojs/webpack5-runner/index.js",
+    "weapp": { "miniEntryLoaded": true, "h5EntryLoaded": false, "devServerModuleLoaded": false },
+    "h5": { "miniEntryLoaded": false, "h5EntryLoaded": true, "devServerModuleLoaded": true },
+    "method": "isolated Node require-cache inspection under TARO_PLATFORM=weapp and TARO_PLATFORM=web; no server invocation",
+    "rawEvidence": [
+      ".local/sp01-r01-branch.stdout.txt",
+      ".local/sp01-r01-branch.stderr.txt",
+      ".local/sp01-r01-h5.stdout.txt",
+      ".local/sp01-r01-h5.stderr.txt"
+    ],
+    "serverStarted": false,
+    "advisoryResolved": false,
+    "productPathVerified": false
+  },
   "retainedFailures": [
     {
       "phase": "seeded-install",

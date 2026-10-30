@@ -68,3 +68,14 @@ test('candidate generator status reflects the approved SP01 candidate without im
     productVersionFrozen: false,
   });
 });
+
+test('remaining Taro dev-server risk records measured branch isolation without closing the audit', () => {
+  const evidence = require('../docs/sp01-maintenance-candidate-20261030.json');
+  const check = evidence.remainingRiskPathCheck;
+  assert.equal(check.package, 'webpack-dev-server@4.15.2');
+  assert.deepEqual(check.weapp, { miniEntryLoaded: true, h5EntryLoaded: false, devServerModuleLoaded: false });
+  assert.deepEqual(check.h5, { miniEntryLoaded: false, h5EntryLoaded: true, devServerModuleLoaded: true });
+  assert.equal(check.serverStarted, false);
+  assert.equal(check.advisoryResolved, false);
+  assert.equal(evidence.audit.allFindingsResolved, false);
+});
