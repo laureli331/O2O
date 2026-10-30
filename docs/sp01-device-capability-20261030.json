@@ -166,7 +166,7 @@
     "scope": "User checked Developer Options > Debugging and did not find System Tracing; this records the checked path only, not every OEM entry point"
   },
   "fpsMeasurementResearch": {
-    "status": "SurfaceFlinger TimeStats ran on the connected Android 10 Huawei and reported an attributable WeChat AppBrandUI00 layer. A separate gfxinfo framestats query now returns detailed timing rows from the WeChat appbrand0 process and identifies the same AppBrandUI00 window. Both are measurement candidates only; neither current capture is synchronized to a confirmed scroll segment or QP05 acceptance evidence.",
+    "status": "SurfaceFlinger TimeStats ran on the connected Android 10 Huawei and reported an attributable WeChat AppBrandUI00 layer. A separate gfxinfo framestats query returns detailed timing rows from the WeChat appbrand0 process and identifies the same AppBrandUI00 window; the per-process reset command has now been verified on this Huawei. A synchronized scroll sample is still pending, so no current frame capture is QP05 acceptance evidence.",
     "androidCandidate": {
       "method": "Android System Tracing on device, then inspect the resulting trace in Perfetto UI",
       "officialAvailability": "Android 9 and later can capture a system trace on device without ADB; Android 10 and later save .perfetto-trace files",
@@ -224,7 +224,7 @@
         "acceptanceEvidence": false,
         "interpretation": "Confirms the Huawei accepts the command and exposes a WeChat AppBrandUI00 layer plus numeric per-layer statistics. It does not prove the 31.25 averageFPS or 350ms bucket came from a synchronized continuous scroll, nor identify the cause of that interval. Feasibility evidence only; do not pass or fail QP05 from this sample."
       },
-      "nextStep": "The appbrand0 gfxinfo candidate below exposes recent frame timestamps and input-event columns. Verify its reset command on this Android 10 process, then collect a synchronized short scroll sample and check whether frame rows with input timestamps align to the gesture. This does not upgrade the earlier SurfaceFlinger capture or count as QP05 evidence.",
+      "nextStep": "The appbrand0 gfxinfo candidate below exposes recent frame timestamps and input-event columns, and its reset command is verified on this Android 10 process. Collect a synchronized short scroll sample and check whether frame rows with input timestamps align to the gesture. This does not upgrade the earlier SurfaceFlinger capture or count as QP05 evidence.",
       "unverified": ["whether the sampled AppBrandUI00 intervals align with user scroll activity and can be bounded to fixed scroll segments", "whether a long interval in this container layer can be attributed to an app-render stall rather than idle or surrounding activity", "whether repeated per-segment SurfaceFlinger results satisfy QP05 sampling and attribution rules"]
     },
     "gfxinfoFramestats": {
@@ -252,22 +252,56 @@
         "deviceModel": "SEA-AL10",
         "androidVersion": "10",
         "resumedActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
-        "totalFrames": 1577,
+        "totalFrames": 3033,
         "jankyFrames": 13,
-        "jankyPercent": 0.82,
-        "scope": "Cumulative process counters before reset; not bounded to this scroll or to a short measurement interval.",
-        "resetCommandVerifiedOnHuawei": false,
+        "jankyPercent": 0.43,
+        "scope": "Cumulative process counters before reset; not bounded to a confirmed user gesture or to a short measurement interval.",
+        "resetCommandVerifiedOnHuawei": true,
         "acceptanceEvidence": false
       },
-      "resetCommandVerifiedOnHuawei": false,
+      "postResetVerification": {
+        "resetExitCode": 0,
+        "summaryQueryExitCode": 0,
+        "statsSinceBeforeResetNs": 21560876224833,
+        "statsSinceAfterResetNs": 22764749642358,
+        "totalFramesAfterReset": 66,
+        "jankyFramesAfterReset": 0,
+        "scope": "Read after reset and before any requested scroll; no controlled gesture was synchronized to these frames.",
+        "acceptanceEvidence": false
+      },
+      "preScrollReadOnlySnapshot": {
+        "deviceModel": "SEA-AL10",
+        "androidVersion": "10",
+        "resumedActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "statsSinceNs": 22764749642358,
+        "totalFrames": 301,
+        "jankyFrames": 0,
+        "scope": "Unsynchronized read immediately before a second reset; no user-confirmed gesture was in progress, so these frames are not assigned to an interaction.",
+        "acceptanceEvidence": false
+      },
+      "controlledScrollWindowReset": {
+        "deviceModel": "SEA-AL10",
+        "androidVersion": "10",
+        "resumedActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "resetExitCode": 0,
+        "summaryQueryExitCode": 0,
+        "statsSinceBeforeResetNs": 22764749642358,
+        "statsSinceAfterResetNs": 22947179612642,
+        "totalFramesImmediatelyAfterReset": 0,
+        "jankyFramesImmediatelyAfterReset": 0,
+        "foregroundViewRootObserved": true,
+        "scope": "Second process-scoped reset immediately before the requested synchronized scroll sample; it resets transient gfxinfo counters only.",
+        "acceptanceEvidence": false
+      },
+      "resetCommandVerifiedOnHuawei": true,
       "acceptanceEvidence": false,
       "limitations": [
-        "The 1070-frame snapshot and later 1577-frame pre-reset snapshot are cumulative process summaries, not controlled interaction measurements.",
+        "The 1070-frame snapshot, later 1577-frame snapshot, and 3033-frame pre-reset snapshot are cumulative process summaries, not controlled interaction measurements.",
         "The 115.81ms adjacent IntendedVsync interval came from ten recent rows without a synchronized gesture and cannot be treated as an app-attributable stall.",
         "AOSP describes framestats as recent 120-frame timing data; it does not alone establish average FPS across the full product scroll segment or QP05's required repeated sample set.",
         "The AppBrandUI00 host ViewRoot is attributable, but gfxinfo does not isolate the mini-program WebView renderer from the containing AppBrand UI."
       ],
-      "nextStep": "Run the exact reset command once while AppBrandUI00 is foreground, confirm it returns successfully, then collect a short synchronized scroll sample from appbrand0. Inspect frame timestamps and newest-input-event columns; preserve the full output and record the measured sampling interval. Decide whether this method can meet QP05 before using it for acceptance.",
+      "nextStep": "The target appbrand0 counters have just been reset and verified at zero. Ask the user to perform one short continuous scroll on the still-open page, then immediately capture framestats and inspect frame/input timestamps. Preserve the full output and record the measured sampling interval. Decide whether this method can meet QP05 before using it for acceptance.",
       "scope": "Read-only diagnostic queries plus a transient reset of Android graphics diagnostic counters for com.tencent.mm:appbrand0 only; no cloud, storage, network, app data, permissions, or persistent setting is touched."
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
@@ -376,7 +410,7 @@
     "The probe reads its own page renderer, not a later formal product page's renderer.",
     "Startup and first-render entries do not measure scroll FPS or button-to-visible-feedback latency.",
     "The first four reports came from a version whose copy button did not refresh the page snapshot; preserve them as first-run evidence. The first revised OPPO report was affected by the duration formatter defect. A later report showed durations on 14 of 20 rows after buffer and observer snapshots had been merged. Following the snapshot-source correction, the next user-provided OPPO report had 10 rows and no repeated visible type/duration patterns; the report did not embed its source revision, so the exact executed build is unverified. The other three devices have not been rerun on the latest probe.",
-    "The meaning of unrecognized interaction/render entries, why the route row lacks duration, physical render latency, and FPS remain unverified. SurfaceFlinger TimeStats and appbrand0 gfxinfo are candidates only; the latter's reset behavior and synchronized scroll attribution still need validation, and neither method is approved for contract sampling.",
+    "The meaning of unrecognized interaction/render entries, why the route row lacks duration, physical render latency, and FPS remain unverified. SurfaceFlinger TimeStats and appbrand0 gfxinfo are candidates only; synchronized scroll attribution still needs validation, and neither method is approved for contract sampling.",
     "The backup Huawei's earlier reported base library 3.17.4 conflicts with the latest probe output 3.17.5; support baseline remains unresolved.",
     "No minimum product base-library floor or device group is frozen by this evidence."
   ],
