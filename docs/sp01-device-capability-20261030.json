@@ -165,7 +165,7 @@
     "scope": "User checked Developer Options > Debugging and did not find System Tracing; this records the checked path only, not every OEM entry point"
   },
   "fpsMeasurementResearch": {
-    "status": "Android ADB SurfaceFlinger TimeStats is confirmed in Android 10 AOSP and official guidance; local ADB is bundled but no device is connected; Huawei support, layer attribution and contract-grade sampling remain unverified",
+    "status": "SurfaceFlinger TimeStats ran on the connected Android 10 Huawei and reported an attributable WeChat AppBrandUI00 layer with per-layer FPS and frame intervals. The first feasibility capture was not synchronized to a confirmed scroll segment and is not QP05 acceptance evidence.",
     "androidCandidate": {
       "method": "Android System Tracing on device, then inspect the resulting trace in Perfetto UI",
       "officialAvailability": "Android 9 and later can capture a system trace on device without ADB; Android 10 and later save .perfetto-trace files",
@@ -189,12 +189,42 @@
       "histogramBoundary": "Android 10 AOSP buckets include 98ms then 102ms and map deltas to the next configured boundary. A nonzero 102ms bucket can include values at or below 100ms, so it cannot by itself prove an exact >100ms stall; use exact frame timestamps or conservatively leave that segment unresolved.",
       "officialScopeCaveat": "The Android averageFPS procedure is presented in a games-only performance guide even though the command reports all tracked SurfaceFlinger layers. This project treats it only as a candidate until the Huawei output identifies an attributable foreground WeChat layer and the measurement is checked against the accepted thresholds.",
       "device": "DEVICE04 HUAWEI SEA-AL10, Android 10, user-selected 60Hz",
-      "huaweiRuntimeSupportVerified": false,
-      "wechatLayerAttributionVerified": false,
+      "huaweiRuntimeSupportVerified": true,
+      "wechatLayerAttributionVerified": true,
       "contractSamplerApproved": false,
       "captureChanges": "-clear resets SurfaceFlinger TimeStats counters; -enable starts temporary frame-stat collection; -disable stops it. No app data, storage, network or persistent setting is changed.",
-      "nextStep": "Connect DEVICE04 by USB with USB debugging enabled and approve the computer's RSA prompt. First verify the device and Android build, then run one bounded feasibility capture on the isolated probe and inspect the returned layer names and frame statistics. Do not treat this first capture as QP05 acceptance sampling.",
-      "unverified": ["whether the OEM Android 10 build exposes the AOSP TimeStats command to ADB shell", "whether the foreground mini-program produces a separately identifiable WeChat layer", "whether SurfaceFlinger output plus gfxinfo framestats provides sufficiently precise per-segment FPS and >100ms attribution for QP05"]
+      "latestFeasibilityCapture": {
+        "evidenceId": "DEVICE04-SF-TIMESTATS-FEASIBILITY-1",
+        "date": "2026-10-30",
+        "deviceModel": "SEA-AL10",
+        "deviceBuild": "SEA-AL10 4.0.0.121(C00E120R5P4)",
+        "androidVersion": "10",
+        "androidApi": 29,
+        "adbVersion": "Android Debug Bridge 1.0.39 (0.0.1-4500957)",
+        "foregroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "layerName": "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0",
+        "packageName": "com.tencent.mm",
+        "startCommandExitCode": 0,
+        "dumpCommandExitCode": 0,
+        "collectionDisableExitCode": 0,
+        "reportedDisplayOnTimeMs": 33664,
+        "statsStart": 1793348446,
+        "statsEnd": 1793348479,
+        "globalTotalFrames": 85,
+        "globalMissedFrames": 0,
+        "totalFrames": 25,
+        "droppedFrames": 0,
+        "averageFPS": 31.25,
+        "nonzeroPresent2PresentBuckets": { "16ms": 23, "82ms": 1, "350ms": 1 },
+        "requestedTimedWaitMs": 15000,
+        "timingWindowMismatch": "The dump reports displayOnTime=33664ms and statsStart/statsEnd differ by 33 seconds, so the output does not establish an exact 15-second scroll segment.",
+        "scrollActionConfirmed": false,
+        "inputTraceAvailable": false,
+        "acceptanceEvidence": false,
+        "interpretation": "Confirms the Huawei accepts the command and exposes a WeChat AppBrandUI00 layer plus numeric per-layer statistics. It does not prove the 31.25 averageFPS or 350ms bucket came from a synchronized continuous scroll, nor identify the cause of that interval. Feasibility evidence only; do not pass or fail QP05 from this sample."
+      },
+      "nextStep": "Define a synchronized scroll-segment capture with explicit start/stop markers and repeat it under frozen device/content conditions. Validate that the per-layer values can be assigned to the scroll interval and distinguish app-attributable stalls. Keep the 100ms boundary conservative; this initial sample has one 350ms bucket but lacks input synchronization and is not contract evidence.",
+      "unverified": ["whether the sampled AppBrandUI00 intervals align with user scroll activity and can be bounded to fixed scroll segments", "whether a long interval in this container layer can be attributed to an app-render stall rather than idle or surrounding activity", "whether repeated per-segment SurfaceFlinger results satisfy QP05 sampling and attribution rules"]
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
     "iosCandidate": {
@@ -229,7 +259,19 @@
       "version": "Android Debug Bridge 1.0.39 (0.0.1-4500957)",
       "check": "adb version and adb devices -l",
       "deviceCountAtCheck": 0,
-      "scope": "read-only host check; ADB daemon started; no phone was connected or queried"
+      "scope": "The initial read-only host check found no attached device; the later connected-device check is recorded separately.",
+      "latestReadOnlyDeviceCheck": {
+        "deviceCount": 1,
+        "model": "SEA-AL10",
+        "androidVersion": "10",
+        "androidApi": 29,
+        "build": "SEA-AL10 4.0.0.121(C00E120R5P4)",
+        "focusedWindow": "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00",
+        "resumedActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "surfaceFlingerCommandSupported": true,
+        "timeStatsInitiallyEmpty": true,
+        "scope": "Read-only device/build/focus/layer checks; no app data, CloudBase resource, permission, persistent device setting or network resource changed."
+      }
     }
   },
   "localTests": {
