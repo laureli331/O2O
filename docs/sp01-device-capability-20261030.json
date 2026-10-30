@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-30",
   "task": "SP01",
-  "status": "four-device-capability-and-oppo-timings-observed-snapshot-confirmation-pending",
+  "status": "four-device-capability-and-oppo-snapshot-source-observed-fps-pending",
   "scope": "isolated-local-device-diagnostic-only",
   "targetAppId": "wx2414399d423dfb65",
   "probe": "tools/sp01-device-probe",
@@ -19,6 +19,10 @@
     "officialPerformanceApi": "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/wx.getPerformance.html",
     "officialPerformanceEntry": "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/PerformanceEntry.html",
     "officialPageReference": "https://developers.weixin.qq.com/miniprogram/dev/reference/api/Page.html",
+    "androidOnDeviceSystemTracing": "https://developer.android.com/topic/performance/tracing/on-device",
+    "androidUiJankDetection": "https://developer.android.com/studio/profile/jank-detection",
+    "perfettoLocalUi": "https://perfetto.dev/docs/getting-started/system-tracing",
+    "appleAnimationHitches": "https://developer.apple.com/documentation/xcode/improving-app-responsiveness",
     "installedPackage": "miniprogram-api-typings@5.2.3",
     "installedPackageLicense": "MIT",
     "installedPackageGeneratedApiSource": ".local/sp01-toolchain-probe/node_modules/miniprogram-api-typings/types/wx/lib.wx.api.d.ts",
@@ -107,6 +111,37 @@
       "cloudOrNetworkUsed": false,
       "mergedSourcesMayDuplicateRows": true,
       "interpretation": "The duration-field correction is reflected in multiple rows. firstPaint, firstContentfulPaint and largestContentfulPaint are documented time points without duration; the route row still lacks a duration and remains unexplained. The report merged buffer and observer snapshots, and repeated output patterns could be duplicates. The probe now prefers the full buffer snapshot when nonempty; a phone run is needed to verify the cleaned output. Unrecognized render/interaction names are not interpreted as latency or FPS."
+    },
+    {
+      "id": "DEVICE01-SNAPSHOT-FIX-1",
+      "deviceId": "DEVICE01",
+      "model": "OPPO PLJ110",
+      "date": "2026-10-30",
+      "probeCommitRequested": "7e9ba98",
+      "probeRevisionEmbeddedInReport": false,
+      "source": "user-provided local report after being asked to run the isolated probe with the snapshot-source correction",
+      "reportedEntryRowCount": 10,
+      "entryTypeCounts": { "script": 1, "navigation": 2, "render": 5, "interaction": 2, "loadPackage": 0, "resource": 0 },
+      "recognizedEntryRows": [
+        { "name": "appLaunch", "entryType": "navigation", "durationMs": 1532 },
+        { "name": "evaluateScript", "entryType": "script", "durationMs": 4 },
+        { "name": "route", "entryType": "navigation", "durationMs": null },
+        { "name": "firstRender", "entryType": "render", "durationMs": 701 },
+        { "name": "firstPaint", "entryType": "render", "durationMs": null },
+        { "name": "firstContentfulPaint", "entryType": "render", "durationMs": null },
+        { "name": "largestContentfulPaint", "entryType": "render", "durationMs": null }
+      ],
+      "recognizedEntryCount": 7,
+      "unrecognizedEntryCountsByType": { "render": 1, "interaction": 2 },
+      "unrecognizedDurationSamplesMsByType": { "render": [591], "interaction": [4, 1] },
+      "rowsWithDisplayedDurationCount": 6,
+      "rowsWithoutDisplayedDurationCount": 4,
+      "routeDurationMissing": true,
+      "visibleRepeatedTypeDurationPatterns": false,
+      "unknownNamesRemainRedacted": true,
+      "fpsOrFrameMetricReported": false,
+      "cloudOrNetworkUsed": false,
+      "interpretation": "The report has 10 rows compared with 20 in the preceding run; the previously repeated visible type/duration patterns no longer appear. This supports the buffer-snapshot selection change. The report does not embed its source revision, so the requested commit cannot be independently confirmed from the output. route still has no duration; firstPaint, firstContentfulPaint and largestContentfulPaint are time points without duration. Redacted interaction/render entries are not interpreted as latency or FPS."
     }
   ],
   "runtimeVersionDiscrepancies": [
@@ -117,14 +152,30 @@
     "userReportedPresent": false,
     "scope": "WeChat Developer Tools Tools menu had no frame-rate item; this does not establish whether another external sampler is suitable"
   },
+  "fpsMeasurementResearch": {
+    "status": "official Android candidate found; not yet validated against the mini-program or acceptance metrics",
+    "androidCandidate": {
+      "method": "Android System Tracing on device, then inspect the resulting trace in Perfetto UI",
+      "officialAvailability": "Android 9 and later can capture a system trace on device without ADB; Android 10 and later save .perfetto-trace files",
+      "bestAvailableDevice": "DEVICE04 HUAWEI SEA-AL10, Android 10, user-selected 60Hz",
+      "privacy": "Perfetto UI runs locally in the browser and does not upload the trace by default; do not use its Share action",
+      "unverified": ["whether the captured trace exposes WeChat mini-program frames as an attributable per-frame track", "whether it supports repeatable per-segment average FPS and app-attributed stalls over 100ms", "whether the OEM exposes System Tracing on this device"]
+    },
+    "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
+    "iosCandidate": {
+      "method": "Apple Instruments Animation Hitches",
+      "limitation": "Official documentation describes frame-lifetime and hitch analysis, but the tooling requires Xcode/Instruments on macOS, unavailable in the user's Windows 11 environment; profiling WeChat's embedded mini-program renderer is also unverified."
+    },
+    "sources": ["androidOnDeviceSystemTracing", "androidUiJankDetection", "perfettoLocalUi", "appleAnimationHitches"]
+  },
   "freshEntryFollowUp": {
     "oldProbeObservedOnly": ["navigation", "render", "script"],
     "deviceReportedSupportedTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"],
     "oldCopyButtonRefreshedSnapshot": false,
     "revisedProbeObservesRuntimeReportedTypes": true,
     "revisedCopyButtonRefreshesBeforeCopy": true,
-    "oneDeviceRetest": "corrected-duration OPPO run completed; buffer-snapshot confirmation pending",
-    "retestEvidenceId": "DEVICE01-DURATION-FIX-1",
+    "oneDeviceRetest": "OPPO snapshot-source retest supplied: 10 rows, visible repeats absent; route duration and FPS remain unresolved",
+    "retestEvidenceId": "DEVICE01-SNAPSHOT-FIX-1",
     "oldOutputs": "keep as first-run evidence, not proof that the current runtime buffer stays empty"
   },
   "cliCapabilityCheck": {
@@ -146,19 +197,19 @@
       "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1548, "failed": 0 }
     },
     "miniProgramIDECompile": "user-provided outputs confirm execution on four phones; separate IDE compile artifact not captured",
-    "realPhoneRuns": "4 unique devices; 6 user-provided capability reports including two revised OPPO retests",
+    "realPhoneRuns": "4 unique devices; 7 user-provided capability reports including three revised OPPO retests",
     "phoneRendererValues": "webview on all 4 reported devices",
     "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
-    "freshEntriesAfterRevisedProbe": "OPPO report shows durations for 14 of 20 rows; buffer-snapshot selection is locally tested; phone confirmation pending",
+    "freshEntriesAfterRevisedProbe": "OPPO returned 10 rows after snapshot-source correction was requested; visible repeated type/duration patterns are absent; report does not embed source revision; route duration and FPS remain unresolved",
     "measuredRefreshTiming": "unknown",
-    "fpsMeasurementTool": "no item in IDE Tools menu per user; alternative measurement method not confirmed"
+    "fpsMeasurementTool": "no item in IDE Tools menu per user; Android on-device System Tracing + Perfetto is an official candidate but not validated"
   },
   "limitations": [
     "Selected display refresh settings are not measured display timing or FPS.",
     "The probe reads its own page renderer, not a later formal product page's renderer.",
     "Startup and first-render entries do not measure scroll FPS or button-to-visible-feedback latency.",
-    "The first four reports came from a version whose copy button did not refresh the page snapshot; preserve them as first-run evidence. The first revised OPPO report was affected by the duration formatter defect. A later report showed durations on 14 of 20 output rows, but buffer and observer snapshots had been merged and repeated patterns could duplicate the same entries. The probe now selects the full buffer when available; a final OPPO confirmation is required. The other three devices have not been rerun on the revised probe.",
-    "The meaning of unrecognized interaction/render entries, why the route row lacks duration, clean unique entry counts, quantitative render latency, and FPS remain unverified.",
+    "The first four reports came from a version whose copy button did not refresh the page snapshot; preserve them as first-run evidence. The first revised OPPO report was affected by the duration formatter defect. A later report showed durations on 14 of 20 rows after buffer and observer snapshots had been merged. Following the snapshot-source correction, the next user-provided OPPO report had 10 rows and no repeated visible type/duration patterns; the report did not embed its source revision, so the exact executed build is unverified. The other three devices have not been rerun on the latest probe.",
+    "The meaning of unrecognized interaction/render entries, why the route row lacks duration, physical render latency, and FPS remain unverified. Android on-device System Tracing is only a candidate; it must expose attributable mini-program frames and support the contract's statistics before use.",
     "The backup Huawei's earlier reported base library 3.17.4 conflicts with the latest probe output 3.17.5; support baseline remains unresolved.",
     "No minimum product base-library floor or device group is frozen by this evidence."
   ],
