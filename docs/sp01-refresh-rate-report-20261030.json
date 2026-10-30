@@ -2,13 +2,16 @@
   "date": "2026-10-30",
   "source": "user-message",
   "rawReport": "oppo是120；华为是90；苹果是60",
+  "clarification": "用户确认是当前选中的刷新率；华为90Hz为主机，备用机为60Hz",
   "reportedRates": [
     { "brand": "OPPO", "reportedHz": 120, "knownDevice": "DEVICE01" },
-    { "brand": "HUAWEI", "reportedHz": 90, "knownDevice": null, "possibleDeviceIds": ["DEVICE03", "DEVICE04"] },
-    { "brand": "iPhone", "reportedHz": 60, "knownDevice": "DEVICE02" }
+    { "brand": "HUAWEI", "reportedHz": 90, "knownDevice": "DEVICE03" },
+    { "brand": "iPhone", "reportedHz": 60, "knownDevice": "DEVICE02" },
+    { "brand": "HUAWEI", "reportedHz": 60, "knownDevice": "DEVICE04", "backupFor": "DEVICE03" }
   ],
-  "currentSettingOrMaximumCapabilityConfirmed": false,
-  "huaweiModelAssociationConfirmed": false,
+  "currentSettingOrMaximumCapabilityConfirmed": true,
+  "rateMeaning": "currently-selected-setting",
+  "huaweiModelAssociationConfirmed": true,
   "physicalRefreshTimingMeasured": false,
   "renderedFpsMeasured": false,
   "measurementGroupsFrozen": false,

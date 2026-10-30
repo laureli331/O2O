@@ -4,7 +4,7 @@
 
 最新用户确认覆盖下文R02的旧提问：拒绝双React主版本，统一React/DOM/类型18.3.1、对齐TypeScript、业务逻辑全部集中shared。无需再问React19方案，旧网页19验证仅为历史；当前架构见[统一方案](unified-react18-shared-core-20261030.md)。刷新率需普通显示设置的当前/可选项，不是开发者实时FPS。
 
-刷新率补充：用户报告OPPO120Hz、华为90Hz、苹果60Hz，见[原始登记](sp01-refresh-rate-report-20261030.json)。当前设置或最高支持值尚待明确；华为对应主机还是备用机也待明确，因此暂不改设备实测字段、不冻结分组，也不把高刷设备直接记作60Hz验收通过。
+刷新率补充：用户确认是当前选中的设置：OPPO120Hz、华为主机BON-AL00为90Hz、备用SEA-AL10为60Hz、苹果60Hz，见[原始登记](sp01-refresh-rate-report-20261030.json)。已登记selectedRefreshRateHz；实际刷新时序、渲染FPS及采样能力仍未测，refreshRateHz实测字段保留未知。未改手机设置或验收门槛，不将高刷设置直接按60Hz验收通过。
 
 ## 已具备的证据
 
