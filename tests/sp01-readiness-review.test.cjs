@@ -21,7 +21,14 @@ test('SP01 current review covers the exact contract criteria without silently re
     for (const id of row.laterEvidenceTasks || []) assert.ok(plan.tasks.some(task => task.id === id));
   }
   for (const item of review.openItems) {
-    assert.ok(['pending', 'awaiting-user'].includes(item.state));
+    if (item.id === 'R02') {
+      assert.equal(item.state, 'verified-for-SP01');
+      assert.equal(item.verificationScope, 'SP01-isolated-compatibility-only');
+      const evidence = require('../' + item.evidence);
+      assert.equal(evidence.checks.sharedFullStrictExitCode, 0);
+      assert.equal(evidence.simulator.resetCount0Observed, true);
+      assert.equal(evidence.productAcceptancePassed, false);
+    } else assert.ok(['pending', 'awaiting-user'].includes(item.state));
     assert.ok(item.nextAction.length > 20);
   }
 });

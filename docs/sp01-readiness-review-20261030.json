@@ -35,15 +35,17 @@
       "topic": "Taro exact dependency combination",
       "known": "Unified shared-workspace lock builds and runs in simulator; its current audit has 37 entries (17 moderate/16 high/4 critical), distinct from the historical archive-fix lock; template/download and alternate-renderer chains reviewed without closing findings",
       "evidence": "docs/sp01-current-toolchain-review-20261030.json",
+      "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
       "nextAction": "Evaluate remaining relevant toolchain risks from advisory/source and ordinary compatibility evidence; key dependency replacements need a concrete comparison before adoption",
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },
     {
-      "id": "R02", "kind": "confirmed-direction-validation", "state": "pending",
+      "id": "R02", "kind": "confirmed-direction-validation", "state": "verified-for-SP01",
       "topic": "Web React major-version direction",
       "known": "Unified React/DOM/types18.3.1 and TS5.9.3 verified with one shared source/React instance, full shared strict checks, Chrome and WeChat simulator interactions; React19 is historical",
       "evidence": "docs/sp01-shared-core-evidence-20261030.json",
-      "nextAction": "Retain this bounded compatibility evidence; continue R01 dependency risk review and later production boundary/state-library validation, without asking again about React19"
+      "verificationScope": "SP01-isolated-compatibility-only",
+      "nextAction": "Include the completed preparation evidence in SP01 signoff; real product boundary/state-library checks belong to their later implementation tasks, not a reverse prerequisite"
     },
     {
       "id": "R03", "kind": "device-evidence-and-decision", "state": "pending",
@@ -83,7 +85,7 @@
     { "criteria": ["QP10"], "currentStageState": "staged-gates-documented", "openItems": [], "laterEvidenceTasks": ["SP07", "SP15", "SP18", "SP35"], "productResult": "not-executed" },
     { "criteria": ["QS08", "QR06"], "currentStageState": "pending-capability-and-recovery-preparation", "openItems": ["R06"], "productResult": "not-executed" },
     { "criteria": ["QD01", "QD02", "QD04", "QD07"], "currentStageState": "evidence-index-and-rollback-documented-not-final-approved", "openItems": ["R01", "R06"], "productResult": "not-executed" },
-    { "criteria": ["QD03"], "currentStageState": "prerequisite-signoff-pending", "openItems": ["R01", "R02", "R03", "R04", "R05", "R06"], "productResult": "not-executed" }
+    { "criteria": ["QD03"], "currentStageState": "prerequisite-signoff-pending", "openItems": ["R01", "R03", "R04", "R05", "R06"], "productResult": "not-executed" }
   ],
   "datasetShapesInherited": ["empty", "one-record", "20-record-page", "200-record-multi-page", "per-field-approved-max-text-image-and-boundary"],
   "existingPlanAndQualityThresholdsChanged": false,

@@ -36,3 +36,16 @@ $env:PATH='E:\O2O\.local\node-v20.19.3-win-x64;'+$env:PATH
 共享层完整 strict 检查且不跳过第三方声明；Taro 应用沿用已批准拆分检查，第三方声明全检失败仍单独保留。AST检查复用 TypeScript Compiler API，拒绝显式any、所列平台全局、跨界模块和类型抑制，补查变量/参数/绑定及数组中的推断any；UI检查拒绝自有Interface、类型别名和显式any。它不是全部数据流、业务位置或副作用的完整证明，不能替代后续 lint、代码审查和服务端测试。
 
 原始失败、修复、复用来源、许可和证据范围见 [验证记录](../../docs/sp01-shared-core-evidence-20261030.md)。实验锁不是正式工程依赖冻结，也不表示 Taro 安全项已经解决。
+
+## 独立局部维护候选
+
+`node tools/sp01-shared-core-probe/prepare-maintenance.cjs` 从已准备的基线生成 `.local/sp01-shared-react18-maintenance-probe`，只复制源码与配置，不复制node_modules/dist。目标已存在时明确失败，不覆盖或删除。原锁存为baseline证据；若已提供验证过的maintenance实验锁，则生成主package-lock供npm ci复现。两项限定override与Web esbuild显式peer仅应用于新候选，原目录不变。
+
+在候选目录使用前述Node20/npm11执行 `ci --ignore-scripts --no-audit --no-fund`、`ls --all --json`、`run check:shared`、`run build:web`、`run build:weapp`。实际普通调用和浏览器验证从仓库根运行：
+
+```powershell
+& .local/node-v20.19.3-win-x64/node.exe tools/sp01-shared-core-probe/verify-maintenance.real.cjs .local/sp01-shared-react18-maintenance-probe .local/sp01-shared-react18-probe .local .local/shared18-maintenance-compatibility.json
+& .local/node-v20.19.3-win-x64/node.exe tools/sp01-shared-core-probe/browser.real.cjs .local/sp01-shared-react18-maintenance-probe/apps/web .local/shared18-maintenance-browser.json
+```
+
+浏览器脚本可选项目/报告路径参数，默认仍验证原候选；不会改动被测项目。维护候选的失败安装、可选peer问题、复验和待采用比较见[维护记录](../../docs/sp01-maintenance-candidate-20261030.md)。不要把审计exit1当测试通过，也不要因构建成功忽略完整依赖树失败。

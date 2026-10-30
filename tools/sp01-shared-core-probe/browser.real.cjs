@@ -3,11 +3,13 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const { runBrowserSmoke } = require('../sp01-web-react-probe/browser-smoke.cjs');
 const root = path.resolve(__dirname, '../..');
+const project = path.resolve(process.argv[2] || path.join(root, '.local/sp01-shared-react18-probe/apps/web'));
+const report = path.resolve(process.argv[3] || path.join(root, '.local/shared18-browser.json'));
 const interactions = [];
-runBrowserSmoke(path.join(root, '.local/sp01-shared-react18-probe/apps/web'),
+runBrowserSmoke(project,
   path.join(root, '.local/npm-tool-cache/_npx/873d7bcc81943761/node_modules/playwright-core'),
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
-  path.join(root, '.local/shared18-browser.json'), {
+  report, {
     expectedText: 'Count 0', contentSelector: '#root p',
     onReady: async (page, width) => {
       for (let index = 0; index < 3; index++) await page.getByRole('button', { name: 'Increment', exact: true }).click();
