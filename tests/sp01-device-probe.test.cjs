@@ -33,6 +33,19 @@ test('runtime-supported interaction entries are summarized without exposing raw 
   ]);
 });
 
+test('already-sanitized observer entries retain durationMs when rendered again', () => {
+  const report = buildDeviceReport({
+    info: { brand: 'OPPO', model: 'PLJ110', system: 'Android 17', version: '8.0.79', SDKVersion: '3.17.5', platform: 'android', screenWidth: 360, screenHeight: 776, windowWidth: 360, fontSizeSetting: 16 },
+    renderer: 'webview',
+    performanceApiAvailable: true,
+    observerAvailable: true,
+    supportedTypes: ['navigation'],
+    entries: [],
+    observedEntries: [{ name: 'route', entryType: 'navigation', durationMs: 84.5 }],
+  });
+  assert.match(report, /route\/navigation\/84\.5ms/);
+});
+
 test('capability normalizers redact unknown names and retain only finite safe durations', () => {
   assert.deepEqual(summarizeSupportedTypes(['render', { entryType: 'navigation' }, 'bad label', 5]), ['navigation', 'render']);
   assert.deepEqual(summarizeEntries([

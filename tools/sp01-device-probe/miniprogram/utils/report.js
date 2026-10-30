@@ -44,7 +44,7 @@ function summarizeEntries(entries, supportedTypes = []) {
     result.push({
       name: safeName ? entry.name : '未识别',
       entryType: entry.entryType,
-      durationMs: safeMetric(entry.duration),
+      durationMs: safeMetric(entry.duration === undefined ? entry.durationMs : entry.duration),
     });
   }
   return result.slice(-20);
