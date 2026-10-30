@@ -21,6 +21,7 @@
     "officialPageReference": "https://developers.weixin.qq.com/miniprogram/dev/reference/api/Page.html",
     "androidOnDeviceSystemTracing": "https://developer.android.com/topic/performance/tracing/on-device",
     "androidUiJankDetection": "https://developer.android.com/studio/profile/jank-detection",
+    "androidGpuRendering": "https://developer.android.com/topic/performance/rendering/inspect-gpu-rendering",
     "perfettoLocalUi": "https://perfetto.dev/docs/getting-started/system-tracing",
     "appleAnimationHitches": "https://developer.apple.com/documentation/xcode/improving-app-responsiveness",
     "installedPackage": "miniprogram-api-typings@5.2.3",
@@ -152,21 +153,34 @@
     "userReportedPresent": false,
     "scope": "WeChat Developer Tools Tools menu had no frame-rate item; this does not establish whether another external sampler is suitable"
   },
+  "systemTracingMenu": {
+    "checkedByUser": true,
+    "userReportedPresent": false,
+    "device": "HUAWEI SEA-AL10, Android 10",
+    "scope": "User checked Developer Options > Debugging and did not find System Tracing; this records the checked path only, not every OEM entry point"
+  },
   "fpsMeasurementResearch": {
-    "status": "official Android candidate found; not yet validated against the mini-program or acceptance metrics",
+    "status": "System Tracing is not exposed in the checked Huawei menu; official GPU Rendering fallback found but not validated against the mini-program or acceptance metrics",
     "androidCandidate": {
       "method": "Android System Tracing on device, then inspect the resulting trace in Perfetto UI",
       "officialAvailability": "Android 9 and later can capture a system trace on device without ADB; Android 10 and later save .perfetto-trace files",
       "bestAvailableDevice": "DEVICE04 HUAWEI SEA-AL10, Android 10, user-selected 60Hz",
+      "deviceAvailability": "User checked Developer Options > Debugging on DEVICE04 and did not find System Tracing; device/OEM exposure is unavailable on the checked path",
       "privacy": "Perfetto UI runs locally in the browser and does not upload the trace by default; do not use its Share action",
-      "unverified": ["whether the captured trace exposes WeChat mini-program frames as an attributable per-frame track", "whether it supports repeatable per-segment average FPS and app-attributed stalls over 100ms", "whether the OEM exposes System Tracing on this device"]
+      "unverified": ["whether a trace captured through another route exists on this OEM build", "whether it exposes WeChat mini-program frames as an attributable per-frame track and supports repeatable per-segment average FPS and app-attributed stalls over 100ms"]
+    },
+    "gpuRenderingFallback": {
+      "method": "Android Developer Options > Monitoring > Profile GPU Rendering/Profile HWUI Rendering > On screen as bars",
+      "officialCapability": "Official Android guidance describes a scrolling per-frame render-time histogram for a UI window, with a 16.67ms reference line for 60 FPS",
+      "status": "not checked on DEVICE04; not validated for WeChat mini-program WebView attribution or contract-grade per-segment statistics",
+      "unverified": ["whether the Huawei OEM exposes this option", "whether WebView-composited mini-program frames appear in the histogram", "whether the displayed bars can support repeatable per-segment average FPS and detection of app-attributable stalls over 100ms"]
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
     "iosCandidate": {
       "method": "Apple Instruments Animation Hitches",
       "limitation": "Official documentation describes frame-lifetime and hitch analysis, but the tooling requires Xcode/Instruments on macOS, unavailable in the user's Windows 11 environment; profiling WeChat's embedded mini-program renderer is also unverified."
     },
-    "sources": ["androidOnDeviceSystemTracing", "androidUiJankDetection", "perfettoLocalUi", "appleAnimationHitches"]
+    "sources": ["androidOnDeviceSystemTracing", "androidUiJankDetection", "androidGpuRendering", "perfettoLocalUi", "appleAnimationHitches"]
   },
   "freshEntryFollowUp": {
     "oldProbeObservedOnly": ["navigation", "render", "script"],
@@ -202,7 +216,7 @@
     "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
     "freshEntriesAfterRevisedProbe": "OPPO returned 10 rows after snapshot-source correction was requested; visible repeated type/duration patterns are absent; report does not embed source revision; route duration and FPS remain unresolved",
     "measuredRefreshTiming": "unknown",
-    "fpsMeasurementTool": "no item in IDE Tools menu per user; Android on-device System Tracing + Perfetto is an official candidate but not validated"
+    "fpsMeasurementTool": "no item in IDE Tools menu per user; System Tracing not found under Developer Options > Debugging on HUAWEI SEA-AL10; Android Profile GPU Rendering is an official fallback candidate not yet checked"
   },
   "limitations": [
     "Selected display refresh settings are not measured display timing or FPS.",
