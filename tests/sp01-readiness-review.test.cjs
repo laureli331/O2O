@@ -43,10 +43,21 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.ok(capability.realDeviceRuns.every((run) => run.performanceApiAvailable && run.observerRegistered));
       assert.ok(capability.realDeviceRuns.every((run) => run.supportedEntryTypes.join(',') === 'interaction,loadPackage,navigation,render,resource,script'));
       assert.ok(capability.realDeviceRuns.every((run) => run.currentEntries === 'not-provided'));
+      const retest = capability.revisedProbeRetests.find((run) => run.deviceId === 'DEVICE01');
+      assert.ok(retest, 'the revised probe has a fresh OPPO report');
+      assert.equal(retest.probeCommit, 'aa61c9a');
+      assert.equal(retest.currentEntryCount, 20);
+      assert.deepEqual(retest.entryTypeCounts, { script: 1, navigation: 1, render: 11, interaction: 7, loadPackage: 0, resource: 0 });
+      assert.equal(retest.recognizedEntryCount, 4);
+      assert.deepEqual(retest.unrecognizedEntryCountsByType, { render: 9, interaction: 7 });
+      assert.equal(retest.entriesWithoutDurationCount, 20);
+      assert.equal(retest.fpsOrFrameMetricReported, false);
+      assert.equal(retest.cloudOrNetworkUsed, false);
       assert.equal(capability.fpsToolMenu.userReportedPresent, false);
       assert.equal(capability.runtimeVersionDiscrepancies[0].status, 'unresolved');
-      assert.equal(capability.localTests.realPhoneRuns, '4 user-provided device-capability reports');
-      assert.equal(capability.localTests.freshEntriesAfterRevisedProbe, 'pending-single-device-check');
+      assert.equal(capability.localTests.realPhoneRuns, '4 unique devices; 5 user-provided capability reports including one revised OPPO retest');
+      assert.equal(capability.localTests.freshEntriesAfterRevisedProbe, 'completed on OPPO: 20 entries, no durations or FPS/frame metric');
+      assert.equal(capability.freshEntryFollowUp.oneDeviceRetest, 'completed on OPPO PLJ110 using the revised probe');
     } else assert.ok(['pending', 'awaiting-user'].includes(item.state));
     assert.ok(item.nextAction.length > 20);
   }

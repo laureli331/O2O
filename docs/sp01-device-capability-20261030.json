@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-30",
   "task": "SP01",
-  "status": "four-device-capability-observed-fresh-entry-and-fps-method-pending",
+  "status": "four-device-capability-and-oppo-fresh-entry-observed-fps-method-pending",
   "scope": "isolated-local-device-diagnostic-only",
   "targetAppId": "wx2414399d423dfb65",
   "probe": "tools/sp01-device-probe",
@@ -49,6 +49,30 @@
     { "id": "DEVICE03", "model": "HUAWEI BON-AL00", "system": "Android 12", "wechatVersion": "8.0.79", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 800], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 90, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false },
     { "id": "DEVICE04", "model": "HUAWEI SEA-AL10 backup", "system": "Android 10", "wechatVersion": "8.0.78", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 780], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 60, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false }
   ],
+  "revisedProbeRetests": [
+    {
+      "id": "DEVICE01-REVISED-1",
+      "deviceId": "DEVICE01",
+      "model": "OPPO PLJ110",
+      "date": "2026-10-30",
+      "probeCommit": "aa61c9a",
+      "source": "user-provided local report after re-read and copy on the revised isolated probe",
+      "currentEntryCount": 20,
+      "entryTypeCounts": { "script": 1, "navigation": 1, "render": 11, "interaction": 7, "loadPackage": 0, "resource": 0 },
+      "recognizedEntries": [
+        { "name": "evaluateScript", "entryType": "script" },
+        { "name": "route", "entryType": "navigation" },
+        { "name": "firstRender", "entryType": "render" },
+        { "name": "largestContentfulPaint", "entryType": "render" }
+      ],
+      "recognizedEntryCount": 4,
+      "unrecognizedEntryCountsByType": { "render": 9, "interaction": 7 },
+      "entriesWithoutDurationCount": 20,
+      "fpsOrFrameMetricReported": false,
+      "cloudOrNetworkUsed": false,
+      "interpretation": "The revised observer/read path captured entries on OPPO. The report intentionally redacts unrecognized names, all entries lacked a displayed duration, and neither their semantics nor FPS can be inferred from this output."
+    }
+  ],
   "runtimeVersionDiscrepancies": [
     { "deviceId": "DEVICE04", "earlierUserReportedBaseLibrary": "3.17.4", "latestProbeReportedBaseLibrary": "3.17.5", "status": "unresolved", "meaning": "preserve both reports; do not infer the product support floor from either one" }
   ],
@@ -63,7 +87,8 @@
     "oldCopyButtonRefreshedSnapshot": false,
     "revisedProbeObservesRuntimeReportedTypes": true,
     "revisedCopyButtonRefreshesBeforeCopy": true,
-    "oneDeviceRetest": "pending; first use OPPO after importing the revised probe",
+    "oneDeviceRetest": "completed on OPPO PLJ110 using the revised probe",
+    "retestEvidenceId": "DEVICE01-REVISED-1",
     "oldOutputs": "keep as first-run evidence, not proof that the current runtime buffer stays empty"
   },
   "cliCapabilityCheck": {
@@ -84,10 +109,10 @@
       "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1546, "failed": 0 }
     },
     "miniProgramIDECompile": "user-provided outputs confirm execution on four phones; separate IDE compile artifact not captured",
-    "realPhoneRuns": "4 user-provided device-capability reports",
+    "realPhoneRuns": "4 unique devices; 5 user-provided capability reports including one revised OPPO retest",
     "phoneRendererValues": "webview on all 4 reported devices",
     "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
-    "freshEntriesAfterRevisedProbe": "pending-single-device-check",
+    "freshEntriesAfterRevisedProbe": "completed on OPPO: 20 entries, no durations or FPS/frame metric",
     "measuredRefreshTiming": "unknown",
     "fpsMeasurementTool": "no item in IDE Tools menu per user; alternative measurement method not confirmed"
   },
@@ -95,7 +120,8 @@
     "Selected display refresh settings are not measured display timing or FPS.",
     "The probe reads its own page renderer, not a later formal product page's renderer.",
     "Startup and first-render entries do not measure scroll FPS or button-to-visible-feedback latency.",
-    "The first four reports came from a version whose copy button did not refresh the page snapshot. If the user did not separately tap re-read before copying, the entries may be stale; one fresh phone run is needed before interpreting the initially unprovided entries.",
+    "The first four reports came from a version whose copy button did not refresh the page snapshot; preserve them as first-run evidence. The revised OPPO run captured 20 entries, but no displayed durations and 16 names were redacted as unrecognized. The other three devices have not been rerun on the revised probe.",
+    "The revised OPPO report does not establish the meaning of the interaction/render entries, quantitative render latency, or FPS.",
     "The backup Huawei's earlier reported base library 3.17.4 conflicts with the latest probe output 3.17.5; support baseline remains unresolved.",
     "No minimum product base-library floor or device group is frozen by this evidence."
   ],
