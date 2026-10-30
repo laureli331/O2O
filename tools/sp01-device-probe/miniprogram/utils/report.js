@@ -4,6 +4,13 @@ const safeLabels = new Set([
   'appLaunch', 'route', 'firstRender', 'firstPaint', 'firstContentfulPaint',
   'largestContentfulPaint', 'evaluateScript', 'downloadPackage', 'resourceTiming',
 ]);
+const safeEntryTypeByName = new Map([
+  ['appLaunch', 'navigation'], ['route', 'navigation'],
+  ['firstRender', 'render'], ['firstPaint', 'render'],
+  ['firstContentfulPaint', 'render'], ['largestContentfulPaint', 'render'],
+  ['evaluateScript', 'script'], ['downloadPackage', 'loadPackage'],
+  ['resourceTiming', 'resource'],
+]);
 
 function safeText(value) {
   if (typeof value === 'number' && Number.isFinite(value)) return String(value);
@@ -26,14 +33,17 @@ function summarizeSupportedTypes(types) {
   }).filter((value) => typeof value === 'string' && /^[A-Za-z][A-Za-z0-9-]{0,39}$/.test(value)))].sort();
 }
 
-function summarizeEntries(entries) {
+function summarizeEntries(entries, supportedTypes = []) {
   if (!Array.isArray(entries)) return [];
+  const safeTypes = new Set(['navigation', 'render', 'script', ...summarizeSupportedTypes(supportedTypes)]);
   const result = [];
   for (const entry of entries) {
-    if (!entry || !safeLabels.has(entry.name)) continue;
+    if (!entry || typeof entry.entryType !== 'string' || !safeTypes.has(entry.entryType)) continue;
+    const safeName = safeLabels.has(entry.name)
+      && safeEntryTypeByName.get(entry.name) === entry.entryType;
     result.push({
-      name: entry.name,
-      entryType: typeof entry.entryType === 'string' ? entry.entryType : '未提供',
+      name: safeName ? entry.name : '未识别',
+      entryType: entry.entryType,
       durationMs: safeMetric(entry.duration),
     });
   }
@@ -57,7 +67,7 @@ function buildDeviceReport({
     ['窗口逻辑宽', info.windowWidth], ['字体设置', info.fontSizeSetting],
   ];
   const types = summarizeSupportedTypes(supportedTypes);
-  const metrics = summarizeEntries([...(entries || []), ...(observedEntries || [])]);
+  const metrics = summarizeEntries([...(entries || []), ...(observedEntries || [])], types);
   const hasFrameMetric = [...types, ...metrics.map((item) => item.name)]
     .some((name) => /fps|frame/i.test(name));
   return [

@@ -23,7 +23,17 @@ test('device capability report only includes approved device fields and never in
   assert.match(report, /明确FPS\/逐帧指标：未发现/);
 });
 
-test('capability normalizers reject unknown labels and retain only finite safe durations', () => {
+test('runtime-supported interaction entries are summarized without exposing raw names or paths', () => {
+  assert.deepEqual(summarizeEntries([
+    { name: 'tap-private-name', entryType: 'interaction', duration: 62.4, path: '/private/page' },
+    { name: 'resource-private-name', entryType: 'resource', duration: 12, uri: 'https://private.invalid' },
+  ], ['interaction', 'resource']), [
+    { name: '未识别', entryType: 'interaction', durationMs: 62.4 },
+    { name: '未识别', entryType: 'resource', durationMs: 12 },
+  ]);
+});
+
+test('capability normalizers redact unknown names and retain only finite safe durations', () => {
   assert.deepEqual(summarizeSupportedTypes(['render', { entryType: 'navigation' }, 'bad label', 5]), ['navigation', 'render']);
   assert.deepEqual(summarizeEntries([
     { name: 'firstRender', entryType: 'render', duration: 100 },
@@ -31,8 +41,18 @@ test('capability normalizers reject unknown labels and retain only finite safe d
     { name: 'route', entryType: 'navigation', duration: Infinity },
   ]), [
     { name: 'firstRender', entryType: 'render', durationMs: 100 },
+    { name: '未识别', entryType: 'render', durationMs: 200 },
     { name: 'route', entryType: 'navigation', durationMs: null },
   ]);
+});
+
+test('copying the report refreshes current observer entries instead of copying the initial snapshot', () => {
+  const page = fs.readFileSync(path.resolve(__dirname, '../tools/sp01-device-probe/miniprogram/pages/index/index.js'), 'utf8');
+  const copyHandler = page.match(/copyReport\(\)\s*\{([\s\S]*?)\n  \},/);
+  assert.ok(copyHandler, 'copyReport handler exists');
+  assert.match(copyHandler[1], /const report = this\.readDevice\(\);/);
+  assert.ok(copyHandler[1].indexOf('this.readDevice()') < copyHandler[1].indexOf('wx.setClipboardData'));
+  assert.match(page, /this\.setData\(\{ report \}\);\s*return report;/);
 });
 
 test('isolated project uses target AppID and makes no network, cloud, or storage calls', () => {
@@ -45,8 +65,10 @@ test('isolated project uses target AppID and makes no network, cloud, or storage
     assert.doesNotMatch(source, /wx\.cloud|wx\.request|wx\.uploadFile|wx\.downloadFile|wx\.getTempFileURL|writeFile|setStorage/, relative);
   }
   const page = fs.readFileSync(path.join(root, 'pages/index/index.js'), 'utf8');
+  const app = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
   const view = fs.readFileSync(path.join(root, 'pages/index/index.wxml'), 'utf8');
   assert.match(view, /bindtap="copyReport"/);
   assert.match(page, /copyReport\(\)\s*\{[\s\S]*?wx\.setClipboardData/);
-  assert.doesNotMatch(fs.readFileSync(path.join(root, 'app.js'), 'utf8'), /copyReport|setClipboardData/);
+  assert.doesNotMatch(app, /copyReport|setClipboardData/);
+  assert.match(app, /observer\.observe\(\{\s*entryTypes:\s*this\.globalData\.supportedTypes\s*\}\)/);
 });

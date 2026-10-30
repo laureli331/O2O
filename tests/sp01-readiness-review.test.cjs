@@ -38,7 +38,15 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(item.state, 'pending');
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
       assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);
-      assert.equal(capability.localTests.realPhoneRuns, 'not-run');
+      assert.equal(capability.realDeviceRuns.length, 4);
+      assert.ok(capability.realDeviceRuns.every((run) => run.renderer === 'webview'));
+      assert.ok(capability.realDeviceRuns.every((run) => run.performanceApiAvailable && run.observerRegistered));
+      assert.ok(capability.realDeviceRuns.every((run) => run.supportedEntryTypes.join(',') === 'interaction,loadPackage,navigation,render,resource,script'));
+      assert.ok(capability.realDeviceRuns.every((run) => run.currentEntries === 'not-provided'));
+      assert.equal(capability.fpsToolMenu.userReportedPresent, false);
+      assert.equal(capability.runtimeVersionDiscrepancies[0].status, 'unresolved');
+      assert.equal(capability.localTests.realPhoneRuns, '4 user-provided device-capability reports');
+      assert.equal(capability.localTests.freshEntriesAfterRevisedProbe, 'pending-single-device-check');
     } else assert.ok(['pending', 'awaiting-user'].includes(item.state));
     assert.ok(item.nextAction.length > 20);
   }

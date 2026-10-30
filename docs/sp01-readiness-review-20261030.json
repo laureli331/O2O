@@ -51,10 +51,10 @@
     {
       "id": "R03", "kind": "device-evidence-and-decision", "state": "pending",
       "topic": "Measurement device conditions and support baseline",
-      "known": "Four runtime reports exist; user-confirmed selected settings are OPPO 120Hz, BON-AL00 90Hz, SEA-AL10 60Hz and iPhone 60Hz. WeChat-maintained API typings expose startup/route/first-render metrics and a page renderer field, but no FPS/逐帧 entry; an isolated no-cloud capability probe is ready for phone runs",
-      "unknown": ["physical refresh timing", "actual renderer values", "runtime entry/API values on phones", "available FPS sampling method", "minimum supported library and frozen device groups"],
+      "known": "Four user-provided phone outputs show webview rendering, callable wx.getPerformance, registered observers and the same six runtime-supported types (interaction, loadPackage, navigation, render, resource, script). No FPS/frame metric was reported; user also reports no frame-rate item in the IDE Tools menu. Initial reports say current entries were not provided.",
+      "unknown": ["fresh performance-entry values after corrected observer/read path", "physical refresh timing", "alternative FPS sampling method", "backup Huawei runtime-version discrepancy", "minimum supported library and frozen device groups"],
       "evidence": "docs/sp01-device-capability-20261030.json",
-      "nextAction": "Run the isolated capability probe on the four confirmed phones and check whether the installed IDE GUI exposes real-device FPS capture; do not treat settings or first-render timings as measured FPS"
+      "nextAction": "Import the revised isolated probe and run one fresh OPPO read/copy to inspect entries from all runtime-advertised types; then identify a validated FPS measurement method without treating selected refresh settings or first-render timings as measured FPS"
     },
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",

@@ -1,6 +1,6 @@
 # SP01 device and performance API capability check
 
-This is preparation evidence, not a product or phone-performance pass. The isolated probe at [tools/sp01-device-probe](../tools/sp01-device-probe/README.md) performs local-only reads of system information, the current page's reported renderer, and documented Performance API capabilities. It does not initialize CloudBase, make network requests, or write storage.
+This is preparation evidence, not a product or phone-performance pass. The isolated probe at [tools/sp01-device-probe](../tools/sp01-device-probe/README.md) performs local-only reads of system information, the current page's reported renderer, and Performance API capabilities. It does not initialize CloudBase, make network requests, or write storage.
 
 ## Reuse and source review
 
@@ -11,13 +11,14 @@ The official docs site could not be read by the research browser in this session
 ## What this establishes
 
 - Existing reports identify four physical devices and their selected refresh settings. The settings remain user-reported choices, not measured physical timing or FPS.
-- The probe is configured to base library 3.17.4 because that is the lowest reported version among the four devices. This only makes it the probe's compatibility candidate; it does not approve a product support floor.
-- The probe can report whether the device runtime exposes the documented performance API, which entry types/names it reports, and the renderer value returned for the diagnostic page. Those actual phone values are still unknown.
-- `wx.getPerformance()` is not an FPS sampler. No FPS, scroll-frame timing, or button-to-visible-feedback timing will be derived from first-render or navigation durations.
-- The installed WeChat CLI help contains no dedicated performance-capture command. This does not prove the IDE GUI lacks a profiler; that GUI capability remains to be checked.
+- The user supplied runtime output from four phones on 2026-10-30: OPPO PLJ110 (Android 17), iPhone XR (iOS 17.5.1), HUAWEI BON-AL00 (Android 12), and HUAWEI SEA-AL10 (Android 10). All four reported `webview`, callable `wx.getPerformance()`, a registered observer, and the same six supported types: `interaction`, `loadPackage`, `navigation`, `render`, `resource`, and `script`. None reported an FPS/frame metric. The user also checked the IDE Tools menu and reported no frame-rate tool there.
+- The initial outputs showed current entries as “not provided”. Review found the old probe subscribed to only three entry types and copied its initial page snapshot. The revised probe now subscribes to all types reported by each runtime and refreshes the buffer before copying. Keep the initial outputs as first-run evidence; one fresh OPPO run is needed before concluding the runtime buffer remains empty.
+- The earlier device report listed the backup Huawei's base library as 3.17.4, while this latest probe output says 3.17.5. Both observations are retained and the discrepancy remains unresolved; neither sets the product support floor. The probe remains configured to 3.17.4 as the lowest earlier report, not as an approved product support floor.
+- `wx.getPerformance()` has no documented FPS/per-frame entry in the WeChat-maintained API typings. No FPS, scroll-frame timing, or button-to-visible-feedback timing will be derived from first-render or navigation durations. The observed `interaction` type is recorded only as a capability until a fresh entry is returned and its meaning is verified.
+- The installed WeChat CLI help has no dedicated performance-capture command. The user also reports no frame-rate tool in the IDE Tools menu. A validated alternative FPS method is still unknown.
 
 ## Validation and next device step
 
-Local unit coverage checks report-field allowlisting, unknown renderer handling, safe metric normalization, and absence of cloud/network/storage APIs. After that passes, import this isolated directory in WeChat Developer Tools, launch it on the four listed phones, and return the `device-capability-v1` result from each. Separately inspect the IDE's **Tools** menu for a real-device performance analyzer or FPS panel; that one observation will determine whether the existing 55 FPS / 60 Hz contract can be measured with the current setup. Until then the minimum library, actual renderer, performance sampler, and device groups stay open.
+Local unit coverage checks report-field allowlisting, unknown renderer handling, safe metric normalization, fresh-copy behavior, runtime-advertised type observation, and absence of cloud/network/storage APIs. The four phone outputs establish renderer and API capability, not performance pass/fail. Next, import the revised isolated directory in WeChat Developer Tools and on the OPPO tap **重新读取** then **复制结果** once; return that refreshed output. The IDE Tools menu has already been checked by the user and has no frame-rate item. A separate validated FPS method is still needed for the existing 55 FPS / 60 Hz contract. Until then the minimum library, product renderer, FPS sampler, and device groups stay open.
 
 No cloud, user files, money, dependency installation, or formal product code are involved. Rollback is deleting the isolated local probe and reverting its scoped commit.

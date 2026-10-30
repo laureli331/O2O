@@ -22,10 +22,11 @@ App({
         this.globalData.observedEntries = summarizeEntries([
           ...this.globalData.observedEntries,
           ...entries,
-        ]);
+        ], this.globalData.supportedTypes);
       });
       this.globalData.supportedTypes = summarizeSupportedTypes(observer?.supportedEntryTypes);
-      observer.observe({ entryTypes: ['navigation', 'render', 'script'] });
+      if (!this.globalData.supportedTypes.length) return;
+      observer.observe({ entryTypes: this.globalData.supportedTypes });
       this.globalData.observerAvailable = true;
     } catch (_) {
       // Capability failures are shown as unavailable; raw runtime messages are not exposed.

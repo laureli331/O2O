@@ -10,6 +10,7 @@ Page({
   },
 
   readDevice() {
+    let report;
     try {
       const info = wx.getSystemInfoSync();
       const current = getCurrentPages().slice(-1)[0];
@@ -17,7 +18,7 @@ Page({
       const performance = app.globalData.performance;
       let entries = [];
       try { entries = performance?.getEntries?.() || []; } catch (_) { /* report unavailable */ }
-      const report = buildDeviceReport({
+      report = buildDeviceReport({
         info,
         renderer: current?.renderer,
         performanceApiAvailable: app.globalData.performanceApiAvailable,
@@ -26,14 +27,16 @@ Page({
         entries,
         observedEntries: app.globalData.observedEntries,
       });
-      this.setData({ report });
     } catch (_) {
-      this.setData({ report: '本机读取失败；没有联网或调用云服务。' });
+      report = '本机读取失败；没有联网或调用云服务。';
     }
+    this.setData({ report });
+    return report;
   },
 
   copyReport() {
-    if (!this.data.report) return;
-    wx.setClipboardData({ data: this.data.report });
+    const report = this.readDevice();
+    if (!report) return;
+    wx.setClipboardData({ data: report });
   },
 });

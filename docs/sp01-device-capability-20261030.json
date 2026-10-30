@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-30",
   "task": "SP01",
-  "status": "capability-method-prepared-phone-evidence-pending",
+  "status": "four-device-capability-observed-fresh-entry-and-fps-method-pending",
   "scope": "isolated-local-device-diagnostic-only",
   "targetAppId": "wx2414399d423dfb65",
   "probe": "tools/sp01-device-probe",
@@ -43,33 +43,60 @@
     { "id": "DEVICE03", "model": "HUAWEI BON-AL00", "reportedBaseLibrary": "3.17.5", "selectedRefreshRateHz": 90 },
     { "id": "DEVICE04", "model": "HUAWEI SEA-AL10 backup", "reportedBaseLibrary": "3.17.4", "selectedRefreshRateHz": 60 }
   ],
+  "realDeviceRuns": [
+    { "id": "DEVICE01", "model": "OPPO PLJ110", "system": "Android 17", "wechatVersion": "8.0.79", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 776], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 120, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false },
+    { "id": "DEVICE02", "model": "iPhone XR (iPhone11,8)", "system": "iOS 17.5.1", "wechatVersion": "8.0.80", "baseLibrary": "3.17.5", "platform": "ios", "screenLogical": [414, 896], "windowWidthLogical": 414, "fontSizeSetting": 17, "selectedRefreshRateHz": 60, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false },
+    { "id": "DEVICE03", "model": "HUAWEI BON-AL00", "system": "Android 12", "wechatVersion": "8.0.79", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 800], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 90, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false },
+    { "id": "DEVICE04", "model": "HUAWEI SEA-AL10 backup", "system": "Android 10", "wechatVersion": "8.0.78", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 780], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 60, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false }
+  ],
+  "runtimeVersionDiscrepancies": [
+    { "deviceId": "DEVICE04", "earlierUserReportedBaseLibrary": "3.17.4", "latestProbeReportedBaseLibrary": "3.17.5", "status": "unresolved", "meaning": "preserve both reports; do not infer the product support floor from either one" }
+  ],
+  "fpsToolMenu": {
+    "checkedByUser": true,
+    "userReportedPresent": false,
+    "scope": "WeChat Developer Tools Tools menu had no frame-rate item; this does not establish whether another external sampler is suitable"
+  },
+  "freshEntryFollowUp": {
+    "oldProbeObservedOnly": ["navigation", "render", "script"],
+    "deviceReportedSupportedTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"],
+    "oldCopyButtonRefreshedSnapshot": false,
+    "revisedProbeObservesRuntimeReportedTypes": true,
+    "revisedCopyButtonRefreshesBeforeCopy": true,
+    "oneDeviceRetest": "pending; first use OPPO after importing the revised probe",
+    "oldOutputs": "keep as first-run evidence, not proof that the current runtime buffer stays empty"
+  },
   "cliCapabilityCheck": {
     "source": "installed-wechatidecli --help",
     "dedicatedPerformanceCaptureCommandListed": false,
-    "guiToolCapability": "not-checked",
+    "guiToolCapability": "user-reports-no-frame-rate-tool-in-Tools-menu",
+    "guiMenuCheckedByUser": true,
     "helpCommandWasReadOnly": true
   },
   "localTests": {
     "formatterAndAllowlist": "passed",
-    "allDeviceProbeTests": "3/3 passed",
+    "allDeviceProbeTests": "5/5 passed",
     "javascriptSyntax": "node --check passed for 3 JavaScript files",
     "jsonParse": "passed for 5 project/evidence JSON files",
     "testRuns": {
-      "focused": { "command": "node --test tests/sp01-device-probe.test.cjs tests/sp01-readiness-review.test.cjs", "passed": 5, "failed": 0 },
+      "focused": { "command": "node --test tests/sp01-device-probe.test.cjs tests/sp01-readiness-review.test.cjs", "passed": 7, "failed": 0 },
       "developmentPlan": { "command": "node --test tests/executable-development-plan.test.cjs", "passed": 44, "failed": 0 },
-      "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1544, "failed": 0 }
+      "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1546, "failed": 0 }
     },
-    "miniProgramIDECompile": "not-run",
-    "realPhoneRuns": "not-run",
-    "phoneRendererValues": "unknown",
-    "phonePerformanceObserverValues": "unknown",
+    "miniProgramIDECompile": "user-provided outputs confirm execution on four phones; separate IDE compile artifact not captured",
+    "realPhoneRuns": "4 user-provided device-capability reports",
+    "phoneRendererValues": "webview on all 4 reported devices",
+    "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
+    "freshEntriesAfterRevisedProbe": "pending-single-device-check",
     "measuredRefreshTiming": "unknown",
-    "fpsMeasurementTool": "not-confirmed"
+    "fpsMeasurementTool": "no item in IDE Tools menu per user; alternative measurement method not confirmed"
   },
   "limitations": [
     "Selected display refresh settings are not measured display timing or FPS.",
     "The probe reads its own page renderer, not a later formal product page's renderer.",
     "Startup and first-render entries do not measure scroll FPS or button-to-visible-feedback latency.",
+    "The first four reports came from a version whose copy button did not refresh the page snapshot. If the user did not separately tap re-read before copying, the entries may be stale; one fresh phone run is needed before interpreting the initially unprovided entries.",
+    "The backup Huawei's earlier reported base library 3.17.4 conflicts with the latest probe output 3.17.5; support baseline remains unresolved.",
     "No minimum product base-library floor or device group is frozen by this evidence."
   ],
   "cloudAccess": false,
