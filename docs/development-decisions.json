@@ -1,6 +1,8 @@
 {
   "currentFrontendApproval": {
-    "date": "2026-10-29",
+    "date": "2026-10-30",
+    "versionPolicy": "docs/frontend-version-policy-20261030.json",
+    "architecturePlan": "docs/unified-react18-shared-core-20261030.md",
     "source": "docs/react-frontend-decision-20261029.json",
     "userSelection": "2",
     "frontend": "taro-react-typescript",

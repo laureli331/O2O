@@ -34,6 +34,9 @@
   "architecture": {
     "frontend": "taro-react-typescript",
     "frontendDecisionSource": "docs/react-frontend-decision-20261029.json",
+    "frontendVersionPolicy": "docs/frontend-version-policy-20261030.json",
+    "businessCore": "packages/shared",
+    "crossPlatformUiReuse": false,
     "adminFramework": "react",
     "miniappAdapter": "taro",
     "backend": "node-cloud-functions",

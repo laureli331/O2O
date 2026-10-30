@@ -30,3 +30,22 @@ test('archive comparison is a separate candidate and does not alter the peer com
   assert.deepEqual(archive.overrides, { ...peer.overrides, 'adm-zip@^0.5.12': '0.6.1' });
   assert.equal(peer.overrides['adm-zip@^0.5.12'], undefined);
 });
+
+test('unified React 18 candidate aligns both application toolchains with the user policy', () => {
+  const policy = require('../docs/frontend-version-policy-20261030.json');
+  const web = require('../tools/sp01-web-react-probe/package.json');
+  const miniapp = createManifest(base, 'unified18');
+  for (const name of Object.keys(policy.required)) {
+    assert.equal(web.dependencies[name] || web.devDependencies[name], policy.required[name], name);
+    assert.equal(miniapp.dependencies[name] || miniapp.devDependencies[name], policy.required[name], name);
+    assert.equal(base.dependencies[name] || base.devDependencies[name], policy.required[name], `base ${name}`);
+  }
+  const locks = [require('../tools/sp01-web-react-probe/package-lock.json'),
+    require('../tools/sp01-taro-probe/variants/unified18.package-lock.json')];
+  for (const lock of locks) {
+    for (const [name, entry] of Object.entries(lock.packages)) {
+      const match = name.match(/node_modules\/(react|react-dom|@types\/react|@types\/react-dom|typescript)$/);
+      if (match) assert.equal(entry.version, policy.required[match[1]], name);
+    }
+  }
+});

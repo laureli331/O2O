@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "date": "2026-10-29",
   "status": "react-and-taro-confirmed-versions-pending-verification",
+  "currentOverride": {
+    "date": "2026-10-30",
+    "source": "user-explicit-single-version-and-shared-core-constraint",
+    "versionPolicy": "docs/frontend-version-policy-20261030.json",
+    "architecture": "docs/unified-react18-shared-core-20261030.md",
+    "allOwnedBusinessLogicShared": true,
+    "uiComponentsShared": false,
+    "ownedAnyAllowed": false,
+    "formalProjectCreated": false
+  },
   "userEvidence": {
     "initialRequest": "我希望用react",
     "clarification": "仅网页运营后台用React，还是小程序和网页后台都用React技术路线",

@@ -245,6 +245,13 @@
     {
       "id": "E06",
       "title": "新主体云环境、运行时、数据模式、安全与恢复",
+      "currentReview": {
+        "date": "2026-10-30",
+        "document": "docs/sp01-readiness-review-20261030.md",
+        "data": "docs/sp01-readiness-review-20261030.json",
+        "historicalFieldsRetainedBelow": true,
+        "gatePassed": false
+      },
       "gatePassed": false,
       "evidenceLevel": "user-reported-not-opened-plus-current-live-query-failed",
       "knownEvidence": [

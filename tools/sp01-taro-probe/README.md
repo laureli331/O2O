@@ -6,6 +6,8 @@ check-own-declarations.cjs仅扫描src/config/types内自有.d.ts/.d.mts/.d.cts�
 
 这是独立工具链候选检查，不是SP07工程、产品页面或已验收模板。[复用调查与失败记录](../../docs/sp01-taro-reuse-review-20261029.md)说明来源、许可、适配成本与边界。
 
+2026-10-30现行版本已按用户要求统一React/DOM/类型18.3.1、TS5.9.3、Node类型20.19.43、PostCSS8.5.32。prepare.cjs unified18创建新目录保留旧实验；下方baseline和peer-fix数值均属历史，不能据此宣称新组合的完整第三方声明或安全已通过。见[共享核心方案](../../docs/unified-react18-shared-core-20261030.md)。
+
 最新依赖补丁与实际构建证据见[安全跟进](../../docs/sp01-taro-security-followup-20261029.md)：peer-fix限定glob10.5.0，审计仍有38个受影响包条目。可选`SP01_CAPTURE_STATS=1`启用官方Webpack统计，不改变安全验收结论。
 
 另有[独立archive-fix对照](../../docs/sp01-taro-archive-comparison-20261029.md)：adm-zip0.6.1通过有界回归与Taro调用兼容检查，审计37包条目，但跨出父包声明范围且无锁安装失败，尚未冻结采用。使用`prepare.cjs archive-fix`保留peer-fix原目录；复现安装限制与命令见该文档。

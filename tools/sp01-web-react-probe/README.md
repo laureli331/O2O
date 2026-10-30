@@ -1,5 +1,7 @@
 # SP01 React网页编译候选
 
+2026-10-30当前配置统一React/DOM/类型18.3.1、TS5.9.3。默认目录改为.local/sp01-web-react18-probe，replay为.local/sp01-web-react18-replay；下方React19路径/证据仅为历史，见[当前方案](../../docs/unified-react18-shared-core-20261030.md)。
+
 这是单个合成入口的独立编译检查，不是SP07正式后台。见[复用与实测记录](../../docs/sp01-web-react-evidence-20261030.md)。没有业务、云连接、支付或正式页面设计；未启动开发服务器。
 
 后续已用限于本机的静态preview完成[Chrome普通运行检查](../../docs/sp01-web-browser-evidence-20261030.md)，随后关闭服务。它不启动HMR开发服务器，也不代表正式页面、视觉或性能通过。browser-smoke.cjs复用已有Vite/Playwright公开API，所需工具路径按实际安装传入。
