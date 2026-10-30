@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-29",
+  "candidate": "archive-fix",
+  "status": "isolated-comparison-not-version-freeze",
+  "scopeUpdate": {
+    "date": "2026-10-30",
+    "userConfirmed": true,
+    "currentScriptScope": "normal-archive-compatibility-only",
+    "vulnerabilityReproductionStopped": true,
+    "boundedRegressionBelowIsHistorical": true,
+    "historicalScriptPreservedLocallyNotExecuted": true
+  },
+  "previousEvidence": "docs/sp01-taro-security-followup-20261029.json",
+  "dependencyChange": {
+    "package": "adm-zip",
+    "from": "0.5.18",
+    "to": "0.6.1",
+    "parent": "@tarojs/cli@4.3.1",
+    "parentDeclaredRange": "^0.5.12",
+    "withinParentDeclaredRange": false,
+    "license": "MIT",
+    "nodeRequirement": ">=14.0",
+    "archiveIntegrity": "sha512-Xwrja8nx9e5o2N1my4DsKCeKpdrnACyr1wtbPxBDgGzKzKyE9kRtBFA8mWldI+RVlD7CBZNWY/wQ2+ydwOR6kQ=="
+  },
+  "sourceTrace": {
+    "templateEntry": "@tarojs/cli/dist/create/fetchTemplate.js",
+    "zipCall": "new AdmZip(zipPath).extractAllTo(unZipPath, true)",
+    "ordinaryBuildCoverage": [
+      { "module": "@tarojs/cli/dist/create/fetchTemplate.js", "function": "fetchTemplate", "observedCounts": [0] },
+      { "module": "adm-zip/adm-zip.js", "function": "module.exports", "observedCounts": [0] },
+      { "module": "download-git-repo/index.js", "function": "download", "observedCounts": [0] },
+      { "module": "git-clone/index.js", "function": "module.exports", "observedCounts": [0] },
+      { "module": "decompress/index.js", "function": "module.exports", "observedCounts": [0] }
+    ],
+    "scope": "one-prior-peer-fix-production-weapp-build-only",
+    "allCommandsSafe": false
+  },
+  "validation": {
+    "nodeVersion": "v20.19.3",
+    "npmVersion": "10.8.2",
+    "freshUnlockedInstall": { "exitCode": 1, "error": "Cannot read properties of null (reading 'edgesOut')", "rootCauseConfirmed": false },
+    "peerLockSeededInstallExitCode": 0,
+    "changedLockedPackageVersions": ["node_modules/adm-zip"],
+    "addedOrRemovedLockedPackages": 0,
+    "dependencyTreeExitCode": 0,
+    "applicationTypecheckExitCode": 0,
+    "buildExitCode": 0,
+    "artifacts": { "fileCount": 17, "totalBytes": 306822 },
+    "boundedRegression": {
+      "payloadBytes": 512,
+      "fixtureCreatedBy": "adm-zip@0.5.18",
+      "oldVersionExitCode": 1,
+      "oldVersionFailure": "ZERO_SIZE_GUARD_MISSING",
+      "oldVersionSubsequentError": "CRC32 checksum failed",
+      "patchedVersionExitCode": 0,
+      "patchedGuardCode": "ERR_BUFFER_TOO_LARGE",
+      "templateExtractionPassed": true,
+      "unicodeAndEmptyFilePassed": true,
+      "overwritePolicyPassed": true,
+      "allAdvisoriesIndependentlyReproduced": false
+    },
+    "audit": { "moderate": 21, "high": 12, "critical": 4, "total": 37, "removedEntries": ["adm-zip"], "allFindingsResolved": false },
+    "lockSha256": "f4e7f3863574abf1b5b31a35472adb7cbc6078921de8e0b42200b3059bfed86d"
+  },
+  "officialTaroCompatibilityGuarantee": false,
+  "vendorDeclarationFailureRetained": true,
+  "versionsFrozen": false,
+  "cloudChanged": false,
+  "sp01Passed": false,
+  "productAcceptancePassed": false
+}

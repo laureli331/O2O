@@ -21,3 +21,12 @@ test('peer candidate keeps the official Webpack requirement and changes only rev
   assert.deepEqual(createManifest(base, 'baseline'), base);
   assert.throws(() => createManifest(base, '../outside'), /UNKNOWN_CANDIDATE/);
 });
+
+test('archive comparison is a separate candidate and does not alter the peer comparison', () => {
+  const peer = createManifest(base, 'peer-fix');
+  const archive = createManifest(base, 'archive-fix');
+  assert.deepEqual(archive.dependencies, peer.dependencies);
+  assert.deepEqual(archive.devDependencies, peer.devDependencies);
+  assert.deepEqual(archive.overrides, { ...peer.overrides, 'adm-zip@^0.5.12': '0.6.1' });
+  assert.equal(peer.overrides['adm-zip@^0.5.12'], undefined);
+});

@@ -8,6 +8,8 @@ check-own-declarations.cjs仅扫描src/config/types内自有.d.ts/.d.mts/.d.cts�
 
 最新依赖补丁与实际构建证据见[安全跟进](../../docs/sp01-taro-security-followup-20261029.md)：peer-fix限定glob10.5.0，审计仍有38个受影响包条目。可选`SP01_CAPTURE_STATS=1`启用官方Webpack统计，不改变安全验收结论。
 
+另有[独立archive-fix对照](../../docs/sp01-taro-archive-comparison-20261029.md)：adm-zip0.6.1通过有界回归与Taro调用兼容检查，审计37包条目，但跨出父包声明范围且无锁安装失败，尚未冻结采用。使用`prepare.cjs archive-fix`保留peer-fix原目录；复现安装限制与命令见该文档。
+
 当前：Taro4.3.1＋React18.3.1＋Webpack5.91.0＋TypeScript5.9.3的微信目标构建成功；完整类型检查及依赖树检查失败，依赖审计尚有待处理项。具体依赖未冻结，不能直接用于正式工程。真实平台/交互未验。
 
 以上是baseline结果。后续独立peer-fix候选已解决依赖树冲突并保持构建成功，完整声明检查及安全项仍未完成；见[受控对照与待确认类型策略](../../docs/sp01-taro-compatibility-20261029.md)。使用 `node tools/sp01-taro-probe/prepare.cjs peer-fix`，不会覆盖baseline运行目录。原类型配置保持strict:true、skipLibCheck:false；check-type-policy.cjs中的声明跳过选项仅为诊断对照，尚未采用。
