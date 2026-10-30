@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-30",
+  "scope": "isolated-web-compiler-candidate",
+  "versions": {
+    "node": "20.19.3", "npm": "11.16.0",
+    "react": "19.3.1", "reactDom": "19.3.1",
+    "vite": "8.3.5", "pluginReact": "6.1.2", "typescript": "7.0.2",
+    "nodeTypes": "20.19.43", "reactTypes": "19.3.0", "reactDomTypes": "19.3.0"
+  },
+  "reuse": {
+    "template": "create-vite@9.3.3/template-react-ts",
+    "templateLicense": "MIT",
+    "templateAndPluginSourceRead": true,
+    "templateArchiveIntegrity": "sha512-vXkNaFdSq3eMfk7W0oo8FgTe6n/tTsvk8q7iGvZLQSPVj8AyZZ3dT0QMaYzcxaULsGxTx59n4tpvZtfVKUPvRg==",
+    "pluginArchiveIntegrity": "sha512-fhJNGUdscQa4HkI0xFxwonWyhnVReCPDbXI7FH7jmzpnVCrFQI7PRrhWecO263610vOrs9tr2Y4xcf8uAdFxbw==",
+    "addedBusinessFeatures": false
+  },
+  "validation": {
+    "npm10UnlockedInstall": { "exitCode": 1, "error": "Cannot read properties of null (reading 'edgesOut')" },
+    "npm11InstallExitCode": 0,
+    "strict": true,
+    "skipLibCheck": false,
+    "buildExitCode": 0,
+    "negativeTypecheck": { "exitCode": 1, "diagnostic": "TS2322", "input": "button disabled property supplied as string" },
+    "dependencyTreeExitCode": 0,
+    "audit": { "registry": "https://registry.npmjs.org", "exitCode": 0, "affectedPackageEntries": 0, "provesAllCodeSafe": false },
+    "cleanReplayInstallExitCode": 0,
+    "cleanReplayBuildExitCode": 0,
+    "replayArtifactHashesMatch": true,
+    "artifactFileCount": 3,
+    "artifactTotalBytes": 219947,
+    "lockSha256": "923eb519f0e979cc5d1ed39fdc909dc19b1579e4d348faefdd58c0ee83f92ae8",
+    "reactDoctor": { "version": "0.9.18", "telemetryDisabled": true, "initialScannedFiles": 0, "initialResultUsable": false, "explicitFileScanCount": 1, "explicitScanExitCode": 0, "findings": 0, "scoreRequested": false }
+  },
+  "taroNpm11Followup": {
+    "freshLockResolutionExitCode": 0,
+    "fullFreshInstallExecuted": false,
+    "newGraphBuildExecuted": false,
+    "sameAsPriorLockedGraph": false,
+    "rootCauseOfNpm10FailureConfirmed": false
+  },
+  "browserRuntimeVerified": false,
+  "performanceVerified": false,
+  "formalProjectCreated": false,
+  "devServerStarted": false,
+  "cloudChanged": false,
+  "versionsFrozen": false,
+  "sp01Passed": false,
+  "productAcceptancePassed": false
+}
