@@ -33,7 +33,8 @@
     {
       "id": "R01", "kind": "technical-choice-and-risk", "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "Taro 4.3.1/React 18.3.1 has a successful ordinary build and approved split type policy; archive-fix audit still has 37 affected-package entries",
+      "known": "Unified shared-workspace lock builds and runs in simulator; its current audit has 37 entries (17 moderate/16 high/4 critical), distinct from the historical archive-fix lock; template/download and alternate-renderer chains reviewed without closing findings",
+      "evidence": "docs/sp01-current-toolchain-review-20261030.json",
       "nextAction": "Evaluate remaining relevant toolchain risks from advisory/source and ordinary compatibility evidence; key dependency replacements need a concrete comparison before adoption",
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },

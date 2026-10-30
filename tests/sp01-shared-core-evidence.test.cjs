@@ -27,3 +27,13 @@ test('shared compatibility evidence preserves failures and cannot authorize prod
   assert.equal(evidence.retainedFailures.length, 3);
   assert.ok(evidence.limits.includes('vendor-declarations-and-security-still-unresolved'));
 });
+test('current toolchain review keeps ordinary build evidence separate from unresolved audit findings', () => {
+  const evidence = read('docs/sp01-current-toolchain-review-20261030.json');
+  assert.equal(evidence.audit.total, evidence.audit.moderate + evidence.audit.high + evidence.audit.critical);
+  assert.equal(evidence.audit.exitCode, 1);
+  assert.equal(evidence.findingsClosed, 0);
+  for (const key of ['historicalSameCountImpliesSameFindings', 'missingBundleModuleProvesSafety',
+    'vulnerabilityReproductionExecuted', 'remoteTemplateDownloaded', 'dependencyVersionsChanged', 'sp01Passed', 'productAcceptancePassed']) {
+    assert.equal(evidence[key], false, key);
+  }
+});

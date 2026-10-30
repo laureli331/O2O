@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-30",
+  "task": "SP01",
+  "lock": "tools/sp01-shared-core-probe/workspace.package-lock.json",
+  "registry": "https://registry.npmjs.org",
+  "audit": { "exitCode": 1, "moderate": 17, "high": 16, "critical": 4, "total": 37, "unit": "affected-package-entries", "raw": ".local/shared18-audit-current.json" },
+  "buildStats": { "exitCode": 0, "distinctModuleNames": 156, "errors": 0, "topLevelFilteredModules": 0, "sharedModelAndHookObserved": true, "scope": "synthetic-entry-module-graph-only" },
+  "sourcePathsReviewed": [
+    "@tarojs/cli/dist/create/fetchTemplate.js", "download-git-repo/index.js", "download/index.js",
+    "@tarojs/components/package.json", "@tarojs/components/mini/index.js", "@tarojs/plugin-framework-react/dist/index.js"
+  ],
+  "historicalSameCountImpliesSameFindings": false,
+  "missingBundleModuleProvesSafety": false,
+  "vulnerabilityReproductionExecuted": false,
+  "remoteTemplateDownloaded": false,
+  "dependencyVersionsChanged": false,
+  "findingsClosed": 0,
+  "sp01Passed": false,
+  "productAcceptancePassed": false
+}
