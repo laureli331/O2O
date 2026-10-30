@@ -332,6 +332,61 @@
         "interpretation": "The reset-relative aggregate spans about 240.6 seconds, not the requested five-second scroll. All ten returned recent frame rows have NewestInputEvent=0 and OldestInputEvent at the no-event sentinel. Therefore the capture cannot associate frames or gaps with the scroll, and no scroll FPS or app-attributable >100ms stall can be concluded. The process aggregate reports 0 janky frames, but this is not a segment result.",
         "acceptanceEvidence": false
       },
+      "livePollScrollAttempt": {
+        "deviceModel": "SEA-AL10",
+        "androidVersion": "10",
+        "wechatVersion": "8.0.79",
+        "baseLibraryVersion": "3.17.5",
+        "resumedActivityDuringCapture": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "resetExitCode": 0,
+        "statsSinceBeforeResetNs": 22947179612642,
+        "statsSinceAfterResetNs": 23485430093289,
+        "captureDurationMs": 15226,
+        "userConfirmedApproximateScrollDurationMs": 5000,
+        "gestureStartStopTimestamped": false,
+        "pollingPointCount": 43,
+        "pollingSeriesElapsedTotalJanky": [
+          [96, 0, 0], [515, 0, 0], [854, 0, 0], [1208, 0, 0], [1550, 0, 0], [1906, 0, 0],
+          [2232, 0, 0], [2562, 0, 0], [2882, 0, 0], [3217, 0, 0], [3544, 0, 0], [3903, 0, 0],
+          [4245, 0, 0], [4599, 0, 0], [4953, 0, 0], [5331, 0, 0], [5674, 3, 0], [6009, 11, 0],
+          [6347, 20, 0], [6702, 27, 0], [7067, 35, 0], [7423, 41, 0], [7794, 50, 0], [8151, 57, 0],
+          [8525, 65, 0], [8890, 73, 0], [9236, 78, 0], [9590, 84, 0], [9958, 92, 1], [10307, 100, 1],
+          [10651, 106, 1], [11022, 112, 1], [11388, 119, 1], [11748, 126, 1], [12107, 133, 1],
+          [12476, 139, 1], [12828, 148, 1], [13185, 154, 1], [13537, 161, 1], [13874, 168, 1],
+          [14249, 175, 1], [14610, 182, 1], [14974, 190, 1]
+        ],
+        "totalFramesAtEnd": 203,
+        "jankyFramesAtEnd": 1,
+        "jankyPercentAtEnd": 0.49,
+        "percentilesMs": { "p50": 6, "p90": 7, "p95": 7, "p99": 8 },
+        "reportedMissedVsync": 0,
+        "finalProfileDataHeader": "Flags,IntendedVsync,Vsync,OldestInputEvent,NewestInputEvent,HandleInputStart,AnimationStart,PerformTraversalsStart,DrawStart,SyncQueued,SyncStart,IssueDrawCommandsStart,SwapBuffers,FrameCompleted,DequeueBufferDuration,QueueBufferDuration,",
+        "finalProfileDataRows": [
+          "0,23494766770793,23494766770793,9223372036854775807,0,23494767399538,23494767400580,23494767532350,23494767607350,23494767752142,23494769280788,23494769396413,23494770655788,23494773146934,136000,523000,",
+          "0,23494932035623,23494932035623,9223372036854775807,0,23494932603184,23494932605788,23494932915163,23494933095371,23494933417246,23494934867246,23494935242246,23494937263080,23494939333913,242000,822000,",
+          "0,23494948560829,23494948560829,9223372036854775807,0,23494950520371,23494950521413,23494950681309,23494950782871,23494950929225,23494953310475,23494953667246,23494956996934,23494958782871,292000,672000,",
+          "0,23494965087543,23494965087543,9223372036854775807,0,23494965660996,23494965663600,23494965952663,23494966129746,23494966441205,23494968044850,23494968165684,23494970332350,23494972877142,237000,908000,",
+          "0,23494981614290,23494981614290,9223372036854775807,0,23494982437038,23494982438080,23494982616725,23494982707350,23494982847975,23494984821934,23494984948496,23494986565684,23494989219850,139000,686000,",
+          "0,23495119826856,23495119826856,9223372036854775807,0,23495120585475,23495120590163,23495120965684,23495121218288,23495121457350,23495121819330,23495122172975,23495145855788,23495148960475,183000,834000,",
+          "0,23495136353684,23495136353684,9223372036854775807,0,23495136985996,23495136987038,23495137131830,23495137197975,23495137288600,23495149285475,23495149562038,23495151088600,23495152570892,143000,659000,",
+          "0,23495152880414,23495152880414,9223372036854775807,0,23495153247975,23495153249538,23495153359434,23495153424538,23495153534434,23495154461517,23495154843288,23495159409434,23495160455788,2712000,605000,",
+          "0,23495169406767,23495169406767,9223372036854775807,0,23495169782871,23495169783913,23495169924538,23495169991205,23495170112559,23495171004225,23495171278705,23495174205788,23495174934434,1177000,387000,",
+          "0,23495185933522,23495185933522,9223372036854775807,0,23495186566725,23495186568288,23495186684434,23495186826621,23495186960475,23495187954225,23495188257871,23495190323496,23495193475580,868000,543000,"
+        ],
+        "profileRowsReturned": 10,
+        "nonzeroNewestInputEventCount": 0,
+        "oldestInputEventSentinelCount": 10,
+        "profileIntendedVsyncSpanMs": 419.2,
+        "maximumAdjacentIntendedVsyncGapMs": 165.3,
+        "interpretation": "The user confirmed an approximate five-second scroll occurred during this 15.2-second live window. Polling saw no new frames through 5.331 seconds, then a rising count. The exact start/end were not timestamped; the reset-relative 203-frame/1-janky aggregate therefore cannot be converted to scroll FPS. All ten final rows had NewestInputEvent=0 and OldestInputEvent at the no-event sentinel, so the 165.3ms gap cannot be attributed to the scroll. No QP05 pass or fail is derived.",
+        "acceptanceEvidence": false
+      },
+      "postCaptureForegroundCheck": {
+        "deviceModel": "SEA-AL10",
+        "resumedActivity": "com.android.settings/.Settings$DisplaySettingsActivity",
+        "scope": "Read-only check after capture. The guarded automation issued no swipe because the mini-program page was no longer foreground; no phone setting was changed.",
+        "syntheticGestureIssued": false
+      },
       "resetCommandVerifiedOnHuawei": true,
       "acceptanceEvidence": false,
       "limitations": [
@@ -340,7 +395,7 @@
         "AOSP describes framestats as recent 120-frame timing data; it does not alone establish average FPS across the full product scroll segment or QP05's required repeated sample set.",
         "The AppBrandUI00 host ViewRoot is attributable, but gfxinfo does not isolate the mini-program WebView renderer from the containing AppBrand UI."
       ],
-      "nextStep": "The first requested scroll attempt was captured only in an unsynchronized aggregate and cannot be attributed: ten recent frame rows had no input-event timestamps, and the aggregate spans about 240.6 seconds. Prepare a live, time-bounded capture before asking for another gesture; verify whether it can retain input/frame timing over the same short window. Do not use this attempt as QP05 evidence.",
+        "nextStep": "A 15.2-second live poll overlapped a user-confirmed approximate five-second scroll, but its exact gesture boundaries were not recorded and all ten final frame rows had no input-event timestamps. The phone is now foregrounded on Android Display settings, so no scripted gesture was issued. When the user reopens the SP01 probe and signals ready, run a properly cued time-bounded capture. Do not use either attempt as QP05 evidence.",
       "scope": "Read-only diagnostic queries plus a transient reset of Android graphics diagnostic counters for com.tencent.mm:appbrand0 only; no cloud, storage, network, app data, permissions, or persistent setting is touched."
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
