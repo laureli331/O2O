@@ -2,6 +2,8 @@
 
 这是单个合成入口的独立编译检查，不是SP07正式后台。见[复用与实测记录](../../docs/sp01-web-react-evidence-20261030.md)。没有业务、云连接、支付或正式页面设计；未启动开发服务器。
 
+后续已用限于本机的静态preview完成[Chrome普通运行检查](../../docs/sp01-web-browser-evidence-20261030.md)，随后关闭服务。它不启动HMR开发服务器，也不代表正式页面、视觉或性能通过。browser-smoke.cjs复用已有Vite/Playwright公开API，所需工具路径按实际安装传入。
+
 在仓库根目录执行`node tools/sp01-web-react-probe/prepare.cjs`，在`.local/sp01-web-react-probe`安装并构建。`prepare.cjs replay`准备另一个运行目录`.local/sp01-web-react-replay`，使用已提交的**实验锁**重放，不覆盖Taro、用户QuickStart或已有预览。
 
 实际使用Node20.19.3配合本机npm11.16.0。Node自带npm10.8.2无锁安装曾触发内部错误，保留失败记录。普通命令：`npm ci --ignore-scripts --prefer-offline --no-audit --no-fund`、`npm run build`。如果PATH选择了旧npm，需显式以Node20运行本机`C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js`；不要据此修改全局npm。
