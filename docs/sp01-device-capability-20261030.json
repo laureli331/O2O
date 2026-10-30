@@ -53,7 +53,7 @@
     { "id": "DEVICE01", "model": "OPPO PLJ110", "system": "Android 17", "wechatVersion": "8.0.79", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 776], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 120, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false },
     { "id": "DEVICE02", "model": "iPhone XR (iPhone11,8)", "system": "iOS 17.5.1", "wechatVersion": "8.0.80", "baseLibrary": "3.17.5", "platform": "ios", "screenLogical": [414, 896], "windowWidthLogical": 414, "fontSizeSetting": 17, "selectedRefreshRateHz": 60, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false },
     { "id": "DEVICE03", "model": "HUAWEI BON-AL00", "system": "Android 12", "wechatVersion": "8.0.79", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 800], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 90, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false },
-    { "id": "DEVICE04", "model": "HUAWEI SEA-AL10 backup", "system": "Android 10", "wechatVersion": "8.0.78", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 780], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 60, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "not-provided", "fpsOrFrameMetricReported": false }
+    { "id": "DEVICE04", "model": "HUAWEI SEA-AL10 backup", "system": "Android 10", "wechatVersion": "8.0.79", "baseLibrary": "3.17.5", "platform": "android", "screenLogical": [360, 780], "windowWidthLogical": 360, "fontSizeSetting": 16, "selectedRefreshRateHz": 60, "renderer": "webview", "performanceApiAvailable": true, "observerRegistered": true, "supportedEntryTypes": ["interaction", "loadPackage", "navigation", "render", "resource", "script"], "currentEntries": "see DEVICE04-GPU-PROFILE-1", "fpsOrFrameMetricReported": false }
   ],
   "revisedProbeRetests": [
     {
@@ -146,7 +146,7 @@
     }
   ],
   "runtimeVersionDiscrepancies": [
-    { "deviceId": "DEVICE04", "earlierUserReportedBaseLibrary": "3.17.4", "latestProbeReportedBaseLibrary": "3.17.5", "status": "unresolved", "meaning": "preserve both reports; do not infer the product support floor from either one" }
+    { "deviceId": "DEVICE04", "earlierUserReportedBaseLibrary": "3.17.4", "latestProbeReportedBaseLibrary": "3.17.5", "status": "latest-device-report-confirms-3.17.5; earlier-report-preserved", "meaning": "The latest screenshot reports 3.17.5; retain the earlier 3.17.4 report as historical and do not infer the product minimum support floor from either one" }
   ],
   "fpsToolMenu": {
     "checkedByUser": true,
@@ -160,7 +160,7 @@
     "scope": "User checked Developer Options > Debugging and did not find System Tracing; this records the checked path only, not every OEM entry point"
   },
   "fpsMeasurementResearch": {
-    "status": "System Tracing is not exposed in the checked Huawei menu; official GPU Rendering fallback found but not validated against the mini-program or acceptance metrics",
+    "status": "GPU Rendering histogram appeared over the WeChat mini-program probe and refreshed during scrolling; numerical contract evidence is not yet captured",
     "androidCandidate": {
       "method": "Android System Tracing on device, then inspect the resulting trace in Perfetto UI",
       "officialAvailability": "Android 9 and later can capture a system trace on device without ADB; Android 10 and later save .perfetto-trace files",
@@ -172,8 +172,9 @@
     "gpuRenderingFallback": {
       "method": "Android Developer Options > Monitoring > Profile GPU Rendering/Profile HWUI Rendering > On screen as bars",
       "officialCapability": "Official Android guidance describes a scrolling per-frame render-time histogram for a UI window, with a 16.67ms reference line for 60 FPS",
-      "status": "not checked on DEVICE04; not validated for WeChat mini-program WebView attribution or contract-grade per-segment statistics",
-      "unverified": ["whether the Huawei OEM exposes this option", "whether WebView-composited mini-program frames appear in the histogram", "whether the displayed bars can support repeatable per-segment average FPS and detection of app-attributable stalls over 100ms"]
+      "observed": "User reports the histogram appeared over the WeChat mini-program device probe and refreshed during scrolling on DEVICE04; the attached screenshot shows the overlay over the probe page",
+      "status": "visual capture feasibility observed; numerical extraction and contract-grade per-segment statistics not validated",
+      "unverified": ["whether bar values can be extracted with adequate precision across repeated scrolling segments", "whether the histogram's scale and app attribution can establish average FPS and detect app-attributable stalls over 100ms"]
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
     "iosCandidate": {
@@ -189,6 +190,7 @@
     "revisedProbeObservesRuntimeReportedTypes": true,
     "revisedCopyButtonRefreshesBeforeCopy": true,
     "oneDeviceRetest": "OPPO snapshot-source retest supplied: 10 rows, visible repeats absent; route duration and FPS remain unresolved",
+    "latestHuaweiRetest": "SEA-AL10 report supplied with WeChat 8.0.79/base library 3.17.5; GPU Rendering histogram appeared over the WeChat probe and refreshed during scrolling; no numeric FPS result",
     "retestEvidenceId": "DEVICE01-SNAPSHOT-FIX-1",
     "oldOutputs": "keep as first-run evidence, not proof that the current runtime buffer stays empty"
   },
@@ -211,13 +213,47 @@
       "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1548, "failed": 0 }
     },
     "miniProgramIDECompile": "user-provided outputs confirm execution on four phones; separate IDE compile artifact not captured",
-    "realPhoneRuns": "4 unique devices; 7 user-provided capability reports including three revised OPPO retests",
+    "realPhoneRuns": "4 unique devices; 8 user-provided capability reports including three revised OPPO retests and one Huawei GPU-profile retest",
     "phoneRendererValues": "webview on all 4 reported devices",
     "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
     "freshEntriesAfterRevisedProbe": "OPPO returned 10 rows after snapshot-source correction was requested; visible repeated type/duration patterns are absent; report does not embed source revision; route duration and FPS remain unresolved",
     "measuredRefreshTiming": "unknown",
-    "fpsMeasurementTool": "no item in IDE Tools menu per user; System Tracing not found under Developer Options > Debugging on HUAWEI SEA-AL10; Android Profile GPU Rendering is an official fallback candidate not yet checked"
+    "fpsMeasurementTool": "no item in IDE Tools menu per user; System Tracing not found under Developer Options > Debugging on HUAWEI SEA-AL10; Android GPU Rendering bars were visible and refreshed over the WeChat probe during scrolling"
   },
+  "gpuProfileRetests": [
+    {
+      "id": "DEVICE04-GPU-PROFILE-1",
+      "deviceId": "DEVICE04",
+      "date": "2026-10-30",
+      "source": "user-provided screenshot of the device capability report with GPU Rendering overlay; user confirmed the bars appeared over the probe and refreshed during scrolling",
+      "wechatVersion": "8.0.79",
+      "baseLibrary": "3.17.5",
+      "reportedEntryRowCount": 11,
+      "entryTypeCounts": { "script": 1, "navigation": 2, "render": 7, "interaction": 0, "loadPackage": 1, "resource": 0 },
+      "recognizedEntryRows": [
+        { "name": "appLaunch", "entryType": "navigation", "durationMs": 8444 },
+        { "name": "downloadPackage", "entryType": "loadPackage", "durationMs": 1457 },
+        { "name": "evaluateScript", "entryType": "script", "durationMs": 9 },
+        { "name": "route", "entryType": "navigation", "durationMs": null },
+        { "name": "firstRender", "entryType": "render", "durationMs": 364 },
+        { "name": "firstPaint", "entryType": "render", "durationMs": null },
+        { "name": "firstContentfulPaint", "entryType": "render", "durationMs": null },
+        { "name": "largestContentfulPaint", "entryType": "render", "durationMs": null }
+      ],
+      "unrecognizedDurationSamplesMsByType": { "render": [2930, 2141, 717] },
+      "rowsWithDisplayedDurationCount": 7,
+      "rowsWithoutDisplayedDurationCount": 4,
+      "fpsOrFrameMetricReported": false,
+      "gpuOverlayVisibleOverProbe": true,
+      "gpuBarsRefreshDuringScroll": true,
+      "numericFrameTimesExtracted": false,
+      "averageFpsCalculated": false,
+      "over100msAppStallAttribution": false,
+      "cloudOrNetworkUsed": false,
+      "probeRevisionEmbeddedInReport": false,
+      "interpretation": "The official per-frame histogram is visibly available over the WeChat WebView probe and refreshes during scrolling, establishing sampler visibility feasibility on this device. The capability report entries are not FPS; the screenshot does not provide raw numeric frame times, segment average FPS or app-attributed stalls over 100ms."
+    }
+  ],
   "limitations": [
     "Selected display refresh settings are not measured display timing or FPS.",
     "The probe reads its own page renderer, not a later formal product page's renderer.",
