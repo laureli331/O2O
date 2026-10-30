@@ -40,8 +40,9 @@
     {
       "id": "R02", "kind": "confirmed-direction-validation", "state": "pending",
       "topic": "Web React major-version direction",
-      "known": "User rejected separate React majors and requires React/DOM/types 18.3.1, aligned TypeScript and a shared business core; React 19 evidence is historical",
-      "nextAction": "Apply and verify the unified version policy; do not ask again whether to keep React 19"
+      "known": "Unified React/DOM/types18.3.1 and TS5.9.3 verified with one shared source/React instance, full shared strict checks, Chrome and WeChat simulator interactions; React19 is historical",
+      "evidence": "docs/sp01-shared-core-evidence-20261030.json",
+      "nextAction": "Retain this bounded compatibility evidence; continue R01 dependency risk review and later production boundary/state-library validation, without asking again about React19"
     },
     {
       "id": "R03", "kind": "device-evidence-and-decision", "state": "pending",

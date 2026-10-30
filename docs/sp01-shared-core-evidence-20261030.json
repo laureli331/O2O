@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-30",
+  "task": "SP01",
+  "scope": "isolated-synthetic-workspace-compatibility",
+  "workspace": ".local/sp01-shared-react18-probe",
+  "source": "tools/sp01-shared-core-probe",
+  "lock": "tools/sp01-shared-core-probe/workspace.package-lock.json",
+  "nodeVersion": "20.19.3",
+  "npmVersion": "11.16.0",
+  "requiredVersions": {
+    "react": "18.3.1", "react-dom": "18.3.1",
+    "@types/react": "18.3.1", "@types/react-dom": "18.3.1", "typescript": "5.9.3"
+  },
+  "resolution": { "sharedPhysicalSourceCount": 1, "reactInstanceCount": 1, "consumers": ["apps/web", "apps/miniapp", "packages/shared"] },
+  "checks": {
+    "lockReplayExitCode": 0,
+    "sharedFullStrictExitCode": 0,
+    "webStrictAndBuildExitCode": 0,
+    "miniappApprovedChecksAndBuildExitCode": 0,
+    "realCompilerAndModelTests": { "total": 7, "passed": 7, "failed": 0 },
+    "planTests": { "total": 44, "passed": 44, "failed": 0 },
+    "rootTests": { "total": 1535, "passed": 1535, "failed": 0 },
+    "sharedBoundaryFiles": 4,
+    "sharedBoundaryFindings": 0
+  },
+  "browser": {
+    "browserVersion": "156.0.8078.73", "playwrightVersion": "1.64.1",
+    "widths": [1280, 360], "incrementsPerWidth": 3,
+    "count3Observed": true, "resetCount0Observed": true, "reloadCount0Observed": true,
+    "horizontalOverflow": false, "pageErrors": [], "consoleErrors": [], "externalRequests": [],
+    "browserClosed": true, "previewClosed": true
+  },
+  "simulator": {
+    "tool": "wechatide-skill 0.3.11",
+    "isolatedAppId": "wx2414399d423dfb65",
+    "count0Observed": true, "count1Observed": true, "count3Observed": true, "resetCount0Observed": true,
+    "method": "real-button-taps-and-text-queries-not-setData",
+    "selectorRecovery": "queried-current-WXML-and-page-data-for-Taro-internal-sids-after-id-wait-timeout",
+    "rawInteractionLog": ".local/shared18-native-interactions.log",
+    "isolatedWindowClosed": true,
+    "phoneTest": false
+  },
+  "retainedFailures": [
+    { "case": "external-shared-TS-first-build", "outcome": "parse-failure", "fix": "official-mini.compile.include", "retest": "passed" },
+    { "case": "JSX-id-simulator-selector", "outcome": "timeout", "retest": "passed-with-queried-runtime-sid" },
+    { "case": "fixture-directory-type-resolution", "outcome": "unresolved-react-caused-inferred-any-findings", "fix": "compare-source-bytes-then-check-installed-workspace", "retest": "passed" }
+  ],
+  "reactDoctor": { "changedMode": "skipped", "fullScannedFiles": 0, "countsAsCodeScanEvidence": false },
+  "rawEvidence": [
+    ".local/shared18-lock-replay.log", ".local/shared18-replay-check-shared.log",
+    ".local/shared18-replay-build-web.log", ".local/shared18-replay-build-weapp.log",
+    ".local/shared18-real-tests.log", ".local/shared18-browser.json",
+    ".local/shared18-native-interactions.log"
+  ],
+  "limits": ["synthetic-model-only", "fake-transport-contract-only", "bounded-AST-and-type-check-not-complete-flow-analysis", "vendor-declarations-and-security-still-unresolved", "production-state-library-not-frozen"],
+  "cloudChanged": false, "formalProjectCreated": false, "productAcceptancePassed": false,
+  "sp01Passed": false, "sp07Started": false
+}

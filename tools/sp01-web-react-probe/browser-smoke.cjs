@@ -6,13 +6,13 @@ const { createRequire } = require('node:module');
 const { pathToFileURL } = require('node:url');
 const EXPECTED_TEXT = 'SP01 React Web synthetic build probe';
 
-function assertSmokeResult(result) {
+function assertSmokeResult(result, expectedText = EXPECTED_TEXT) {
   assert.equal(result.views.length, 2, 'EXPECTED_TWO_VIEWPORTS');
   assert.deepEqual(result.views.map(view => view.width), [1280, 360], 'VIEWPORTS_NOT_CHECKED');
   for (const view of result.views) {
     assert.equal(view.httpStatus, 200, 'PAGE_NOT_OK');
-    assert.equal(view.text, EXPECTED_TEXT, 'REACT_RENDER_MISSING');
-    assert.equal(view.reloadText, EXPECTED_TEXT, 'RELOAD_RENDER_MISSING');
+    assert.equal(view.text, expectedText, 'REACT_RENDER_MISSING');
+    assert.equal(view.reloadText, expectedText, 'RELOAD_RENDER_MISSING');
     assert.equal(view.horizontalOverflow, false, 'HORIZONTAL_OVERFLOW');
   }
   assert.deepEqual(result.pageErrors, [], 'PAGE_RUNTIME_ERRORS');
@@ -21,7 +21,9 @@ function assertSmokeResult(result) {
   assert.deepEqual(result.externalRequests, [], 'UNEXPECTED_EXTERNAL_REQUESTS');
 }
 
-async function runBrowserSmoke(project, playwrightPackage, executablePath, outputFile) {
+async function runBrowserSmoke(project, playwrightPackage, executablePath, outputFile, options = {}) {
+  const expectedText = options.expectedText || EXPECTED_TEXT;
+  const selector = options.contentSelector || '#root';
   const resolveProject = createRequire(path.join(path.resolve(project), 'package.json'));
   const { preview } = await import(pathToFileURL(resolveProject.resolve('vite')).href);
   const { chromium } = require(path.resolve(playwrightPackage));
@@ -53,15 +55,16 @@ async function runBrowserSmoke(project, playwrightPackage, executablePath, outpu
     for (const width of [1280, 360]) {
       await page.setViewportSize({ width, height: 800 });
       const response = await page.goto(origin, { waitUntil: 'networkidle', timeout: 15000 });
-      await page.getByText(EXPECTED_TEXT, { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
-      const text = await page.locator('#root').textContent();
+      await page.getByText(expectedText, { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+      if (options.onReady) await options.onReady(page, width);
+      const text = await page.locator(selector).textContent();
       const horizontalOverflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
       await page.reload({ waitUntil: 'networkidle', timeout: 15000 });
-      await page.getByText(EXPECTED_TEXT, { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
+      await page.getByText(expectedText, { exact: true }).waitFor({ state: 'visible', timeout: 10000 });
       result.views.push({ width, height: 800, httpStatus: response.status(), text,
-        reloadText: await page.locator('#root').textContent(), horizontalOverflow });
+        reloadText: await page.locator(selector).textContent(), horizontalOverflow });
     }
-    assertSmokeResult(result);
+    assertSmokeResult(result, expectedText);
     result.success = true;
   } catch (error) {
     failure = error;
