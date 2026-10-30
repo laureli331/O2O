@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('node:fs');
 const path = require('node:path');
-const { createMaintenanceManifest, createMaintenanceWebManifest } = require('./maintenance-manifest.cjs');
+const { createMaintenanceManifest, createMaintenanceWebManifest, maintenanceCandidateStatus } = require('./maintenance-manifest.cjs');
 const root = path.resolve(__dirname, '../..');
 const baseline = path.join(root, '.local/sp01-shared-react18-probe');
 const destination = path.join(root, '.local/sp01-shared-react18-maintenance-probe');
@@ -21,4 +21,4 @@ const candidateLock = path.join(__dirname, 'maintenance.workspace.package-lock.j
 if (fs.existsSync(candidateLock)) fs.copyFileSync(candidateLock, path.join(destination, 'package-lock.json'));
 fs.writeFileSync(path.join(destination, 'package.json'), JSON.stringify(manifest, null, 2));
 fs.writeFileSync(path.join(destination, 'apps/web/package.json'), JSON.stringify(createMaintenanceWebManifest(read('apps/web/package.json')), null, 2));
-console.log(JSON.stringify({ destination, baselineModified: false, cloudChanged: false, adopted: false }));
+console.log(JSON.stringify({ destination, baselineModified: false, cloudChanged: false, ...maintenanceCandidateStatus() }));

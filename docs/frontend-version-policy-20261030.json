@@ -14,8 +14,20 @@
   "businessCoreLocation": "packages/shared",
   "platformApisAllowedInShared": false,
   "platformSpecificBuildTools": {
-    "web": { "vite": "8.3.5", "@vitejs/plugin-react": "6.1.2" },
+    "web": { "vite": "8.3.5", "@vitejs/plugin-react": "6.1.2", "esbuild": "0.28.2" },
     "miniapp": { "@tarojs/cli": "4.3.1", "@tarojs/webpack5-runner": "4.3.1", "webpack": "5.91.0" }
+  },
+  "approvedMaintenanceCandidate": {
+    "date": "2026-10-30",
+    "userReply": "采用此局部维护候选（推荐）",
+    "scope": "current-SP01-candidate-not-final-product-freeze",
+    "formalProductVersionFrozen": false,
+    "overrides": { "adm-zip@^0.5.12": "0.6.1", "serialize-javascript@^6.0.2": "7.1.4" },
+    "webOnlyBuildDependencies": { "esbuild": "0.28.2" },
+    "lock": "tools/sp01-shared-core-probe/maintenance.workspace.package-lock.json",
+    "evidence": "docs/sp01-maintenance-candidate-20261030.json",
+    "historicalControlLock": "tools/sp01-shared-core-probe/workspace.package-lock.json",
+    "allAuditFindingsResolved": false
   },
   "formalProjectCreated": false,
   "productAcceptancePassed": false

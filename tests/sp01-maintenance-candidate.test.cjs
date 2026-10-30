@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
-const { createMaintenanceManifest, createMaintenanceWebManifest } = require('../tools/sp01-shared-core-probe/maintenance-manifest.cjs');
+const { createMaintenanceManifest, createMaintenanceWebManifest, maintenanceCandidateStatus } = require('../tools/sp01-shared-core-probe/maintenance-manifest.cjs');
 
 test('maintenance comparison changes only the two scoped transitive overrides and preserves its input', () => {
   const baseline = { name: 'synthetic', dependencies: { react: '18.3.1' },
@@ -42,7 +42,7 @@ test('candidate lock preserves approved core versions and makes the Web build pe
   assert.notEqual(lock.packages['apps/web/node_modules/esbuild'].extraneous, true);
   assert.equal(lock.packages['node_modules/esbuild'].version, '0.21.5');
 });
-test('maintenance evidence retains failed attempts, unresolved audit and the adoption boundary', () => {
+test('maintenance evidence records user adoption while retaining failed attempts and unresolved audit', () => {
   const root = path.resolve(__dirname, '..');
   const evidence = require('../docs/sp01-maintenance-candidate-20261030.json');
   const digest = crypto.createHash('sha256').update(fs.readFileSync(path.join(root, evidence.lock))).digest('hex');
@@ -53,7 +53,18 @@ test('maintenance evidence retains failed attempts, unresolved audit and the ado
   assert.equal(evidence.audit.exitCode, 1);
   assert.equal(evidence.audit.after.total, evidence.audit.after.moderate + evidence.audit.after.high + evidence.audit.after.critical);
   assert.deepEqual(evidence.audit.addedEntries, []);
-  for (const key of ['adopted', 'versionsFrozen', 'vulnerabilityReproductionPerformed', 'cloudChanged', 'sp01Passed', 'sp07Started', 'productAcceptancePassed']) {
+  assert.equal(evidence.adopted, true);
+  const policy = require('../docs/frontend-version-policy-20261030.json');
+  assert.equal(evidence.userAdoption.reply, policy.approvedMaintenanceCandidate.userReply);
+  assert.equal(evidence.lock, policy.approvedMaintenanceCandidate.lock);
+  for (const key of ['versionsFrozen', 'vulnerabilityReproductionPerformed', 'cloudChanged', 'sp01Passed', 'sp07Started', 'productAcceptancePassed']) {
     assert.equal(evidence[key], false, key);
   }
+});
+test('candidate generator status reflects the approved SP01 candidate without implying product freeze', () => {
+  assert.deepEqual(maintenanceCandidateStatus(), {
+    candidateStatus: 'user-adopted-current-SP01-candidate',
+    candidateScope: 'current-SP01-candidate-not-final-product-freeze',
+    productVersionFrozen: false,
+  });
 });

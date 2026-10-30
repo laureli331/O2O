@@ -28,6 +28,11 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(evidence.checks.sharedFullStrictExitCode, 0);
       assert.equal(evidence.simulator.resetCount0Observed, true);
       assert.equal(evidence.productAcceptancePassed, false);
+    } else if (item.id === 'R01') {
+      const candidate = require('../docs/sp01-maintenance-candidate-20261030.json');
+      assert.equal(candidate.adopted, true);
+      assert.equal(candidate.audit.after.total, 32);
+      assert.match(item.known, /已采用.*32条/);
     } else assert.ok(['pending', 'awaiting-user'].includes(item.state));
     assert.ok(item.nextAction.length > 20);
   }

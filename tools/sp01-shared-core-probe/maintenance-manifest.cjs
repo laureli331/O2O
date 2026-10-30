@@ -1,13 +1,21 @@
 'use strict';
+const policy = require('../../docs/frontend-version-policy-20261030.json');
+const approved = policy.approvedMaintenanceCandidate;
 function createMaintenanceManifest(baseline) {
   const manifest = structuredClone(baseline);
-  manifest.overrides = { ...manifest.overrides,
-    'adm-zip@^0.5.12': '0.6.1', 'serialize-javascript@^6.0.2': '7.1.4' };
+  manifest.overrides = { ...manifest.overrides, ...approved.overrides };
   return manifest;
 }
 function createMaintenanceWebManifest(baseline) {
   const manifest = structuredClone(baseline);
-  manifest.devDependencies = { ...manifest.devDependencies, esbuild: '0.28.2' };
+  manifest.devDependencies = { ...manifest.devDependencies, ...approved.webOnlyBuildDependencies };
   return manifest;
 }
-module.exports = { createMaintenanceManifest, createMaintenanceWebManifest };
+function maintenanceCandidateStatus() {
+  return {
+    candidateStatus: 'user-adopted-current-SP01-candidate',
+    candidateScope: approved.scope,
+    productVersionFrozen: approved.formalProductVersionFrozen,
+  };
+}
+module.exports = { createMaintenanceManifest, createMaintenanceWebManifest, maintenanceCandidateStatus };

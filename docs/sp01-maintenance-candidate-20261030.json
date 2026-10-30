@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-30",
   "task": "SP01",
-  "status": "validated-local-candidate-awaiting-adoption",
+  "status": "user-adopted-current-SP01-candidate",
   "scope": "ordinary-synthetic-compatibility-only",
   "candidate": ".local/sp01-shared-react18-maintenance-probe",
   "nodeVersion": "20.19.3",
@@ -131,7 +131,8 @@
     ".local/shared18-maintenance-final-browser.json",
     ".local/shared18-maintenance-final-audit.json"
   ],
-  "adopted": false,
+  "adopted": true,
+  "userAdoption": { "date": "2026-10-30", "reply": "采用此局部维护候选（推荐）", "scope": "local-maintenance-candidate-not-product-acceptance" },
   "versionsFrozen": false,
   "upstreamParentRangeCompatibilityGuaranteed": false,
   "vendorDeclarationsFullyPassed": false,

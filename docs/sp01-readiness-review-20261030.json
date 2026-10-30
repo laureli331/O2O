@@ -33,10 +33,10 @@
     {
       "id": "R01", "kind": "technical-choice-and-risk", "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "Unified shared-workspace lock builds and runs in simulator; its current audit has 37 entries (17 moderate/16 high/4 critical), distinct from the historical archive-fix lock; template/download and alternate-renderer chains reviewed without closing findings",
+      "known": "已采用局部维护候选用于当前SP01准备；新锁审计仍有32条受影响包记录（15 moderate/13 high/4 critical），原共享工作区锁的37条仅作历史对照。模板/下载和备用渲染器依赖链已查阅，但相关发现未全部关闭",
       "evidence": "docs/sp01-current-toolchain-review-20261030.json",
       "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
-      "nextAction": "Evaluate remaining relevant toolchain risks from advisory/source and ordinary compatibility evidence; key dependency replacements need a concrete comparison before adoption",
+      "nextAction": "继续核对剩余适用依赖风险及普通兼容证据，明确未关闭审计项对当前准备的影响；保留候选与历史锁对照，不把候选采用或构建通过写成全部风险已修复或最终版本冻结",
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },
     {
