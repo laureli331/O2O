@@ -33,6 +33,12 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(candidate.adopted, true);
       assert.equal(candidate.audit.after.total, 32);
       assert.match(item.known, /已采用.*32条/);
+    } else if (item.id === 'R03') {
+      const capability = require('../docs/sp01-device-capability-20261030.json');
+      assert.equal(item.state, 'pending');
+      assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
+      assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);
+      assert.equal(capability.localTests.realPhoneRuns, 'not-run');
     } else assert.ok(['pending', 'awaiting-user'].includes(item.state));
     assert.ok(item.nextAction.length > 20);
   }

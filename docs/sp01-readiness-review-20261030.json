@@ -13,6 +13,7 @@
     "docs/sp01-web-react-evidence-20261030.json",
     "docs/sp01-web-browser-evidence-20261030.json",
     "docs/sp01-device-evidence-20261029.json",
+    "docs/sp01-device-capability-20261030.json",
     "docs/sp01-next-evidence-and-measurement-20261029.md"
   ],
   "knownFacts": {
@@ -50,9 +51,10 @@
     {
       "id": "R03", "kind": "device-evidence-and-decision", "state": "pending",
       "topic": "Measurement device conditions and support baseline",
-      "known": "Four runtime reports exist; user confirmed selected settings: OPPO 120Hz, BON-AL00 90Hz, SEA-AL10 60Hz, iPhone 60Hz; backup library 3.17.4 and main reports 3.17.5",
-      "unknown": ["physical refresh timing", "rendering engine", "available phone sampling method", "minimum supported library and frozen device groups"],
-      "nextAction": "Do not ask for selected rates again; prepare sampling capability and device-group proposals from actual supported tools without treating settings as measured FPS"
+      "known": "Four runtime reports exist; user-confirmed selected settings are OPPO 120Hz, BON-AL00 90Hz, SEA-AL10 60Hz and iPhone 60Hz. WeChat-maintained API typings expose startup/route/first-render metrics and a page renderer field, but no FPS/逐帧 entry; an isolated no-cloud capability probe is ready for phone runs",
+      "unknown": ["physical refresh timing", "actual renderer values", "runtime entry/API values on phones", "available FPS sampling method", "minimum supported library and frozen device groups"],
+      "evidence": "docs/sp01-device-capability-20261030.json",
+      "nextAction": "Run the isolated capability probe on the four confirmed phones and check whether the installed IDE GUI exposes real-device FPS capture; do not treat settings or first-render timings as measured FPS"
     },
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",

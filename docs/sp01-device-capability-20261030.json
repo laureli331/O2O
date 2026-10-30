@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-30",
+  "task": "SP01",
+  "status": "capability-method-prepared-phone-evidence-pending",
+  "scope": "isolated-local-device-diagnostic-only",
+  "targetAppId": "wx2414399d423dfb65",
+  "probe": "tools/sp01-device-probe",
+  "configuredBaseLibrary": "3.17.4",
+  "baseLibraryMeaning": "lowest user-reported probe-device runtime; not an approved product support floor",
+  "reuse": {
+    "existingProjectCode": "tools/sp01-storage-probe/miniprogram/pages/index/index.js inspectDevice",
+    "decision": "keep cloud permission probe untouched; create a separate offline-only device probe using the existing safe system-field list",
+    "thirdPartyDependencies": [],
+    "externalCodeCopied": false
+  },
+  "sources": {
+    "officialTypingsRepository": "https://github.com/wechat-miniprogram/api-typings",
+    "officialPerformanceApi": "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/wx.getPerformance.html",
+    "officialPerformanceEntry": "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/PerformanceEntry.html",
+    "officialPageReference": "https://developers.weixin.qq.com/miniprogram/dev/reference/api/Page.html",
+    "installedPackage": "miniprogram-api-typings@5.2.3",
+    "installedPackageLicense": "MIT",
+    "installedPackageGeneratedApiSource": ".local/sp01-toolchain-probe/node_modules/miniprogram-api-typings/types/wx/lib.wx.api.d.ts",
+    "installedPageTypeSource": ".local/sp01-toolchain-probe/node_modules/miniprogram-api-typings/types/wx/lib.wx.page.d.ts"
+  },
+  "documentedRuntimeCapabilities": {
+    "getPerformanceMinimumBaseLibrary": "2.11.0",
+    "entryTypes": ["navigation", "render", "script"],
+    "entryNames": ["appLaunch", "route", "firstRender", "firstPaint", "firstContentfulPaint", "largestContentfulPaint", "evaluateScript", "downloadPackage", "resourceTiming"],
+    "iosNotes": {
+      "firstPaint": "unsupported",
+      "largestContentfulPaint": "unsupported",
+      "firstContentfulPaintBelowIos": "14.5 unsupported"
+    },
+    "pageRendererValues": ["webview", "skyline"],
+    "frameRateOrFpsEntryDeclared": false,
+    "apiCanProveLiveFps": false
+  },
+  "historicalDeviceInputs": [
+    { "id": "DEVICE01", "model": "OPPO PLJ110", "reportedBaseLibrary": "3.17.5", "selectedRefreshRateHz": 120 },
+    { "id": "DEVICE02", "model": "iPhone XR", "reportedBaseLibrary": "3.17.5", "selectedRefreshRateHz": 60 },
+    { "id": "DEVICE03", "model": "HUAWEI BON-AL00", "reportedBaseLibrary": "3.17.5", "selectedRefreshRateHz": 90 },
+    { "id": "DEVICE04", "model": "HUAWEI SEA-AL10 backup", "reportedBaseLibrary": "3.17.4", "selectedRefreshRateHz": 60 }
+  ],
+  "cliCapabilityCheck": {
+    "source": "installed-wechatidecli --help",
+    "dedicatedPerformanceCaptureCommandListed": false,
+    "guiToolCapability": "not-checked",
+    "helpCommandWasReadOnly": true
+  },
+  "localTests": {
+    "formatterAndAllowlist": "passed",
+    "allDeviceProbeTests": "3/3 passed",
+    "javascriptSyntax": "node --check passed for 3 JavaScript files",
+    "jsonParse": "passed for 5 project/evidence JSON files",
+    "testRuns": {
+      "focused": { "command": "node --test tests/sp01-device-probe.test.cjs tests/sp01-readiness-review.test.cjs", "passed": 5, "failed": 0 },
+      "developmentPlan": { "command": "node --test tests/executable-development-plan.test.cjs", "passed": 44, "failed": 0 },
+      "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1544, "failed": 0 }
+    },
+    "miniProgramIDECompile": "not-run",
+    "realPhoneRuns": "not-run",
+    "phoneRendererValues": "unknown",
+    "phonePerformanceObserverValues": "unknown",
+    "measuredRefreshTiming": "unknown",
+    "fpsMeasurementTool": "not-confirmed"
+  },
+  "limitations": [
+    "Selected display refresh settings are not measured display timing or FPS.",
+    "The probe reads its own page renderer, not a later formal product page's renderer.",
+    "Startup and first-render entries do not measure scroll FPS or button-to-visible-feedback latency.",
+    "No minimum product base-library floor or device group is frozen by this evidence."
+  ],
+  "cloudAccess": false,
+  "networkRequests": false,
+  "fileSystemWrites": false,
+  "clipboardWritesOnExplicitUserTap": true,
+  "productAcceptancePassed": false
+}

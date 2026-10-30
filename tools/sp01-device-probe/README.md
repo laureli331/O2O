@@ -1,0 +1,16 @@
+# SP01 device capability probe
+
+An isolated, local-only WeChat mini-program used to read device metadata, the current page's reported renderer, and the runtime's documented Performance API capability. The project has no cloud initialization, network requests, storage writes, or dependencies. Its configured base library is 3.17.4, the lowest user-reported test-device runtime; this is a probe setting, not an approved product support floor.
+
+## Reuse and source check
+
+- The existing `tools/sp01-storage-probe` already reads system information, but it is a cloud-permission experiment and must remain undisturbed. This project reuses its safe field list and isolates additional runtime-capability reads from cloud tests.
+- WeChat's [official mini-program API typings repository](https://github.com/wechat-miniprogram/api-typings) publishes generated API definitions from the WeChat documentation; the locally installed MIT package version 5.2.3 documents `wx.getPerformance()` (minimum library 2.11.0), entry names for launch/route/first render/paint/script/package/resource timing, and the page-instance `renderer` field (`webview` or `skyline`). The current field list contains no FPS or per-frame metric.
+- The API's [official wx.getPerformance page](https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/wx.getPerformance.html), [PerformanceEntry page](https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/PerformanceEntry.html), and [Page page](https://developers.weixin.qq.com/miniprogram/dev/reference/api/Page.html) are linked in the generated declarations. The official site was not readable from the research browser during this turn; conclusions are cross-checked against the installed WeChat-maintained declarations and marked as capability evidence, not phone execution evidence.
+- No third-party dependency is needed: these are first-party runtime APIs and local formatting. Adding an analytics SDK would transmit data and would not supply a confirmed per-frame measurement method, so it is out of scope.
+
+## Scope and validation
+
+`onLaunch` registers an observer for the documented navigation/render/script entry types. The page reads system info, `Page.renderer`, observer-supported types, and current safe metric summaries. The **Copy result** button writes the displayed report to the device clipboard only after an explicit tap; the app never emits raw error text, page paths, identity, network data, or file contents, and never writes files or cloud storage.
+
+Validate the formatter and its allowlist with `node --test tests/sp01-device-probe.test.cjs`. The installed WeChat Developer Tools CLI help exposes no standalone compile command, so an IDE compile has not been claimed. Import this directory in WeChat Developer Tools and compile in its GUI; if it builds, run it on the four listed phones and use **Copy result** to return each local report. Phone use is still required to establish actual renderer values, runtime API support, and entry output. No device FPS or product-performance acceptance is claimed.
