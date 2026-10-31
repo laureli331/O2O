@@ -19,6 +19,7 @@
     "docs/sp01-recovery-capability-20261031.json",
     "docs/sp01-endurance-web-budget-proposal-20261031.md",
     "docs/sp01-network-home-wifi-20261031.json",
+    "docs/sp01-network-cloudflare-home-wifi-20261031.json",
     "docs/sp01-r01-residual-risk-20261031.md"
   ],
   "knownFacts": {
@@ -67,8 +68,8 @@
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",
       "topic": "Normal/weak-network conditions",
-      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. This does not measure link RTT, throughput, network jitter or packet loss.",
-      "evidence": "docs/sp01-network-home-wifi-20261031.json",
+      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. A separate one-round user screenshot of Cloudflare speed test reported down 25.5 Mbps, up 33.5 Mbps, latency 200ms, jitter 40ms and packet loss 14.3%; its target differs from CloudBase and the screenshot does not independently verify the device/access. Neither one round nor app success freezes a stable link profile.",
+      "evidence": "docs/sp01-network-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-20261031.json",
       "unknown": ["actual uplink/downlink and link RTT/jitter/loss", "stable range across independent runs", "repeatable weak-network injection and recovery method", "public Wi-Fi profile"],
       "nextAction": "Choose and validate separate link-profile and repeatable weak-network methods; do not mislabel application round-trip differences as network jitter or successes as zero packet loss. SP08 will remeasure formal endpoint.",
       "numericDefaultsInvented": false

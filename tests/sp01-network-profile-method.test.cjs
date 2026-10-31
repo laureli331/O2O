@@ -13,3 +13,16 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /弱网配置还需独立方法/);
   assert.match(source, /SP01 不放行/);
 });
+
+test('first Cloudflare screenshot is a single round with high loss and no false CloudBase claim', () => {
+  const evidence = require('../docs/sp01-network-cloudflare-home-wifi-20261031.json');
+  assert.equal(evidence.scope, 'phone-to-Cloudflare, not phone-to-CloudBase');
+  assert.equal(evidence.downloadMbps, 25.5);
+  assert.equal(evidence.uploadMbps, 33.5);
+  assert.equal(evidence.latencyMs, 200);
+  assert.equal(evidence.jitterMs, 40);
+  assert.equal(evidence.packetLossPercent, 14.3);
+  assert.equal(evidence.independentRounds, 1);
+  assert.equal(evidence.normalNetworkStableRangeFrozen, false);
+  assert.equal(evidence.r04Passed, false);
+});
