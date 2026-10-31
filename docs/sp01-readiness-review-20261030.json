@@ -17,7 +17,9 @@
     "docs/sp01-device-capability-20261030.json",
     "docs/sp01-next-evidence-and-measurement-20261029.md",
     "docs/sp01-recovery-capability-20261031.json",
-    "docs/sp01-endurance-web-budget-proposal-20261031.md"
+    "docs/sp01-endurance-web-budget-proposal-20261031.md",
+    "docs/sp01-network-home-wifi-20261031.json",
+    "docs/sp01-r01-residual-risk-20261031.md"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -37,9 +39,10 @@
     {
       "id": "R01", "kind": "technical-choice-and-risk", "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "已采用局部维护候选用于当前SP01准备；新锁审计仍有32条受影响包记录（15 moderate/13 high/4 critical），原共享工作区锁的37条仅作历史对照。模板/下载和备用渲染器依赖链已查阅。候选的Taro runner入口加载实测表明weapp未加载webpack-dev-server，H5入口会加载；这不关闭该包或其余审计发现",
+      "known": "已采用局部维护候选用于当前SP01准备；新锁审计仍有32条受影响包记录（15 moderate/13 high/4 critical），原共享工作区锁的37条仅作历史对照。已按本机源码把远程模板、Swiper原生映射、H5开发服务及必用编译链分组核对；这不关闭审计发现",
       "evidence": "docs/sp01-current-toolchain-review-20261030.json",
       "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
+      "residualRiskReview": "docs/sp01-r01-residual-risk-20261031.md",
       "nextAction": "继续核对剩余适用依赖风险及普通兼容证据，明确未关闭审计项对当前准备的影响；保留候选与历史锁对照，不把候选采用或构建通过写成全部风险已修复或最终版本冻结",
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },
@@ -64,9 +67,10 @@
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",
       "topic": "Normal/weak-network conditions",
-      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes, not measured or repeatable network profiles",
-      "unknown": ["measured endpoint and samples", "uplink/downlink", "RTT/jitter/loss", "repeatable injection and recovery method"],
-      "nextAction": "Prepare one bounded measurement procedure with a relevant permitted endpoint; obtain evidence and user confirmation before freezing values",
+      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. This does not measure link RTT, throughput, network jitter or packet loss.",
+      "evidence": "docs/sp01-network-home-wifi-20261031.json",
+      "unknown": ["actual uplink/downlink and link RTT/jitter/loss", "stable range across independent runs", "repeatable weak-network injection and recovery method", "public Wi-Fi profile"],
+      "nextAction": "Choose and validate separate link-profile and repeatable weak-network methods; do not mislabel application round-trip differences as network jitter or successes as zero packet loss. SP08 will remeasure formal endpoint.",
       "numericDefaultsInvented": false
     },
     {
