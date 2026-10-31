@@ -15,6 +15,17 @@
 
 当前没有采用外部库或自行实现流量代理。跨设备代理需要先核实安全、许可、维护、系统兼容、是否实际拦截微信请求和恢复能力，不能因一个功能引入未经验证的整套系统。
 
+## Android 真机候选源码核查（2026-10-31，仅静态）
+
+候选为 [WeakNet](https://github.com/baithinking134/WeakNet)，核对固定提交 `54f6377c931582ad7cb538598d089b66250328ce`，不是核对或安装发布 APK。[许可证](https://github.com/baithinking134/WeakNet/blob/main/LICENSE)为 Apache-2.0；核查时仓库显示 7 次提交，历史和设备覆盖有限。构建文件声明 `minSdk 23`、`targetSdk 36`，依赖列为 AndroidX/Compose；这只说明 Android 10 在声明的最低系统范围内，不证明华为 SEA-AL10 或微信小程序实际兼容。
+
+- [Manifest](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/AndroidManifest.xml)申请 VPN、悬浮窗、读取已安装应用列表、通知与前台服务能力，且 `allowBackup=true`。这是对测试手机的敏感权限要求。
+- [VPN 服务](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/WeakNetVpnService.kt)使用 Android `VpnService`。选定应用列表非空时调用 `addAllowedApplication`；若列表为空，排除自身后将其余应用纳入 VPN。因此必须先实测仅微信被选中，不能依赖默认状态。服务停止时关闭虚拟网卡；还需在手机上实测停用、系统 VPN 状态及原网络恢复。
+- [网络配置](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/VpnConfig.kt)内置三个 DNS 服务器。源码通过受保护的上游 socket 转发流量；[处理器](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/engine/PacketProcessor.kt)包含目标 IP/端口的调试日志。未见源码依据可证明安装包无外传或完整隐私安全，不能把静态阅读等同于安全审计。
+- [丢包实现](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/manipulation/PacketLossManipulator.kt)有随机及突发模式；TCP 出站在 `PacketProcessor` 中另行判定，DNS/ICMP 另有处理。标称丢包百分比仍需对目标微信请求实测，不能从源码推断实际业务失败率。[限速实现](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/manipulation/ThrottleManipulator.kt)为按会话令牌调度，未证实多连接总速率达到设定值。
+
+**结论：暂不安装。** 它比只读采样页更接近所需真机注入，但权限与流量接管范围较大，且目前只有静态源码核查；没有本地构建、APK 与源码对应性、华为真机运行或微信 CloudBase 对照证据。若继续，应先在独立候选目录从固定提交构建并核对权限，提出仅备用机、仅微信、短时、可停用的具体方案供用户确认；不得直接下载并运行未经核对的预编译 APK。若本地构建不可行，再比较外部网络设备方案，不能假装已通过 R04。
+
 ## 最小验证顺序（待入口确认）
 
 1. iPhone XR 入口核查已完成：当前未出现；苹果方法暂不采用。若未来已有可用 Mac/开发设备，再重新核对，不把升级 iOS 当解除条件。
