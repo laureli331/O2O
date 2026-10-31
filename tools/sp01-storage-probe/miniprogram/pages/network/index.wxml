@@ -1,0 +1,13 @@
+<view class="page">
+  <view class="card">
+    <view class="title">SP01 网络采样</view>
+    <view class="subtitle">手动触发后，顺序调用现有只读身份函数 30 次。只保存每次成败和耗时，不保存身份摘要、错误正文或临时凭据。</view>
+    <view class="hint warn">结果是小程序到云函数的往返耗时，包含客户端、网关和函数处理；不能当作网络 RTT、上下行速度或真实丢包。请在得到本次云端调用授权后再按开始。</view>
+    <button class="button button-primary" hover-class="button-hover" hover-stay-time="80" bindtap="start" loading="{{busy}}" disabled="{{busy}}">开始 30 次只读采样</button>
+  </view>
+  <view wx:if="{{report}}" class="card">
+    <view class="section-title">本机结果</view>
+    <view class="report">{{report}}</view>
+    <button class="button button-secondary" hover-class="button-hover" hover-stay-time="80" bindtap="copyReport" disabled="{{busy}}">复制脱敏结果</button>
+  </view>
+</view>

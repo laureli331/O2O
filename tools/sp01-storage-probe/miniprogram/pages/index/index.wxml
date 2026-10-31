@@ -5,6 +5,7 @@
     <view class="hint warn">第二账号先核对身份摘要。摘要相同会停止；摘要不同后才测试读取与同路径写入。</view>
     <button class="button button-secondary" hover-class="button-hover" hover-stay-time="80" bindtap="checkIdentityOnly" loading="{{busy}}" disabled="{{busy}}">仅诊断身份调用（不写文件）</button>
     <button class="button button-secondary" hover-class="button-hover" hover-stay-time="80" bindtap="inspectDevice" disabled="{{busy}}">读取本机环境信息（不联网）</button>
+    <navigator url="/pages/network/index" hover-class="button-hover" class="button button-secondary network-link">打开独立网络采样页</navigator>
   </view>
 
   <view class="card">
