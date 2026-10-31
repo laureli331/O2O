@@ -2,6 +2,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { summarizeSamples } = require('../tools/sp01-network-probe/summarize.cjs');
+const { collectSequentialSamples } = require('../tools/sp01-network-probe/collect.cjs');
 
 test('network sample summary retains failures and computes nearest-rank p95', () => {
   const result = summarizeSamples([
@@ -26,4 +27,30 @@ test('empty and malformed sample sets cannot be reported as successful measureme
   assert.equal(summarizeSamples([]).p95Ms, null);
   assert.throws(() => summarizeSamples([{ ok: true, elapsedMs: -1 }]), TypeError);
   assert.throws(() => summarizeSamples([{ ok: true, elapsedMs: Number.NaN }]), TypeError);
+});
+
+test('collector calls a read-only endpoint sequentially and never returns response bodies', async () => {
+  const events = [];
+  let tick = 0;
+  const samples = await collectSequentialSamples({ count: 3,
+    clock: () => tick,
+    makeNonce: index => `nonce-${index}`,
+    call: async nonce => { events.push(nonce); tick += 10; return { fingerprint: 'must-not-appear' }; },
+  });
+  assert.deepEqual(events, ['nonce-0', 'nonce-1', 'nonce-2']);
+  assert.deepEqual(samples, [
+    { ok: true, elapsedMs: 10 }, { ok: true, elapsedMs: 10 }, { ok: true, elapsedMs: 10 },
+  ]);
+  assert.doesNotMatch(JSON.stringify(samples), /fingerprint/);
+});
+
+test('collector keeps failed attempts and stops on invalid configuration', async () => {
+  let tick = 0;
+  const samples = await collectSequentialSamples({ count: 2, clock: () => tick,
+    makeNonce: index => `nonce-${index}`,
+    call: async nonce => { tick += 5; if (nonce === 'nonce-0') throw new Error('private response'); },
+  });
+  assert.deepEqual(samples, [{ ok: false, elapsedMs: 5 }, { ok: true, elapsedMs: 5 }]);
+  assert.rejects(() => collectSequentialSamples({ count: 0, clock: () => 0,
+    makeNonce: () => 'x', call: async () => {} }), RangeError);
 });
