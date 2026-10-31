@@ -472,6 +472,37 @@
         "remoteTraceFilesDeletedAfterLocalCopy": true,
         "interpretation": "The Android 17 phone exposes FrameTimeline with a named AppBrand host layer and input slices. The only motion-related host frame burst spans about one second although the synthetic swipe command lasted five seconds. No separate WebView layer or actual product list with 200 heavy items was verified; the selected 120Hz refresh does not satisfy the 60Hz QP05 device condition. The trace processor also reported 975 systrace import failures. This establishes method feasibility only, not scroll FPS or QP05 pass/fail."
       },
+      "oppo60HzMethodCheck": {
+        "date": "2026-10-31",
+        "deviceModel": "PLJ110",
+        "androidVersion": "17",
+        "activeDisplayHz": 60,
+        "activeModeId": 6,
+        "foregroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "traceDurationConfiguredMs": 8000,
+        "syntheticSwipeDurationConfiguredMs": 5000,
+        "firstTraceAppBrandFrameCount": 0,
+        "firstTraceInputDeliverySliceCount": 602,
+        "secondTracePreparation": "two short downward swipes before capture to return diagnostic page toward the top",
+        "secondTraceAppBrandLayer": "TX - VRI-com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#523236",
+        "secondTraceAppBrandFrameCount": 152,
+        "secondTraceAppBrandFrameSpanSeconds": 2.845,
+        "secondTraceInputDeliverySliceCount": 1204,
+        "secondTraceDoFrameSliceCount": 789,
+        "secondTraceSystraceParseFailures": 948,
+        "maximumAdjacentHostFrameGapMs": 329.57,
+        "hostFrameGapsOver100Ms": 1,
+        "isolatedWebviewLayerVerified": false,
+        "actualProductHeavyContentTested": false,
+        "fpsInterpretableForQp05": false,
+        "acceptanceEvidence": false,
+        "rawTraces": [
+          { "path": ".local/sp01-trace/sp01-oppo-60hz.perfetto-trace", "sha256": "bd2ee4ce610dc282a36aa8905310c9efcbed5435e3b2251110cea9fa81cad897" },
+          { "path": ".local/sp01-trace/sp01-oppo-60hz-retry.perfetto-trace", "sha256": "dc59d00bf3077fb1e27b656040f8af11fc071af7083d2eb5f730d4f71d465fab" }
+        ],
+        "remoteTraceFilesDeletedAfterLocalCopy": true,
+        "interpretation": "The system display mode was 60 Hz and the named AppBrand host layer produced actual-frame records during a controlled diagnostic-page swipe. The first trace contained input but no AppBrand frames; the second has 152 host frames over 2.845 seconds and one 329.57 ms adjacent gap. The trace does not isolate the WebView, the complete five-second gesture, or the future 200-item product page. The gap cannot be attributed to an application stall, and the 948 import errors prevent claiming complete event capture. This is measurement-method feasibility only."
+      },
       "resetCommandVerifiedOnHuawei": true,
       "acceptanceEvidence": false,
       "limitations": [

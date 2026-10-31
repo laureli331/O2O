@@ -178,6 +178,12 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(oppoTrace.actualProductHeavyContentTested, false);
       assert.equal(oppoTrace.fpsInterpretableForQp05, false);
       assert.equal(oppoTrace.acceptanceEvidence, false);
+      const oppo60 = gfxinfo.oppo60HzMethodCheck;
+      assert.equal(oppo60.deviceModel, 'PLJ110');
+      assert.equal(oppo60.activeDisplayHz, 60);
+      assert.equal(oppo60.secondTraceAppBrandFrameCount, 152);
+      assert.equal(oppo60.isolatedWebviewLayerVerified, false);
+      assert.equal(oppo60.acceptanceEvidence, false);
       assert.equal(gfxinfo.postCaptureForegroundCheck.resumedActivity, 'com.android.settings/.Settings$DisplaySettingsActivity');
       assert.equal(gfxinfo.postCaptureForegroundCheck.syntheticGestureIssued, false);
       assert.equal(gfxinfo.appAttribution.mainProcessViewRoot, 'com.tencent.mm/com.tencent.mm.ui.LauncherUI');
@@ -185,7 +191,7 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.match(gfxinfo.resetCommand, /dumpsys gfxinfo com\.tencent\.mm:appbrand0 reset/);
       assert.match(review.openItems.find((item) => item.id === 'R03').nextAction, /60Hz measurement device/);
       assert.match(review.openItems.find((item) => item.id === 'R03').localTraceEvidence, /61,017\/61,017 events/);
-      assert.match(review.openItems.find((item) => item.id === 'R03').oppoFrameTimelineEvidence, /84 host-layer frames/);
+      assert.match(review.openItems.find((item) => item.id === 'R03').oppoFrameTimelineEvidence, /152 host frames/);
       assert.equal(capability.sources.androidGfxinfoResetGuidance, 'https://android.googlesource.com/platform/frameworks/base/+/562ae3a/docs/html/training/testing/performance.jd');
       assert.equal(capability.sources.androidAospInputShellSwipe, 'https://android.googlesource.com/platform/frameworks/base/+/81f52b053da6/services/core/java/com/android/server/input/InputShellCommand.java');
       assert.equal(capability.sources.perfettoAndroidTracing, 'https://perfetto.dev/docs/learning-more/android');
