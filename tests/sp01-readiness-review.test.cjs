@@ -244,6 +244,10 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(review.knownFacts.historicalDirectDownloadCodeAttributed, false);
   assert.equal(review.openItems.find(x => x.id === 'R01').vulnerabilityReproductionAuthorizedByThisReview, false);
   assert.equal(review.openItems.find(x => x.id === 'R06').newCloudActionAuthorizedByThisReview, false);
+  assert.match(review.openItems.find(x => x.id === 'R05').known, /continuous 60 minutes, at least 60 complete cycles/);
+  assert.match(review.openItems.find(x => x.id === 'R06').known, /暂无数据/);
+  assert.equal(review.openItems.find(x => x.id === 'R05').state, 'pending');
+  assert.equal(review.openItems.find(x => x.id === 'R06').state, 'pending');
   const platform = require('../docs/sp02-platform-evidence-20261027.json');
   const findGate = value => {
     if (!value || typeof value !== 'object') return undefined;

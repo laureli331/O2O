@@ -1,6 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-30",
+  "updatedAt": "2026-10-31",
   "task": "SP01",
   "status": "in-progress",
   "scope": "preparation-review-not-product-acceptance",
@@ -15,7 +16,8 @@
     "docs/sp01-device-evidence-20261029.json",
     "docs/sp01-device-capability-20261030.json",
     "docs/sp01-next-evidence-and-measurement-20261029.md",
-    "docs/sp01-recovery-capability-20261031.json"
+    "docs/sp01-recovery-capability-20261031.json",
+    "docs/sp01-endurance-web-budget-proposal-20261031.md"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -70,17 +72,18 @@
     {
       "id": "R05", "kind": "measurement-and-budget-decision", "state": "pending",
       "topic": "Endurance, observable resources and independent Web budgets",
-      "known": "Startup/navigation/feedback/FPS thresholds and 3-by-30 sample rules already exist; no need to ask for them again",
-      "unknown": ["endurance duration and loops", "sampling windows and observable growth budget", "Web core-task budget"],
-      "nextAction": "Use tool capability evidence and SP05 scenarios to propose missing parameters; retain unknowns until approved",
+      "known": "Startup/navigation/feedback/FPS thresholds and 3-by-30 sample rules already exist. User confirmed endurance preparation workload: continuous 60 minutes, at least 60 complete cycles, record every 10 minutes. Chrome official Performance monitor and Memory snapshot capabilities documented for Web; no product measurements yet.",
+      "evidence": "docs/sp01-endurance-web-budget-proposal-20261031.md",
+      "unknown": ["exact mixed-cycle page operations until SP05", "attributable mini-program memory observation method and growth budget", "Web core-task response budget and measured baseline"],
+      "nextAction": "Validate attributable mini-program memory sampling and Web instrumentation on real product pages, then propose numerical memory growth and Web task budgets for user confirmation; do not infer product acceptance from a preparation workload",
       "requiresFinalProductResultsBeforeSP07": false
     },
     {
       "id": "R06", "kind": "external-capability-evidence", "state": "pending",
       "topic": "E06 current security/recovery capability and costs",
-      "known": "Target environment and document database were identified earlier. Current official pages describe daily backup, default seven-day retention, edition-dependent rollback and JSON/CSV export; an older general page describes up to fourteen days. None proves cloud1's current entitlement, backup points or costs.",
+      "known": "Target environment and document database were identified earlier. Current official pages describe daily backup, default seven-day retention, edition-dependent rollback and JSON/CSV export; an older general page describes up to fourteen days. User reports a related entry visible in cloud1 database settings, an area showing 暂无数据, and no fee/unavailable prompt. Exact entitlement, backup points, retention and costs remain unverified.",
       "recoveryCapabilityEvidence": "docs/sp01-recovery-capability-20261031.json",
-      "nextAction": "Read the target cloud1 database settings for actual rollback entitlement, available backup points, retention and fee prompts; do not run restore or change settings. Then decide whether an isolated synthetic recovery rehearsal is needed.",
+      "nextAction": "If a more detailed read-only backup/rollback panel exists, identify its exact label and entitlement; current view has no visible recovery point. Do not run restore or change settings. Reassess a synthetic rehearsal only after a recovery point becomes available.",
       "newCloudActionAuthorizedByThisReview": false,
       "fullBusinessRestoreRequiredBeforeProductExists": false
     }
