@@ -18,5 +18,9 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /若列表为空，排除自身后将其余应用纳入 VPN/);
   assert.match(text, /暂不安装/);
   assert.match(text, /没有本地构建、APK 与源码对应性/);
+  assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);
+  assert.match(text, /NETWORK_FORWARD/);
+  assert.match(text, /不安装驱动或运行程序/);
+  assert.match(text, /不修改家庭网络/);
   assert.match(text, /R04 与 SP01 均未通过/);
 });

@@ -26,6 +26,16 @@
 
 **结论：暂不安装。** 它比只读采样页更接近所需真机注入，但权限与流量接管范围较大，且目前只有静态源码核查；没有本地构建、APK 与源码对应性、华为真机运行或微信 CloudBase 对照证据。若继续，应先在独立候选目录从固定提交构建并核对权限，提出仅备用机、仅微信、短时、可停用的具体方案供用户确认；不得直接下载并运行未经核对的预编译 APK。若本地构建不可行，再比较外部网络设备方案，不能假装已通过 R04。
 
+## 外部网络路径核对（2026-10-31，只读）
+
+| 路径 | 已核对 | 当前判断 |
+| --- | --- | --- |
+| Windows 11 移动热点 | [微软说明](https://support.microsoft.com/en-us/windows/experience/connectivity-networking/use-your-windows-device-as-a-mobile-hotspot)支持共享 Wi-Fi/以太网/蜂窝连接。电脑只读检查显示 WLAN 在线、以太网断开；`netsh wlan show drivers` 显示旧式 Hosted network 不支持，但不能据此判断现代移动热点是否可用 | 仅有转发路径的可能性；尚未启用热点或证明手机流量经过电脑 |
+| Windows clumsy + WinDivert | [clumsy 源码](https://raw.githubusercontent.com/jagt/clumsy/master/src/divert.c)调用 `WinDivertOpen(..., WINDIVERT_LAYER_NETWORK, ...)`；[WinDivert 文档](https://github.com/basil00/WinDivert/wiki/WinDivert-Documentation)区分 NETWORK（电脑本机收发）与 NETWORK_FORWARD（经过电脑转发） | 现成 clumsy 不能凭 README 的“全系统”描述视为能影响热点下的手机流量；本方案暂不采用，也不安装驱动或运行程序 |
+| OpenWrt 路由器 netem | [OpenWrt 文档](https://openwrt.org/docs/guide-user/network/traffic-shaping/sch_netem)提供延迟和丢包队列示例，可在实际转发设备上配置 | 尚不知道用户路由器型号、固件与可用权限；不能假定支持，且改家用主路由有影响全家网络的风险。需先只读核对设备，再决定是否存在隔离测试路径 |
+
+目前没有经验证且低影响的外部注入方案。下一步只读确认家庭路由器型号/固件，或确认是否已有独立备用路由器；在此之前不修改家庭网络。任何候选须先证明手机确实走对应转发路径，记录原设置，并用既有只读 CloudBase 探针做注入前后对照及停用恢复；仅软件可配置不构成 R04 通过。
+
 ## 最小验证顺序（待入口确认）
 
 1. iPhone XR 入口核查已完成：当前未出现；苹果方法暂不采用。若未来已有可用 Mac/开发设备，再重新核对，不把升级 iOS 当解除条件。
