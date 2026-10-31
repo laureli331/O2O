@@ -22,6 +22,8 @@ test('first Cloudflare screenshot is a single round with high loss and no false 
   assert.equal(evidence.latencyMs, 200);
   assert.equal(evidence.jitterMs, 40);
   assert.equal(evidence.packetLossPercent, 14.3);
+  assert.equal(evidence.deviceAndAccessConfirmedByUser, true);
+  assert.equal(evidence.deviceAndAccessIndependentlyVerifiedByScreenshot, false);
   assert.equal(evidence.independentRounds, 1);
   assert.equal(evidence.normalNetworkStableRangeFrozen, false);
   assert.equal(evidence.r04Passed, false);
