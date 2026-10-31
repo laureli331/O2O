@@ -20,6 +20,7 @@
     "docs/sp01-endurance-web-budget-proposal-20261031.md",
     "docs/sp01-network-home-wifi-20261031.json",
     "docs/sp01-network-cloudflare-home-wifi-20261031.json",
+    "docs/sp01-network-cloudflare-home-wifi-round2-20261031.json",
     "docs/sp01-r01-residual-risk-20261031.md"
   ],
   "knownFacts": {
@@ -68,8 +69,8 @@
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",
       "topic": "Normal/weak-network conditions",
-      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. A separate one-round user screenshot of Cloudflare speed test reported down 25.5 Mbps, up 33.5 Mbps, latency 200ms, jitter 40ms and packet loss 14.3%; the user explicitly confirmed same OPPO/home Wi-Fi, while the screenshot does not independently verify device/access. Its target differs from CloudBase. Neither one round nor app success freezes a stable link profile.",
-      "evidence": "docs/sp01-network-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-20261031.json",
+      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. Two separate Cloudflare speed-test screenshots reported down 25.5/27.1 Mbps, up 33.5/25.1 Mbps, latency 200/191ms, jitter 40/74.3ms and packet loss 14.3/1.8%; the user confirmed the same OPPO/home Wi-Fi, while the screenshots do not independently verify device/access. The Cloudflare target differs from CloudBase. The large packet-loss variation prevents freezing a stable normal network profile.",
+      "evidence": "docs/sp01-network-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-round2-20261031.json",
       "unknown": ["actual uplink/downlink and link RTT/jitter/loss", "stable range across independent runs", "repeatable weak-network injection and recovery method", "public Wi-Fi profile"],
       "nextAction": "Choose and validate separate link-profile and repeatable weak-network methods; do not mislabel application round-trip differences as network jitter or successes as zero packet loss. SP08 will remeasure formal endpoint.",
       "numericDefaultsInvented": false

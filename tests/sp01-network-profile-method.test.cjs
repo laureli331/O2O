@@ -28,3 +28,17 @@ test('first Cloudflare screenshot is a single round with high loss and no false 
   assert.equal(evidence.normalNetworkStableRangeFrozen, false);
   assert.equal(evidence.r04Passed, false);
 });
+
+test('second Cloudflare round retains variable loss rather than replacing the first', () => {
+  const first = require('../docs/sp01-network-cloudflare-home-wifi-20261031.json');
+  const second = require('../docs/sp01-network-cloudflare-home-wifi-round2-20261031.json');
+  assert.equal(second.round, 2);
+  assert.equal(second.downloadMbps, 27.1);
+  assert.equal(second.uploadMbps, 25.1);
+  assert.equal(second.latencyMs, 191);
+  assert.equal(second.jitterMs, 74.3);
+  assert.equal(second.packetLossPercent, 1.8);
+  assert.equal(first.packetLossPercent - second.packetLossPercent, 12.5);
+  assert.equal(second.normalNetworkStableRangeFrozen, false);
+  assert.equal(second.scope, first.scope);
+});
