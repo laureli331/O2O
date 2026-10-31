@@ -10,6 +10,8 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /developer\.android\.com\/studio\/run\/emulator-commandline/);
   assert.match(text, /不能直接代表现有 Android 真机微信/);
   assert.match(text, /不能当作手机微信云 SDK 的弱网注入/);
-  assert.match(text, /iPhone XR 是否有该入口尚待本机查看/);
+  assert.match(text, /iPhone XR 更新至 iOS 18\.7\.11 后仍未找到入口/);
+  assert.match(text, /不能据此归因于 iOS 版本/);
+  assert.match(text, /苹果方法暂不采用/);
   assert.match(text, /R04 与 SP01 均未通过/);
 });
