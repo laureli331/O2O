@@ -6,7 +6,17 @@
   "targetAppId": "wx2414399d423dfb65",
   "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
   "databaseFamily": "document",
-  "evidenceScope": "public-documentation-and-prior-target-database-identification-only",
+  "evidenceScope": "public-documentation-prior-target-identification-and-user-reported-read-only-console-view",
+  "targetConsoleObservation": {
+    "date": "2026-10-31",
+    "method": "user-reported read-only view of cloud1 database settings",
+    "backupOrRollbackEntryVisible": true,
+    "entryIdentityIndividuallyVerified": false,
+    "availableBackupAreaText": "暂无数据",
+    "feeOrUnavailablePromptVisible": false,
+    "retentionShown": false,
+    "interpretation": "A visible entry and empty area do not establish rollback entitlement, available recovery points, retention, or cost."
+  },
   "sources": [
     { "url": "https://docs.cloudbase.net/database/backup", "finding": "document database daily backup defaults to seven days; console shows available rollback times; rollback creates a separate collection" },
     { "url": "https://cloud.tencent.com/document/product/876/46897", "finding": "document database page says personal edition does not support rollback and upgraded service can retain fourteen days" },
@@ -20,6 +30,6 @@
   "targetExportCapabilityVerified": false,
   "restoreExecuted": false,
   "productionDataPresentInThisEvidence": false,
-  "nextReadOnlyCheck": "In target cloud1 database settings, view backup/rollback entitlement, available backup times, retention and any fee prompt; do not create a rollback task, import, export or change settings.",
+  "nextReadOnlyCheck": "If an explicit backup or rollback detail panel exists, identify its exact label and state; do not create a rollback task, import, export or change settings. Current reported area has no available data.",
   "sp01Passed": false
 }
