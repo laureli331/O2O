@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-31",
+  "task": "SP01",
+  "gate": "E06",
+  "targetAppId": "wx2414399d423dfb65",
+  "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+  "databaseFamily": "document",
+  "evidenceScope": "public-documentation-and-prior-target-database-identification-only",
+  "sources": [
+    { "url": "https://docs.cloudbase.net/database/backup", "finding": "document database daily backup defaults to seven days; console shows available rollback times; rollback creates a separate collection" },
+    { "url": "https://cloud.tencent.com/document/product/876/46897", "finding": "document database page says personal edition does not support rollback and upgraded service can retain fourteen days" },
+    { "url": "https://cloud.tencent.com/document/product/876/48441", "finding": "older general CloudBase page states backups may be retained up to fourteen days" },
+    { "url": "https://docs.cloudbase.net/database/manage", "finding": "document collections support JSON and CSV export/import" }
+  ],
+  "documentationConflict": "retention and entitlement vary by product page and edition; do not assign either to the target environment without its console evidence",
+  "targetRollbackEntitlementVerified": false,
+  "targetBackupRetentionDays": null,
+  "targetAvailableBackupPointsVerified": false,
+  "targetExportCapabilityVerified": false,
+  "restoreExecuted": false,
+  "productionDataPresentInThisEvidence": false,
+  "nextReadOnlyCheck": "In target cloud1 database settings, view backup/rollback entitlement, available backup times, retention and any fee prompt; do not create a rollback task, import, export or change settings.",
+  "sp01Passed": false
+}

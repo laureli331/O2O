@@ -14,7 +14,8 @@
     "docs/sp01-web-browser-evidence-20261030.json",
     "docs/sp01-device-evidence-20261029.json",
     "docs/sp01-device-capability-20261030.json",
-    "docs/sp01-next-evidence-and-measurement-20261029.md"
+    "docs/sp01-next-evidence-and-measurement-20261029.md",
+    "docs/sp01-recovery-capability-20261031.json"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -77,8 +78,9 @@
     {
       "id": "R06", "kind": "external-capability-evidence", "state": "pending",
       "topic": "E06 current security/recovery capability and costs",
-      "known": "Old gate fields predate the confirmed target environment, document database, SDK choices and controlled probes",
-      "nextAction": "Reconcile the actual capability, authorization and backup/restore preparation evidence; design any further external action and its cost/rollback boundary before requesting it",
+      "known": "Target environment and document database were identified earlier. Current official pages describe daily backup, default seven-day retention, edition-dependent rollback and JSON/CSV export; an older general page describes up to fourteen days. None proves cloud1's current entitlement, backup points or costs.",
+      "recoveryCapabilityEvidence": "docs/sp01-recovery-capability-20261031.json",
+      "nextAction": "Read the target cloud1 database settings for actual rollback entitlement, available backup points, retention and fee prompts; do not run restore or change settings. Then decide whether an isolated synthetic recovery rehearsal is needed.",
       "newCloudActionAuthorizedByThisReview": false,
       "fullBusinessRestoreRequiredBeforeProductExists": false
     }
