@@ -12,6 +12,7 @@
   "sourceAudit": {
     "existingProjectAndRequirementsReviewed": [
       "docs/prd.md",
+      "docs/ascii-design-prd-2.1.md",
       "docs/v1-scope-confirmed-20261026.md",
       "docs/miniapp-planning.md",
       "docs/external-evidence.md",
@@ -33,6 +34,15 @@
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/CHANGELOG.md"
       ]
+    },
+    "taroComponentDeclarationEvidence": {
+      "repository": "https://github.com/NervJS/taro",
+      "tag": "v4.3.1",
+      "package": "@tarojs/components",
+      "packageVersion": "4.3.1",
+      "license": "MIT",
+      "sourceFile": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-components/types/Button.d.ts",
+      "role": "Read the already selected framework's exact component type declaration to check the privacy-plus-phone button syntax and stated minimum. No package, runtime dependency, or implementation was added or adopted."
     },
     "officialCloudBaseTutorialEvidence": {
       "url": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
@@ -70,6 +80,41 @@
         "https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.event.d.ts",
         "https://github.com/wechat-miniprogram/api-typings/issues/236"
+      ]
+    },
+    {
+      "id": "PRIVACY-AUTHORIZATION",
+      "requirement": "Privacy consent must be completed before phone-number or other privacy-sensitive capabilities proceed; the PRD requires separate explicit consent for login, phone verification, and identity verification.",
+      "candidate": "A standalone agreePrivacyAuthorization step, wx.onNeedPrivacyAuthorization synchronization, or a combined getPhoneNumber|agreePrivacyAuthorization button; the exact product route is not selected.",
+      "requiredForFirstRelease": true,
+      "implementationLocked": false,
+      "minimumBaseLibrary": null,
+      "candidateMinimums": [
+        {
+          "candidate": "wx.onNeedPrivacyAuthorization",
+          "minimumBaseLibrary": "2.32.3",
+          "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
+          "basis": "The pinned WeChat-maintained typings mark this API as requiring 2.32.3. It suspends privacy-sensitive APIs/components, including getPhoneNumber, pending the user's consent response."
+        },
+        {
+          "candidate": "button open-type=getPhoneNumber|agreePrivacyAuthorization",
+          "minimumBaseLibrary": "2.32.3",
+          "sourceUrl": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-components/types/Button.d.ts",
+          "basis": "The exact Taro 4.3.1 component declaration says this combined privacy-consent and phone-verification button is supported from base library 2.32.3. This matches the current one-action V05 design candidate but is not yet selected as the implementation."
+        },
+        {
+          "candidate": "standalone button open-type=agreePrivacyAuthorization before getPhoneNumber",
+          "minimumBaseLibrary": null,
+          "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
+          "basis": "The pinned typings describe this separate consent route and say the onNeedPrivacyAuthorization listener is unnecessary if consent was already tapped, but the reviewed source provides no general mini-program minimum for this standalone button route."
+        }
+      ],
+      "versionEvidence": "The platform privacy synchronization API and the combined one-action button both have a documented candidate floor of 2.32.3. A separate pre-consent button route has no general minimum established by the reviewed sources. Because the exact UX/API route is not frozen, keep the row-level and global minimum unset.",
+      "status": "required-capability-route-unselected-candidate-floor-conditional",
+      "sourceUrls": [
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
+        "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-components/types/Button.d.ts",
+        "https://developers.weixin.qq.com/miniprogram/dev/framework/user-privacy/PrivacyAuthorize.html"
       ]
     },
     {
@@ -166,13 +211,14 @@
     }
   ],
   "floorAnalysis": {
-    "knownConditionalLowerBound": "2.21.2",
-    "conditionalBasis": "First-release phone-number verification is a confirmed requirement and the planned dynamic-code flow is tied to base library 2.21.2.",
+    "knownConditionalLowerBound": "2.32.3",
+    "conditionalBasis": "The confirmed dynamic-code phone-number flow has a 2.21.2 candidate floor. If the approved privacy authorization route uses wx.onNeedPrivacyAuthorization or the currently designed combined getPhoneNumber|agreePrivacyAuthorization button, that route adds a 2.32.3 candidate floor. A separate pre-consent button route has no general minimum established in the reviewed sources; therefore 2.32.3 is conditional on route selection and is not the global support floor.",
     "globalMinimumSupportedBaseLibrary": null,
     "devicePolicyFrozen": false,
     "reasonNotFrozen": [
       "The direct wx.cloud call and upload candidates have a documented 2.2.3 namespace minimum, but the product upload route is not selected and alternative upload/adapter paths have no verified floor in the reviewed sources.",
       "wx.login has no general minimum annotation in the reviewed type source.",
+      "Privacy consent is required, but its implementation route is not selected. The platform listener and combined one-action phone-consent button are annotated at 2.32.3; the separate pre-consent button route has no general minimum established in the reviewed sources.",
       "The secure phone-code minimum is supported by the maintained repository's issue record, while the canonical WeChat page was not retrievable in this review.",
       "No completed formal product package exists for verifying the Taro 4.3.1 runtime path and capability behavior on the proposed floor.",
       "The exact device support groups and QP05 sampling path remain open in R03."
@@ -202,6 +248,7 @@
     "checks": [
       "JSON parses and required API rows exist.",
       "A global minimum remains null while any required API route has no version evidence or implementation path.",
+      "Privacy synchronization and combined-button minima are recorded as route-conditional candidates; an unversioned standalone consent route remains unknown.",
       "Plugin-only API annotations are not treated as ordinary mini-program minimums.",
       "Diagnostic and gated payment APIs do not determine the product floor.",
       "Readiness index keeps R03 pending and links this evidence."

@@ -14,6 +14,9 @@ test('API floor matrix pins its official evidence source and reuse decision', ()
   assert.equal(matrix.sourceAudit.officialApiEvidence.repositoryCommit, '6092df9100c73b84e140c20b9a42a8e8799e0660');
   assert.equal(matrix.sourceAudit.officialApiEvidence.packageVersion, '5.2.3');
   assert.equal(matrix.sourceAudit.officialApiEvidence.license, 'MIT');
+  assert.equal(matrix.sourceAudit.taroComponentDeclarationEvidence.packageVersion, '4.3.1');
+  assert.equal(matrix.sourceAudit.taroComponentDeclarationEvidence.license, 'MIT');
+  assert.match(matrix.sourceAudit.taroComponentDeclarationEvidence.role, /No package, runtime dependency/);
   assert.match(matrix.sourceAudit.reuseDecision, /no third-party implementation|不|no runtime dependency/i);
   assert.equal(matrix.projectConstraints.sp07Started, false);
 });
@@ -23,6 +26,20 @@ test('known API minima remain scoped to the exact API or flow', () => {
   assert.equal(byId['IMAGE-SELECTION'].minimumBaseLibrary, '2.10.0');
   assert.equal(byId['PHONE-VERIFICATION'].callbackMinimumBaseLibrary, '1.2.0');
   assert.equal(byId['PHONE-VERIFICATION'].codeFlowMinimumBaseLibrary, '2.21.2');
+  assert.equal(byId['PRIVACY-AUTHORIZATION'].requiredForFirstRelease, true);
+  assert.equal(byId['PRIVACY-AUTHORIZATION'].minimumBaseLibrary, null);
+  assert.equal(
+    byId['PRIVACY-AUTHORIZATION'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.onNeedPrivacyAuthorization').minimumBaseLibrary,
+    '2.32.3',
+  );
+  assert.equal(
+    byId['PRIVACY-AUTHORIZATION'].candidateMinimums.find((candidate) => candidate.candidate === 'button open-type=getPhoneNumber|agreePrivacyAuthorization').minimumBaseLibrary,
+    '2.32.3',
+  );
+  assert.equal(
+    byId['PRIVACY-AUTHORIZATION'].candidateMinimums.find((candidate) => candidate.candidate === 'standalone button open-type=agreePrivacyAuthorization before getPhoneNumber').minimumBaseLibrary,
+    null,
+  );
   assert.equal(byId['DIAGNOSTIC-PERFORMANCE'].minimumBaseLibrary, '2.11.0');
   assert.equal(byId['AUTH-LOGIN'].minimumBaseLibrary, null);
   assert.equal(byId['CLOUD-FUNCTION-CALL'].minimumBaseLibrary, null);
@@ -47,7 +64,8 @@ test('CloudBase namespace minimum is conditional on choosing the direct wx.cloud
 });
 
 test('unknown required API floors prevent a global support promise', () => {
-  assert.equal(matrix.floorAnalysis.knownConditionalLowerBound, '2.21.2');
+  assert.equal(matrix.floorAnalysis.knownConditionalLowerBound, '2.32.3');
+  assert.match(matrix.floorAnalysis.conditionalBasis, /privacy authorization/i);
   assert.equal(matrix.floorAnalysis.globalMinimumSupportedBaseLibrary, null);
   assert.equal(matrix.floorAnalysis.devicePolicyFrozen, false);
   assert.equal(matrix.floorAnalysis.decision, 'Do not freeze a global minimum or device support group from this matrix alone. Keep R03 pending.');
@@ -71,6 +89,7 @@ test('readiness index references the matrix and keeps R03 and SP01 pending', () 
   assert.ok(readiness.sources.includes('docs/sp01-api-floor-matrix-20261101.json'));
   assert.equal(item.state, 'pending');
   assert.equal(item.apiFloorMatrix.evidence, 'docs/sp01-api-floor-matrix-20261101.json');
+  assert.equal(item.apiFloorMatrix.knownConditionalLowerBound, '2.32.3');
   assert.equal(item.apiFloorMatrix.globalMinimumSupportedBaseLibrary, null);
   assert.equal(readiness.sp01Passed, false);
   assert.equal(readiness.sp07Started, false);
