@@ -170,7 +170,7 @@
     "scope": "User checked Developer Options > Debugging and did not find System Tracing; this records the checked path only, not every OEM entry point"
   },
   "fpsMeasurementResearch": {
-    "status": "SurfaceFlinger TimeStats ran on the connected Android 10 Huawei and reported an attributable WeChat AppBrandUI00 layer. A separate gfxinfo framestats query returns detailed timing rows from the WeChat appbrand0 process and identifies the same AppBrandUI00 window; the per-process reset command has now been verified on this Huawei. A synchronized scroll sample is still pending, so no current frame capture is QP05 acceptance evidence.",
+    "status": "SurfaceFlinger TimeStats ran on the connected Android 10 Huawei and reported an attributable WeChat AppBrandUI00 layer. A separate gfxinfo framestats query returns detailed timing rows from the WeChat appbrand0 process and identifies the same AppBrandUI00 window; the per-process reset command has now been verified on this Huawei. A 20-second manual FrameTimeline-only trace on OPPO PLJ110 overlapped a user-reported approximate five-second scroll and recorded 538 actual and expected frames on the named AppBrand host layer; all were classified On-time Present with no jank type. Gesture boundaries were not timestamped, no input tracks were included, and the embedded WebView was not isolated. This improves method-feasibility evidence but is not a scroll FPS result or QP05 acceptance evidence.",
     "androidCandidate": {
       "method": "Android System Tracing on device, then inspect the resulting trace in Perfetto UI",
       "officialAvailability": "Android 9 and later can capture a system trace on device without ADB; Android 10 and later save .perfetto-trace files",
@@ -541,9 +541,60 @@
           "acceptanceEvidence": false,
           "rawTrace": { "path": ".local/sp01-trace/oppo-synthetic-20261101.perfetto-trace", "bytes": 26555, "sha256": "c0e133905d13ba5b2f664194b228d0c1da595c68ba00f2a8de13d7e58b342cfe" }
         },
+        "manualScrollCapture": {
+          "status": "completed-manual-scroll-method-evidence-only",
+          "deviceModel": "PLJ110",
+          "androidVersion": "17",
+          "activeDisplayHz": 60,
+          "foregroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+          "traceConfig": {
+            "dataSource": "android.surfaceflinger.frametimeline",
+            "durationMs": 20000,
+            "ringBufferKb": 4096,
+            "excludedDataSources": [
+              "linux.ftrace",
+              "android.surfaceflinger"
+            ]
+          },
+          "userReportedApproximateScrollDurationMs": 5000,
+          "userConfirmedScrollCompletedDuringCapture": true,
+          "gestureStartStopTimestamped": false,
+          "inputTracksIncluded": false,
+          "appBrandLayer": "TX - VRI-com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#589005",
+          "actualFrameCount": 538,
+          "actualFrameTimestampSpanSeconds": 10.079,
+          "expectedFrameCount": 538,
+          "expectedFrameTimestampSpanSeconds": 10.079,
+          "presentTypeCounts": {
+            "On-time Present": 538
+          },
+          "jankTypeCounts": {
+            "None": 538
+          },
+          "jankSeverityTypeCounts": {
+            "None": 538
+          },
+          "onTimeFinishCount": 538,
+          "maxAdjacentAppBrandFrameGapMs": 317.55,
+          "unnamedLayerFrameCount": 542,
+          "unnamedLayerFrameTimestampSpanSeconds": 12.163,
+          "statusBarFrameCount": 1,
+          "navigationBarFrameCount": 1,
+          "traceProcessorNonzeroErrorStats": 0,
+          "isolatedWebviewPresentFramesVerified": false,
+          "gestureSegmentInterpretable": false,
+          "fpsInterpretable": false,
+          "acceptanceEvidence": false,
+          "rawTrace": {
+            "path": ".local/sp01-trace/oppo-manual-3763c140b2.perfetto-trace",
+            "bytes": 298562,
+            "sha256": "0da99870903844f0cc9b3dadc86d953840958a6bb3e04d175283aaa19e5e48de"
+          },
+          "remoteTemporaryTraceAndConfigFilesDeletedAfterLocalCopy": true
+        },
         "remoteTemporaryTraceAndConfigFilesDeletedAfterLocalCopy": true,
         "acceptanceEvidence": false,
-        "interpretation": "The manual capture did not include the requested user scroll. The synthetic swipe demonstrates that the FrameTimeline-only configuration can expose the named AppBrand host layer and avoids the prior systrace import errors. The 329.87ms host-frame gap is not attributable to an application stall; this is not a manual gesture result, FPS result, isolated WebView stream, product-page measurement, or QP05 evidence."
+        "interpretation": "The user reported an approximately five-second manual scroll completed during the 20-second FrameTimeline-only capture. Trace Processor found 538 actual and 538 expected frame records on the named AppBrand host layer spanning 10.079 seconds; all 538 actual records were On-time Present with jank_type=None and jank_severity_type=None. The maximum adjacent host-frame gap was 317.55ms. Because the gesture start/end were not timestamped, the gap cannot be attributed to the scroll; there were no input tracks and no separately verified embedded-WebView presented-frame stream. This is useful manual method-feasibility evidence on a diagnostic page, not an FPS result, app-stall attribution, product-page measurement or QP05 pass/fail."
       },
       "resetCommandVerifiedOnHuawei": true,
       "acceptanceEvidence": false,
@@ -556,7 +607,7 @@
         "A local seven-second atrace retained input, AppBrand doFrame and SurfaceFlinger vsync markers without buffer loss but no separately attributable WebView presented frames.",
         "The Android 17 OPPO FrameTimeline exposed an AppBrand host layer and frame records, but no separately verified WebView layer or contract-compliant 60Hz product scroll segment."
       ],
-        "nextStep": "The 2026-11-01 FrameTimeline-only attempt exposed the named AppBrand host layer during a synthetic swipe and had no nonzero Trace Processor error stats; a separate manual-capture window was missed. If another manual method-correlation run is useful, wait until the user explicitly confirms readiness before starting the timed capture, then prompt immediately. Keep R03 pending. Do not infer FPS or QP05 from the synthetic swipe. Before QP05, measure the actual product page with frozen content, device group, sampler and repeated timed segments; minimum supported library and iPhone path remain unresolved.",
+        "nextStep": "Keep R03 pending and do not repeat the same manual host trace: the user-reported approximate five-second scroll occurred during a 20-second FrameTimeline-only capture, but exact gesture boundaries were not timestamped and no separate WebView presented-frame stream was found. Continue resolving the remaining SP01 preparation facts: iPhone frame-sampling path, minimum supported library, probe revision provenance and missing route duration. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists.",
       "scope": "Local diagnostic queries, transient graphics-counter reset, guarded synthetic swipes and a short Android trace saved under Git-ignored .local/sp01-trace only; no cloud, app data, permissions or persistent phone setting was changed."
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
