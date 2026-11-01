@@ -2,6 +2,8 @@
 
 对象是用户已采用的[局部维护候选](sp01-maintenance-candidate-20261030.md)，不是正式产品依赖锁。候选的 npm audit 仍报告 **32 个受影响包条目**（15 moderate、13 high、4 critical）；条目数不等于独立漏洞数，也不等于当前小程序可触达漏洞数。底层原始结果保存在 `.local/shared18-maintenance-final-audit.json`。本轮只读本地已安装源码和既有构建证据，未运行漏洞利用或远程模板下载。
 
+按该 2026-10-30 原始报告中的公告 URL 去重后，共有 **23 个不同公告 URL**（5 critical、13 high、5 moderate）；逐条清单见[审计公告清单](sp01-r01-advisory-inventory-20261030.json)。这是同一份本地 npm audit 快照的派生索引，不是重新查询注册表，也不代表漏洞已触达或修复。包条目数与公告数不能互换；例如 `decompress` 一个包条目对应多个严重公告。
+
 | 风险链 | 本地实际来源/路径 | 当前判断与保留动作 |
 | --- | --- | --- |
 | `download-git-repo` → `download`/`decompress` | 已安装 `@tarojs/cli/dist/create/fetchTemplate.js` 第16行直接导入 `download-git-repo`；该链供远程模板创建。此前普通小程序构建只加载模块，未下载或解压模板。 | 创建阶段风险仍在；正式建工程不得把来源不明模板交给此链，优先使用已核验的本地工程。不能因本次构建未触发就删除审计项。 |

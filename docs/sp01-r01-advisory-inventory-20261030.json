@@ -1,0 +1,278 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-30",
+  "task": "SP01/R01",
+  "source": ".local/shared18-maintenance-final-audit.json",
+  "sourceKind": "captured npm audit JSON; this file is a checked-in derived inventory, not a fresh registry query",
+  "affectedPackageEntries": {
+    "total": 32,
+    "critical": 4,
+    "high": 13,
+    "moderate": 15,
+    "low": 0,
+    "info": 0
+  },
+  "distinctAdvisoryUrls": {
+    "total": 23,
+    "critical": 5,
+    "high": 13,
+    "moderate": 5,
+    "low": 0,
+    "info": 0
+  },
+  "advisories": [
+    {
+      "severity": "critical",
+      "title": "@xhmikosr/decompress: Path traversal via symlink chain",
+      "url": "https://github.com/advisories/GHSA-hrh2-vp3x-79xf",
+      "affectedPackages": [
+        "decompress"
+      ],
+      "affectedRanges": [
+        "<=4.2.1"
+      ]
+    },
+    {
+      "severity": "critical",
+      "title": "decompress allows arbitrary hardlink creation during archive extraction",
+      "url": "https://github.com/advisories/GHSA-jwp9-9v96-94mx",
+      "affectedPackages": [
+        "decompress"
+      ],
+      "affectedRanges": [
+        "<=4.2.1"
+      ]
+    },
+    {
+      "severity": "critical",
+      "title": "decompress: Arbitrary File Write via Archive Extraction (Zip Slip)",
+      "url": "https://github.com/advisories/GHSA-h39j-r5qq-r9mm",
+      "affectedPackages": [
+        "decompress"
+      ],
+      "affectedRanges": [
+        "<=4.2.1"
+      ]
+    },
+    {
+      "severity": "critical",
+      "title": "Decompress: Archive extraction can create files and links outside of the target directory",
+      "url": "https://github.com/advisories/GHSA-mp2f-45pm-3cg9",
+      "affectedPackages": [
+        "decompress"
+      ],
+      "affectedRanges": [
+        "<=4.2.1"
+      ]
+    },
+    {
+      "severity": "critical",
+      "title": "Prototype pollution in swiper",
+      "url": "https://github.com/advisories/GHSA-hmx5-qpq5-p643",
+      "affectedPackages": [
+        "swiper"
+      ],
+      "affectedRanges": [
+        ">=6.5.1 <12.1.2"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "Command injection in git-clone",
+      "url": "https://github.com/advisories/GHSA-8jmw-wjr8-2x66",
+      "affectedPackages": [
+        "git-clone"
+      ],
+      "affectedRanges": [
+        "<=0.2.0"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "decode-uri-component vulnerable to denial of service via quadratic replacement of percent-encoded runs",
+      "url": "https://github.com/advisories/GHSA-qr28-fpjm-wq7f",
+      "affectedPackages": [
+        "decode-uri-component"
+      ],
+      "affectedRanges": [
+        "<=0.5.0"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "decode-uri-component: Denial of service via exponential decoding of malformed percent-encoded input",
+      "url": "https://github.com/advisories/GHSA-vcc3-ghjq-m6fr",
+      "affectedPackages": [
+        "decode-uri-component"
+      ],
+      "affectedRanges": [
+        "<=0.4.2"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "Got allows a redirect to a UNIX socket",
+      "url": "https://github.com/advisories/GHSA-pfrx-2q88-qq97",
+      "affectedPackages": [
+        "got"
+      ],
+      "affectedRanges": [
+        "<11.8.5"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "http-cache-semantics vulnerable to Regular Expression Denial of Service",
+      "url": "https://github.com/advisories/GHSA-rc47-6667-2j5j",
+      "affectedPackages": [
+        "http-cache-semantics"
+      ],
+      "affectedRanges": [
+        "<4.1.1"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "kangax html-minifier REDoS vulnerability",
+      "url": "https://github.com/advisories/GHSA-pfq8-rq6v-vf5m",
+      "affectedPackages": [
+        "html-minifier"
+      ],
+      "affectedRanges": [
+        "<=4.0.0"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "webpack-dev-middleware vulnerable to Path Traversal via non-slash-terminated publicPath",
+      "url": "https://github.com/advisories/GHSA-g84c-rxfj-3j2c",
+      "affectedPackages": [
+        "webpack-dev-middleware"
+      ],
+      "affectedRanges": [
+        "<7.4.5"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site",
+      "url": "https://github.com/advisories/GHSA-4v9v-hfq4-rm2v",
+      "affectedPackages": [
+        "webpack-dev-server"
+      ],
+      "affectedRanges": [
+        "<=5.2.0"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "webpack-dev-server users' source code may be stolen when they access a malicious web site with non-Chromium based browser",
+      "url": "https://github.com/advisories/GHSA-9jgg-88mc-972h",
+      "affectedPackages": [
+        "webpack-dev-server"
+      ],
+      "affectedRanges": [
+        "<=5.2.0"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "webpack-dev-server vulnerable to cross-origin source code exposure on non-HTTPS origins",
+      "url": "https://github.com/advisories/GHSA-79cf-xcqc-c78w",
+      "affectedPackages": [
+        "webpack-dev-server"
+      ],
+      "affectedRanges": [
+        "<=5.2.3"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "webpack-dev-server vulnerable to cross-site request forgery via internal developer endpoints",
+      "url": "https://github.com/advisories/GHSA-f5vj-f2hx-8m93",
+      "affectedPackages": [
+        "webpack-dev-server"
+      ],
+      "affectedRanges": [
+        "<=5.2.5"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "webpack-dev-server vulnerable to denial of service via a malformed Host or Origin header",
+      "url": "https://github.com/advisories/GHSA-m28w-2pqf-7qgj",
+      "affectedPackages": [
+        "webpack-dev-server"
+      ],
+      "affectedRanges": [
+        "<=5.2.5"
+      ]
+    },
+    {
+      "severity": "high",
+      "title": "webpack-dev-server vulnerable to HMR WebSocket interception via permissive user proxies",
+      "url": "https://github.com/advisories/GHSA-mx8g-39q3-5c79",
+      "affectedPackages": [
+        "webpack-dev-server"
+      ],
+      "affectedRanges": [
+        "<5.2.5"
+      ]
+    },
+    {
+      "severity": "moderate",
+      "title": "esbuild enables any website to send any requests to the development server and read the response",
+      "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99",
+      "affectedPackages": [
+        "esbuild"
+      ],
+      "affectedRanges": [
+        "<=0.24.2"
+      ]
+    },
+    {
+      "severity": "moderate",
+      "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+      "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+      "affectedPackages": [
+        "uuid"
+      ],
+      "affectedRanges": [
+        "<11.1.1"
+      ]
+    },
+    {
+      "severity": "moderate",
+      "title": "webpack buildHttp HttpUriPlugin allowedUris bypass via HTTP redirects → SSRF + cache persistence",
+      "url": "https://github.com/advisories/GHSA-38r7-794h-5758",
+      "affectedPackages": [
+        "webpack"
+      ],
+      "affectedRanges": [
+        ">=5.49.0 <5.104.0"
+      ]
+    },
+    {
+      "severity": "moderate",
+      "title": "webpack buildHttp: allowedUris allow-list bypass via URL userinfo (@) leading to build-time SSRF behavior",
+      "url": "https://github.com/advisories/GHSA-8fgc-7cc6-rx7x",
+      "affectedPackages": [
+        "webpack"
+      ],
+      "affectedRanges": [
+        ">=5.49.0 <=5.104.0"
+      ]
+    },
+    {
+      "severity": "moderate",
+      "title": "Webpack's AutoPublicPathRuntimeModule has a DOM Clobbering Gadget that leads to XSS",
+      "url": "https://github.com/advisories/GHSA-4vvj-4cpr-p986",
+      "affectedPackages": [
+        "webpack"
+      ],
+      "affectedRanges": [
+        ">=5.0.0-alpha.0 <5.94.0"
+      ]
+    }
+  ]
+}
