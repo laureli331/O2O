@@ -24,7 +24,12 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /不修改家庭网络/);
   assert.match(text, /兆能讯通 \*\*ZN-M2\*\*/);
   assert.match(text, /当前固件未知/);
-  assert.match(text, /不对借用设备刷机/);
+  assert.match(text, /社区构建，不是这台实机当前状态的证明/);
+  assert.match(text, /osGex0o0II\/ZN-M2-LiBwrt-Builder/);
+  assert.match(text, /移除 Wi-Fi\/USB 驱动/);
+  assert.match(text, /旧的 Wi-Fi 分支记录/);
+  assert.match(text, /包含可用 `sch_netem`/);
+  assert.match(text, /不登录或刷写借用设备/);
   assert.match(text, /不转录密码、序列号、MAC、二维码或整张标签图/);
   assert.match(text, /R04 与 SP01 均未通过/);
 });

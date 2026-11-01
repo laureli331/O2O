@@ -38,7 +38,7 @@
 
 ### 借用设备核对
 
-用户提供的设备标签仅确认是中国电信定制的兆能讯通 **ZN-M2**，并说明这是借来的设备；当前固件未知。照片还包含登录及 Wi-Fi 凭据，项目证据只记录型号，不转录密码、序列号、MAC、二维码或整张标签图。第三方存在 [ZN-M2 的 OpenWrt 构建项目](https://github.com/myjdesert/ZN-M2-OpenWrt)，但这不能证明借到的实机已刷入 OpenWrt，也不能证明其 Wi-Fi 或 `sch_netem` 可用；该项目说明其某构建禁用 Wi-Fi。现阶段**不借此认定 R04 可执行，不对借用设备刷机**。下一步由设备所有者确认当前固件名称/版本、管理权限及是否允许在隔离网络内临时配置；只需文字，不提交凭据。
+用户提供的设备标签仅确认是中国电信定制的兆能讯通 **ZN-M2**，并说明这是借来的设备；当前固件未知。照片还包含登录及 Wi-Fi 凭据，项目证据只记录型号，不转录密码、序列号、MAC、二维码或整张标签图。型号级源码核对找到的都是社区构建，不是这台实机当前状态的证明：[myjdesert/ZN-M2-OpenWrt](https://github.com/myjdesert/ZN-M2-OpenWrt)说明其构建禁用 Wi-Fi；[osGex0o0II/ZN-M2-LiBwrt-Builder](https://github.com/osGex0o0II/ZN-M2-LiBwrt-Builder)针对原厂 256MB 版本，构建移除 Wi-Fi/USB 驱动并把设备作为有线路由；[caosir1990/ZN-M2-OPENWRT-WIFI](https://github.com/caosir1990/ZN-M2-OPENWRT-WIFI)是旧的 Wi-Fi 分支记录，不能证明当前支持借来的硬件修订或包含可用 `sch_netem`。这些来源也没有证明借到的实机已刷入 OpenWrt、具备可用 Wi-Fi 测试网，或允许改变路由配置。现阶段**不借此认定 R04 可执行，不登录或刷写借用设备**。下一步由设备所有者确认当前固件名称/版本、管理权限及是否允许在隔离网络内临时配置；只需文字，不提交凭据。
 
 ## 最小验证顺序（待入口确认）
 
