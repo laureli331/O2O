@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-01",
+  "status": "api-evidence-matrix-only; global-support-floor-not-frozen",
+  "purpose": "Record first-release WeChat API candidates, explicit minimum-base-library evidence, and unresolved applicability without converting the device cohort into a support promise.",
+  "projectConstraints": {
+    "miniProgramFramework": "Taro 4.3.1 with React 18.3.1 and TypeScript 5.9.3",
+    "businessCore": "packages/shared owns business rules and API orchestration; platform APIs are injected through adapters",
+    "noProductApiCallsExecuted": true,
+    "sp07Started": false
+  },
+  "sourceAudit": {
+    "existingProjectAndRequirementsReviewed": [
+      "docs/prd.md",
+      "docs/v1-scope-confirmed-20261026.md",
+      "docs/miniapp-planning.md",
+      "docs/external-evidence.md",
+      "docs/sp01-technical-environment-20261027.md",
+      "docs/sp01-device-capability-20261030.json"
+    ],
+    "officialApiEvidence": {
+      "repository": "https://github.com/wechat-miniprogram/api-typings",
+      "repositoryCommit": "6092df9100c73b84e140c20b9a42a8e8799e0660",
+      "commitDate": "2026-09-01T12:25:38Z",
+      "packageVersion": "5.2.3",
+      "apiDefinitionSync": "CHANGELOG says API definitions were updated to base library 3.17.0 in v5.2.2 on 2026-07-27.",
+      "license": "MIT",
+      "maintenanceEvidence": "285 commits were shown by the repository at review time; latest inspected commit was 2026-09-01.",
+      "officialDocsDirectFetch": "The linked developers.weixin.qq.com pages could not be retrieved in this review. Where a minimum version is stated below, it is taken from the pinned WeChat-maintained API typings; caveats are recorded per API.",
+      "sourceFiles": [
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.event.d.ts",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/CHANGELOG.md"
+      ]
+    },
+    "reuseDecision": "Use existing PRD and the WeChat-maintained API typings as evidence; add no runtime dependency and adopt no third-party implementation. Typings provide version annotations but do not prove account entitlements, runtime behavior, or the complete app support floor."
+  },
+  "apiRequirements": [
+    {
+      "id": "AUTH-LOGIN",
+      "requirement": "First-release sign-in/session flow; the planning record references wx.login.",
+      "candidate": "wx.login",
+      "requiredForFirstRelease": true,
+      "implementationLocked": false,
+      "minimumBaseLibrary": null,
+      "versionEvidence": "Pinned API typings have no general mini-program minimum on wx.login; the nearby 2.3.1 note is explicitly plugin-only and cannot be used as the app floor.",
+      "status": "candidate-needs-runtime-and-flow-validation",
+      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+    },
+    {
+      "id": "PHONE-VERIFICATION",
+      "requirement": "ID08 requires user-consented, verified WeChat phone-number capability; manual phone entry is not an approved substitute. E02 still gates account eligibility and actual enablement.",
+      "candidate": "button open-type=getPhoneNumber with the dynamic-code exchange flow",
+      "requiredForFirstRelease": true,
+      "implementationLocked": true,
+      "callbackMinimumBaseLibrary": "1.2.0",
+      "codeFlowMinimumBaseLibrary": "2.21.2",
+      "versionEvidence": "The pinned typings mark the button callback at 1.2.0. The new dynamic-code behavior is documented as starting at 2.21.2 in issue #236 of the WeChat-maintained typings repository; that issue is secondary to the canonical API page, which could not be fetched during this review. Treat 2.21.2 as a corroborated conditional floor, not a complete product floor.",
+      "accountEligibility": "unverified; E02 remains pending",
+      "costAndEntitlementVerified": false,
+      "status": "business-requirement-confirmed-platform-entitlement-pending",
+      "sourceUrls": [
+        "https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.event.d.ts",
+        "https://github.com/wechat-miniprogram/api-typings/issues/236"
+      ]
+    },
+    {
+      "id": "IMAGE-SELECTION",
+      "requirement": "First-release posts and listings support approved image attachments, with format, count, size, privacy, and moderation constraints defined in the PRD.",
+      "candidate": "wx.chooseMedia with mediaType image",
+      "requiredForFirstRelease": true,
+      "implementationLocked": false,
+      "minimumBaseLibrary": "2.10.0",
+      "versionEvidence": "The pinned WeChat-maintained API typings mark wx.chooseMedia as requiring base library 2.10.0; a separate 2.11.1 annotation applies only inside mini-program plugins.",
+      "status": "candidate-needs-image-flow-and-device-validation",
+      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+    },
+    {
+      "id": "CLOUD-FUNCTION-CALL",
+      "requirement": "Client/server operations require a CloudBase request path; actual business permission enforcement stays server-side.",
+      "candidate": "wx.cloud.callFunction or a Taro/platform adapter over the approved CloudBase client API",
+      "requiredForFirstRelease": true,
+      "implementationLocked": false,
+      "minimumBaseLibrary": null,
+      "versionEvidence": "The pinned cloud typings describe callFunction but include no minimum-base-library annotation. The product call adapter and its framework path are not implemented yet.",
+      "status": "required-capability-api-path-unselected",
+      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
+    },
+    {
+      "id": "CLOUD-FILE-UPLOAD",
+      "requirement": "Image evidence must be uploaded and then governed by the confirmed per-request server authorization and independent-public-copy design.",
+      "candidate": "wx.cloud.uploadFile, wx.uploadFile, or a server-mediated upload adapter; exact route is not selected.",
+      "requiredForFirstRelease": true,
+      "implementationLocked": false,
+      "minimumBaseLibrary": null,
+      "versionEvidence": "The pinned typings give wx.uploadFile a plugin-only 1.9.6 note and no general app minimum. The cloud typings expose wx.cloud.uploadFile without a minimum annotation. Plugin-only versions do not establish the ordinary mini-program floor.",
+      "status": "required-capability-upload-route-unselected",
+      "sourceUrls": [
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
+      ]
+    },
+    {
+      "id": "PAYMENT",
+      "requirement": "Payment is held behind E04; the applicable merchant capability, costs, and production transaction flow are not verified.",
+      "candidate": "wx.requestPayment",
+      "requiredForFirstRelease": false,
+      "implementationLocked": false,
+      "minimumBaseLibrary": null,
+      "versionEvidence": "The pinned type source gives no general minimum annotation for wx.requestPayment. Do not use it to set the current API floor while payment applicability is gated.",
+      "status": "gated-not-part-of-current-floor",
+      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+    },
+    {
+      "id": "DIAGNOSTIC-PERFORMANCE",
+      "requirement": "SP01 diagnostic probe only; not a first-release business capability.",
+      "candidate": "wx.getPerformance",
+      "requiredForFirstRelease": false,
+      "implementationLocked": true,
+      "minimumBaseLibrary": "2.11.0",
+      "versionEvidence": "The pinned API typings mark wx.getPerformance as requiring base library 2.11.0. Its presence does not supply FPS or establish the product support floor.",
+      "status": "diagnostic-only-excluded-from-product-floor",
+      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+    }
+  ],
+  "floorAnalysis": {
+    "knownConditionalLowerBound": "2.21.2",
+    "conditionalBasis": "First-release phone-number verification is a confirmed requirement and the planned dynamic-code flow is tied to base library 2.21.2.",
+    "globalMinimumSupportedBaseLibrary": null,
+    "devicePolicyFrozen": false,
+    "reasonNotFrozen": [
+      "The CloudBase call and file-upload API route is not selected and the official typings do not annotate a general minimum for these cloud methods.",
+      "wx.login has no general minimum annotation in the reviewed type source.",
+      "The secure phone-code minimum is supported by the maintained repository's issue record, while the canonical WeChat page was not retrievable in this review.",
+      "No completed formal product package exists for verifying the Taro 4.3.1 runtime path and capability behavior on the proposed floor.",
+      "The exact device support groups and QP05 sampling path remain open in R03."
+    ],
+    "observedDeviceBaseLibraryReports": {
+      "reportedValue": "3.17.5",
+      "devices": ["OPPO PLJ110", "HUAWEI BON-AL00", "HUAWEI SEA-AL10", "iPhone XR"],
+      "interpretation": "This is the current supplied test-device cohort report, not a minimum support promise. The iPhone report predates the user's later iOS update; the earlier SEA-AL10 report said 3.17.4 and is retained as historical evidence."
+    },
+    "decision": "Do not freeze a global minimum or device support group from this matrix alone. Keep R03 pending."
+  },
+  "excludedFromFloor": [
+    {
+      "capability": "GPS/location picker",
+      "reason": "The confirmed address flow does not require forced GPS or wx.chooseLocation."
+    },
+    {
+      "capability": "wx.requestPayment",
+      "reason": "E04 is pending and payment is not part of the current verified runtime flow."
+    },
+    {
+      "capability": "wx.getPerformance",
+      "reason": "SP01 diagnostic-only; no FPS evidence and not a product feature."
+    }
+  ],
+  "validation": {
+    "checks": [
+      "JSON parses and required API rows exist.",
+      "A global minimum remains null while any required API route has no version evidence or implementation path.",
+      "Plugin-only API annotations are not treated as ordinary mini-program minimums.",
+      "Diagnostic and gated payment APIs do not determine the product floor.",
+      "Readiness index keeps R03 pending and links this evidence."
+    ],
+    "productAcceptancePassed": false
+  }
+}
