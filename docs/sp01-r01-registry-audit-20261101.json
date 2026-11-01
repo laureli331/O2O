@@ -163,7 +163,7 @@
           "Synthetic preparation pages only; no product pages or real-device interaction were tested.",
           "A successful build does not amend Taro's published exact peer declaration or establish full behavioral compatibility."
         ],
-        "decision": "Promising isolated candidate only; not adopted into the user-approved lock pending a deliberate peer-override decision and interaction validation."
+        "decision": "Isolated candidate only; user confirmed keeping webpack 5.91.0 to match Taro's exact peer declaration, so webpack 5.104.1 is not adopted. No product-page interaction validation was performed."
       },
       "normalWeappBuildLoadTrace": {
         "path": ".local/sp01-r01-build-load-trace-20261101.jsonl",
@@ -175,7 +175,7 @@
         "swiperAndH5DevServerModulesRequired": false,
         "interpretation": "The CLI statically loads its template helper and downloader dependencies, but this existing-project weapp build did not supply a remote template source or execute the template-fetch command. The trace is scoped to this synthetic build path and is not a product-bundle or general exploitability proof."
       },
-      "conclusion": "The 5.112.2 override is incompatible. The minimum common patched candidate 5.104.1 passes shared strict typecheck and synthetic weapp/web builds, but violates Taro's published exact webpack peer value and has no product-page or interaction validation. Keep it isolated until that compatibility boundary is explicitly accepted and tested. The synthetic weapp load trace scopes conditional tooling paths only; remaining advisories are not marked fixed."
+      "conclusion": "The 5.112.2 override is incompatible. The minimum common patched candidate 5.104.1 passes shared strict typecheck and synthetic weapp/web builds, but violates Taro's published exact webpack peer value and has no product-page or interaction validation. The user confirmed keeping webpack 5.91.0; do not adopt the override. The synthetic weapp load trace scopes conditional tooling paths only; remaining advisories are not marked fixed."
     }
   ],
   "reuseDecision": {
@@ -188,6 +188,8 @@
     "r01Status": "pending",
     "sp01Passed": false,
     "reason": "No compatible stable Taro 4 dependency set resolving the reviewed advisory paths has been verified; current product bundle does not yet exist for reachability review. Keep the user-adopted candidate as an isolated preparation candidate only.",
-    "nextAction": "A minimum-patched webpack@5.104.1 override now passes synthetic shared/weapp/web builds but does not match Taro's published exact 5.91.0 peer value; 5.112.2 fails the build. Keep the adopted lock unchanged. The next decision is whether to accept a narrowly scoped 5.104.1 peer override for further interaction validation or keep 5.91.0 and limit the preparation conclusion to conditional tooling paths. After real mini-program pages exist, rerun the lock audit and inspect the actual product weapp graph."
+    "userConfirmedDependencyChoice": "keep webpack 5.91.0 to match the exact Taro peer; do not adopt the override",
+    "webpackOverrideAdopted": false,
+    "nextAction": "The user confirmed keeping webpack@5.91.0 to match Taro's published exact peer; do not adopt the isolated webpack@5.104.1 override. Keep the adopted lock unchanged and retain the conditional build-tool risk. R01 remains pending because no compatible stable Taro 4 dependency set resolving the reviewed advisory paths has been verified and no product bundle exists for reachability review. After real mini-program pages exist, rerun the lock audit and inspect the actual product weapp graph; do not treat synthetic builds or audit counts as proof that advisories are fixed or product vulnerabilities."
   }
 }

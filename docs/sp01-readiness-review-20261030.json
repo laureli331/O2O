@@ -45,12 +45,12 @@
     {
       "id": "R01", "kind": "technical-choice-and-risk", "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证，尚未采用。当前稳定Taro仍为4.3.1，4.3.2-beta.2仍保留所核对的关键依赖版本。",
+      "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证。用户确认保留Webpack 5.91.0以遵守精确peer；未采用5.104.1覆盖。当前稳定Taro仍为4.3.1，4.3.2-beta.2仍保留所核对的关键依赖版本。",
       "evidence": "docs/sp01-r01-registry-audit-20261101.json",
       "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
       "residualRiskReview": "docs/sp01-r01-residual-risk-20261031.md",
       "registryAuditEvidence": "docs/sp01-r01-registry-audit-20261101.json",
-      "nextAction": "保持采用锁不变。Webpack 5.104.1在隔离合成工程通过构建，但Taro发布的peer仍精确要求5.91.0；在将该组合用于任何正式产品锁之前，需由用户确认是否接受这项窄范围peer覆盖并补小程序交互验证。否则保留5.91.0与当前条件风险记录。真实产品页面建立后重跑锁审计并检查正式weapp模块图。不得把npm audit计数或样例构建误写成产品漏洞数/风险已修复。",
+      "nextAction": "用户已确认保留Webpack 5.91.0以符合Taro精确peer，不采用5.104.1覆盖；保持采用锁不变并保留条件性构建工具风险。R01仍pending：尚无已验证的稳定Taro 4依赖组合解决所审查的公告路径，且当前没有产品包可做可达性复核。真实小程序页面建立后重跑锁审计并检查正式weapp模块图。不得把npm audit计数或样例构建误写成产品漏洞数/风险已修复。",
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },
     {

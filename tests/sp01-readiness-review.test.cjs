@@ -40,7 +40,11 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.deepEqual(audit.historicalCandidateAudit.severityEntries, { critical: 4, high: 13, moderate: 15, low: 0, info: 0 });
       assert.equal(audit.decision.r01Status, 'pending');
       assert.equal(audit.decision.sp01Passed, false);
+      assert.equal(audit.decision.userConfirmedDependencyChoice, 'keep webpack 5.91.0 to match the exact Taro peer; do not adopt the override');
+      assert.equal(audit.decision.webpackOverrideAdopted, false);
+      assert.doesNotMatch(audit.decision.nextAction, /next decision is whether/);
       assert.equal(item.registryAuditEvidence, 'docs/sp01-r01-registry-audit-20261101.json');
+      assert.match(item.known, /用户确认保留Webpack 5\.91\.0/);
       assert.match(item.known, /48个受影响包条目/);
       assert.match(item.known, /32条保留不覆盖/);
       const webpack = audit.reviewedPaths.find((entry) => entry.id === 'webpack-and-h5-devserver');
@@ -50,10 +54,10 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(webpack.minimumPatchedOverrideExperiment.webpack, '5.104.1');
       assert.equal(webpack.minimumPatchedOverrideExperiment.weappTypecheckAndBuildExitCode, 0);
       assert.equal(webpack.minimumPatchedOverrideExperiment.webTypecheckAndBuildExitCode, 0);
-      assert.equal(webpack.minimumPatchedOverrideExperiment.decision.startsWith('Promising isolated candidate only'), true);
+      assert.equal(webpack.minimumPatchedOverrideExperiment.decision.startsWith('Isolated candidate only'), true);
       assert.equal(webpack.normalWeappBuildLoadTrace.remoteTemplateFetchPerformed, false);
       assert.equal(webpack.normalWeappBuildLoadTrace.swiperAndH5DevServerModulesRequired, false);
-      assert.match(audit.decision.nextAction, /peer override/);
+      assert.match(audit.decision.nextAction, /do not adopt.*override/);
       assert.equal(item.state, 'pending');
     } else if (item.id === 'R03') {
       const capability = require('../docs/sp01-device-capability-20261030.json');
