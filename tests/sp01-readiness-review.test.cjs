@@ -87,6 +87,14 @@ test('SP01 current review covers the exact contract criteria without silently re
         localOnlyMode: 'vendor documents disabling screenshots and automatic sync, with session upload initiated through a Cloud button; local-only behavior must be verified before capture',
         sourceAndReuse: 'proprietary measurement product; source code and an open-source license were not verified; no product-code dependency adopted; temporary external-tool candidate only',
         cost: 'official trial page advertises 30 minutes of testing over 28 days with no credit card; account signup and paid pricing after trial are not verified',
+        officialDownloadAccess: {
+          checkedAt: '2026-11-01',
+          installerAvailability: 'official dashboard Downloads page; public installation guide has no direct installer link',
+          userAuthenticationRequiredForDownloads: true,
+          installerObtained: false,
+          userActionRequired: 'user downloads the official installer using their own account; do not share credentials',
+        },
+        localTrialProgress: 'user authorized local installation and one short wired feasibility calibration; not started because the official installer is only exposed after dashboard sign-in',
         sources: [
           'https://docs.gamebench.net/docs/studio-pro-desktop/requirements/',
           'https://docs.gamebench.net/docs/studio-pro-desktop/relnotes/v1-30-0/',
@@ -94,19 +102,24 @@ test('SP01 current review covers the exact contract criteria without silently re
           'https://docs.gamebench.net/docs/studio-pro-desktop/wireless-testing-ios17plus-method-2/',
           'https://docs.gamebench.net/docs/studio-pro-desktop/configuration/',
           'https://docs.gamebench.net/docs/studio-pro-desktop/getting-started/',
+          'https://docs.gamebench.net/docs/web-dashboard/getting-started/',
           'https://docs.gamebench.net/docs/web-dashboard/session-detail/metrics-timeline/',
           'https://docs.gamebench.net/docs/web-dashboard/session-detail/fps/',
           'https://trial.gamebench.net/',
         ],
-        installAuthorized: false,
+        installAuthorized: true,
         cloudUploadAuthorized: false,
         acceptanceEvidence: false,
       });
       assert.match(item.nextAction, /GameBench Pro Desktop.*candidate-not-validated/s);
-      assert.match(item.nextAction, /Do not install or upload.*before the user confirms/);
-      assert.match(item.nextAction, /Do not use external-camera capture; keep the iPhone frame-sampling gap open until a suitable iPhone frame-by-frame tool is available/);
+      assert.match(item.nextAction, /download the official installer.*using their own account/s);
+      assert.match(item.nextAction, /never request credentials or register on their behalf/);
+      assert.match(item.nextAction, /Stop if .*Apple support software installation.*session upload is required/);
+      assert.match(item.nextAction, /Do not use external-camera capture; keep the iPhone frame-sampling gap open until a suitable frame-by-frame tool is available/);
       assert.match(readinessMarkdown, /用户明确拒绝外拍\/光学测量方案，决定保留 iPhone 逐帧证据缺口/);
       assert.match(readinessMarkdown, /GameBench Pro Desktop 是尚未安装或验证的候选工具/s);
+      assert.match(readinessMarkdown, /官方公开安装指南说明.*未给出安装包直链.*Dashboard 文档说明.*Downloads/s);
+      assert.match(readinessMarkdown, /用户已授权本地试装及一次短时有线校准，但尚未取得安装包/s);
       assert.match(readinessMarkdown, /macOS 13.*Xcode.*Windows.*资料冲突/s);
       assert.match(item.developerModeExplanation, /pairing is initiated or the device was previously paired with a Mac/);
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
