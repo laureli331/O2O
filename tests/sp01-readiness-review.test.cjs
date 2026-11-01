@@ -68,6 +68,15 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(item.latestLocalProbeRevision.phoneReportEvidence, 'docs/sp01-device-capability-20261030.json#localTests.latestProbeRevision.phoneResult');
       assert.equal(item.iphoneSystemUpdateReported, 'User reports iPhone XR updated to iOS 18.7.11 after Developer Mode remained unavailable; no post-update capability report has been supplied');
       assert.equal(item.userReportedMacAccess, 'none; user reports currently no Mac');
+      assert.deepEqual(item.iphoneFrameSamplingDecision, {
+        date: '2026-11-01',
+        externalCameraMethod: 'declined-by-user',
+        decision: 'Keep the iPhone frame-sampling gap open until a suitable iPhone frame-by-frame tool is available',
+        opticalCaptureImplemented: false,
+        acceptanceEvidence: false,
+      });
+      assert.match(item.nextAction, /Do not use external-camera capture; keep the iPhone frame-sampling gap open until a suitable iPhone frame-by-frame tool is available/);
+      assert.match(readinessMarkdown, /用户明确拒绝外拍\/光学测量方案，决定保留 iPhone 逐帧证据缺口/);
       assert.match(item.developerModeExplanation, /pairing is initiated or the device was previously paired with a Mac/);
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
       assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);

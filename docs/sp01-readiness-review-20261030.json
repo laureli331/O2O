@@ -84,8 +84,15 @@
       },
       "iphoneSystemUpdateReported": "User reports iPhone XR updated to iOS 18.7.11 after Developer Mode remained unavailable; no post-update capability report has been supplied",
       "userReportedMacAccess": "none; user reports currently no Mac",
+      "iphoneFrameSamplingDecision": {
+        "date": "2026-11-01",
+        "externalCameraMethod": "declined-by-user",
+        "decision": "Keep the iPhone frame-sampling gap open until a suitable iPhone frame-by-frame tool is available",
+        "opticalCaptureImplemented": false,
+        "acceptanceEvidence": false
+      },
       "developerModeExplanation": "Apple documents that Developer Mode appears in Settings only after device pairing is initiated or the device was previously paired with a Mac",
-      "nextAction": "Keep R03 pending and do not repeat the same manual host trace: gesture boundaries and an independent WebView frame stream are still unavailable, so host records cannot establish scroll FPS. The OPPO PLJ110 has now run revision device-capability-v2-20261101-r1; route/navigation reports duration undefined. This confirms the runtime field shape but does not explain the platform cause and does not create an FPS measurement. No further OPPO field retest is needed. The user reports iPhone XR updated to iOS 18.7.11 but Developer Mode remains unavailable and currently has no Mac. Apple documents that Developer Mode appears after pairing is initiated or the device was previously paired with a Mac; Instruments is unavailable with current equipment. Continue resolving an iPhone sampling path when suitable equipment is available and minimum supported library/device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists."
+      "nextAction": "Keep R03 pending and do not repeat the same manual host trace: gesture boundaries and an independent WebView frame stream are still unavailable, so host records cannot establish scroll FPS. The OPPO PLJ110 has now run revision device-capability-v2-20261101-r1; route/navigation reports duration undefined. This confirms the runtime field shape but does not explain the platform cause and does not create an FPS measurement. No further OPPO field retest is needed. The user reports iPhone XR updated to iOS 18.7.11 but Developer Mode remains unavailable and currently has no Mac. Apple documents that Developer Mode appears after pairing is initiated or the device was previously paired with a Mac; Instruments is unavailable with current equipment. Do not use external-camera capture; keep the iPhone frame-sampling gap open until a suitable iPhone frame-by-frame tool is available. Continue resolving the minimum supported library and device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists."
     },
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",
