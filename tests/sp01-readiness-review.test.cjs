@@ -247,6 +247,8 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.match(review.openItems.find(x => x.id === 'R05').known, /continuous 60 minutes, at least 60 complete cycles/);
   assert.match(review.openItems.find(x => x.id === 'R06').known, /暂无数据/);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /P50=284ms, P95=470ms/);
+  assert.match(review.openItems.find(x => x.id === 'R04').known, /borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router/);
+  assert.ok(review.openItems.find(x => x.id === 'R04').unknown.some(x => x.includes('borrowed ZN-M2 firmware')));
   assert.equal(review.openItems.find(x => x.id === 'R04').state, 'pending');
   assert.equal(review.openItems.find(x => x.id === 'R05').state, 'pending');
   assert.equal(review.openItems.find(x => x.id === 'R06').state, 'pending');
