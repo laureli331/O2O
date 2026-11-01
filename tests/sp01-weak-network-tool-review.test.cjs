@@ -22,8 +22,14 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /GPL-3\.0/);
   assert.match(text, /minSdk=29/);
   assert.match(text, /用户此前要求安装前再次确认/);
-  assert.match(text, /本次不下载运行官方发布 APK、不构建、不安装/);
+  assert.match(text, /没有运行官方发布 APK、没有构建或安装/);
   assert.match(text, /该候选尚未在华为备用机实测/);
+  assert.match(text, /Gradle 8\.13/);
+  assert.match(text, /未配置 `distributionSha256Sum`/);
+  assert.match(text, /未发现系统 Gradle、`adb`、`sdkmanager` 命令/);
+  assert.match(text, /开始前需用户确认这一具体范围/);
+  assert.match(text, /只运行 `kernelDebug`/);
+  assert.match(text, /当前没有构建、APK 检查/);
   assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);
   assert.match(text, /NETWORK_FORWARD/);
   assert.match(text, /不安装驱动或运行程序/);
