@@ -85,10 +85,15 @@
     {
       "id": "PRIVACY-AUTHORIZATION",
       "requirement": "Privacy consent must be completed before phone-number or other privacy-sensitive capabilities proceed; the PRD requires separate explicit consent for login, phone verification, and identity verification.",
-      "candidate": "A standalone agreePrivacyAuthorization step, wx.onNeedPrivacyAuthorization synchronization, or a combined getPhoneNumber|agreePrivacyAuthorization button; the exact product route is not selected.",
+      "candidate": "button open-type=getPhoneNumber|agreePrivacyAuthorization",
       "requiredForFirstRelease": true,
-      "implementationLocked": false,
-      "minimumBaseLibrary": null,
+      "implementationLocked": true,
+      "minimumBaseLibrary": "2.32.3",
+      "selectedRoute": {
+        "confirmedByUser": "A",
+        "confirmedAt": "2026-11-01",
+        "decision": "Keep the approved one-action V05 flow, with the platform privacy-consent and phone-number verification button combined."
+      },
       "candidateMinimums": [
         {
           "candidate": "wx.onNeedPrivacyAuthorization",
@@ -109,8 +114,8 @@
           "basis": "The pinned typings describe this separate consent route and say the onNeedPrivacyAuthorization listener is unnecessary if consent was already tapped, but the reviewed source provides no general mini-program minimum for this standalone button route."
         }
       ],
-      "versionEvidence": "The platform privacy synchronization API and the combined one-action button both have a documented candidate floor of 2.32.3. A separate pre-consent button route has no general minimum established by the reviewed sources. Because the exact UX/API route is not frozen, keep the row-level and global minimum unset.",
-      "status": "required-capability-route-unselected-candidate-floor-conditional",
+      "versionEvidence": "The user selected the combined one-action V05 button. The exact Taro 4.3.1 component declaration states that this combined privacy-consent and phone-number verification route is supported from base library 2.32.3. This establishes the selected route's minimum, not the global application floor.",
+      "status": "selected-route-minimum-established-global-floor-still-open",
       "sourceUrls": [
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
         "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-components/types/Button.d.ts",
@@ -212,13 +217,12 @@
   ],
   "floorAnalysis": {
     "knownConditionalLowerBound": "2.32.3",
-    "conditionalBasis": "The confirmed dynamic-code phone-number flow has a 2.21.2 candidate floor. If the approved privacy authorization route uses wx.onNeedPrivacyAuthorization or the currently designed combined getPhoneNumber|agreePrivacyAuthorization button, that route adds a 2.32.3 candidate floor. A separate pre-consent button route has no general minimum established in the reviewed sources; therefore 2.32.3 is conditional on route selection and is not the global support floor.",
+    "conditionalBasis": "The user selected the combined getPhoneNumber|agreePrivacyAuthorization button; its Taro 4.3.1 type declaration states a base-library minimum of 2.32.3. This is the selected privacy-and-phone route floor, not the global application support floor.",
     "globalMinimumSupportedBaseLibrary": null,
     "devicePolicyFrozen": false,
     "reasonNotFrozen": [
       "The direct wx.cloud call and upload candidates have a documented 2.2.3 namespace minimum, but the product upload route is not selected and alternative upload/adapter paths have no verified floor in the reviewed sources.",
       "wx.login has no general minimum annotation in the reviewed type source.",
-      "Privacy consent is required, but its implementation route is not selected. The platform listener and combined one-action phone-consent button are annotated at 2.32.3; the separate pre-consent button route has no general minimum established in the reviewed sources.",
       "The secure phone-code minimum is supported by the maintained repository's issue record, while the canonical WeChat page was not retrievable in this review.",
       "No completed formal product package exists for verifying the Taro 4.3.1 runtime path and capability behavior on the proposed floor.",
       "The exact device support groups and QP05 sampling path remain open in R03."

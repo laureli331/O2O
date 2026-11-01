@@ -27,7 +27,11 @@ test('known API minima remain scoped to the exact API or flow', () => {
   assert.equal(byId['PHONE-VERIFICATION'].callbackMinimumBaseLibrary, '1.2.0');
   assert.equal(byId['PHONE-VERIFICATION'].codeFlowMinimumBaseLibrary, '2.21.2');
   assert.equal(byId['PRIVACY-AUTHORIZATION'].requiredForFirstRelease, true);
-  assert.equal(byId['PRIVACY-AUTHORIZATION'].minimumBaseLibrary, null);
+  assert.equal(byId['PRIVACY-AUTHORIZATION'].candidate, 'button open-type=getPhoneNumber|agreePrivacyAuthorization');
+  assert.equal(byId['PRIVACY-AUTHORIZATION'].implementationLocked, true);
+  assert.equal(byId['PRIVACY-AUTHORIZATION'].minimumBaseLibrary, '2.32.3');
+  assert.equal(byId['PRIVACY-AUTHORIZATION'].selectedRoute.confirmedByUser, 'A');
+  assert.equal(byId['PRIVACY-AUTHORIZATION'].status, 'selected-route-minimum-established-global-floor-still-open');
   assert.equal(
     byId['PRIVACY-AUTHORIZATION'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.onNeedPrivacyAuthorization').minimumBaseLibrary,
     '2.32.3',
@@ -65,7 +69,7 @@ test('CloudBase namespace minimum is conditional on choosing the direct wx.cloud
 
 test('unknown required API floors prevent a global support promise', () => {
   assert.equal(matrix.floorAnalysis.knownConditionalLowerBound, '2.32.3');
-  assert.match(matrix.floorAnalysis.conditionalBasis, /privacy authorization/i);
+  assert.match(matrix.floorAnalysis.conditionalBasis, /selected privacy-and-phone route floor/i);
   assert.equal(matrix.floorAnalysis.globalMinimumSupportedBaseLibrary, null);
   assert.equal(matrix.floorAnalysis.devicePolicyFrozen, false);
   assert.equal(matrix.floorAnalysis.decision, 'Do not freeze a global minimum or device support group from this matrix alone. Keep R03 pending.');
@@ -90,6 +94,7 @@ test('readiness index references the matrix and keeps R03 and SP01 pending', () 
   assert.equal(item.state, 'pending');
   assert.equal(item.apiFloorMatrix.evidence, 'docs/sp01-api-floor-matrix-20261101.json');
   assert.equal(item.apiFloorMatrix.knownConditionalLowerBound, '2.32.3');
+  assert.equal(item.apiFloorMatrix.status, 'selected-privacy-route-minimum-known-global-floor-pending-upload-route-and-product-validation');
   assert.equal(item.apiFloorMatrix.globalMinimumSupportedBaseLibrary, null);
   assert.equal(readiness.sp01Passed, false);
   assert.equal(readiness.sp07Started, false);
