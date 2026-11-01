@@ -66,6 +66,9 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(item.latestLocalProbeRevision.revision, 'device-capability-v2-20261101-r1');
       assert.equal(item.latestLocalProbeRevision.phoneRetest, 'confirmed; route duration field is undefined');
       assert.equal(item.latestLocalProbeRevision.phoneReportEvidence, 'docs/sp01-device-capability-20261030.json#localTests.latestProbeRevision.phoneResult');
+      assert.equal(item.iphoneSystemUpdateReported, 'User reports iPhone XR updated to iOS 18.7.11 after Developer Mode remained unavailable; no post-update capability report has been supplied');
+      assert.equal(item.userReportedMacAccess, 'none; user reports currently no Mac');
+      assert.match(item.developerModeExplanation, /pairing is initiated or the device was previously paired with a Mac/);
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
       assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);
       assert.equal(capability.routeDurationOfficialDefinition.routeMetricDefinition, 'route processing time; entryType navigation');
@@ -310,17 +313,19 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(gpuRetest.averageFpsCalculated, false);
       assert.equal(gpuRetest.over100msAppStallAttribution, false);
       assert.equal(gpuRetest.reportedEntryRowCount, 11);
-      assert.match(capability.fpsMeasurementResearch.iosCandidate.limitation, /Windows 11 environment/);
+      assert.match(capability.fpsMeasurementResearch.iosCandidate.limitation, /current equipment/);
       assert.equal(capability.sources.androidOnDeviceSystemTracing, 'https://developer.android.com/topic/performance/tracing/on-device');
       assert.equal(capability.sources.androidUiJankDetection, 'https://developer.android.com/studio/profile/jank-detection');
       assert.equal(capability.sources.androidGpuRendering, 'https://developer.android.com/topic/performance/rendering/inspect-gpu-rendering');
       assert.equal(capability.sources.perfettoLocalUi, 'https://perfetto.dev/docs/getting-started/system-tracing');
+      assert.equal(capability.sources.appleDeveloperMode, 'https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device');
       assert.equal(capability.fpsToolMenu.userReportedPresent, false);
       assert.equal(capability.systemTracingMenu.userReportedPresent, false);
       assert.equal(capability.runtimeVersionDiscrepancies[0].status, 'latest-device-report-confirms-3.17.5; earlier-report-preserved');
-      assert.equal(capability.localTests.realPhoneRuns, '4 unique devices; 8 user-provided capability reports including three revised OPPO retests and one Huawei GPU-profile retest');
-      assert.equal(capability.localTests.freshEntriesAfterRevisedProbe, 'OPPO returned 10 rows after snapshot-source correction was requested; visible repeated type/duration patterns are absent; report does not embed source revision; route duration and FPS remain unresolved');
-      assert.equal(capability.freshEntryFollowUp.oneDeviceRetest, 'OPPO snapshot-source retest supplied: 10 rows, visible repeats absent; route duration and FPS remain unresolved');
+      assert.equal(capability.localTests.realPhoneRuns, '4 unique devices; 9 user-provided capability reports including four revised OPPO retests and one Huawei GPU-profile retest');
+      assert.equal(capability.localTests.freshEntriesAfterRevisedProbe, 'Earlier snapshot-source correction report: 10 rows with visible repeats absent, but its build revision was not embedded; the later r1 route-field retest is recorded separately');
+      assert.equal(capability.freshEntryFollowUp.oneDeviceRetest, 'Latest probe revision retest supplied from OPPO PLJ110: route duration field is undefined; this resolves the displayed field-state question only, not route cause or FPS');
+      assert.equal(capability.freshEntryFollowUp.iphoneSystemUpdateReported, 'User reports iPhone XR updated to iOS 18.7.11 after Developer Mode remained unavailable; no post-update capability report has been supplied');
       assert.equal(capability.localTests.latestProbeRevision.revision, 'device-capability-v2-20261101-r1');
       assert.equal(capability.localTests.latestProbeRevision.phoneRetest, 'confirmed; route duration field is undefined');
       assert.equal(capability.localTests.latestProbeRevision.phoneResult.deviceModel, 'OPPO PLJ110');
@@ -328,6 +333,10 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(capability.localTests.latestProbeRevision.phoneResult.fpsAvailable, false);
       assert.equal(capability.localTests.latestProbeRevision.phoneResult.cloudNetworkOrFileWrites, false);
       assert.equal(capability.localTests.latestProbeRevision.cloudAccess, false);
+      assert.doesNotMatch(capability.fpsMeasurementResearch.gfxinfoFramestats.nextStep, /Obtain one fresh OPPO report/);
+      assert.match(capability.fpsMeasurementResearch.gfxinfoFramestats.nextStep, /route duration undefined on OPPO PLJ110/i);
+      assert.equal(capability.fpsMeasurementResearch.iosCandidate.userReportedMacAccess, 'none; user reports currently no Mac');
+      assert.equal(capability.fpsMeasurementResearch.iosCandidate.developerModeExplanation, 'Apple documents that Developer Mode appears in Settings only after device pairing is initiated or the device was previously paired with a Mac');
     } else assert.ok(['pending', 'awaiting-user'].includes(item.state));
     assert.ok(item.nextAction.length > 20);
   }

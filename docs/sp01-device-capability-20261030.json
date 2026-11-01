@@ -35,6 +35,7 @@
     "aospAndroid10TimeStatsOutput": "https://android.googlesource.com/platform/frameworks/native/+/refs/heads/android10-release/services/surfaceflinger/TimeStats/timestatsproto/TimeStatsHelper.cpp",
     "perfettoLocalUi": "https://perfetto.dev/docs/getting-started/system-tracing",
     "appleAnimationHitches": "https://developer.apple.com/documentation/xcode/improving-app-responsiveness",
+    "appleDeveloperMode": "https://developer.apple.com/documentation/xcode/enabling-developer-mode-on-a-device",
     "installedPackage": "miniprogram-api-typings@5.2.3",
     "installedPackageLicense": "MIT",
     "installedPackageGeneratedApiSource": ".local/sp01-toolchain-probe/node_modules/miniprogram-api-typings/types/wx/lib.wx.api.d.ts",
@@ -608,15 +609,17 @@
         "A local seven-second atrace retained input, AppBrand doFrame and SurfaceFlinger vsync markers without buffer loss but no separately attributable WebView presented frames.",
         "The Android 17 OPPO FrameTimeline exposed an AppBrand host layer and frame records, but no separately verified WebView layer or contract-compliant 60Hz product scroll segment."
       ],
-        "nextStep": "Keep R03 pending and do not repeat the same manual host trace: the user-reported approximate five-second scroll occurred during a 20-second FrameTimeline-only capture, but exact gesture boundaries were not timestamped and no separate WebView presented-frame stream was found. The isolated device probe now emits revision device-capability-v2-20261101-r1 and classifies the route duration field without exposing raw paths or values; local regression tests pass. Obtain one fresh OPPO report from that revision to establish the runtime field state. Continue resolving the iPhone frame-sampling path, minimum supported library and device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists.",
+        "nextStep": "Keep R03 pending and do not repeat the same manual host trace: the user-reported approximate five-second scroll occurred during a 20-second FrameTimeline-only capture, but exact gesture boundaries were not timestamped and no separate WebView presented-frame stream was found. The isolated device probe revision device-capability-v2-20261101-r1 reports route duration undefined on OPPO PLJ110; this closes only the displayed field-state question, not its platform cause or FPS. No further OPPO field retest is needed. The user reports iPhone XR was updated to iOS 18.7.11 but Developer Mode remains unavailable, and currently has no Mac. Apple documents that Developer Mode appears after pairing is initiated or the device was previously paired with a Mac; therefore Instruments is unavailable with current equipment. Continue resolving an iPhone sampling path when suitable equipment is available, plus minimum supported library and device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists.",
       "scope": "Local diagnostic queries, transient graphics-counter reset, guarded synthetic swipes and a short Android trace saved under Git-ignored .local/sp01-trace only; no cloud, app data, permissions or persistent phone setting was changed."
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
     "iosCandidate": {
       "method": "Apple Instruments Animation Hitches",
-      "limitation": "Official documentation describes frame-lifetime and hitch analysis, but the tooling requires Xcode/Instruments on macOS, unavailable in the user's Windows 11 environment; profiling WeChat's embedded mini-program renderer is also unverified."
+      "limitation": "Official documentation describes frame-lifetime and hitch analysis, but the user reports no Mac is currently available, so Xcode/Instruments cannot be run with current equipment. Profiling WeChat's embedded mini-program renderer is also unverified.",
+      "userReportedMacAccess": "none; user reports currently no Mac",
+      "developerModeExplanation": "Apple documents that Developer Mode appears in Settings only after device pairing is initiated or the device was previously paired with a Mac"
     },
-    "sources": ["androidOnDeviceSystemTracing", "androidUiJankDetection", "androidGpuRendering", "androidDumpsys", "androidGfxinfoResetGuidance", "androidAospInputShellSwipe", "perfettoAndroidTracing", "perfettoFrameTimeline", "perfettoTraceProcessor", "androidSlowSessions", "aospAndroid10SurfaceFlinger", "aospAndroid10TimeStats", "aospAndroid10TimeStatsOutput", "perfettoLocalUi", "appleAnimationHitches"]
+    "sources": ["androidOnDeviceSystemTracing", "androidUiJankDetection", "androidGpuRendering", "androidDumpsys", "androidGfxinfoResetGuidance", "androidAospInputShellSwipe", "perfettoAndroidTracing", "perfettoFrameTimeline", "perfettoTraceProcessor", "androidSlowSessions", "aospAndroid10SurfaceFlinger", "aospAndroid10TimeStats", "aospAndroid10TimeStatsOutput", "perfettoLocalUi", "appleAnimationHitches", "appleDeveloperMode"]
   },
   "freshEntryFollowUp": {
     "oldProbeObservedOnly": ["navigation", "render", "script"],
@@ -624,7 +627,8 @@
     "oldCopyButtonRefreshedSnapshot": false,
     "revisedProbeObservesRuntimeReportedTypes": true,
     "revisedCopyButtonRefreshesBeforeCopy": true,
-    "oneDeviceRetest": "OPPO snapshot-source retest supplied: 10 rows, visible repeats absent; route duration and FPS remain unresolved",
+    "oneDeviceRetest": "Latest probe revision retest supplied from OPPO PLJ110: route duration field is undefined; this resolves the displayed field-state question only, not route cause or FPS",
+    "iphoneSystemUpdateReported": "User reports iPhone XR updated to iOS 18.7.11 after Developer Mode remained unavailable; no post-update capability report has been supplied",
     "latestHuaweiRetest": "SEA-AL10 report supplied with WeChat 8.0.79/base library 3.17.5; GPU Rendering histogram appeared over the WeChat probe and refreshed during scrolling; no numeric FPS result",
     "retestEvidenceId": "DEVICE01-SNAPSHOT-FIX-1",
     "oldOutputs": "keep as first-run evidence, not proof that the current runtime buffer stays empty"
@@ -679,10 +683,10 @@
       "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1567, "failed": 0 }
     },
     "miniProgramIDECompile": "user-provided outputs confirm execution on four phones; separate IDE compile artifact not captured",
-    "realPhoneRuns": "4 unique devices; 8 user-provided capability reports including three revised OPPO retests and one Huawei GPU-profile retest",
+    "realPhoneRuns": "4 unique devices; 9 user-provided capability reports including four revised OPPO retests and one Huawei GPU-profile retest",
     "phoneRendererValues": "webview on all 4 reported devices",
     "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
-    "freshEntriesAfterRevisedProbe": "OPPO returned 10 rows after snapshot-source correction was requested; visible repeated type/duration patterns are absent; report does not embed source revision; route duration and FPS remain unresolved",
+    "freshEntriesAfterRevisedProbe": "Earlier snapshot-source correction report: 10 rows with visible repeats absent, but its build revision was not embedded; the later r1 route-field retest is recorded separately",
     "measuredRefreshTiming": "unknown",
     "fpsMeasurementTool": "no item in IDE Tools menu per user; System Tracing not found under Developer Options > Debugging on HUAWEI SEA-AL10; Android GPU Rendering bars were visible and refreshed over the WeChat probe during scrolling; bundled ADB 1.0.39 was found but adb devices -l returned no connected devices",
     "latestProbeRevision": {
