@@ -76,12 +76,13 @@
         "reportIncludesRevision": true,
         "routeDurationFieldClassificationAdded": true,
         "localProbeTests": "8/8 passed",
-        "phoneRetest": "pending",
+        "phoneRetest": "confirmed; route duration field is undefined",
+        "phoneReportEvidence": "docs/sp01-device-capability-20261030.json#localTests.latestProbeRevision.phoneResult",
         "cloudAccess": false,
         "networkRequests": false,
         "fileWrites": false
       },
-      "nextAction": "Keep R03 pending and do not repeat the same manual host trace: the user-reported approximate five-second scroll occurred during a 20-second FrameTimeline-only capture, but exact gesture boundaries were not timestamped and no separate WebView presented-frame stream was found. The isolated probe now reports revision device-capability-v2-20261101-r1 and classifies the route duration field without exposing raw paths or values; its local regression tests pass. Have OPPO run this revision once and return the local copy result to confirm the actual route field state. Continue resolving the iPhone frame-sampling path, minimum supported library and device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists."
+      "nextAction": "Keep R03 pending and do not repeat the same manual host trace: gesture boundaries and an independent WebView frame stream are still unavailable, so host records cannot establish scroll FPS. The OPPO PLJ110 has now run revision device-capability-v2-20261101-r1; route/navigation reports duration undefined. This confirms the runtime field shape but does not explain the platform cause and does not create an FPS measurement. No further probe revision is needed for this field. Continue resolving the iPhone frame-sampling path and minimum supported library/device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists."
     },
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",
