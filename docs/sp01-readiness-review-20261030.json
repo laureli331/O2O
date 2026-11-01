@@ -42,11 +42,11 @@
     {
       "id": "R01", "kind": "technical-choice-and-risk", "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "已采用局部维护候选用于当前SP01准备；新锁审计仍有32条受影响包记录（15 moderate/13 high/4 critical），原共享工作区锁的37条仅作历史对照。已按本机源码把远程模板、Swiper原生映射、H5开发服务及必用编译链分组核对；这不关闭审计发现",
+      "known": "已采用局部维护候选用于当前SP01准备；新锁审计仍有32条受影响包记录（15 moderate/13 high/4 critical），原共享工作区锁的37条仅作历史对照。已按本机源码把远程模板、Swiper原生映射、H5开发服务及必用编译链分组核对。2026-11-01隔离最小weapp样例构建成功，Webpack模块清单139项且0项名称匹配Swiper；该样例页不含真实产品页面，不能外推正式产品，也不关闭审计发现",
       "evidence": "docs/sp01-current-toolchain-review-20261030.json",
       "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
       "residualRiskReview": "docs/sp01-r01-residual-risk-20261031.md",
-      "nextAction": "继续核对剩余适用依赖风险及普通兼容证据，明确未关闭审计项对当前准备的影响；保留候选与历史锁对照，不把候选采用或构建通过写成全部风险已修复或最终版本冻结",
+      "nextAction": "继续核对剩余适用依赖风险及普通兼容证据，明确未关闭审计项对当前准备的影响；真实产品页面建立后检查正式weapp模块图，并比较公告修复版适配或明确构建边界的证据；保留候选与历史锁对照，不把候选采用或样例构建通过写成全部风险已修复或最终版本冻结",
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },
     {
