@@ -503,6 +503,48 @@
         "remoteTraceFilesDeletedAfterLocalCopy": true,
         "interpretation": "The system display mode was 60 Hz and the named AppBrand host layer produced actual-frame records during a controlled diagnostic-page swipe. The first trace contained input but no AppBrand frames; the second has 152 host frames over 2.845 seconds and one 329.57 ms adjacent gap. The trace does not isolate the WebView, the complete five-second gesture, or the future 200-item product page. The gap cannot be attributed to an application stall, and the 948 import errors prevent claiming complete event capture. This is measurement-method feasibility only."
       },
+      "oppoFrameTimelineOnlyRetest": {
+        "date": "2026-11-01",
+        "deviceModel": "PLJ110",
+        "androidVersion": "17",
+        "activeDisplayHz": 60,
+        "foregroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "traceConfig": { "dataSource": "android.surfaceflinger.frametimeline", "durationMs": 8000, "ringBufferKb": 4096, "excludedDataSources": ["linux.ftrace", "android.surfaceflinger"] },
+        "manualAttempt": {
+          "status": "capture-completed-user-scroll-window-missed",
+          "userReportedWindowMissed": true,
+          "actualFrameCount": 9,
+          "statusBarNamedFrameCount": 3,
+          "unnamedFrameCount": 6,
+          "appBrandFrameCount": 0,
+          "traceProcessorNonzeroErrorStats": 0,
+          "userGestureEvidence": false,
+          "rawTrace": { "path": ".local/sp01-trace/oppo-scroll-20261101.perfetto-trace", "bytes": 2362, "sha256": "f41271a51c4f44b5d68dac947e5a212f5d59abbb3c0c10550a21e6100d6142b0" }
+        },
+        "syntheticAttempt": {
+          "status": "completed-method-feasibility-only",
+          "inputType": "ADB-injected-synthetic-touch-events",
+          "swipeCommand": "adb shell input touchscreen swipe 540 1900 540 700 5000",
+          "swipeDurationArgumentMs": 5000,
+          "traceDurationMs": 8000,
+          "actualFrameCount": 94,
+          "appBrandLayer": "TX - VRI-com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#588956",
+          "appBrandFrameCount": 45,
+          "appBrandFrameSpanSeconds": 1.034,
+          "maxAdjacentAppBrandFrameGapMs": 329.87,
+          "statusBarFrameCount": 2,
+          "statusBarFrameSpanSeconds": 1.00405,
+          "traceProcessorNonzeroErrorStats": 0,
+          "systraceDataSourceIncluded": false,
+          "userGestureEvidence": false,
+          "fpsInterpretable": false,
+          "acceptanceEvidence": false,
+          "rawTrace": { "path": ".local/sp01-trace/oppo-synthetic-20261101.perfetto-trace", "bytes": 26555, "sha256": "c0e133905d13ba5b2f664194b228d0c1da595c68ba00f2a8de13d7e58b342cfe" }
+        },
+        "remoteTemporaryTraceAndConfigFilesDeletedAfterLocalCopy": true,
+        "acceptanceEvidence": false,
+        "interpretation": "The manual capture did not include the requested user scroll. The synthetic swipe demonstrates that the FrameTimeline-only configuration can expose the named AppBrand host layer and avoids the prior systrace import errors. The 329.87ms host-frame gap is not attributable to an application stall; this is not a manual gesture result, FPS result, isolated WebView stream, product-page measurement, or QP05 evidence."
+      },
       "resetCommandVerifiedOnHuawei": true,
       "acceptanceEvidence": false,
       "limitations": [
@@ -514,7 +556,7 @@
         "A local seven-second atrace retained input, AppBrand doFrame and SurfaceFlinger vsync markers without buffer loss but no separately attributable WebView presented frames.",
         "The Android 17 OPPO FrameTimeline exposed an AppBrand host layer and frame records, but no separately verified WebView layer or contract-compliant 60Hz product scroll segment."
       ],
-        "nextStep": "FrameTimeline on the Android 17 OPPO can record presented frames for the named AppBrand host layer, but its trace did not verify a separate WebView layer and the phone was set to 120Hz. Keep R03 pending. Before QP05, verify the host layer's attribution to the actual product page, freeze a 60Hz device/method and 200-item heavy-content segment, then collect the contract's repeated timed runs with input and presented-frame evidence.",
+        "nextStep": "The 2026-11-01 FrameTimeline-only attempt exposed the named AppBrand host layer during a synthetic swipe and had no nonzero Trace Processor error stats; a separate manual-capture window was missed. If another manual method-correlation run is useful, wait until the user explicitly confirms readiness before starting the timed capture, then prompt immediately. Keep R03 pending. Do not infer FPS or QP05 from the synthetic swipe. Before QP05, measure the actual product page with frozen content, device group, sampler and repeated timed segments; minimum supported library and iPhone path remain unresolved.",
       "scope": "Local diagnostic queries, transient graphics-counter reset, guarded synthetic swipes and a short Android trace saved under Git-ignored .local/sp01-trace only; no cloud, app data, permissions or persistent phone setting was changed."
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
