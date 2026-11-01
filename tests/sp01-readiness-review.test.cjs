@@ -75,8 +75,39 @@ test('SP01 current review covers the exact contract criteria without silently re
         opticalCaptureImplemented: false,
         acceptanceEvidence: false,
       });
+      assert.deepEqual(item.iphoneFrameSamplingToolReview, {
+        reviewedAt: '2026-11-01',
+        candidate: 'GameBench Pro Desktop',
+        status: 'candidate-not-validated',
+        currentWindowsEvidence: '2024 release notes say iOS 17.4+ profiling on Windows and a current guide documents iOS 17.4+ wireless setup on Windows; current requirements separately say iOS 17 profiling needs macOS 13+ and latest Xcode, so wired Windows support is unresolved',
+        perFrameEvidence: 'current release notes say wired iOS sessions retain frame times and jank; dashboard documentation offers timeline export but does not specify per-frame export granularity or format',
+        blockingConflict: 'current requirements page says profiling iOS 17 requires macOS 13+ and latest Xcode, while release notes and a Windows setup guide describe Windows support; target iPhone XR on iOS 18.7.11 is untested',
+        targetDeviceValidation: 'not-tested-on-iPhone-XR-iOS-18.7.11',
+        miniProgramWebViewAttribution: 'not-validated; vendor warns that FPS may track the wrong onscreen element, and WeChat mini-program WebView attribution is undocumented',
+        localOnlyMode: 'vendor documents disabling screenshots and automatic sync, with session upload initiated through a Cloud button; local-only behavior must be verified before capture',
+        sourceAndReuse: 'proprietary measurement product; source code and an open-source license were not verified; no product-code dependency adopted; temporary external-tool candidate only',
+        cost: 'official trial page advertises 30 minutes of testing over 28 days with no credit card; account signup and paid pricing after trial are not verified',
+        sources: [
+          'https://docs.gamebench.net/docs/studio-pro-desktop/requirements/',
+          'https://docs.gamebench.net/docs/studio-pro-desktop/relnotes/v1-30-0/',
+          'https://docs.gamebench.net/docs/studio-pro-desktop/relnotes/v1-38-4/',
+          'https://docs.gamebench.net/docs/studio-pro-desktop/wireless-testing-ios17plus-method-2/',
+          'https://docs.gamebench.net/docs/studio-pro-desktop/configuration/',
+          'https://docs.gamebench.net/docs/studio-pro-desktop/getting-started/',
+          'https://docs.gamebench.net/docs/web-dashboard/session-detail/metrics-timeline/',
+          'https://docs.gamebench.net/docs/web-dashboard/session-detail/fps/',
+          'https://trial.gamebench.net/',
+        ],
+        installAuthorized: false,
+        cloudUploadAuthorized: false,
+        acceptanceEvidence: false,
+      });
+      assert.match(item.nextAction, /GameBench Pro Desktop.*candidate-not-validated/s);
+      assert.match(item.nextAction, /Do not install or upload.*before the user confirms/);
       assert.match(item.nextAction, /Do not use external-camera capture; keep the iPhone frame-sampling gap open until a suitable iPhone frame-by-frame tool is available/);
       assert.match(readinessMarkdown, /用户明确拒绝外拍\/光学测量方案，决定保留 iPhone 逐帧证据缺口/);
+      assert.match(readinessMarkdown, /GameBench Pro Desktop 是尚未安装或验证的候选工具/s);
+      assert.match(readinessMarkdown, /macOS 13.*Xcode.*Windows.*资料冲突/s);
       assert.match(item.developerModeExplanation, /pairing is initiated or the device was previously paired with a Mac/);
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
       assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);
