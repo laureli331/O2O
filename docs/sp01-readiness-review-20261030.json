@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-30",
-  "updatedAt": "2026-10-31",
+  "updatedAt": "2026-11-01",
   "task": "SP01",
   "status": "in-progress",
   "scope": "preparation-review-not-product-acceptance",
@@ -17,6 +17,7 @@
     "docs/sp01-device-capability-20261030.json",
     "docs/sp01-next-evidence-and-measurement-20261029.md",
     "docs/sp01-recovery-capability-20261031.json",
+    "docs/sp01-recovery-capability-20261101.json",
     "docs/sp01-endurance-web-budget-proposal-20261031.md",
     "docs/sp01-network-home-wifi-20261031.json",
     "docs/sp01-network-cloudflare-home-wifi-20261031.json",
@@ -70,10 +71,11 @@
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",
       "topic": "Normal/weak-network conditions",
-      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. Two separate Cloudflare speed-test screenshots reported down 25.5/27.1 Mbps, up 33.5/25.1 Mbps, latency 200/191ms, jitter 40/74.3ms and packet loss 14.3/1.8%; the user confirmed the same OPPO/home Wi-Fi, while the screenshots do not independently verify device/access. The Cloudflare target differs from CloudBase. The user has borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router; firmware and owner permission for isolated configuration are unknown. A third-party firmware project does not prove this device runs OpenWrt. The large packet-loss variation prevents freezing a stable normal network profile.",
+      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. Two separate Cloudflare speed-test screenshots reported down 25.5/27.1 Mbps, up 33.5/25.1 Mbps, latency 200/191ms, jitter 40/74.3ms and packet loss 14.3/1.8%; the user confirmed the same OPPO/home Wi-Fi, while the screenshots do not independently verify device/access. The Cloudflare target differs from CloudBase. The user has borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router; firmware and owner permission for isolated configuration are unknown. On 2026-11-01 the user said the router owner is temporarily unavailable to ask, so no firmware, management-access or configuration-consent evidence is available. A third-party firmware project does not prove this device runs OpenWrt. The large packet-loss variation prevents freezing a stable normal network profile.",
       "evidence": "docs/sp01-network-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-round2-20261031.json",
       "unknown": ["actual uplink/downlink and link RTT/jitter/loss", "stable range across independent runs", "borrowed ZN-M2 firmware, management permissions, and owner consent for isolated configuration", "whether the borrowed ZN-M2 hardware and current firmware support a Wi-Fi test network with repeatable traffic shaping", "repeatable weak-network injection and recovery method", "public Wi-Fi profile"],
-      "nextAction": "Ask the borrowed router owner to confirm firmware name/version, management access, and whether a temporary isolated test configuration is permitted. Do not log in with photographed credentials, modify the borrowed router, or flash firmware. If suitable firmware and permission are confirmed, document a reversible isolated-network plan and validate that phone traffic reaches the read-only CloudBase probe through it before freezing weak-network parameters. Otherwise use a separately authorized alternative. Repeat/characterize the variable Cloudflare link profile without recasting it as CloudBase; do not mislabel application round-trip differences as network jitter or successes as zero packet loss. SP08 will remeasure formal endpoint.",
+      "nextAction": "Do not repeat the router-owner question while the owner is unavailable. When the user can obtain the firmware name/version, management-access status and permission for an isolated temporary test configuration, assess a reversible plan before any router change. Do not log in with photographed credentials, modify the borrowed router, or flash firmware. Meanwhile continue only local/read-only work and characterize the variable Cloudflare link profile without recasting it as CloudBase; do not mislabel application round-trip differences as network jitter or successes as zero packet loss. SP08 will remeasure the formal endpoint.",
+      "routerOwnerContactStatus": "temporarily-unavailable-reported-by-user-2026-11-01",
       "numericDefaultsInvented": false
     },
     {
@@ -88,9 +90,10 @@
     {
       "id": "R06", "kind": "external-capability-evidence", "state": "pending",
       "topic": "E06 current security/recovery capability and costs",
-      "known": "Target environment and document database were identified earlier. Current official pages describe daily backup, default seven-day retention, edition-dependent rollback and JSON/CSV export; an older general page describes up to fourteen days. User reports a related entry visible in cloud1 database settings, an area showing 暂无数据, and no fee/unavailable prompt. Exact entitlement, backup points, retention and costs remain unverified.",
-      "recoveryCapabilityEvidence": "docs/sp01-recovery-capability-20261031.json",
-      "nextAction": "If a more detailed read-only backup/rollback panel exists, identify its exact label and entitlement; current view has no visible recovery point. Do not run restore or change settings. Reassess a synthetic rehearsal only after a recovery point becomes available.",
+      "known": "2026-11-01 official Tencent Cloud plan table marks database rollback unavailable for free-trial and personal plans and lists 14 days for standard and above; JSON/CSV import/export is listed across plans. The database guide separately describes daily seven-day default backups and says personal plans cannot use rollback. User's prior read-only cloud1 view showed a related entry, 暂无数据, and no fee/unavailable prompt. Prior billing screenshot reported 微信体验版, 40,000 points/month, and ¥19.9/month; those fields do not unambiguously map to the current public plan labels. Target plan mapping, active entitlement, backup points, retention, and cost remain unverified; no live cloud state was queried.",
+      "recoveryCapabilityEvidence": "docs/sp01-recovery-capability-20261101.json",
+      "unknown": ["exact mapping of the user-reported 微信体验版/40,000 points/¥19.9 screenshot to the active public plan", "current target-environment rollback entitlement", "whether the empty backup area means no recovery point or no plan entitlement", "target-specific retention and cost", "tested export/restore fallback"],
+      "nextAction": "No cloud action is needed now: the prior read-only view showed no recovery points and this evidence contains no product data. Before storing real business data, identify the exact active plan using a read-only plan view and document a tested export/restore fallback if rollback is unavailable. Do not create a rollback task, import/export data, or change settings.",
       "newCloudActionAuthorizedByThisReview": false,
       "fullBusinessRestoreRequiredBeforeProductExists": false
     }

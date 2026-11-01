@@ -246,31 +246,32 @@
       "id": "E06",
       "title": "新主体云环境、运行时、数据模式、安全与恢复",
       "currentReview": {
-        "date": "2026-10-30",
+        "date": "2026-11-01",
         "document": "docs/sp01-readiness-review-20261030.md",
         "data": "docs/sp01-readiness-review-20261030.json",
         "historicalFieldsRetainedBelow": true,
         "gatePassed": false
       },
       "gatePassed": false,
-      "evidenceLevel": "user-reported-not-opened-plus-current-live-query-failed",
+      "evidenceLevel": "historical-user-reported-console-view-plus-current-official-capability-docs; no-current-live-plan-query",
       "knownEvidence": [
         "新主体云开发于2026-10-18为用户报告尚未开通；2026-10-27 CLI登录为真，但环境列表请求返回code 10系统错误",
         "Node/npm版本仅为本机；旧cloud1仅批准受控开发/测试",
-        "公开运行时资料状态描述不一致，数据库模式、SDK版本仍未选"
+        "当前SP01证据已确认目标环境与文档型数据库、Node.js 20.19候选、SDK和受控事务/存储测试范围；此处只读主引用见docs/sp01-readiness-review-20261030.json",
+        "2026-11-01腾讯云公开套餐表标注免费体验版和个人版不支持数据库回档、标准版及以上支持14天；此前cloud1页面报告暂无数据且无付费/不可用提示。微信体验版标签与公开套餐映射、当前权益和恢复点仍未通过实时账户信息确认，详见docs/sp01-recovery-capability-20261101.json"
       ],
       "missingEvidence": [
-        "目标环境ID和该AppID下的实际环境归属/状态",
-        "可部署运行时、数据库模式、事务和私密文件访问实测",
-        "真实安全权限、备份/恢复能力及成本依据"
+        "当前目标环境归属/状态的独立实时查询",
+        "目标环境准确套餐映射、数据库回档权益、恢复点与当前成本",
+        "真实业务数据建立后的隔离恢复演练及运行时/权限持续状态复核"
       ],
       "owner": {
         "user": "在官方工具可读时确认目标项目/环境并确认有费用或风险的动作",
         "developer": "保持只读核验，环境确认后准备隔离测试、恢复和依赖锁定方案",
         "cloudbase": "提供当前账号/环境的可用能力和计费信息"
       },
-      "releaseCondition": "新主体目标环境和实际运行/数据库/存储能力有可复核证据；受控测试、备份恢复和权限边界通过",
-      "sources": ["docs/sp01-technical-environment-20261027.md", "docs/v1-development-preflight-20261018.md", "docs/external-evidence.md"]
+      "releaseCondition": "目标环境和实际运行/数据库/存储能力有可复核证据；准确套餐及费用已查明；数据上线前具备可执行并经验证的备份/恢复替代方案，安全权限边界通过",
+      "sources": ["docs/sp01-technical-environment-20261027.md", "docs/sp01-readiness-review-20261030.json", "docs/sp01-recovery-capability-20261101.json", "docs/v1-development-preflight-20261018.md", "docs/external-evidence.md"]
     },
     {
       "id": "QG01",

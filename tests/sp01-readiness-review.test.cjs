@@ -241,6 +241,7 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(review.productAcceptancePassed, false);
   assert.equal(review.existingPlanAndQualityThresholdsChanged, false);
   assert.equal(review.knownFacts.currentCloudStateRequeried, false);
+  assert.equal(review.updatedAt, '2026-11-01');
   assert.equal(review.knownFacts.historicalDirectDownloadCodeAttributed, false);
   assert.equal(review.openItems.find(x => x.id === 'R01').vulnerabilityReproductionAuthorizedByThisReview, false);
   assert.equal(review.openItems.find(x => x.id === 'R06').newCloudActionAuthorizedByThisReview, false);
@@ -252,6 +253,19 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(review.openItems.find(x => x.id === 'R04').state, 'pending');
   assert.equal(review.openItems.find(x => x.id === 'R05').state, 'pending');
   assert.equal(review.openItems.find(x => x.id === 'R06').state, 'pending');
+  const recoveryItem = review.openItems.find(x => x.id === 'R06');
+  const recovery = require('../docs/sp01-recovery-capability-20261101.json');
+  assert.ok(review.sources.includes('docs/sp01-recovery-capability-20261101.json'));
+  assert.equal(recovery.officialPackageCapabilityTable.publishedPlanCapabilities.freeTrialDataRollbackSupported, false);
+  assert.equal(recovery.officialPackageCapabilityTable.publishedPlanCapabilities.personalDataRollbackSupported, false);
+  assert.equal(recovery.officialPackageCapabilityTable.publishedPlanCapabilities.standardAndAboveDataRollbackDays, 14);
+  assert.equal(recovery.targetPlanIdentityVerified, false);
+  assert.equal(recovery.targetRollbackEntitlementVerified, false);
+  assert.equal(recovery.restoreTestPerformed, false);
+  assert.equal(recoveryItem.recoveryCapabilityEvidence, 'docs/sp01-recovery-capability-20261101.json');
+  assert.equal(review.e06GatePassed, false);
+  assert.equal(review.sp01Passed, false);
+  assert.equal(review.openItems.find(x => x.id === 'R04').routerOwnerContactStatus, 'temporarily-unavailable-reported-by-user-2026-11-01');
   const platform = require('../docs/sp02-platform-evidence-20261027.json');
   const findGate = value => {
     if (!value || typeof value !== 'object') return undefined;

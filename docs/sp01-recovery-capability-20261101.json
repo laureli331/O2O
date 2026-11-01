@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-01",
+  "task": "SP01",
+  "gate": "E06",
+  "targetAppId": "wx2414399d423dfb65",
+  "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+  "databaseFamily": "document",
+  "evidenceScope": "current-official-package-capability-documentation-plus-historical-user-reported-read-only-console-view; no live package-entitlement query or cloud mutation",
+  "officialPackageCapabilityTable": {
+    "url": "https://cloud.tencent.com/document/product/876/127357",
+    "accessedDate": "2026-11-01",
+    "publishedPlanCapabilities": {
+      "freeTrialDataRollbackDays": null,
+      "freeTrialDataRollbackSupported": false,
+      "personalDataRollbackDays": null,
+      "personalDataRollbackSupported": false,
+      "standardAndAboveDataRollbackDays": 14,
+      "jsonCsvImportExportSupportedAcrossPlans": true
+    },
+    "interpretation": "The current public table marks data rollback unavailable for free-trial and personal plans and lists 14 days for standard and higher plans. JSON/CSV import/export is listed across plans. These are general plan capabilities, not proof of this environment's exact active plan or account entitlement.",
+    "targetPlanLabelMappingVerified": false
+  },
+  "officialDocumentDatabaseGuide": {
+    "url": "https://cloud.tencent.com/document/product/876/46897",
+    "lastUpdated": "2026-04-21",
+    "publishedStatements": [
+      "Default backup is daily and retained for 7 days.",
+      "After plan upgrade, the page describes real-time backup and 14-day retention.",
+      "Personal plan does not support rollback."
+    ],
+    "interpretation": "The page describes backup retention separately from whether a plan can use rollback. Its personal-plan restriction aligns with the current package capability table; it does not establish that a particular target environment has a usable recovery point."
+  },
+  "officialImportExportGuide": {
+    "url": "https://docs.cloudbase.net/database/manage",
+    "accessedDate": "2026-11-01",
+    "publishedCapability": "Document collections can be exported and imported in JSON or CSV; JSON preserves nested structures and is identified as suitable for complete data backup.",
+    "targetExportPerformed": false,
+    "restoreTestPerformed": false
+  },
+  "priorTargetConsoleObservation": {
+    "source": "docs/sp01-recovery-capability-20261031.json",
+    "date": "2026-10-31",
+    "method": "user-reported read-only view of cloud1 database settings",
+    "backupOrRollbackEntryVisible": true,
+    "entryIdentityIndividuallyVerified": false,
+    "availableBackupAreaText": "暂无数据",
+    "feeOrUnavailablePromptVisible": false,
+    "interpretation": "The visible entry, empty area, and absence of a prompt do not prove active rollback entitlement, available recovery points, retention, or cost."
+  },
+  "priorPlanScreenshotObservation": {
+    "source": "docs/sp01-technical-environment-20261027.md",
+    "userReportedLabel": "微信体验版",
+    "userReportedQuotaPerMonth": 40000,
+    "userReportedDisplayedPriceCnyPerMonth": 19.9,
+    "interpretation": "These reported console fields do not map unambiguously to the current public plan labels or establish billing/entitlement; the displayed price is not evidence of a payment."
+  },
+  "targetRollbackEntitlementVerified": false,
+  "targetPlanIdentityVerified": false,
+  "targetBackupRetentionDays": null,
+  "targetAvailableBackupPointsVerified": false,
+  "targetExportCapabilityPublished": true,
+  "targetExportPerformed": false,
+  "restoreTestPerformed": false,
+  "restoreExecuted": false,
+  "currentTargetCloudStateRequeried": false,
+  "productionDataPresentInThisEvidence": false,
+  "nextAction": "Do not create rollback tasks or change cloud settings. Before any real business data exists, identify the exact active plan from a read-only account/plan view and document the applicable export and recovery procedure. If rollback is not included, define and verify a separate export/restore fallback before production data is stored. No user action is needed now because the environment has no reported recovery points and no product data is in this evidence.",
+  "e06GatePassed": false,
+  "sp01Passed": false
+}
