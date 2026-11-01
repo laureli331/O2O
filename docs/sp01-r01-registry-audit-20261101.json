@@ -1,0 +1,193 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-01",
+  "task": "SP01/R01",
+  "candidate": ".local/sp01-shared-react18-maintenance-probe",
+  "lock": ".local/sp01-shared-react18-maintenance-probe/package-lock.json",
+  "lockSha256": "450fe2e75f45121f3c8a97f19d820e8436ffcf7fc942f34f41d752e08508cb20",
+  "registry": "https://registry.npmjs.org",
+  "auditCommand": "npm --registry=https://registry.npmjs.org audit --package-lock-only --json",
+  "auditExitCode": 1,
+  "auditFailureMeans": "The candidate lock has published advisory matches; this is not a build or compatibility test failure.",
+  "configuredMirrorAttempt": {
+    "registry": "https://registry.npmmirror.com",
+    "result": "audit endpoint returned HTTP 404 NOT_IMPLEMENTED",
+    "usedForCounts": false
+  },
+  "rawAudit": {
+    "path": ".local/sp01-r01-audit-20261101.json",
+    "sha256": "893EF29FC7D50AAD282D8D7444D40EC9EA037EEEFCDEAC991993CEE880586DFE",
+    "committed": false
+  },
+  "fullTree": {
+    "affectedPackageEntries": 48,
+    "severityEntries": {
+      "critical": 4,
+      "high": 13,
+      "moderate": 31,
+      "low": 0,
+      "info": 0
+    },
+    "distinctAdvisoryUrls": 25,
+    "distinctAdvisorySeverities": {
+      "critical": 3,
+      "high": 5,
+      "moderate": 15,
+      "low": 2
+    },
+    "interpretation": "Package-entry counts aggregate dependency-tree nodes and can repeat the same advisory; they are not counts of unique flaws, reachable product paths, or exploitable product behavior."
+  },
+  "omitDevAudit": {
+    "command": "npm --registry=https://registry.npmjs.org audit --package-lock-only --omit=dev --json",
+    "exitCode": 1,
+    "affectedPackageEntries": 19,
+    "severityEntries": {
+      "critical": 3,
+      "high": 2,
+      "moderate": 14,
+      "low": 0,
+      "info": 0
+    },
+    "interpretation": "This filters dependencies classified as dev by npm; it does not prove which code enters a mini-program bundle or runs in production. The Taro packages remain in this candidate's non-dev dependency graph."
+  },
+  "historicalCandidateAudit": {
+    "date": "2026-10-30",
+    "affectedPackageEntries": 32,
+    "severityEntries": {
+      "critical": 4,
+      "high": 13,
+      "moderate": 15,
+      "low": 0,
+      "info": 0
+    },
+    "source": "docs/sp01-maintenance-candidate-20261030.json",
+    "historicalSnapshotRetained": true
+  },
+  "stableReleaseCheck": {
+    "package": "@tarojs/taro",
+    "latestStable": "4.3.1",
+    "latestDistTag": "4.3.1",
+    "betaDistTag": "4.3.2-beta.2",
+    "alphaDistTag": "4.3.2-alpha.0",
+    "betaComponentsSwiper": "11.1.15",
+    "betaRunnerWebpackDevServer": "^4.15.2",
+    "betaRunnerWebpackPeer": "5.91.0",
+    "betaCliTemplateDownloader": "download-git-repo@^3.0.2",
+    "source": "npm registry metadata queried 2026-11-01",
+    "conclusion": "No newer stable Taro 4 release or prerelease package-metadata change resolving the identified Swiper, Webpack peer, or remote-template dependency paths was found. Beta metadata is not a production fix."
+  },
+  "reviewedPaths": [
+    {
+      "id": "decompress-template-fetch",
+      "installed": "decompress@4.2.1",
+      "path": "@tarojs/cli@4.3.1 fetchTemplate.js -> download-git-repo@3.0.2 -> download@7.1.0 -> decompress@4.2.1",
+      "conditionalUse": "Taro remote Git template download/extraction path; not loaded by the recorded local weapp build. download-git-repo clone mode also depends on git-clone@0.1.0.",
+      "officialAdvisories": [
+        "https://github.com/advisories/GHSA-mp2f-45pm-3cg9",
+        "https://github.com/advisories/GHSA-hrh2-vp3x-79xf",
+        "https://github.com/advisories/GHSA-8jmw-wjr8-2x66"
+      ],
+      "upstreamStatus": "The unscoped decompress 4.2.1 line is unmaintained and has no patched version in the reviewed GitHub Advisory records.",
+      "forkCandidate": {
+        "package": "@xhmikosr/decompress@11.1.4",
+        "license": "MIT",
+        "type": "ES module",
+        "nodeEngine": ">=20",
+        "maintenanceEvidence": "Published fix releases 10.2.2/11.1.4 are named by GHSA-hrh2-vp3x-79xf.",
+        "compatibilityStatus": "Not a verified drop-in for the installed CommonJS download@7.1.0 consumer, which uses require('decompress') and calls the returned value as a function. No override or behavior change was made."
+      }
+    },
+    {
+      "id": "swiper-components",
+      "installed": "swiper@11.1.15 via @tarojs/components@4.3.1",
+      "officialAdvisory": "https://github.com/advisories/GHSA-hmx5-qpq5-p643",
+      "patchedVersion": "12.1.2",
+      "sourceReview": "Taro mini entry maps Swiper and SwiperItem to native component names; the H5 hydrate entry imports swiper/bundle.",
+      "localBuildEvidence": {
+        "scope": "isolated synthetic weapp page without product content",
+        "buildExitCode": 0,
+        "moduleCount": 139,
+        "swiperNamedModules": 0,
+        "productBuild": false
+      },
+      "conclusion": "The observed synthetic weapp bundle did not include the Swiper JS runtime. This does not resolve the advisory for all product import paths or replace the required product-bundle review. Taro's reviewed 4.3.2-beta.2 metadata still pins 11.1.15."
+    },
+    {
+      "id": "webpack-and-h5-devserver",
+      "installed": {
+        "webpack": "5.91.0",
+        "webpack-dev-server": "4.15.2",
+        "webpack-dev-middleware": "5.3.4"
+      },
+      "officialAdvisories": [
+        "https://github.com/advisories/GHSA-4vvj-4cpr-p986",
+        "https://github.com/advisories/GHSA-38r7-794h-5758",
+        "https://github.com/advisories/GHSA-8fgc-7cc6-rx7x",
+        "https://github.com/advisories/GHSA-g84c-rxfj-3j2c"
+      ],
+      "peerConstraint": "@tarojs/webpack5-runner@4.3.1 declares webpack peer version 5.91.0 exactly.",
+      "registryFixCandidate": "webpack@5.104.1 (minimum common patched version for reviewed webpack advisories)",
+      "weappLoadEvidence": "Existing isolated require-cache check did not load the H5 entry or webpack-dev-server during TARO_PLATFORM=weapp; no dev server was started.",
+      "productArchitecture": "The confirmed web admin uses Vite; Taro H5 is not the selected product target.",
+      "latestVersionOverrideExperiment": {
+        "path": ".local/sp01-r01-webpack-override-experiment-20261101",
+        "webpack": "5.112.2",
+        "npmCiExitCode": 0,
+        "npmLsExitCode": 0,
+        "weappBuildExitCode": 1,
+        "weappBuildError": "MODULE_NOT_FOUND: webpack/lib/dependencies/EntryDependency",
+        "baseCandidateWeappBuildExitCode": 0,
+        "auditAfterOverride": {
+          "affectedPackageEntries": 47,
+          "severityEntries": { "critical": 4, "high": 13, "moderate": 30, "low": 0 },
+          "distinctAdvisoryUrls": 22
+        },
+        "decision": "Rejected; the override breaks the Taro weapp build despite succeeding at install."
+      },
+      "minimumPatchedOverrideExperiment": {
+        "path": ".local/sp01-r01-webpack-51041-experiment-20261101",
+        "webpack": "5.104.1",
+        "peerDeclaration": "5.91.0 exact; the experimental resolved version is outside the declared peer value.",
+        "npmCiExitCode": 0,
+        "npmLsExitCode": 0,
+        "sharedStrictCheckExitCode": 0,
+        "weappTypecheckAndBuildExitCode": 0,
+        "webTypecheckAndBuildExitCode": 0,
+        "entryDependencyModuleResolution": "resolved",
+        "auditAfterOverride": {
+          "affectedPackageEntries": 47,
+          "severityEntries": { "critical": 4, "high": 13, "moderate": 30, "low": 0 },
+          "distinctAdvisoryUrls": 22
+        },
+        "limits": [
+          "Synthetic preparation pages only; no product pages or real-device interaction were tested.",
+          "A successful build does not amend Taro's published exact peer declaration or establish full behavioral compatibility."
+        ],
+        "decision": "Promising isolated candidate only; not adopted into the user-approved lock pending a deliberate peer-override decision and interaction validation."
+      },
+      "normalWeappBuildLoadTrace": {
+        "path": ".local/sp01-r01-build-load-trace-20261101.jsonl",
+        "command": "taro build --type weapp",
+        "buildExitCode": 0,
+        "downloadModulesRequiredDuringCliBootstrap": ["download-git-repo", "download", "decompress"],
+        "remoteTemplateSourceProvided": false,
+        "remoteTemplateFetchPerformed": false,
+        "swiperAndH5DevServerModulesRequired": false,
+        "interpretation": "The CLI statically loads its template helper and downloader dependencies, but this existing-project weapp build did not supply a remote template source or execute the template-fetch command. The trace is scoped to this synthetic build path and is not a product-bundle or general exploitability proof."
+      },
+      "conclusion": "The 5.112.2 override is incompatible. The minimum common patched candidate 5.104.1 passes shared strict typecheck and synthetic weapp/web builds, but violates Taro's published exact webpack peer value and has no product-page or interaction validation. Keep it isolated until that compatibility boundary is explicitly accepted and tested. The synthetic weapp load trace scopes conditional tooling paths only; remaining advisories are not marked fixed."
+    }
+  ],
+  "reuseDecision": {
+    "existingImplementation": "Continue the already tested Taro 4.3.1/React 18.3.1 local candidate and its official mini component mapping; no replacement framework adopted.",
+    "scopeChanges": "No package versions, manifest, or dependency overrides changed in this review.",
+    "licenseAndMaintenance": "The reviewed Taro packages declare MIT. Swiper and the decompress fork declare MIT in npm metadata. The old decompress package is explicitly unmaintained in its advisory; the fork has published patched releases. License metadata is not a complete distribution notice.",
+    "validation": "Fresh npm audit against npmjs.org, npm package metadata checks, installed source review, and the previously recorded isolated weapp build/module graph. No exploit reproduction, remote template download, production build, or dependency update was performed."
+  },
+  "decision": {
+    "r01Status": "pending",
+    "sp01Passed": false,
+    "reason": "No compatible stable Taro 4 dependency set resolving the reviewed advisory paths has been verified; current product bundle does not yet exist for reachability review. Keep the user-adopted candidate as an isolated preparation candidate only.",
+    "nextAction": "A minimum-patched webpack@5.104.1 override now passes synthetic shared/weapp/web builds but does not match Taro's published exact 5.91.0 peer value; 5.112.2 fails the build. Keep the adopted lock unchanged. The next decision is whether to accept a narrowly scoped 5.104.1 peer override for further interaction validation or keep 5.91.0 and limit the preparation conclusion to conditional tooling paths. After real mini-program pages exist, rerun the lock audit and inspect the actual product weapp graph."
+  }
+}

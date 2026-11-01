@@ -30,9 +30,31 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(evidence.productAcceptancePassed, false);
     } else if (item.id === 'R01') {
       const candidate = require('../docs/sp01-maintenance-candidate-20261030.json');
+      const audit = require('../docs/sp01-r01-registry-audit-20261101.json');
       assert.equal(candidate.adopted, true);
       assert.equal(candidate.audit.after.total, 32);
-      assert.match(item.known, /已采用.*32条/);
+      assert.equal(audit.fullTree.affectedPackageEntries, 48);
+      assert.deepEqual(audit.fullTree.severityEntries, { critical: 4, high: 13, moderate: 31, low: 0, info: 0 });
+      assert.equal(audit.fullTree.distinctAdvisoryUrls, 25);
+      assert.equal(audit.omitDevAudit.affectedPackageEntries, 19);
+      assert.deepEqual(audit.historicalCandidateAudit.severityEntries, { critical: 4, high: 13, moderate: 15, low: 0, info: 0 });
+      assert.equal(audit.decision.r01Status, 'pending');
+      assert.equal(audit.decision.sp01Passed, false);
+      assert.equal(item.registryAuditEvidence, 'docs/sp01-r01-registry-audit-20261101.json');
+      assert.match(item.known, /48个受影响包条目/);
+      assert.match(item.known, /32条保留不覆盖/);
+      const webpack = audit.reviewedPaths.find((entry) => entry.id === 'webpack-and-h5-devserver');
+      assert.equal(webpack.peerConstraint, '@tarojs/webpack5-runner@4.3.1 declares webpack peer version 5.91.0 exactly.');
+      assert.equal(webpack.latestVersionOverrideExperiment.weappBuildExitCode, 1);
+      assert.match(webpack.latestVersionOverrideExperiment.weappBuildError, /EntryDependency/);
+      assert.equal(webpack.minimumPatchedOverrideExperiment.webpack, '5.104.1');
+      assert.equal(webpack.minimumPatchedOverrideExperiment.weappTypecheckAndBuildExitCode, 0);
+      assert.equal(webpack.minimumPatchedOverrideExperiment.webTypecheckAndBuildExitCode, 0);
+      assert.equal(webpack.minimumPatchedOverrideExperiment.decision.startsWith('Promising isolated candidate only'), true);
+      assert.equal(webpack.normalWeappBuildLoadTrace.remoteTemplateFetchPerformed, false);
+      assert.equal(webpack.normalWeappBuildLoadTrace.swiperAndH5DevServerModulesRequired, false);
+      assert.match(audit.decision.nextAction, /peer override/);
+      assert.equal(item.state, 'pending');
     } else if (item.id === 'R03') {
       const capability = require('../docs/sp01-device-capability-20261030.json');
       assert.equal(item.state, 'pending');

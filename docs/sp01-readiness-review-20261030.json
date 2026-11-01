@@ -23,7 +23,9 @@
     "docs/sp01-network-cloudflare-home-wifi-20261031.json",
     "docs/sp01-network-cloudflare-home-wifi-round2-20261031.json",
     "docs/sp01-weak-network-tool-review-20261031.md",
-    "docs/sp01-r01-residual-risk-20261031.md"
+    "docs/sp01-r01-residual-risk-20261031.md",
+    "docs/sp01-r01-registry-audit-20261101.json",
+    "docs/sp01-r01-registry-audit-20261101.md"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -43,11 +45,12 @@
     {
       "id": "R01", "kind": "technical-choice-and-risk", "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "已采用局部维护候选用于当前SP01准备；新锁审计仍有32条受影响包记录（15 moderate/13 high/4 critical），原共享工作区锁的37条仅作历史对照。已按本机源码把远程模板、Swiper原生映射、H5开发服务及必用编译链分组核对。2026-11-01隔离最小weapp样例构建成功，Webpack模块清单139项且0项名称匹配Swiper；该样例页不含真实产品页面，不能外推正式产品，也不关闭审计发现",
-      "evidence": "docs/sp01-current-toolchain-review-20261030.json",
+      "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证，尚未采用。当前稳定Taro仍为4.3.1，4.3.2-beta.2仍保留所核对的关键依赖版本。",
+      "evidence": "docs/sp01-r01-registry-audit-20261101.json",
       "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
       "residualRiskReview": "docs/sp01-r01-residual-risk-20261031.md",
-      "nextAction": "继续核对剩余适用依赖风险及普通兼容证据，明确未关闭审计项对当前准备的影响；真实产品页面建立后检查正式weapp模块图，并比较公告修复版适配或明确构建边界的证据；保留候选与历史锁对照，不把候选采用或样例构建通过写成全部风险已修复或最终版本冻结",
+      "registryAuditEvidence": "docs/sp01-r01-registry-audit-20261101.json",
+      "nextAction": "保持采用锁不变。Webpack 5.104.1在隔离合成工程通过构建，但Taro发布的peer仍精确要求5.91.0；在将该组合用于任何正式产品锁之前，需由用户确认是否接受这项窄范围peer覆盖并补小程序交互验证。否则保留5.91.0与当前条件风险记录。真实产品页面建立后重跑锁审计并检查正式weapp模块图。不得把npm audit计数或样例构建误写成产品漏洞数/风险已修复。",
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },
     {
