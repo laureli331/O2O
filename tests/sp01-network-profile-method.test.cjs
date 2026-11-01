@@ -14,6 +14,27 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /SP01 不放行/);
 });
 
+test('R04 Pakomo is recorded as a source-reviewed candidate, not a validated weak-network result', () => {
+  const source = fs.readFileSync(path.join(__dirname, '../docs/sp01-weak-network-tool-review-20261031.md'), 'utf8');
+  assert.match(source, /Pakomo v0\.3\.0/);
+  assert.match(source, /6798549060990f9bdcb7a9feedbe16259ee95d9d/);
+  assert.match(source, /GPL-3\.0/);
+  assert.match(source, /Android 10/);
+  assert.match(source, /仅微信/);
+  assert.match(source, /官方发布 APK/);
+  assert.match(source, /尚未在华为备用机实测/);
+  assert.match(source, /安装如获另行确认/);
+  assert.match(source, /本次不下载运行官方发布 APK、不构建、不安装/);
+  assert.match(source, /不授权悬浮窗/);
+
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  assert.equal(r04.state, 'pending');
+  assert.equal(readiness.sp01Passed, false);
+  assert.ok(r04.unknown.some(item => item.includes('repeatable weak-network injection and recovery method')));
+  assert.match(r04.evidence, /sp01-weak-network-tool-review-20261031\.md/);
+});
+
 test('first Cloudflare screenshot is a single round with high loss and no false CloudBase claim', () => {
   const evidence = require('../docs/sp01-network-cloudflare-home-wifi-20261031.json');
   assert.equal(evidence.scope, 'phone-to-Cloudflare, not phone-to-CloudBase');

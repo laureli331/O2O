@@ -16,8 +16,14 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /54f6377c931582ad7cb538598d089b66250328ce/);
   assert.match(text, /选定应用列表非空时调用 `addAllowedApplication`/);
   assert.match(text, /若列表为空，排除自身后将其余应用纳入 VPN/);
-  assert.match(text, /暂不安装/);
-  assert.match(text, /没有本地构建、APK 与源码对应性/);
+  assert.match(text, /\*\*结论：不采用 WeakNet。\*\*/);
+  assert.match(text, /Pakomo v0\.3\.0/);
+  assert.match(text, /6798549060990f9bdcb7a9feedbe16259ee95d9d/);
+  assert.match(text, /GPL-3\.0/);
+  assert.match(text, /minSdk=29/);
+  assert.match(text, /用户此前要求安装前再次确认/);
+  assert.match(text, /本次不下载运行官方发布 APK、不构建、不安装/);
+  assert.match(text, /该候选尚未在华为备用机实测/);
   assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);
   assert.match(text, /NETWORK_FORWARD/);
   assert.match(text, /不安装驱动或运行程序/);
@@ -35,8 +41,6 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /MIT 许可文件/);
   assert.match(text, /2022—2023 年条目/);
   assert.match(text, /没有本地构建或实机验证/);
-  assert.match(text, /回退成本及硬件适配成本目前无法估算/);
-  assert.match(text, /没有直接采用或局部适配/);
   assert.match(text, /不登录或刷写借用设备/);
   assert.match(text, /不转录密码、序列号、MAC、二维码或整张标签图/);
   assert.match(text, /R04 与 SP01 均未通过/);

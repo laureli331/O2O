@@ -24,7 +24,21 @@
 - [网络配置](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/VpnConfig.kt)内置三个 DNS 服务器。源码通过受保护的上游 socket 转发流量；[处理器](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/engine/PacketProcessor.kt)包含目标 IP/端口的调试日志。未见源码依据可证明安装包无外传或完整隐私安全，不能把静态阅读等同于安全审计。
 - [丢包实现](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/manipulation/PacketLossManipulator.kt)有随机及突发模式；TCP 出站在 `PacketProcessor` 中另行判定，DNS/ICMP 另有处理。标称丢包百分比仍需对目标微信请求实测，不能从源码推断实际业务失败率。[限速实现](https://raw.githubusercontent.com/baithinking134/WeakNet/54f6377c931582ad7cb538598d089b66250328ce/app/src/main/java/com/awu/weaknet/vpn/manipulation/ThrottleManipulator.kt)为按会话令牌调度，未证实多连接总速率达到设定值。
 
-**结论：暂不安装。** 它比只读采样页更接近所需真机注入，但权限与流量接管范围较大，且目前只有静态源码核查；没有本地构建、APK 与源码对应性、华为真机运行或微信 CloudBase 对照证据。若继续，应先在独立候选目录从固定提交构建并核对权限，提出仅备用机、仅微信、短时、可停用的具体方案供用户确认；不得直接下载并运行未经核对的预编译 APK。若本地构建不可行，再比较外部网络设备方案，不能假装已通过 R04。
+**结论：不采用 WeakNet。** 这份核查只覆盖固定提交源码，未构建、未安装；其应用筛选回退、悬浮窗权限和实现成熟度不适合当前小范围验证。后续另行核对的 Pakomo 候选见下节，不改变本节判断。
+
+## Android 真机候选源码核查：Pakomo v0.3.0（2026-11-01，仅静态）
+
+候选为 [AlfWorks/Pakomo v0.3.0](https://github.com/AlfWorks/Pakomo/releases/tag/v0.3.0)，源码固定到提交 `6798549060990f9bdcb7a9feedbe16259ee95d9d`。仓库提供 GPL-3.0 许可证；这是独立测试工具候选，不纳入湘邻湘友产品或其依赖。发布页显示版本于 2026-09-11 发布。该项目规模和独立审查证据有限，不能按“成熟、已安全审计”处理。
+
+| 复用核查 | 查证结果 | 对本项目的边界 |
+| --- | --- | --- |
+| 项目内已有工具 | `sp01-network-probe` 可测应用层往返；没有微信真机弱网注入能力 | 保留现有采样页；不重复实现整形器 |
+| Android 官方能力 | [Android VPN 指南](https://developer.android.com/develop/connectivity/vpn)说明首次激活要由用户在系统弹窗确认，状态栏会显示 VPN 标记；[VpnService API](https://developer.android.com/reference/android/net/VpnService)说明同一时刻系统只有一个活动 VPN | 开始前确认备用机没有必须保留的其他 VPN；仅用户确认系统弹窗后短时启用，结束时停止并核验网络恢复 |
+| Pakomo 源码能力 | [固定提交的能力矩阵](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/docs/01-capabilities/capability-matrix.md)列出按应用筛选、延迟/抖动、丢包、限速和断网类场景；[VPN 服务源码](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/src/main/java/com/alphynia/pakomo/vpn/WeakNetworkVpnService.kt)按所选应用建立允许列表 | 源码声明的能力不是这台 SEA-AL10 上的实测。若试用，只选择微信；先证明其他应用流量不受影响，并验证微信到同一只读 CloudBase 端点的请求确实被影响 |
+| 许可、更新与接入 | [许可证](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/LICENSE)为 GPL-3.0；[构建配置](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/build.gradle.kts)声明 `minSdk=29`，与用户华为备用机 Android 10 的版本下限相符；[更新控制器](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/src/main/java/com/alphynia/pakomo/update/NoviUpdateController.kt)在更新源或信任锚为空时禁用自更新；[发布流水线](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/.gitlab-ci.yml)会为正式标签构建注入更新源 | `minSdk` 只证明声明的最低系统版本，不证明华为兼容。不能直接安装来源不匹配或更新源未核实的官方发布 APK。若用户同意继续，先在隔离目录检查构建脚本和依赖，再讨论本地构建；只有最终 APK 的包标识、签名、权限、更新源为空等均经实证核对后，才另行确认是否安装 |
+| 权限与隐私 | [Manifest](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/src/main/AndroidManifest.xml)声明 VPN/网络、前台服务、通知、`QUERY_ALL_PACKAGES` 和 `SYSTEM_ALERT_WINDOW`；后两项分别涉及应用列表与悬浮窗。能力矩阵还描述本地连接元数据记录 | 不授予悬浮窗权限；仅测试包若需要的系统 VPN 同意和应用选择。实际采集、日志保存与联网情况尚未在 APK/设备实测，静态审查不能证明不存在额外行为 |
+
+**本阶段决策：Pakomo 是值得进入构建审查的候选，不是已批准安装的工具，也不是 R04 通过证据。** 用户此前要求安装前再次确认；本次不下载运行官方发布 APK、不构建、不安装，不触发 VPN，也不调用 CloudBase。由于源码审查不足以验证构建产物和运行行为，下一步应先对固定提交的构建脚本、包装器与依赖进行只读复核，再决定是否准备一个关闭自更新的本地 APK。若出现构建执行或安装，必须先展示具体范围和产物证据。安装如获另行确认，仅用用户自己的华为备用机 SEA-AL10 Android 10，系统 VPN 弹窗由用户确认，只选微信，不授权悬浮窗；回退为停止 VPN、确认图标消失和原网络恢复，再卸载候选应用。该候选尚未在华为备用机实测。
 
 ## 外部网络路径核对（2026-10-31，只读）
 
@@ -34,7 +48,7 @@
 | Windows clumsy + WinDivert | [clumsy 源码](https://raw.githubusercontent.com/jagt/clumsy/master/src/divert.c)调用 `WinDivertOpen(..., WINDIVERT_LAYER_NETWORK, ...)`；[WinDivert 文档](https://github.com/basil00/WinDivert/wiki/WinDivert-Documentation)区分 NETWORK（电脑本机收发）与 NETWORK_FORWARD（经过电脑转发） | 现成 clumsy 不能凭 README 的“全系统”描述视为能影响热点下的手机流量；本方案暂不采用，也不安装驱动或运行程序 |
 | OpenWrt 路由器 netem | [OpenWrt 文档](https://openwrt.org/docs/guide-user/network/traffic-shaping/sch_netem)提供延迟和丢包队列示例，可在实际转发设备上配置 | 尚不知道用户路由器型号、固件与可用权限；不能假定支持，且改家用主路由有影响全家网络的风险。需先只读核对设备，再决定是否存在隔离测试路径 |
 
-目前没有经验证且低影响的外部注入方案。下一步只读确认家庭路由器型号/固件，或确认是否已有独立备用路由器；在此之前不修改家庭网络。任何候选须先证明手机确实走对应转发路径，记录原设置，并用既有只读 CloudBase 探针做注入前后对照及停用恢复；仅软件可配置不构成 R04 通过。
+目前没有经手机验证的注入方案。Pakomo 的源码候选可独立于借来的路由器继续评估；ZN-M2 仍保持不可用状态，不因出现该候选而修改家庭网络或联系/登录借用设备。任何候选须先证明只作用于选定微信、确实影响小程序到 CloudBase 的请求，并验证停用后的恢复；仅源码说明或本地构建成功不构成 R04 通过。
 
 ### 借用设备核对
 
@@ -46,13 +60,13 @@
 | [osGex0o0II/ZN-M2-LiBwrt-Builder](https://github.com/osGex0o0II/ZN-M2-LiBwrt-Builder) | 仓库提供 MIT 许可文件；最近提交时间未核实 | README 将 256MB 原厂版本作为有线路由配置，禁用 Wi-Fi/USB 相关能力；不是隔离 Wi-Fi 弱网测试的直接适配；没有本地构建或实机验证 |
 | [caosir1990/ZN-M2-OPENWRT-WIFI](https://github.com/caosir1990/ZN-M2-OPENWRT-WIFI) | 仓库提供 MIT 许可文件；README 记录的无线分支变更包含 2022—2023 年条目，当前分支维护状态未核实 | README 自述无线可用，但未证明兼容借来设备的硬件修订、当前固件或 `sch_netem`；没有本地构建或实机验证 |
 
-以上仓库都是固件构建项目，不是可直接安装、可单独关闭的整形工具。采用任一方案都涉及固件构建和设备配置，回退成本及硬件适配成本目前无法估算；借用设备的固件、硬件修订和所有者许可也未知。因此没有直接采用或局部适配，不能把 GitHub 上的构建产物当成已验证候选。现阶段**不借此认定 R04 可执行，不登录或刷写借用设备**。下一步由设备所有者只读确认当前固件名称/版本、管理权限及是否允许在隔离网络内临时配置；只需文字，不提交凭据。
+以上仓库都是固件构建项目，不是可直接安装、可单独关闭的整形工具。借用设备的固件、硬件修订和所有者许可仍未知，因此不登录或刷写借用设备，也不修改家庭网络；但本项目无需等待该设备，先评估上面的手机本地候选。
 
 ## 最小验证顺序（待入口确认）
 
 1. iPhone XR 入口核查已完成：当前未出现；苹果方法暂不采用。若未来已有可用 Mac/开发设备，再重新核对，不把升级 iOS 当解除条件。
-2. 下一候选须在 Android 真机或外部网络设备上验证；先核对许可、维护、隐私与兼容性，再测试是否确实影响微信小程序到 CloudBase 的请求。没有真实请求对照前不得冻结弱网参数。
-3. 若方法成立，先记录原状态与恢复步骤，再提出一组具体限速、延迟、丢包、中断和恢复参数供用户确认；使用当前只读身份函数做基线与注入后对照，核对同一 AppID/环境、请求数、失败与耗时。
+2. Pakomo 已完成固定提交的静态源码、许可证、Android最低版本、权限和更新源核对；仍需只读复核 Gradle 构建入口/包装器/依赖，再做可重复构建与 APK 离线检查。未经用户确认，不安装或启用 VPN。
+3. 若构建产物检查通过且用户另行确认安装，再用华为备用机验证仅微信进入 VPN、其他应用不受影响、停用后恢复。之后须先确定工具实际支持的场景与取值，再用用户单独授权的当前只读 CloudBase 端点作正常/受限/中断/恢复对照；不复用已耗尽的30次采样授权。
 4. 正式业务出现后仍按 QP07 各场景独立验证。Android 方法不自动覆盖 iPhone。
 
 此文件只记录候选与验证步骤；当前没有改任何手机、云端或项目网络配置，R04 与 SP01 均未通过。回退只需撤销本文件对应提交。
