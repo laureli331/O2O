@@ -108,9 +108,60 @@
           "installerAvailability": "official dashboard Downloads page; public installation guide has no direct installer link",
           "userAuthenticationRequiredForDownloads": true,
           "installerObtained": false,
-          "userActionRequired": "user downloads the official installer using their own account; do not share credentials"
+          "userActionRequired": "none; user reports having no GameBench account, and no registration or account creation is requested"
         },
-        "localTrialProgress": "user authorized local installation and one short wired feasibility calibration; not started because the official installer is only exposed after dashboard sign-in",
+        "userAccountStatus": "User reports no GameBench account; no account registration requested",
+        "noAccountCandidateReview": {
+          "checkedAt": "2026-11-01",
+          "decision": "No reviewed candidate currently meets QP05 evidence requirements. Do not install or run the unsigned KeyMob executable. Keep the iPhone frame-sampling gap open.",
+          "keymob": {
+            "sources": [
+              "https://keymob.com/download/",
+              "https://keymob.com/guides/faq/",
+              "https://www.keymob.com/guides/performance-monitoring/",
+              "https://keymob.com/guides/fps-and-jank/",
+              "https://keymob.com/privacy/",
+              "https://www.keymob.com/download.html"
+            ],
+            "accountAndCost": "Current download and FAQ say no account/login; charts are trial-limited to 1 minute per app launch and full chart/history access requires VIP. A legacy download page still describes a registered-account 7-day trial, so vendor pages conflict.",
+            "measurementScope": "Vendor says a mini-program can be selected as its own process and defines its counter as frames presented per second; it also says it cannot debug WebView contents. No public evidence documents raw per-frame timestamps, input trajectories, or QP05 long-frame attribution/export.",
+            "privacy": "Current policy says viewed device metrics/logs/files are displayed locally, while the app reports device model, OS, device identifier and usage/error diagnostics. No account is required for the free path.",
+            "windowsInstall": "Windows 10/11 x64; vendor may require a separate Apple device driver; Windows 11 includes WebView2 per vendor docs.",
+            "packageStaticInspection": {
+              "downloadedFromOfficialLink": true,
+              "redirectedHost": "downloadfiles.kxdang.com",
+              "archiveBytes": 21438202,
+              "archiveSha256": "45123DC80E440BBC892F150FA165CAC94CD0DB5089C49A3B6A84F1FF25E04985",
+              "entryCount": 1,
+              "executableBytes": 51908608,
+              "executableSha256": "44CDC3687DF373BF2F20CC5ED3DD44DE2E34D6D8B0426CF15A1BB2AE20B8BBF0",
+              "authenticodeStatus": "NotSigned",
+              "publisherAndVersionMetadata": "not present",
+              "executed": false,
+              "localArchivePath": "E:/O2O/.codex-tmp/keymob-static-review-20261101/keymob-win-x86_64.zip"
+            },
+            "qp05Evidence": false
+          },
+          "lazyios": {
+            "source": "https://github.com/Manuel-1312/lazyios",
+            "license": "GPL-3.0-or-later",
+            "latestReviewedCommit": "cfc49978da814c8b16d934af73a0b57100f43932",
+            "latestReviewedCommitDate": "2026-10-26",
+            "sourceFinding": "Windows-capable CLI uses pymobiledevice3 Graphics.fps(); the pinned-compatible upstream Graphics API yields whole-display Core Animation FPS about once per second, not per-frame timestamps. It requires the iPhone to trust the computer and Developer Mode to be enabled.",
+            "qp05Evidence": false,
+            "installed": false
+          },
+          "mobileProfiler": {
+            "source": "https://github.com/lemon08x/mobile-profiler",
+            "license": "not declared in GitHub repository metadata",
+            "latestReviewedCommit": "71813b98a0f6b82d66a39eaba43717d73d89adc2",
+            "latestReviewedCommitDate": "2026-07-24",
+            "sourceFinding": "Large cross-platform profiler with an optional pymobiledevice3 iOS sidecar; inspected iOS collector uses DVT Graphics samples and about-one-second performance sampling. No evidence of per-frame input-aligned trace for this mini-program.",
+            "qp05Evidence": false,
+            "adopted": false
+          }
+        },
+        "localTrialProgress": "No GameBench account is available and no registration was requested. The KeyMob archive was downloaded from its official download link for static inspection only; its executable is unsigned and has not been run or installed. No accountless candidate currently satisfies QP05.",
         "sources": [
           "https://docs.gamebench.net/docs/studio-pro-desktop/requirements/",
           "https://docs.gamebench.net/docs/studio-pro-desktop/relnotes/v1-30-0/",
@@ -128,7 +179,7 @@
         "acceptanceEvidence": false
       },
       "developerModeExplanation": "Apple documents that Developer Mode appears in Settings only after device pairing is initiated or the device was previously paired with a Mac",
-      "nextAction": "Keep R03 pending and do not repeat the same manual host trace: gesture boundaries and an independent WebView frame stream are still unavailable, so host records cannot establish scroll FPS. The OPPO PLJ110 has run revision device-capability-v2-20261101-r1; route/navigation reports duration undefined. This confirms field shape but does not explain the platform cause or create FPS evidence. No further OPPO field retest is needed. The user reports iPhone XR updated to iOS 18.7.11 but Developer Mode remains unavailable and currently has no Mac. Apple documents Developer Mode appears after pairing is initiated or the device was previously paired with a Mac; Instruments is unavailable with current equipment. Do not use external-camera capture; keep the iPhone frame-sampling gap open until a suitable frame-by-frame tool is available. GameBench Pro Desktop remains candidate-not-validated: official documents conflict on Windows profiling for iOS 17, do not document per-frame export format, and do not establish iPhone XR/iOS 18.7.11 support or WeChat mini-program WebView attribution. The user authorized local installation and one short wired calibration, but the installer has not been obtained. The official installation guide has no direct installer link, and dashboard documentation places downloads under the signed-in account Downloads page. Ask the user to download the official installer using their own account and provide its local path; never request credentials or register on their behalf. After receipt, verify publisher/signature and SHA256 before installation. If installation is possible without privilege elevation or paid dependencies, first disable screenshots and auto-sync, do not click Cloud/upload, and attempt only the authorized short wired calibration. Stop if account signup, payment, privilege elevation, Apple support software installation, or session upload is required; obtain separate authorization for any such step. Continue resolving the minimum supported library and device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists."
+        "nextAction": "Keep R03 pending and do not repeat the same manual host trace: gesture boundaries and an independent WebView frame stream are still unavailable, so host records cannot establish scroll FPS. The OPPO PLJ110 has run revision device-capability-v2-20261101-r1; route/navigation reports duration undefined. This confirms field shape but does not explain the platform cause or create FPS evidence. No further OPPO field retest is needed. The user reports iPhone XR updated to iOS 18.7.11 but Developer Mode remains unavailable and currently has no Mac. Do not use external-camera capture. GameBench requires signed-in dashboard access to its installer, and the user reports having no account; do not ask them to register or download it. The accountless KeyMob candidate was checked: current vendor pages offer no-login use but limit charts to one minute per launch, do not document the QP05 raw evidence, and its downloaded EXE is unsigned; it was not run. The open-source lazyios source only exposes whole-display Core Animation FPS about once per second, and mobile-profiler's inspected iOS collector likewise samples DVT graphics at about one-second cadence; neither provides per-frame/input-aligned evidence. Keep the iPhone gap open and do not install these candidates. Continue resolving the minimum supported library and device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists."
     },
     {
       "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",

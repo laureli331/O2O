@@ -92,9 +92,60 @@ test('SP01 current review covers the exact contract criteria without silently re
           installerAvailability: 'official dashboard Downloads page; public installation guide has no direct installer link',
           userAuthenticationRequiredForDownloads: true,
           installerObtained: false,
-          userActionRequired: 'user downloads the official installer using their own account; do not share credentials',
+          userActionRequired: 'none; user reports having no GameBench account, and no registration or account creation is requested',
         },
-        localTrialProgress: 'user authorized local installation and one short wired feasibility calibration; not started because the official installer is only exposed after dashboard sign-in',
+        userAccountStatus: 'User reports no GameBench account; no account registration requested',
+        noAccountCandidateReview: {
+          checkedAt: '2026-11-01',
+          decision: 'No reviewed candidate currently meets QP05 evidence requirements. Do not install or run the unsigned KeyMob executable. Keep the iPhone frame-sampling gap open.',
+          keymob: {
+            sources: [
+              'https://keymob.com/download/',
+              'https://keymob.com/guides/faq/',
+              'https://www.keymob.com/guides/performance-monitoring/',
+              'https://keymob.com/guides/fps-and-jank/',
+              'https://keymob.com/privacy/',
+              'https://www.keymob.com/download.html',
+            ],
+            accountAndCost: 'Current download and FAQ say no account/login; charts are trial-limited to 1 minute per app launch and full chart/history access requires VIP. A legacy download page still describes a registered-account 7-day trial, so vendor pages conflict.',
+            measurementScope: 'Vendor says a mini-program can be selected as its own process and defines its counter as frames presented per second; it also says it cannot debug WebView contents. No public evidence documents raw per-frame timestamps, input trajectories, or QP05 long-frame attribution/export.',
+            privacy: 'Current policy says viewed device metrics/logs/files are displayed locally, while the app reports device model, OS, device identifier and usage/error diagnostics. No account is required for the free path.',
+            windowsInstall: 'Windows 10/11 x64; vendor may require a separate Apple device driver; Windows 11 includes WebView2 per vendor docs.',
+            packageStaticInspection: {
+              downloadedFromOfficialLink: true,
+              redirectedHost: 'downloadfiles.kxdang.com',
+              archiveBytes: 21438202,
+              archiveSha256: '45123DC80E440BBC892F150FA165CAC94CD0DB5089C49A3B6A84F1FF25E04985',
+              entryCount: 1,
+              executableBytes: 51908608,
+              executableSha256: '44CDC3687DF373BF2F20CC5ED3DD44DE2E34D6D8B0426CF15A1BB2AE20B8BBF0',
+              authenticodeStatus: 'NotSigned',
+              publisherAndVersionMetadata: 'not present',
+              executed: false,
+              localArchivePath: 'E:/O2O/.codex-tmp/keymob-static-review-20261101/keymob-win-x86_64.zip',
+            },
+            qp05Evidence: false,
+          },
+          lazyios: {
+            source: 'https://github.com/Manuel-1312/lazyios',
+            license: 'GPL-3.0-or-later',
+            latestReviewedCommit: 'cfc49978da814c8b16d934af73a0b57100f43932',
+            latestReviewedCommitDate: '2026-10-26',
+            sourceFinding: 'Windows-capable CLI uses pymobiledevice3 Graphics.fps(); the pinned-compatible upstream Graphics API yields whole-display Core Animation FPS about once per second, not per-frame timestamps. It requires the iPhone to trust the computer and Developer Mode to be enabled.',
+            qp05Evidence: false,
+            installed: false,
+          },
+          mobileProfiler: {
+            source: 'https://github.com/lemon08x/mobile-profiler',
+            license: 'not declared in GitHub repository metadata',
+            latestReviewedCommit: '71813b98a0f6b82d66a39eaba43717d73d89adc2',
+            latestReviewedCommitDate: '2026-07-24',
+            sourceFinding: 'Large cross-platform profiler with an optional pymobiledevice3 iOS sidecar; inspected iOS collector uses DVT Graphics samples and about-one-second performance sampling. No evidence of per-frame input-aligned trace for this mini-program.',
+            qp05Evidence: false,
+            adopted: false,
+          },
+        },
+        localTrialProgress: 'No GameBench account is available and no registration was requested. The KeyMob archive was downloaded from its official download link for static inspection only; its executable is unsigned and has not been run or installed. No accountless candidate currently satisfies QP05.',
         sources: [
           'https://docs.gamebench.net/docs/studio-pro-desktop/requirements/',
           'https://docs.gamebench.net/docs/studio-pro-desktop/relnotes/v1-30-0/',
@@ -111,16 +162,20 @@ test('SP01 current review covers the exact contract criteria without silently re
         cloudUploadAuthorized: false,
         acceptanceEvidence: false,
       });
-      assert.match(item.nextAction, /GameBench Pro Desktop.*candidate-not-validated/s);
-      assert.match(item.nextAction, /download the official installer.*using their own account/s);
-      assert.match(item.nextAction, /never request credentials or register on their behalf/);
-      assert.match(item.nextAction, /Stop if .*Apple support software installation.*session upload is required/);
-      assert.match(item.nextAction, /Do not use external-camera capture; keep the iPhone frame-sampling gap open until a suitable frame-by-frame tool is available/);
+      assert.match(item.nextAction, /GameBench requires signed-in dashboard access.*user reports having no account/s);
+      assert.match(item.nextAction, /user reports having no account.*do not ask them to register or download it/s);
+      assert.match(item.nextAction, /KeyMob candidate was checked.*EXE is unsigned/s);
+      assert.match(item.nextAction, /lazyios.*mobile-profiler.*neither provides per-frame\/input-aligned evidence/s);
+      assert.match(item.nextAction, /do not install these candidates/);
+      assert.match(item.nextAction, /Do not use external-camera capture/);
+      assert.match(item.nextAction, /Keep the iPhone gap open/);
       assert.match(readinessMarkdown, /用户明确拒绝外拍\/光学测量方案，决定保留 iPhone 逐帧证据缺口/);
-      assert.match(readinessMarkdown, /GameBench Pro Desktop 是尚未安装或验证的候选工具/s);
-      assert.match(readinessMarkdown, /官方公开安装指南说明.*未给出安装包直链.*Dashboard 文档说明.*Downloads/s);
-      assert.match(readinessMarkdown, /用户已授权本地试装及一次短时有线校准，但尚未取得安装包/s);
-      assert.match(readinessMarkdown, /macOS 13.*Xcode.*Windows.*资料冲突/s);
+      assert.match(readinessMarkdown, /GameBench Pro Desktop 经官方资料初筛后仅作为候选工具，尚未安装或验证/s);
+      assert.match(readinessMarkdown, /用户明确表示没有 GameBench 账号，不要求用户注册或另建账号/s);
+      assert.match(readinessMarkdown, /无账号候选复核/);
+      assert.match(readinessMarkdown, /Windows ZIP 仅作静态检查.*未签名且无发布者\/版本元数据/s);
+      assert.match(readinessMarkdown, /目前没有已验证的无账号候选满足验收合同/s);
+      assert.match(readinessMarkdown, /Windows\/iOS 兼容性有资料冲突.*macOS 13.*Xcode/s);
       assert.match(item.developerModeExplanation, /pairing is initiated or the device was previously paired with a Mac/);
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
       assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);
