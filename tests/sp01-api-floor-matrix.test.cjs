@@ -17,6 +17,10 @@ test('API floor matrix pins its official evidence source and reuse decision', ()
   assert.equal(matrix.sourceAudit.taroComponentDeclarationEvidence.packageVersion, '4.3.1');
   assert.equal(matrix.sourceAudit.taroComponentDeclarationEvidence.license, 'MIT');
   assert.match(matrix.sourceAudit.taroComponentDeclarationEvidence.role, /No package, runtime dependency/);
+  assert.equal(matrix.sourceAudit.taroCloudAdapterEvidence.tagCommit, '18ea23fc9031f5868a3f07bf895b9da6488b590e');
+  assert.equal(matrix.sourceAudit.taroCloudAdapterEvidence.license, 'MIT');
+  assert.match(matrix.sourceAudit.taroCloudAdapterEvidence.findings.join(' '), /taro\.cloud = wx\.cloud/);
+  assert.match(matrix.sourceAudit.taroCloudAdapterEvidence.reuseAssessment, /No additional package/);
   assert.match(matrix.sourceAudit.reuseDecision, /no third-party implementation|不|no runtime dependency/i);
   assert.equal(matrix.projectConstraints.sp07Started, false);
 });
@@ -70,20 +74,30 @@ test('known API minima remain scoped to the exact API or flow', () => {
   assert.ok(byId['CLOUD-FILE-UPLOAD'].sourceUrls.some((url) => url.endsWith('/wx.uploadFile.md')));
 });
 
-test('CloudBase namespace minimum is conditional on choosing the direct wx.cloud route', () => {
+test('Taro 4.3.1 CloudBase APIs reuse the direct wx.cloud namespace conditionally', () => {
   const byId = Object.fromEntries(matrix.apiRequirements.map((row) => [row.id, row]));
   const callFunction = byId['CLOUD-FUNCTION-CALL'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.cloud.callFunction');
+  const taroCallFunction = byId['CLOUD-FUNCTION-CALL'].candidateMinimums.find((candidate) => candidate.candidate === 'Taro.cloud.callFunction on weapp');
   const cloudUpload = byId['CLOUD-FILE-UPLOAD'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.cloud.uploadFile');
+  const taroCloudUpload = byId['CLOUD-FILE-UPLOAD'].candidateMinimums.find((candidate) => candidate.candidate === 'Taro.cloud.uploadFile on weapp');
   const directUpload = byId['CLOUD-FILE-UPLOAD'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.uploadFile');
 
   assert.equal(callFunction.minimumBaseLibrary, '2.2.3');
+  assert.equal(taroCallFunction.minimumBaseLibrary, '2.2.3');
   assert.equal(cloudUpload.minimumBaseLibrary, '2.2.3');
+  assert.equal(taroCloudUpload.minimumBaseLibrary, '2.2.3');
   assert.equal(directUpload.minimumBaseLibrary, null);
   assert.equal(byId['CLOUD-FUNCTION-CALL'].minimumBaseLibrary, null);
   assert.equal(byId['CLOUD-FILE-UPLOAD'].minimumBaseLibrary, null);
   assert.match(callFunction.sourceUrl, /docs\.cloudbase\.net\/recipes\/add-cloud-function-wechat-miniprogram/);
   assert.match(callFunction.sourceUrl, /\.md$/);
+  assert.match(taroCallFunction.sourceUrl, /NervJS\/taro\/blob\/v4\.3\.1\/packages\/taro-platform-weapp\/src\/apis\.ts$/);
+  assert.match(taroCloudUpload.sourceUrl, /NervJS\/taro\/blob\/v4\.3\.1\/packages\/taro\/types\/api\/cloud\/index\.d\.ts$/);
+  assert.match(taroCloudUpload.basis, /maps Taro\.cloud directly to wx\.cloud/);
+  assert.match(byId['CLOUD-FILE-UPLOAD'].candidate, /preferred existing adapter candidate/);
+  assert.match(byId['CLOUD-FILE-UPLOAD'].versionEvidence, /Taro\.uploadFile\/wx\.uploadFile is a separate developer-server HTTP upload path/);
   assert.match(markdown, /CloudBase 官方小程序云函数接入教程（Markdown）/);
+  assert.match(markdown, /Taro 4\.3\.1 微信平台适配源码/);
   assert.match(markdown, /wx\.login` API 文档（Markdown）/);
   assert.match(markdown, /wx\.uploadFile` API 文档（Markdown）/);
 });
@@ -115,9 +129,10 @@ test('readiness index references the matrix and keeps R03 and SP01 pending', () 
   assert.equal(item.state, 'pending');
   assert.equal(item.apiFloorMatrix.evidence, 'docs/sp01-api-floor-matrix-20261101.json');
   assert.equal(item.apiFloorMatrix.knownConditionalLowerBound, '2.32.3');
-  assert.equal(item.apiFloorMatrix.status, 'selected-privacy-route-minimum-known-global-floor-pending-upload-route-and-product-validation');
+  assert.equal(item.apiFloorMatrix.status, 'selected-privacy-route-and-taro-cloud-route-minima-known-global-floor-pending-login-storage-design-and-product-validation');
   assert.equal(item.apiFloorMatrix.globalMinimumSupportedBaseLibrary, null);
   assert.match(item.nextAction, /official privacy guide/);
+  assert.match(item.nextAction, /Taro CloudBase call\/upload candidate is now source-confirmed/);
   assert.equal(readiness.sp01Passed, false);
   assert.equal(readiness.sp07Started, false);
   assert.match(markdown, /微信 API 最低版本证据矩阵/);

@@ -75,6 +75,21 @@
       "sourceFile": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-components/types/Button.d.ts",
       "role": "Read the already selected framework's exact component type declaration to check the privacy-plus-phone button syntax and stated minimum. No package, runtime dependency, or implementation was added or adopted."
     },
+    "taroCloudAdapterEvidence": {
+      "repository": "https://github.com/NervJS/taro",
+      "tag": "v4.3.1",
+      "tagCommit": "18ea23fc9031f5868a3f07bf895b9da6488b590e",
+      "license": "MIT",
+      "apiTypeSource": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro/types/api/cloud/index.d.ts",
+      "weappAdapterSource": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-platform-weapp/src/apis.ts",
+      "findings": [
+        "Taro.cloud.uploadFile and Taro.cloud.callFunction are documented in Taro's cloud API types as supported on weapp.",
+        "The v4.3.1 WeChat platform adapter assigns taro.cloud = wx.cloud, so this candidate delegates to the existing CloudBase mini-program API without a separate upload SDK."
+      ],
+      "conditionalFloor": "2.2.3",
+      "conditionalFloorBasis": "The CloudBase tutorial's wx.cloud minimum applies to this source-confirmed direct mapping when this Taro route is used; it is not a global app minimum.",
+      "reuseAssessment": "Reuse the already selected Taro 4.3.1 adapter and CloudBase client. No additional package, copied code, or new server endpoint is introduced. The source tag is fixed and MIT-licensed; static declaration and implementation inspection verified the mapping. This does not validate product authorization, storage rules, upload behavior, or a complete device path."
+    },
     "officialCloudBaseTutorialEvidence": {
       "url": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
       "claim": "The tutorial lists mini-program base library >= 2.2.3 as the minimum for wx.cloud and shows wx.cloud.init plus wx.cloud.callFunction.",
@@ -189,28 +204,42 @@
           "basis": "Official CloudBase WeChat mini-program tutorial lists 2.2.3 as the minimum for wx.cloud."
         },
         {
+          "candidate": "Taro.cloud.callFunction on weapp",
+          "minimumBaseLibrary": "2.2.3",
+          "sourceUrl": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-platform-weapp/src/apis.ts",
+          "basis": "Taro 4.3.1 marks the API supported on weapp and maps taro.cloud directly to wx.cloud; the conditional 2.2.3 floor comes from the CloudBase tutorial."
+        },
+        {
           "candidate": "other CloudBase client adapter",
           "minimumBaseLibrary": null,
           "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts",
           "basis": "No version floor established for an alternative adapter by the reviewed sources."
         }
       ],
-      "versionEvidence": "The official CloudBase tutorial gives the direct wx.cloud namespace a 2.2.3 minimum. This is conditional on choosing that path; the product call adapter and framework path are not implemented yet, so the row-level minimum remains unset.",
+      "versionEvidence": "The official CloudBase tutorial gives wx.cloud a 2.2.3 minimum. Taro 4.3.1's weapp adapter directly maps Taro.cloud to wx.cloud and its types mark callFunction as supported on weapp, so the same conditional floor applies to that Taro route. The product adapter is not implemented and this route is not frozen, so the row-level minimum remains unset.",
       "status": "required-capability-api-path-unselected",
       "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram.md",
       "sourceUrls": [
         "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram.md",
-        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts",
+        "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro/types/api/cloud/index.d.ts",
+        "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-platform-weapp/src/apis.ts"
       ]
     },
     {
       "id": "CLOUD-FILE-UPLOAD",
       "requirement": "Image evidence must be uploaded and then governed by the confirmed per-request server authorization and independent-public-copy design.",
-      "candidate": "wx.cloud.uploadFile, wx.uploadFile, or a server-mediated upload adapter; exact route is not selected.",
+      "candidate": "Taro.cloud.uploadFile on weapp (preferred existing adapter candidate), wx.cloud.uploadFile, wx.uploadFile, or a server-mediated upload adapter; exact product route is not selected.",
       "requiredForFirstRelease": true,
       "implementationLocked": false,
       "minimumBaseLibrary": null,
       "candidateMinimums": [
+        {
+          "candidate": "Taro.cloud.uploadFile on weapp",
+          "minimumBaseLibrary": "2.2.3",
+          "sourceUrl": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro/types/api/cloud/index.d.ts",
+          "basis": "Taro 4.3.1 marks uploadFile supported on weapp and its WeChat adapter maps Taro.cloud directly to wx.cloud; the conditional 2.2.3 floor comes from the CloudBase tutorial."
+        },
         {
           "candidate": "wx.cloud.uploadFile",
           "minimumBaseLibrary": "2.2.3",
@@ -230,12 +259,15 @@
           "basis": "Exact route and corresponding official version evidence have not been selected."
         }
       ],
-      "versionEvidence": "The direct wx.cloud.uploadFile candidate inherits the conditional wx.cloud minimum of 2.2.3. The official wx.uploadFile page gives no general mini-program API minimum; its 1.9.6 note is plugin-only. The product upload route is not selected, so the row-level minimum remains unset.",
+      "versionEvidence": "Taro 4.3.1 exposes cloud.uploadFile on weapp and maps Taro.cloud directly to wx.cloud, so it reuses the conditional CloudBase namespace floor of 2.2.3. Taro.uploadFile/wx.uploadFile is a separate developer-server HTTP upload path; the official wx.uploadFile page gives no general mini-program API minimum and its 1.9.6 note is plugin-only. The product route remains unfrozen pending the required storage authorization design and product validation, so the row-level minimum remains unset.",
       "status": "required-capability-upload-route-unselected",
       "sourceUrls": [
         "https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/wx.uploadFile.md",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
-        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts",
+        "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro/types/api/cloud/index.d.ts",
+        "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-platform-weapp/src/apis.ts",
+        "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro/types/api/network/upload.d.ts"
       ]
     },
     {
@@ -267,7 +299,7 @@
     "globalMinimumSupportedBaseLibrary": null,
     "devicePolicyFrozen": false,
     "reasonNotFrozen": [
-      "The direct wx.cloud call and upload candidates have a documented 2.2.3 namespace minimum, but the product upload route is not selected and alternative upload/adapter paths have no verified floor in the reviewed sources.",
+      "The selected Taro 4.3.1 weapp adapter directly delegates Taro.cloud calls to wx.cloud, so call/upload candidates have a conditional 2.2.3 namespace floor; the product storage route remains unfrozen pending authorization design and product validation.",
       "wx.login has no general minimum annotation in the reviewed type source.",
       "The secure phone-code minimum is directly stated by the official phone-number guide, but the login and upload API pages do not state general mini-program floors and the product upload route remains unselected.",
       "No completed formal product package exists for verifying the Taro 4.3.1 runtime path and capability behavior on the proposed floor.",
