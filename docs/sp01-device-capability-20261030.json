@@ -16,6 +16,7 @@
   },
   "sources": {
     "officialTypingsRepository": "https://github.com/wechat-miniprogram/api-typings",
+    "officialPerformanceTypingsSource": "https://github.com/wechat-miniprogram/api-typings/blob/master/types/wx/lib.wx.api.d.ts",
     "officialPerformanceApi": "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/wx.getPerformance.html",
     "officialPerformanceEntry": "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/PerformanceEntry.html",
     "officialPageReference": "https://developers.weixin.qq.com/miniprogram/dev/reference/api/Page.html",
@@ -607,7 +608,7 @@
         "A local seven-second atrace retained input, AppBrand doFrame and SurfaceFlinger vsync markers without buffer loss but no separately attributable WebView presented frames.",
         "The Android 17 OPPO FrameTimeline exposed an AppBrand host layer and frame records, but no separately verified WebView layer or contract-compliant 60Hz product scroll segment."
       ],
-        "nextStep": "Keep R03 pending and do not repeat the same manual host trace: the user-reported approximate five-second scroll occurred during a 20-second FrameTimeline-only capture, but exact gesture boundaries were not timestamped and no separate WebView presented-frame stream was found. Continue resolving the remaining SP01 preparation facts: iPhone frame-sampling path, minimum supported library, probe revision provenance and missing route duration. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists.",
+        "nextStep": "Keep R03 pending and do not repeat the same manual host trace: the user-reported approximate five-second scroll occurred during a 20-second FrameTimeline-only capture, but exact gesture boundaries were not timestamped and no separate WebView presented-frame stream was found. The isolated device probe now emits revision device-capability-v2-20261101-r1 and classifies the route duration field without exposing raw paths or values; local regression tests pass. Obtain one fresh OPPO report from that revision to establish the runtime field state. Continue resolving the iPhone frame-sampling path, minimum supported library and device groups. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists.",
       "scope": "Local diagnostic queries, transient graphics-counter reset, guarded synthetic swipes and a short Android trace saved under Git-ignored .local/sp01-trace only; no cloud, app data, permissions or persistent phone setting was changed."
     },
     "androidStudioGuidance": "Android's official UI-jank guide says Android 10 and lower traces show UI-thread and RenderThread frame events in the Display section; this guidance has not been verified against a trace captured from the user's Huawei or the browser-based Perfetto UI.",
@@ -627,6 +628,14 @@
     "latestHuaweiRetest": "SEA-AL10 report supplied with WeChat 8.0.79/base library 3.17.5; GPU Rendering histogram appeared over the WeChat probe and refreshed during scrolling; no numeric FPS result",
     "retestEvidenceId": "DEVICE01-SNAPSHOT-FIX-1",
     "oldOutputs": "keep as first-run evidence, not proof that the current runtime buffer stays empty"
+  },
+  "routeDurationOfficialDefinition": {
+    "source": "WeChat-maintained miniprogram-api-typings@5.2.3",
+    "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/master/types/wx/lib.wx.api.d.ts",
+    "routeMetricDefinition": "route processing time; entryType navigation",
+    "durationFieldDefinition": "milliseconds, only valid for metrics representing a phase",
+    "interpretation": "The observed route row with no numeric duration remains an unexplained runtime result; no cause is inferred. The new local probe reports whether duration and durationMs are missing, undefined, null, non-finite, non-numeric or finite.",
+    "officialRuntimeCauseDocumented": false
   },
   "cliCapabilityCheck": {
     "source": "installed-wechatidecli --help",
@@ -660,14 +669,14 @@
   },
   "localTests": {
     "formatterAndAllowlist": "passed",
-    "allDeviceProbeTests": "7/7 passed",
+    "allDeviceProbeTests": "8/8 passed",
     "normalizedObserverDurationRegression": "passed; formatter retains the sanitized durationMs field",
     "javascriptSyntax": "node --check passed for 3 JavaScript files",
     "jsonParse": "passed for 5 project/evidence JSON files",
     "testRuns": {
-      "focused": { "command": "node --test tests/sp01-device-probe.test.cjs tests/sp01-readiness-review.test.cjs", "passed": 9, "failed": 0 },
+      "focused": { "command": "node --test tests/sp01-device-probe.test.cjs tests/sp01-readiness-review.test.cjs", "passed": 10, "failed": 0 },
       "developmentPlan": { "command": "node --test tests/executable-development-plan.test.cjs", "passed": 44, "failed": 0 },
-      "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1548, "failed": 0 }
+      "fullSuite": { "command": "node --test tests/*.test.cjs", "passed": 1567, "failed": 0 }
     },
     "miniProgramIDECompile": "user-provided outputs confirm execution on four phones; separate IDE compile artifact not captured",
     "realPhoneRuns": "4 unique devices; 8 user-provided capability reports including three revised OPPO retests and one Huawei GPU-profile retest",
@@ -675,7 +684,19 @@
     "phonePerformanceObserverValues": "API callable and observer registered on all 4; identical six supported entry types reported",
     "freshEntriesAfterRevisedProbe": "OPPO returned 10 rows after snapshot-source correction was requested; visible repeated type/duration patterns are absent; report does not embed source revision; route duration and FPS remain unresolved",
     "measuredRefreshTiming": "unknown",
-    "fpsMeasurementTool": "no item in IDE Tools menu per user; System Tracing not found under Developer Options > Debugging on HUAWEI SEA-AL10; Android GPU Rendering bars were visible and refreshed over the WeChat probe during scrolling; bundled ADB 1.0.39 was found but adb devices -l returned no connected devices"
+    "fpsMeasurementTool": "no item in IDE Tools menu per user; System Tracing not found under Developer Options > Debugging on HUAWEI SEA-AL10; Android GPU Rendering bars were visible and refreshed over the WeChat probe during scrolling; bundled ADB 1.0.39 was found but adb devices -l returned no connected devices",
+    "latestProbeRevision": {
+      "revision": "device-capability-v2-20261101-r1",
+      "date": "2026-11-01",
+      "reportIncludesRevision": true,
+      "routeDurationFieldStates": ["finite", "missing", "undefined", "null", "non-finite", "non-numeric"],
+      "sourcePathsAndRawValuesExposed": false,
+      "localTests": "8/8 passed",
+      "phoneRetest": "pending",
+      "cloudAccess": false,
+      "networkRequests": false,
+      "fileWrites": false
+    }
   },
   "gpuProfileRetests": [
     {

@@ -59,8 +59,13 @@ test('SP01 current review covers the exact contract criteria without silently re
       const capability = require('../docs/sp01-device-capability-20261030.json');
       const readinessMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
       assert.equal(item.state, 'pending');
+      assert.equal(item.latestLocalProbeRevision.revision, 'device-capability-v2-20261101-r1');
+      assert.equal(item.latestLocalProbeRevision.phoneRetest, 'pending');
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
       assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);
+      assert.equal(capability.routeDurationOfficialDefinition.routeMetricDefinition, 'route processing time; entryType navigation');
+      assert.equal(capability.routeDurationOfficialDefinition.officialRuntimeCauseDocumented, false);
+      assert.equal(capability.routeDurationOfficialDefinition.sourceUrl, capability.sources.officialPerformanceTypingsSource);
       assert.equal(capability.realDeviceRuns.length, 4);
       assert.ok(capability.realDeviceRuns.every((run) => run.renderer === 'webview'));
       assert.ok(capability.realDeviceRuns.every((run) => run.performanceApiAvailable && run.observerRegistered));
@@ -311,6 +316,9 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(capability.localTests.realPhoneRuns, '4 unique devices; 8 user-provided capability reports including three revised OPPO retests and one Huawei GPU-profile retest');
       assert.equal(capability.localTests.freshEntriesAfterRevisedProbe, 'OPPO returned 10 rows after snapshot-source correction was requested; visible repeated type/duration patterns are absent; report does not embed source revision; route duration and FPS remain unresolved');
       assert.equal(capability.freshEntryFollowUp.oneDeviceRetest, 'OPPO snapshot-source retest supplied: 10 rows, visible repeats absent; route duration and FPS remain unresolved');
+      assert.equal(capability.localTests.latestProbeRevision.revision, 'device-capability-v2-20261101-r1');
+      assert.equal(capability.localTests.latestProbeRevision.phoneRetest, 'pending');
+      assert.equal(capability.localTests.latestProbeRevision.cloudAccess, false);
     } else assert.ok(['pending', 'awaiting-user'].includes(item.state));
     assert.ok(item.nextAction.length > 20);
   }

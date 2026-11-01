@@ -21,6 +21,25 @@ test('device capability report only includes approved device fields and never in
   assert.match(report, /firstRender\/render\/81\.3ms/);
   assert.doesNotMatch(report, /private/);
   assert.match(report, /明确FPS\/逐帧指标：未发现/);
+  assert.match(report, /探针修订：device-capability-v2-20261101-r1/);
+});
+
+test('route report distinguishes a missing duration field from an invalid numeric duration', () => {
+  const report = buildDeviceReport({
+    info: { brand: 'OPPO', model: 'PLJ110', system: 'Android 17', version: '8.0.79', SDKVersion: '3.17.5', platform: 'android', screenWidth: 360, screenHeight: 776, windowWidth: 360, fontSizeSetting: 16 },
+    renderer: 'webview',
+    performanceApiAvailable: true,
+    observerAvailable: true,
+    supportedTypes: ['navigation'],
+    entries: [
+      { name: 'route', entryType: 'navigation', navigationType: 'navigateTo', path: '/private/path' },
+      { name: 'appLaunch', entryType: 'navigation', duration: Infinity },
+    ],
+    observedEntries: [],
+  });
+  assert.match(report, /route\/navigation\/无耗时ms/);
+  assert.match(report, /route耗时字段状态：缺少 duration 和 durationMs 字段/);
+  assert.doesNotMatch(report, /private|navigateTo/);
 });
 
 test('runtime-supported interaction entries are summarized without exposing raw names or paths', () => {
@@ -28,8 +47,8 @@ test('runtime-supported interaction entries are summarized without exposing raw 
     { name: 'tap-private-name', entryType: 'interaction', duration: 62.4, path: '/private/page' },
     { name: 'resource-private-name', entryType: 'resource', duration: 12, uri: 'https://private.invalid' },
   ], ['interaction', 'resource']), [
-    { name: '未识别', entryType: 'interaction', durationMs: 62.4 },
-    { name: '未识别', entryType: 'resource', durationMs: 12 },
+    { name: '未识别', entryType: 'interaction', durationMs: 62.4, durationState: 'finite' },
+    { name: '未识别', entryType: 'resource', durationMs: 12, durationState: 'finite' },
   ]);
 });
 
@@ -69,10 +88,18 @@ test('capability normalizers redact unknown names and retain only finite safe du
     { name: 'firstRender', entryType: 'render', duration: 100 },
     { name: 'custom-sensitive-name', entryType: 'render', duration: 200 },
     { name: 'route', entryType: 'navigation', duration: Infinity },
+    { name: 'firstPaint', entryType: 'render', duration: null },
+    { name: 'route', entryType: 'navigation', duration: undefined },
+    { name: 'route', entryType: 'navigation', duration: 'private-value' },
+    { name: 'route', entryType: 'navigation' },
   ]), [
-    { name: 'firstRender', entryType: 'render', durationMs: 100 },
-    { name: '未识别', entryType: 'render', durationMs: 200 },
-    { name: 'route', entryType: 'navigation', durationMs: null },
+    { name: 'firstRender', entryType: 'render', durationMs: 100, durationState: 'finite' },
+    { name: '未识别', entryType: 'render', durationMs: 200, durationState: 'finite' },
+    { name: 'route', entryType: 'navigation', durationMs: null, durationState: 'non-finite' },
+    { name: 'firstPaint', entryType: 'render', durationMs: null, durationState: 'null' },
+    { name: 'route', entryType: 'navigation', durationMs: null, durationState: 'undefined' },
+    { name: 'route', entryType: 'navigation', durationMs: null, durationState: 'non-numeric' },
+    { name: 'route', entryType: 'navigation', durationMs: null, durationState: 'missing' },
   ]);
 });
 
