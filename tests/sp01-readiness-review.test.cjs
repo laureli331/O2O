@@ -57,6 +57,7 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(item.state, 'pending');
     } else if (item.id === 'R03') {
       const capability = require('../docs/sp01-device-capability-20261030.json');
+      const readinessMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
       assert.equal(item.state, 'pending');
       assert.equal(item.evidence, 'docs/sp01-device-capability-20261030.json');
       assert.equal(capability.documentedRuntimeCapabilities.apiCanProveLiveFps, false);
@@ -206,6 +207,9 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(oppo60.secondTraceAppBrandFrameCount, 152);
       assert.equal(oppo60.isolatedWebviewLayerVerified, false);
       assert.equal(oppo60.acceptanceEvidence, false);
+      assert.match(readinessMarkdown, /OPPO PLJ110 的 Android 17 FrameTimeline 已在实际60Hz显示模式下捕获到 AppBrand 主窗口帧/);
+      assert.match(readinessMarkdown, /152帧跨2\.845秒/);
+      assert.match(readinessMarkdown, /不证明完整滚动 FPS、应用卡顿或 QP05 通过/);
       assert.equal(gfxinfo.postCaptureForegroundCheck.resumedActivity, 'com.android.settings/.Settings$DisplaySettingsActivity');
       assert.equal(gfxinfo.postCaptureForegroundCheck.syntheticGestureIssued, false);
       assert.equal(gfxinfo.appAttribution.mainProcessViewRoot, 'com.tencent.mm/com.tencent.mm.ui.LauncherUI');
