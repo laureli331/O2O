@@ -215,7 +215,8 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(gfxinfo.appAttribution.mainProcessViewRoot, 'com.tencent.mm/com.tencent.mm.ui.LauncherUI');
       assert.equal(gfxinfo.appAttribution.appBrandViewRootCount, 1);
       assert.match(gfxinfo.resetCommand, /dumpsys gfxinfo com\.tencent\.mm:appbrand0 reset/);
-      assert.match(review.openItems.find((item) => item.id === 'R03').nextAction, /60Hz measurement device/);
+      assert.match(review.openItems.find((item) => item.id === 'R03').nextAction, /FrameTimeline-only capture/);
+      assert.match(review.openItems.find((item) => item.id === 'R03').nextAction, /current device is not connected over ADB/);
       assert.match(review.openItems.find((item) => item.id === 'R03').localTraceEvidence, /61,017\/61,017 events/);
       assert.match(review.openItems.find((item) => item.id === 'R03').oppoFrameTimelineEvidence, /152 host frames/);
       assert.equal(capability.sources.androidGfxinfoResetGuidance, 'https://android.googlesource.com/platform/frameworks/base/+/562ae3a/docs/html/training/testing/performance.jd');
