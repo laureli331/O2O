@@ -47,12 +47,13 @@
 | 核对项 | 查证结果 | 实际边界 |
 | --- | --- | --- |
 | Gradle入口 | [Wrapper配置](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/gradle/wrapper/gradle-wrapper.properties)请求 Gradle 8.13；未配置 `distributionSha256Sum`。[settings.gradle.kts](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/settings.gradle.kts)声明 Google、Maven Central、Gradle Plugin Portal 仓库，单一 `:app` 模块，没有 `includeBuild` | Wrapper 首次运行需下载发行包；未由仓库配置发行包校验和。尚未检查或运行 Wrapper JAR |
+| 官方下载完整性 | [Gradle 官方校验表](https://gradle.org/release-checksums/)列出的 8.13 binary ZIP SHA-256 为 `20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78`；[Android 官方下载页](https://developer.android.com/studio)列出的 Windows command-line tools ZIP（155.7 MB）SHA-256 为 `90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a` | 这些是官方预期值，不是本机已下载文件的校验结果。若构建获批，可直接下载并逐项比对后再解压，不运行项目 Wrapper；Android SDK 下载页包含 SDK 许可条款，未获用户明确同意前不代为接受 |
 | 插件与依赖 | 固定版本目录声明 Android Gradle Plugin 8.13.2、Kotlin 2.3.21，并依赖 AndroidX/Compose 和 Maven Central 上的 Novi 组件 | 构建仍会执行 Gradle 插件及依赖中的代码；源码静态检查不构成供应链审计 |
 | 构建任务与签名 | [app/build.gradle.kts](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/build.gradle.kts)区分 Kernel 与 HEV flavor；Kernel 路径不需 NDK。构建脚本会读取本地 Git 短提交号；若存在 `keystore.properties` 则可用于签名 | 任何后续构建限定 `kernelDebug`，不运行发布、签名或 CI 任务；需先确认独立工作目录内没有签名文件并复核依赖任务图 |
 | 更新配置 | 构建配置从环境变量读取更新源和信任锚；未设置时源码路径禁用更新器。正式发布流水线会注入更新配置 | 只有 APK 静态检查确认更新地址、信任锚、包名、签名和权限后，才可提交安装评估；静态默认值不是 APK 证据 |
 | 当前电脑 | 只读检查显示 Java 25 可用；未发现系统 Gradle、`adb`、`sdkmanager` 命令，`ANDROID_HOME` / `ANDROID_SDK_ROOT` 为空，常见用户 Android SDK 路径不存在 | 在此环境构建需新增下载并运行官方 Gradle、Android SDK 与项目依赖；本次没有下载或安装任何构建工具 |
 
-**结论与下一步：构建入口审查已完成，但没有可直接构建的本地 Android 工具链。** 若继续，须先准备官方 Gradle 8.13 与 Android SDK，并逐项核实发行包校验和；再在专用隔离目录只运行 `kernelDebug`，检查任务图不读取签名密钥、不构建 HEV/NDK、不注入更新源。此操作会运行第三方 Gradle 插件和依赖代码，且需要下载工具/依赖，因此开始前需用户确认这一具体范围。它与之后是否把 APK 安装到华为备用机是两个独立决定；安装仍需单独确认。当前没有构建、APK 检查、安装、VPN、CloudBase 或路由器操作，R04 与 SP01 均未通过。
+**结论与下一步：构建入口审查已完成，但没有可直接构建的本地 Android 工具链。** 若继续，可用上述官方 SHA-256 基准校验 Gradle 8.13 与 Android command-line tools；之后还需确认所需 SDK 平台/构建工具的来源与校验，再在专用隔离目录只运行 `kernelDebug`，检查任务图不读取签名密钥、不构建 HEV/NDK、不注入更新源。此操作会运行第三方 Gradle 插件和依赖代码，且需要下载工具/依赖；Android SDK 条款也不能由我代为接受，因此开始前需用户明确授权具体下载和构建范围，并自行明确 SDK 条款处理。它与之后是否把 APK 安装到华为备用机是两个独立决定；安装仍需单独确认。当前没有构建、APK 检查、安装、VPN、CloudBase 或路由器操作，R04 与 SP01 均未通过。
 
 ## 外部网络路径核对（2026-10-31，只读）
 

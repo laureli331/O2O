@@ -27,7 +27,10 @@ test('R04 Pakomo is recorded as a source-reviewed candidate, not a validated wea
   assert.match(source, /没有运行官方发布 APK、没有构建或安装/);
   assert.match(source, /固定提交的构建入口审查/);
   assert.match(source, /未配置 `distributionSha256Sum`/);
-  assert.match(source, /开始前需用户确认这一具体范围/);
+  assert.match(source, /开始前需用户明确授权具体下载和构建范围/);
+  assert.match(source, /20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78/);
+  assert.match(source, /90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a/);
+  assert.match(source, /未获用户明确同意前不代为接受/);
   assert.match(source, /不授权悬浮窗/);
 
   const readiness = require('../docs/sp01-readiness-review-20261030.json');

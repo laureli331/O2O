@@ -27,7 +27,7 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /Gradle 8\.13/);
   assert.match(text, /未配置 `distributionSha256Sum`/);
   assert.match(text, /未发现系统 Gradle、`adb`、`sdkmanager` 命令/);
-  assert.match(text, /开始前需用户确认这一具体范围/);
+  assert.match(text, /开始前需用户明确授权具体下载和构建范围/);
   assert.match(text, /只运行 `kernelDebug`/);
   assert.match(text, /当前没有构建、APK 检查/);
   assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);
