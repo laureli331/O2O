@@ -27,12 +27,43 @@
       "apiDefinitionSync": "CHANGELOG says API definitions were updated to base library 3.17.0 in v5.2.2 on 2026-07-27.",
       "license": "MIT",
       "maintenanceEvidence": "285 commits were shown by the repository at review time; latest inspected commit was 2026-09-01.",
-      "officialDocsDirectFetch": "The linked developers.weixin.qq.com pages could not be retrieved in this review. Where a minimum version is stated below, it is taken from the pinned WeChat-maintained API typings; caveats are recorded per API.",
+      "officialDocsDirectFetch": "Official WeChat developer documentation was retrieved through its published Markdown alternate URLs on 2026-11-01. wx.login and wx.uploadFile API pages do not state a general mini-program minimum; plugin-only floors are kept out of the app floor. chooseMedia, phone code, and privacy/phone coupling pages state their exact route floors.",
       "sourceFiles": [
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.event.d.ts",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/CHANGELOG.md"
+      ]
+    },
+    "officialWeChatMarkdownEvidence": {
+      "retrievedAt": "2026-11-01",
+      "retrievalMethod": "Official developers.weixin.qq.com Markdown alternate URLs; canonical HTML pages were not consistently retrievable through the web reader.",
+      "pages": [
+        {
+          "api": "wx.login",
+          "url": "https://developers.weixin.qq.com/miniprogram/dev/api/open-api/login/wx.login.md",
+          "finding": "No general mini-program minimum is stated; 2.3.1 is explicitly plugin-only."
+        },
+        {
+          "api": "wx.chooseMedia",
+          "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/video/wx.chooseMedia.md",
+          "finding": "General mini-program support starts at 2.10.0; 2.11.1 is explicitly plugin-only."
+        },
+        {
+          "api": "wx.uploadFile",
+          "url": "https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/wx.uploadFile.md",
+          "finding": "The general API page gives no overall minimum; 1.9.6 is explicitly plugin-only. Some optional fields have their own later minimums."
+        },
+        {
+          "api": "getPhoneNumber dynamic code flow",
+          "url": "https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.md",
+          "finding": "The secure dynamic-code method starts at base library 2.21.2."
+        },
+        {
+          "api": "privacy consent combined with phone verification",
+          "url": "https://developers.weixin.qq.com/miniprogram/dev/framework/user-privacy/PrivacyAuthorize.md",
+          "finding": "Privacy APIs start at 2.32.3, and the combined getPhoneNumber|agreePrivacyAuthorization button is supported from 2.32.3."
+        }
       ]
     },
     "taroComponentDeclarationEvidence": {
@@ -48,7 +79,7 @@
       "url": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
       "claim": "The tutorial lists mini-program base library >= 2.2.3 as the minimum for wx.cloud and shows wx.cloud.init plus wx.cloud.callFunction.",
       "scope": "Conditional on using the direct wx.cloud namespace in a WeChat Cloud Development mini program.",
-      "retrievalNote": "The search result returned the relevant official page text; a direct page open timed out during this review."
+      "retrievalNote": "The canonical page open timed out in the web reader, but its published Markdown alternate URL was fetched directly and confirmed the same 2.2.3 requirement."
     },
     "reuseDecision": "Use existing PRD and the WeChat-maintained API typings as evidence; add no runtime dependency and adopt no third-party implementation. Typings provide version annotations but do not prove account entitlements, runtime behavior, or the complete app support floor."
   },
@@ -60,9 +91,13 @@
       "requiredForFirstRelease": true,
       "implementationLocked": false,
       "minimumBaseLibrary": null,
-      "versionEvidence": "Pinned API typings have no general mini-program minimum on wx.login; the nearby 2.3.1 note is explicitly plugin-only and cannot be used as the app floor.",
+      "versionEvidence": "The official wx.login page states no general mini-program minimum; its 2.3.1 note applies only to mini-program plugins. The function-level timeout option has its own minimum and does not establish the API floor.",
       "status": "candidate-needs-runtime-and-flow-validation",
-      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+      "sourceUrl": "https://developers.weixin.qq.com/miniprogram/dev/api/open-api/login/wx.login.md",
+      "sourceUrls": [
+        "https://developers.weixin.qq.com/miniprogram/dev/api/open-api/login/wx.login.md",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+      ]
     },
     {
       "id": "PHONE-VERIFICATION",
@@ -72,11 +107,12 @@
       "implementationLocked": true,
       "callbackMinimumBaseLibrary": "1.2.0",
       "codeFlowMinimumBaseLibrary": "2.21.2",
-      "versionEvidence": "The pinned typings mark the button callback at 1.2.0. The new dynamic-code behavior is documented as starting at 2.21.2 in issue #236 of the WeChat-maintained typings repository; that issue is secondary to the canonical API page, which could not be fetched during this review. Treat 2.21.2 as a corroborated conditional floor, not a complete product floor.",
+      "versionEvidence": "The pinned typings mark the button callback at 1.2.0. The official phone-number guide directly states that the secure dynamic-code method starts at 2.21.2. Treat 2.21.2 as the selected code-flow floor, not a complete product floor.",
       "accountEligibility": "unverified; E02 remains pending",
       "costAndEntitlementVerified": false,
       "status": "business-requirement-confirmed-platform-entitlement-pending",
       "sourceUrls": [
+        "https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.md",
         "https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/getPhoneNumber.html",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.event.d.ts",
         "https://github.com/wechat-miniprogram/api-typings/issues/236"
@@ -105,7 +141,7 @@
           "candidate": "button open-type=getPhoneNumber|agreePrivacyAuthorization",
           "minimumBaseLibrary": "2.32.3",
           "sourceUrl": "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-components/types/Button.d.ts",
-          "basis": "The exact Taro 4.3.1 component declaration says this combined privacy-consent and phone-verification button is supported from base library 2.32.3. This matches the current one-action V05 design candidate but is not yet selected as the implementation."
+          "basis": "The official privacy guide states that this combined privacy-consent and phone-verification button is supported from base library 2.32.3; the exact Taro 4.3.1 component declaration independently confirms the syntax. The user selected this route."
         },
         {
           "candidate": "standalone button open-type=agreePrivacyAuthorization before getPhoneNumber",
@@ -114,9 +150,10 @@
           "basis": "The pinned typings describe this separate consent route and say the onNeedPrivacyAuthorization listener is unnecessary if consent was already tapped, but the reviewed source provides no general mini-program minimum for this standalone button route."
         }
       ],
-      "versionEvidence": "The user selected the combined one-action V05 button. The exact Taro 4.3.1 component declaration states that this combined privacy-consent and phone-number verification route is supported from base library 2.32.3. This establishes the selected route's minimum, not the global application floor.",
+      "versionEvidence": "The user selected the combined one-action V05 button. The official privacy guide states that privacy APIs and the combined privacy-consent/phone-number route are supported from base library 2.32.3; the exact Taro 4.3.1 declaration confirms the same syntax. This establishes the selected route's minimum, not the global application floor.",
       "status": "selected-route-minimum-established-global-floor-still-open",
       "sourceUrls": [
+        "https://developers.weixin.qq.com/miniprogram/dev/framework/user-privacy/PrivacyAuthorize.md",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
         "https://github.com/NervJS/taro/blob/v4.3.1/packages/taro-components/types/Button.d.ts",
         "https://developers.weixin.qq.com/miniprogram/dev/framework/user-privacy/PrivacyAuthorize.html"
@@ -129,9 +166,13 @@
       "requiredForFirstRelease": true,
       "implementationLocked": false,
       "minimumBaseLibrary": "2.10.0",
-      "versionEvidence": "The pinned WeChat-maintained API typings mark wx.chooseMedia as requiring base library 2.10.0; a separate 2.11.1 annotation applies only inside mini-program plugins.",
+      "versionEvidence": "The official wx.chooseMedia page states that the API is supported from base library 2.10.0; its separate 2.11.1 note applies only inside mini-program plugins.",
       "status": "candidate-needs-image-flow-and-device-validation",
-      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+      "sourceUrl": "https://developers.weixin.qq.com/miniprogram/dev/api/media/video/wx.chooseMedia.md",
+      "sourceUrls": [
+        "https://developers.weixin.qq.com/miniprogram/dev/api/media/video/wx.chooseMedia.md",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts"
+      ]
     },
     {
       "id": "CLOUD-FUNCTION-CALL",
@@ -144,7 +185,7 @@
         {
           "candidate": "wx.cloud.callFunction",
           "minimumBaseLibrary": "2.2.3",
-          "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
+          "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram.md",
           "basis": "Official CloudBase WeChat mini-program tutorial lists 2.2.3 as the minimum for wx.cloud."
         },
         {
@@ -156,7 +197,11 @@
       ],
       "versionEvidence": "The official CloudBase tutorial gives the direct wx.cloud namespace a 2.2.3 minimum. This is conditional on choosing that path; the product call adapter and framework path are not implemented yet, so the row-level minimum remains unset.",
       "status": "required-capability-api-path-unselected",
-      "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
+      "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram.md",
+      "sourceUrls": [
+        "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram.md",
+        "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
+      ]
     },
     {
       "id": "CLOUD-FILE-UPLOAD",
@@ -169,14 +214,14 @@
         {
           "candidate": "wx.cloud.uploadFile",
           "minimumBaseLibrary": "2.2.3",
-          "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
+          "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram.md",
           "basis": "Conditional on the direct wx.cloud namespace; the official CloudBase tutorial lists 2.2.3 as the minimum for wx.cloud."
         },
         {
           "candidate": "wx.uploadFile",
           "minimumBaseLibrary": null,
-          "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
-          "basis": "The pinned typings provide no general mini-program minimum; their 1.9.6 note is plugin-only."
+          "sourceUrl": "https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/wx.uploadFile.md",
+          "basis": "The official wx.uploadFile API page gives no overall minimum for ordinary mini-program use; its 1.9.6 note is explicitly plugin-only. Individual optional fields can have separate later minima."
         },
         {
           "candidate": "server-mediated or other adapter",
@@ -185,9 +230,10 @@
           "basis": "Exact route and corresponding official version evidence have not been selected."
         }
       ],
-      "versionEvidence": "The direct wx.cloud.uploadFile candidate inherits the conditional wx.cloud minimum of 2.2.3. The wx.uploadFile candidate has no general minimum in the pinned typings; its 1.9.6 note is plugin-only. The upload route is not selected, so the row-level minimum remains unset.",
+      "versionEvidence": "The direct wx.cloud.uploadFile candidate inherits the conditional wx.cloud minimum of 2.2.3. The official wx.uploadFile page gives no general mini-program API minimum; its 1.9.6 note is plugin-only. The product upload route is not selected, so the row-level minimum remains unset.",
       "status": "required-capability-upload-route-unselected",
       "sourceUrls": [
+        "https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/wx.uploadFile.md",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
       ]
@@ -217,13 +263,13 @@
   ],
   "floorAnalysis": {
     "knownConditionalLowerBound": "2.32.3",
-    "conditionalBasis": "The user selected the combined getPhoneNumber|agreePrivacyAuthorization button; its Taro 4.3.1 type declaration states a base-library minimum of 2.32.3. This is the selected privacy-and-phone route floor, not the global application support floor.",
+    "conditionalBasis": "The user selected the combined getPhoneNumber|agreePrivacyAuthorization button; the official privacy guide and Taro 4.3.1 type declaration both state a base-library minimum of 2.32.3. This is the selected privacy-and-phone route floor, not the global application support floor.",
     "globalMinimumSupportedBaseLibrary": null,
     "devicePolicyFrozen": false,
     "reasonNotFrozen": [
       "The direct wx.cloud call and upload candidates have a documented 2.2.3 namespace minimum, but the product upload route is not selected and alternative upload/adapter paths have no verified floor in the reviewed sources.",
       "wx.login has no general minimum annotation in the reviewed type source.",
-      "The secure phone-code minimum is supported by the maintained repository's issue record, while the canonical WeChat page was not retrievable in this review.",
+      "The secure phone-code minimum is directly stated by the official phone-number guide, but the login and upload API pages do not state general mini-program floors and the product upload route remains unselected.",
       "No completed formal product package exists for verifying the Taro 4.3.1 runtime path and capability behavior on the proposed floor.",
       "The exact device support groups and QP05 sampling path remain open in R03."
     ],

@@ -21,6 +21,19 @@ test('API floor matrix pins its official evidence source and reuse decision', ()
   assert.equal(matrix.projectConstraints.sp07Started, false);
 });
 
+test('official Markdown API evidence separates general app floors from plugin-only notes', () => {
+  const pages = Object.fromEntries(matrix.sourceAudit.officialWeChatMarkdownEvidence.pages.map((page) => [page.api, page]));
+  assert.match(matrix.sourceAudit.officialWeChatMarkdownEvidence.retrievalMethod, /Markdown alternate URLs/);
+  assert.match(pages['wx.login'].url, /wx\.login\.md$/);
+  assert.match(pages['wx.login'].finding, /No general mini-program minimum/);
+  assert.match(pages['wx.login'].finding, /plugin-only/);
+  assert.match(pages['wx.chooseMedia'].finding, /2\.10\.0/);
+  assert.match(pages['wx.uploadFile'].finding, /no overall minimum/);
+  assert.match(pages['wx.uploadFile'].finding, /plugin-only/);
+  assert.match(pages['getPhoneNumber dynamic code flow'].finding, /2\.21\.2/);
+  assert.match(pages['privacy consent combined with phone verification'].finding, /2\.32\.3/);
+});
+
 test('known API minima remain scoped to the exact API or flow', () => {
   const byId = Object.fromEntries(matrix.apiRequirements.map((row) => [row.id, row]));
   assert.equal(byId['IMAGE-SELECTION'].minimumBaseLibrary, '2.10.0');
@@ -48,8 +61,13 @@ test('known API minima remain scoped to the exact API or flow', () => {
   assert.equal(byId['AUTH-LOGIN'].minimumBaseLibrary, null);
   assert.equal(byId['CLOUD-FUNCTION-CALL'].minimumBaseLibrary, null);
   assert.equal(byId['CLOUD-FILE-UPLOAD'].minimumBaseLibrary, null);
-  assert.match(byId['AUTH-LOGIN'].versionEvidence, /plugin-only/);
+  assert.match(byId['AUTH-LOGIN'].versionEvidence, /only to mini-program plugins/);
+  assert.ok(byId['AUTH-LOGIN'].sourceUrls.some((url) => url.endsWith('/wx.login.md')));
+  assert.ok(byId['PHONE-VERIFICATION'].sourceUrls.some((url) => url.endsWith('/getPhoneNumber.md')));
+  assert.ok(byId['PRIVACY-AUTHORIZATION'].sourceUrls.some((url) => url.endsWith('/PrivacyAuthorize.md')));
+  assert.ok(byId['IMAGE-SELECTION'].sourceUrls.some((url) => url.endsWith('/wx.chooseMedia.md')));
   assert.match(byId['CLOUD-FILE-UPLOAD'].versionEvidence, /plugin-only/);
+  assert.ok(byId['CLOUD-FILE-UPLOAD'].sourceUrls.some((url) => url.endsWith('/wx.uploadFile.md')));
 });
 
 test('CloudBase namespace minimum is conditional on choosing the direct wx.cloud route', () => {
@@ -64,7 +82,10 @@ test('CloudBase namespace minimum is conditional on choosing the direct wx.cloud
   assert.equal(byId['CLOUD-FUNCTION-CALL'].minimumBaseLibrary, null);
   assert.equal(byId['CLOUD-FILE-UPLOAD'].minimumBaseLibrary, null);
   assert.match(callFunction.sourceUrl, /docs\.cloudbase\.net\/recipes\/add-cloud-function-wechat-miniprogram/);
-  assert.match(markdown, /CloudBase 官方小程序云函数接入教程/);
+  assert.match(callFunction.sourceUrl, /\.md$/);
+  assert.match(markdown, /CloudBase 官方小程序云函数接入教程（Markdown）/);
+  assert.match(markdown, /wx\.login` API 文档（Markdown）/);
+  assert.match(markdown, /wx\.uploadFile` API 文档（Markdown）/);
 });
 
 test('unknown required API floors prevent a global support promise', () => {
@@ -96,6 +117,7 @@ test('readiness index references the matrix and keeps R03 and SP01 pending', () 
   assert.equal(item.apiFloorMatrix.knownConditionalLowerBound, '2.32.3');
   assert.equal(item.apiFloorMatrix.status, 'selected-privacy-route-minimum-known-global-floor-pending-upload-route-and-product-validation');
   assert.equal(item.apiFloorMatrix.globalMinimumSupportedBaseLibrary, null);
+  assert.match(item.nextAction, /official privacy guide/);
   assert.equal(readiness.sp01Passed, false);
   assert.equal(readiness.sp07Started, false);
   assert.match(markdown, /微信 API 最低版本证据矩阵/);
