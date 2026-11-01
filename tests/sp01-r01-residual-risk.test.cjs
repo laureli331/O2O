@@ -13,4 +13,9 @@ test('R01 risk review retains audit failures and distinguishes source paths from
   assert.match(note, /R01 与 SP01 仍未通过/);
   assert.match(note, /不能一概标“不适用”/);
   assert.match(note, /未运行漏洞利用或远程模板下载/);
+  assert.match(note, /swiper@11\.1\.15/);
+  assert.match(note, /dist\/hydrate\/index\.js/);
+  assert.match(note, /12\.1\.2/);
+  assert.match(note, /尚未在正式产品构建包验证/);
+  assert.match(note, /未做适配测试或依赖变更/);
 });
