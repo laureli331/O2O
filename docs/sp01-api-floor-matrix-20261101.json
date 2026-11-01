@@ -34,6 +34,12 @@
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/CHANGELOG.md"
       ]
     },
+    "officialCloudBaseTutorialEvidence": {
+      "url": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
+      "claim": "The tutorial lists mini-program base library >= 2.2.3 as the minimum for wx.cloud and shows wx.cloud.init plus wx.cloud.callFunction.",
+      "scope": "Conditional on using the direct wx.cloud namespace in a WeChat Cloud Development mini program.",
+      "retrievalNote": "The search result returned the relevant official page text; a direct page open timed out during this review."
+    },
     "reuseDecision": "Use existing PRD and the WeChat-maintained API typings as evidence; add no runtime dependency and adopt no third-party implementation. Typings provide version annotations but do not prove account entitlements, runtime behavior, or the complete app support floor."
   },
   "apiRequirements": [
@@ -84,7 +90,21 @@
       "requiredForFirstRelease": true,
       "implementationLocked": false,
       "minimumBaseLibrary": null,
-      "versionEvidence": "The pinned cloud typings describe callFunction but include no minimum-base-library annotation. The product call adapter and its framework path are not implemented yet.",
+      "candidateMinimums": [
+        {
+          "candidate": "wx.cloud.callFunction",
+          "minimumBaseLibrary": "2.2.3",
+          "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
+          "basis": "Official CloudBase WeChat mini-program tutorial lists 2.2.3 as the minimum for wx.cloud."
+        },
+        {
+          "candidate": "other CloudBase client adapter",
+          "minimumBaseLibrary": null,
+          "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts",
+          "basis": "No version floor established for an alternative adapter by the reviewed sources."
+        }
+      ],
+      "versionEvidence": "The official CloudBase tutorial gives the direct wx.cloud namespace a 2.2.3 minimum. This is conditional on choosing that path; the product call adapter and framework path are not implemented yet, so the row-level minimum remains unset.",
       "status": "required-capability-api-path-unselected",
       "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.cloud.d.ts"
     },
@@ -95,7 +115,27 @@
       "requiredForFirstRelease": true,
       "implementationLocked": false,
       "minimumBaseLibrary": null,
-      "versionEvidence": "The pinned typings give wx.uploadFile a plugin-only 1.9.6 note and no general app minimum. The cloud typings expose wx.cloud.uploadFile without a minimum annotation. Plugin-only versions do not establish the ordinary mini-program floor.",
+      "candidateMinimums": [
+        {
+          "candidate": "wx.cloud.uploadFile",
+          "minimumBaseLibrary": "2.2.3",
+          "sourceUrl": "https://docs.cloudbase.net/recipes/add-cloud-function-wechat-miniprogram",
+          "basis": "Conditional on the direct wx.cloud namespace; the official CloudBase tutorial lists 2.2.3 as the minimum for wx.cloud."
+        },
+        {
+          "candidate": "wx.uploadFile",
+          "minimumBaseLibrary": null,
+          "sourceUrl": "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
+          "basis": "The pinned typings provide no general mini-program minimum; their 1.9.6 note is plugin-only."
+        },
+        {
+          "candidate": "server-mediated or other adapter",
+          "minimumBaseLibrary": null,
+          "sourceUrl": null,
+          "basis": "Exact route and corresponding official version evidence have not been selected."
+        }
+      ],
+      "versionEvidence": "The direct wx.cloud.uploadFile candidate inherits the conditional wx.cloud minimum of 2.2.3. The wx.uploadFile candidate has no general minimum in the pinned typings; its 1.9.6 note is plugin-only. The upload route is not selected, so the row-level minimum remains unset.",
       "status": "required-capability-upload-route-unselected",
       "sourceUrls": [
         "https://github.com/wechat-miniprogram/api-typings/blob/6092df9100c73b84e140c20b9a42a8e8799e0660/types/wx/lib.wx.api.d.ts",
@@ -131,7 +171,7 @@
     "globalMinimumSupportedBaseLibrary": null,
     "devicePolicyFrozen": false,
     "reasonNotFrozen": [
-      "The CloudBase call and file-upload API route is not selected and the official typings do not annotate a general minimum for these cloud methods.",
+      "The direct wx.cloud call and upload candidates have a documented 2.2.3 namespace minimum, but the product upload route is not selected and alternative upload/adapter paths have no verified floor in the reviewed sources.",
       "wx.login has no general minimum annotation in the reviewed type source.",
       "The secure phone-code minimum is supported by the maintained repository's issue record, while the canonical WeChat page was not retrievable in this review.",
       "No completed formal product package exists for verifying the Taro 4.3.1 runtime path and capability behavior on the proposed floor.",

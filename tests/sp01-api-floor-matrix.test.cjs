@@ -31,6 +31,21 @@ test('known API minima remain scoped to the exact API or flow', () => {
   assert.match(byId['CLOUD-FILE-UPLOAD'].versionEvidence, /plugin-only/);
 });
 
+test('CloudBase namespace minimum is conditional on choosing the direct wx.cloud route', () => {
+  const byId = Object.fromEntries(matrix.apiRequirements.map((row) => [row.id, row]));
+  const callFunction = byId['CLOUD-FUNCTION-CALL'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.cloud.callFunction');
+  const cloudUpload = byId['CLOUD-FILE-UPLOAD'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.cloud.uploadFile');
+  const directUpload = byId['CLOUD-FILE-UPLOAD'].candidateMinimums.find((candidate) => candidate.candidate === 'wx.uploadFile');
+
+  assert.equal(callFunction.minimumBaseLibrary, '2.2.3');
+  assert.equal(cloudUpload.minimumBaseLibrary, '2.2.3');
+  assert.equal(directUpload.minimumBaseLibrary, null);
+  assert.equal(byId['CLOUD-FUNCTION-CALL'].minimumBaseLibrary, null);
+  assert.equal(byId['CLOUD-FILE-UPLOAD'].minimumBaseLibrary, null);
+  assert.match(callFunction.sourceUrl, /docs\.cloudbase\.net\/recipes\/add-cloud-function-wechat-miniprogram/);
+  assert.match(markdown, /CloudBase 官方小程序云函数接入教程/);
+});
+
 test('unknown required API floors prevent a global support promise', () => {
   assert.equal(matrix.floorAnalysis.knownConditionalLowerBound, '2.21.2');
   assert.equal(matrix.floorAnalysis.globalMinimumSupportedBaseLibrary, null);
