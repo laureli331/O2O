@@ -24,19 +24,23 @@ test('R04 Pakomo is recorded as a source-reviewed candidate, not a validated wea
   assert.match(source, /官方发布 APK/);
   assert.match(source, /尚未在华为备用机实测/);
   assert.match(source, /安装如获另行确认/);
-  assert.match(source, /没有运行官方发布 APK、没有构建或安装/);
+  assert.match(source, /没有运行官方发布 APK、没有生成 APK、没有安装/);
   assert.match(source, /固定提交的构建入口审查/);
   assert.match(source, /未配置 `distributionSha256Sum`/);
-  assert.match(source, /开始前需用户明确授权具体下载和构建范围/);
+  assert.match(source, /用户于 2026-11-01 授权在隔离目录准备官方工具并尝试本地调试构建/);
+  assert.match(source, /`build-tools;35\.0\.0`/);
+  assert.match(source, /`platforms;android-36`/);
+  assert.match(source, /dry-run 未执行 Android 编译\/打包任务/);
   assert.match(source, /20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78/);
   assert.match(source, /90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a/);
-  assert.match(source, /未获用户明确同意前不代为接受/);
+  assert.match(source, /Android SDK 许可仍由用户自行审阅和接受/);
   assert.match(source, /不授权悬浮窗/);
 
   const readiness = require('../docs/sp01-readiness-review-20261030.json');
   const r04 = readiness.openItems.find(item => item.id === 'R04');
   assert.equal(r04.state, 'pending');
   assert.equal(readiness.sp01Passed, false);
+  assert.match(r04.nextAction, /licenses for build-tools;35\.0\.0 and platforms;android-36 are unaccepted/);
   assert.ok(r04.unknown.some(item => item.includes('repeatable weak-network injection and recovery method')));
   assert.match(r04.evidence, /sp01-weak-network-tool-review-20261031\.md/);
 });

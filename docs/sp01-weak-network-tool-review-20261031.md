@@ -38,7 +38,7 @@
 | 许可、更新与接入 | [许可证](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/LICENSE)为 GPL-3.0；[构建配置](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/build.gradle.kts)声明 `minSdk=29`，与用户华为备用机 Android 10 的版本下限相符；[更新控制器](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/src/main/java/com/alphynia/pakomo/update/NoviUpdateController.kt)在更新源或信任锚为空时禁用自更新；[发布流水线](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/.gitlab-ci.yml)会为正式标签构建注入更新源 | `minSdk` 只证明声明的最低系统版本，不证明华为兼容。不能直接安装来源不匹配或更新源未核实的官方发布 APK。若用户同意继续，先在隔离目录检查构建脚本和依赖，再讨论本地构建；只有最终 APK 的包标识、签名、权限、更新源为空等均经实证核对后，才另行确认是否安装 |
 | 权限与隐私 | [Manifest](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/src/main/AndroidManifest.xml)声明 VPN/网络、前台服务、通知、`QUERY_ALL_PACKAGES` 和 `SYSTEM_ALERT_WINDOW`；后两项分别涉及应用列表与悬浮窗。能力矩阵还描述本地连接元数据记录 | 不授予悬浮窗权限；仅测试包若需要的系统 VPN 同意和应用选择。实际采集、日志保存与联网情况尚未在 APK/设备实测，静态审查不能证明不存在额外行为 |
 
-**本阶段决策：Pakomo 是值得评估的构建候选，不是已批准安装的工具，也不是 R04 通过证据。** 用户此前要求安装前再次确认；截至本次复核，没有运行官方发布 APK、没有构建或安装，没有触发 VPN，也没有调用 CloudBase。固定提交的源代码、许可、权限、更新源、构建入口与依赖已完成只读审查，详情见下一节。若出现构建执行或安装，必须先展示具体范围和产物证据。安装如获另行确认，仅用用户自己的华为备用机 SEA-AL10 Android 10，系统 VPN 弹窗由用户确认，只选微信，不授权悬浮窗；回退为停止 VPN、确认图标消失和原网络恢复，再卸载候选应用。该候选尚未在华为备用机实测。
+**本阶段决策：Pakomo 是值得评估的构建候选，不是已批准安装的工具，也不是 R04 通过证据。** 固定提交的源代码、许可、权限、更新源、构建入口与依赖已完成只读审查，详情见下一节。用户于 2026-11-01 授权在隔离目录准备官方工具并尝试本地调试构建；实际进度和阻塞见下方“本地隔离构建准备与停止点”。没有运行官方发布 APK、没有生成 APK、没有安装、没有触发 VPN，也没有调用 CloudBase。安装如获另行确认，仅用用户自己的华为备用机 SEA-AL10 Android 10，系统 VPN 弹窗由用户确认，只选微信，不授权悬浮窗；回退为停止 VPN、确认图标消失和原网络恢复，再卸载候选应用。该候选尚未在华为备用机实测。
 
 ## 固定提交的构建入口审查（2026-11-01，仅只读）
 
@@ -47,13 +47,34 @@
 | 核对项 | 查证结果 | 实际边界 |
 | --- | --- | --- |
 | Gradle入口 | [Wrapper配置](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/gradle/wrapper/gradle-wrapper.properties)请求 Gradle 8.13；未配置 `distributionSha256Sum`。[settings.gradle.kts](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/settings.gradle.kts)声明 Google、Maven Central、Gradle Plugin Portal 仓库，单一 `:app` 模块，没有 `includeBuild` | Wrapper 首次运行需下载发行包；未由仓库配置发行包校验和。尚未检查或运行 Wrapper JAR |
-| 官方下载完整性 | [Gradle 官方校验表](https://gradle.org/release-checksums/)列出的 8.13 binary ZIP SHA-256 为 `20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78`；[Android 官方下载页](https://developer.android.com/studio)列出的 Windows command-line tools ZIP（155.7 MB）SHA-256 为 `90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a` | 这些是官方预期值，不是本机已下载文件的校验结果。若构建获批，可直接下载并逐项比对后再解压，不运行项目 Wrapper；Android SDK 下载页包含 SDK 许可条款，未获用户明确同意前不代为接受 |
+| 官方下载完整性 | [Gradle 官方校验表](https://gradle.org/release-checksums/)列出的 8.13 binary ZIP SHA-256 为 `20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78`；[Android 官方下载页](https://developer.android.com/studio)列出的 Windows command-line tools ZIP（155.7 MB）SHA-256 为 `90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a` | 这是本轮下载的官方预期值，已与本地文件 SHA-256 逐一比对一致；详见下节。Android SDK 许可仍由用户自行审阅和接受 |
 | 插件与依赖 | 固定版本目录声明 Android Gradle Plugin 8.13.2、Kotlin 2.3.21，并依赖 AndroidX/Compose 和 Maven Central 上的 Novi 组件 | 构建仍会执行 Gradle 插件及依赖中的代码；源码静态检查不构成供应链审计 |
 | 构建任务与签名 | [app/build.gradle.kts](https://github.com/AlfWorks/Pakomo/blob/6798549060990f9bdcb7a9feedbe16259ee95d9d/app/build.gradle.kts)区分 Kernel 与 HEV flavor；Kernel 路径不需 NDK。构建脚本会读取本地 Git 短提交号；若存在 `keystore.properties` 则可用于签名 | 任何后续构建限定 `kernelDebug`，不运行发布、签名或 CI 任务；需先确认独立工作目录内没有签名文件并复核依赖任务图 |
 | 更新配置 | 构建配置从环境变量读取更新源和信任锚；未设置时源码路径禁用更新器。正式发布流水线会注入更新配置 | 只有 APK 静态检查确认更新地址、信任锚、包名、签名和权限后，才可提交安装评估；静态默认值不是 APK 证据 |
-| 当前电脑 | 只读检查显示 Java 25 可用；未发现系统 Gradle、`adb`、`sdkmanager` 命令，`ANDROID_HOME` / `ANDROID_SDK_ROOT` 为空，常见用户 Android SDK 路径不存在 | 在此环境构建需新增下载并运行官方 Gradle、Android SDK 与项目依赖；本次没有下载或安装任何构建工具 |
+| 当前电脑 | 原有系统 Java 25 可用；开始前系统 PATH 未发现 Gradle、`adb`、`sdkmanager`，`ANDROID_HOME` / `ANDROID_SDK_ROOT` 为空，常见系统 SDK 路径不存在。本轮在独立目录准备了 Microsoft OpenJDK 17、Gradle 8.13、Android command-line tools | 工具位于隔离审计目录，没有改系统安装或全局环境变量。Android SDK 平台/构建工具尚未安装；许可证未接受 |
 
-**结论与下一步：构建入口审查已完成，但没有可直接构建的本地 Android 工具链。** 若继续，可用上述官方 SHA-256 基准校验 Gradle 8.13 与 Android command-line tools；之后还需确认所需 SDK 平台/构建工具的来源与校验，再在专用隔离目录只运行 `kernelDebug`，检查任务图不读取签名密钥、不构建 HEV/NDK、不注入更新源。此操作会运行第三方 Gradle 插件和依赖代码，且需要下载工具/依赖；Android SDK 条款也不能由我代为接受，因此开始前需用户明确授权具体下载和构建范围，并自行明确 SDK 条款处理。它与之后是否把 APK 安装到华为备用机是两个独立决定；安装仍需单独确认。当前没有构建、APK 检查、安装、VPN、CloudBase 或路由器操作，R04 与 SP01 均未通过。
+## 本地隔离构建准备与停止点（2026-11-01）
+
+用户已授权仅在 `tools/sp01-pakomo-build-audit` 内准备工具并尝试固定源码的 Kernel 调试构建。该目录为本轮新建的隔离工作区；Pakomo 检出到固定提交 `6798549060990f9bdcb7a9feedbe16259ee95d9d`，源码内未发现 `keystore.properties`。没有改动原小程序工程、系统 SDK、全局环境变量或其他项目文件。
+
+| 本地工具 | 实际版本 | 本地 SHA-256 | 核验来源 |
+| --- | --- | --- | --- |
+| Gradle binary distribution | 8.13 | `20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78` | [Gradle 官方校验表](https://gradle.org/release-checksums/)；本地哈希一致 |
+| Android command-line tools for Windows | build `15859902` | `90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a` | [Android Studio 下载页](https://developer.android.com/studio)；本地哈希一致 |
+| Microsoft OpenJDK for Windows x64 | 17.0.21.0.2 | `49154292866386b2f4f09a3ecf3be07ab80a419149c84ec1d4419b9eec9e4b64` | [Microsoft OpenJDK 下载页](https://learn.microsoft.com/en-us/java/openjdk/download)及其 SHA-256 sidecar；本地哈希一致 |
+
+本机系统 Java 是 25；已验证隔离 JDK 17 与 Gradle 8.13 可启动。首次 dry-run 请求卡在 HTTPS 响应读取；只读检查发现当前代理监听于 `127.0.0.1:7897`。随后仅对该 Gradle 子进程传入代理参数，未更改系统或 Codex 的代理设置。该代理诊断后，Gradle 已继续解析项目构建配置/依赖。
+
+**实际停止原因：Android SDK 许可证未接受。** 本轮只请求 `:app:assembleKernelDebug --dry-run` 以审阅任务图；Gradle 在依赖任务判定阶段因以下 SDK 包许可证未接受而退出，未生成可审阅的完整任务图：
+
+- `build-tools;35.0.0`
+- `platforms;android-36`
+
+dry-run 未执行 Android 编译/打包任务。没有接受任何 SDK 许可证，也没有安装上述 SDK 包、生成 APK、安装应用、启用 VPN、调用 CloudBase、登录或更改路由器。Gradle 配置与依赖解析阶段已启动，因此不能表述为“完全没有运行第三方构建代码”。
+
+下一步由用户在 Android Studio SDK Manager 或命令行自行审阅并接受 Android SDK 许可证，再安装 `Android SDK Build-Tools 35.0.0` 与 `Android SDK Platform 36`。Android 官方说明使用 SDK 前必须接受对应许可：[Android Studio / SDK 下载与条款](https://developer.android.com/studio)。接受并安装后告知我，我再核对安装版本/许可记录，重新运行 dry-run 审阅完整任务图；只有任务图确认限定在 Kernel debug、不读取签名配置、不构建 HEV/NDK 且不注入更新源，才执行获授权的 `kernelDebug`。APK 检查与之后是否安装仍分别记录；本轮授权不包含设备安装、VPN或云端测试。
+
+**当前结论：R04 与 SP01 仍未通过。** 尚无 APK，也没有证明 Pakomo 在目标 Huawei/微信上隔离限速、丢包、中断和恢复。
 
 ## 外部网络路径核对（2026-10-31，只读）
 
@@ -80,7 +101,7 @@
 ## 最小验证顺序（待入口确认）
 
 1. iPhone XR 入口核查已完成：当前未出现；苹果方法暂不采用。若未来已有可用 Mac/开发设备，再重新核对，不把升级 iOS 当解除条件。
-2. Pakomo 固定提交的构建入口、Wrapper、依赖与本机工具条件已完成只读审查。若用户确认，仅在专用隔离目录准备经校验的官方 Gradle/Android SDK，只运行 `kernelDebug` 并离线检查 APK；构建执行与手机安装分开确认。未确认前不下载、不运行、不安装。
+2. Pakomo 固定提交的构建入口、Wrapper、依赖与本机工具条件已核对。用户已授权的隔离工具准备已完成；须先由用户自行审阅并接受 Android SDK 许可证、安装 `build-tools;35.0.0` 与 `platforms;android-36`。随后重跑 dry-run 审阅完整任务图，符合范围后才执行 `kernelDebug` 并离线检查 APK。构建与手机安装分开；未另行确认前不安装 APK。
 3. 若 APK 离线检查通过且用户另行确认安装，再用华为备用机验证仅微信进入 VPN、其他应用不受影响、停用后恢复。之后须先确定工具实际支持的场景与取值，再用用户单独授权的当前只读 CloudBase 端点作正常/受限/中断/恢复对照；不复用已耗尽的30次采样授权。
 4. 正式业务出现后仍按 QP07 各场景独立验证。Android 方法不自动覆盖 iPhone。
 
