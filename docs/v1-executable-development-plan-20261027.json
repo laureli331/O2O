@@ -1224,7 +1224,7 @@
           "旧号个人与新号个体工商户/公司主体不同，旧cloud1不作新号共享候选；套餐、账单和到期核查按用户要求略过且不构成当前开发阻塞。",
           "SP01当前已限定在目标AppID、cloud1、临时探针及固定合成测试集合；服务范围供给、官方类目等SP04核验仍按对应卡片推进，SP01—SP06门槛完成前不得进入SP07。"
         ],
-        "nextAction": "环境上下文：用户确认腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并在E:\\O2O\\miniprogram\\cloudfunctions中选中cloud1；目标AppID范围的cloud_env_list已确认环境ID。DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理。事务验证期间sp01EnvProbe为Active/Nodejs20.19、超时30秒；用户随后报告已删除，目标AppID/EnvID范围只读cloud_fn_list返回total:0、list:[]；inspect、prepare及一次新run结构化结果均通过，事务探针的提交、回滚、并发和自动清理断言通过。此前失败run的三条自有记录已定向清理并验证无遗留；成功run的三条测试记录也由函数自动清理并回查通过。之后的一次性存储权限测试中，用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读写合成文件，故该测试文件的跨账号隔离失败；两个账号_openid未直接采集。确切文件已删除且目录只读查询为0，设置未改、具体规则生效原因未定；进一步云端诊断/修改/复测需要新授权。tools/sp01-storage-probe已导入开发者工具项目列表并在独立模拟器中成功打开pages/index/index；筛选error日志没有匹配行，但该结果不证明云端身份或存储能力。16项单元测试通过，身份函数sp01IdentityProbe已部署；首次代码更新因函数处于Creating被拒，函数Active后重新部署成功。当前只读详情为Active/Nodejs16.13/3秒（与此前Nodejs20.19选择不同，已创建函数运行时不能修改），模拟器页面成功打开。账号A已在真实微信客户端尝试调用身份函数，但页面返回IDENTITY_CALL_FAILED、云函数返回码-1且请求ID未提供；没有生成测试包、未创建或上传文件，身份摘要未比对。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；函数详情底部未见日志配置/主题，详情报告Active/Nodejs16.13/3秒。用户未改设置、未重跑。筛选后无记录仍不能判断请求是否到达或失败原因。随后只读查看日志设置菜单，未选择“投递到 CLS”或“删除日志”；CLS投递和保存时长状态未知。Nodejs16.13列在官方支持表中，但部署包兼容性、请求是否到达及失败根因仍未知；未获新授权前不改设置、不重试。SP01还需完成实际手机/网络测量与请求和耐久预算等质量合同项目；状态保持进行中、产品验收未通过。后续任何云端写入、清理或部署均须先确认具体范围。SP01—SP06门槛完成前不得进入SP07。",
+        "nextAction": "环境上下文：用户确认腾讯云账号中心已关联目标小程序，随后报告已导入cloud1并在E:\\O2O\\miniprogram\\cloudfunctions中选中cloud1；目标AppID范围的cloud_env_list已确认环境ID。DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型。旧号个人主体的cloud1不作新号共享候选。费用核查按用户要求略过；若上线后有平台实际付费提示，用户自行办理。事务验证期间sp01EnvProbe为Active/Nodejs20.19、超时30秒；用户随后报告已删除，目标AppID/EnvID范围只读cloud_fn_list返回total:0、list:[]；inspect、prepare及一次新run结构化结果均通过，事务探针的提交、回滚、并发和自动清理断言通过。此前失败run的三条自有记录已定向清理并验证无遗留；成功run的三条测试记录也由函数自动清理并回查通过。之后的一次性存储权限测试中，用户确认第二测试账号未加入管理员/开发者名单，截图显示该账号成功读写合成文件，故该测试文件的跨账号隔离失败；两个账号_openid未直接采集。确切文件已删除且目录只读查询为0，设置未改、具体规则生效原因未定；进一步云端诊断/修改/复测需要新授权。tools/sp01-storage-probe已导入开发者工具项目列表并在独立模拟器中成功打开pages/index/index；筛选error日志没有匹配行，但该结果不证明云端身份或存储能力。16项单元测试通过，身份函数sp01IdentityProbe已部署；首次代码更新因函数处于Creating被拒，函数Active后重新部署成功。当前只读详情为Active/Nodejs16.13/3秒（与此前Nodejs20.19选择不同，已创建函数运行时不能修改），模拟器页面成功打开。账号A已在真实微信客户端尝试调用身份函数，但页面返回IDENTITY_CALL_FAILED、云函数返回码-1且请求ID未提供；没有生成测试包、未创建或上传文件，身份摘要未比对。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；函数详情底部未见日志配置/主题，详情报告Active/Nodejs16.13/3秒。用户未改设置、未重跑。筛选后无记录仍不能判断请求是否到达或失败原因。随后只读查看日志设置菜单，未选择“投递到 CLS”或“删除日志”；CLS投递和保存时长状态未知。Nodejs16.13列在官方支持表中，但部署包兼容性、请求是否到达及失败根因仍未知；未获新授权前不改设置、不重试。SP01还需完成实际手机/网络测量与请求和耐久预算等质量合同项目；状态保持进行中、产品验收未通过。后续任何云端写入、清理或部署均须先确认具体范围。SP01—SP06门槛完成前不得进入SP07。 Latest Pakomo light-profile sample returned 30/30 successful calls, but its 368351ms start-to-stop interval exceeded the authorized 60000ms by 308351ms; record docs/sp01-network-huawei-pakomo-overrun-current-20261102.json as diagnostic-only and keep R04/SP01 pending.",
         "latestUserReportedAccountAssociationCheck": {
           "date": "2026-10-28",
           "source": "user-reply-to-read-only-check",
@@ -2138,7 +2138,8 @@
           "scope": "host-sampler-feasibility-only; delta window also includes counter queries; not WebView FPS or product QP05",
           "acceptanceEvidence": false
         },
-        "latestPausedPakomoAttemptEvidence": "docs/sp01-pakomo-current-attempt-20261102.json"
+        "latestPausedPakomoAttemptEvidence": "docs/sp01-pakomo-current-attempt-20261102.json",
+        "latestPakomoDiagnosticOnlySampleEvidence": "docs/sp01-network-huawei-pakomo-overrun-current-20261102.json"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

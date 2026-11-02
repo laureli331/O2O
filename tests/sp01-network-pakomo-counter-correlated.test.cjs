@@ -72,5 +72,6 @@ test('R04 records the latest Huawei Pakomo sample with in-run status counters', 
     );
   }
   const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
-  assert.match(reviewMarkdown, /最新新增一轮22次状态轮询与30次只读采样重叠[\s\S]*?30\/30[\s\S]*?P50=393ms[\s\S]*?P95=1181ms/);
+  assert.match(reviewMarkdown, /随后新增一轮状态轮询与采样重叠[\s\S]*?30次只读CloudBase往返全部成功，P50=393ms、P95=1181ms、max=2048ms/);
+  assert.match(reviewMarkdown, /\| R04 \|[\s\S]*?本轮超时诊断记录/);
 });

@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-02",
+  "task": "SP01",
+  "item": "R04",
+  "status": "diagnostic-only-execution-window-exceeded",
+  "authorization": {
+    "maximumDurationMs": 60000,
+    "sampleCalls": 30,
+    "endpoint": "sp01IdentityProbe / read-only",
+    "permittedWrites": false,
+    "permittedDeployments": false
+  },
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "androidVersion": "10",
+    "networkType": "wifi"
+  },
+  "pakomo": {
+    "profile": "轻度弱网",
+    "scope": "指定应用：微信",
+    "selectedPackage": "com.tencent.mm",
+    "startTimestampEpochMs": 1793605710543,
+    "startTimestampUtc": "2026-11-02T07:48:30.543Z",
+    "startResponseConfirmedActive": true,
+    "startResponseStage": "forwarding",
+    "appliedRule": "light",
+    "stopTimestampEpochMs": 1793606078894,
+    "stopTimestampUtc": "2026-11-02T07:54:38.894Z",
+    "stopConfirmed": true,
+    "activeAfterStop": false,
+    "controlResponseIntervalMs": 368351,
+    "authorizationOverrunMs": 308351,
+    "withinAuthorizationWindow": false
+  },
+  "sample": {
+    "attempts": 30,
+    "succeeded": 30,
+    "failed": 0,
+    "failureRate": 0,
+    "medianMs": 397,
+    "p95Ms": 732,
+    "maxMs": 3046,
+    "meanConsecutiveDifferenceMs": 153.6206896551724,
+    "rawElapsedSamplesRetained": false,
+    "summaryScreenshot": "docs/evidence/sp01-network-huawei-pakomo-overrun-summary-20261102.png"
+  },
+  "afterRun": {
+    "validatedWifi": true,
+    "vpnNetworkAgentFound": false,
+    "databaseWrites": 0,
+    "storageWrites": 0,
+    "cloudDeployments": 0,
+    "stayOnWhilePluggedInRestoredToOriginal": 0,
+    "screenOffTimeoutMs": 600000
+  },
+  "followUpDeviceSetting": {
+    "source": "ADB readback after the user's request to prevent idle screen-off",
+    "stayOnWhilePluggedIn": 2,
+    "usbPowered": true,
+    "wakefulness": "Awake",
+    "mStayOn": true,
+    "screenOffTimeoutMs": 600000,
+    "scope": "while USB-powered"
+  },
+  "summaryScreenshot": {
+    "path": "docs/evidence/sp01-network-huawei-pakomo-overrun-summary-20261102.png",
+    "sha256": "81ecedfc0b59fa6a692e7065d8483b53293acf7111664e241cb40d056bee85f7",
+    "shows": "30/30 read-only calls, median 397 ms, P95 732 ms, maximum 3046 ms"
+  },
+  "interpretation": {
+    "diagnosticOnly": true,
+    "reason": "start-to-stop control-response interval exceeded the authorized 60-second maximum by 308351 ms",
+    "provesExactImpairmentParameters": false,
+    "provesPerRequestShaping": false,
+    "provesLinkRttThroughputJitterOrLoss": false,
+    "rawPerCallEvidenceAvailable": false
+  },
+  "acceptance": {
+    "diagnosticOnly": true,
+    "r04Passed": false,
+    "sp01Passed": false
+  }
+}
