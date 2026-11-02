@@ -32,7 +32,7 @@ test('Pakomo runtime evidence records confirmed start, recovery, and the bounded
   assert.equal(r04.state, 'pending');
   assert.equal(r04.pakomoRuntimeControlEvidence, 'docs/sp01-pakomo-control-runtime-check-20261102.json');
   assert.match(r04.nextAction, /within that run's 60-second authorization/);
-  assert.match(r04.nextAction, /Do not repeat under that consumed authorization/);
+  assert.match(r04.nextAction, /That authorization is consumed\. Do not repeat under it/);
   assert.equal(readiness.sp01Passed, false);
 });
 

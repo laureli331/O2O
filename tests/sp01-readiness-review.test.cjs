@@ -451,6 +451,44 @@ test('SP01 current review covers the exact contract criteria without silently re
   }
 });
 
+test('R04 records the latest one-shot Pakomo sample as diagnostic-only after exceeding its authorization window', () => {
+  const sample = require('../docs/sp01-network-huawei-pakomo-light-run-20261102.json');
+  const r04 = review.openItems.find(item => item.id === 'R04');
+  const evidencePath = 'docs/sp01-network-huawei-pakomo-light-run-20261102.json';
+
+  assert.ok(review.sources.includes(evidencePath));
+  assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.equal(r04.latestPakomoAttemptEvidence, evidencePath);
+  assert.equal(r04.latestOneShotPakomoSampleEvidence, evidencePath);
+  assert.equal(sample.authorization.maximumVpnDurationSeconds, 60);
+  assert.equal(sample.authorization.deviceTimerObservedDurationSeconds, 68);
+  assert.equal(sample.authorization.overrunSeconds, 8);
+  assert.equal(sample.authorization.limitExceeded, true);
+  assert.deepEqual(
+    [sample.sample.attempts, sample.sample.succeeded, sample.sample.failed],
+    [30, 30, 0]
+  );
+  assert.deepEqual(
+    [sample.sample.medianMs, sample.sample.p95Ms, sample.sample.maxMs],
+    [398, 656, 1985]
+  );
+  assert.equal(sample.sample.scope, 'application-roundtrip-not-link-rtt-or-packet-loss');
+  assert.equal(sample.sample.databaseOrStorageWrites, false);
+  assert.equal(sample.after.pakomoConfirmedStopped, true);
+  assert.equal(sample.after.wifiConnected, true);
+  assert.equal(sample.after.vpnNetworkAgentFound, false);
+  assert.equal(sample.after.internetValidation, false);
+  assert.equal(sample.r04AcceptanceEligible, false);
+  assert.equal(sample.r04Passed, false);
+  assert.equal(sample.sp01Passed, false);
+  assert.equal(r04.state, 'pending');
+  assert.match(r04.nextAction, /timer showed 68 seconds against the 60-second authorization/i);
+  assert.match(r04.nextAction, /authorization is consumed\. do not repeat under it/i);
+  assert.match(r04.known, /30\/30.*P50=398ms.*P95=656ms.*max=1985ms/);
+  const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(reviewMarkdown, /后续获准的单次采样.*计时显示68秒.*上限8秒/);
+});
+
 test('SP01 review preserves gates, source files and historical evidence boundaries', () => {
   for (const file of review.sources) assert.ok(fs.existsSync(path.resolve(__dirname, '..', file)), file);
   assert.equal(review.e06GatePassed, false);
@@ -480,10 +518,10 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   const abortedPakomoAttempt = require('../docs/sp01-pakomo-attempt-20261102.json');
   assert.ok(review.sources.includes('docs/sp01-pakomo-attempt-20261102.json'));
   assert.ok(r04.evidence.split('; ').includes('docs/sp01-pakomo-attempt-20261102.json'));
-  assert.equal(r04.latestPakomoAttemptEvidence, 'docs/sp01-pakomo-attempt-20261102.json');
+  assert.equal(r04.previousNoSamplePakomoAttemptEvidence, 'docs/sp01-pakomo-attempt-20261102.json');
   assert.equal(abortedPakomoAttempt.sample.performed, false);
   assert.equal(abortedPakomoAttempt.authorization.durationLimitExceededByMs, 17092);
-  assert.match(r04.nextAction, /latest one-time authorization was consumed without sampling/i);
+  assert.match(r04.nextAction, /timer showed 68 seconds against the 60-second authorization/i);
   const correlatedPakomoSample = require('../docs/sp01-network-huawei-pakomo-correlated-20261102.json');
   assert.equal(r04.correlatedPakomoSampleEvidence, 'docs/sp01-network-huawei-pakomo-correlated-20261102.json');
   assert.ok(review.sources.includes(r04.correlatedPakomoSampleEvidence));
@@ -514,7 +552,7 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(correlatedPakomoSample.run.after.wifiRecoveredAndNotVpn, true);
   assert.equal(correlatedPakomoSample.r04Passed, false);
   assert.equal(correlatedPakomoSample.sp01Passed, false);
-  assert.match(r04.nextAction, /earlier agent-observed correlated 30-call run remains recorded/i);
+  assert.match(r04.nextAction, /earlier protocol-correlated 30-call run remains recorded/i);
   assert.match(r04.nextAction, /does not prove.*individual CloudBase calls.*shaped/i);
   assert.match(r04.nextAction, /independent link measures.*interrupted-request behavior.*public[- ]Wi-Fi/i);
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceInstallEvidence.adbInstallResult, 'Success');

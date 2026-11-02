@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "scope": "one-shot-agent-operated-pakomo-light-cloudbase-roundtrip-sample",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10"
+  },
+  "authorization": {
+    "userAuthorizedOneRun": true,
+    "maximumVpnDurationSeconds": 60,
+    "deviceTimerObservedDurationSeconds": 68,
+    "overrunSeconds": 8,
+    "limitExceeded": true,
+    "consumed": true
+  },
+  "pakomo": {
+    "package": "com.alphynia.pakomo.kernel",
+    "profile": {
+      "name": "轻度弱网",
+      "delayMs": 100,
+      "jitterMs": 30,
+      "packetLossPercent": 1,
+      "downlinkKbps": 2048,
+      "uplinkKbps": 1024
+    },
+    "applicationScope": "指定应用",
+    "selectedPackage": "com.tencent.mm",
+    "statusAtStart": "running-visible-in-pakomo-ui",
+    "statusAfterStop": "stopped-visible-in-pakomo-ui"
+  },
+  "sample": {
+    "endpoint": "sp01IdentityProbe / read-only",
+    "scope": "application-roundtrip-not-link-rtt-or-packet-loss",
+    "networkType": "wifi",
+    "attempts": 30,
+    "succeeded": 30,
+    "failed": 0,
+    "failureRate": 0,
+    "medianMs": 398,
+    "p95Ms": 656,
+    "maxMs": 1985,
+    "meanConsecutiveDifferenceMs": 116.48275862068965,
+    "rawSamplesRetained": false,
+    "databaseOrStorageWrites": false
+  },
+  "after": {
+    "pakomoConfirmedStopped": true,
+    "wifiConnected": true,
+    "vpnNetworkAgentFound": false,
+    "internetValidation": false,
+    "verificationSource": "ADB UI and connectivity state after stop"
+  },
+  "interpretation": {
+    "sampleCanBeUsedAsDiagnosticRoundtripEvidence": true,
+    "sampleCanBeUsedForR04Acceptance": false,
+    "provesIndividualCallShaping": false,
+    "provesConfiguredImpairmentValues": false,
+    "provesLinkRttThroughputJitterOrPacketLoss": false,
+    "durationAuthorizationWasRespected": false,
+    "reason": "Pakomo's elapsed timer was observed at 68 seconds against the authorized 60-second maximum. The one-shot authorization is consumed."
+  },
+  "nextAction": "Do not repeat under this authorization. R04 still needs valid time-bounded condition correlation, independent link measurements, interrupted-request recovery, a stable normal-network range and public-Wi-Fi evidence.",
+  "r04AcceptanceEligible": false,
+  "r04Passed": false,
+  "sp01Passed": false
+}
