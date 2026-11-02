@@ -560,10 +560,11 @@
       "evidence": "docs/sp01-endurance-web-budget-proposal-20261031.md",
       "unknown": [
         "exact mixed-cycle page operations until SP05",
-        "attributable mini-program memory observation method and growth budget",
+        "single-page attribution beyond the observed WeChat renderer-process PSS, and a product-derived memory growth budget",
         "Web core-task response budget and measured baseline"
       ],
       "nextAction": "Validate attributable mini-program memory sampling and Web instrumentation on real product pages, then propose numerical memory growth and Web task budgets for user confirmation; do not infer product acceptance from a preparation workload",
+      "latestEvidence": "docs/sp01-huawei-webview-memory-probe-20261102.json",
       "requiresFinalProductResultsBeforeSP07": false
     },
     {

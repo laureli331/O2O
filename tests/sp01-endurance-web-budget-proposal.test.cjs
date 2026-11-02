@@ -14,3 +14,19 @@ test('SP01 endurance proposal does not present unmeasured budgets as approved', 
   assert.match(text, /3 轮×30 次/);
   assert.match(text, /developer\.chrome\.com\/docs\/devtools\/performance-monitor/);
 });
+
+test('SP01 Android memory evidence is renderer-process scoped and keeps page budget pending', () => {
+  const root = path.join(__dirname, '..');
+  const evidence = JSON.parse(fs.readFileSync(path.join(root, 'docs/sp01-huawei-webview-memory-probe-20261102.json'), 'utf8'));
+  const proposal = fs.readFileSync(path.join(root, 'docs/sp01-endurance-web-budget-proposal-20261031.md'), 'utf8');
+  const review = JSON.parse(fs.readFileSync(path.join(root, 'docs/sp01-readiness-review-20261030.json'), 'utf8'));
+  assert.deepEqual(evidence.samples.map(sample => sample.totalPssKb), [14371, 16471, 16470]);
+  assert.equal(evidence.discovery.wechatRenderer.activityManagerPackageList[0], 'com.tencent.mm');
+  assert.equal(evidence.interpretation.singleMiniProgramPageAttributionProven, false);
+  assert.equal(evidence.interpretation.growthBudgetApproved, false);
+  assert.equal(evidence.interpretation.r05State, 'pending');
+  assert.match(proposal, /渲染进程级方法可行性/);
+  assert.match(proposal, /同一应用的多个 WebView 可能共享渲染进程/);
+  assert.equal(review.openItems.find(item => item.id === 'R05').state, 'pending');
+  assert.equal(review.openItems.find(item => item.id === 'R05').latestEvidence, 'docs/sp01-huawei-webview-memory-probe-20261102.json');
+});

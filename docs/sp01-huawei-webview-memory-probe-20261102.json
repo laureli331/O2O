@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-11-02T21:46:54+08:00",
+  "task": "SP01/R05 memory measurement feasibility",
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "os": "Android 10",
+    "wechatVersion": "8.0.79",
+    "baseLibraryVersion": "3.17.5",
+    "webViewProvider": "com.huawei.webview",
+    "webViewVersion": "114.0.5.302"
+  },
+  "conditions": {
+    "miniProgramPage": "SP01 device capability probe, user confirmed open in WeChat",
+    "focusedActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+    "screenTimeoutMs": 7200000,
+    "deviceAwake": true,
+    "usbStayAwake": true,
+    "networkOrCloudCalls": false,
+    "settingsChanged": false
+  },
+  "discovery": {
+    "method": "ADB read-only inspection of ActivityManager process records, WebView provider, and /proc/net/unix",
+    "wechatRenderer": {
+      "pidAtCapture": 2669,
+      "process": "com.huawei.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0",
+      "isolatedUid": 99023,
+      "hostUid": 10187,
+      "activityManagerPackageList": [
+        "com.tencent.mm"
+      ],
+      "serviceClient": "com.tencent.mm/org.chromium.content.app.SandboxedProcessService0:0"
+    },
+    "otherAppRendererObserved": {
+      "pidAtCapture": 16473,
+      "activityManagerPackageList": [
+        "com.huawei.hwread.dz"
+      ]
+    },
+    "webViewDevToolsSocketFound": false
+  },
+  "samples": [
+    {
+      "elapsedSincePreviousMs": 0,
+      "rendererPid": 2669,
+      "javaHeapKb": 1188,
+      "nativeHeapKb": 660,
+      "codeKb": 112,
+      "stackKb": 20,
+      "graphicsKb": 0,
+      "privateOtherKb": 696,
+      "systemKb": 11695,
+      "totalPssKb": 14371,
+      "totalSwapPssKb": 3629
+    },
+    {
+      "elapsedSincePreviousMs": 3496,
+      "rendererPid": 2669,
+      "javaHeapKb": 3268,
+      "nativeHeapKb": 756,
+      "codeKb": 116,
+      "stackKb": 20,
+      "graphicsKb": 0,
+      "privateOtherKb": 728,
+      "systemKb": 11583,
+      "totalPssKb": 16471,
+      "totalSwapPssKb": 2871
+    },
+    {
+      "elapsedSincePreviousMs": 3367,
+      "rendererPid": 2669,
+      "javaHeapKb": 3268,
+      "nativeHeapKb": 764,
+      "codeKb": 116,
+      "stackKb": 20,
+      "graphicsKb": 0,
+      "privateOtherKb": 724,
+      "systemKb": 11578,
+      "totalPssKb": 16470,
+      "totalSwapPssKb": 2866
+    }
+  ],
+  "hostProcessComparison": {
+    "process": "com.tencent.mm:appbrand0",
+    "pidAtCapture": 15360,
+    "totalPssKb": 820463,
+    "totalSwapPssKb": 137471,
+    "useAsPageMemory": false
+  },
+  "interpretation": {
+    "rendererProcessPssReadable": true,
+    "processAssociationToWechatObserved": true,
+    "singleMiniProgramPageAttributionProven": false,
+    "reason": "Android documents that a WebView renderer may be shared by multiple WebViews in the same app. ActivityManager associated this isolated renderer with WeChat, but the probe did not map it to one route or exclude other WeChat WebViews.",
+    "growthBudgetApproved": false,
+    "formalProductMeasurement": false,
+    "r05State": "pending",
+    "result": "Renderer-process PSS is observable on this device; this probe does not establish page-level attribution or a product memory-growth budget."
+  },
+  "commands": [
+    "adb shell dumpsys webviewupdate",
+    "adb shell ps -A -o PID,UID,NAME,ARGS",
+    "adb shell cat /proc/net/unix",
+    "adb shell dumpsys activity processes",
+    "adb shell dumpsys meminfo <renderer-pid>",
+    "adb shell dumpsys meminfo <appbrand-host-pid>"
+  ],
+  "officialReferences": [
+    "https://developer.android.com/develop/ui/views/layout/webapps/manage-webview-memory",
+    "https://developer.android.com/reference/android/webkit/WebView#getWebViewRenderProcess()",
+    "https://developer.android.com/tools/dumpsys"
+  ]
+}
