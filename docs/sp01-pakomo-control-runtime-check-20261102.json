@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R04",
+  "scope": "local-device-control-only-no-cloud-sample",
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "androidVersion": "10",
+    "pakomoPackage": "com.alphynia.pakomo.kernel",
+    "pakomoVersion": "0.1.0-kernel"
+  },
+  "source": {
+    "transport": "ADB explicit ordered broadcast",
+    "protocolReview": "docs/sp01-pakomo-control-protocol-review-20261102.json",
+    "networkRecoveryCheck": "adb shell dumpsys connectivity"
+  },
+  "authorization": {
+    "authorizedMaximumVpnDurationMs": 60000,
+    "measuredStartToStopMs": 138824,
+    "durationLimitExceeded": true,
+    "exceededByMs": 78824
+  },
+  "start": {
+    "deviceTimestampMs": 1793589342759,
+    "response": {
+      "protocolVersion": 1,
+      "cmd": "start",
+      "flavor": "kernel",
+      "ok": true,
+      "error": null,
+      "stage": "forwarding",
+      "active": true,
+      "appliedRule": "light",
+      "scope": "applications",
+      "confirmed": true,
+      "stats": {
+        "upBps": 0,
+        "downBps": 0,
+        "activeFlows": 0,
+        "dropped": 0,
+        "delayed": 0,
+        "uptimeMs": 0
+      }
+    },
+    "selectedApplicationNamesReturned": false,
+    "numericRuleParametersReturned": false
+  },
+  "failedStopAttempt": {
+    "action": "com.pakomo.CONTROL",
+    "explicitReceiver": false,
+    "responseDataReturned": false,
+    "laterConnectivityCheckStillFoundVpn": true,
+    "interpretation": "wrong broadcast did not stop Pakomo; no successful-stop claim is based on this attempt"
+  },
+  "stop": {
+    "deviceTimestampMs": 1793589481583,
+    "action": "com.pakomo.automation.CONTROL",
+    "receiver": "com.alphynia.pakomo.automation.ControlReceiver",
+    "response": {
+      "protocolVersion": 1,
+      "cmd": "stop",
+      "flavor": "kernel",
+      "ok": true,
+      "error": null,
+      "stage": "stopped",
+      "active": false,
+      "stats": {
+        "upBps": 0,
+        "downBps": 0,
+        "activeFlows": 0,
+        "dropped": 0,
+        "delayed": 0,
+        "uptimeMs": 0
+      }
+    }
+  },
+  "postStopStatus": {
+    "deviceTimestampMs": 1793589481843,
+    "response": {
+      "protocolVersion": 1,
+      "cmd": "status",
+      "flavor": "kernel",
+      "ok": true,
+      "error": null,
+      "stage": "stopped",
+      "active": false,
+      "stats": {
+        "upBps": 0,
+        "downBps": 0,
+        "activeFlows": 0,
+        "dropped": 0,
+        "delayed": 0,
+        "uptimeMs": 0
+      }
+    }
+  },
+  "recovery": {
+    "wifiConnected": true,
+    "wifiValidated": true,
+    "wifiMarkedNotVpn": true,
+    "vpnTransportPresent": false,
+    "scope": "current post-stop snapshot only; says nothing about earlier CloudBase sample rounds"
+  },
+  "networkSample": {
+    "performed": false,
+    "reason": "the foreground page was the SP01 device-capability probe, not the independent network sample page",
+    "cloudBaseCalls": 0,
+    "cloudDatabaseOrStorageWrites": false
+  },
+  "pakomoLocalDiagnostics": {
+    "statusAndControlCallsWriteLocalDiagnostics": true,
+    "details": "Per the source protocol, responses are logged locally and the app-specific status.json snapshot is overwritten; no Pakomo diagnostic was treated as a CloudBase sample."
+  },
+  "acceptanceEvidence": false,
+  "r04Passed": false,
+  "sp01Passed": false
+}
