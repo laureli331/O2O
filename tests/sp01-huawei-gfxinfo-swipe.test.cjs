@@ -103,3 +103,47 @@ test('Huawei gfxinfo swipe evidence stays limited to host-sampler feasibility', 
   assert.match(planMarkdown, /累计帧数从2833增至3027/);
   assert.match(planMarkdown, /夹住手势的累计帧计数从3272增至3453/);
 });
+
+test('Huawei SurfaceFlinger alternating swipe is recorded as host-only sampler feasibility', () => {
+  const sample = evidence.surfaceFlingerAlternatingSwipeProbe;
+  assert.equal(sample.device.model, 'HUAWEI SEA-AL10');
+  assert.equal(sample.method.tool, 'SurfaceFlinger TimeStats');
+  assert.equal(sample.method.gesturePattern, 'four alternating up/down cycles');
+  assert.equal(sample.method.gestureCount, 8);
+  assert.equal(sample.method.durationArgumentMsPerGesture, 600);
+  assert.equal(sample.method.hostMeasuredCommandElapsedMs, 7340);
+  assert.equal(sample.method.statsWereClearedBeforeCapture, true);
+  assert.equal(sample.method.timeStatsDisabledAfterCapture, true);
+  assert.equal(sample.method.networkOrCloudUsed, false);
+  assert.equal(sample.display.userConfirmedSelectedRefreshRateHz, 60);
+  assert.equal(sample.display.surfaceFlingerReportedRefreshRateHz, 60.000002);
+  assert.equal(sample.layer.name, 'com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0');
+  assert.equal(sample.layer.totalFrames, 363);
+  assert.equal(sample.layer.droppedFrames, 0);
+  assert.equal(sample.layer.averageFps, 61.787);
+  assert.deepEqual(sample.layer.presentToPresentHistogramMs, { '16': 361, '33': 1, '66': 1 });
+  assert.equal(sample.derived.maximumAdjacentIntervalMs, 66);
+  assert.equal(sample.derived.webViewFramesIsolated, false);
+  assert.equal(sample.derived.scrollDisplacementIndependentlyVerified, false);
+  assert.equal(sample.acceptanceEvidence, false);
+  assert.equal(sample.sp01Passed, false);
+
+  const r03 = review.openItems.find((item) => item.id === 'R03');
+  assert.ok(r03.additionalEvidence.includes('docs/sp01-huawei-gfxinfo-swipe-20261102.json'));
+  assert.equal(r03.latestSurfaceFlingerSwipeEvidence.evidence, 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#surfaceFlingerAlternatingSwipeProbe');
+  assert.equal(r03.latestSurfaceFlingerSwipeEvidence.averageFps, 61.787);
+  assert.equal(r03.latestSurfaceFlingerSwipeEvidence.acceptanceEvidence, false);
+  assert.equal(r03.state, 'pending');
+  assert.equal(review.sp01Passed, false);
+  assert.equal(review.sp07Started, false);
+
+  const sp01 = plan.tasks.find((task) => task.id === 'SP01');
+  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.executionProgress.latestSurfaceFlingerSwipeProbe.evidence, 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#surfaceFlingerAlternatingSwipeProbe');
+  assert.equal(sp01.executionProgress.latestSurfaceFlingerSwipeProbe.acceptanceEvidence, false);
+  const reviewMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  const planMarkdown = fs.readFileSync(path.join(__dirname, '../docs/v1-executable-development-plan-20261027.md'), 'utf8');
+  assert.match(reviewMarkdown, /复用 Android 内置 SurfaceFlinger TimeStats/);
+  assert.match(reviewMarkdown, /363帧/);
+  assert.match(planMarkdown, /Android 内置 SurfaceFlinger TimeStats/);
+});

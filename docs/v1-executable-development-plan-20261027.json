@@ -2139,7 +2139,24 @@
           "acceptanceEvidence": false
         },
         "latestPausedPakomoAttemptEvidence": "docs/sp01-pakomo-current-attempt-20261102.json",
-        "latestPakomoDiagnosticOnlySampleEvidence": "docs/sp01-network-huawei-pakomo-overrun-current-20261102.json"
+        "latestPakomoDiagnosticOnlySampleEvidence": "docs/sp01-network-huawei-pakomo-overrun-current-20261102.json",
+        "latestSurfaceFlingerSwipeProbe": {
+          "date": "2026-11-02",
+          "evidence": "docs/sp01-huawei-gfxinfo-swipe-20261102.json#surfaceFlingerAlternatingSwipeProbe",
+          "device": "HUAWEI SEA-AL10 / Android 10",
+          "sampler": "Android SurfaceFlinger TimeStats via existing ADB toolchain",
+          "gesturePattern": "four alternating up/down cycles; eight 600ms swipes",
+          "hostMeasuredCommandElapsedMs": 7340,
+          "sampledLayer": "WeChat AppBrandUI00 host layer",
+          "totalFrames": 363,
+          "droppedFrames": 0,
+          "averageFps": 61.787,
+          "maximumAdjacentIntervalMs": 66,
+          "webViewFramesIsolated": false,
+          "inputAligned": false,
+          "rawTraceArtifactRetained": false,
+          "acceptanceEvidence": false
+        }
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

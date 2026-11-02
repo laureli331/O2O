@@ -12,7 +12,9 @@
     "activity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
     "process": "com.tencent.mm:appbrand0",
     "viewRoot": "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00",
-    "otherAppBrandProcessesObserved": ["com.tencent.mm:appbrand1"]
+    "otherAppBrandProcessesObserved": [
+      "com.tencent.mm:appbrand1"
+    ]
   },
   "method": {
     "command": "adb shell dumpsys gfxinfo com.tencent.mm:appbrand0",
@@ -39,7 +41,7 @@
     "statsSinceMonotonicNs": "11803766077885",
     "totalFramesRendered": 357,
     "jankyFrames": 25,
-    "jankyPercent": 7.0,
+    "jankyPercent": 7,
     "percentile50Ms": 6,
     "percentile90Ms": 14,
     "percentile95Ms": 21,
@@ -145,6 +147,77 @@
       "The WebView compositor frame stream is not isolated from the AppBrand host window.",
       "The frame-counter delta is not a scroll FPS result and does not establish product-page QP05."
     ],
+    "acceptanceEvidence": false,
+    "sp01Passed": false
+  },
+  "surfaceFlingerAlternatingSwipeProbe": {
+    "date": "2026-11-02",
+    "device": {
+      "model": "HUAWEI SEA-AL10",
+      "androidVersion": "10",
+      "wechatVersion": "8.0.79",
+      "baseLibraryVersion": "3.17.5"
+    },
+    "foreground": {
+      "activity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+      "sampledLayer": "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0"
+    },
+    "method": {
+      "tool": "SurfaceFlinger TimeStats",
+      "commandSequence": [
+        "adb shell dumpsys SurfaceFlinger --timestats -clear -enable",
+        "adb shell input swipe (four alternating up/down cycles)",
+        "adb shell dumpsys SurfaceFlinger --timestats -dump",
+        "adb shell dumpsys SurfaceFlinger --timestats -disable"
+      ],
+      "gesturePattern": "four alternating up/down cycles",
+      "gestureCount": 8,
+      "durationArgumentMsPerGesture": 600,
+      "hostMeasuredCommandElapsedMs": 7340,
+      "statsWereClearedBeforeCapture": true,
+      "timeStatsDisabledAfterCapture": true,
+      "networkOrCloudUsed": false,
+      "rawTraceArtifactRetained": false,
+      "valuesTranscribedFromCommandOutput": true
+    },
+    "display": {
+      "userConfirmedSelectedRefreshRateHz": 60,
+      "surfaceFlingerReportedRefreshRateHz": 60.000002
+    },
+    "layer": {
+      "name": "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0",
+      "totalFrames": 363,
+      "droppedFrames": 0,
+      "averageFps": 61.787,
+      "presentToPresentHistogramMs": {
+        "16": 361,
+        "33": 1,
+        "66": 1
+      }
+    },
+    "derived": {
+      "maximumAdjacentIntervalMs": 66,
+      "webViewFramesIsolated": false,
+      "scrollDisplacementIndependentlyVerified": false,
+      "sampleIsAcceptedProductFps": false
+    },
+    "reuseAssessment": {
+      "selected": "Android SurfaceFlinger TimeStats through the existing local ADB toolchain",
+      "thirdPartyDependencyAdded": false,
+      "reason": "The built-in sampler is already available and exposes a named AppBrand host layer with presentation timing; it does not isolate the embedded WebView or align frames to input events."
+    },
+    "limitations": [
+      "The sampled layer is the WeChat AppBrand host layer; the embedded WebView compositor frame stream is not separately identified.",
+      "The capture has no independently timestamped gesture boundaries or input-event trajectory.",
+      "The scroll displacement was not independently verified.",
+      "The recorded average FPS and frame interval histogram describe the sampled host layer, not an accepted product-page scroll FPS.",
+      "No raw TimeStats dump artifact was retained; the counts and histogram were transcribed from the local command output."
+    ],
+    "officialSource": {
+      "title": "Android Developers: Frame rate",
+      "url": "https://developer.android.com/games/optimize/framerate",
+      "supports": "Android documents SurfaceFlinger TimeStats commands for collecting frame-rate and frame-presentation timing data; it does not document attribution to a WeChat embedded mini-program WebView."
+    },
     "acceptanceEvidence": false,
     "sp01Passed": false
   }
