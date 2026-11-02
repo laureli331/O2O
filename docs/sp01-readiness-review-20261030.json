@@ -33,7 +33,8 @@
     "docs/sp01-network-huawei-paired-reruns-20261102.json",
     "docs/sp01-huawei-render-layer-inspection-20261102.json",
     "docs/sp01-pakomo-control-protocol-review-20261102.json",
-    "docs/sp01-pakomo-control-runtime-check-20261102.json"
+    "docs/sp01-pakomo-control-runtime-check-20261102.json",
+    "docs/sp01-network-huawei-pakomo-correlated-20261102.json"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -51,7 +52,9 @@
   },
   "openItems": [
     {
-      "id": "R01", "kind": "technical-choice-and-risk", "state": "pending",
+      "id": "R01",
+      "kind": "technical-choice-and-risk",
+      "state": "pending",
       "topic": "Taro exact dependency combination",
       "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证。用户确认保留Webpack 5.91.0以遵守精确peer；未采用5.104.1覆盖。当前稳定Taro仍为4.3.1，4.3.2-beta.2仍保留所核对的关键依赖版本。2026-11-02另以官方Taro Vite runner 4.3.1做隔离对照：React 18.3.1/TS 5.9.3严格类型检查与144模块的weapp样例构建通过，候选不含Webpack，但引入Vite 4与网页Vite 8并存，仍保留Taro CLI模板下载链和Swiper，npm审计45项（4 critical）；未采用，R01仍pending。",
       "evidence": "docs/sp01-r01-registry-audit-20261101.json",
@@ -63,7 +66,9 @@
       "vulnerabilityReproductionAuthorizedByThisReview": false
     },
     {
-      "id": "R02", "kind": "confirmed-direction-validation", "state": "verified-for-SP01",
+      "id": "R02",
+      "kind": "confirmed-direction-validation",
+      "state": "verified-for-SP01",
       "topic": "Web React major-version direction",
       "known": "Unified React/DOM/types18.3.1 and TS5.9.3 verified with one shared source/React instance, full shared strict checks, Chrome and WeChat simulator interactions; React19 is historical",
       "evidence": "docs/sp01-shared-core-evidence-20261030.json",
@@ -71,7 +76,9 @@
       "nextAction": "Include the completed preparation evidence in SP01 signoff; real product boundary/state-library checks belong to their later implementation tasks, not a reverse prerequisite"
     },
     {
-      "id": "R03", "kind": "device-evidence-and-decision", "state": "pending",
+      "id": "R03",
+      "kind": "device-evidence-and-decision",
+      "state": "pending",
       "topic": "Measurement device conditions and support baseline",
       "apiFloorMatrix": {
         "evidence": "docs/sp01-api-floor-matrix-20261101.json",
@@ -81,9 +88,22 @@
         "status": "selected-privacy-route-and-taro-cloud-route-minima-known-global-floor-pending-login-storage-design-and-product-validation"
       },
       "known": "Four devices report webview rendering, callable wx.getPerformance, registered observers and the same six runtime-supported types. After the snapshot-source correction was requested, OPPO returned 10 rows, down from 20; the previous visible repeated type/duration patterns are absent. Six rows display durations (appLaunch 1532ms, firstRender 701ms, evaluateScript 4ms, plus redacted render/interaction values); route and the three paint/content timing points have no duration. The OPPO report does not embed its probe revision. A new SEA-AL10 report shows WeChat 8.0.79/base library 3.17.5 (earlier report was 3.17.4); the user confirmed Android GPU Rendering bars appeared over the WeChat probe and refreshed while scrolling. ADB confirms the connected device is SEA-AL10/Android 10/API 29 and foreground AppBrandUI00 during capture. SurfaceFlinger returned an attributable host layer but its first capture spanned about 33 seconds and was not synchronized to scrolling. A separate read-only gfxinfo query against com.tencent.mm:appbrand0 returned a ViewRoot matching AppBrandUI00; the main WeChat process was excluded because its ViewRoot was LauncherUI. Before reset, the process showed 3033 cumulative frames and 13 janky frames. The first reset exited 0 and its stats-since timestamp changed; a post-reset query restarted at 66 frames. A later unsynchronized read showed 301 frames/0 janky. A second reset before the requested gesture changed the stats-since timestamp and verified zero frames immediately afterward. The first post-scroll dump showed 1636 aggregate frames/0 janky across about 240.6 seconds and no input timestamps. A later 15.226-second live poll overlapped a user-confirmed approximate five-second scroll: the count stayed at 0 through 5.331 seconds, then rose to 203 frames with 1 janky frame (0.49%). The gesture start/end were not logged, and all ten final rows had NewestInputEvent=0 and the no-event OldestInputEvent sentinel. A later guarded synthetic swipe on the visible AppBrandUI00 host returned 93 frames/0 janky over 5.419 seconds of host command time, but its ten recent rows had no input timestamps and the WebView compositor was not isolated. This is feasibility data only, not a scroll FPS or QP05 result. No frame-rate item was found in the IDE Tools menu; System Tracing was not found under Debugging on the backup Huawei. A later 20-second manual FrameTimeline-only capture on OPPO PLJ110 overlapped the user-reported approximate five-second scroll: 538 actual and 538 expected frames appeared on the named AppBrand host layer over 10.079 seconds, all classified on-time with no jank type. The 317.55ms maximum adjacent gap has no timestamped gesture bounds, and no independent WebView frame stream was found; this is method evidence only.",
-      "unknown": ["whether the OPPO phone output came from exact commit 7e9ba98 because the report embeds no revision", "reason route has no displayed duration", "semantics and useful timing fields for the unnamed render/interaction entries", "physical refresh timing", "which supported sampler can expose mini-program WebView presented frames separately from the AppBrand host on this Huawei", "whether a long interval in the AppBrandUI00 host is an app-render stall rather than idle or surrounding activity", "whether the 98ms/102ms histogram boundary or gfxinfo frame timestamps provide enough precision for exact segment-level >100ms attribution", "iPhone frame-sampling path on the available Windows setup", "effective product runtime behavior of the selected privacy-and-phone button on the eventual minimum supported base library", "minimum supported library and frozen device groups"],
+      "unknown": [
+        "whether the OPPO phone output came from exact commit 7e9ba98 because the report embeds no revision",
+        "reason route has no displayed duration",
+        "semantics and useful timing fields for the unnamed render/interaction entries",
+        "physical refresh timing",
+        "which supported sampler can expose mini-program WebView presented frames separately from the AppBrand host on this Huawei",
+        "whether a long interval in the AppBrandUI00 host is an app-render stall rather than idle or surrounding activity",
+        "whether the 98ms/102ms histogram boundary or gfxinfo frame timestamps provide enough precision for exact segment-level >100ms attribution",
+        "iPhone frame-sampling path on the available Windows setup",
+        "effective product runtime behavior of the selected privacy-and-phone button on the eventual minimum supported base library",
+        "minimum supported library and frozen device groups"
+      ],
       "evidence": "docs/sp01-device-capability-20261030.json",
-      "additionalEvidence": ["docs/sp01-huawei-gfxinfo-swipe-20261102.json"],
+      "additionalEvidence": [
+        "docs/sp01-huawei-gfxinfo-swipe-20261102.json"
+      ],
       "latestLocalSyntheticSwipeEvidence": {
         "evidence": "docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAgentTriggeredSwipeFollowUp",
         "device": "HUAWEI SEA-AL10 / Android 10",
@@ -225,10 +245,12 @@
       "nextAction": "Keep R03 pending and do not repeat the same manual host trace: gesture boundaries and an independent WebView frame stream are still unavailable, so host records cannot establish scroll FPS. The OPPO PLJ110 has run revision device-capability-v2-20261101-r1; route/navigation reports duration undefined. This confirms field shape but does not explain the platform cause or create FPS evidence. No further OPPO field retest is needed. The user reports iPhone XR updated to iOS 18.7.11 but Developer Mode remains unavailable and currently has no Mac. Do not use external-camera capture. GameBench requires signed-in dashboard access to its installer, and the user reports having no account; do not ask them to register or download it. The accountless KeyMob candidate was checked: current vendor pages offer no-login use but limit charts to one minute per launch, do not document the QP05 raw evidence, and its downloaded EXE is unsigned; it was not run. The open-source lazyios source only exposes whole-display Core Animation FPS about once per second, and mobile-profiler's inspected iOS collector likewise samples DVT graphics at about one-second cadence; neither provides per-frame/input-aligned evidence. Keep the iPhone gap open and do not install these candidates. The user selected the combined one-action V05 privacy-consent and phone-verification button; its 2.32.3 route minimum is directly stated in the official privacy guide and independently confirmed by the Taro 4.3.1 declaration. This is not the global floor. The Taro CloudBase call/upload candidate is now source-confirmed; keep the global floor and device groups unset until login-floor applicability, product storage authorization design and product validation are resolved. Do not infer FPS or QP05 from AppBrand host records. QP05 requires the actual product page, frozen 200-item content, device group, sampler and repeated timed segments; execute that contract only when the product page exists."
     },
     {
-      "id": "R04", "kind": "measurement-evidence-and-decision", "state": "pending",
+      "id": "R04",
+      "kind": "measurement-evidence-and-decision",
+      "state": "pending",
       "topic": "Normal/weak-network conditions",
-      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. Two separate Cloudflare speed-test screenshots reported down 25.5/27.1 Mbps, up 33.5/25.1 Mbps, latency 200/191ms, jitter 40/74.3ms and packet loss 14.3/1.8%; the user confirmed the same OPPO/home Wi-Fi, while the screenshots do not independently verify device/access. The Cloudflare target differs from CloudBase. Static source review identified Pakomo v0.3.0 at commit 6798549060990f9bdcb7a9feedbe16259ee95d9d as an Android per-app weak-network candidate with GPL-3.0 and minSdk 29. On 2026-11-01 the user authorized isolated local tool preparation and a debug build attempt. Gradle 8.13, Android command-line tools build 15859902 and Microsoft OpenJDK 17.0.21.0.2 were downloaded to tools/sp01-pakomo-build-audit and matched their official SHA-256 values (Gradle 20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78; command-line tools 90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a; JDK 49154292866386b2f4f09a3ecf3be07ab80a419149c84ec1d4419b9eec9e4b64). The isolated :app:assembleKernelDebug --dry-run stopped before producing a complete task graph because licenses for build-tools;35.0.0 and platforms;android-36 were not accepted; those SDK packages were not installed. Gradle configuration/dependency resolution started, but no Android build task ran and at that dry-run stage no APK was produced or inspected; there was no installation, VPN activation or Huawei/WeChat/CloudBase weak-network test. The user must review/accept the Android SDK license and install those exact SDK packages before the local build can continue. Installation requires a separate confirmation. VPN consent, update-source packaging behavior and tool evidence are in docs/sp01-weak-network-tool-review-20261031.md. The user has borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router; firmware and owner permission for isolated configuration are unknown. On 2026-11-01 the user said the router owner is temporarily unavailable to ask, so no firmware, management-access or configuration-consent evidence is available. A third-party firmware project does not prove this device runs OpenWrt. The large packet-loss variation prevents freezing a stable normal network profile. SDK licenses were accepted by the user on 2026-11-02, and build-tools;35.0.0 plus platforms;android-36 are installed. The isolated :app:assembleKernelDebug build succeeded on Temurin 17.0.20.1+1. A corrected debug APK passed offline package and signature checks; permissions are recorded in latestBuildEvidence. At the build-record stage, no installation, VPN activation, or weak-network injection had been performed; the later device installation is recorded in deviceInstallEvidence. Three user-pasted 30-call rounds per normal and light-weak labels are now recorded on Huawei SEA-AL10; all 180 calls succeeded. The two new adjacent rerun pairs show light-label averaged-middle P50 increases of 82ms and 108.5ms, but P95 direction is inconsistent across the three rounds (first round normal is higher; later reruns are higher under the light label). The three-run average of per-run P50 is 288.5ms normal vs 381.83ms light; the average P95 is 581.67ms normal vs 545.33ms light. Results are consistent with a median application-roundtrip increase but do not establish Pakomo VPN state or configured impairment enforcement. The probe does not measure link RTT, throughput, jitter or packet loss. The user-pasted reruns did not include per-run timestamps, diagnostic counters, or VPN state/recovery confirmation.",
-      "evidence": "docs/sp01-network-home-wifi-20261031.json; docs/sp01-network-huawei-pakomo-light-20261102.json; docs/sp01-network-cloudflare-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-round2-20261031.json; docs/sp01-weak-network-tool-review-20261031.md; docs/sp01-network-huawei-normal-20261102.json; docs/sp01-network-huawei-paired-reruns-20261102.json; docs/sp01-pakomo-current-device-snapshot-20261102.json; docs/sp01-pakomo-traffic-diagnostics-20261102.json; docs/sp01-pakomo-control-protocol-review-20261102.json; docs/sp01-pakomo-control-runtime-check-20261102.json",
+      "known": "Home Wi-Fi and public free Wi-Fi are user-confirmed scenes. An authorized OPPO/home-Wi-Fi run of the existing read-only identity endpoint returned 30/30 successful application round trips; recomputed P50=284ms, P95=470ms, max=1701ms. Two separate Cloudflare speed-test screenshots reported down 25.5/27.1 Mbps, up 33.5/25.1 Mbps, latency 200/191ms, jitter 40/74.3ms and packet loss 14.3/1.8%; the user confirmed the same OPPO/home Wi-Fi, while the screenshots do not independently verify device/access. The Cloudflare target differs from CloudBase. Static source review identified Pakomo v0.3.0 at commit 6798549060990f9bdcb7a9feedbe16259ee95d9d as an Android per-app weak-network candidate with GPL-3.0 and minSdk 29. On 2026-11-01 the user authorized isolated local tool preparation and a debug build attempt. Gradle 8.13, Android command-line tools build 15859902 and Microsoft OpenJDK 17.0.21.0.2 were downloaded to tools/sp01-pakomo-build-audit and matched their official SHA-256 values (Gradle 20f1b1176237254a6fc204d8434196fa11a4cfb387567519c61556e8710aed78; command-line tools 90ae805d20434428bffcb699c290860f19bb5f66a67e6b330067e3de801fb04a; JDK 49154292866386b2f4f09a3ecf3be07ab80a419149c84ec1d4419b9eec9e4b64). The isolated :app:assembleKernelDebug --dry-run stopped before producing a complete task graph because licenses for build-tools;35.0.0 and platforms;android-36 were not accepted; those SDK packages were not installed. Gradle configuration/dependency resolution started, but no Android build task ran and at that dry-run stage no APK was produced or inspected; there was no installation, VPN activation or Huawei/WeChat/CloudBase weak-network test. The user must review/accept the Android SDK license and install those exact SDK packages before the local build can continue. Installation requires a separate confirmation. VPN consent, update-source packaging behavior and tool evidence are in docs/sp01-weak-network-tool-review-20261031.md. The user has borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router; firmware and owner permission for isolated configuration are unknown. On 2026-11-01 the user said the router owner is temporarily unavailable to ask, so no firmware, management-access or configuration-consent evidence is available. A third-party firmware project does not prove this device runs OpenWrt. The large packet-loss variation prevents freezing a stable normal network profile. SDK licenses were accepted by the user on 2026-11-02, and build-tools;35.0.0 plus platforms;android-36 are installed. The isolated :app:assembleKernelDebug build succeeded on Temurin 17.0.20.1+1. A corrected debug APK passed offline package and signature checks; permissions are recorded in latestBuildEvidence. At the build-record stage, no installation, VPN activation, or weak-network injection had been performed; the later device installation is recorded in deviceInstallEvidence. Three user-pasted 30-call rounds per normal and light-weak labels are now recorded on Huawei SEA-AL10; all 180 calls succeeded. The two new adjacent rerun pairs show light-label averaged-middle P50 increases of 82ms and 108.5ms, but P95 direction is inconsistent across the three rounds (first round normal is higher; later reruns are higher under the light label). The three-run average of per-run P50 is 288.5ms normal vs 381.83ms light; the average P95 is 581.67ms normal vs 545.33ms light. Results are consistent with a median application-roundtrip increase but do not establish Pakomo VPN state or configured impairment enforcement. The probe does not measure link RTT, throughput, jitter or packet loss. The user-pasted reruns did not include per-run timestamps, diagnostic counters, or VPN state/recovery confirmation. A later agent-operated correlated run on Huawei SEA-AL10 confirmed Pakomo light forwarding before the sample; status before stop showed activeFlows=4, delayed=93, dropped=0. The same 30-call read-only CloudBase sample succeeded 30/30 (lower-middle P50=403ms, nearest-rank P95=622ms, max=6407ms). Pakomo stop was confirmed and validated Wi-Fi returned as NOT_VPN within the fresh 60-second authorization. Aggregate counters cannot identify individual CloudBase calls, so this confirms a bounded correlated run but not per-request shaping or exact impairment enforcement.",
+      "evidence": "docs/sp01-network-home-wifi-20261031.json; docs/sp01-network-huawei-pakomo-light-20261102.json; docs/sp01-network-cloudflare-home-wifi-20261031.json; docs/sp01-network-cloudflare-home-wifi-round2-20261031.json; docs/sp01-weak-network-tool-review-20261031.md; docs/sp01-network-huawei-normal-20261102.json; docs/sp01-network-huawei-paired-reruns-20261102.json; docs/sp01-pakomo-current-device-snapshot-20261102.json; docs/sp01-pakomo-traffic-diagnostics-20261102.json; docs/sp01-pakomo-control-protocol-review-20261102.json; docs/sp01-pakomo-control-runtime-check-20261102.json; docs/sp01-network-huawei-pakomo-correlated-20261102.json",
       "pakomoControlProtocolEvidence": "docs/sp01-pakomo-control-protocol-review-20261102.json",
       "pakomoRuntimeControlEvidence": "docs/sp01-pakomo-control-runtime-check-20261102.json",
       "latestBuildEvidence": {
@@ -341,10 +363,22 @@
           "attemptsPerRun": 30,
           "normalSucceeded": 60,
           "lightSucceeded": 60,
-          "rerunPairsAveragedP50DifferencesMs": [82, 108.5],
-          "rerunPairsP95DifferencesMs": [8, 165],
-          "threeRunMeanOfPerRunAveragedP50Ms": { "normal": 288.5, "light": 381.8333333333333 },
-          "threeRunMeanOfPerRunP95Ms": { "normal": 581.6666666666666, "light": 545.3333333333334 },
+          "rerunPairsAveragedP50DifferencesMs": [
+            82,
+            108.5
+          ],
+          "rerunPairsP95DifferencesMs": [
+            8,
+            165
+          ],
+          "threeRunMeanOfPerRunAveragedP50Ms": {
+            "normal": 288.5,
+            "light": 381.8333333333333
+          },
+          "threeRunMeanOfPerRunP95Ms": {
+            "normal": 581.6666666666666,
+            "light": 545.3333333333334
+          },
           "pakomoStateDirectlyObserved": false,
           "effectConfirmed": false
         },
@@ -369,40 +403,151 @@
           "sampleRoundCorrelationEstablished": false
         }
       },
-      "unknown": ["direct Pakomo/VPN state and diagnostic counters for each paired rerun", "whether Pakomo's configured delay, jitter, loss and rate limits were enforced on every run", "actual uplink/downlink and link RTT/jitter/loss", "stable normal-network range across independent conditions", "interruption and recovery outcome for these specific reruns", "borrowed ZN-M2 firmware, management permissions, and owner consent for isolated configuration", "whether the borrowed ZN-M2 hardware and current firmware support a Wi-Fi test network with repeatable traffic shaping", "public Wi-Fi profile"],
-      "nextAction": "Three user-pasted 30-call runs per normal/light label are recorded. Both adjacent rerun pairs show higher light-label P50 (+82ms and +108.5ms), while P95 direction varies across runs and the average of all three per-run P95 values is lower for the light label. Treat the median pattern as consistent with increased application round-trip latency, not proof of Pakomo state or impairment enforcement. A fixed-commit local source review now confirms that Pakomo start(wait=true) can return confirmed=true only after the requested configuration reaches forwarding, and status returns active stage plus aggregate delay/drop counters; each response also writes PAKOMO_AUTO Logcat and overwrites the app-specific status.json, while returning neither numeric rule settings nor selected package names. For one next correlated run, capture the Pakomo app selection/preset, read baseline status, start light with wait=true, require confirmed=true and scope=applications, run one 30-call read-only CloudBase sample only after that exact run is authorized, read status, stop with wait=true, and check recovery. This still will not measure link RTT, throughput or packet loss, nor attribute aggregate counters to a CloudBase request. R04 also still needs independent link measures, interruption/recovery and public-Wi-Fi evidence; do not mark R04 or SP01 passed. The formal endpoint will be remeasured in SP08. The confirmed Pakomo control session exceeded the previous 60-second authorization; no additional VPN run may use that authorization. Obtain a fresh bounded authorization before starting Pakomo again.",
+      "unknown": [
+        "direct Pakomo/VPN state and diagnostic counters for the earlier user-pasted paired reruns",
+        "whether Pakomo's configured delay, jitter, loss and rate limits were enforced on every run",
+        "actual uplink/downlink and link RTT/jitter/loss",
+        "stable normal-network range across independent conditions",
+        "request interruption and recovery when connectivity is lost during an in-flight operation",
+        "borrowed ZN-M2 firmware, management permissions, and owner consent for isolated configuration",
+        "whether the borrowed ZN-M2 hardware and current firmware support a Wi-Fi test network with repeatable traffic shaping",
+        "public Wi-Fi profile"
+      ],
+      "nextAction": "One agent-observed correlated 30-call run is now recorded: Pakomo light forwarding was confirmed during the sample, aggregate status showed 93 delayed and 0 dropped packets, and stop plus validated non-VPN Wi-Fi recovery were confirmed within the fresh 60-second authorization. This does not prove that individual CloudBase calls were shaped or that the exact configured impairment values were enforced. Do not repeat this run under the consumed authorization. R04 still needs independent link measures (RTT, throughput, jitter and packet loss), a stable normal-network range, interrupted-request behavior and public-Wi-Fi evidence; the borrowed router firmware and owner permission also remain unknown. The formal product endpoint will be remeasured in SP08. Keep R04 pending and SP01 not passed.",
       "routerOwnerContactStatus": "temporarily-unavailable-reported-by-user-2026-11-01",
-      "numericDefaultsInvented": false
+      "numericDefaultsInvented": false,
+      "correlatedPakomoSampleEvidence": "docs/sp01-network-huawei-pakomo-correlated-20261102.json"
     },
     {
-      "id": "R05", "kind": "measurement-and-budget-decision", "state": "pending",
+      "id": "R05",
+      "kind": "measurement-and-budget-decision",
+      "state": "pending",
       "topic": "Endurance, observable resources and independent Web budgets",
       "known": "Startup/navigation/feedback/FPS thresholds and 3-by-30 sample rules already exist. User confirmed endurance preparation workload: continuous 60 minutes, at least 60 complete cycles, record every 10 minutes. Chrome official Performance monitor and Memory snapshot capabilities documented for Web; no product measurements yet.",
       "evidence": "docs/sp01-endurance-web-budget-proposal-20261031.md",
-      "unknown": ["exact mixed-cycle page operations until SP05", "attributable mini-program memory observation method and growth budget", "Web core-task response budget and measured baseline"],
+      "unknown": [
+        "exact mixed-cycle page operations until SP05",
+        "attributable mini-program memory observation method and growth budget",
+        "Web core-task response budget and measured baseline"
+      ],
       "nextAction": "Validate attributable mini-program memory sampling and Web instrumentation on real product pages, then propose numerical memory growth and Web task budgets for user confirmation; do not infer product acceptance from a preparation workload",
       "requiresFinalProductResultsBeforeSP07": false
     },
     {
-      "id": "R06", "kind": "external-capability-evidence", "state": "pending",
+      "id": "R06",
+      "kind": "external-capability-evidence",
+      "state": "pending",
       "topic": "E06 current security/recovery capability and costs",
       "known": "2026-11-01 official Tencent Cloud plan table marks database rollback unavailable for free-trial and personal plans and lists 14 days for standard and above; JSON/CSV import/export is listed across plans. The database guide separately describes daily seven-day default backups and says personal plans cannot use rollback. User's prior read-only cloud1 view showed a related entry, 暂无数据, and no fee/unavailable prompt. Prior billing screenshot reported 微信体验版, 40,000 points/month, and ¥19.9/month; those fields do not unambiguously map to the current public plan labels. Target plan mapping, active entitlement, backup points, retention, and cost remain unverified; no live cloud state was queried.",
       "recoveryCapabilityEvidence": "docs/sp01-recovery-capability-20261101.json",
-      "unknown": ["exact mapping of the user-reported 微信体验版/40,000 points/¥19.9 screenshot to the active public plan", "current target-environment rollback entitlement", "whether the empty backup area means no recovery point or no plan entitlement", "target-specific retention and cost", "tested export/restore fallback"],
+      "unknown": [
+        "exact mapping of the user-reported 微信体验版/40,000 points/¥19.9 screenshot to the active public plan",
+        "current target-environment rollback entitlement",
+        "whether the empty backup area means no recovery point or no plan entitlement",
+        "target-specific retention and cost",
+        "tested export/restore fallback"
+      ],
       "nextAction": "No cloud action is needed now: the prior read-only view showed no recovery points and this evidence contains no product data. Before storing real business data, identify the exact active plan using a read-only plan view and document a tested export/restore fallback if rollback is unavailable. Do not create a rollback task, import/export data, or change settings.",
       "newCloudActionAuthorizedByThisReview": false,
       "fullBusinessRestoreRequiredBeforeProductExists": false
     }
   ],
   "qualityReview": [
-    { "criteria": ["QP01", "QP02", "QP03", "QP04", "QP05", "QP07", "QP08", "QP09"], "currentStageState": "pending-environment-and-measurement-specification", "openItems": ["R03", "R04", "R05"], "productResult": "not-executed" },
-    { "criteria": ["QP06"], "currentStageState": "budget-method-documented-endpoint-evidence-staged", "openItems": ["R05"], "laterEvidenceTasks": ["SP08", "SP13", "SP31"], "productResult": "not-executed" },
-    { "criteria": ["QP10"], "currentStageState": "staged-gates-documented", "openItems": [], "laterEvidenceTasks": ["SP07", "SP15", "SP18", "SP35"], "productResult": "not-executed" },
-    { "criteria": ["QS08", "QR06"], "currentStageState": "pending-capability-and-recovery-preparation", "openItems": ["R06"], "productResult": "not-executed" },
-    { "criteria": ["QD01", "QD02", "QD04", "QD07"], "currentStageState": "evidence-index-and-rollback-documented-not-final-approved", "openItems": ["R01", "R06"], "productResult": "not-executed" },
-    { "criteria": ["QD03"], "currentStageState": "prerequisite-signoff-pending", "openItems": ["R01", "R03", "R04", "R05", "R06"], "productResult": "not-executed" }
+    {
+      "criteria": [
+        "QP01",
+        "QP02",
+        "QP03",
+        "QP04",
+        "QP05",
+        "QP07",
+        "QP08",
+        "QP09"
+      ],
+      "currentStageState": "pending-environment-and-measurement-specification",
+      "openItems": [
+        "R03",
+        "R04",
+        "R05"
+      ],
+      "productResult": "not-executed"
+    },
+    {
+      "criteria": [
+        "QP06"
+      ],
+      "currentStageState": "budget-method-documented-endpoint-evidence-staged",
+      "openItems": [
+        "R05"
+      ],
+      "laterEvidenceTasks": [
+        "SP08",
+        "SP13",
+        "SP31"
+      ],
+      "productResult": "not-executed"
+    },
+    {
+      "criteria": [
+        "QP10"
+      ],
+      "currentStageState": "staged-gates-documented",
+      "openItems": [],
+      "laterEvidenceTasks": [
+        "SP07",
+        "SP15",
+        "SP18",
+        "SP35"
+      ],
+      "productResult": "not-executed"
+    },
+    {
+      "criteria": [
+        "QS08",
+        "QR06"
+      ],
+      "currentStageState": "pending-capability-and-recovery-preparation",
+      "openItems": [
+        "R06"
+      ],
+      "productResult": "not-executed"
+    },
+    {
+      "criteria": [
+        "QD01",
+        "QD02",
+        "QD04",
+        "QD07"
+      ],
+      "currentStageState": "evidence-index-and-rollback-documented-not-final-approved",
+      "openItems": [
+        "R01",
+        "R06"
+      ],
+      "productResult": "not-executed"
+    },
+    {
+      "criteria": [
+        "QD03"
+      ],
+      "currentStageState": "prerequisite-signoff-pending",
+      "openItems": [
+        "R01",
+        "R03",
+        "R04",
+        "R05",
+        "R06"
+      ],
+      "productResult": "not-executed"
+    }
   ],
-  "datasetShapesInherited": ["empty", "one-record", "20-record-page", "200-record-multi-page", "per-field-approved-max-text-image-and-boundary"],
+  "datasetShapesInherited": [
+    "empty",
+    "one-record",
+    "20-record-page",
+    "200-record-multi-page",
+    "per-field-approved-max-text-image-and-boundary"
+  ],
   "existingPlanAndQualityThresholdsChanged": false,
   "e06GatePassed": false,
   "sp01Passed": false,

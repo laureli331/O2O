@@ -468,8 +468,40 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.match(review.openItems.find(x => x.id === 'R04').known, /P50=284ms, P95=470ms/);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router/);
   assert.ok(review.openItems.find(x => x.id === 'R04').unknown.some(x => x.includes('borrowed ZN-M2 firmware')));
-  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /Three user-pasted 30-call runs per normal\/light label are recorded/i);
-  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /start light with wait=true.*run one 30-call read-only CloudBase sample only after that exact run is authorized.*stop with wait=true/i);
+  const r04 = review.openItems.find(x => x.id === 'R04');
+  const correlatedPakomoSample = require('../docs/sp01-network-huawei-pakomo-correlated-20261102.json');
+  assert.equal(r04.correlatedPakomoSampleEvidence, 'docs/sp01-network-huawei-pakomo-correlated-20261102.json');
+  assert.ok(review.sources.includes(r04.correlatedPakomoSampleEvidence));
+  assert.ok(r04.evidence.split('; ').includes(r04.correlatedPakomoSampleEvidence));
+  assert.equal(correlatedPakomoSample.run.kind, 'agent-observed-correlated-device-run');
+  assert.equal(correlatedPakomoSample.run.pakomo.startResponse.confirmed, true);
+  assert.equal(correlatedPakomoSample.run.pakomo.startResponse.scope, 'applications');
+  assert.equal(correlatedPakomoSample.run.pakomo.statusBeforeStop.active, true);
+  assert.equal(correlatedPakomoSample.run.pakomo.statusBeforeStop.delayed, 93);
+  assert.equal(correlatedPakomoSample.run.pakomo.statusBeforeStop.dropped, 0);
+  assert.equal(correlatedPakomoSample.run.sample.attempts, 30);
+  assert.equal(correlatedPakomoSample.run.sample.succeeded, 30);
+  assert.equal(correlatedPakomoSample.run.sample.p50LowerMiddleMs, 403);
+  assert.equal(correlatedPakomoSample.run.sample.p95NearestRankMs, 622);
+  assert.equal(correlatedPakomoSample.run.sample.maxMs, 6407);
+  assert.equal(correlatedPakomoSample.run.sample.rawElapsedMs.length, 30);
+  assert.ok(correlatedPakomoSample.run.sample.rawElapsedMs.every(Number.isFinite));
+  const correlatedElapsedSorted = [...correlatedPakomoSample.run.sample.rawElapsedMs].sort((a, b) => a - b);
+  assert.equal(correlatedElapsedSorted[Math.floor((correlatedElapsedSorted.length - 1) / 2)], correlatedPakomoSample.run.sample.p50LowerMiddleMs);
+  assert.equal(correlatedElapsedSorted[Math.ceil(correlatedElapsedSorted.length * 0.95) - 1], correlatedPakomoSample.run.sample.p95NearestRankMs);
+  assert.equal(Math.max(...correlatedPakomoSample.run.sample.rawElapsedMs), correlatedPakomoSample.run.sample.maxMs);
+  assert.equal(
+    correlatedPakomoSample.run.sample.rawElapsedMs.slice(1).reduce((sum, value, index) => sum + Math.abs(value - correlatedPakomoSample.run.sample.rawElapsedMs[index]), 0) / (correlatedPakomoSample.run.sample.rawElapsedMs.length - 1),
+    correlatedPakomoSample.run.sample.meanConsecutiveDifferenceMs
+  );
+  assert.equal(correlatedPakomoSample.run.interpretation.provesPerRequestShaping, false);
+  assert.equal(correlatedPakomoSample.run.after.stopConfirmedInactive, true);
+  assert.equal(correlatedPakomoSample.run.after.wifiRecoveredAndNotVpn, true);
+  assert.equal(correlatedPakomoSample.r04Passed, false);
+  assert.equal(correlatedPakomoSample.sp01Passed, false);
+  assert.match(r04.nextAction, /correlated 30-call run is now recorded/i);
+  assert.match(r04.nextAction, /does not prove.*individual CloudBase calls.*shaped/i);
+  assert.match(r04.nextAction, /independent link measures.*interrupted-request behavior.*public[- ]Wi-Fi/i);
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceInstallEvidence.adbInstallResult, 'Success');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.source, 'user-reported; not directly observed by the agent');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.reportedResults.wechatConnectivity, 'normal');
@@ -546,6 +578,7 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.match(reviewMarkdown, /R04 当前进度（2026-11-02）/);
   assert.match(reviewMarkdown, /Pakomo v0\.3\.0 debug APK 已构建.*并安装到华为备用机/);
   assert.match(reviewMarkdown, /仍不能证明.*弱网注入.*生效/);
+  assert.match(reviewMarkdown, /本轮受控关联采样.*30\/30.*403ms.*622ms/);
   assert.match(reviewMarkdown, /R04 历史记录（截至2026-11-01/);
   const platform = require('../docs/sp02-platform-evidence-20261027.json');
   const findGate = value => {

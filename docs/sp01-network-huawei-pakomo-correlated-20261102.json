@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R04",
+  "source": "Agent-operated ADB observations of the Huawei device and local sampling page; the 30 displayed elapsed values were reconstructed from the run screenshots and independently checked against the on-device summary.",
+  "targetAppId": "wx2414399d423dfb65",
+  "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10",
+    "networkTypeReportedByProbe": "wifi"
+  },
+  "authorization": {
+    "authorizedPakomoWindowSeconds": 60,
+    "cloudBaseCalls": 30,
+    "endpoint": "sp01IdentityProbe",
+    "writesDatabase": false,
+    "writesStorage": false
+  },
+  "run": {
+    "kind": "agent-observed-correlated-device-run",
+    "pakomo": {
+      "baseline": {
+        "stage": "stopped",
+        "active": false,
+        "systemWifi": "validated-and-not-vpn"
+      },
+      "requestedProfile": {
+        "scope": "WeChat only, selected application",
+        "profile": "light",
+        "numericParametersSource": "docs/sp01-pakomo-control-protocol-review-20261102.json",
+        "runtimeResponseEchoedSelectedPackage": false,
+        "runtimeResponseEchoedNumericParameters": false
+      },
+      "startResponse": {
+        "stage": "forwarding",
+        "active": true,
+        "appliedRule": "light",
+        "scope": "applications",
+        "confirmed": true
+      },
+      "statusBeforeStop": {
+        "stage": "forwarding",
+        "active": true,
+        "activeFlows": 4,
+        "dropped": 0,
+        "delayed": 93,
+        "uptimeMs": 46658,
+        "counterScope": "aggregate Pakomo counters; not attributable to individual CloudBase calls"
+      },
+      "stopResponse": {
+        "stage": "stopped",
+        "active": false
+      },
+      "vpnWindowApproxSeconds": 48.6,
+      "withinAuthorizedMaximum": true
+    },
+    "sample": {
+      "endpoint": "sp01IdentityProbe / read-only",
+      "scope": "application-roundtrip-not-link-rtt-or-packet-loss",
+      "clock": "Date.now with nominal 1ms resolution; exact wall-clock timestamps were not retained",
+      "attempts": 30,
+      "succeeded": 30,
+      "failed": 0,
+      "failureRate": 0,
+      "rawElapsedMs": [
+        6407, 622, 384, 522, 416, 380, 366, 370, 440, 429,
+        444, 365, 423, 425, 398, 455, 410, 409, 373, 364,
+        398, 361, 578, 406, 346, 377, 424, 356, 403, 397
+      ],
+      "probeReportedMedianMs": 403,
+      "p50LowerMiddleMs": 403,
+      "p50AveragedMiddleMs": 404.5,
+      "p95NearestRankMs": 622,
+      "maxMs": 6407,
+      "meanConsecutiveDifferenceMs": 256.8965517241379
+    },
+    "after": {
+      "stopConfirmedInactive": true,
+      "wifiRecoveredAndNotVpn": true,
+      "evidence": "ADB connectivity inspection showed the default Wi-Fi network validated and marked NOT_VPN after Pakomo stop."
+    },
+    "interpretation": {
+      "pakomoForwardingConfirmedDuringSample": true,
+      "aggregateDelayedCounterPositiveAtEnd": true,
+      "provesPerRequestShaping": false,
+      "provesExactImpairmentParametersWereEnforcedForCloudBaseCalls": false,
+      "measuresNetworkLayerRttThroughputJitterOrPacketLoss": false,
+      "applicationCallsAllSucceeded": true
+    }
+  },
+  "notMeasured": [
+    "network-layer RTT, uplink/downlink throughput, jitter and packet loss",
+    "which aggregate Pakomo counter increments correspond to the sampled CloudBase requests",
+    "per-request enforcement of delay, jitter, loss and rate-limit values",
+    "request interruption and recovery when connectivity is lost during an in-flight operation",
+    "public Wi-Fi behavior and a stable normal-network range across independent conditions"
+  ],
+  "r04Passed": false,
+  "sp01Passed": false
+}
