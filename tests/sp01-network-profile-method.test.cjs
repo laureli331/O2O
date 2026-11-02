@@ -11,7 +11,9 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /不能换算成链路 RTT、上下行、抖动或丢包/);
   assert.match(source, /公共 Wi-Fi 单列/);
   assert.match(source, /sp01-network-huawei-pakomo-light-20261102\.json/);
-  assert.match(source, /同一华为和 Wi-Fi、VPN 停止\/正常档时取得30次只读基线/);
+  assert.match(source, /sp01-network-huawei-normal-20261102\.json/);
+  assert.match(source, /正常档的 P95 和最大值反而更高/);
+  assert.match(source, /重复配对正常\/轻度弱网轮次/);
   assert.match(source, /R04 与 SP01 继续保持待完成/);
 });
 
@@ -41,7 +43,8 @@ test('R04 records user-reported app-scope isolation without claiming measured we
   const r04 = readiness.openItems.find(item => item.id === 'R04');
   assert.equal(r04.state, 'pending');
   assert.equal(readiness.sp01Passed, false);
-  assert.match(r04.nextAction, /Installation is verified on Huawei SEA-AL10/i);
+  assert.match(r04.nextAction, /same-device Huawei SEA-AL10 normal-profile baseline is now recorded/i);
+  assert.match(r04.nextAction, /Repeat paired normal\/light-profile rounds on the same Huawei and Wi-Fi/i);
   assert.equal(r04.latestBuildEvidence.versionName, '0.1.0-kernel');
   assert.equal(r04.latestBuildEvidence.apkSha256, 'F026D48E9D6F298A1419EA69332A7C28F8D50D7BF115D978DDB1FB0DC6BCBD34');
   assert.equal(r04.latestBuildEvidence.installed, true);
@@ -61,9 +64,13 @@ test('R04 records user-reported app-scope isolation without claiming measured we
   assert.equal(r04.deviceWeakNetworkEvidence.reportedResults.networkRecoveredAfterVpnStopped, 'normal');
   assert.equal(r04.deviceWeakNetworkEvidence.cloudBaseCallsMade, true);
   assert.equal(r04.deviceWeakNetworkEvidence.cloudBaseSample.succeeded, 30);
+  assert.equal(r04.deviceWeakNetworkEvidence.normalProfileBaseline.succeeded, 30);
+  assert.equal(r04.deviceWeakNetworkEvidence.normalProfileBaseline.medianMs, 293);
+  assert.equal(r04.deviceWeakNetworkEvidence.normalProfileBaseline.p95Ms, 848);
+  assert.equal(r04.deviceWeakNetworkEvidence.normalProfileBaseline.maxMs, 1552);
   assert.equal(r04.deviceWeakNetworkEvidence.vpnStoppedAfterRun, 'user-confirmed');
   assert.equal(r04.deviceWeakNetworkEvidence.measuredWeakNetworkEffect, false);
-  assert.ok(r04.unknown.some(item => item.includes('same-device normal-profile baseline on Huawei SEA-AL10')));
+  assert.ok(r04.unknown.some(item => item.includes('repeat paired normal/weak-profile runs on Huawei SEA-AL10')));
   assert.match(r04.evidence, /sp01-weak-network-tool-review-20261031\.md/);
 });
 
@@ -79,6 +86,23 @@ test('Huawei Pakomo sample retains raw observations and records its measurement 
   assert.equal(sample.independentlyRecomputed.averagedMiddleP50Ms, 382.5);
   assert.equal(sample.independentlyRecomputed.nearestRankP95Ms, 566);
   assert.equal(sample.afterRun.vpnStopped, 'user-confirmed');
+  assert.equal(sample.r04Passed, false);
+  assert.equal(sample.sp01Passed, false);
+});
+
+test('Huawei normal-profile baseline preserves raw observations and avoids causal claims', () => {
+  const sample = require('../docs/sp01-network-huawei-normal-20261102.json');
+  assert.equal(sample.networkCondition.pakomoState, 'stopped-user-confirmed');
+  assert.equal(sample.networkCondition.networkTypeReportedByProbe, 'wifi');
+  assert.deepEqual(sample.samples.map(item => item.elapsedMs), [1552, 292, 300, 293, 326, 848, 403, 274, 293, 296, 301, 277, 292, 265, 273, 297, 301, 409, 272, 293, 292, 300, 292, 266, 310, 271, 299, 285, 278, 265]);
+  assert.equal(sample.samples.filter(item => item.ok).length, 30);
+  assert.equal(sample.userReportedSummary.medianMs, 293);
+  assert.equal(sample.userReportedSummary.p95Ms, 848);
+  assert.equal(sample.userReportedSummary.maxMs, 1552);
+  assert.equal(sample.userReportedSummary.meanConsecutiveDifferenceMs, 103);
+  assert.equal(sample.independentlyRecomputed.averagedMiddleP50Ms, 293);
+  assert.equal(sample.comparisonToLightProfile.p95DifferenceMs, 282);
+  assert.equal(sample.comparisonToLightProfile.effectConfirmed, false);
   assert.equal(sample.r04Passed, false);
   assert.equal(sample.sp01Passed, false);
 });

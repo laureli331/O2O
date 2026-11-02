@@ -467,11 +467,13 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.match(review.openItems.find(x => x.id === 'R04').known, /P50=284ms, P95=470ms/);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router/);
   assert.ok(review.openItems.find(x => x.id === 'R04').unknown.some(x => x.includes('borrowed ZN-M2 firmware')));
-  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /Installation is verified on Huawei SEA-AL10/i);
+  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /same-device Huawei SEA-AL10 normal-profile baseline is now recorded/i);
+  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /Repeat paired normal\/light-profile rounds on the same Huawei and Wi-Fi/i);
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceInstallEvidence.adbInstallResult, 'Success');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.source, 'user-reported; not directly observed by the agent');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.reportedResults.wechatConnectivity, 'normal');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.cloudBaseSample.succeeded, 30);
+  assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.normalProfileBaseline.p95Ms, 848);
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.vpnStoppedAfterRun, 'user-confirmed');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.measuredWeakNetworkEffect, false);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /dry-run stopped before producing a complete task graph/);
