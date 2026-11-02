@@ -2126,16 +2126,16 @@
         "pendingCloudStep": "no-cloud-retest-or-settings-change-without-new-authorization",
         "latestLocalGfxinfoSwipeProbe": {
           "date": "2026-11-02",
-          "evidence": "docs/sp01-huawei-gfxinfo-swipe-20261102.json",
+          "evidence": "docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAgentTriggeredSwipeFollowUp",
           "device": "HUAWEI SEA-AL10 / Android 10",
           "foreground": "WeChat AppBrandUI00 / com.tencent.mm:appbrand0 ViewRoot",
           "controlledSwipeDurationArgumentMs": 5000,
-          "hostMeasuredCommandElapsedMs": 5431,
-          "renderedFrameCounterDelta": 194,
+          "hostMeasuredCommandElapsedMs": 5472,
+          "renderedFrameCounterDelta": 181,
           "jankyFrameCounterDelta": 0,
           "statsReset": false,
           "networkOrCloudUsed": false,
-          "scope": "host-sampler-feasibility-only; not WebView FPS or product QP05",
+          "scope": "host-sampler-feasibility-only; delta window also includes counter queries; not WebView FPS or product QP05",
           "acceptanceEvidence": false
         }
       },

@@ -44,19 +44,38 @@ test('Huawei gfxinfo swipe evidence stays limited to host-sampler feasibility', 
   assert.equal(followUp.acceptanceEvidence, false);
   assert.equal(followUp.sp01Passed, false);
 
+  const latestFollowUp = evidence.latestAgentTriggeredSwipeFollowUp;
+  assert.equal(latestFollowUp.device.model, 'HUAWEI SEA-AL10');
+  assert.equal(latestFollowUp.foreground.sampledProcess, 'com.tencent.mm:appbrand0');
+  assert.equal(latestFollowUp.method.syntheticSwipeDurationArgumentMs, 5000);
+  assert.equal(latestFollowUp.method.hostMeasuredCommandElapsedMs, 5472);
+  assert.equal(latestFollowUp.method.statsWereReset, false);
+  assert.equal(latestFollowUp.method.networkOrCloudUsed, false);
+  assert.equal(latestFollowUp.method.counterDeltaWindowIncludesBeforeAndAfterQueries, true);
+  assert.equal(latestFollowUp.before.totalFramesRendered, 3272);
+  assert.equal(latestFollowUp.after.totalFramesRendered, 3453);
+  assert.equal(latestFollowUp.before.jankyFrames, 5);
+  assert.equal(latestFollowUp.after.jankyFrames, 5);
+  assert.equal(latestFollowUp.derived.renderedFrameCounterDelta, 181);
+  assert.equal(latestFollowUp.derived.jankyFrameCounterDelta, 0);
+  assert.equal(latestFollowUp.derived.hostWindowRateIsAcceptedFps, false);
+  assert.equal(latestFollowUp.acceptanceEvidence, false);
+  assert.equal(latestFollowUp.sp01Passed, false);
+  assert.ok(latestFollowUp.limitations.some((item) => item.includes('No input-event timestamps')));
+
   const r03 = review.openItems.find((item) => item.id === 'R03');
   assert.ok(r03.additionalEvidence.includes('docs/sp01-huawei-gfxinfo-swipe-20261102.json'));
   assert.deepEqual(r03.latestLocalSyntheticSwipeEvidence, {
-    evidence: 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#automatedSelfScrollFollowUp',
+    evidence: 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAgentTriggeredSwipeFollowUp',
     device: 'HUAWEI SEA-AL10 / Android 10',
     process: 'com.tencent.mm:appbrand0',
     controlledSwipeDurationArgumentMs: 5000,
-    hostMeasuredCommandElapsedMs: 5431,
-    renderedFrameCounterDelta: 194,
+    hostMeasuredCommandElapsedMs: 5472,
+    renderedFrameCounterDelta: 181,
     jankyFrameCounterDelta: 0,
     statsReset: false,
     networkOrCloudUsed: false,
-    scope: 'host-sampler-feasibility-only; not WebView FPS or product QP05',
+    scope: 'host-sampler-feasibility-only; delta window also includes counter queries; not WebView FPS or product QP05',
     acceptanceEvidence: false,
   });
   assert.equal(r03.state, 'pending');
@@ -67,19 +86,20 @@ test('Huawei gfxinfo swipe evidence stays limited to host-sampler feasibility', 
   assert.equal(sp01.status, 'in-progress');
   assert.deepEqual(sp01.executionProgress.latestLocalGfxinfoSwipeProbe, {
     date: '2026-11-02',
-    evidence: 'docs/sp01-huawei-gfxinfo-swipe-20261102.json',
+    evidence: 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAgentTriggeredSwipeFollowUp',
     device: 'HUAWEI SEA-AL10 / Android 10',
     foreground: 'WeChat AppBrandUI00 / com.tencent.mm:appbrand0 ViewRoot',
     controlledSwipeDurationArgumentMs: 5000,
-    hostMeasuredCommandElapsedMs: 5431,
-    renderedFrameCounterDelta: 194,
+    hostMeasuredCommandElapsedMs: 5472,
+    renderedFrameCounterDelta: 181,
     jankyFrameCounterDelta: 0,
     statsReset: false,
     networkOrCloudUsed: false,
-    scope: 'host-sampler-feasibility-only; not WebView FPS or product QP05',
+    scope: 'host-sampler-feasibility-only; delta window also includes counter queries; not WebView FPS or product QP05',
     acceptanceEvidence: false,
   });
   const planMarkdown = fs.readFileSync(path.join(__dirname, '../docs/v1-executable-development-plan-20261027.md'), 'utf8');
   assert.match(planMarkdown, /2026-11-02 SP01 本地设备帧采样可行性/);
   assert.match(planMarkdown, /累计帧数从2833增至3027/);
+  assert.match(planMarkdown, /夹住手势的累计帧计数从3272增至3453/);
 });

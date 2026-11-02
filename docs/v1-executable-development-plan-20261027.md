@@ -10,6 +10,8 @@
 
 用户随后要求由我通过 ADB 代为滚动约5秒。确认 `AppBrandUI00` 前后台均在前台后，`appbrand0` 累计帧数从2833增至3027（+194），累计卡顿帧仍为3；滑动命令耗时5431ms，未重置统计、未调用云端。该结果补充证明自动手势和宿主计数可用；由于没有输入事件时间戳且未隔离 WebView 合成层，不能计算滚动 FPS、归因卡顿或通过产品页 QP05。SP01仍未通过。详见同一证据 JSON 中的 `automatedSelfScrollFollowUp`。
 
+用户再次要求代为滚动时，首轮误查微信主进程计数且未能确认滚动效果；随后改读 `com.tencent.mm:appbrand0` 并重新执行一次约5秒 ADB 滑动。滑动命令耗时5472ms，夹住手势的累计帧计数从3272增至3453（+181），累计卡顿帧仍为5。帧数差包含前后查询间隔，没有输入时间戳，也未隔离 WebView 合成层；不计算 FPS、不归因卡顿、不通过 QP05。该轮记录为宿主采样可行性证据，SP01仍未通过。详见 `latestAgentTriggeredSwipeFollowUp`。
+
 ### 2026-10-29 收尾回查：合成文件已清理，B 直接下载仍缺上游回包
 
 用户确认了最后三张精确删除卡；随后使用目标 AppID `wx2414399d423dfb65`、环境 `cloud1-d2gjahlq39bf141c7` 的只读 `cloud_query_storage action=list` 回查 `sp01_permission_probe/`，结果为 `files:[]`、`totalCount:0`。七份合成文件均已完成定向删除，未删除目录或其他文件，权限设置未改。
