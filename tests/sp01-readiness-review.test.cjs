@@ -490,6 +490,42 @@ test('Huawei follow-up device report is retained as local diagnostic evidence on
   assert.equal(review.sp07Started, false);
 });
 
+test('R03 controlled Huawei SurfaceFlinger drag remains sampler-feasibility evidence only', () => {
+  const evidence = require('../docs/sp01-huawei-gfxinfo-swipe-20261102.json');
+  const drag = evidence.latestControlledSurfaceFlingerLatencyDragProbe;
+  const r03 = review.openItems.find(item => item.id === 'R03');
+  const planSp01 = plan.tasks.find(task => task.id === 'SP01');
+
+  assert.equal(drag.device.model, 'HUAWEI SEA-AL10');
+  assert.equal(drag.device.userSelectedRefreshRateHz, 60);
+  assert.equal(drag.foreground.sampledLayer, 'com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0');
+  assert.equal(drag.method.syntheticSwipeDurationArgumentMs, 1500);
+  assert.equal(drag.method.hostMeasuredCommandElapsedMs, 1934.7);
+  assert.equal(drag.capture.presentedFrameCount, 89);
+  assert.equal(drag.capture.presentTimestampSpanMs, 1451.66);
+  assert.equal(drag.capture.medianPresentIntervalMs, 16.42);
+  assert.equal(drag.capture.gapsOver1_5RefreshPeriods, 0);
+  assert.equal(drag.reuseAssessment.thirdPartyDependencyAdded, false);
+  assert.equal(drag.method.networkOrCloudUsed, false);
+  assert.match(drag.methodSource.url, /android\.googlesource\.com/);
+  assert.equal(drag.limitations.some(text => /WebView compositor frame stream is not isolated/.test(text)), true);
+  assert.equal(drag.acceptanceEvidence, false);
+  assert.equal(drag.sp01Passed, false);
+
+  assert.equal(r03.state, 'pending');
+  assert.equal(r03.latestControlledSurfaceFlingerLatencyDragProbe.presentedFrameCount, 89);
+  assert.equal(r03.latestControlledSurfaceFlingerLatencyDragProbe.webViewFramesIsolated, false);
+  assert.equal(r03.latestControlledSurfaceFlingerLatencyDragProbe.acceptanceEvidence, false);
+  assert.equal(planSp01.executionProgress.latestControlledSurfaceFlingerLatencyDragProbe.evidence,
+    'docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestControlledSurfaceFlingerLatencyDragProbe');
+  assert.equal(planSp01.productAcceptancePassed, false);
+  assert.equal(review.sp01Passed, false);
+  assert.equal(review.sp07Started, false);
+  const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(reviewMarkdown, /89 个呈现帧，时间跨度 1451\.66ms/);
+  assert.match(reviewMarkdown, /不是产品页滚动 FPS，也不满足 QP05/);
+});
+
 test('R04 preserves the historical one-shot Pakomo sample that exceeded its authorization window', () => {
   const sample = require('../docs/sp01-network-huawei-pakomo-light-run-20261102.json');
   const r04 = review.openItems.find(item => item.id === 'R04');

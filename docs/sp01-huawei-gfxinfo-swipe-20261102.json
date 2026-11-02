@@ -220,5 +220,59 @@
     },
     "acceptanceEvidence": false,
     "sp01Passed": false
+  },
+  "latestControlledSurfaceFlingerLatencyDragProbe": {
+    "date": "2026-11-02",
+    "device": {
+      "model": "HUAWEI SEA-AL10",
+      "androidVersion": "10",
+      "wechatVersion": "8.0.79",
+      "baseLibraryVersion": "3.17.5",
+      "userSelectedRefreshRateHz": 60,
+      "surfaceFlingerReportedRefreshPeriodNs": 16666666
+    },
+    "foreground": {
+      "activity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+      "sampledLayer": "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0"
+    },
+    "method": {
+      "sampler": "Android SurfaceFlinger --latency / --latency-clear using existing local ADB tooling",
+      "commandSequence": [
+        "adb shell dumpsys SurfaceFlinger --latency-clear \"com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0\"",
+        "adb shell input swipe 540 1750 540 1400 1500",
+        "adb shell dumpsys SurfaceFlinger --latency \"com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0\""
+      ],
+      "syntheticSwipeDurationArgumentMs": 1500,
+      "hostMeasuredCommandElapsedMs": 1934.7,
+      "statsClearedBeforeCapture": true,
+      "networkOrCloudUsed": false,
+      "thirdPartyDependencyAdded": false
+    },
+    "capture": {
+      "presentedFrameCount": 89,
+      "firstPresentTimestampNs": 41044623579674,
+      "lastPresentTimestampNs": 41046075243215,
+      "presentTimestampSpanMs": 1451.66,
+      "medianPresentIntervalMs": 16.42,
+      "gapsOver1_5RefreshPeriods": 0
+    },
+    "reuseAssessment": {
+      "selected": "Android built-in SurfaceFlinger latency timestamps through the already installed ADB toolchain",
+      "thirdPartyDependencyAdded": false,
+      "reason": "It exposes presentation timestamps for the named AppBrand host layer and is already available locally; this capture does not isolate the embedded WebView compositor."
+    },
+    "methodSource": {
+      "title": "Chromium Android SurfaceStatsCollector",
+      "url": "https://android.googlesource.com/platform/external/chromium_org/%2B/d0247b1/build/android/pylib/perf/surface_stats_collector.py",
+      "supports": "The collector uses SurfaceFlinger --latency-clear and --latency, interprets the first output line as refresh period and subsequent rows as frame timestamps, and warns that main-window stats may not update when content is composited into a SurfaceView."
+    },
+    "limitations": [
+      "The sampled surface is the WeChat AppBrand host layer; the embedded mini-program WebView compositor frame stream is not isolated.",
+      "The gesture was a synthetic ADB swipe; the capture has no independently timestamped input-event boundaries or trajectory.",
+      "Scroll displacement was not independently measured.",
+      "This short capture demonstrates sampler feasibility only; it is not product-page scroll FPS and does not satisfy QP05."
+    ],
+    "acceptanceEvidence": false,
+    "sp01Passed": false
   }
 }
