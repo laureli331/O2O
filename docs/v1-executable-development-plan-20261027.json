@@ -2359,7 +2359,8 @@
           "SP01恢复函数Active/Nodejs20.19、超时30秒；修正版代码已上传，inspect、prepare及新run结构化响应通过。3秒历史超时和首次30秒失败仍按历史记录保留；旧失败run的三条自有记录已核验并清理，成功run自动清理3条并完成删除后回查。最新事务探针的提交可见、回滚无部分写入、并发两笔成功且最终值为2。随后DescribeEnvs回包及官方资源映射支持确认数据库模式；SP04未修改CloudBase权限或数据库设置。",
           "2026-10-28后续独立部署sp01IdentityProbe：代码更新首次因Creating被拒，Active后重试成功；只读详情Active/Nodejs16.13/3秒，模拟器页面已打开；客户端身份调用和存储写入尚未执行。",
           "2026-10-28用户确认最新sp01IdentityProbe代码更新后，部署任务confirmation_cloud_fn_deploy_666ced08-b2fa-49af-8c21-17857ea251ba返回success/execution_success；目标AppID/EnvID只读详情仍为Active/Nodejs16.13/3秒。真实客户端身份调用、摘要比较及本轮存储写入仍未发生。",
-          "用户确认CLI部署卡片后，安装目录CLI只读查询sp01IdentityProbe返回Active / Nodejs16.13 / 3秒；该状态查询不证明本次代码更新成功，也不证明客户端调用。"
+          "用户确认CLI部署卡片后，安装目录CLI只读查询sp01IdentityProbe返回Active / Nodejs16.13 / 3秒；该状态查询不证明本次代码更新成功，也不证明客户端调用。",
+          "2026-11-02用户更新当前设备清单：OPPO PLJ110/Find X9 Android 17、120Hz；华为主机 BON-AL00/nova 11 SE Android 12、90Hz；华为备用机 SEA-AL10 Android 10、60Hz；iPhone XR iOS 18.7.11、60Hz。四机基础库均为3.17.5；iPhone开发者模式仍不可用且用户目前没有Mac。家庭Wi-Fi/CloudBase往返和第三方测速已有部分诊断记录，公共免费Wi-Fi尚未实测，不能视为网络验收完成；详见SP04当前设备快照与SP01网络记录。"
         ],
         "blockedChecks": [
           "微信官方类目适用性仍需正式依据；目前没有已确认愿意接单的维修或代买代取服务者，资质审核状态和十个地点的实际覆盖尚未确认。用户报告cloudfunctions文件夹当前环境已选中cloud1；活动窗口项目路径、托管/登录配置和正式域名仍未核验。SP01事务探针通过；另一次存储跨账号客户端探针在该测试文件上失败：用户确认第二测试账号未加入管理员/开发者名单且截图显示其成功读写；两个账号_openid未直接采集，文件已定向删除且权限设置未改，进一步云端诊断或复测需新授权。旧号与新号主体不同，旧cloud1不作共享候选。费用核查按用户要求略过。",

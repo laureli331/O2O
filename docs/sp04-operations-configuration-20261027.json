@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-27",
-  "lastUpdated": "2026-10-29",
+  "lastUpdated": "2026-11-02",
   "taskId": "SP04",
   "status": "in-progress",
   "productAcceptancePassed": false,
@@ -393,11 +393,62 @@
         "wechatVersion": "8.0.79"
       }
     ],
+    "latestDeviceSnapshot": {
+      "date": "2026-11-02",
+      "source": "user-provided-device-capability-reports-and-refresh-rate-confirmation",
+      "refreshRateValues": "user-confirmed-current-selected-rates",
+      "devices": [
+        {
+          "role": "primary-android",
+          "brand": "OPPO",
+          "model": "PLJ110 / Find X9",
+          "operatingSystem": "Android 17",
+          "wechatVersion": "8.0.79",
+          "baseLibraryVersion": "3.17.5",
+          "refreshRateHz": 120
+        },
+        {
+          "role": "primary-huawei",
+          "brand": "HUAWEI",
+          "model": "BON-AL00 / nova 11 SE",
+          "operatingSystem": "Android 12",
+          "wechatVersion": "8.0.79",
+          "baseLibraryVersion": "3.17.5",
+          "refreshRateHz": 90
+        },
+        {
+          "role": "backup-huawei",
+          "brand": "HUAWEI",
+          "model": "SEA-AL10",
+          "operatingSystem": "Android 10",
+          "wechatVersion": "8.0.79",
+          "baseLibraryVersion": "3.17.5",
+          "refreshRateHz": 60
+        },
+        {
+          "role": "iphone",
+          "brand": "Apple",
+          "model": "iPhone XR (iPhone11,8)",
+          "operatingSystem": "iOS 18.7.11",
+          "wechatVersion": "8.0.80",
+          "baseLibraryVersion": "3.17.5",
+          "refreshRateHz": 60
+        }
+      ],
+      "iphoneDeveloperMode": "not-available-after-user-reported-update; no Mac available"
+    },
     "selectedAdminBrowser": "Google Chrome",
     "adminBrowserTested": false,
     "normalNetworkScenario": "家中 WiFi 5G（用户描述）",
     "weakNetworkScenario": "公共免费 WiFi（用户指定为较弱场景）",
     "networkMetricsMeasured": false,
+    "networkMeasurementStatus": "partial-diagnostic-only",
+    "networkEvidenceReferences": [
+      "docs/sp01-readiness-review-20261030.md",
+      "docs/sp01-network-huawei-normal-20261102.json",
+      "docs/sp01-network-huawei-pakomo-bounded-20261102.json",
+      "docs/sp01-network-huawei-pakomo-counter-correlated-20261102.json"
+    ],
     "webHostingAndLoginTested": false
   },
   "budget": {

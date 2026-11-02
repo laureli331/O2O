@@ -164,10 +164,16 @@ test('SP04 records the generated preview and separates the failed client attempt
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {
   const record = evidence();
   assert.equal(record.date, '2026-10-27');
-  assert.equal(record.lastUpdated, '2026-10-29');
+  assert.equal(record.lastUpdated, '2026-11-02');
   assert.equal(record.localPreviewAvailability.httpStatus, 200);
   assert.equal(record.localPreviewAvailability.scope, 'local-static-directory-only');
-  assert.ok(read('docs/sp04-operations-configuration-20261027.md').includes('创建日期：2026-10-27；最近更新：2026-10-29'));
+  const doc = read('docs/sp04-operations-configuration-20261027.md');
+  assert.ok(doc.includes('创建日期：2026-10-27；最近更新：2026-11-02'));
+  assert.ok(doc.includes('120Hz、90Hz、60Hz、60Hz'));
+  assert.ok(doc.includes('公共免费 WiFi 尚未实测'));
+  assert.ok(doc.includes('Cloudflare 两次丢包率分别为14.3%和1.8%'));
+  assert.ok(doc.includes('`networkMetricsMeasured=false`'));
+  assert.ok(doc.includes('表示完整场景对照仍未完成'));
   assert.equal(record.cloudConsoleScreenshot.name, 'user-provided-2026-10-27');
   assert.equal(record.cloudConsoleScreenshot.visibleEnvironmentName, 'cloud1');
   assert.equal(record.cloudConsoleScreenshot.visibleBadge, '微信体验版');
@@ -637,11 +643,30 @@ test('SP04 records browser installation separately from tested support and block
     { brand: 'Huawei', model: 'nova 11 SE', operatingSystem: 'HarmonyOS 4.2.0', wechatVersion: '8.0.79' },
     { brand: 'Apple', model: 'iPhone XR', operatingSystem: 'iOS 16', wechatVersion: '8.0.79' },
   ]);
+  assert.deepEqual(record.localDevice.latestDeviceSnapshot, {
+    date: '2026-11-02',
+    source: 'user-provided-device-capability-reports-and-refresh-rate-confirmation',
+    refreshRateValues: 'user-confirmed-current-selected-rates',
+    devices: [
+      { role: 'primary-android', brand: 'OPPO', model: 'PLJ110 / Find X9', operatingSystem: 'Android 17', wechatVersion: '8.0.79', baseLibraryVersion: '3.17.5', refreshRateHz: 120 },
+      { role: 'primary-huawei', brand: 'HUAWEI', model: 'BON-AL00 / nova 11 SE', operatingSystem: 'Android 12', wechatVersion: '8.0.79', baseLibraryVersion: '3.17.5', refreshRateHz: 90 },
+      { role: 'backup-huawei', brand: 'HUAWEI', model: 'SEA-AL10', operatingSystem: 'Android 10', wechatVersion: '8.0.79', baseLibraryVersion: '3.17.5', refreshRateHz: 60 },
+      { role: 'iphone', brand: 'Apple', model: 'iPhone XR (iPhone11,8)', operatingSystem: 'iOS 18.7.11', wechatVersion: '8.0.80', baseLibraryVersion: '3.17.5', refreshRateHz: 60 },
+    ],
+    iphoneDeveloperMode: 'not-available-after-user-reported-update; no Mac available',
+  });
   assert.equal(record.localDevice.selectedAdminBrowser, 'Google Chrome');
   assert.equal(record.localDevice.adminBrowserTested, false);
   assert.equal(record.localDevice.normalNetworkScenario, '家中 WiFi 5G（用户描述）');
   assert.equal(record.localDevice.weakNetworkScenario, '公共免费 WiFi（用户指定为较弱场景）');
   assert.equal(record.localDevice.networkMetricsMeasured, false);
+  assert.equal(record.localDevice.networkMeasurementStatus, 'partial-diagnostic-only');
+  assert.deepEqual(record.localDevice.networkEvidenceReferences, [
+    'docs/sp01-readiness-review-20261030.md',
+    'docs/sp01-network-huawei-normal-20261102.json',
+    'docs/sp01-network-huawei-pakomo-bounded-20261102.json',
+    'docs/sp01-network-huawei-pakomo-counter-correlated-20261102.json',
+  ]);
   assert.equal(record.localDevice.webHostingAndLoginTested, false);
   assert.deepEqual(record.evidenceGates.map((gate) => gate.passed), [false, false]);
   assert.equal(record.cloudWritesOrDeploymentPerformed, true);
@@ -655,6 +680,7 @@ test('SP04 records browser installation separately from tested support and block
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('湘阴渡社区') && check.includes('湘阴村')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('09:00') && check.includes('22:00')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('顾客服务时段09:00—22:00') && check.includes('22:00后请求次日处理')));
+  assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('2026-11-02') && check.includes('iPhone XR') && check.includes('120Hz') && check.includes('60Hz')));
   assert.ok(task.executionProgress.blockedChecks.every((check) => !check.includes('顾客可预约服务时段')));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.md'));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.json'));
