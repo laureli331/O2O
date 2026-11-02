@@ -2174,7 +2174,16 @@
           "stayOnWhilePluggedInMask": 2,
           "wakefulness": "Awake",
           "stayOn": true,
-          "scope": "temporary device-screen setup for long local SP01 measurements; not acceptance evidence; restore 1800000ms after measurement"
+          "scope": "temporary device-screen setup for long local SP01 measurements; not acceptance evidence",
+          "postMeasurementRestoration": {
+            "observedAt": "2026-11-02",
+            "source": "local ADB settings readback after Huawei atrace host-process diagnostic",
+            "screenOffTimeoutBeforeMs": 7200000,
+            "screenOffTimeoutAfterMs": 1800000,
+            "usbPowered": true,
+            "stayOnWhilePluggedInMask": 2,
+            "scope": "restored the recorded 30-minute timeout after local measurement; USB-powered stay-awake remains enabled"
+          }
         },
         "latestPakomoScreenSleepFollowUpDiagnosticEvidence": "docs/sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json",
         "latestControlledSurfaceFlingerLatencyDragProbe": {

@@ -632,7 +632,16 @@ test('SP01 review preserves gates, source files and historical evidence boundari
     stayOnWhilePluggedInMask: 2,
     wakefulness: 'Awake',
     stayOn: true,
-    scope: 'temporary device-screen setup for long local SP01 measurements; not acceptance evidence; restore 1800000ms after measurement'
+    scope: 'temporary device-screen setup for long local SP01 measurements; not acceptance evidence',
+    postMeasurementRestoration: {
+      observedAt: '2026-11-02',
+      source: 'local ADB settings readback after Huawei atrace host-process diagnostic',
+      screenOffTimeoutBeforeMs: 7200000,
+      screenOffTimeoutAfterMs: 1800000,
+      usbPowered: true,
+      stayOnWhilePluggedInMask: 2,
+      scope: 'restored the recorded 30-minute timeout after local measurement; USB-powered stay-awake remains enabled'
+    }
   });
   const plan = require('../docs/v1-executable-development-plan-20261027.json');
   const planSp01 = plan.tasks.find(x => x.id === 'SP01');

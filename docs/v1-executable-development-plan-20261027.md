@@ -30,6 +30,8 @@
 
 随后复用本机 Android `atrace` 对微信 `AppBrandUI00` 及 `com.tencent.mm:appbrand0` 做短时异步采样，并通过 ADB 自动执行两次反向纵向滑动（各900ms）。共解析到134593行、76356个全量标记；过滤后的 AppBrand 进程有125个 `Choreographer#doFrame`、85个 `draw`、18个 `input` 标记。未发现可单独识别的小程序 WebView 呈现帧流，手势边界没有与跟踪时间戳对齐，页面位移未独立核验；原始跟踪未保留，汇总由当时内存中的解析结果记录。该结果仅为宿主层采样方法诊断，不能换算 WebView FPS、QP05或SP01通过。详见 [ATrace诊断记录](sp01-huawei-gfxinfo-swipe-20261102.json#latestAtraceHostProcessDiagnostic) 与 [AOSP atrace源码](https://android.googlesource.com/platform/frameworks/native/+/master/cmds/atrace/atrace.cpp)。
 
+完成上述本地诊断后，通过 ADB 将华为备用机的屏幕超时从2小时恢复为记录的30分钟，并读回确认 `screen_off_timeout=1800000`、`stay_on_while_plugged_in=2`。因此拔掉USB后按30分钟超时；接USB时仍保持唤醒。该设备设置恢复不构成R03性能验收证据。
+
 ### 2026-10-29 收尾回查：合成文件已清理，B 直接下载仍缺上游回包
 
 用户确认了最后三张精确删除卡；随后使用目标 AppID `wx2414399d423dfb65`、环境 `cloud1-d2gjahlq39bf141c7` 的只读 `cloud_query_storage action=list` 回查 `sp01_permission_probe/`，结果为 `files:[]`、`totalCount:0`。七份合成文件均已完成定向删除，未删除目录或其他文件，权限设置未改。

@@ -188,3 +188,27 @@ test('Huawei atrace follow-up remains host-process feasibility evidence only', (
   assert.match(planMarkdown, /ATrace诊断记录/);
   assert.match(planMarkdown, /仅为宿主层采样方法诊断/);
 });
+
+test('Huawei display timeout is restored after the local atrace diagnostic', () => {
+  const readiness = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.json'), 'utf8'));
+  const plan = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs/v1-executable-development-plan-20261027.json'), 'utf8'));
+  const adjustment = readiness.latestDeviceSleepSettingAdjustment;
+  const restoration = adjustment.postMeasurementRestoration;
+
+  assert.equal(adjustment.screenOffTimeoutAfterMs, 7200000);
+  assert.equal(restoration.screenOffTimeoutBeforeMs, 7200000);
+  assert.equal(restoration.screenOffTimeoutAfterMs, 1800000);
+  assert.equal(restoration.usbPowered, true);
+  assert.equal(restoration.stayOnWhilePluggedInMask, 2);
+  assert.match(restoration.source, /local ADB settings readback/);
+
+  const sp01 = plan.tasks.find((task) => task.id === 'SP01');
+  assert.deepEqual(
+    sp01.executionProgress.latestDeviceSleepSettingAdjustment.postMeasurementRestoration,
+    restoration,
+  );
+  const planMarkdown = fs.readFileSync(path.join(__dirname, '../docs/v1-executable-development-plan-20261027.md'), 'utf8');
+  const reviewMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(planMarkdown, /恢复为记录的30分钟/);
+  assert.match(reviewMarkdown, /恢复为记录的30分钟/);
+});
