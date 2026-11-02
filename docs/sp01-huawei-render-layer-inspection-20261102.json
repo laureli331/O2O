@@ -37,5 +37,68 @@
     "title": "Android Developers: dumpsys",
     "url": "https://developer.android.com/tools/dumpsys?authuser=4",
     "scope": "documents gfxinfo/framestats for UI frame performance; does not document WeChat WebView attribution"
+  },
+  "latestReadOnlyRepeat": {
+    "date": "2026-11-02",
+    "trigger": "user reported the SP01 device-capability page open in WeChat",
+    "device": {
+      "model": "HUAWEI SEA-AL10",
+      "androidVersion": "10"
+    },
+    "foreground": {
+      "source": "adb shell dumpsys activity activities; adb shell dumpsys window",
+      "focusedActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+      "interpretation": "WeChat AppBrand host is foreground; exact mini-program route is not exposed by this check"
+    },
+    "surfaceFlinger": {
+      "source": "adb shell dumpsys SurfaceFlinger --list",
+      "matchedLayers": [
+        "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0",
+        "SurfaceView - GestureNavLeft#0",
+        "SurfaceView - GestureNavRight#0",
+        "SurfaceView - GestureNavBottom#0"
+      ],
+      "webViewSpecificLayerFound": false,
+      "interpretation": "no identifiable WebView/Chromium layer in the filtered result; this does not prove the embedded WebView is absent"
+    },
+    "processes": {
+      "source": "adb shell ps -A",
+      "appBrandProcessesObserved": [
+        "com.tencent.mm:appbrand0",
+        "com.tencent.mm:appbrand1"
+      ],
+      "webViewSandboxProcessObserved": true,
+      "correlatedToSpecificMiniProgramRoute": false
+    },
+    "gfxinfo": {
+      "source": "adb shell dumpsys gfxinfo com.tencent.mm:appbrand0",
+      "process": "com.tencent.mm:appbrand0",
+      "totalFramesRendered": 385,
+      "jankyFrames": 27,
+      "jankyFrameRatePercent": 7.01,
+      "framePercentilesMs": {
+        "p50": 6,
+        "p90": 13,
+        "p95": 21,
+        "p99": 109
+      },
+      "viewRootCount": 1,
+      "totalViews": 80,
+      "countersResetForThisCheck": false,
+      "interpretation": "cumulative host-process snapshot; no synchronized gesture window or separate WebView frame stream"
+    },
+    "actions": {
+      "frameCountersReset": false,
+      "gestureIssued": false,
+      "networkOrCloudUsed": false,
+      "settingsChanged": false
+    },
+    "acceptanceEvidence": false,
+    "limitations": [
+      "foreground activity identifies the WeChat AppBrand host, not the specific mini-program route",
+      "a WebView sandbox process was present but was not tied to the focused route or its presented frames",
+      "gfxinfo counters were not reset and do not isolate this page-open interval",
+      "no gesture was synchronized with the read, so frame rate and app-stall attribution cannot be computed"
+    ]
   }
 }

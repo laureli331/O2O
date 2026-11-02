@@ -80,6 +80,18 @@
       "evidence": "docs/sp01-device-capability-20261030.json",
       "additionalEvidence": ["docs/sp01-huawei-gfxinfo-swipe-20261102.json"],
       "latestRenderLayerInspectionEvidence": "docs/sp01-huawei-render-layer-inspection-20261102.json",
+      "latestRenderLayerRepeat": {
+        "evidence": "docs/sp01-huawei-render-layer-inspection-20261102.json#latestReadOnlyRepeat",
+        "foregroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "webViewSpecificLayerFound": false,
+        "gfxinfo": {
+          "process": "com.tencent.mm:appbrand0",
+          "totalFramesRendered": 385,
+          "jankyFrames": 27,
+          "countersReset": false
+        },
+        "acceptanceEvidence": false
+      },
       "localTraceEvidence": "A seven-second atrace overlapped a five-second synthetic swipe and retained 61,017/61,017 events. Input, AppBrand doFrame and SurfaceFlinger vsync markers were present, but no separately attributable WebView presented-frame stream was found. Perfetto's traced service disconnected and a larger atrace buffer failed; a 1,024 KB buffer succeeded. This is measurement-method feasibility only.",
       "oppoFrameTimelineEvidence": "Historical 60Hz capture: 152 host frames over 2.845 seconds, 1,204 input-delivery slices, 789 doFrame slices, 948 systrace import failures, and a 329.57ms maximum adjacent gap; not gesture-correlated. On 2026-11-01, the first manual FrameTimeline-only capture window was missed (9 actual-frame records: 3 named status-bar, 6 unnamed, 0 AppBrand); the Trace Processor error-stat query had no nonzero rows. An 8-second FrameTimeline-only trace overlapping a 5-second ADB synthetic swipe recorded 94 actual-frame records, including 45 named AppBrand host frames over 1.034 seconds and a 329.87ms maximum adjacent host-frame gap; the status bar had 2 frames over 1.004 seconds. A later 20-second FrameTimeline-only capture overlapped a user-reported approximate five-second manual scroll and recorded 538 actual and 538 expected frames on the named AppBrand host layer over 10.079 seconds; all actual records were On-time Present with jank type None, and the maximum adjacent host-frame gap was 317.55ms. Gesture boundaries were not timestamped, no input tracks were included, and the embedded WebView was not isolated, so this is method-feasibility evidence only—not a scroll FPS, app-stall attribution, product-page result or QP05 evidence.",
       "frameTimelineOnlyEvidence": "docs/sp01-device-capability-20261030.json#fpsMeasurementResearch.gfxinfoFramestats.oppoFrameTimelineOnlyRetest",
