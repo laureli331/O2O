@@ -993,7 +993,7 @@
       "status": "in-progress",
       "productAcceptancePassed": false,
       "executionProgress": {
-        "date": "2026-10-28",
+        "date": "2026-11-02",
         "completedChecks": [
           "本机Node.js 24.18.0与npm 11.16.0已复核；不是云端运行时证据",
           "微信开发者工具CLI只读登录检查返回login=true",
@@ -1034,7 +1034,8 @@
           "2026-10-28更新SP01进度文档后：开发计划测试43/43通过，仓库全量Node测试1434/1434通过；配套JSON解析和git diff --check通过。",
           "用户确认CLI部署卡片后，安装目录CLI只读查询sp01IdentityProbe返回Active / Nodejs16.13 / 3秒；该状态查询不证明本次代码更新成功，也不证明客户端调用。",
           "2026-10-28账号A真实客户端调用返回IDENTITY_CALL_FAILED，云函数返回码-1、请求ID未提供；未生成测试包，按本地调用顺序未创建本机临时文件或上传云文件。",
-          "2026-10-28用户打开CloudBase日志页后，按sp01IdentityProbe筛选并查询最近24小时，报告无记录；函数详情为Active/Nodejs16.13/3秒且底部未见日志配置或主题。未改设置、未重跑；该查询结果仍不能判定请求是否到达。"
+          "2026-10-28用户打开CloudBase日志页后，按sp01IdentityProbe筛选并查询最近24小时，报告无记录；函数详情为Active/Nodejs16.13/3秒且底部未见日志配置或主题。未改设置、未重跑；该查询结果仍不能判定请求是否到达。",
+          "2026-11-02为延长华为备用机SEA-AL10的本地测试可用时间，通过ADB将screen_off_timeout从1800000毫秒改为7200000毫秒并读回确认；USB供电、stay_on_while_plugged_in=2、Awake且mStayOn=true。属于可恢复的设备测试准备，不是SP01验收证据，测量结束后应恢复原30分钟。"
         ],
         "postRunTimeoutReadOnlyCloudRecheckBeforeTimeoutAdjustment": {
           "source": "wechatide-cli-read-only-after-user-run-timeout",
@@ -2156,6 +2157,18 @@
           "inputAligned": false,
           "rawTraceArtifactRetained": false,
           "acceptanceEvidence": false
+        },
+        "latestDeviceSleepSettingAdjustment": {
+          "observedAt": "2026-11-02",
+          "device": "HUAWEI SEA-AL10 / Android 10",
+          "source": "local ADB settings and power-state readback",
+          "screenOffTimeoutBeforeMs": 1800000,
+          "screenOffTimeoutAfterMs": 7200000,
+          "usbPowered": true,
+          "stayOnWhilePluggedInMask": 2,
+          "wakefulness": "Awake",
+          "stayOn": true,
+          "scope": "temporary device-screen setup for long local SP01 measurements; not acceptance evidence; restore 1800000ms after measurement"
         }
       },
       "qualityContract": {

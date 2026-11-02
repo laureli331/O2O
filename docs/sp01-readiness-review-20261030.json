@@ -71,6 +71,18 @@
     "stayOn": true,
     "scope": "device-screen behavior only; not SP01 network or endurance acceptance"
   },
+  "latestDeviceSleepSettingAdjustment": {
+    "observedAt": "2026-11-02",
+    "device": "HUAWEI SEA-AL10 / Android 10",
+    "source": "local ADB settings and power-state readback",
+    "screenOffTimeoutBeforeMs": 1800000,
+    "screenOffTimeoutAfterMs": 7200000,
+    "usbPowered": true,
+    "stayOnWhilePluggedInMask": 2,
+    "wakefulness": "Awake",
+    "stayOn": true,
+    "scope": "temporary device-screen setup for long local SP01 measurements; not acceptance evidence; restore 1800000ms after measurement"
+  },
   "openItems": [
     {
       "id": "R01",
