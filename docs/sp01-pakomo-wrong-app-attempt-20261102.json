@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "scope": "authorized-pakomo-start-stop-no-valid-sample",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10"
+  },
+  "authorization": {
+    "userAuthorizedOneRun": true,
+    "maximumVpnDurationSeconds": 60,
+    "durationMeasuredSeconds": null,
+    "withinAuthorizedDurationVerified": false,
+    "consumed": true
+  },
+  "pakomo": {
+    "start": {
+      "confirmed": true,
+      "profile": "轻度弱网",
+      "applicationScope": "指定应用：微信"
+    },
+    "stop": {
+      "confirmedInactive": true
+    },
+    "recovery": {
+      "wifiConnected": true,
+      "wifiValidated": true,
+      "vpnNetworkAgentFound": false
+    }
+  },
+  "sample": {
+    "expectedPage": "SP01 网络采样",
+    "resumedPage": "狼人杀发牌助手",
+    "validSampleReturned": false,
+    "databaseOrStorageWrites": false,
+    "reason": "After starting Pakomo and returning to WeChat, the resumed mini-program was the Werewolf helper, not the SP01 network sampling page. No valid SP01 sample result was returned; Pakomo was stopped instead of retrying navigation during the time-limited run."
+  },
+  "currentForegroundPageAfterUserSwitch": {
+    "userReportedPage": "SP01 网络采样",
+    "adbForegroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00"
+  },
+  "processReview": {
+    "failureCause": "WeChat resumed a different mini-program task after Pakomo was started.",
+    "correctiveSequenceForAnyFutureSeparatelyAuthorizedRun": "Keep the exact SP01 network sampling page and its start button in the foreground before starting Pakomo; then verify forwarding, trigger one 30-call sample, and stop Pakomo before the 60-second limit.",
+    "authorizationForAnotherRun": false
+  },
+  "acceptanceEvidence": false,
+  "r04Passed": false,
+  "sp01Passed": false
+}

@@ -28,6 +28,8 @@ R04 当前进度（2026-11-02）：用户接受 Android SDK 许可并安装所�
 
 2026-11-02 后续获准的单次采样：我在华为备用机 SEA-AL10 上启动 Pakomo“轻度弱网”，确认 WeChat 为唯一选定应用，并运行 30 次只读 CloudBase 探针。30/30 成功，设备结果页汇总为 P50=398ms、P95=656ms、max=1985ms。由于 Pakomo 计时显示68秒，超出60秒授权上限8秒，本次授权已消耗，结果不符合 R04 验收的时限条件。随后已停止 Pakomo；ADB 状态显示 Wi-Fi 已连接且未发现 VPN network agent，但没有单独验证互联网连通性。没有数据库或存储写入。该数据只能作为诊断观察，不能证明请求逐条受控或设定的延迟、抖动、丢包和速率已生效；不重试此次授权。详见[本轮采样记录](sp01-network-huawei-pakomo-light-run-20261102.json)。
 
+2026-11-02 后续一次弱网尝试：Pakomo“轻度弱网”已启动，范围限定微信。切回微信时前台恢复为“狼人杀发牌助手”，不是 SP01 网络采样页，因此没有取得有效样本；随后立即停止 Pakomo。ADB 确认 Wi-Fi 已连接且未发现 VPN network agent，未写数据库或存储。此次精确启动时长没有记录，不能声称满足60秒上限；一次性授权已消耗，不在该授权下重试。用户之后已切回 SP01 网络采样页，ADB 前台活动为 `AppBrandUI00`。再次采样前应先确认按钮在前台可见，并取得一份新的限时授权。详见[失败尝试记录](sp01-pakomo-wrong-app-attempt-20261102.json)。
+
 R04 历史记录（截至2026-11-01）：固定源码 Pakomo v0.3.0（GPL-3.0、minSdk 29）及其入口、依赖、更新器和权限已完成审查。用户已授权隔离本地工具准备和调试构建尝试；Gradle 8.13、Android command-line tools、Microsoft JDK 17 已下载并通过官方哈希核对。`kernelDebug --dry-run` 因未接受 Android SDK 许可证，在任务图完成前停止；当时`build-tools;35.0.0`与`platforms;android-36`未安装、未执行构建任务、未生成APK。随后用户接受许可、安装包并继续构建和设备验证，因此本段只记录当时状态。ZN-M2固件与所有者许可仍未知。详细审查和回退边界见[弱网工具核对](sp01-weak-network-tool-review-20261031.md)。
 
 2026-11-02进度：六项索引中R02已完成SP01所需的隔离兼容准备并登记verified-for-SP01；其它五项仍待完成。正式状态库及产品边界验证由后续实施任务执行，不反向阻塞已完成的准备验证。R01的[局部维护候选](sp01-maintenance-candidate-20261030.md)已由用户确认采用；用户并已确认保留Webpack 5.91.0以遵守Taro精确peer，不采用5.104.1 override。另测试官方Vite runner隔离路线，未采用，理由及验证见[Vite runner对照](sp01-taro-vite-runner-comparison-20261102.md)。R01风险验收和正式包可达性复核仍未完成，见[2026-11-01注册表审计](sp01-r01-registry-audit-20261101.md)。

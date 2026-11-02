@@ -458,7 +458,6 @@ test('R04 records the latest one-shot Pakomo sample as diagnostic-only after exc
 
   assert.ok(review.sources.includes(evidencePath));
   assert.ok(r04.evidence.split('; ').includes(evidencePath));
-  assert.equal(r04.latestPakomoAttemptEvidence, evidencePath);
   assert.equal(r04.latestOneShotPakomoSampleEvidence, evidencePath);
   assert.equal(sample.authorization.maximumVpnDurationSeconds, 60);
   assert.equal(sample.authorization.deviceTimerObservedDurationSeconds, 68);
@@ -483,10 +482,41 @@ test('R04 records the latest one-shot Pakomo sample as diagnostic-only after exc
   assert.equal(sample.sp01Passed, false);
   assert.equal(r04.state, 'pending');
   assert.match(r04.nextAction, /timer showed 68 seconds against the 60-second authorization/i);
-  assert.match(r04.nextAction, /authorization is consumed\. do not repeat under it/i);
+  assert.match(r04.nextAction, /timer showed 68 seconds against the 60-second authorization.*that authorization is consumed/i);
   assert.match(r04.known, /30\/30.*P50=398ms.*P95=656ms.*max=1985ms/);
   const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
   assert.match(reviewMarkdown, /后续获准的单次采样.*计时显示68秒.*上限8秒/);
+});
+
+test('R04 records the later Pakomo attempt that resumed the wrong mini-program without a valid sample', () => {
+  const attempt = require('../docs/sp01-pakomo-wrong-app-attempt-20261102.json');
+  const r04 = review.openItems.find(item => item.id === 'R04');
+  const evidencePath = 'docs/sp01-pakomo-wrong-app-attempt-20261102.json';
+
+  assert.ok(review.sources.includes(evidencePath));
+  assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.equal(r04.latestPakomoAttemptEvidence, evidencePath);
+  assert.equal(attempt.authorization.userAuthorizedOneRun, true);
+  assert.equal(attempt.authorization.maximumVpnDurationSeconds, 60);
+  assert.equal(attempt.authorization.durationMeasuredSeconds, null);
+  assert.equal(attempt.authorization.consumed, true);
+  assert.equal(attempt.pakomo.start.confirmed, true);
+  assert.equal(attempt.pakomo.start.profile, '轻度弱网');
+  assert.equal(attempt.pakomo.start.applicationScope, '指定应用：微信');
+  assert.equal(attempt.pakomo.stop.confirmedInactive, true);
+  assert.equal(attempt.sample.validSampleReturned, false);
+  assert.equal(attempt.sample.databaseOrStorageWrites, false);
+  assert.equal(attempt.sample.expectedPage, 'SP01 网络采样');
+  assert.equal(attempt.sample.resumedPage, '狼人杀发牌助手');
+  assert.equal(attempt.pakomo.recovery.wifiValidated, true);
+  assert.equal(attempt.pakomo.recovery.vpnNetworkAgentFound, false);
+  assert.equal(attempt.currentForegroundPageAfterUserSwitch.adbForegroundActivity, 'com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00');
+  assert.equal(attempt.r04Passed, false);
+  assert.equal(attempt.sp01Passed, false);
+  assert.equal(r04.state, 'pending');
+
+  const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(reviewMarkdown, /后续一次弱网尝试.*狼人杀发牌助手.*没有取得有效样本/);
 });
 
 test('SP01 review preserves gates, source files and historical evidence boundaries', () => {
