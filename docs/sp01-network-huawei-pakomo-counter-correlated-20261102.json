@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R04",
+  "scope": "one-agent-observed-Pakomo-light-run-with-in-run-status-polls-and-30-read-only-CloudBase-roundtrips",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10",
+    "networkTypeReportedByProbe": "wifi"
+  },
+  "authorization": {
+    "userAuthorized": true,
+    "maximumVpnDurationMs": 60000,
+    "cloudBaseCalls": 30,
+    "writesDatabase": false,
+    "writesStorage": false,
+    "exactStartToStopWallClockIntervalRetained": false,
+    "observedVpnWindowWithinMaximum": true,
+    "evidence": "ADB control sequence and Pakomo uptime snapshots; active status polling spanned 19331ms and stop was confirmed immediately after the bounded sample sequence"
+  },
+  "pakomo": {
+    "package": "com.alphynia.pakomo.kernel",
+    "source": "docs/sp01-pakomo-control-protocol-review-20261102.json",
+    "profile": {
+      "name": "light",
+      "configuredParametersFromReviewedSource": {
+        "delayMs": 100,
+        "jitterMs": 30,
+        "packetLossPercent": 1,
+        "downlinkKbps": 2048,
+        "uplinkKbps": 1024
+      }
+    },
+    "applicationScope": "applications",
+    "selectedApplication": "WeChat, selected by user in Pakomo settings before this run; exact package list is not echoed by the start response",
+    "startResponse": {
+      "confirmed": true,
+      "stage": "forwarding",
+      "active": true,
+      "appliedRule": "light",
+      "scope": "applications"
+    },
+    "statusDuringSample": {
+      "pollCount": 22,
+      "sourceFile": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-status-series-20261102.json",
+      "captureStartedUtcFieldReliableForAlignment": false,
+      "deviceUptimeFirstMs": 18299,
+      "deviceUptimeLastMs": 37630,
+      "observedUptimeIntervalMs": 19331,
+      "allPollsForwardingAndActive": true,
+      "activeFlowsObserved": true,
+      "delayedCounterInitial": 66,
+      "delayedCounterFinal": 126,
+      "delayedCounterMonotonic": true,
+      "droppedCounterInitial": 0,
+      "droppedCounterFinal": 0,
+      "interpretation": "Aggregate Pakomo counters were observed while the sample page was active; they cannot identify which counter increments correspond to individual CloudBase calls."
+    },
+    "stopResponse": {
+      "confirmedInactive": true,
+      "stage": "stopped",
+      "active": false
+    }
+  },
+  "sample": {
+    "endpoint": "sp01IdentityProbe / read-only",
+    "scope": "application-roundtrip-not-link-rtt-or-packet-loss",
+    "source": "Agent-operated ADB screenshots of the on-device sanitized result; all 30 displayed values were transcribed from overlapping screenshots and recomputed against the displayed summary.",
+    "attempts": 30,
+    "rawElapsedMs": [
+      2048, 387, 500, 458, 387, 368, 377, 382, 396, 388,
+      393, 409, 406, 377, 429, 368, 417, 586, 392, 430,
+      417, 379, 385, 455, 395, 357, 384, 404, 363, 1181
+    ],
+    "summary": {
+      "attempts": 30,
+      "succeeded": 30,
+      "failed": 0,
+      "failureRate": 0,
+      "medianMs": 393,
+      "p95Ms": 1181,
+      "maxMs": 2048,
+      "meanConsecutiveDifferenceMs": 127.20689655172414
+    },
+    "databaseOrStorageWrites": false,
+    "responseBodiesRetained": false
+  },
+  "after": {
+    "pakomoStopConfirmed": true,
+    "validatedWifi": true,
+    "vpnNetworkAgentFound": false,
+    "internetReachabilitySeparatelyTested": false
+  },
+  "evidence": {
+    "statusSeriesSha256": "5C8879B20A6412D73DF366F2E9416AEE89E513DD229FDD2521790E8940952BF4",
+    "screenshots": [
+      {
+        "path": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-segment-a-20261102.png",
+        "sha256": "E71F49829C62F110E26DFE2629EC6D9917079665A75E0F6075EC2EEBEA4559E8"
+      },
+      {
+        "path": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-segment-b-20261102.png",
+        "sha256": "F48BDB3A06569A898CABAAFB1655211F0774A2AD534242BE310C918028474A6D"
+      },
+      {
+        "path": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-segment-c-20261102.png",
+        "sha256": "E0D1021475FA4558BB02ADE018E2B1A11A15401D5AF6405360DDCC92CB8E4202"
+      },
+      {
+        "path": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-segment-d-20261102.png",
+        "sha256": "E20F3E37CCA3DC4A5778B2D0B9CFB7B9A1CC2F79845E56B8CA002A7E453631C6"
+      },
+      {
+        "path": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-summary-20261102.png",
+        "sha256": "2E5A5D9CFF0B83635407466E4735390939A4EBDAD1A3407BF3AC63A2343500B0"
+      }
+    ]
+  },
+  "interpretation": {
+    "boundedReadOnlyApplicationSampleObserved": true,
+    "pakomoForwardingAndActiveObservedDuringSample": true,
+    "aggregateDelayedCounterIncreasedDuringObservation": true,
+    "statusCountersCorrelatedWithRun": true,
+    "provesPerRequestShaping": false,
+    "provesExactImpairmentParameters": false,
+    "provesLinkRttThroughputJitterOrPacketLoss": false,
+    "provesInterruptedRequestRecovery": false,
+    "provesPublicWifiBehavior": false,
+    "reason": "This adds time-correlated aggregate status observations during a 30-call sample. It does not map counters to individual requests or independently measure link conditions."
+  },
+  "remainingR04Evidence": [
+    "independent link RTT, throughput, jitter and packet-loss measurement suitable for the actual service path",
+    "stable normal-network range across independent rounds and conditions",
+    "interrupted-request behavior and recovery",
+    "public Wi-Fi behavior",
+    "product endpoint remeasurement in SP08"
+  ],
+  "r04Passed": false,
+  "sp01Passed": false
+}
