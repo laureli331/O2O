@@ -51,6 +51,10 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /`APPLICATIONS` 范围通过 `addAllowedApplication`/);
   assert.match(text, /`GLOBAL` 范围则走 `addDisallowedApplication\(Pakomo\)`/);
   assert.match(text, /未打开应用、启动 VPN、选择应用、授予权限或调用 CloudBase/);
+  assert.match(text, /华为备用机单应用短时验证（2026-11-02）/);
+  assert.match(text, /用户确认唯一选中项是微信（计数1）/);
+  assert.match(text, /不能证明“轻度弱网”的参数确实按标称值生效/);
+  assert.match(text, /本轮未调用 CloudBase/);
   assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);
   assert.match(text, /NETWORK_FORWARD/);
   assert.match(text, /不安装驱动或运行程序/);

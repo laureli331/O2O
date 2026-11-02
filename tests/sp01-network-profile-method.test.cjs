@@ -14,7 +14,7 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /SP01 不放行/);
 });
 
-test('R04 Pakomo is recorded as a source-reviewed candidate, not a validated weak-network result', () => {
+test('R04 records user-reported app-scope isolation without claiming measured weak-network effect', () => {
   const source = fs.readFileSync(path.join(__dirname, '../docs/sp01-weak-network-tool-review-20261031.md'), 'utf8');
   assert.match(source, /Pakomo v0\.3\.0/);
   assert.match(source, /6798549060990f9bdcb7a9feedbe16259ee95d9d/);
@@ -50,7 +50,17 @@ test('R04 Pakomo is recorded as a source-reviewed candidate, not a validated wea
   assert.equal(r04.deviceInstallEvidence.vpnActiveAfterInstall, false);
   assert.equal(r04.deviceInstallEvidence.overlayAppOp, 'ignore');
   assert.equal(r04.latestBuildEvidence.weakNetworkInjectionVerified, false);
-  assert.ok(r04.unknown.some(item => item.includes('repeatable weak-network injection and recovery method')));
+  assert.equal(r04.deviceWeakNetworkEvidence.source, 'user-reported; not directly observed by the agent');
+  assert.equal(r04.deviceWeakNetworkEvidence.applicationScope, '指定应用');
+  assert.equal(r04.deviceWeakNetworkEvidence.selectedApplication, 'WeChat (user-confirmed)');
+  assert.equal(r04.deviceWeakNetworkEvidence.profile.packetLossPercent, 1);
+  assert.equal(r04.deviceWeakNetworkEvidence.profile.downlinkKbps, 2048);
+  assert.equal(r04.deviceWeakNetworkEvidence.profile.uplinkKbps, 1024);
+  assert.equal(r04.deviceWeakNetworkEvidence.reportedResults.unselectedBrowserConnectivity, 'normal');
+  assert.equal(r04.deviceWeakNetworkEvidence.reportedResults.networkRecoveredAfterVpnStopped, 'normal');
+  assert.equal(r04.deviceWeakNetworkEvidence.cloudBaseCallsMade, false);
+  assert.equal(r04.deviceWeakNetworkEvidence.measuredWeakNetworkEffect, false);
+  assert.ok(r04.unknown.some(item => item.includes('repeatability and measured CloudBase effect')));
   assert.match(r04.evidence, /sp01-weak-network-tool-review-20261031\.md/);
 });
 
