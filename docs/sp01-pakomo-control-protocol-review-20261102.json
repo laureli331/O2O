@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "scope": "local-static-source-review",
+  "source": {
+    "project": "AlfWorks/Pakomo",
+    "tag": "v0.3.0",
+    "commit": "6798549060990f9bdcb7a9feedbe16259ee95d9d",
+    "license": "GPL-3.0",
+    "files": [
+      "app/src/main/java/com/alphynia/pakomo/automation/ControlReceiver.kt",
+      "app/src/main/java/com/alphynia/pakomo/automation/StatusReporter.kt",
+      "app/src/main/java/com/alphynia/pakomo/automation/ProfileCodec.kt",
+      "app/src/main/java/com/alphynia/pakomo/core/model/PakomoModels.kt",
+      "docs/automation-control.md"
+    ]
+  },
+  "reuseDecision": {
+    "existingProjectNetworkProbe": "Reuse tools/sp01-network-probe for CloudBase application round trips; it does not inject network impairment.",
+    "adoptedCandidate": "Use Pakomo's existing ordered-broadcast automation protocol for condition readback; do not write a second traffic shaper.",
+    "adaptation": "Read-only protocol review only. No product dependency, source patch, command dispatch, VPN activation, CloudBase call, or phone file write was performed.",
+    "compatibility": "Static source is from the already-built and installed kernel debug package for Huawei SEA-AL10 Android 10; protocol operation on the current phone remains unverified in this review."
+  },
+  "lightPresetSource": {
+    "file": "app/src/main/java/com/alphynia/pakomo/core/model/PakomoModels.kt",
+    "presetId": "light",
+    "presetName": "轻度弱网",
+    "latencyMs": 100,
+    "jitterMs": 30,
+    "packetLossPercent": 1,
+    "downloadKbps": 2048,
+    "uploadKbps": 1024,
+    "scopeAndSelectedApplications": "Persisted Pakomo selection; the command response returns scope but does not echo selected package names."
+  },
+  "controlTransport": {
+    "kind": "explicit ordered Android broadcast",
+    "action": "com.pakomo.automation.CONTROL",
+    "receiver": "com.alphynia.pakomo.automation.ControlReceiver",
+    "primaryResponse": "ordered-broadcast result data JSON",
+    "otherResponseChannels": [
+      "Logcat tag PAKOMO_AUTO",
+      "/sdcard/Android/data/<pkg>/files/pakomo/status.json"
+    ]
+  },
+  "statusCommand": {
+    "changesVpnOrRule": false,
+    "returnsActiveStageAndCounters": true,
+    "returnFields": [
+      "ok",
+      "stage",
+      "active",
+      "stats.upBps",
+      "stats.downBps",
+      "stats.activeFlows",
+      "stats.dropped",
+      "stats.delayed",
+      "stats.uptimeMs",
+      "ts"
+    ],
+    "writesLocalDiagnostics": true,
+    "localWrites": [
+      "appends a PAKOMO_AUTO Logcat entry",
+      "overwrites the app-specific pakomo/status.json snapshot"
+    ],
+    "cloudWrites": false
+  },
+  "startCommand": {
+    "changesVpnOrRule": true,
+    "waitedStartConfirmsAppliedConfig": true,
+    "confirmedSemantics": "With wait=true, source waits for the exact applied config ID and forwarding stage before returning confirmed=true.",
+    "returnedFields": [
+      "ok",
+      "stage",
+      "active",
+      "appliedRule",
+      "scope",
+      "confirmed",
+      "stats"
+    ],
+    "returnsExactNumericRuleParameters": false,
+    "returnsSelectedPackageNames": false,
+    "requiresSystemVpnConsent": true
+  },
+  "stopCommand": {
+    "changesVpnOrRule": true,
+    "waitedStopCanConfirmInactive": true,
+    "cloudWrites": false
+  },
+  "diagnosticLimitations": [
+    "status counters aggregate shaped traffic and do not identify the CloudBase endpoint or a specific sample request.",
+    "start confirms the requested config was applied but does not echo the exact numeric parameters or selected package list.",
+    "A screenshot of the Pakomo rule/app selection plus start/status result timestamps can correlate the test condition, but is not an independent measurement of link RTT, throughput, jitter, or packet loss.",
+    "Every successful status response has local Logcat and status-file side effects; the status file is overwritten, not an append-only history."
+  ],
+  "appropriateUseForNextRun": {
+    "perRunStateEvidencePossible": true,
+    "sequence": [
+      "capture the active-app selection and light preset in Pakomo",
+      "read baseline status",
+      "start light with wait=true and require confirmed=true, stage=forwarding, scope=applications, appliedRule=light",
+      "run exactly one already-authorized 30-call read-only CloudBase sample and record start/end wall-clock times",
+      "read status and preserve counters and timestamp",
+      "stop with wait=true, require inactive, and verify network recovery"
+    ],
+    "statusQueryLocalSideEffectsDisclosed": true,
+    "noTestWasRunAsPartOfThisReview": true
+  },
+  "acceptanceEvidence": false
+}

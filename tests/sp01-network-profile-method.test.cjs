@@ -47,7 +47,7 @@ test('R04 records user-reported app-scope isolation without claiming measured we
   assert.equal(r04.state, 'pending');
   assert.equal(readiness.sp01Passed, false);
   assert.match(r04.nextAction, /Three user-pasted 30-call runs per normal\/light label are recorded/i);
-  assert.match(r04.nextAction, /obtain direct per-run VPN\/diagnostic condition evidence/i);
+  assert.match(r04.nextAction, /start light with wait=true.*run one 30-call read-only CloudBase sample only after that exact run is authorized.*stop with wait=true/i);
   assert.equal(r04.latestBuildEvidence.versionName, '0.1.0-kernel');
   assert.equal(r04.latestBuildEvidence.apkSha256, 'F026D48E9D6F298A1419EA69332A7C28F8D50D7BF115D978DDB1FB0DC6BCBD34');
   assert.equal(r04.latestBuildEvidence.installed, true);

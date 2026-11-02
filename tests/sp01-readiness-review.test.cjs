@@ -469,7 +469,7 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.match(review.openItems.find(x => x.id === 'R04').known, /borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router/);
   assert.ok(review.openItems.find(x => x.id === 'R04').unknown.some(x => x.includes('borrowed ZN-M2 firmware')));
   assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /Three user-pasted 30-call runs per normal\/light label are recorded/i);
-  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /obtain direct per-run VPN\/diagnostic condition evidence/i);
+  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /start light with wait=true.*run one 30-call read-only CloudBase sample only after that exact run is authorized.*stop with wait=true/i);
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceInstallEvidence.adbInstallResult, 'Success');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.source, 'user-reported; not directly observed by the agent');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.reportedResults.wechatConnectivity, 'normal');
@@ -480,6 +480,31 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.deepEqual(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.pairedReruns.rerunPairsAveragedP50DifferencesMs, [82, 108.5]);
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.vpnStoppedAfterRun, 'user-confirmed');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.measuredWeakNetworkEffect, false);
+  const pakomoProtocolReview = require('../docs/sp01-pakomo-control-protocol-review-20261102.json');
+  assert.equal(review.openItems.find(x => x.id === 'R04').pakomoControlProtocolEvidence, 'docs/sp01-pakomo-control-protocol-review-20261102.json');
+  assert.equal(pakomoProtocolReview.scope, 'local-static-source-review');
+  assert.equal(pakomoProtocolReview.statusCommand.changesVpnOrRule, false);
+  assert.equal(pakomoProtocolReview.statusCommand.writesLocalDiagnostics, true);
+  assert.equal(pakomoProtocolReview.statusCommand.returnsActiveStageAndCounters, true);
+  assert.equal(pakomoProtocolReview.statusCommand.cloudWrites, false);
+  assert.equal(pakomoProtocolReview.startCommand.requiresSystemVpnConsent, true);
+  assert.equal(pakomoProtocolReview.startCommand.waitedStartConfirmsAppliedConfig, true);
+  assert.equal(pakomoProtocolReview.startCommand.returnsExactNumericRuleParameters, false);
+  assert.equal(pakomoProtocolReview.startCommand.returnsSelectedPackageNames, false);
+  assert.deepEqual(
+    [
+      pakomoProtocolReview.lightPresetSource.latencyMs,
+      pakomoProtocolReview.lightPresetSource.jitterMs,
+      pakomoProtocolReview.lightPresetSource.packetLossPercent,
+      pakomoProtocolReview.lightPresetSource.downloadKbps,
+      pakomoProtocolReview.lightPresetSource.uploadKbps
+    ],
+    [100, 30, 1, 2048, 1024]
+  );
+  assert.equal(pakomoProtocolReview.appropriateUseForNextRun.perRunStateEvidencePossible, true);
+  assert.equal(pakomoProtocolReview.stopCommand.waitedStopCanConfirmInactive, true);
+  assert.equal(pakomoProtocolReview.appropriateUseForNextRun.noTestWasRunAsPartOfThisReview, true);
+  assert.equal(pakomoProtocolReview.acceptanceEvidence, false);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /dry-run stopped before producing a complete task graph/);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /no APK was produced or inspected/);
   assert.equal(review.openItems.find(x => x.id === 'R04').state, 'pending');

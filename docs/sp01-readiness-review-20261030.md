@@ -19,6 +19,8 @@
 
 R04 当前进度（2026-11-02）：用户接受 Android SDK 许可并安装所需包后，隔离 Pakomo v0.3.0 debug APK 已构建、完成离线包与签名检查，并安装到华为备用机 SEA-AL10（Android 10）。用户授权的最多60秒试用中，Pakomo 限于微信；用户报告微信可用、未选中的浏览器可用，停止后网络恢复。正常与“轻度弱网”标签各三轮只读 CloudBase 应用往返采样共180次，均成功；P50在弱网标签下较高，但P95方向不一致，且没有逐轮 VPN/诊断状态，因此仍不能证明弱网注入或参数生效。独立 Cloudflare 测速的两次丢包率相差较大（14.3%、1.8%）；其链路与CloudBase端点不同。截图中的流量记录尚未与采样轮次对应，诊断页当时服务已停止且日志显示`read: unexpected EOF!`。R04 仍缺逐轮条件证据、稳定独立链路测量、中断恢复和公共Wi-Fi验证；路由器固件与所有者授权未知。**R04仍pending，SP01未通过**。详情见[R04证据记录](sp01-readiness-review-20261030.json)及[截图事实记录](sp01-pakomo-traffic-diagnostics-20261102.json)。
 
+2026-11-02 Pakomo 固定提交源码的只读复核已确认可用的后续取证协议：`start(wait=true)` 在返回 `confirmed=true` 前等待目标规则进入 forwarding；`status` 可读取活动阶段及聚合的延迟/丢弃计数，`stop(wait=true)` 可确认停止。三者中 `status` 不改 VPN 规则，但会写 Pakomo 本地 Logcat 和覆盖应用专属 `status.json`；开始响应不回传完整数值参数或所选包名，计数也不能归因到单条 CloudBase 请求。当前还没有按此协议执行与采样绑定的实机轮次，因此 R04 仍缺实测条件关联及独立链路指标。详见[控制协议核对](sp01-pakomo-control-protocol-review-20261102.json)。
+
 R04 历史记录（截至2026-11-01）：固定源码 Pakomo v0.3.0（GPL-3.0、minSdk 29）及其入口、依赖、更新器和权限已完成审查。用户已授权隔离本地工具准备和调试构建尝试；Gradle 8.13、Android command-line tools、Microsoft JDK 17 已下载并通过官方哈希核对。`kernelDebug --dry-run` 因未接受 Android SDK 许可证，在任务图完成前停止；当时`build-tools;35.0.0`与`platforms;android-36`未安装、未执行构建任务、未生成APK。随后用户接受许可、安装包并继续构建和设备验证，因此本段只记录当时状态。ZN-M2固件与所有者许可仍未知。详细审查和回退边界见[弱网工具核对](sp01-weak-network-tool-review-20261031.md)。
 
 2026-11-01进度：六项索引中R02已完成SP01所需的隔离兼容准备并登记verified-for-SP01；其它五项仍待完成。正式状态库及产品边界验证由后续实施任务执行，不反向阻塞已完成的准备验证。R01的[局部维护候选](sp01-maintenance-candidate-20261030.md)已由用户确认采用；用户并已确认保留Webpack 5.91.0以遵守Taro精确peer，不采用5.104.1 override。该版本选择已记录，但R01风险验收和正式包可达性复核仍未完成，见[2026-11-01注册表审计](sp01-r01-registry-audit-20261101.md)。

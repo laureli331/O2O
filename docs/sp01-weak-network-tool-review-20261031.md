@@ -148,3 +148,13 @@ Pakomo“规则”页截图显示内置“轻度弱网”已选中，参数为 1
 10:22 的“诊断”页显示服务已停止、指定应用范围、上下行 0 B/s、连接/丢弃/延迟均为 0、最近目标“未运行”；原始日志区显示 `read: unexpected EOF!`。静态查阅本地 Pakomo 源码发现该区域启动筛选后的 Android `logcat` 子进程，并在读取失败时展示捕获到的异常文字。截图支持“日志读取面板报告 EOF”，确切原因未知；该文字本身不能证明 VPN 转发失败。
 
 因此，截图补充了历史流量被标记为整形的证据和稍后服务已停止的状态，但不能证明此前六轮采样中的某轮发生时 VPN/整形正处于生效状态。R04 与 SP01 仍未通过。
+
+## Pakomo 控制协议源码复核（2026-11-02，只读）
+
+为复用已安装候选的现成能力，本次阅读固定 Pakomo 提交 `6798549060990f9bdcb7a9feedbe16259ee95d9d` 的 `ControlReceiver.kt`、`StatusReporter.kt`、`ProfileCodec.kt`、`PakomoModels.kt` 和控制协议文档，没有改 Pakomo 源码、发送控制命令、启动 VPN、调用 CloudBase 或写手机文件。没有另造流量整形器；继续复用项目已有的 `tools/sp01-network-probe` 测 CloudBase 应用往返，并用 Pakomo 的有序广播协议为未来轮次回读规则状态。
+
+- `start(wait=true)` 会等到相同配置 ID 进入 forwarding 后才返回 `confirmed=true`，并回传 `stage`、`appliedRule`、`scope` 与统计计数。该响应不回传数值参数或完整所选应用列表；系统 VPN 确认仍由手机用户操作。固定源码中的“轻度弱网”值为延迟100ms、抖动30ms、丢包1%、下行2048Kbps、上行1024Kbps。源码预置值只能说明测试配置目标，不能证明设备当时应用了这些数值。
+- `status` 不切换 VPN 或规则，可以回读 active 阶段、上下行速率、活动流数、丢弃/延迟计数和运行时间；它会写 `PAKOMO_AUTO` Logcat，并覆盖 Pakomo 专属 `status.json`。这是本地诊断副作用，不写 CloudBase；该文件不是逐条追加的历史记录。
+- `stop(wait=true)` 可等待并确认 inactive。汇总计数只覆盖整形流量，不能单独识别 CloudBase 探针请求；状态回读和规则确认也不能替代链路 RTT、吞吐、抖动、丢包的独立测量。
+
+可复核的下一轮顺序是：记录 Pakomo 中微信应用选择与轻度档；读取 baseline status；执行 `start(wait=true)` 并要求确认规则、范围及 forwarding；运行一轮已授权的30次只读 CloudBase 样本并记下开始/结束时间；读取 status；`stop(wait=true)` 并核实网络恢复。**本次只核对源码，没有执行这轮操作**，也没有获得新的 VPN 或 CloudBase 操作授权。复用决策、返回字段和局限的结构化记录见[控制协议证据](sp01-pakomo-control-protocol-review-20261102.json)。R04 仍需实际条件关联、独立链路指标、中断恢复与公共 Wi-Fi 证据，不能据此标为通过。
