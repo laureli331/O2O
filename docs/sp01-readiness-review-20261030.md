@@ -11,7 +11,7 @@
 - 新目标AppID/环境归属、文档数据库、Node20.19事务探针有历史实际证据。数据库SDK3.18.7和微信身份SDK4.0.2已确认，不重新问选择。
 - 文件方向已确认逐次服务端授权和独立公开副本；真实存储＋合成授权组合有受控证据。它不等于真实业务账号授权、手机组装或产品性能验收。旧下载数值码仍未唯一归因，不再重复造文件只为解释它。
 - Taro已确认，普通构建及批准的拆分类型检查有证据；候选原快照32条。2026-11-01官方npm registry刷新后为48个受影响包条目、25个去重公告URL，`--omit=dev`仍有19条；见[当前R01审计](sp01-r01-registry-audit-20261101.md)。审计条目数不等于产品可利用漏洞数，构建通过也不代表已修复。
-- 2026-11-02注册表复核发现 Taro latest 已为4.3.2，但 CLI 仍依赖 `download-git-repo@^3.0.2`、组件稳定版仍为4.3.1并依赖 `swiper@11.1.15`，4.3.2 runner 仍精确 peer Webpack 5.91.0；没有更新锁文件。详见[注册表复核](sp01-r01-registry-follow-up-20261102.md)及[JSON](sp01-r01-registry-follow-up-20261102.json)。
+- 2026-11-02注册表复核发现 Taro latest 已为4.3.2，但 CLI 仍依赖 `download-git-repo@^3.0.2`、组件稳定版仍为4.3.1并依赖 `swiper@11.1.15`，4.3.2 runner 仍精确 peer Webpack 5.91.0；追加核对发现 Taro 4.3.2 要求的 components/helper/runtime 精确稳定包在本次查询中返回 E404，现有 4.3.2 beta 组件属于 beta 发布组，不能混入稳定依赖。未更新锁文件。详见[注册表复核](sp01-r01-registry-follow-up-20261102.md)及[JSON](sp01-r01-registry-follow-up-20261102.json)。
 - 2026-11-02复用调查了官方Taro Vite runner 4.3.1，隔离React 18.3.1/TypeScript 5.9.3严格类型检查与144模块小程序样例构建通过；但该路线让小程序Vite 4与网页Vite 8并存，且Taro CLI模板下载和Swiper依赖仍在，审计仍有45项（4 critical）。因此没有采用，保留已确认的Webpack 5.91.0方向，R01继续pending。来源、锁版本和边界见[Vite runner对照](sp01-taro-vite-runner-comparison-20261102.md)及[JSON](sp01-taro-vite-runner-comparison-20261102.json)。
 - React网页候选已完成严格编译、类型负例、实验锁重放及Chrome最小入口加载/刷新；当前SP01依赖候选已获用户采用，但尚未最终冻结，也不要求现在先有正式后台页面。
 - 三台主机及一台备用手机的真实运行信息已登记，早期口述版本保留为历史；当前Chrome实测156.0.8078.73。

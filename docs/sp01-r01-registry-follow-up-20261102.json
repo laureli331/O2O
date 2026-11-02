@@ -6,7 +6,16 @@
   "reviewedPackages": {
     "@tarojs/taro": {
       "latestDistTag": "4.3.2",
-      "source": "https://registry.npmjs.org/@tarojs%2ftaro/latest"
+      "version432PeerRequirements": {
+        "@tarojs/helper": "4.3.2",
+        "@tarojs/shared": "4.3.2",
+        "@tarojs/components": "4.3.2"
+      },
+      "version432RuntimeDependencies": {
+        "@tarojs/api": "4.3.2",
+        "@tarojs/runtime": "4.3.2"
+      },
+      "source": "https://registry.npmjs.org/@tarojs%2ftaro/4.3.2"
     },
     "@tarojs/cli": {
       "version": "4.3.2",
@@ -36,9 +45,21 @@
       "version431License": "MIT",
       "version431SwiperDependency": "11.1.15",
       "version432StablePackageQuery": "not published (npm returned E404)",
+      "version432Beta": "4.3.2-beta.2",
+      "version432BetaTaroRuntimeDependencies": "4.3.2-beta.2 exact",
+      "version432BetaSwiperDependency": "11.1.15",
       "source": "https://registry.npmjs.org/@tarojs%2fcomponents/latest",
       "version431Source": "https://registry.npmjs.org/@tarojs%2fcomponents/4.3.1",
       "version432Query": "https://registry.npmjs.org/@tarojs%2fcomponents/4.3.2"
+    },
+    "@tarojs/runtime": {
+      "latestStableDistTag": "4.3.1",
+      "version432StablePackageQuery": "not published (npm returned E404)",
+      "version432Query": "https://registry.npmjs.org/@tarojs%2fruntime/4.3.2"
+    },
+    "@tarojs/helper": {
+      "version432StablePackageQuery": "not published (npm returned E404)",
+      "version432Query": "https://registry.npmjs.org/@tarojs%2fhelper/4.3.2"
     }
   },
   "comparisonToPreviouslyReviewedPaths": {
@@ -46,10 +67,15 @@
     "swiper": "The latest stable @tarojs/components remains 4.3.1 and still depends on swiper 11.1.15; no stable components 4.3.2 package was found.",
     "webpackPeer": "@tarojs/webpack5-runner 4.3.2 still declares webpack 5.91.0 exactly, consistent with the user's confirmed pin."
   },
+  "releaseFamilyResolution": {
+    "result": "incomplete-stable-release-family-at-query-time",
+    "evidence": "@tarojs/taro@4.3.2 requires @tarojs/components@4.3.2 and @tarojs/helper@4.3.2 as peers and depends on @tarojs/runtime@4.3.2; registry queries for those exact stable versions returned E404. Their latest stable dist-tags are 4.3.1. The available components 4.3.2-beta.2 is tied to matching beta Taro/runtime packages and is not a stable substitute.",
+    "policyImplication": "The exact-version shared Taro family cannot be updated to stable 4.3.2 from the queried registry state without missing packages or mixing release channels."
+  },
   "reuseDecision": {
     "approach": "Reuse the existing Taro dependency direction and inspect current official npm registry metadata before considering an update.",
     "adopted": false,
-    "reason": "The 4.3.2 metadata does not resolve the reviewed downloader or Swiper paths, and no coherent updated lock, compatibility build, or fresh audit was produced. Keeping the current lock also preserves the user's confirmed exact webpack peer choice.",
+    "reason": "The 4.3.2 metadata does not resolve the reviewed downloader or Swiper paths, and the stable Taro package family is incomplete in the registry snapshot: exact 4.3.2 runtime/components/helper packages queried as E404 while the core requires them. No coherent updated lock, compatibility build, or fresh audit was produced. Keeping the current lock also preserves the user's confirmed exact webpack peer choice.",
     "scope": "Metadata-only follow-up; package manifests and lockfiles were not changed.",
     "licenseAndMaintenance": "The queried Taro 4.3.2 core, CLI, and webpack runner metadata declares MIT. This metadata-only check does not constitute source, maintenance-quality, exploitability, or product-bundle validation."
   },
@@ -59,7 +85,7 @@
     "nextAction": "Keep the approved lock unchanged. After the formal mini-program pages exist, rerun the lock audit and inspect the actual weapp module graph; assess any dependency update as a complete compatible set before adoption."
   },
   "validationLimits": [
-    "Only registry metadata was queried for Taro 4.3.2; no installation or local source review was performed for that release.",
+    "Only registry metadata was queried for Taro 4.3.2; no installation or local source review was performed for that release. E404 observations are specific to the query time.",
     "No vulnerability exploitability or product-bundle reachability conclusion is added.",
     "Registry metadata can change; this is a dated snapshot."
   ]

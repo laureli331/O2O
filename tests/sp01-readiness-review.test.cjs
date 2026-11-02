@@ -67,6 +67,16 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(registryFollowup.reviewedPackages['download-git-repo'].latestDistTag, '3.0.2');
       assert.equal(registryFollowup.reviewedPackages['@tarojs/components'].latestStableDistTag, '4.3.1');
       assert.equal(registryFollowup.reviewedPackages['@tarojs/components'].version431SwiperDependency, '11.1.15');
+      assert.deepEqual(registryFollowup.reviewedPackages['@tarojs/taro'].version432PeerRequirements, {
+        '@tarojs/helper': '4.3.2',
+        '@tarojs/shared': '4.3.2',
+        '@tarojs/components': '4.3.2'
+      });
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/taro'].version432RuntimeDependencies['@tarojs/runtime'], '4.3.2');
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/runtime'].version432StablePackageQuery, 'not published (npm returned E404)');
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/helper'].version432StablePackageQuery, 'not published (npm returned E404)');
+      assert.equal(registryFollowup.releaseFamilyResolution.result, 'incomplete-stable-release-family-at-query-time');
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/components'].version432Beta, '4.3.2-beta.2');
       assert.equal(registryFollowup.reviewedPackages['@tarojs/webpack5-runner'].webpackPeer, '5.91.0');
       assert.equal(registryFollowup.reuseDecision.adopted, false);
       assert.equal(registryFollowup.decision.r01Status, 'pending');
@@ -76,6 +86,7 @@ test('SP01 current review covers the exact contract criteria without silently re
       const registryFollowupMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-r01-registry-follow-up-20261102.md'), 'utf8');
       assert.match(registryFollowupMarkdown, /@tarojs\/cli@4\.3\.2/);
       assert.match(registryFollowupMarkdown, /swiper@11\.1\.15/);
+      assert.match(registryFollowupMarkdown, /稳定发布组在本次查询时不完整/);
       assert.match(registryFollowupMarkdown, /R01 继续 pending/);
       assert.equal(item.state, 'pending');
     } else if (item.id === 'R03') {
