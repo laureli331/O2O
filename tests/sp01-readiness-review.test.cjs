@@ -6,6 +6,7 @@ const path = require('node:path');
 const review = require('../docs/sp01-readiness-review-20261030.json');
 const quality = require('../docs/v1-quality-acceptance-20261027.json');
 const plan = require('../docs/v1-executable-development-plan-20261027.json');
+const huaweiRenderLayerInspection = require('../docs/sp01-huawei-render-layer-inspection-20261102.json');
 
 test('SP01 current review covers the exact contract criteria without silently removing pending preparation', () => {
   const contract = quality.taskContracts.find(x => x.task === 'SP01');
@@ -498,6 +499,19 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(review.e06GatePassed, false);
   assert.equal(review.sp01Passed, false);
   assert.equal(review.openItems.find(x => x.id === 'R04').routerOwnerContactStatus, 'temporarily-unavailable-reported-by-user-2026-11-01');
+  assert.ok(review.sources.includes('docs/sp01-huawei-render-layer-inspection-20261102.json'));
+  assert.equal(review.openItems.find(x => x.id === 'R03').latestRenderLayerInspectionEvidence, 'docs/sp01-huawei-render-layer-inspection-20261102.json');
+  assert.equal(huaweiRenderLayerInspection.device.model, 'HUAWEI SEA-AL10');
+  assert.equal(huaweiRenderLayerInspection.foreground.focusedActivity, 'com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00');
+  assert.ok(huaweiRenderLayerInspection.surfaceFlinger.namedLayers.includes('com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0'));
+  assert.equal(huaweiRenderLayerInspection.surfaceFlinger.webViewSpecificLayerFound, false);
+  assert.equal(huaweiRenderLayerInspection.surfaceFlinger.interpretation, 'no-identifiable-webview-layer-in-snapshot; does-not-prove-webview-absent');
+  assert.equal(huaweiRenderLayerInspection.acceptanceEvidence, false);
+  const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(reviewMarkdown, /R04 当前进度（2026-11-02）/);
+  assert.match(reviewMarkdown, /Pakomo v0\.3\.0 debug APK 已构建.*并安装到华为备用机/);
+  assert.match(reviewMarkdown, /仍不能证明.*弱网注入.*生效/);
+  assert.match(reviewMarkdown, /R04 历史记录（截至2026-11-01/);
   const platform = require('../docs/sp02-platform-evidence-20261027.json');
   const findGate = value => {
     if (!value || typeof value !== 'object') return undefined;

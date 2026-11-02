@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R03",
+  "purpose": "read-only Huawei mini-program render-layer visibility check",
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "androidVersion": "10"
+  },
+  "userReportedPage": "SP01 device-capability probe page open in WeChat",
+  "foreground": {
+    "source": "adb shell dumpsys window",
+    "focusedActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00"
+  },
+  "surfaceFlinger": {
+    "source": "adb shell dumpsys SurfaceFlinger --list",
+    "namedLayers": [
+      "com.tencent.mm/com.tencent.mm.ui.LauncherUI#0",
+      "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00#0",
+      "SurfaceView - GestureNavLeft#0",
+      "SurfaceView - GestureNavRight#0",
+      "SurfaceView - GestureNavBottom#0"
+    ],
+    "webViewSpecificLayerFound": false,
+    "interpretation": "no-identifiable-webview-layer-in-snapshot; does-not-prove-webview-absent"
+  },
+  "networkOrCloudUsed": false,
+  "settingsChanged": false,
+  "acceptanceEvidence": false,
+  "limitations": [
+    "the focused activity identifies the WeChat AppBrand host, not the specific mini-program page",
+    "SurfaceFlinger did not expose a separately identifiable WebView or Chromium layer in this snapshot",
+    "absence of a named WebView layer does not prove that the embedded WebView is absent",
+    "this read-only snapshot does not measure frame rate or attribute rendered frames to the page"
+  ],
+  "officialReference": {
+    "title": "Android Developers: dumpsys",
+    "url": "https://developer.android.com/tools/dumpsys?authuser=4",
+    "scope": "documents gfxinfo/framestats for UI frame performance; does not document WeChat WebView attribution"
+  }
+}
