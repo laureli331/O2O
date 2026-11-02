@@ -101,11 +101,11 @@ dry-run 未执行 Android 编译/打包任务。没有接受任何 SDK 许可证
 ## 最小验证顺序（截至 2026-11-02）
 
 1. iPhone XR 入口核查已完成：当前未出现；苹果方法暂不采用。若未来已有可用 Mac/开发设备，再重新核对，不把升级 iOS 当解除条件。
-2. SDK 许可证已由用户审阅并接受；`build-tools;35.0.0` 与 `platforms;android-36` 已安装。完整 `:app:assembleKernelDebug` 成功，且本地离线核对了包名、版本、SDK 范围和 debug 签名。当前 APK 仍未安装；清单包含悬浮窗、查询已安装应用、请求安装包等权限，安装前需审阅其用途并取得一次具体安装确认。
-3. 若用户确认安装，再只在华为备用机上核实是否能把 VPN 范围限定为微信、其他应用是否不受影响，以及停止后网络是否恢复。然后须先确定工具实际支持的场景与取值，再用用户单独授权的当前只读 CloudBase 端点作正常/受限/中断/恢复对照；不复用已耗尽的30次采样授权。
+2. SDK 许可证已由用户审阅并接受；`build-tools;35.0.0` 与 `platforms;android-36` 已安装。完整 `:app:assembleKernelDebug` 成功，且本地离线核对了包名、版本、SDK 范围和 debug 签名。APK 权限用途已审阅，安装已获用户确认；结果见下方“华为备用机安装核验”。
+3. 安装包已在华为备用机 SEA-AL10 上核验。下一步先查看 Pakomo 主界面，把范围设为“应用”，只选微信，并核对选择；不要选全局模式。VPN 只在用户另行明确授权及手机系统确认后启动。之后验证非目标应用不受影响、停止后网络恢复；再用用户单独授权的当前只读 CloudBase 端点作正常/受限/中断/恢复对照，不复用已耗尽的30次采样授权。
 4. 正式业务出现后仍按 QP07 各场景独立验证。Android 方法不自动覆盖 iPhone。
 
-此文件只记录候选与验证步骤；当前没有改任何手机、云端或项目网络配置，R04 与 SP01 均未通过。回退只需撤销本文件对应提交。
+当前仅完成候选 APK 在备用机的安装核验，没有启用 VPN、授予悬浮窗权限、改变网络配置或调用云端。R04 与 SP01 均未通过。回退需先停止 VPN（若后续启用）、确认网络恢复，再按用户确认卸载候选应用；本文件记录可随对应提交回退。
 
 ## 本地构建后续（2026-11-02）
 
@@ -121,4 +121,12 @@ dry-run 未执行 Android 编译/打包任务。没有接受任何 SDK 许可证
 | 清单权限 | 包含 `SYSTEM_ALERT_WINDOW`、`QUERY_ALL_PACKAGES`、`REQUEST_INSTALL_PACKAGES`、`FOREGROUND_SERVICE_SPECIAL_USE`、`POST_NOTIFICATIONS`、`INTERNET` 与 `ACCESS_NETWORK_STATE`；本轮没有安装或授予权限 |
 | 非致命工具提示 | Android 工具报告 SDK XML v4，而当前命令行工具只识别至 v3；构建成功，但需在后续工具维护中更新/对齐 SDK 命令行工具 |
 
-没有安装 APK、启动 VPN、变更设备或路由器、调用 CloudBase，亦未验证限速/延迟/丢包/中断和恢复效果。构建成功只完成工具可构建性，不满足 R04，更不能作为 SP01 通过证据。下一步需先由用户审阅上述权限并明确授权一次在华为备用机安装 debug APK；届时仍需分别确认 Android VPN 授权、微信单应用范围、其他应用隔离和停止后的网络恢复。官方来源：[Adoptium Temurin 17 发布页](https://github.com/adoptium/temurin17-binaries/releases)、[Gradle Java 兼容表](https://docs.gradle.org/current/userguide/compatibility.html)。
+截至本地构建记录完成时，没有安装 APK、启动 VPN、变更设备或路由器、调用 CloudBase，亦未验证限速/延迟/丢包/中断和恢复效果。构建成功只完成工具可构建性，不满足 R04，更不能作为 SP01 通过证据。官方来源：[Adoptium Temurin 17 发布页](https://github.com/adoptium/temurin17-binaries/releases)、[Gradle Java 兼容表](https://docs.gradle.org/current/userguide/compatibility.html)。
+
+## 华为备用机安装核验（2026-11-02）
+
+用户明确确认安装后，通过 ADB 核对目标机为 HUAWEI SEA-AL10、Android 10；没有记录设备序列号。安装前查询确认包不存在。第一次 streamed install 在传输后失败且 ADB 连接短暂消失；恢复连接后以 `--no-streaming` 安装，命令返回 `Success`。`pm path`、`dumpsys package` 及 APK SHA-256 复核一致：`com.alphynia.pakomo.kernel`，versionCode `1`，versionName `0.1.0-kernel`，SHA-256 `F026D48E9D6F298A1419EA69332A7C28F8D50D7BF115D978DDB1FB0DC6BCBD34`。
+
+安装后 `pidof` 未发现应用进程；`dumpsys connectivity` 未显示活动 Pakomo VPN；悬浮窗 `SYSTEM_ALERT_WINDOW` AppOp 为 `ignore`，`dumpsys package` 的运行时权限区为空。未打开应用、启动 VPN、选择应用、授予权限或调用 CloudBase。安装成功不等于 VPN 隔离或弱网注入通过。
+
+静态源码复核发现 `APPLICATIONS` 范围通过 `addAllowedApplication` 只允许所选包；空选择时源码把范围限制为 Pakomo 自身。`GLOBAL` 范围则走 `addDisallowedApplication(Pakomo)`，属于广泛接管，禁止用于本次验证。因此先在 UI 选择“应用”范围并只选微信，核对后再由用户决定是否触发 Android VPN 系统确认。下一次授权应限定为短时、微信单应用、无额外悬浮窗权限；随后检查浏览器等非目标应用仍直连、停止 VPN 后微信网络恢复。真正的 CloudBase 受限网络对照需要另行授权一次新的只读调用。

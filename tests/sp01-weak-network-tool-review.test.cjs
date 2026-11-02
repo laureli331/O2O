@@ -45,6 +45,12 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /SYSTEM_ALERT_WINDOW.*QUERY_ALL_PACKAGES.*REQUEST_INSTALL_PACKAGES/);
   assert.match(text, /没有安装 APK、启动 VPN/);
   assert.match(text, /确切根因未确定/);
+  assert.match(text, /华为备用机安装核验（2026-11-02）/);
+  assert.match(text, /versionName `0\.1\.0-kernel`/);
+  assert.match(text, /悬浮窗 `SYSTEM_ALERT_WINDOW` AppOp 为 `ignore`/);
+  assert.match(text, /`APPLICATIONS` 范围通过 `addAllowedApplication`/);
+  assert.match(text, /`GLOBAL` 范围则走 `addDisallowedApplication\(Pakomo\)`/);
+  assert.match(text, /未打开应用、启动 VPN、选择应用、授予权限或调用 CloudBase/);
   assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);
   assert.match(text, /NETWORK_FORWARD/);
   assert.match(text, /不安装驱动或运行程序/);

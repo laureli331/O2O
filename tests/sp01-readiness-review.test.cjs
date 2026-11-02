@@ -467,8 +467,8 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.match(review.openItems.find(x => x.id === 'R04').known, /P50=284ms, P95=470ms/);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /borrowed a China Telecom-customized Zhaonengxuntong ZN-M2 router/);
   assert.ok(review.openItems.find(x => x.id === 'R04').unknown.some(x => x.includes('borrowed ZN-M2 firmware')));
-  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /review the debug APK permissions/i);
-  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /do not install until the user explicitly confirms/i);
+  assert.match(review.openItems.find(x => x.id === 'R04').nextAction, /Installation is verified on Huawei SEA-AL10/i);
+  assert.equal(review.openItems.find(x => x.id === 'R04').deviceInstallEvidence.adbInstallResult, 'Success');
   assert.match(review.openItems.find(x => x.id === 'R04').known, /dry-run stopped before producing a complete task graph/);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /no APK was produced or inspected/);
   assert.equal(review.openItems.find(x => x.id === 'R04').state, 'pending');
