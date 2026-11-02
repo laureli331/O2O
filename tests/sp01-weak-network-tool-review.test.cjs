@@ -53,13 +53,15 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /未打开应用、启动 VPN、选择应用、授予权限或调用 CloudBase/);
   assert.match(text, /华为备用机单应用短时验证（2026-11-02）/);
   assert.match(text, /用户确认唯一选中项是微信（计数1）/);
-  assert.match(text, /单次配对样本不足以证明所设弱网参数生效或失效/);
+  assert.match(text, /六轮实际结果均由用户粘贴/);
   assert.match(text, /任何新增 CloudBase 调用须有对应授权/);
   assert.match(text, /用户确认该轮后 VPN 已停止且网络恢复/);
   assert.match(text, /sp01-network-huawei-pakomo-light-20261102\.json/);
   assert.match(text, /sp01-network-huawei-normal-20261102\.json/);
-  assert.match(text, /正常档 P50 293ms、P95 848ms/);
-  assert.match(text, /轻度弱网档的传统平均 P50 为382\.5ms、P95 566ms/);
+  assert.match(text, /sp01-network-huawei-paired-reruns-20261102\.json/);
+  assert.match(text, /平均中间 P50 差为\+82ms和\+108\.5ms/);
+  assert.match(text, /正常288\.5ms、轻度弱网381\.83ms/);
+  assert.match(text, /三轮平均P95仍为正常581\.67ms、轻度弱网545\.33ms/);
   assert.doesNotMatch(text, /没有量化链路损伤或同设备正常基线/);
   assert.doesNotMatch(text, /该对照需要另行授权一次新的只读调用/);
   assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);

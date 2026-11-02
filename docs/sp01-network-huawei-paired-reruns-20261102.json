@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R04",
+  "source": "four raw result JSONs pasted by the user in order; labels retained",
+  "deviceContext": "HUAWEI SEA-AL10 / Android 10 per the active sampling protocol; not independently observed by the agent",
+  "networkTypeReportedByProbe": "wifi",
+  "sameHomeWifi": "requested by the protocol; not independently observed",
+  "conditionDirectlyObserved": false,
+  "endpoint": "sp01IdentityProbe / read-only",
+  "clock": "Date.now / nominal 1ms resolution; wall-clock shifts cannot be independently excluded from pasted results",
+  "scope": "application-roundtrip-not-link-rtt-or-packet-loss",
+  "runs": [
+    {
+      "id": "normalRerun2",
+      "userLabel": "正常",
+      "pakomoStateDirectlyObserved": false,
+      "samples": [
+        { "ok": true, "elapsedMs": 1712 }, { "ok": true, "elapsedMs": 293 }, { "ok": true, "elapsedMs": 320 }, { "ok": true, "elapsedMs": 287 }, { "ok": true, "elapsedMs": 440 }, { "ok": true, "elapsedMs": 317 }, { "ok": true, "elapsedMs": 361 }, { "ok": true, "elapsedMs": 300 }, { "ok": true, "elapsedMs": 275 }, { "ok": true, "elapsedMs": 341 }, { "ok": true, "elapsedMs": 287 }, { "ok": true, "elapsedMs": 301 }, { "ok": true, "elapsedMs": 322 }, { "ok": true, "elapsedMs": 286 }, { "ok": true, "elapsedMs": 313 }, { "ok": true, "elapsedMs": 297 }, { "ok": true, "elapsedMs": 302 }, { "ok": true, "elapsedMs": 265 }, { "ok": true, "elapsedMs": 285 }, { "ok": true, "elapsedMs": 333 }, { "ok": true, "elapsedMs": 292 }, { "ok": true, "elapsedMs": 271 }, { "ok": true, "elapsedMs": 292 }, { "ok": true, "elapsedMs": 301 }, { "ok": true, "elapsedMs": 276 }, { "ok": true, "elapsedMs": 272 }, { "ok": true, "elapsedMs": 295 }, { "ok": true, "elapsedMs": 308 }, { "ok": true, "elapsedMs": 275 }, { "ok": true, "elapsedMs": 294 }
+      ],
+      "userReportedSummary": { "attempts": 30, "succeeded": 30, "failed": 0, "failureRate": 0, "lowerMiddleP50Ms": 295, "nearestRankP95Ms": 440, "maxMs": 1712, "meanConsecutiveDifferenceMs": 84.06896551724138 },
+      "recomputed": { "attempts": 30, "succeeded": 30, "failed": 0, "lowerMiddleP50Ms": 295, "averagedMiddleP50Ms": 296, "nearestRankP95Ms": 440, "maxMs": 1712, "meanConsecutiveDifferenceMs": 84.06896551724138 }
+    },
+    {
+      "id": "lightRerun2",
+      "userLabel": "轻度弱网",
+      "pakomoStateDirectlyObserved": false,
+      "samples": [
+        { "ok": true, "elapsedMs": 433 }, { "ok": true, "elapsedMs": 372 }, { "ok": true, "elapsedMs": 413 }, { "ok": true, "elapsedMs": 479 }, { "ok": true, "elapsedMs": 399 }, { "ok": true, "elapsedMs": 375 }, { "ok": true, "elapsedMs": 358 }, { "ok": true, "elapsedMs": 418 }, { "ok": true, "elapsedMs": 438 }, { "ok": true, "elapsedMs": 377 }, { "ok": true, "elapsedMs": 379 }, { "ok": true, "elapsedMs": 376 }, { "ok": true, "elapsedMs": 402 }, { "ok": true, "elapsedMs": 351 }, { "ok": true, "elapsedMs": 448 }, { "ok": true, "elapsedMs": 395 }, { "ok": true, "elapsedMs": 366 }, { "ok": true, "elapsedMs": 360 }, { "ok": true, "elapsedMs": 379 }, { "ok": true, "elapsedMs": 396 }, { "ok": true, "elapsedMs": 365 }, { "ok": true, "elapsedMs": 380 }, { "ok": true, "elapsedMs": 357 }, { "ok": true, "elapsedMs": 386 }, { "ok": true, "elapsedMs": 363 }, { "ok": true, "elapsedMs": 372 }, { "ok": true, "elapsedMs": 374 }, { "ok": true, "elapsedMs": 411 }, { "ok": true, "elapsedMs": 377 }, { "ok": true, "elapsedMs": 367 }
+      ],
+      "userReportedSummary": { "attempts": 30, "succeeded": 30, "failed": 0, "failureRate": 0, "lowerMiddleP50Ms": 377, "nearestRankP95Ms": 448, "maxMs": 479, "meanConsecutiveDifferenceMs": 32.62068965517241 },
+      "recomputed": { "attempts": 30, "succeeded": 30, "failed": 0, "lowerMiddleP50Ms": 377, "averagedMiddleP50Ms": 378, "nearestRankP95Ms": 448, "maxMs": 479, "meanConsecutiveDifferenceMs": 32.62068965517241 }
+    },
+    {
+      "id": "normalRerun3",
+      "userLabel": "正常",
+      "pakomoStateDirectlyObserved": false,
+      "samples": [
+        { "ok": true, "elapsedMs": 517 }, { "ok": true, "elapsedMs": 277 }, { "ok": true, "elapsedMs": 300 }, { "ok": true, "elapsedMs": 457 }, { "ok": true, "elapsedMs": 266 }, { "ok": true, "elapsedMs": 290 }, { "ok": true, "elapsedMs": 297 }, { "ok": true, "elapsedMs": 284 }, { "ok": true, "elapsedMs": 288 }, { "ok": true, "elapsedMs": 291 }, { "ok": true, "elapsedMs": 275 }, { "ok": true, "elapsedMs": 290 }, { "ok": true, "elapsedMs": 310 }, { "ok": true, "elapsedMs": 276 }, { "ok": true, "elapsedMs": 285 }, { "ok": true, "elapsedMs": 280 }, { "ok": true, "elapsedMs": 263 }, { "ok": true, "elapsedMs": 292 }, { "ok": true, "elapsedMs": 250 }, { "ok": true, "elapsedMs": 312 }, { "ok": true, "elapsedMs": 267 }, { "ok": true, "elapsedMs": 276 }, { "ok": true, "elapsedMs": 264 }, { "ok": true, "elapsedMs": 269 }, { "ok": true, "elapsedMs": 263 }, { "ok": true, "elapsedMs": 264 }, { "ok": true, "elapsedMs": 265 }, { "ok": true, "elapsedMs": 239 }, { "ok": true, "elapsedMs": 257 }, { "ok": true, "elapsedMs": 250 }
+      ],
+      "userReportedSummary": { "attempts": 30, "succeeded": 30, "failed": 0, "failureRate": 0, "lowerMiddleP50Ms": 276, "nearestRankP95Ms": 457, "maxMs": 517, "meanConsecutiveDifferenceMs": 35.89655172413793 },
+      "recomputed": { "attempts": 30, "succeeded": 30, "failed": 0, "lowerMiddleP50Ms": 276, "averagedMiddleP50Ms": 276.5, "nearestRankP95Ms": 457, "maxMs": 517, "meanConsecutiveDifferenceMs": 35.89655172413793 }
+    },
+    {
+      "id": "lightRerun3",
+      "userLabel": "轻度弱网",
+      "pakomoStateDirectlyObserved": false,
+      "samples": [
+        { "ok": true, "elapsedMs": 367 }, { "ok": true, "elapsedMs": 342 }, { "ok": true, "elapsedMs": 391 }, { "ok": true, "elapsedMs": 402 }, { "ok": true, "elapsedMs": 350 }, { "ok": true, "elapsedMs": 384 }, { "ok": true, "elapsedMs": 392 }, { "ok": true, "elapsedMs": 387 }, { "ok": true, "elapsedMs": 622 }, { "ok": true, "elapsedMs": 414 }, { "ok": true, "elapsedMs": 395 }, { "ok": true, "elapsedMs": 366 }, { "ok": true, "elapsedMs": 364 }, { "ok": true, "elapsedMs": 400 }, { "ok": true, "elapsedMs": 400 }, { "ok": true, "elapsedMs": 372 }, { "ok": true, "elapsedMs": 351 }, { "ok": true, "elapsedMs": 397 }, { "ok": true, "elapsedMs": 375 }, { "ok": true, "elapsedMs": 596 }, { "ok": true, "elapsedMs": 350 }, { "ok": true, "elapsedMs": 378 }, { "ok": true, "elapsedMs": 408 }, { "ok": true, "elapsedMs": 386 }, { "ok": true, "elapsedMs": 337 }, { "ok": true, "elapsedMs": 399 }, { "ok": true, "elapsedMs": 341 }, { "ok": true, "elapsedMs": 769 }, { "ok": true, "elapsedMs": 375 }, { "ok": true, "elapsedMs": 358 }
+      ],
+      "userReportedSummary": { "attempts": 30, "succeeded": 30, "failed": 0, "failureRate": 0, "lowerMiddleP50Ms": 384, "nearestRankP95Ms": 622, "maxMs": 769, "meanConsecutiveDifferenceMs": 82.24137931034483 },
+      "recomputed": { "attempts": 30, "succeeded": 30, "failed": 0, "lowerMiddleP50Ms": 384, "averagedMiddleP50Ms": 385, "nearestRankP95Ms": 622, "maxMs": 769, "meanConsecutiveDifferenceMs": 82.24137931034483 }
+    }
+  ],
+  "comparison": {
+    "pairedRunDefinition": "Pairs use the two adjacent rerun normal/light labels in the order pasted; actual Pakomo state was not independently observed.",
+    "rerunPairs": [
+      { "normalRun": "normalRerun2", "lightRun": "lightRerun2", "averagedMedianDifferenceMs": 82, "p95DifferenceMs": 8 },
+      { "normalRun": "normalRerun3", "lightRun": "lightRerun3", "averagedMedianDifferenceMs": 108.5, "p95DifferenceMs": 165 }
+    ],
+    "threeRunMeanOfPerRunAveragedP50Ms": {
+      "normal": 288.5,
+      "light": 381.8333333333333,
+      "lightMinusNormal": 93.33333333333333
+    },
+    "threeRunMeanOfPerRunP95Ms": {
+      "normal": 581.6666666666666,
+      "light": 545.3333333333334,
+      "lightMinusNormal": -36.33333333333326
+    },
+    "interpretation": "Both rerun pairs show a higher weak-label median, consistent with an application-roundtrip increase of about 82-109ms; the paired P95 increases are uneven, and across all three runs the average P95 remains lower in the weak-labeled set due to the first observations. These samples do not prove Pakomo state or parameter enforcement, and do not measure link RTT, throughput, jitter or packet loss.",
+    "effectConfirmed": false
+  },
+  "notMeasured": [
+    "directly observed VPN active/inactive state during each run",
+    "Pakomo diagnostic counters or independently measured impairment parameters for these reruns",
+    "network-layer RTT, uplink/downlink throughput, jitter and packet loss",
+    "interruption and recovery behavior for these specific reruns",
+    "public Wi-Fi profile",
+    "wall-clock adjustments during each run"
+  ],
+  "r04Passed": false,
+  "sp01Passed": false
+}
