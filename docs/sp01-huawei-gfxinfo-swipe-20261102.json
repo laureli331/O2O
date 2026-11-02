@@ -274,5 +274,60 @@
     ],
     "acceptanceEvidence": false,
     "sp01Passed": false
+  },
+  "latestAtraceHostProcessDiagnostic": {
+    "date": "2026-11-02",
+    "device": {
+      "model": "HUAWEI SEA-AL10",
+      "androidVersion": "10",
+      "adbSerial": "HLRDU19C16005647"
+    },
+    "foreground": {
+      "activity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+      "process": "com.tencent.mm:appbrand0"
+    },
+    "method": {
+      "sampler": "Android atrace async capture using existing local ADB tooling",
+      "categories": ["gfx", "input", "view", "webview", "sched", "freq"],
+      "applicationFilter": "com.tencent.mm:appbrand0",
+      "syntheticGestures": "two automated vertical swipes in opposite directions; 900ms each",
+      "networkOrCloudUsed": false,
+      "thirdPartyDependencyAdded": false,
+      "rawTraceRetained": false,
+      "summarySource": "counts parsed from the in-memory trace; raw trace was not persisted"
+    },
+    "captureSummary": {
+      "traceLines": 134593,
+      "traceMarkers": 76356,
+      "applicationProcessLines": 13976,
+      "applicationProcessMarkers": 7695,
+      "eventCounts": {
+        "Choreographer#doFrame": 125,
+        "draw": 85,
+        "Record View#draw()": 85,
+        "input": 18,
+        "DeliverInput Send": 1443,
+        "processInputEventForCompatibility": 1443
+      }
+    },
+    "interpretation": {
+      "hostInputAndDrawActivityObserved": true,
+      "separatelyIdentifiableWebViewPresentedFrameStreamFound": false,
+      "gestureTimestampCorrelationEstablished": false,
+      "webViewFramesIsolated": false,
+      "acceptanceEvidence": false,
+      "sp01Passed": false
+    },
+    "limitations": [
+      "The marker counts describe the filtered AppBrand host process and do not identify frames presented by the embedded mini-program WebView.",
+      "The two automated swipes were not correlated to trace event timestamps or independently verified by scroll displacement.",
+      "The raw trace was discarded after parsing, so the summary cannot be independently re-parsed from a retained artifact.",
+      "This is local sampler feasibility evidence only; it is not product-page FPS, QP05, or SP01 acceptance evidence."
+    ],
+    "methodSource": {
+      "title": "AOSP atrace implementation",
+      "url": "https://android.googlesource.com/platform/frameworks/native/+/master/cmds/atrace/atrace.cpp",
+      "supports": "Defines Android trace categories and asynchronous atrace capture options; category availability does not prove a distinct embedded WebView presentation stream."
+    }
   }
 }

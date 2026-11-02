@@ -147,3 +147,44 @@ test('Huawei SurfaceFlinger alternating swipe is recorded as host-only sampler f
   assert.match(reviewMarkdown, /363帧/);
   assert.match(planMarkdown, /Android 内置 SurfaceFlinger TimeStats/);
 });
+
+test('Huawei atrace follow-up remains host-process feasibility evidence only', () => {
+  const sample = evidence.latestAtraceHostProcessDiagnostic;
+  assert.equal(sample.device.model, 'HUAWEI SEA-AL10');
+  assert.equal(sample.foreground.activity, 'com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00');
+  assert.equal(sample.foreground.process, 'com.tencent.mm:appbrand0');
+  assert.deepEqual(sample.method.categories, ['gfx', 'input', 'view', 'webview', 'sched', 'freq']);
+  assert.equal(sample.captureSummary.traceLines, 134593);
+  assert.equal(sample.captureSummary.traceMarkers, 76356);
+  assert.equal(sample.captureSummary.applicationProcessMarkers, 7695);
+  assert.equal(sample.captureSummary.eventCounts['Choreographer#doFrame'], 125);
+  assert.equal(sample.captureSummary.eventCounts.draw, 85);
+  assert.equal(sample.captureSummary.eventCounts.input, 18);
+  assert.equal(sample.method.rawTraceRetained, false);
+  assert.equal(sample.method.networkOrCloudUsed, false);
+  assert.equal(sample.interpretation.hostInputAndDrawActivityObserved, true);
+  assert.equal(sample.interpretation.separatelyIdentifiableWebViewPresentedFrameStreamFound, false);
+  assert.equal(sample.interpretation.gestureTimestampCorrelationEstablished, false);
+  assert.equal(sample.interpretation.webViewFramesIsolated, false);
+  assert.equal(sample.interpretation.acceptanceEvidence, false);
+  assert.equal(sample.interpretation.sp01Passed, false);
+
+  const r03 = review.openItems.find((item) => item.id === 'R03');
+  assert.equal(r03.state, 'pending');
+  assert.equal(r03.latestAtraceHostProcessDiagnostic.evidence, 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAtraceHostProcessDiagnostic');
+  assert.equal(r03.latestAtraceHostProcessDiagnostic.separatelyIdentifiableWebViewPresentedFrameStreamFound, false);
+  assert.equal(r03.latestAtraceHostProcessDiagnostic.acceptanceEvidence, false);
+  assert.equal(review.sp01Passed, false);
+  assert.equal(review.sp07Started, false);
+
+  const sp01 = plan.tasks.find((task) => task.id === 'SP01');
+  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.executionProgress.latestAtraceHostProcessDiagnostic.evidence, 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAtraceHostProcessDiagnostic');
+  assert.equal(sp01.executionProgress.latestAtraceHostProcessDiagnostic.acceptanceEvidence, false);
+  const reviewMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  const planMarkdown = fs.readFileSync(path.join(__dirname, '../docs/v1-executable-development-plan-20261027.md'), 'utf8');
+  assert.match(reviewMarkdown, /ATrace宿主诊断记录/);
+  assert.match(reviewMarkdown, /没有发现可单独识别的小程序 WebView 呈现帧流/);
+  assert.match(planMarkdown, /ATrace诊断记录/);
+  assert.match(planMarkdown, /仅为宿主层采样方法诊断/);
+});

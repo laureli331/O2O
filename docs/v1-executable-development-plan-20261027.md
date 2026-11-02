@@ -28,6 +28,8 @@
 
 用户已打开华为备用机设备探针页后，我改用 Android 内置 SurfaceFlinger TimeStats，并让 ADB 自动执行4轮交替上下滑动（8次、每次600ms）。微信 `AppBrandUI00` 宿主层采到363帧、0帧标为dropped，报告平均61.787 FPS；直方图中361个间隔为16ms、1个为33ms、1个为66ms，命令批次耗时7340ms。没有单独识别WebView合成帧、没有输入事件时间戳，也未独立确认页面位移；原始转储未留档。该结果只记录采样方法可行，不代表产品滚动FPS或QP05。使用Android自带接口，没有新增第三方依赖或云端调用。详见 `surfaceFlingerAlternatingSwipeProbe`。
 
+随后复用本机 Android `atrace` 对微信 `AppBrandUI00` 及 `com.tencent.mm:appbrand0` 做短时异步采样，并通过 ADB 自动执行两次反向纵向滑动（各900ms）。共解析到134593行、76356个全量标记；过滤后的 AppBrand 进程有125个 `Choreographer#doFrame`、85个 `draw`、18个 `input` 标记。未发现可单独识别的小程序 WebView 呈现帧流，手势边界没有与跟踪时间戳对齐，页面位移未独立核验；原始跟踪未保留，汇总由当时内存中的解析结果记录。该结果仅为宿主层采样方法诊断，不能换算 WebView FPS、QP05或SP01通过。详见 [ATrace诊断记录](sp01-huawei-gfxinfo-swipe-20261102.json#latestAtraceHostProcessDiagnostic) 与 [AOSP atrace源码](https://android.googlesource.com/platform/frameworks/native/+/master/cmds/atrace/atrace.cpp)。
+
 ### 2026-10-29 收尾回查：合成文件已清理，B 直接下载仍缺上游回包
 
 用户确认了最后三张精确删除卡；随后使用目标 AppID `wx2414399d423dfb65`、环境 `cloud1-d2gjahlq39bf141c7` 的只读 `cloud_query_storage action=list` 回查 `sp01_permission_probe/`，结果为 `files:[]`、`totalCount:0`。七份合成文件均已完成定向删除，未删除目录或其他文件，权限设置未改。

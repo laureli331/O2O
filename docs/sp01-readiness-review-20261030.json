@@ -336,6 +336,20 @@
         "inputAligned": false,
         "networkOrCloudUsed": false,
         "acceptanceEvidence": false
+      },
+      "latestAtraceHostProcessDiagnostic": {
+        "evidence": "docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAtraceHostProcessDiagnostic",
+        "device": "HUAWEI SEA-AL10 / Android 10",
+        "foregroundProcess": "com.tencent.mm:appbrand0",
+        "traceLines": 134593,
+        "traceMarkers": 76356,
+        "hostDoFrameMarkers": 125,
+        "hostDrawMarkers": 85,
+        "inputMarkers": 18,
+        "separatelyIdentifiableWebViewPresentedFrameStreamFound": false,
+        "rawTraceRetained": false,
+        "networkOrCloudUsed": false,
+        "acceptanceEvidence": false
       }
     },
     {
