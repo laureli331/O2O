@@ -535,6 +535,22 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(cloudSnapshot.query.invokedFunction, false);
   assert.equal(cloudSnapshot.query.cloudWrites, false);
   assert.equal(review.updatedAt, '2026-11-02');
+  assert.deepEqual(review.devicePowerSettingsObservation, {
+    observedAt: '2026-11-02',
+    device: 'HUAWEI SEA-AL10 / Android 10',
+    source: 'local ADB settings and power-state readback',
+    screenOffTimeoutBeforeMs: 600000,
+    screenOffTimeoutAfterMs: 1800000,
+    stayOnWhilePluggedInMask: 2,
+    wakefulness: 'Awake',
+    stayOn: true,
+    scope: 'device-screen behavior only; not SP01 network or endurance acceptance'
+  });
+  assert.equal(review.openItems.find(x => x.id === 'R04').state, 'pending');
+  assert.equal(review.openItems.find(x => x.id === 'R05').state, 'pending');
+  const powerReviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(powerReviewMarkdown, /屏幕超时为600000毫秒.*改为1800000毫秒（30分钟）并读回确认/);
+  assert.match(powerReviewMarkdown, /不构成R04弱网或R05耐久\/内存测量证据/);
   assert.equal(review.knownFacts.historicalDirectDownloadCodeAttributed, false);
   assert.equal(review.openItems.find(x => x.id === 'R01').vulnerabilityReproductionAuthorizedByThisReview, false);
   assert.equal(review.openItems.find(x => x.id === 'R06').newCloudActionAuthorizedByThisReview, false);

@@ -59,6 +59,17 @@
     "currentCloudStateRequeried": true,
     "currentCloudSnapshotEvidence": "docs/sp01-cloud-function-snapshot-20261102.json"
   },
+  "devicePowerSettingsObservation": {
+    "observedAt": "2026-11-02",
+    "device": "HUAWEI SEA-AL10 / Android 10",
+    "source": "local ADB settings and power-state readback",
+    "screenOffTimeoutBeforeMs": 600000,
+    "screenOffTimeoutAfterMs": 1800000,
+    "stayOnWhilePluggedInMask": 2,
+    "wakefulness": "Awake",
+    "stayOn": true,
+    "scope": "device-screen behavior only; not SP01 network or endurance acceptance"
+  },
   "openItems": [
     {
       "id": "R01",
