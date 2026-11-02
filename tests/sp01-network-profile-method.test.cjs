@@ -10,8 +10,9 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /手机到 Cloudflare/);
   assert.match(source, /不能换算成链路 RTT、上下行、抖动或丢包/);
   assert.match(source, /公共 Wi-Fi 单列/);
-  assert.match(source, /弱网配置还需独立方法/);
-  assert.match(source, /SP01 不放行/);
+  assert.match(source, /sp01-network-huawei-pakomo-light-20261102\.json/);
+  assert.match(source, /同一华为和 Wi-Fi、VPN 停止\/正常档时取得30次只读基线/);
+  assert.match(source, /R04 与 SP01 继续保持待完成/);
 });
 
 test('R04 records user-reported app-scope isolation without claiming measured weak-network effect', () => {
@@ -58,10 +59,28 @@ test('R04 records user-reported app-scope isolation without claiming measured we
   assert.equal(r04.deviceWeakNetworkEvidence.profile.uplinkKbps, 1024);
   assert.equal(r04.deviceWeakNetworkEvidence.reportedResults.unselectedBrowserConnectivity, 'normal');
   assert.equal(r04.deviceWeakNetworkEvidence.reportedResults.networkRecoveredAfterVpnStopped, 'normal');
-  assert.equal(r04.deviceWeakNetworkEvidence.cloudBaseCallsMade, false);
+  assert.equal(r04.deviceWeakNetworkEvidence.cloudBaseCallsMade, true);
+  assert.equal(r04.deviceWeakNetworkEvidence.cloudBaseSample.succeeded, 30);
+  assert.equal(r04.deviceWeakNetworkEvidence.vpnStoppedAfterRun, 'user-confirmed');
   assert.equal(r04.deviceWeakNetworkEvidence.measuredWeakNetworkEffect, false);
-  assert.ok(r04.unknown.some(item => item.includes('repeatability and measured CloudBase effect')));
+  assert.ok(r04.unknown.some(item => item.includes('same-device normal-profile baseline on Huawei SEA-AL10')));
   assert.match(r04.evidence, /sp01-weak-network-tool-review-20261031\.md/);
+});
+
+test('Huawei Pakomo sample retains raw observations and records its measurement limits', () => {
+  const sample = require('../docs/sp01-network-huawei-pakomo-light-20261102.json');
+  assert.equal(sample.networkTypeReportedByProbe, 'wifi');
+  assert.equal(sample.pakomoTestCondition.applicationScope, '指定应用');
+  assert.equal(sample.pakomoTestCondition.selectedApplication, 'WeChat');
+  assert.equal(sample.pakomoTestCondition.profile, '轻度弱网');
+  assert.equal(sample.samples.length, 30);
+  assert.equal(sample.samples.filter(item => item.ok).length, 30);
+  assert.equal(sample.userReportedSummary.medianMs, 379);
+  assert.equal(sample.independentlyRecomputed.averagedMiddleP50Ms, 382.5);
+  assert.equal(sample.independentlyRecomputed.nearestRankP95Ms, 566);
+  assert.equal(sample.afterRun.vpnStopped, 'user-confirmed');
+  assert.equal(sample.r04Passed, false);
+  assert.equal(sample.sp01Passed, false);
 });
 
 test('first Cloudflare screenshot is a single round with high loss and no false CloudBase claim', () => {

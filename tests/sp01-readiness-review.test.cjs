@@ -471,6 +471,8 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceInstallEvidence.adbInstallResult, 'Success');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.source, 'user-reported; not directly observed by the agent');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.reportedResults.wechatConnectivity, 'normal');
+  assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.cloudBaseSample.succeeded, 30);
+  assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.vpnStoppedAfterRun, 'user-confirmed');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.measuredWeakNetworkEffect, false);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /dry-run stopped before producing a complete task graph/);
   assert.match(review.openItems.find(x => x.id === 'R04').known, /no APK was produced or inspected/);
