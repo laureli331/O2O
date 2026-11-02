@@ -85,3 +85,25 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /不转录密码、序列号、MAC、二维码或整张标签图/);
   assert.match(text, /R04 与 SP01 均未通过/);
 });
+
+test('current Pakomo device snapshot remains point-in-time evidence only', () => {
+  const snapshot = require('../docs/sp01-pakomo-current-device-snapshot-20261102.json');
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  const networkReview = fs.readFileSync(path.join(__dirname, '../docs/sp01-network-profile-method-20261031.md'), 'utf8');
+
+  assert.equal(snapshot.device.model, 'SEA-AL10');
+  assert.equal(snapshot.pakomo.installed, true);
+  assert.equal(snapshot.pakomo.processRunningAtSnapshot, true);
+  assert.equal(snapshot.connectivity.wifiValidated, true);
+  assert.equal(snapshot.connectivity.wifiNetworkCapabilityNotVpn, true);
+  assert.equal(snapshot.connectivity.vpnTransportNetworkAgentFoundInFilteredConnectivityOutput, false);
+  assert.equal(snapshot.actions.cloudBaseCalls, false);
+  assert.equal(snapshot.actions.vpnStartedOrStopped, false);
+  assert.equal(snapshot.acceptance.r04Passed, false);
+  assert.equal(snapshot.acceptance.sp01Passed, false);
+  assert.equal(r04.state, 'pending');
+  assert.equal(r04.deviceWeakNetworkEvidence.currentReadOnlyDeviceSnapshot.historicalSamplingStateEstablished, false);
+  assert.equal(r04.deviceWeakNetworkEvidence.currentReadOnlyDeviceSnapshot.impairmentEnforcementEstablished, false);
+  assert.match(networkReview, /不能回溯证明六轮采样时 VPN/);
+});

@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "source": "read-only ADB inspection of the connected Huawei backup phone",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10"
+  },
+  "pakomo": {
+    "packageName": "com.alphynia.pakomo.kernel",
+    "versionCode": 1,
+    "versionName": "0.1.0-kernel",
+    "installed": true,
+    "processRunningAtSnapshot": true
+  },
+  "connectivity": {
+    "wifiConnected": true,
+    "wifiValidated": true,
+    "wifiNetworkCapabilityNotVpn": true,
+    "vpnTransportNetworkAgentFoundInFilteredConnectivityOutput": false
+  },
+  "interpretation": "At this snapshot the connected validated Wi-Fi network was marked NOT_VPN and no VPN transport network agent appeared in the filtered connectivity output. This does not establish Pakomo or VPN state during any earlier sampling run, the selected-app rule, or whether impairment settings were enforced.",
+  "actions": {
+    "cloudBaseCalls": false,
+    "vpnStartedOrStopped": false,
+    "deviceSettingsChanged": false,
+    "filesWrittenOrDeleted": false
+  },
+  "acceptance": {
+    "r04Passed": false,
+    "sp01Passed": false
+  }
+}

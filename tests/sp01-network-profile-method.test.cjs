@@ -15,6 +15,8 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /sp01-network-huawei-paired-reruns-20261102\.json/);
   assert.match(source, /轻度弱网381\.83ms/);
   assert.match(source, /不能确认具体参数已生效/);
+  assert.match(source, /sp01-pakomo-current-device-snapshot-20261102\.json/);
+  assert.match(source, /不能回溯证明六轮采样时 VPN/);
   assert.match(source, /R04 与 SP01 继续保持待完成/);
 });
 
