@@ -2137,7 +2137,8 @@
           "networkOrCloudUsed": false,
           "scope": "host-sampler-feasibility-only; delta window also includes counter queries; not WebView FPS or product QP05",
           "acceptanceEvidence": false
-        }
+        },
+        "latestPausedPakomoAttemptEvidence": "docs/sp01-pakomo-current-attempt-20261102.json"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

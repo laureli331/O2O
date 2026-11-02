@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "observedAtUtc": "2026-11-02 06:59 UTC",
+  "task": "SP01",
+  "item": "R04",
+  "scope": "preflight-and-display-sleep-recovery-only-no-network-sample",
+  "authorization": {
+    "profile": "light",
+    "scope": "WeChat only",
+    "sampleCount": 30,
+    "durationLimitSeconds": 60,
+    "cloudFunction": "sp01IdentityProbe",
+    "cloudWritesAllowed": false
+  },
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "androidVersion": "10",
+    "adbConnected": true
+  },
+  "profile": {
+    "name": "轻度弱网",
+    "scope": "WeChat only",
+    "delayMs": 100,
+    "jitterMs": 30,
+    "packetLossPercent": 1,
+    "downloadKbps": 2048,
+    "uploadKbps": 1024,
+    "source": "previously confirmed Pakomo rules screen and selected application; not re-read from the rules screen during this current preflight"
+  },
+  "displaySleep": {
+    "before": {
+      "screenOffTimeoutMs": 600000,
+      "stayOnWhilePluggedIn": 0
+    },
+    "temporarySetting": {
+      "stayOnWhilePluggedIn": 2,
+      "meaning": "stay awake while USB powered"
+    },
+    "readback": {
+      "stayOnWhilePluggedIn": 2,
+      "wakefulness": "Awake",
+      "isPowered": true,
+      "stayOn": true
+    },
+    "restoreOriginalAfterSampling": true,
+    "restorationPending": true
+  },
+  "observation": {
+    "pakomoWasOpenedForConfigurationReview": true,
+    "vpnActive": false,
+    "wifiValidatedAndNotVpn": true,
+    "currentForegroundAfterReturningToWechat": "WeChat mini-program list",
+    "samplePageForeground": false,
+    "lockScreenVisible": false
+  },
+  "sample": {
+    "performed": false,
+    "cloudCalls": 0,
+    "databaseWrites": 0,
+    "storageWrites": 0,
+    "reason": "The device was unlocked but on the WeChat mini-program list, not the SP01 network sample page; VPN was not started."
+  },
+  "acceptance": {
+    "r04Passed": false,
+    "sp01Passed": false
+  }
+}

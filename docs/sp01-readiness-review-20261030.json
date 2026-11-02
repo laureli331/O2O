@@ -40,7 +40,8 @@
     "docs/sp01-network-huawei-pakomo-light-run-20261102.json",
     "docs/sp01-pakomo-wrong-app-attempt-20261102.json",
     "docs/sp01-network-huawei-pakomo-bounded-20261102.json",
-    "docs/sp01-network-huawei-pakomo-counter-correlated-20261102.json"
+    "docs/sp01-network-huawei-pakomo-counter-correlated-20261102.json",
+    "docs/sp01-pakomo-current-attempt-20261102.json"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -431,7 +432,8 @@
       "latestBoundedPakomoSampleEvidence": "docs/sp01-network-huawei-pakomo-bounded-20261102.json",
       "overrunPakomoSampleEvidence": "docs/sp01-network-huawei-pakomo-light-run-20261102.json",
       "latestCounterCorrelatedSampleEvidence": "docs/sp01-network-huawei-pakomo-counter-correlated-20261102.json",
-      "latestPakomoStatusSeriesEvidence": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-status-series-20261102.json"
+      "latestPakomoStatusSeriesEvidence": "docs/evidence/sp01-network-huawei-pakomo-counter-correlated-status-series-20261102.json",
+      "latestPausedPakomoAttemptEvidence": "docs/sp01-pakomo-current-attempt-20261102.json"
     },
     {
       "id": "R05",
