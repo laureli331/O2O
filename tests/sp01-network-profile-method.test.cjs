@@ -40,7 +40,12 @@ test('R04 Pakomo is recorded as a source-reviewed candidate, not a validated wea
   const r04 = readiness.openItems.find(item => item.id === 'R04');
   assert.equal(r04.state, 'pending');
   assert.equal(readiness.sp01Passed, false);
-  assert.match(r04.nextAction, /licenses for build-tools;35\.0\.0 and platforms;android-36 are unaccepted/);
+  assert.match(r04.nextAction, /review the debug APK permissions/i);
+  assert.match(r04.nextAction, /do not install until the user explicitly confirms/);
+  assert.equal(r04.latestBuildEvidence.versionName, '0.1.0-kernel');
+  assert.equal(r04.latestBuildEvidence.apkSha256, 'F026D48E9D6F298A1419EA69332A7C28F8D50D7BF115D978DDB1FB0DC6BCBD34');
+  assert.equal(r04.latestBuildEvidence.installed, false);
+  assert.equal(r04.latestBuildEvidence.weakNetworkInjectionVerified, false);
   assert.ok(r04.unknown.some(item => item.includes('repeatable weak-network injection and recovery method')));
   assert.match(r04.evidence, /sp01-weak-network-tool-review-20261031\.md/);
 });

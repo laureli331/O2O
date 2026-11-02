@@ -98,11 +98,27 @@ dry-run 未执行 Android 编译/打包任务。没有接受任何 SDK 许可证
 
 以上仓库都是固件构建项目，不是可直接安装、可单独关闭的整形工具。借用设备的固件、硬件修订和所有者许可仍未知，因此不登录或刷写借用设备，也不修改家庭网络；但本项目无需等待该设备，先评估上面的手机本地候选。
 
-## 最小验证顺序（待入口确认）
+## 最小验证顺序（截至 2026-11-02）
 
 1. iPhone XR 入口核查已完成：当前未出现；苹果方法暂不采用。若未来已有可用 Mac/开发设备，再重新核对，不把升级 iOS 当解除条件。
-2. Pakomo 固定提交的构建入口、Wrapper、依赖与本机工具条件已核对。用户已授权的隔离工具准备已完成；须先由用户自行审阅并接受 Android SDK 许可证、安装 `build-tools;35.0.0` 与 `platforms;android-36`。随后重跑 dry-run 审阅完整任务图，符合范围后才执行 `kernelDebug` 并离线检查 APK。构建与手机安装分开；未另行确认前不安装 APK。
-3. 若 APK 离线检查通过且用户另行确认安装，再用华为备用机验证仅微信进入 VPN、其他应用不受影响、停用后恢复。之后须先确定工具实际支持的场景与取值，再用用户单独授权的当前只读 CloudBase 端点作正常/受限/中断/恢复对照；不复用已耗尽的30次采样授权。
+2. SDK 许可证已由用户审阅并接受；`build-tools;35.0.0` 与 `platforms;android-36` 已安装。完整 `:app:assembleKernelDebug` 成功，且本地离线核对了包名、版本、SDK 范围和 debug 签名。当前 APK 仍未安装；清单包含悬浮窗、查询已安装应用、请求安装包等权限，安装前需审阅其用途并取得一次具体安装确认。
+3. 若用户确认安装，再只在华为备用机上核实是否能把 VPN 范围限定为微信、其他应用是否不受影响，以及停止后网络是否恢复。然后须先确定工具实际支持的场景与取值，再用用户单独授权的当前只读 CloudBase 端点作正常/受限/中断/恢复对照；不复用已耗尽的30次采样授权。
 4. 正式业务出现后仍按 QP07 各场景独立验证。Android 方法不自动覆盖 iPhone。
 
 此文件只记录候选与验证步骤；当前没有改任何手机、云端或项目网络配置，R04 与 SP01 均未通过。回退只需撤销本文件对应提交。
+
+## 本地构建后续（2026-11-02）
+
+用户发回的截图显示 Android SDK 许可证均已接受。只读核对确认 `build-tools;35.0.0` 与 `platforms;android-36` 已安装；完整任务图限定为 `:app:assembleKernelDebug`，无 HEV、NDK 或发布签名任务。首次纠正版本号后，Microsoft OpenJDK `17.0.21.0.2` 在 Gradle daemon 的 Sweeper thread 触发 `Internal Error (assembler_x86.cpp:1105), ShouldNotReachHere()`；确切根因未确定。崩溃报告留在仓库根目录 `hs_err_pid20392.log`，自动审查拦截了清理操作；报告可能包含进程环境值，禁止分享或提交，需由用户手动删除。
+
+为区分 JDK 故障与项目构建故障，在项目隔离工具目录下载 Temurin `17.0.20.1+1`，并按 Adoptium API 返回值核对 ZIP SHA-256：`e53a79c3c3d86865bd7e787903884331068e71321714ffd44f145785affc7cb0`。Gradle 官方兼容表支持 Java 17 运行 Gradle 8.x。代理只通过本次构建子进程环境设置，没有修改系统设置。随后 `:app:assembleKernelDebug` 构建成功（Gradle 8.13，3m11s，39 项任务，8 执行、31 已是最新）；这证明该隔离源码可用 Temurin 生成 debug 包，但没有证明 Microsoft JDK 崩溃的根因。
+
+| 离线检查项 | 结果 |
+| --- | --- |
+| APK | `tools/sp01-pakomo-build-audit/source/app/build/outputs/apk/kernel/debug/app-kernel-debug.apk`；63,988,226 字节；SHA-256 `F026D48E9D6F298A1419EA69332A7C28F8D50D7BF115D978DDB1FB0DC6BCBD34` |
+| 包与版本 | `com.alphynia.pakomo.kernel`；versionCode `1`；versionName `0.1.0-kernel`；minSdk `29`；targetSdk `36`；compileSdk `36` |
+| 签名 | `apksigner verify` 通过；单一 Android Debug signer；v2 签名有效。不是发布签名 |
+| 清单权限 | 包含 `SYSTEM_ALERT_WINDOW`、`QUERY_ALL_PACKAGES`、`REQUEST_INSTALL_PACKAGES`、`FOREGROUND_SERVICE_SPECIAL_USE`、`POST_NOTIFICATIONS`、`INTERNET` 与 `ACCESS_NETWORK_STATE`；本轮没有安装或授予权限 |
+| 非致命工具提示 | Android 工具报告 SDK XML v4，而当前命令行工具只识别至 v3；构建成功，但需在后续工具维护中更新/对齐 SDK 命令行工具 |
+
+没有安装 APK、启动 VPN、变更设备或路由器、调用 CloudBase，亦未验证限速/延迟/丢包/中断和恢复效果。构建成功只完成工具可构建性，不满足 R04，更不能作为 SP01 通过证据。下一步需先由用户审阅上述权限并明确授权一次在华为备用机安装 debug APK；届时仍需分别确认 Android VPN 授权、微信单应用范围、其他应用隔离和停止后的网络恢复。官方来源：[Adoptium Temurin 17 发布页](https://github.com/adoptium/temurin17-binaries/releases)、[Gradle Java 兼容表](https://docs.gradle.org/current/userguide/compatibility.html)。

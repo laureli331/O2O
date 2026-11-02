@@ -38,6 +38,13 @@ test('weak-network tool review does not claim unverified phone injection', () =>
   assert.match(text, /没有接受任何 SDK 许可证/);
   assert.match(text, /才执行获授权的 `kernelDebug`/);
   assert.match(text, /当前结论：R04 与 SP01 仍未通过/);
+  assert.match(text, /本地构建后续（2026-11-02）/);
+  assert.match(text, /构建成功（Gradle 8\.13，3m11s/);
+  assert.match(text, /0\.1\.0-kernel/);
+  assert.match(text, /F026D48E9D6F298A1419EA69332A7C28F8D50D7BF115D978DDB1FB0DC6BCBD34/);
+  assert.match(text, /SYSTEM_ALERT_WINDOW.*QUERY_ALL_PACKAGES.*REQUEST_INSTALL_PACKAGES/);
+  assert.match(text, /没有安装 APK、启动 VPN/);
+  assert.match(text, /确切根因未确定/);
   assert.match(text, /WINDIVERT_LAYER_NETWORK, \.\.\./);
   assert.match(text, /NETWORK_FORWARD/);
   assert.match(text, /不安装驱动或运行程序/);
