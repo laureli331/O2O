@@ -240,3 +240,9 @@ CLI提供存储list、info、url和read查询；本轮未用CLI读取文件内�
 使用微信开发者工具安装目录 CLI，显式指定目标 AppID `wx2414399d423dfb65` 与 EnvID `cloud1-d2gjahlq39bf141c7`，仅执行 `cloud_fn_list`、`cloud_fn_info --names sp01IdentityProbe` 和 `cloud_query_storage --action list --cloud-path sp01_permission_probe/`。返回结果为：目标环境当前仅有 `sp01IdentityProbe`，状态 `Active`、运行时 `Nodejs16.13`、超时 `3` 秒；`sp01_permission_probe/` 返回 `files: []`、`totalCount: 0`。本次未调用函数、未写入/删除云端资源、未修改运行时/日志/权限设置。
 
 该快照覆盖当前真实状态，不覆盖此前 Nodejs20.19/30秒事务探针的历史证据。SP01 的直接下载语义仍未完成唯一归因；此前已测文件的跨账号隔离失败结论仍仅限该文件和账号，不能推广为所有存储对象的规则。若继续做云端复验，必须另行明确授权具体写入、读取、删除范围；在此之前不把 SP01 标记通过。
+
+## 2026-11-02 当前函数状态与 Pakomo 后续尝试
+
+本日只读微信开发者工具 CLI 查询确认目标 `cloud1` 当前有一个函数：`sp01IdentityProbe`，状态 `Active`、运行时 `Nodejs16.13`、超时3秒；查询未调用函数、未部署或更改设置。该状态快照见[结构化证据](sp01-cloud-function-snapshot-20261102.json)，不验证函数包兼容性或产品接口表现。
+
+用户另行授权的一次 Pakomo 轻度弱网关联采样尝试未实际发起采样。由于启动 VPN 前没有先把采样按钮滚动到可见区域，时间限制内重新定位耗时；开始后77,092毫秒才停止，超过授权的60,000毫秒上限17,092毫秒。没有调用 CloudBase，也没有数据库/存储写入。ADB 确认 Pakomo 已停止，当前网络列表显示 Wi-Fi 已连接且没有 VPN 网络代理条目；本次证据未确认互联网验证状态。详见[本次尝试记录](sp01-pakomo-attempt-20261102.json)。此前独立完成的相关采样证据保留在原记录中；本次失败不覆盖历史结果。R04与SP01均保持未通过。

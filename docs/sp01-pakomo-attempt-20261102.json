@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "scope": "authorized-local-pakomo-start-stop-no-cloud-sample",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10"
+  },
+  "authorization": {
+    "userAuthorizedOneRun": true,
+    "authorizedMaximumVpnDurationMs": 60000,
+    "measuredStartToStopMs": 77092,
+    "durationLimitExceededByMs": 17092,
+    "consumed": true
+  },
+  "pakomo": {
+    "package": "com.alphynia.pakomo.kernel",
+    "start": {
+      "unixTimeMs": 1793594702533,
+      "utc": "2026-11-02T04:45:02.533Z",
+      "confirmed": true,
+      "stage": "forwarding",
+      "appliedRule": "light",
+      "scope": "applications",
+      "selectedPackageNamesReadBack": false
+    },
+    "stop": {
+      "unixTimeMs": 1793594779625,
+      "utc": "2026-11-02T04:46:19.625Z",
+      "confirmedInactive": true
+    },
+    "postStopStatus": {
+      "unixTimeMs": 1793594779784,
+      "utc": "2026-11-02T04:46:19.784Z",
+      "active": false,
+      "stage": "stopped"
+    }
+  },
+  "sample": {
+    "performed": false,
+    "cloudBaseCalls": 0,
+    "databaseOrStorageWrites": false,
+    "reason": "The sampling control was below the visible viewport when Pakomo was started. Page repositioning occurred during the authorized window; when the elapsed-time check showed the limit had passed, the sample button was not pressed."
+  },
+  "recovery": {
+    "pakomoStatusConfirmedStopped": true,
+    "wifiNetworkAgentConnected": true,
+    "vpnNetworkAgentFound": false,
+    "source": "ADB dumpsys connectivity; current NetworkAgentInfo listing contained connected Wi-Fi and no VPN network-agent entry",
+    "internetValidationConfirmed": false
+  },
+  "processReview": {
+    "failureCause": "The sampling page was not positioned at the trigger before the time-limited VPN run began.",
+    "correctiveSequenceForAnyFutureSeparatelyAuthorizedRun": "Position and verify the sample button first, then start Pakomo, verify forwarding, start the sample immediately, and stop Pakomo before the 60-second limit.",
+    "authorizationForAnotherRun": false
+  },
+  "acceptanceEvidence": false,
+  "r04Passed": false,
+  "sp01Passed": false
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "scope": "read-only-cloud-function-state-query",
+  "target": {
+    "appId": "wx2414399d423dfb65",
+    "environmentId": "cloud1-d2gjahlq39bf141c7"
+  },
+  "query": {
+    "tool": "WeChat DevTools CLI",
+    "loginExpired": false,
+    "commands": [
+      "cloud_fn_list",
+      "cloud_fn_info --names sp01IdentityProbe"
+    ],
+    "invokedFunction": false,
+    "cloudWrites": false,
+    "deploymentOrConfigurationChange": false,
+    "personallyIdentifyingOutputStored": false
+  },
+  "environment": {
+    "functionCount": 1,
+    "functions": [
+      {
+        "name": "sp01IdentityProbe",
+        "status": "Active",
+        "runtime": "Nodejs16.13",
+        "timeoutSeconds": 3
+      }
+    ]
+  },
+  "interpretation": {
+    "scope": "function-list-and-function-details-only",
+    "doesNotVerify": [
+      "function invocation success",
+      "runtime compatibility of the current package",
+      "network behavior under Pakomo",
+      "database or storage state"
+    ],
+    "acceptanceEvidence": false
+  }
+}
