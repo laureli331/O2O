@@ -451,14 +451,14 @@ test('SP01 current review covers the exact contract criteria without silently re
   }
 });
 
-test('R04 records the latest one-shot Pakomo sample as diagnostic-only after exceeding its authorization window', () => {
+test('R04 preserves the historical one-shot Pakomo sample that exceeded its authorization window', () => {
   const sample = require('../docs/sp01-network-huawei-pakomo-light-run-20261102.json');
   const r04 = review.openItems.find(item => item.id === 'R04');
   const evidencePath = 'docs/sp01-network-huawei-pakomo-light-run-20261102.json';
 
   assert.ok(review.sources.includes(evidencePath));
   assert.ok(r04.evidence.split('; ').includes(evidencePath));
-  assert.equal(r04.latestOneShotPakomoSampleEvidence, evidencePath);
+  assert.equal(r04.overrunPakomoSampleEvidence, evidencePath);
   assert.equal(sample.authorization.maximumVpnDurationSeconds, 60);
   assert.equal(sample.authorization.deviceTimerObservedDurationSeconds, 68);
   assert.equal(sample.authorization.overrunSeconds, 8);
@@ -481,8 +481,7 @@ test('R04 records the latest one-shot Pakomo sample as diagnostic-only after exc
   assert.equal(sample.r04Passed, false);
   assert.equal(sample.sp01Passed, false);
   assert.equal(r04.state, 'pending');
-  assert.match(r04.nextAction, /timer showed 68 seconds against the 60-second authorization/i);
-  assert.match(r04.nextAction, /timer showed 68 seconds against the 60-second authorization.*that authorization is consumed/i);
+  assert.match(r04.known, /device timer showed 68 seconds against a 60-second authorization/i);
   assert.match(r04.known, /30\/30.*P50=398ms.*P95=656ms.*max=1985ms/);
   const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
   assert.match(reviewMarkdown, /后续获准的单次采样.*计时显示68秒.*上限8秒/);
@@ -495,7 +494,7 @@ test('R04 records the later Pakomo attempt that resumed the wrong mini-program w
 
   assert.ok(review.sources.includes(evidencePath));
   assert.ok(r04.evidence.split('; ').includes(evidencePath));
-  assert.equal(r04.latestPakomoAttemptEvidence, evidencePath);
+  assert.equal(r04.latestFailedPakomoAttemptEvidence, evidencePath);
   assert.equal(attempt.authorization.userAuthorizedOneRun, true);
   assert.equal(attempt.authorization.maximumVpnDurationSeconds, 60);
   assert.equal(attempt.authorization.durationMeasuredSeconds, null);
@@ -551,7 +550,7 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(r04.previousNoSamplePakomoAttemptEvidence, 'docs/sp01-pakomo-attempt-20261102.json');
   assert.equal(abortedPakomoAttempt.sample.performed, false);
   assert.equal(abortedPakomoAttempt.authorization.durationLimitExceededByMs, 17092);
-  assert.match(r04.nextAction, /timer showed 68 seconds against the 60-second authorization/i);
+  assert.match(r04.known, /device timer showed 68 seconds against a 60-second authorization/i);
   const correlatedPakomoSample = require('../docs/sp01-network-huawei-pakomo-correlated-20261102.json');
   assert.equal(r04.correlatedPakomoSampleEvidence, 'docs/sp01-network-huawei-pakomo-correlated-20261102.json');
   assert.ok(review.sources.includes(r04.correlatedPakomoSampleEvidence));
@@ -582,9 +581,10 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(correlatedPakomoSample.run.after.wifiRecoveredAndNotVpn, true);
   assert.equal(correlatedPakomoSample.r04Passed, false);
   assert.equal(correlatedPakomoSample.sp01Passed, false);
-  assert.match(r04.nextAction, /earlier protocol-correlated 30-call run remains recorded/i);
-  assert.match(r04.nextAction, /does not prove.*individual CloudBase calls.*shaped/i);
+  assert.match(r04.known, /later agent-operated correlated run.*delayed=93.*dropped=0/i);
+  assert.match(r04.known, /Aggregate counters cannot identify individual CloudBase calls.*not per-request shaping/i);
   assert.match(r04.nextAction, /independent link measures.*interrupted-request behavior.*public[- ]Wi-Fi/i);
+  assert.equal(r04.latestBoundedPakomoSampleEvidence, 'docs/sp01-network-huawei-pakomo-bounded-20261102.json');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceInstallEvidence.adbInstallResult, 'Success');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.source, 'user-reported; not directly observed by the agent');
   assert.equal(review.openItems.find(x => x.id === 'R04').deviceWeakNetworkEvidence.reportedResults.wechatConnectivity, 'normal');
@@ -662,6 +662,7 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.match(reviewMarkdown, /Pakomo v0\.3\.0 debug APK 已构建.*并安装到华为备用机/);
   assert.match(reviewMarkdown, /仍不能证明.*弱网注入.*生效/);
   assert.match(reviewMarkdown, /本轮受控关联采样.*30\/30.*403ms.*622ms/);
+  assert.match(reviewMarkdown, /2026-11-02 后续限时关联采样：[\s\S]*?26秒[\s\S]*?30\/30[\s\S]*?405ms[\s\S]*?588ms/);
   assert.match(reviewMarkdown, /R04 历史记录（截至2026-11-01/);
   const platform = require('../docs/sp02-platform-evidence-20261027.json');
   const findGate = value => {

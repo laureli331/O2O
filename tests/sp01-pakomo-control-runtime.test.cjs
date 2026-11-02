@@ -31,8 +31,9 @@ test('Pakomo runtime evidence records confirmed start, recovery, and the bounded
   const r04 = readiness.openItems.find(item => item.id === 'R04');
   assert.equal(r04.state, 'pending');
   assert.equal(r04.pakomoRuntimeControlEvidence, 'docs/sp01-pakomo-control-runtime-check-20261102.json');
-  assert.match(r04.nextAction, /within that run's 60-second authorization/);
-  assert.match(r04.nextAction, /That authorization is consumed\. Do not repeat under it/);
+  assert.equal(r04.latestBoundedPakomoSampleEvidence, 'docs/sp01-network-huawei-pakomo-bounded-20261102.json');
+  assert.match(r04.nextAction, /26,000ms from Pakomo start response to confirmed stop response/);
+  assert.match(r04.nextAction, /no in-run Pakomo counters were captured/);
   assert.equal(readiness.sp01Passed, false);
 });
 

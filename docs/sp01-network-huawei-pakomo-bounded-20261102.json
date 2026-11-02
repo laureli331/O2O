@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R04",
+  "scope": "one-bounded-pakomo-light-cloudbase-application-roundtrip-sample",
+  "summaryScreenshot": "docs/evidence/sp01-network-huawei-pakomo-bounded-summary-20261102.png",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10"
+  },
+  "authorization": {
+    "userAuthorizedOneRun": true,
+    "maximumVpnDurationMs": 60000,
+    "readOnlyCloudCalls": 30,
+    "databaseOrStorageWrites": false
+  },
+  "previousOutOfWindowAttempt": {
+    "authorizationMaximumDurationMs": 60000,
+    "startResponseTimestampEpochMs": 1793597353730,
+    "stopResponseTimestampEpochMs": 1793597466832,
+    "observedControlResponseIntervalMs": 113102,
+    "limitExceeded": true,
+    "sample": {
+      "attempts": 30,
+      "succeeded": 30,
+      "failed": 0,
+      "medianMs": 401,
+      "p95Ms": 583,
+      "maxMs": 1770,
+      "rawSamplesRetained": false
+    },
+    "pakomoConfirmedStopped": true,
+    "wifiValidatedAndNotVpn": true,
+    "acceptanceEligible": false,
+    "classification": "diagnostic-only; exceeded the 60-second authorization window"
+  },
+  "run": {
+    "kind": "agent-observed-bounded-correlated-device-run",
+    "pakomo": {
+      "applicationScope": "applications",
+      "selectedApplication": "WeChat",
+      "selectedApplicationCount": 1,
+      "profile": "light",
+      "startResponse": {
+        "timestampEpochMs": 1793597561298,
+        "stage": "forwarding",
+        "active": true,
+        "appliedRule": "light",
+        "scope": "applications",
+        "confirmed": true
+      },
+      "statusDuringSampleCaptured": false,
+      "statusCountersCaptured": false,
+      "stopResponse": {
+        "timestampEpochMs": 1793597587298,
+        "stage": "stopped",
+        "active": false,
+        "confirmedInactive": true
+      },
+      "controlResponseIntervalMs": 26000,
+      "controlResponseIntervalWithinAuthorization": true,
+      "exactImpairmentParametersIndependentlyConfirmedForThisRun": false
+    },
+    "sample": {
+      "endpoint": "sp01IdentityProbe / read-only",
+      "scope": "application-roundtrip-not-link-rtt-or-packet-loss",
+      "networkType": "wifi",
+      "selectedPageAtStart": "SP01 network sampling page",
+      "attempts": 30,
+      "succeeded": 30,
+      "failed": 0,
+      "rawElapsedMs": [
+        725,
+        405,
+        439,
+        431,
+        355,
+        376,
+        378,
+        348,
+        365,
+        397,
+        410,
+        366,
+        588,
+        410,
+        396,
+        409,
+        418,
+        417,
+        437,
+        406,
+        411,
+        407,
+        382,
+        425,
+        395,
+        367,
+        380,
+        381,
+        392,
+        415
+      ],
+      "summary": {
+        "attempts": 30,
+        "succeeded": 30,
+        "failed": 0,
+        "failureRate": 0,
+        "medianMs": 405,
+        "p95Ms": 588,
+        "maxMs": 725,
+        "meanConsecutiveDifferenceMs": 43.724137931034484
+      },
+      "databaseOrStorageWrites": false,
+      "responseBodiesRetained": false
+    },
+    "after": {
+      "pakomoConfirmedStopped": true,
+      "validatedWifi": true,
+      "vpnNetworkAgentFound": false,
+      "internetReachabilitySeparatelyTested": false,
+      "verificationSource": "ADB connectivity and Wi-Fi state after stop"
+    }
+  },
+  "interpretation": {
+    "boundedThirtyCallApplicationSampleObserved": true,
+    "pakomoStartConfirmedBeforeSample": true,
+    "pakomoStopAndValidatedWifiRecoveryConfirmedAfterSample": true,
+    "provesPakomoRemainedActiveThroughoutEveryCall": false,
+    "provesPerRequestShaping": false,
+    "provesExactImpairmentParameters": false,
+    "provesLinkRttThroughputJitterOrPacketLoss": false,
+    "reason": "The start response confirmed the light rule and application scope, and the later stop response confirmed stopped state. Status counters were not captured during this run, so the evidence does not attribute impairment to individual requests or establish exact per-call shaping."
+  },
+  "nextAction": "Continue R04 with independent link measurements, interrupted-request recovery, stable normal-network range and public-Wi-Fi evidence; remeasure the actual product endpoint in SP08.",
+  "durationConstrainedSampleEligible": true,
+  "r04AcceptanceEligible": false,
+  "r04Passed": false,
+  "sp01Passed": false
+}

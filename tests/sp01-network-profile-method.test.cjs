@@ -46,8 +46,8 @@ test('R04 records user-reported app-scope isolation without claiming measured we
   const r04 = readiness.openItems.find(item => item.id === 'R04');
   assert.equal(r04.state, 'pending');
   assert.equal(readiness.sp01Passed, false);
-  assert.match(r04.nextAction, /earlier protocol-correlated 30-call run remains recorded/i);
-  assert.match(r04.nextAction, /That authorization is consumed\. Do not repeat under it/i);
+  assert.equal(r04.latestBoundedPakomoSampleEvidence, 'docs/sp01-network-huawei-pakomo-bounded-20261102.json');
+  assert.match(r04.nextAction, /A bounded 30-call application-roundtrip run was recorded at 26,000ms/i);
   assert.equal(r04.latestBuildEvidence.versionName, '0.1.0-kernel');
   assert.equal(r04.latestBuildEvidence.apkSha256, 'F026D48E9D6F298A1419EA69332A7C28F8D50D7BF115D978DDB1FB0DC6BCBD34');
   assert.equal(r04.latestBuildEvidence.installed, true);
