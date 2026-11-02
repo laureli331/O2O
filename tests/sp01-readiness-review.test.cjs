@@ -462,16 +462,29 @@ test('Huawei follow-up device report is retained as local diagnostic evidence on
   assert.equal(evidence.device.wechatVersion, '8.0.79');
   assert.equal(evidence.device.baseLibrary, '3.17.5');
   assert.equal(evidence.device.renderer, 'webview');
-  assert.equal(evidence.device.currentPerformanceEntries, 'not-provided');
-  assert.equal(evidence.device.routeEntry, 'not-observed');
-  assert.equal(evidence.device.explicitFpsMetricFound, false);
+  assert.equal(evidence.device.initialOnShow.currentPerformanceEntries, 'not-provided');
+  assert.deepEqual(evidence.onDemandRead.entries, [
+    { name: 'appLaunch', type: 'navigation', durationMs: 1350 },
+    { name: 'downloadPackage', type: 'loadPackage', durationMs: 429 },
+    { name: 'evaluateScript', type: 'script', durationMs: 10 },
+    { name: 'route', type: 'navigation', durationMs: null },
+    { name: 'firstPaint', type: 'render', durationMs: null },
+    { name: 'firstRender', type: 'render', durationMs: 43 },
+    { name: 'firstContentfulPaint', type: 'render', durationMs: null },
+    { name: 'largestContentfulPaint', type: 'render', durationMs: null },
+  ]);
+  assert.equal(evidence.onDemandRead.routeDurationField, 'undefined');
+  assert.equal(evidence.onDemandRead.explicitFpsMetricFound, false);
   assert.equal(evidence.cloudRequests, false);
   assert.equal(evidence.networkRequests, false);
   assert.equal(evidence.fileWritesOnDevice, false);
   assert.equal(evidence.acceptanceEvidence, false);
   assert.equal(fs.existsSync(path.resolve(__dirname, '../docs/evidence/sp01-device-capability-huawei-follow-up-20261102.png')), true);
+  assert.equal(fs.existsSync(path.resolve(__dirname, '../docs/evidence/sp01-device-capability-huawei-read-again-20261102.png')), true);
   assert.equal(item.state, 'pending');
   assert.equal(item.latestHuaweiDeviceCapabilityFollowUp.evidence, 'docs/sp01-device-capability-huawei-follow-up-20261102.json');
+  assert.equal(item.latestHuaweiDeviceCapabilityFollowUp.currentPerformanceEntries, 8);
+  assert.equal(item.latestHuaweiDeviceCapabilityFollowUp.routeEntry, 'observed; duration undefined');
   assert.ok(review.sources.includes('docs/sp01-device-capability-huawei-follow-up-20261102.json'));
   assert.equal(review.sp01Passed, false);
   assert.equal(review.sp07Started, false);

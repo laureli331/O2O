@@ -53,7 +53,7 @@ R04 历史记录（截至2026-11-01）：固定源码 Pakomo v0.3.0（GPL-3.0、
 
 2026-11-02 本地采样方法补充：在华为备用机 SEA-AL10（Android 10，用户确认当前60Hz）上复用 Android 内置 SurfaceFlinger TimeStats，通过8次交替上下滑动采集微信 `AppBrandUI00` 宿主层。命令批次耗时7340ms；该层显示363帧、0 dropped、平均61.787 FPS，present-to-present直方图为16ms=361、33ms=1、66ms=1。它没有隔离内嵌WebView、没有输入事件时间戳，也没有独立核实滚动位移；因此只证明该宿主层采样方法可用，不计算产品滚动FPS，也不满足QP05。未新增第三方依赖，未调用云端。原始TimeStats转储未留档；登记数值来自本地命令输出。详见[SurfaceFlinger采样证据](sp01-huawei-gfxinfo-swipe-20261102.json#surfaceFlingerAlternatingSwipeProbe)与[Android帧率文档](https://developer.android.com/games/optimize/framerate)。
 
-2026-11-02 华为备用机本地能力页复核：用户扫码并打开目标预览后，ADB 截图确认页面显示探针修订 `device-capability-v2-20261101-r1`、SEA-AL10、Android 10、微信8.0.79、基础库3.17.5、WebView；性能 API 可调用、观察器已注册，当前无性能条目、未观察到 route 条目、未发现明确FPS指标。此记录仅为本机能力观察，不含网络/云调用，不代表产品页性能或QP05。截图与结构化读数见[华为备用机本地能力复核](sp01-device-capability-huawei-follow-up-20261102.json)。R03保持pending。
+2026-11-02 华为备用机本地能力页复核：用户扫码并打开目标预览后，ADB 截图确认页面显示探针修订 `device-capability-v2-20261101-r1`、SEA-AL10、Android 10、微信8.0.79、基础库3.17.5、WebView；性能 API 可调用、观察器已注册。首次页面显示无条目；随后只点一次本地“重新读取”，出现8项：appLaunch 1350ms、downloadPackage 429ms、evaluateScript 10ms、firstRender 43ms，route/paint类字段未提供耗时，route duration字段为undefined，仍未发现FPS指标。该页面是能力探针，不是产品页；这些启动和首屏数值不用于QP05或产品性能验收。操作未调用云端/网络，未写文件或复制剪贴板。两张截图及结构化读数见[华为备用机本地能力复核](sp01-device-capability-huawei-follow-up-20261102.json)。R03保持pending。
 
 ### R03 候选 iPhone 逐帧工具审查（未验收）
 

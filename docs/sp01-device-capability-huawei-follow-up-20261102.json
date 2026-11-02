@@ -28,9 +28,28 @@
       "resource",
       "script"
     ],
-    "currentPerformanceEntries": "not-provided",
-    "routeEntry": "not-observed",
-    "explicitFpsMetricFound": false
+    "initialOnShow": {
+      "currentPerformanceEntries": "not-provided",
+      "routeEntry": "not-observed",
+      "explicitFpsMetricFound": false
+    }
+  },
+  "onDemandRead": {
+    "action": "Tapped the local 重新读取 control once; implementation only rereads device info and the current Performance API buffer",
+    "entries": [
+      { "name": "appLaunch", "type": "navigation", "durationMs": 1350 },
+      { "name": "downloadPackage", "type": "loadPackage", "durationMs": 429 },
+      { "name": "evaluateScript", "type": "script", "durationMs": 10 },
+      { "name": "route", "type": "navigation", "durationMs": null },
+      { "name": "firstPaint", "type": "render", "durationMs": null },
+      { "name": "firstRender", "type": "render", "durationMs": 43 },
+      { "name": "firstContentfulPaint", "type": "render", "durationMs": null },
+      { "name": "largestContentfulPaint", "type": "render", "durationMs": null }
+    ],
+    "routeDurationField": "undefined",
+    "explicitFpsMetricFound": false,
+    "scope": "local probe launch and first-render diagnostics; not product-page performance acceptance or QP05",
+    "screenshot": "docs/evidence/sp01-device-capability-huawei-read-again-20261102.png"
   },
   "scope": "local-device-capability-observation-only; not product-page performance evidence or QP05 acceptance",
   "cloudRequests": false,
@@ -40,6 +59,7 @@
   "evidence": {
     "screenshot": "docs/evidence/sp01-device-capability-huawei-follow-up-20261102.png",
     "screenshotMethod": "adb exec-out screencap -p",
-    "screenshotBytes": 321850
+    "screenshotBytes": 321850,
+    "onDemandReadScreenshotMethod": "adb exec-out screencap -p after one local read action"
   }
 }
