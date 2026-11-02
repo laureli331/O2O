@@ -107,3 +107,24 @@ test('current Pakomo device snapshot remains point-in-time evidence only', () =>
   assert.equal(r04.deviceWeakNetworkEvidence.currentReadOnlyDeviceSnapshot.impairmentEnforcementEstablished, false);
   assert.match(networkReview, /不能回溯证明六轮采样时 VPN/);
 });
+
+test('Pakomo traffic and diagnostics screenshots preserve their limits', () => {
+  const evidence = require('../docs/sp01-pakomo-traffic-diagnostics-20261102.json');
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  const review = fs.readFileSync(path.join(__dirname, '../docs/sp01-weak-network-tool-review-20261031.md'), 'utf8');
+
+  assert.equal(evidence.source.independentlyCapturedByAgent, false);
+  assert.equal(evidence.screenshots.traffic.totalEntries, 16);
+  assert.equal(evidence.screenshots.traffic.shapedBadgeVisible, true);
+  assert.equal(evidence.screenshots.traffic.visibleRecordTimeRange, '10:04:08–10:04:26');
+  assert.equal(evidence.screenshots.diagnostics.serviceState, 'stopped');
+  assert.equal(evidence.screenshots.diagnostics.rawLog, 'read: unexpected EOF!');
+  assert.equal(evidence.interpretation.cloudBaseEndpointIdentityEstablished, false);
+  assert.equal(evidence.interpretation.sampleRoundCorrelationEstablished, false);
+  assert.equal(evidence.acceptance.r04Passed, false);
+  assert.equal(r04.state, 'pending');
+  assert.equal(r04.deviceWeakNetworkEvidence.pakomoTrafficDiagnosticsScreenshots.sampleRoundCorrelationEstablished, false);
+  assert.match(review, /read: unexpected EOF!/);
+  assert.match(review, /没有时间戳能把这些流量与某一轮 CloudBase 采样对应起来/);
+});
