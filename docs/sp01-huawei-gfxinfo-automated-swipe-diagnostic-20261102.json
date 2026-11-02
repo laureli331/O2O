@@ -1,0 +1,86 @@
+{
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R03",
+  "status": "method-inconclusive",
+  "purpose": "local Android host-frame sampler diagnostic; not acceptance evidence",
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "androidVersion": "10",
+    "wechatVersion": "8.0.79",
+    "baseLibraryVersion": "3.17.5",
+    "userSelectedRefreshRateHz": 60,
+    "reportedPage": "SP01 device-capability page",
+    "foregroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+    "displayPhysicalSize": "1080x2340"
+  },
+  "screenSleepReadback": {
+    "screenOffTimeoutMs": 7200000,
+    "stayOnWhilePluggedInMask": 2,
+    "wakefulness": "Awake",
+    "stayOn": true
+  },
+  "method": {
+    "resetCommand": "adb shell dumpsys gfxinfo com.tencent.mm:appbrand0 reset",
+    "frameQueryCommand": "adb shell dumpsys gfxinfo com.tencent.mm:appbrand0 framestats",
+    "gestureCommand": "adb shell input swipe 540 1800 540 700 700; repeated 5 times, alternating with 540 700 540 1800 700",
+    "gestureCount": 10,
+    "swipeDurationArgumentMs": 700,
+    "pauseAfterEachSwipeMs": 300,
+    "touchDisplacementIndependentlyVerified": false,
+    "gestureStartEndMonotonicTimestampsCaptured": false,
+    "networkOrCloudUsed": false,
+    "deviceSettingsChangedDuringThisCheck": false
+  },
+  "observed": {
+    "gfxinfoStatsSinceNs": "41907893662875",
+    "resetConfirmedByChangedStatsSince": true,
+    "totalHostFramesRendered": 399,
+    "hostJankyFrames": 0,
+    "hostFrameTimePercentilesMs": {
+      "p50": 5,
+      "p90": 5,
+      "p95": 5,
+      "p99": 6
+    },
+    "hostMissedVsyncCount": 0,
+    "recentFrameStatsRows": 10,
+    "recentRowsWithInputEventTimestamp": 0,
+    "recentFrameCompletionAfterVsyncMs": {
+      "p50": 3.72,
+      "p95": 3.96
+    },
+    "maxRecentAdjacentIntendedVsyncIntervalMs": 16.52,
+    "recentIntervalsOver100ms": 0,
+    "rawRecentFrameStatsCsv": [
+      "0,41918328464509,41918328464509,9223372036854775807,0,41918329002457,41918329002978,41918329121207,41918329177457,41918329274853,41918329797769,41918329898290,41918330594644,41918332181103,84000,421000,",
+      "0,41918344988652,41918344988652,9223372036854775807,0,41918345319124,41918345320165,41918345438915,41918345495686,41918345595165,41918346218082,41918346323290,41918347025374,41918348646207,86000,402000,",
+      "0,41918361512860,41918361512860,9223372036854775807,0,41918361868082,41918361869644,41918361990999,41918362050374,41918362151415,41918362664957,41918362770165,41918363835269,41918365172769,171000,342000,",
+      "0,41918378037035,41918378037035,9223372036854775807,0,41918378583186,41918378584228,41918378688915,41918378744644,41918378843603,41918379393603,41918379499853,41918380227978,41918381992040,75000,337000,",
+      "0,41918394561186,41918394561186,9223372036854775807,0,41918394869124,41918394870165,41918394979540,41918395034749,41918395129540,41918395703499,41918395801415,41918396733707,41918398074853,79000,332000,",
+      "0,41918411085353,41918411085353,9223372036854775807,0,41918411389957,41918411390999,41918411512874,41918411570165,41918411667561,41918412687353,41918412807665,41918413542040,41918414985269,80000,415000,",
+      "0,41918427609208,41918427609208,9223372036854775807,0,41918428132144,41918428133186,41918428247769,41918428306103,41918428409228,41918428942040,41918429049853,41918429817040,41918431331103,77000,391000,",
+      "0,41918444133245,41918444133245,9223372036854775807,0,41918444457144,41918444457665,41918444569644,41918444625374,41918444722769,41918445229540,41918445334749,41918446041519,41918447610790,84000,381000,",
+      "0,41918460657314,41918460657314,9223372036854775807,0,41918461046728,41918461047769,41918461157665,41918461218603,41918461318082,41918461848811,41918461972769,41918462998290,41918464769124,78000,372000,",
+      "0,41918477181278,41918477181278,9223372036854775807,0,41918477524332,41918477525374,41918477637874,41918477695686,41918477793603,41918478368082,41918478475374,41918479192040,41918481068603,72000,419000,"
+    ]
+  },
+  "surfaceFlinger": {
+    "appBrandHostLayerFound": true,
+    "separatelyIdentifiableWebViewLayerFound": false
+  },
+  "interpretation": "The host process returned frame statistics after a reset, but the recent frame rows contain no input-event timestamps and the embedded WebView was not isolated. Gesture boundaries and scroll displacement were not independently verified. Do not calculate product scroll FPS, attribute host frames to this page, or pass QP05 from this sample.",
+  "acceptanceEvidence": false,
+  "officialReferences": [
+    {
+      "title": "Android Developers: dumpsys",
+      "url": "https://developer.android.com/tools/dumpsys",
+      "scope": "documents gfxinfo and framestats as UI frame-performance diagnostics; does not establish WeChat embedded-WebView attribution"
+    },
+    {
+      "title": "Android Developers: Inspect rendering speed",
+      "url": "https://developer.android.com/topic/performance/rendering/inspect-gpu-rendering",
+      "scope": "documents per-frame UI-window rendering bars and the 16.67ms 60Hz reference; does not make this host-only trace product-page evidence"
+    }
+  ]
+}

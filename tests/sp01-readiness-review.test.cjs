@@ -7,6 +7,7 @@ const review = require('../docs/sp01-readiness-review-20261030.json');
 const quality = require('../docs/v1-quality-acceptance-20261027.json');
 const plan = require('../docs/v1-executable-development-plan-20261027.json');
 const huaweiRenderLayerInspection = require('../docs/sp01-huawei-render-layer-inspection-20261102.json');
+const huaweiAutomatedSwipeDiagnostic = require('../docs/sp01-huawei-gfxinfo-automated-swipe-diagnostic-20261102.json');
 
 test('SP01 current review covers the exact contract criteria without silently removing pending preparation', () => {
   const contract = quality.taskContracts.find(x => x.task === 'SP01');
@@ -765,7 +766,23 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(huaweiRenderLayerInspection.latestReadOnlyRepeat.gfxinfo.countersResetForThisCheck, false);
   assert.equal(huaweiRenderLayerInspection.latestReadOnlyRepeat.acceptanceEvidence, false);
   assert.equal(huaweiRenderLayerInspection.acceptanceEvidence, false);
+  const r03 = review.openItems.find(x => x.id === 'R03');
+  assert.ok(review.sources.includes('docs/sp01-huawei-gfxinfo-automated-swipe-diagnostic-20261102.json'));
+  assert.equal(r03.latestAutomatedGfxinfoSwipeDiagnostic.totalHostFramesRendered, 399);
+  assert.equal(r03.latestAutomatedGfxinfoSwipeDiagnostic.recentRowsWithInputEventTimestamp, 0);
+  assert.equal(r03.latestAutomatedGfxinfoSwipeDiagnostic.separatelyIdentifiableWebViewLayerFound, false);
+  assert.equal(r03.latestAutomatedGfxinfoSwipeDiagnostic.acceptanceEvidence, false);
+  assert.equal(huaweiAutomatedSwipeDiagnostic.device.foregroundActivity, 'com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00');
+  assert.equal(huaweiAutomatedSwipeDiagnostic.method.gestureCount, 10);
+  assert.equal(huaweiAutomatedSwipeDiagnostic.observed.totalHostFramesRendered, 399);
+  assert.equal(huaweiAutomatedSwipeDiagnostic.observed.recentFrameStatsRows, 10);
+  assert.equal(huaweiAutomatedSwipeDiagnostic.observed.recentRowsWithInputEventTimestamp, 0);
+  assert.equal(huaweiAutomatedSwipeDiagnostic.observed.rawRecentFrameStatsCsv.length, 10);
+  assert.equal(huaweiAutomatedSwipeDiagnostic.surfaceFlinger.separatelyIdentifiableWebViewLayerFound, false);
+  assert.equal(huaweiAutomatedSwipeDiagnostic.acceptanceEvidence, false);
   const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(reviewMarkdown, /R03 自动滚动方法校准.*最近10条.*没有输入事件时间戳/);
+  assert.match(reviewMarkdown, /不能把宿主统计归因到小程序页/);
   assert.match(reviewMarkdown, /R04 当前进度（2026-11-02）/);
   assert.match(reviewMarkdown, /Pakomo v0\.3\.0 debug APK 已构建.*并安装到华为备用机/);
   assert.match(reviewMarkdown, /仍不能证明.*弱网注入.*生效/);

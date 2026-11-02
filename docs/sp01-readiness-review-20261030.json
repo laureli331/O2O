@@ -32,6 +32,7 @@
     "docs/sp01-network-huawei-normal-20261102.json",
     "docs/sp01-network-huawei-paired-reruns-20261102.json",
     "docs/sp01-huawei-render-layer-inspection-20261102.json",
+    "docs/sp01-huawei-gfxinfo-automated-swipe-diagnostic-20261102.json",
     "docs/sp01-device-capability-huawei-follow-up-20261102.json",
     "docs/evidence/sp01-device-capability-huawei-follow-up-20261102.png",
     "docs/evidence/sp01-device-capability-huawei-read-again-20261102.png",
@@ -167,6 +168,17 @@
           "jankyFrames": 27,
           "countersReset": false
         },
+        "acceptanceEvidence": false
+      },
+      "latestAutomatedGfxinfoSwipeDiagnostic": {
+        "evidence": "docs/sp01-huawei-gfxinfo-automated-swipe-diagnostic-20261102.json",
+        "foregroundActivity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+        "totalHostFramesRendered": 399,
+        "hostJankyFrames": 0,
+        "recentFrameStatsRows": 10,
+        "recentRowsWithInputEventTimestamp": 0,
+        "separatelyIdentifiableWebViewLayerFound": false,
+        "status": "method-inconclusive",
         "acceptanceEvidence": false
       },
       "latestHuaweiDeviceCapabilityFollowUp": {
