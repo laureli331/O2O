@@ -2123,7 +2123,21 @@
           },
           "interpretation": "身份通路和创建者读取已得到成功证据；B的直接下载、临时链接和同路径写入结果仍无法区分权限拒绝、文件/链接状态或调用链错误，不能据此通过跨账号隔离。"
         },
-        "pendingCloudStep": "no-cloud-retest-or-settings-change-without-new-authorization"
+        "pendingCloudStep": "no-cloud-retest-or-settings-change-without-new-authorization",
+        "latestLocalGfxinfoSwipeProbe": {
+          "date": "2026-11-02",
+          "evidence": "docs/sp01-huawei-gfxinfo-swipe-20261102.json",
+          "device": "HUAWEI SEA-AL10 / Android 10",
+          "foreground": "WeChat AppBrandUI00 / com.tencent.mm:appbrand0 ViewRoot",
+          "controlledSwipeDurationArgumentMs": 5000,
+          "hostMeasuredCommandElapsedMs": 5723,
+          "renderedFrameCounterDelta": 77,
+          "jankyFrameCounterDelta": 0,
+          "statsReset": false,
+          "networkOrCloudUsed": false,
+          "scope": "host-sampler-feasibility-only; not WebView FPS or product QP05",
+          "acceptanceEvidence": false
+        }
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

@@ -1,0 +1,69 @@
+{
+  "date": "2026-11-02",
+  "task": "SP01",
+  "item": "R03",
+  "purpose": "local Android frame-sampler feasibility only",
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "androidVersion": "10",
+    "adbSerial": "HLRDU19C16005647"
+  },
+  "foreground": {
+    "activity": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+    "process": "com.tencent.mm:appbrand0",
+    "viewRoot": "com.tencent.mm/com.tencent.mm.plugin.appbrand.ui.AppBrandUI00",
+    "otherAppBrandProcessesObserved": ["com.tencent.mm:appbrand1"]
+  },
+  "method": {
+    "command": "adb shell dumpsys gfxinfo com.tencent.mm:appbrand0",
+    "gesture": "adb shell input swipe 540 1680 540 760 5000",
+    "swipeDurationArgumentMs": 5000,
+    "hostMeasuredSwipeCommandElapsedMs": 5723,
+    "hostWindowStartUtc": "2026-11-02T02:44:58.4508991Z",
+    "hostWindowEndUtc": "2026-11-02T02:45:04.1837439Z",
+    "statsWereReset": false,
+    "networkOrCloudUsed": false
+  },
+  "before": {
+    "statsSinceMonotonicNs": "11803766077885",
+    "totalFramesRendered": 280,
+    "jankyFrames": 25,
+    "jankyPercent": 8.93,
+    "percentile50Ms": 8,
+    "percentile90Ms": 14,
+    "percentile95Ms": 28,
+    "percentile99Ms": 113,
+    "missedVsyncCount": 7
+  },
+  "after": {
+    "statsSinceMonotonicNs": "11803766077885",
+    "totalFramesRendered": 357,
+    "jankyFrames": 25,
+    "jankyPercent": 7.0,
+    "percentile50Ms": 6,
+    "percentile90Ms": 14,
+    "percentile95Ms": 21,
+    "percentile99Ms": 109,
+    "missedVsyncCount": 7
+  },
+  "derived": {
+    "renderedFrameCounterDelta": 77,
+    "jankyFrameCounterDelta": 0,
+    "measuredWindowMs": 5733,
+    "hostWindowRateIsAcceptedFps": false
+  },
+  "limitations": [
+    "gfxinfo is for the AppBrand host ViewRoot and does not isolate WebView compositor frames",
+    "the command interval is not an input-event-aligned gesture interval; gfxinfo rows had no input timestamps",
+    "the sampled page's scroll displacement was not independently verified",
+    "the before/after percentile values summarize cumulative process statistics, not this swipe",
+    "this does not satisfy product-page QP05 or prove scroll FPS"
+  ],
+  "officialSource": {
+    "title": "Android Developers: dumpsys",
+    "url": "https://developer.android.com/tools/dumpsys?authuser=4",
+    "supports": "gfxinfo and framestats provide UI frame performance and recent-frame timing data; does not document WeChat WebView attribution"
+  },
+  "acceptanceEvidence": false,
+  "sp01Passed": false
+}
