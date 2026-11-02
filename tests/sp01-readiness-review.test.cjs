@@ -694,3 +694,43 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.equal(gate.currentReview.historicalFieldsRetainedBelow, true);
   assert.equal(gate.currentReview.data, 'docs/sp01-readiness-review-20261030.json');
 });
+
+test('R04 keeps the latest Huawei weak-profile sample diagnostic-only when timing and counter evidence are incomplete', () => {
+  const r04 = review.openItems.find(item => item.id === 'R04');
+  const evidencePath = 'docs/sp01-network-huawei-pakomo-live-weak-diagnostic-20261102.json';
+  const evidence = require(`../${evidencePath}`);
+
+  assert.equal(r04.latestLiveWeakProfileDiagnosticEvidence, evidencePath);
+  assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.ok(review.sources.includes(evidencePath));
+  assert.equal(evidence.device.model, 'SEA-AL10');
+  assert.equal(evidence.run.profile.name, '轻度弱网');
+  assert.deepEqual(evidence.run.profile.parameters, {
+    delayMs: 100,
+    jitterMs: 30,
+    packetLossPercent: 1,
+    downlinkKbps: 2048,
+    uplinkKbps: 1024
+  });
+  assert.equal(evidence.run.sample.attempts, 30);
+  assert.equal(evidence.run.sample.succeeded, 30);
+  assert.equal(evidence.run.sample.failed, 0);
+  assert.equal(evidence.run.sample.medianMs, 404);
+  assert.equal(evidence.run.sample.p95Ms, 1192);
+  assert.equal(evidence.run.sample.maxMs, 2733);
+  assert.equal(evidence.run.sample.rawSamplesRetained, false);
+  assert.equal(evidence.run.pakomo.exactDurationSecondsRecorded, false);
+  assert.equal(evidence.run.pakomo.inRunCountersRecorded, false);
+  assert.equal(evidence.run.after.pakomoStopped, true);
+  assert.equal(evidence.run.after.wifiValidated, true);
+  assert.equal(evidence.run.after.vpnTransportAgentPresent, false);
+  assert.equal(evidence.acceptanceEvidence, false);
+  assert.equal(evidence.r04Passed, false);
+  assert.equal(evidence.sp01Passed, false);
+  assert.equal(r04.state, 'pending');
+  assert.equal(review.sp01Passed, false);
+
+  const reviewMarkdown = fs.readFileSync(path.resolve(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(reviewMarkdown, /2026-11-02 新增弱网诊断样本：.*30次.*404ms.*1192ms.*2733ms/);
+  assert.match(reviewMarkdown, /起止时间只有分钟精度.*可能已超时.*R04仍pending/);
+});

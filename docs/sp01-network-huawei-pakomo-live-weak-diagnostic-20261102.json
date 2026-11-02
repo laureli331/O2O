@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-02",
+  "kind": "agent-observed-pakomo-weak-profile-sample-diagnostic-only",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10"
+  },
+  "network": {
+    "type": "Wi-Fi",
+    "scene": "home Wi-Fi (previously user-confirmed)",
+    "endpoint": "sp01IdentityProbe",
+    "endpointBehavior": "read-only identity/AppID verification; no database or storage writes"
+  },
+  "run": {
+    "profile": {
+      "name": "轻度弱网",
+      "parameters": {
+        "delayMs": 100,
+        "jitterMs": 30,
+        "packetLossPercent": 1,
+        "downlinkKbps": 2048,
+        "uplinkKbps": 1024
+      },
+      "source": "Pakomo Rules screenshot; selected profile visible"
+    },
+    "pakomo": {
+      "scope": "specified application",
+      "selectedApplicationCount": 1,
+      "selectedApplication": "WeChat (user-confirmed before this run; active screenshot only shows count)",
+      "activeStateObserved": true,
+      "vpnTransportObservedDuringRun": true,
+      "inRunCountersRecorded": false,
+      "exactDurationSecondsRecorded": false,
+      "authorizationLimitSeconds": 60,
+      "durationLimitCompliance": "unknown; start/stop UI clocks have minute-only resolution and no monotonic start-to-stop duration was retained; this run may have exceeded 60 seconds"
+    },
+    "sample": {
+      "attempts": 30,
+      "succeeded": 30,
+      "failed": 0,
+      "failureRate": 0,
+      "medianMs": 404,
+      "p95Ms": 1192,
+      "maxMs": 2733,
+      "meanConsecutiveDifferenceMs": 167.51724137931035,
+      "rawSamplesRetained": false,
+      "summarySource": "phone result-page screenshot"
+    },
+    "after": {
+      "pakomoStopped": true,
+      "wifiValidated": true,
+      "vpnTransportAgentPresent": false,
+      "verification": "Pakomo stopped screenshot and read-only ADB connectivity snapshot after the run"
+    }
+  },
+  "limitations": [
+    "The application round-trip is not link RTT, throughput, packet loss, or jitter measurement.",
+    "No in-run Pakomo counters were retained, so the aggregate sample cannot be mapped to individual calls.",
+    "The exact start-to-stop duration was not recorded with a monotonic clock; compliance with the 60-second authorization cap cannot be established.",
+    "Raw per-call values were visible on the phone but were not copied into a local evidence file; only the summary screenshot is retained.",
+    "This observation does not prove that every configured impairment parameter was applied to every request."
+  ],
+  "evidenceFiles": [
+    "docs/evidence/sp01-network-huawei-pakomo-live-weak-profile-rules-20261102.png",
+    "docs/evidence/sp01-network-huawei-pakomo-live-weak-active-20261102.png",
+    "docs/evidence/sp01-network-huawei-pakomo-live-weak-summary-20261102.png",
+    "docs/evidence/sp01-network-huawei-pakomo-live-weak-stopped-20261102.png"
+  ],
+  "acceptanceEvidence": false,
+  "r04Passed": false,
+  "sp01Passed": false
+}
