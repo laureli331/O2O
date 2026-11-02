@@ -32,6 +32,8 @@
     "docs/sp01-network-huawei-normal-20261102.json",
     "docs/sp01-network-huawei-paired-reruns-20261102.json",
     "docs/sp01-huawei-render-layer-inspection-20261102.json",
+    "docs/sp01-device-capability-huawei-follow-up-20261102.json",
+    "docs/evidence/sp01-device-capability-huawei-follow-up-20261102.png",
     "docs/sp01-pakomo-control-protocol-review-20261102.json",
     "docs/sp01-pakomo-control-runtime-check-20261102.json",
     "docs/sp01-network-huawei-pakomo-correlated-20261102.json",
@@ -164,6 +166,17 @@
           "jankyFrames": 27,
           "countersReset": false
         },
+        "acceptanceEvidence": false
+      },
+      "latestHuaweiDeviceCapabilityFollowUp": {
+        "evidence": "docs/sp01-device-capability-huawei-follow-up-20261102.json",
+        "screenshot": "docs/evidence/sp01-device-capability-huawei-follow-up-20261102.png",
+        "device": "HUAWEI SEA-AL10 / Android 10 / WeChat 8.0.79 / base library 3.17.5",
+        "renderer": "webview",
+        "currentPerformanceEntries": "not-provided",
+        "routeEntry": "not-observed",
+        "explicitFpsMetricFound": false,
+        "scope": "local device capability only; not product-page performance or QP05 acceptance",
         "acceptanceEvidence": false
       },
       "localTraceEvidence": "A seven-second atrace overlapped a five-second synthetic swipe and retained 61,017/61,017 events. Input, AppBrand doFrame and SurfaceFlinger vsync markers were present, but no separately attributable WebView presented-frame stream was found. Perfetto's traced service disconnected and a larger atrace buffer failed; a 1,024 KB buffer succeeded. This is measurement-method feasibility only.",

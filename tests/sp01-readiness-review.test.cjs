@@ -451,6 +451,32 @@ test('SP01 current review covers the exact contract criteria without silently re
   }
 });
 
+test('Huawei follow-up device report is retained as local diagnostic evidence only', () => {
+  const evidencePath = '../docs/sp01-device-capability-huawei-follow-up-20261102.json';
+  const evidence = require(evidencePath);
+  const item = review.openItems.find((entry) => entry.id === 'R03');
+
+  assert.equal(evidence.device.manufacturer, 'HUAWEI');
+  assert.equal(evidence.device.model, 'SEA-AL10');
+  assert.equal(evidence.device.androidVersion, '10');
+  assert.equal(evidence.device.wechatVersion, '8.0.79');
+  assert.equal(evidence.device.baseLibrary, '3.17.5');
+  assert.equal(evidence.device.renderer, 'webview');
+  assert.equal(evidence.device.currentPerformanceEntries, 'not-provided');
+  assert.equal(evidence.device.routeEntry, 'not-observed');
+  assert.equal(evidence.device.explicitFpsMetricFound, false);
+  assert.equal(evidence.cloudRequests, false);
+  assert.equal(evidence.networkRequests, false);
+  assert.equal(evidence.fileWritesOnDevice, false);
+  assert.equal(evidence.acceptanceEvidence, false);
+  assert.equal(fs.existsSync(path.resolve(__dirname, '../docs/evidence/sp01-device-capability-huawei-follow-up-20261102.png')), true);
+  assert.equal(item.state, 'pending');
+  assert.equal(item.latestHuaweiDeviceCapabilityFollowUp.evidence, 'docs/sp01-device-capability-huawei-follow-up-20261102.json');
+  assert.ok(review.sources.includes('docs/sp01-device-capability-huawei-follow-up-20261102.json'));
+  assert.equal(review.sp01Passed, false);
+  assert.equal(review.sp07Started, false);
+});
+
 test('R04 preserves the historical one-shot Pakomo sample that exceeded its authorization window', () => {
   const sample = require('../docs/sp01-network-huawei-pakomo-light-run-20261102.json');
   const r04 = review.openItems.find(item => item.id === 'R04');

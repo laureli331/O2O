@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-02",
+  "observedAtLocal": "19:10 Asia/Shanghai",
+  "task": "SP01",
+  "source": "ADB screenshot of the user-opened WeChat preview page; device identity also checked through local ADB",
+  "project": "tools/sp01-device-probe",
+  "appId": "wx2414399d423dfb65",
+  "device": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10",
+    "wechatVersion": "8.0.79",
+    "baseLibrary": "3.17.5",
+    "platform": "android",
+    "screenLogicalWidth": 360,
+    "screenLogicalHeight": 780,
+    "windowLogicalWidth": 360,
+    "fontSizeSetting": 16,
+    "renderer": "webview",
+    "deviceCapabilityRevision": "device-capability-v2-20261101-r1",
+    "getPerformance": "callable",
+    "performanceObserver": "registered",
+    "supportedEntryTypes": [
+      "interaction",
+      "loadPackage",
+      "navigation",
+      "render",
+      "resource",
+      "script"
+    ],
+    "currentPerformanceEntries": "not-provided",
+    "routeEntry": "not-observed",
+    "explicitFpsMetricFound": false
+  },
+  "scope": "local-device-capability-observation-only; not product-page performance evidence or QP05 acceptance",
+  "cloudRequests": false,
+  "networkRequests": false,
+  "fileWritesOnDevice": false,
+  "acceptanceEvidence": false,
+  "evidence": {
+    "screenshot": "docs/evidence/sp01-device-capability-huawei-follow-up-20261102.png",
+    "screenshotMethod": "adb exec-out screencap -p",
+    "screenshotBytes": 321850
+  }
+}
