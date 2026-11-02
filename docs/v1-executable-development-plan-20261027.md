@@ -8,6 +8,8 @@
 
 用户在华为备用机打开 SP01 设备能力检查页后，我只读确认微信小程序 `AppBrandUI00` 前台，并用 Android `dumpsys gfxinfo` 记录一次受控纵向滑动前后的 `com.tencent.mm:appbrand0` 帧计数：计数增加77，累计卡顿帧仍为25。未重置统计、未调用云端。该宿主采样没有手势输入时间戳，也未单独采集 WebView 合成层，不能据此计算滚动 FPS 或通过 QP05；R03 与 SP01 继续未通过。来源及限制见 [采样证据](sp01-huawei-gfxinfo-swipe-20261102.json) 和 [R03复核](sp01-readiness-review-20261030.md)。Android 官方说明 `gfxinfo`/`framestats` 可提供界面帧性能与近期帧时序，但没有说明它能归因微信小程序 WebView：[Android dumpsys 文档](https://developer.android.com/tools/dumpsys?authuser=4)。
 
+用户随后要求由我通过 ADB 代为滚动约5秒。确认 `AppBrandUI00` 前后台均在前台后，`appbrand0` 累计帧数从2833增至3027（+194），累计卡顿帧仍为3；滑动命令耗时5431ms，未重置统计、未调用云端。该结果补充证明自动手势和宿主计数可用；由于没有输入事件时间戳且未隔离 WebView 合成层，不能计算滚动 FPS、归因卡顿或通过产品页 QP05。SP01仍未通过。详见同一证据 JSON 中的 `automatedSelfScrollFollowUp`。
+
 ### 2026-10-29 收尾回查：合成文件已清理，B 直接下载仍缺上游回包
 
 用户确认了最后三张精确删除卡；随后使用目标 AppID `wx2414399d423dfb65`、环境 `cloud1-d2gjahlq39bf141c7` 的只读 `cloud_query_storage action=list` 回查 `sp01_permission_probe/`，结果为 `files:[]`、`totalCount:0`。七份合成文件均已完成定向删除，未删除目录或其他文件，权限设置未改。

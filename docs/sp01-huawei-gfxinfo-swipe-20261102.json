@@ -65,5 +65,45 @@
     "supports": "gfxinfo and framestats provide UI frame performance and recent-frame timing data; does not document WeChat WebView attribution"
   },
   "acceptanceEvidence": false,
-  "sp01Passed": false
+  "sp01Passed": false,
+  "automatedSelfScrollFollowUp": {
+    "date": "2026-11-02",
+    "device": {
+      "model": "HUAWEI SEA-AL10",
+      "androidVersion": "10",
+      "adbSerial": "HLRDU19C16005647"
+    },
+    "foreground": {
+      "activityBeforeAndAfter": "com.tencent.mm/.plugin.appbrand.ui.AppBrandUI00",
+      "sampledProcess": "com.tencent.mm:appbrand0"
+    },
+    "method": {
+      "gesture": "adb shell input swipe 540 1850 540 500 5000",
+      "syntheticSwipeDurationArgumentMs": 5000,
+      "hostMeasuredCommandElapsedMs": 5431,
+      "statsWereReset": false,
+      "networkOrCloudUsed": false
+    },
+    "before": {
+      "totalFramesRendered": 2833,
+      "jankyFrames": 3
+    },
+    "after": {
+      "totalFramesRendered": 3027,
+      "jankyFrames": 3
+    },
+    "derived": {
+      "renderedFrameCounterDelta": 194,
+      "jankyFrameCounterDelta": 0,
+      "hostWindowRateIsAcceptedFps": false
+    },
+    "limitations": [
+      "The counters are cumulative AppBrand host-process gfxinfo totals and were not reset for this gesture.",
+      "The command interval is not aligned to recorded input-event timestamps.",
+      "The WebView compositor frame stream is not isolated from the AppBrand host window.",
+      "The frame-counter delta is not a scroll FPS result and does not establish product-page QP05."
+    ],
+    "acceptanceEvidence": false,
+    "sp01Passed": false
+  }
 }

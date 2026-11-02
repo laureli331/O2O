@@ -84,6 +84,19 @@
       "unknown": ["whether the OPPO phone output came from exact commit 7e9ba98 because the report embeds no revision", "reason route has no displayed duration", "semantics and useful timing fields for the unnamed render/interaction entries", "physical refresh timing", "which supported sampler can expose mini-program WebView presented frames separately from the AppBrand host on this Huawei", "whether a long interval in the AppBrandUI00 host is an app-render stall rather than idle or surrounding activity", "whether the 98ms/102ms histogram boundary or gfxinfo frame timestamps provide enough precision for exact segment-level >100ms attribution", "iPhone frame-sampling path on the available Windows setup", "effective product runtime behavior of the selected privacy-and-phone button on the eventual minimum supported base library", "minimum supported library and frozen device groups"],
       "evidence": "docs/sp01-device-capability-20261030.json",
       "additionalEvidence": ["docs/sp01-huawei-gfxinfo-swipe-20261102.json"],
+      "latestLocalSyntheticSwipeEvidence": {
+        "evidence": "docs/sp01-huawei-gfxinfo-swipe-20261102.json#automatedSelfScrollFollowUp",
+        "device": "HUAWEI SEA-AL10 / Android 10",
+        "process": "com.tencent.mm:appbrand0",
+        "controlledSwipeDurationArgumentMs": 5000,
+        "hostMeasuredCommandElapsedMs": 5431,
+        "renderedFrameCounterDelta": 194,
+        "jankyFrameCounterDelta": 0,
+        "statsReset": false,
+        "networkOrCloudUsed": false,
+        "scope": "host-sampler-feasibility-only; not WebView FPS or product QP05",
+        "acceptanceEvidence": false
+      },
       "latestRenderLayerInspectionEvidence": "docs/sp01-huawei-render-layer-inspection-20261102.json",
       "latestRenderLayerRepeat": {
         "evidence": "docs/sp01-huawei-render-layer-inspection-20261102.json#latestReadOnlyRepeat",
