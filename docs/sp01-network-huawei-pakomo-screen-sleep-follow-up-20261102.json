@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-02",
+  "task": "SP01",
+  "item": "R04",
+  "status": "diagnostic-only-execution-window-exceeded",
+  "authorization": {
+    "maximumDurationMs": 60000,
+    "sampleCalls": 30,
+    "endpoint": "sp01IdentityProbe / read-only",
+    "permittedWrites": false,
+    "permittedDeployments": false
+  },
+  "device": {
+    "model": "HUAWEI SEA-AL10",
+    "androidVersion": "10",
+    "networkType": "wifi",
+    "foreground": "SP01 network sampling page"
+  },
+  "displayPower": {
+    "source": "local ADB settings and power-state readback",
+    "screenOffTimeoutBeforeMs": 1800000,
+    "screenOffTimeoutAfterMs": 7200000,
+    "usbPowered": true,
+    "stayOnWhilePluggedInMask": 2,
+    "wakefulness": "Awake",
+    "stayOn": true,
+    "scope": "USB-powered stay-awake plus a temporary two-hour display timeout; restore the prior 30-minute timeout after long measurements"
+  },
+  "pakomo": {
+    "profile": "light",
+    "userReportedSelectedApplication": "WeChat",
+    "startTimestampEpochMs": 1793616342370,
+    "startTimestampUtc": "2026-11-02T10:45:42.370Z",
+    "startResponseConfirmedActive": true,
+    "startResponseStage": "forwarding",
+    "appliedRule": "light",
+    "scope": "applications",
+    "statusDuringRun": {
+      "activeFlows": 3,
+      "dropped": 0,
+      "delayed": 72,
+      "uptimeMs": 72072
+    },
+    "stopTimestampEpochMs": 1793616415149,
+    "stopTimestampUtc": "2026-11-02T10:46:55.149Z",
+    "stopConfirmed": true,
+    "activeAfterStop": false,
+    "controlResponseIntervalMs": 72779,
+    "authorizationOverrunMs": 12779,
+    "withinAuthorizationWindow": false
+  },
+  "sample": {
+    "attempts": 30,
+    "succeeded": 30,
+    "failed": 0,
+    "failureRate": 0,
+    "medianMs": 401,
+    "p95Ms": 726,
+    "maxMs": 1897,
+    "meanConsecutiveDifferenceMs": 98.41379310344827,
+    "rawElapsedSamplesRetained": false,
+    "scope": "application round trip through client, gateway and function; not link RTT, throughput, jitter or packet loss"
+  },
+  "afterRun": {
+    "validatedWifi": true,
+    "notVpnTransport": true,
+    "vpnNetworkAgentFound": false,
+    "databaseWrites": 0,
+    "storageWrites": 0,
+    "cloudDeployments": 0
+  },
+  "screenshots": [
+    {
+      "path": "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-top-20261102.png",
+      "sha256": "1AF2C6FE8C00A0BACAE9038B5D06C87BAA8803C45434E9AEA53C38CC2283BEA2",
+      "shows": "Pakomo run and sample evidence"
+    },
+    {
+      "path": "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-summary-20261102.png",
+      "sha256": "97FF798480628BDF7DCBEB2CD061999FABA427BDB5DE471B915A3A89CA03BC90",
+      "shows": "30/30 read-only calls, median 401 ms, P95 726 ms, maximum 1897 ms"
+    }
+  ],
+  "interpretation": {
+    "diagnosticOnly": true,
+    "reason": "Pakomo start-to-confirmed-stop interval exceeded the authorized 60000ms maximum by 12779ms",
+    "provesExactImpairmentParameters": false,
+    "provesPerRequestShaping": false,
+    "provesLinkRttThroughputJitterOrLoss": false
+  },
+  "acceptance": {
+    "r04Passed": false,
+    "sp01Passed": false
+  }
+}

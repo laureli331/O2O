@@ -29,7 +29,10 @@
     "docs/v1-quality-acceptance-20261027.md",
     "docs/v1-quality-acceptance-20261027.json",
     "docs/prd.md",
-    "docs/ascii-design-prd-2.1.md"
+    "docs/ascii-design-prd-2.1.md",
+    "docs/sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json",
+    "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-top-20261102.png",
+    "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-summary-20261102.png"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -1035,7 +1038,8 @@
           "用户确认CLI部署卡片后，安装目录CLI只读查询sp01IdentityProbe返回Active / Nodejs16.13 / 3秒；该状态查询不证明本次代码更新成功，也不证明客户端调用。",
           "2026-10-28账号A真实客户端调用返回IDENTITY_CALL_FAILED，云函数返回码-1、请求ID未提供；未生成测试包，按本地调用顺序未创建本机临时文件或上传云文件。",
           "2026-10-28用户打开CloudBase日志页后，按sp01IdentityProbe筛选并查询最近24小时，报告无记录；函数详情为Active/Nodejs16.13/3秒且底部未见日志配置或主题。未改设置、未重跑；该查询结果仍不能判定请求是否到达。",
-          "2026-11-02为延长华为备用机SEA-AL10的本地测试可用时间，通过ADB将screen_off_timeout从1800000毫秒改为7200000毫秒并读回确认；USB供电、stay_on_while_plugged_in=2、Awake且mStayOn=true。属于可恢复的设备测试准备，不是SP01验收证据，测量结束后应恢复原30分钟。"
+          "2026-11-02为延长华为备用机SEA-AL10的本地测试可用时间，通过ADB将screen_off_timeout从1800000毫秒改为7200000毫秒并读回确认；USB供电、stay_on_while_plugged_in=2、Awake且mStayOn=true。属于可恢复的设备测试准备，不是SP01验收证据，测量结束后应恢复原30分钟。",
+          "2026-11-02后续屏幕休眠关联采样：华为SEA-AL10、USB供电保持唤醒，Pakomo light启动为forwarding/active且状态计数activeFlows=3、delayed=72、dropped=0；30次只读CloudBase往返30/30成功，中位数401ms、P95 726ms、最大1897ms。启动响应至确认停止72779ms，超过本次60000ms授权上限12779ms，仅记录为诊断、不计R04验收；随后Wi-Fi为VALIDATED且未发现VPN网络代理，无数据库/存储写入或云端部署。屏幕超时读回7200000ms，USB供电时保持唤醒；长测结束恢复1800000ms。见docs/sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json。"
         ],
         "postRunTimeoutReadOnlyCloudRecheckBeforeTimeoutAdjustment": {
           "source": "wechatide-cli-read-only-after-user-run-timeout",
@@ -2169,7 +2173,8 @@
           "wakefulness": "Awake",
           "stayOn": true,
           "scope": "temporary device-screen setup for long local SP01 measurements; not acceptance evidence; restore 1800000ms after measurement"
-        }
+        },
+        "latestPakomoScreenSleepFollowUpDiagnosticEvidence": "docs/sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

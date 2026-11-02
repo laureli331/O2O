@@ -16,6 +16,8 @@
 
 为支持更长的本地测量，2026-11-02再次通过ADB将备用机屏幕超时从1800000毫秒调整为7200000毫秒（2小时），读回确认；USB供电时保持唤醒仍开启。该调整可恢复，测量结束后应把超时恢复为原30分钟。它只解决设备屏幕休眠准备，不是网络、耐久或性能验收证据；SP01状态不变。
 
+同日后续弱网关联采样中，华为备用机保持USB供电并处于唤醒状态，SP01网络采样页已打开。Pakomo轻度弱网启动确认后，30次只读CloudBase应用往返全部成功，中位数401ms、P95 726ms、最大1897ms；但启动响应至确认停止为72779ms，超过本次60000ms上限12779ms，故只记为诊断证据，不计入R04验收。随后确认Pakomo停止，Wi-Fi为VALIDATED且无VPN网络代理；没有数据库/存储写入或云端部署。屏幕超时当前为2小时，USB连接时保持唤醒，长测完成后恢复原30分钟设置。详见[本轮记录](sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json)及[采样摘要截图](evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-summary-20261102.png)。R04与SP01仍pending。
+
 ### 2026-11-02 SP01 本地设备帧采样可行性
 
 用户在华为备用机打开 SP01 设备能力检查页后，我只读确认微信小程序 `AppBrandUI00` 前台，并用 Android `dumpsys gfxinfo` 记录一次受控纵向滑动前后的 `com.tencent.mm:appbrand0` 帧计数：计数增加77，累计卡顿帧仍为25。未重置统计、未调用云端。该宿主采样没有手势输入时间戳，也未单独采集 WebView 合成层，不能据此计算滚动 FPS 或通过 QP05；R03 与 SP01 继续未通过。来源及限制见 [采样证据](sp01-huawei-gfxinfo-swipe-20261102.json) 和 [R03复核](sp01-readiness-review-20261030.md)。Android 官方说明 `gfxinfo`/`framestats` 可提供界面帧性能与近期帧时序，但没有说明它能归因微信小程序 WebView：[Android dumpsys 文档](https://developer.android.com/tools/dumpsys?authuser=4)。
