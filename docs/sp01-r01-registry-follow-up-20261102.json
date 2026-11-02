@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-02",
+  "task": "SP01/R01",
+  "method": "npm view metadata queries against https://registry.npmjs.org; no package installation, lockfile edit, build, or audit was run for Taro 4.3.2",
+  "reviewedPackages": {
+    "@tarojs/taro": {
+      "latestDistTag": "4.3.2",
+      "source": "https://registry.npmjs.org/@tarojs%2ftaro/latest"
+    },
+    "@tarojs/cli": {
+      "version": "4.3.2",
+      "license": "MIT",
+      "downloadGitRepoDependencyRange": "^3.0.2",
+      "source": "https://registry.npmjs.org/@tarojs%2fcli/4.3.2"
+    },
+    "download-git-repo": {
+      "latestDistTag": "3.0.2",
+      "publishedVersions": ["3.0.0", "3.0.1", "3.0.2"],
+      "version302Dependencies": {
+        "download": "^7.1.0",
+        "git-clone": "^0.1.0",
+        "rimraf": "^3.0.0"
+      },
+      "source": "https://registry.npmjs.org/download-git-repo"
+    },
+    "@tarojs/webpack5-runner": {
+      "version": "4.3.2",
+      "license": "MIT",
+      "webpackPeer": "5.91.0",
+      "runtimePeer": "4.3.2",
+      "source": "https://registry.npmjs.org/@tarojs%2fwebpack5-runner/4.3.2"
+    },
+    "@tarojs/components": {
+      "latestStableDistTag": "4.3.1",
+      "version431License": "MIT",
+      "version431SwiperDependency": "11.1.15",
+      "version432StablePackageQuery": "not published (npm returned E404)",
+      "source": "https://registry.npmjs.org/@tarojs%2fcomponents/latest",
+      "version431Source": "https://registry.npmjs.org/@tarojs%2fcomponents/4.3.1",
+      "version432Query": "https://registry.npmjs.org/@tarojs%2fcomponents/4.3.2"
+    }
+  },
+  "comparisonToPreviouslyReviewedPaths": {
+    "remoteTemplateDownloader": "@tarojs/cli 4.3.2 retains download-git-repo ^3.0.2; the registry's latest is still 3.0.2, so the reviewed dependency path is unchanged.",
+    "swiper": "The latest stable @tarojs/components remains 4.3.1 and still depends on swiper 11.1.15; no stable components 4.3.2 package was found.",
+    "webpackPeer": "@tarojs/webpack5-runner 4.3.2 still declares webpack 5.91.0 exactly, consistent with the user's confirmed pin."
+  },
+  "reuseDecision": {
+    "approach": "Reuse the existing Taro dependency direction and inspect current official npm registry metadata before considering an update.",
+    "adopted": false,
+    "reason": "The 4.3.2 metadata does not resolve the reviewed downloader or Swiper paths, and no coherent updated lock, compatibility build, or fresh audit was produced. Keeping the current lock also preserves the user's confirmed exact webpack peer choice.",
+    "scope": "Metadata-only follow-up; package manifests and lockfiles were not changed.",
+    "licenseAndMaintenance": "The queried Taro 4.3.2 core, CLI, and webpack runner metadata declares MIT. This metadata-only check does not constitute source, maintenance-quality, exploitability, or product-bundle validation."
+  },
+  "decision": {
+    "r01Status": "pending",
+    "sp01Passed": false,
+    "nextAction": "Keep the approved lock unchanged. After the formal mini-program pages exist, rerun the lock audit and inspect the actual weapp module graph; assess any dependency update as a complete compatible set before adoption."
+  },
+  "validationLimits": [
+    "Only registry metadata was queried for Taro 4.3.2; no installation or local source review was performed for that release.",
+    "No vulnerability exploitability or product-bundle reachability conclusion is added.",
+    "Registry metadata can change; this is a dated snapshot."
+  ]
+}

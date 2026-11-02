@@ -33,6 +33,7 @@ test('SP01 current review covers the exact contract criteria without silently re
     } else if (item.id === 'R01') {
       const candidate = require('../docs/sp01-maintenance-candidate-20261030.json');
       const audit = require('../docs/sp01-r01-registry-audit-20261101.json');
+      const registryFollowup = require('../docs/sp01-r01-registry-follow-up-20261102.json');
       assert.equal(candidate.adopted, true);
       assert.equal(candidate.audit.after.total, 32);
       assert.equal(audit.fullTree.affectedPackageEntries, 48);
@@ -46,6 +47,7 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(audit.decision.webpackOverrideAdopted, false);
       assert.doesNotMatch(audit.decision.nextAction, /next decision is whether/);
       assert.equal(item.registryAuditEvidence, 'docs/sp01-r01-registry-audit-20261101.json');
+      assert.equal(item.latestRegistryFollowupEvidence, 'docs/sp01-r01-registry-follow-up-20261102.json');
       assert.match(item.known, /用户确认保留Webpack 5\.91\.0/);
       assert.match(item.known, /48个受影响包条目/);
       assert.match(item.known, /32条保留不覆盖/);
@@ -60,6 +62,21 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(webpack.normalWeappBuildLoadTrace.remoteTemplateFetchPerformed, false);
       assert.equal(webpack.normalWeappBuildLoadTrace.swiperAndH5DevServerModulesRequired, false);
       assert.match(audit.decision.nextAction, /do not adopt.*override/);
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/taro'].latestDistTag, '4.3.2');
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/cli'].downloadGitRepoDependencyRange, '^3.0.2');
+      assert.equal(registryFollowup.reviewedPackages['download-git-repo'].latestDistTag, '3.0.2');
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/components'].latestStableDistTag, '4.3.1');
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/components'].version431SwiperDependency, '11.1.15');
+      assert.equal(registryFollowup.reviewedPackages['@tarojs/webpack5-runner'].webpackPeer, '5.91.0');
+      assert.equal(registryFollowup.reuseDecision.adopted, false);
+      assert.equal(registryFollowup.decision.r01Status, 'pending');
+      assert.equal(registryFollowup.decision.sp01Passed, false);
+      assert.ok(review.sources.includes('docs/sp01-r01-registry-follow-up-20261102.json'));
+      assert.ok(review.sources.includes('docs/sp01-r01-registry-follow-up-20261102.md'));
+      const registryFollowupMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-r01-registry-follow-up-20261102.md'), 'utf8');
+      assert.match(registryFollowupMarkdown, /@tarojs\/cli@4\.3\.2/);
+      assert.match(registryFollowupMarkdown, /swiper@11\.1\.15/);
+      assert.match(registryFollowupMarkdown, /R01 继续 pending/);
       assert.equal(item.state, 'pending');
     } else if (item.id === 'R03') {
       const capability = require('../docs/sp01-device-capability-20261030.json');
