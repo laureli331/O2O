@@ -21,9 +21,10 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /不能回溯证明六轮采样时 VPN/);
   assert.match(source, /sp01-network-huawei-cloudflare-4g-20261103\.json/);
   assert.match(source, /sp01-network-huawei-cloudflare-4g-round2-20261103\.json/);
+  assert.match(source, /sp01-network-huawei-cloudflare-4g-round3-20261103\.json/);
   assert.match(source, /下载12\.7Mbps、上传15\.8Mbps/);
   assert.match(source, /第二轮下载3\.57Mbps、上传14\.3Mbps/);
-  assert.match(source, /R04 与 SP01 继续保持待完成/);
+  assert.match(source, /R04 与 SP01 仍待完成/);
 });
 
 test('Huawei reported-4g evidence retains raw samples and independently matches the supplied summary', () => {
@@ -311,13 +312,81 @@ test('second Huawei 4G Cloudflare round preserves its screenshot and does not fr
 
   const readiness = require('../docs/sp01-readiness-review-20261030.json');
   const r04 = readiness.openItems.find(item => item.id === 'R04');
-  assert.equal(r04.latestCellularCloudflareEvidence, evidencePath);
+  assert.equal(r04.latestCellularCloudflareEvidence, 'docs/sp01-network-huawei-cloudflare-4g-round3-20261103.json');
   assert.equal(r04.firstCellularCloudflareEvidence, 'docs/sp01-network-huawei-cloudflare-4g-20261103.json');
   assert.deepEqual(r04.cellularCloudflareEvidence, [
     'docs/sp01-network-huawei-cloudflare-4g-20261103.json',
+    evidencePath,
+    'docs/sp01-network-huawei-cloudflare-4g-round3-20261103.json'
+  ]);
+  assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.ok(readiness.sources.includes(evidencePath));
+  assert.ok(readiness.sources.includes(evidence.sourceImage));
+  assert.equal(r04.state, 'pending');
+  assert.equal(readiness.sp01Passed, false);
+});
+
+test('third Huawei 4G Cloudflare round preserves the 50.7 percent loss observation without freezing a stable range', () => {
+  const evidencePath = 'docs/sp01-network-huawei-cloudflare-4g-round3-20261103.json';
+  const evidence = require(`../${evidencePath}`);
+  const second = require('../docs/sp01-network-huawei-cloudflare-4g-round2-20261103.json');
+  const screenshotPath = path.join(__dirname, '..', evidence.sourceImage);
+  const screenshot = fs.readFileSync(screenshotPath);
+
+  assert.equal(evidence.round, 3);
+  assert.equal(evidence.reportedLocalTime, '14:43:14');
+  assert.equal(evidence.target, 'speed.cloudflare.com');
+  assert.equal(evidence.scope, 'phone-to-Cloudflare, not phone-to-CloudBase');
+  assert.equal(evidence.networkCondition.accessReportedByScreenshot, '4g');
+  assert.equal(evidence.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(evidence.deviceContext.modelIndependentlyVerifiedByScreenshot, false);
+  assert.deepEqual({
+    downloadMbps: evidence.downloadMbps,
+    uploadMbps: evidence.uploadMbps,
+    latencyMs: evidence.latencyMs,
+    downloadLatencyMs: evidence.downloadLatencyMs,
+    uploadLatencyMs: evidence.uploadLatencyMs,
+    jitterMs: evidence.jitterMs,
+    downloadJitterMs: evidence.downloadJitterMs,
+    uploadJitterMs: evidence.uploadJitterMs,
+    packetLossPercent: evidence.packetLossPercent
+  }, {
+    downloadMbps: 2.88,
+    uploadMbps: 14.9,
+    latencyMs: 209,
+    downloadLatencyMs: 217,
+    uploadLatencyMs: 268,
+    jitterMs: 92,
+    downloadJitterMs: 116,
+    uploadJitterMs: 150,
+    packetLossPercent: 50.7
+  });
+  assert.deepEqual(evidence.networkQualityStars, {
+    streaming: '1/5',
+    gaming: '1/5',
+    videoCalls: '1/5'
+  });
+  assert.equal(evidence.independentRoundsForThisDeviceAndAccess, 3);
+  assert.equal(evidence.previousRoundEvidence, 'docs/sp01-network-huawei-cloudflare-4g-round2-20261103.json');
+  assert.equal(evidence.comparisonToPreviousRound.previousRoundPacketLossPercent, second.packetLossPercent);
+  assert.equal(evidence.stableCellularRangeFrozen, false);
+  assert.equal(evidence.weakNetworkInjectionVerified, false);
+  assert.equal(evidence.r04Passed, false);
+  assert.equal(evidence.sp01Passed, false);
+  assert.deepEqual([...screenshot.subarray(0, 2)], [0xff, 0xd8]);
+  assert.equal(crypto.createHash('sha256').update(screenshot).digest('hex').toUpperCase(), evidence.sourceImageSha256);
+
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  assert.equal(r04.latestCellularCloudflareEvidence, evidencePath);
+  assert.deepEqual(r04.cellularCloudflareEvidence, [
+    'docs/sp01-network-huawei-cloudflare-4g-20261103.json',
+    'docs/sp01-network-huawei-cloudflare-4g-round2-20261103.json',
     evidencePath
   ]);
   assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.ok(r04.known.includes('third Cloudflare round'));
+  assert.ok(r04.known.includes('50.7%'));
   assert.ok(readiness.sources.includes(evidencePath));
   assert.ok(readiness.sources.includes(evidence.sourceImage));
   assert.equal(r04.state, 'pending');

@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R04",
+  "round": 3,
+  "sampleType": "reported-cellular-4g-phone-to-cloudflare-speed-test",
+  "source": "User-provided Cloudflare Speed Test screenshot in response to the requested independent Huawei 4G follow-up; original screenshot retained in the repository.",
+  "sourceImage": "docs/evidence/sp01-network-huawei-cloudflare-4g-round3-20261103.jpg",
+  "sourceImageSha256": "0D02B18ED374C1D23A43C81CB962AB091B51BCA8668293F85CDC3E8272360A9B",
+  "deviceContext": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10",
+    "source": "The Huawei SEA-AL10 backup phone was the requested follow-up context; this screenshot does not display the device model.",
+    "modelIndependentlyVerifiedByScreenshot": false
+  },
+  "networkCondition": {
+    "accessReportedByScreenshot": "4g",
+    "cellularIndicatorVisibleInScreenshot": true,
+    "defaultNetworkIndependentlyVerifiedAtTestTime": false,
+    "locationIndependentlyVerifiedAtTestTime": false,
+    "pakomoOrVpnState": "unknown",
+    "profile": "not stated"
+  },
+  "reportedLocalTime": "14:43:14",
+  "target": "speed.cloudflare.com",
+  "scope": "phone-to-Cloudflare, not phone-to-CloudBase",
+  "downloadMbps": 2.88,
+  "uploadMbps": 14.9,
+  "throughputDisplayLabel": "90th percentile",
+  "latencyMs": 209,
+  "downloadLatencyMs": 217,
+  "uploadLatencyMs": 268,
+  "jitterMs": 92,
+  "downloadJitterMs": 116,
+  "uploadJitterMs": 150,
+  "packetLossPercent": 50.7,
+  "networkQualityStars": {
+    "streaming": "1/5",
+    "gaming": "1/5",
+    "videoCalls": "1/5"
+  },
+  "independentRoundsForThisDeviceAndAccess": 3,
+  "previousRoundEvidence": "docs/sp01-network-huawei-cloudflare-4g-round2-20261103.json",
+  "stableCellularRangeFrozen": false,
+  "weakNetworkInjectionVerified": false,
+  "comparisonToPreviousRound": {
+    "previousRoundDownloadMbps": 3.57,
+    "previousRoundUploadMbps": 14.3,
+    "previousRoundLatencyMs": 212,
+    "previousRoundJitterMs": 145,
+    "previousRoundPacketLossPercent": 9.3,
+    "observedDifference": "Download changed from 3.57 to 2.88 Mbps, upload from 14.3 to 14.9 Mbps, latency from 212 to 209 ms, jitter from 145 to 92 ms, and packet loss from 9.3% to 50.7%. The third result is retained as reported and is not merged with or used to replace earlier rounds."
+  },
+  "comparisonAcrossThreeRounds": {
+    "evidence": [
+      "docs/sp01-network-huawei-cloudflare-4g-20261103.json",
+      "docs/sp01-network-huawei-cloudflare-4g-round2-20261103.json",
+      "docs/sp01-network-huawei-cloudflare-4g-round3-20261103.json"
+    ],
+    "downloadMbpsObservedMinMax": [2.88, 12.7],
+    "packetLossPercentObservedMinMax": [9.3, 50.7],
+    "jitterMsObservedMinMax": [92, 145],
+    "conditionsIndependentlyMatchedAcrossRounds": false,
+    "stableRangeEstablished": false
+  },
+  "interpretation": "This third Cloudflare screenshot shows a 4G indicator and reports 2.88 Mbps download, 14.9 Mbps upload, 209 ms latency, 92 ms jitter and 50.7% packet loss. The phone model, location, exact network route and Pakomo/VPN state are not independently visible or verified in the screenshot. Across three screenshots, packet-loss reports range from 9.3% to 50.7% and download reports from 2.88 to 12.7 Mbps, while test conditions are not independently matched. Preserve every round, but do not freeze a stable cellular range or attribute Cloudflare packet loss to CloudBase requests, a controlled weak-network profile or product behavior. R04 and SP01 remain pending.",
+  "r04Passed": false,
+  "sp01Passed": false
+}
