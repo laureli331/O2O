@@ -411,7 +411,12 @@ test('public Wi-Fi evidence keeps CloudBase round trips separate from Cloudflare
   assert.deepEqual(appRecomputed, app.independentlyRecomputed);
   assert.equal(app.networkCondition.networkTypeReportedByProbe, 'wifi');
   assert.equal(app.networkCondition.publicAccessIndependentlyVerified, false);
-  assert.equal(app.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(app.networkCondition.scenarioAccessTypeUserReported, 'public/free Wi-Fi');
+  assert.equal(app.networkCondition.pakomoOrVpnStateUserReported, 'off');
+  assert.equal(app.networkCondition.pakomoOrVpnStateIndependentlyVerified, false);
+  assert.equal(app.deviceContext.deviceUserReported, 'Huawei backup device');
+  assert.equal(app.deviceContext.model, 'SEA-AL10');
+  assert.match(app.deviceContext.modelSource, /Existing device profile/);
   assert.equal(app.deviceContext.modelIndependentlyVerified, false);
   assert.equal(app.scope, 'application-roundtrip-not-link-rtt-or-packet-loss');
   assert.equal(app.r04Passed, false);
@@ -429,7 +434,12 @@ test('public Wi-Fi evidence keeps CloudBase round trips separate from Cloudflare
   assert.equal(cloudflare.networkCondition.wifiIndicatorVisibleInScreenshot, true);
   assert.equal(cloudflare.networkCondition.cellularIndicatorVisibleInScreenshot, true);
   assert.equal(cloudflare.networkCondition.publicAccessIndependentlyVerified, false);
-  assert.equal(cloudflare.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(cloudflare.networkCondition.scenarioAccessTypeUserReported, 'public/free Wi-Fi');
+  assert.equal(cloudflare.networkCondition.pakomoOrVpnStateUserReported, 'off');
+  assert.equal(cloudflare.networkCondition.pakomoOrVpnStateIndependentlyVerified, false);
+  assert.equal(cloudflare.deviceContext.deviceUserReported, 'Huawei backup device');
+  assert.equal(cloudflare.deviceContext.model, 'SEA-AL10');
+  assert.match(cloudflare.deviceContext.modelSource, /Existing device profile/);
   assert.equal(cloudflare.deviceContext.modelIndependentlyVerifiedByScreenshot, false);
   assert.equal(cloudflare.publicWifiStableRangeFrozen, false);
   assert.equal(cloudflare.r04Passed, false);
@@ -440,6 +450,9 @@ test('public Wi-Fi evidence keeps CloudBase round trips separate from Cloudflare
 
   assert.equal(r04.latestPublicWifiAppSampleEvidence, appPath);
   assert.equal(r04.latestPublicWifiCloudflareEvidence, cloudflarePath);
+  assert.equal(r04.publicWifiEvidence.scenarioAccessTypeUserReported, 'public/free Wi-Fi');
+  assert.equal(r04.publicWifiEvidence.deviceUserReported, 'Huawei backup device');
+  assert.equal(r04.publicWifiEvidence.pakomoOrVpnStateUserReported, 'off');
   assert.equal(r04.publicWifiEvidence.publicAccessIndependentlyVerified, false);
   assert.equal(r04.publicWifiEvidence.stableRangeFrozen, false);
   assert.ok(r04.evidence.split('; ').includes(appPath));
@@ -452,6 +465,7 @@ test('public Wi-Fi evidence keeps CloudBase round trips separate from Cloudflare
   assert.equal(readiness.sp01Passed, false);
   assert.match(method, /公共\/免费 Wi-Fi 请求场景/);
   assert.match(method, /Cloudflare链路指标与CloudBase应用往返分开/);
+  assert.match(method, /用户已确认本轮使用公共\/免费 Wi-Fi、华为备用机/);
   assert.match(method, /不冻结公共 Wi-Fi 稳定范围/);
   assert.match(method, /R04 与 SP01 仍待完成/);
 });

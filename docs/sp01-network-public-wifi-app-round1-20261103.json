@@ -4,19 +4,22 @@
   "task": "SP01",
   "item": "R04",
   "sampleType": "reported-public-wifi-scenario-read-only-application-roundtrip",
-  "source": "User-pasted result submitted in response to the public/free Wi-Fi sample request; raw values retained; not directly observed by the agent.",
+  "source": "User-pasted result submitted in response to the public/free Wi-Fi sample request; user later confirmed this round used public/free Wi-Fi on the Huawei backup device with Pakomo/VPN off; raw values retained; not directly observed by the agent.",
   "deviceContext": {
-    "manufacturer": "not recorded in pasted sample",
-    "model": "not recorded in pasted sample",
-    "activeConversationContext": "Huawei backup-device testing was the surrounding session context; this sample itself does not identify a device.",
+    "manufacturer": "HUAWEI (user-reported)",
+    "model": "SEA-AL10",
+    "modelSource": "Existing device profile; user identified this sample device as the Huawei backup device.",
+    "deviceUserReported": "Huawei backup device",
     "modelIndependentlyVerified": false
   },
   "networkCondition": {
     "networkTypeReportedByProbe": "wifi",
     "networkTypeIndependentlyVerified": false,
-    "scenarioContext": "Submitted in response to a request for public/free Wi-Fi evidence; the pasted sample does not identify the access point.",
+    "scenarioContext": "User confirmed this round used public/free Wi-Fi on the Huawei backup device with Pakomo/VPN off; the probe and sample do not identify the access point or actual default route.",
+    "scenarioAccessTypeUserReported": "public/free Wi-Fi",
     "publicAccessIndependentlyVerified": false,
-    "pakomoOrVpnState": "unknown",
+    "pakomoOrVpnStateUserReported": "off",
+    "pakomoOrVpnStateIndependentlyVerified": false,
     "defaultRouteIndependentlyVerified": false
   },
   "endpoint": "sp01IdentityProbe / read-only",
@@ -79,16 +82,16 @@
     "meanConsecutiveDifferenceMs": 140.58620689655172
   },
   "notMeasured": [
-    "whether the access point was public/free Wi-Fi and the actual default route",
-    "device identity for this sample",
-    "Pakomo/VPN state and any weak-network profile during the run",
+    "independent verification of the public access point and actual default route",
+    "independent verification of device identity",
+    "independent verification of Pakomo/VPN state or any weak-network profile during the run",
     "independent link RTT, throughput, jitter, and packet loss",
     "exact run duration and monotonic start/stop timestamps",
     "whether the wall clock changed during the run",
     "interrupted-request and connectivity-recovery behavior",
     "the future production service endpoint"
   ],
-  "interpretation": "One reported public/free Wi-Fi scenario round of 30 successful read-only application round trips. The probe reported Wi-Fi, but the access point, device, default route and VPN state were not independently verified. This is not a link-quality measurement, does not establish zero packet loss, and does not establish a stable public-Wi-Fi profile.",
+  "interpretation": "One user-reported public/free Wi-Fi scenario round on the Huawei backup device with Pakomo/VPN off; 30 read-only application round trips succeeded. The probe reported Wi-Fi, but the access point and actual default route were not independently verified. This is not a link-quality measurement, does not establish zero packet loss, and does not establish a stable public-Wi-Fi profile.",
   "r04Passed": false,
   "sp01Passed": false
 }

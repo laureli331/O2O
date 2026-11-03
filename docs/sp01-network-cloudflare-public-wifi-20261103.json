@@ -8,17 +8,22 @@
   "sourceImage": "docs/evidence/sp01-network-cloudflare-public-wifi-20261103.jpg",
   "sourceImageSha256": "09C147183ED832EA150E21ABB67C484F2FB52E165BC7CDAC4855D5377AA91920",
   "deviceContext": {
-    "manufacturer": "not independently verified",
-    "model": "not independently verified",
+    "manufacturer": "HUAWEI (user-reported)",
+    "model": "SEA-AL10",
+    "modelSource": "Existing device profile; user identified this sample device as the Huawei backup device.",
+    "deviceUserReported": "Huawei backup device",
     "modelIndependentlyVerifiedByScreenshot": false
   },
   "networkCondition": {
-    "scenarioContext": "Submitted in response to a request for public/free Wi-Fi evidence; access point type and actual default route are not independently verified.",
+    "scenarioContext": "User confirmed this run used public/free Wi-Fi on the Huawei backup device with Pakomo/VPN off; screenshot shows both Wi-Fi and 4G indicators, so access point and actual default route are not independently verified.",
+    "scenarioAccessTypeUserReported": "public/free Wi-Fi",
     "wifiIndicatorVisibleInScreenshot": true,
     "cellularIndicatorVisibleInScreenshot": true,
     "cellularIndicatorLabelInScreenshot": "4G",
     "publicAccessIndependentlyVerified": false,
-    "pakomoOrVpnState": "unknown"
+    "pakomoOrVpnStateUserReported": "off",
+    "pakomoOrVpnStateIndependentlyVerified": false,
+    "defaultRouteIndependentlyVerified": false
   },
   "reportedLocalTime": "15:29:39",
   "target": "speed.cloudflare.com",
@@ -42,7 +47,7 @@
   "publicWifiStableRangeFrozen": false,
   "weakNetworkInjectionVerified": false,
   "comparisonNote": "Keep separate from the same-turn sp01IdentityProbe application-roundtrip report. Cloudflare and CloudBase are different targets and metrics; screenshot indicators alone do not establish which access point or route carried the test.",
-  "interpretation": "One Cloudflare result in the reported public-Wi-Fi scenario shows the listed link measurements. The screenshot displays both Wi-Fi and 4G indicators; it does not independently identify the public access point, device, default route, or Pakomo/VPN state. Do not treat its 0% packet-loss display as zero loss on CloudBase or as a stable public-Wi-Fi profile.",
+  "interpretation": "The user identified this as a public/free Wi-Fi run on the Huawei backup device with Pakomo/VPN off. The screenshot displays both Wi-Fi and 4G indicators and does not independently establish the access point, device, or actual default route. Do not treat its 0% packet-loss display as zero loss on CloudBase or as a stable public-Wi-Fi profile.",
   "r04Passed": false,
   "sp01Passed": false
 }
