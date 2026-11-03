@@ -14,6 +14,10 @@
 
 官方 npm registry 只读查询确认 Taro 4.3.2 所需的 `@tarojs/components`、`@tarojs/helper`、`@tarojs/runtime` 稳定包现均已发布，纠正 11 月 2 日查询时的缺包结论并保留当时快照。没有安装依赖、修改 manifest/lock、运行构建或变更云资源。Taro CLI 远程模板链、审计及第三方声明问题、正式产品模块图仍待核实，故 R01/SP01 继续 pending，SP07 不启动。详见[注册表更正](sp01-r01-registry-refresh-20261103.md)及[结构化数据](sp01-r01-registry-refresh-20261103.json)。
 
+### 2026-11-03 R01 解压依赖互操作边界
+
+源码核查确认 Taro CLI 的远程模板链经 `download-git-repo@3.0.2` 使用 `download@7.1.0`，后者以 CommonJS `require` 导入并直接调用 `decompress`。GitHub 安全公告将原始 `decompress@4.2.1` 列为受影响且无补丁版本；维护版 `@xhmikosr/decompress@10.2.2` 已修复，但为 ESM。独立 npm override 复验中，旧调用直接接维护版时报 `TypeError: decompress is not a function`；仅测试专用 default 导出适配后，一份本地合成ZIP成功解压。该结果不覆盖完整Taro模板链或恶意归档安全；正式依赖/锁未变，R01/SP01继续pending，SP07未启动。详见[互操作记录](sp01-taro-decompress-interop-20261103.md)及[JSON](sp01-taro-decompress-interop-20261103.json)。
+
 ### 2026-11-02 Pakomo 弱网采样暂停（历史快照）与屏幕休眠处理
 
 本节前两段记录的是当时的预检状态，后续采样和设置变化以本节新增记录为准。预检时读取到屏幕超时600000毫秒、“USB供电时保持唤醒”原值为关闭；当时的采样准备操作结束后曾恢复原值0。

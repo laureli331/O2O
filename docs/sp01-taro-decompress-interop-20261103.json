@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R01",
+  "title": "Taro remote-template decompressor interoperability boundary",
+  "reuseInvestigation": {
+    "projectSource": {
+      "path": "tools/sp01-taro-432-audit/node_modules/download/index.js",
+      "observedCall": "const decompress = require('decompress'); download@7.1.0 directly invokes decompress(data, output, options)",
+      "transitiveOrigin": "The reviewed Taro CLI path uses download-git-repo@3.0.2, whose dependency range reaches download@7.1.0.",
+      "inspectedPackagePath": "tools/sp01-taro-432-audit/node_modules/decompress/package.json",
+      "inspectedPackageVersion": "4.2.1"
+    },
+    "platformOfficialImplementation": "No platform or Taro official API changes this third-party CommonJS-to-ESM export mismatch; tested at the dependency boundary in isolation.",
+    "thirdPartyCandidate": {
+      "name": "@xhmikosr/decompress",
+      "version": "10.2.2",
+      "license": "MIT",
+      "nodeEngine": ">=18",
+      "moduleFormat": "ES module",
+      "advisoryStatesPatched": true,
+      "packageRepository": "https://github.com/XhmikosR/decompress",
+      "inspectedFiles": [
+        "https://raw.githubusercontent.com/XhmikosR/decompress/v10.2.2/package.json",
+        "https://raw.githubusercontent.com/XhmikosR/decompress/v10.2.2/index.js"
+      ]
+    },
+    "optionsCompared": {
+      "directUse": "Not compatible with download@7.1.0 direct CommonJS function call in the tested Node 20.19.3 setup.",
+      "smallInteropAdapter": "Test-only loader adapter returning the ESM default export; passed one local benign ZIP extraction fixture.",
+      "formalAdoption": "Not selected. No package manifest, project lock, or formal product dependency was changed."
+    }
+  },
+  "chain": {
+    "taroCli": {
+      "package": "@tarojs/cli",
+      "dependency": "download-git-repo",
+      "fullRemoteTemplateInvocationExecuted": false
+    },
+    "downloadGitRepo": {
+      "version": "3.0.2",
+      "dependencyRangeToDownload": "^7.1.0"
+    },
+    "download": {
+      "version": "7.1.0",
+      "inspectedSource": "https://raw.githubusercontent.com/kevva/download/v7.1.0/index.js",
+      "directCommonJsRequire": "decompress",
+      "directCallSites": [
+        "index.js:94",
+        "index.js:100"
+      ]
+    },
+    "vulnerablePackage": {
+      "name": "decompress",
+      "version": "4.2.1",
+      "advisoryId": "GHSA-hrh2-vp3x-79xf",
+      "patchedVersion": null,
+      "advisoryStatesUnpatched": true
+    },
+    "maintainedFork": {
+      "name": "@xhmikosr/decompress",
+      "version": "10.2.2",
+      "license": "MIT",
+      "moduleFormat": "ES module",
+      "nodeEngine": ">=18"
+    }
+  },
+  "directCommonJsCall": {
+    "outcome": "type-error-decompress-is-not-a-function",
+    "actualError": "TypeError: decompress is not a function",
+    "context": "download@7.1.0 calling the maintained fork through a locally installed npm override on Node.js v20.19.3",
+    "outputDirectoryCreated": false
+  },
+  "defaultExportAdapterExtraction": {
+    "adapter": "Temporary test-only Module._load adapter for the download/index.js require(\"decompress\") call, returning the module default export.",
+    "adapterIsTestOnly": true,
+    "productionCodeChanged": false,
+    "localHttpFixture": true,
+    "fixtureDescription": "One benign ZIP containing only sample.txt with the synthetic text \"SP01 synthetic archive interop fixture\".",
+    "fixtureBytes": 158,
+    "fixtureSha256": "254B6E0DCC22E5B261F3657B91069296C0450BC7033405E4B7489C05A7312828",
+    "extractedContentMatched": true,
+    "extractedCharacterCount": 38,
+    "testResult": "passed"
+  },
+  "localExperiment": {
+    "isolatedIgnoredPath": ".local/sp01-decompress-interop-20261103-7f3a-r2",
+    "nodeVersion": "v20.19.3",
+    "npmVersion": "11.16.0",
+    "installCommand": "npm install --prefix .local/sp01-decompress-interop-20261103-7f3a-r2 --ignore-scripts",
+    "npmLsVerifiedGraph": "download@7.1.0 -> decompress@npm:@xhmikosr/decompress@10.2.2",
+    "npmOverrideGraphVerified": true,
+    "testScript": "interop-check.cjs",
+    "externalFixtureRequests": 0,
+    "cloudCalls": 0,
+    "databaseOrStorageWrites": 0
+  },
+  "supersededSetup": {
+    "path": ".local/sp01-decompress-interop-20261103-7f3a",
+    "countedAsEvidence": false,
+    "reason": "The first local harness only installed a top-level alias and did not replace download package nested resolution; final evidence uses the verified override dependency graph in the -r2 directory."
+  },
+  "scope": {
+    "formalDependenciesChanged": false,
+    "formalManifestOrLockChanged": false,
+    "taroRemoteTemplateEndToEndExecuted": false,
+    "maliciousArchiveOrVulnerabilityExploitTested": false,
+    "productBuildOrDeviceTested": false,
+    "cloudServiceUsed": false,
+    "securityFindingResolved": false
+  },
+  "decision": {
+    "r01Status": "pending",
+    "sp01Passed": false,
+    "sp07Started": false,
+    "nextAction": "Read the exact installed Taro CLI to download-git-repo call path and decide whether a separate, fully isolated integration check is required. Do not copy the test-only adapter into the formal dependency graph; keep the security, product reachability, and third-party declaration review open."
+  },
+  "references": [
+    {
+      "title": "GitHub Advisory GHSA-hrh2-vp3x-79xf / CVE-2026-101894",
+      "url": "https://github.com/advisories/GHSA-hrh2-vp3x-79xf",
+      "role": "Affected and patched version statements; advisory says original decompress <=4.2.1 has no patched release and identifies @xhmikosr/decompress@10.2.2 as patched."
+    },
+    {
+      "title": "download@7.1.0 source",
+      "url": "https://raw.githubusercontent.com/kevva/download/v7.1.0/index.js",
+      "role": "Confirms CommonJS require and direct function invocation at extraction call sites."
+    },
+    {
+      "title": "@xhmikosr/decompress@10.2.2 package metadata",
+      "url": "https://raw.githubusercontent.com/XhmikosR/decompress/v10.2.2/package.json",
+      "role": "Confirms MIT license, ESM package type, and Node >=18 engine."
+    },
+    {
+      "title": "@xhmikosr/decompress@10.2.2 source",
+      "url": "https://raw.githubusercontent.com/XhmikosR/decompress/v10.2.2/index.js",
+      "role": "Source inspected for maintained extraction behavior; this local fixture did not test malicious archive defenses."
+    }
+  ]
+}
