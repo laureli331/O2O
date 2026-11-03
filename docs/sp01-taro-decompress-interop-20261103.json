@@ -154,13 +154,14 @@
     "maliciousArchiveOrVulnerabilityExploitTested": false,
     "productBuildOrDeviceTested": false,
     "cloudServiceUsed": false,
-    "securityFindingResolved": false
+    "securityFindingResolved": false,
+    "actualGiteeRemoteTemplateFetchExecuted": true
   },
   "decision": {
     "r01Status": "pending",
     "sp01Passed": false,
     "sp07Started": false,
-    "nextAction": "The installed CLI fetchTemplate function path is verified with one benign loopback ZIP, but full interactive taro init, remote GitHub access, and malicious archive behavior remain untested. Assess the scoped developer-time security risk and whether the future project setup can use the Gitee git-clone route; do not copy the test-only adapter into the formal dependency graph. Full/production audit, malicious-archive security evidence, third-party declaration diagnostics, and formal product module reachability remain open."
+    "nextAction": "Actual Gitee fetchTemplate clone=true integration passed at v4.0 commit c4cd3830794aa4e053d1c20e991d125f586cd1d9: all 15 template directories and 535 files matched with no .git metadata and zero decompress calls. The Gitee repository has no root license file, so license is unknown and no template was adopted. Full interactive taro init, GitHub remote path, malicious archive behavior, security disposition, formal product module reachability, full/production audit, and third-party declaration diagnostics remain open; do not copy the test-only adapter into formal dependencies."
   },
   "references": [
     {
@@ -182,6 +183,54 @@
       "title": "@xhmikosr/decompress@10.2.2 source",
       "url": "https://raw.githubusercontent.com/XhmikosR/decompress/v10.2.2/index.js",
       "role": "Source inspected for maintained extraction behavior; this local fixture did not test malicious archive defenses."
+    },
+    {
+      "title": "Taro official template documentation",
+      "url": "https://docs.taro.zone/docs/template",
+      "role": "Documents Taro template sources and initialization options; not a security guarantee."
+    },
+    {
+      "title": "Taro v4.3.2 fetchTemplate source",
+      "url": "https://github.com/NervJS/taro/blob/v4.3.2/packages/taro-cli/src/create/fetchTemplate.ts",
+      "role": "Reviewed implementation of installed CLI template fetch path; actual run used the matching installed 4.3.2 CLI function."
+    },
+    {
+      "title": "Gitee Taro project templates repository",
+      "url": "https://gitee.com/o2team/taro-project-templates",
+      "role": "Public source repository fetched at ref v4.0; repository license remains unknown because no root license file was found."
     }
-  ]
+  ],
+  "actualGiteeRemoteFetchIntegration": {
+    "success": true,
+    "sourceUrl": "direct:https://gitee.com/o2team/taro-project-templates.git#v4.0",
+    "sourceRepositoryUrl": "https://gitee.com/o2team/taro-project-templates.git",
+    "sourceRef": "v4.0",
+    "sourceCommit": "c4cd3830794aa4e053d1c20e991d125f586cd1d9",
+    "installedCliFunctionInvoked": true,
+    "functionPath": "tools/sp01-taro-432-audit/node_modules/@tarojs/cli/dist/create/fetchTemplate.js",
+    "cloneBranch": true,
+    "sourceTemplateDirectories": 15,
+    "fetchedTemplateDirectories": 15,
+    "creatorMetadataEntries": 15,
+    "sourceFilesCompared": 535,
+    "matchedFiles": 535,
+    "mismatches": [],
+    "destinationsContainingGitMetadata": 0,
+    "decompressFunctionCalls": 0,
+    "taroTemporaryDirectoryRemoved": true,
+    "sourceRepositoryPath": "tools/sp01-gitee-template-review-6a4199328a2b49e6871d807b1acecae1",
+    "fetchedOutputPath": "tools/sp01-gitee-template-fetch-output-6a4199328a2b49e6871d807b1acecae1",
+    "outputDirectoryRetainedForEvidence": true,
+    "rootLicenseFilesFound": 0,
+    "repositoryLicense": "unknown",
+    "adopted": false,
+    "adoptionReason": "No root LICENSE/COPYING/NOTICE file was found; licensing is unknown, so the fetched templates are not adopted.",
+    "dependenciesInstalled": false,
+    "projectInitialized": false,
+    "fullInteractiveTaroInitExecuted": false,
+    "githubRemoteFetched": false,
+    "maliciousArchiveTested": false,
+    "cloudCalls": 0,
+    "databaseOrStorageWrites": 0
+  }
 }
