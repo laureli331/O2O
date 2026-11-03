@@ -57,7 +57,9 @@
     "docs/sp01-taro-432-compatibility-20261103.md",
     "tools/sp01-taro-431-baseline-audit/README.md",
     "tools/sp01-taro-431-baseline-audit/npm-audit-public-report-20261103.json",
-    "tools/sp01-taro-432-audit/npm-audit-public-report-20261103.json"
+    "tools/sp01-taro-432-audit/npm-audit-public-report-20261103.json",
+    "tools/sp01-taro-431-baseline-audit/npm-audit-production-report-20261103.json",
+    "tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -121,7 +123,8 @@
       "viteRunnerComparisonEvidence": "docs/sp01-taro-vite-runner-comparison-20261102.json",
       "nextAction": "保留Taro 4.3.2为隔离候选，不冻结正式锁：其全量第三方声明检查仍失败，public npm audit仍有4个critical受影响包条目；只构建了隔离合成样例，未验证开发者工具、真机或产品。正式产品依赖冻结前继续审查这些失败和风险；实际产品建立后再按真实模块图复核。R01及SP01保持pending，不开始SP07。",
       "vulnerabilityReproductionAuthorizedByThisReview": false,
-      "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json"
+      "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
+      "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json"
     },
     {
       "id": "R02",

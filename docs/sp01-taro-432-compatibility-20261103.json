@@ -10,7 +10,9 @@
     "candidateManifest": "tools/sp01-taro-432-audit/package.json",
     "candidateLock": "tools/sp01-taro-432-audit/package-lock.json",
     "baselineAudit": "tools/sp01-taro-431-baseline-audit/npm-audit-public-report-20261103.json",
-    "candidateAudit": "tools/sp01-taro-432-audit/npm-audit-public-report-20261103.json"
+    "candidateAudit": "tools/sp01-taro-432-audit/npm-audit-public-report-20261103.json",
+    "baselineProductionAudit": "tools/sp01-taro-431-baseline-audit/npm-audit-production-report-20261103.json",
+    "candidateProductionAudit": "tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json"
   },
   "reuseSurvey": {
     "internal": "Reused the existing isolated SP01 Taro sample shape and type-check scripts; no production page or SP07 project was created.",
@@ -72,6 +74,49 @@
       "git-clone",
       "swiper"
     ],
+    "riskRemediationClaimed": false
+  },
+  "productionDependencyAudit": {
+    "command": "npm audit --omit=dev --json --registry=https://registry.npmjs.org/",
+    "commandExitCode": 1,
+    "exitCodeMeaning": "npm audit reports vulnerabilities; nonzero is the observed audit result, not an infrastructure or command failure",
+    "baselineReport": "tools/sp01-taro-431-baseline-audit/npm-audit-production-report-20261103.json",
+    "candidateReport": "tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json",
+    "baselineProductionDependencyCount": 479,
+    "candidateProductionDependencyCount": 479,
+    "baseline": {
+      "affectedPackageEntries": 21,
+      "severity": {
+        "low": 1,
+        "moderate": 15,
+        "high": 2,
+        "critical": 3
+      }
+    },
+    "candidate": {
+      "affectedPackageEntries": 21,
+      "severity": {
+        "low": 1,
+        "moderate": 15,
+        "high": 2,
+        "critical": 3
+      }
+    },
+    "criticalAffectedPackageEntries": [
+      "@tarojs/components",
+      "@tarojs/taro",
+      "swiper"
+    ],
+    "directCriticalAdvisoriesObserved": [
+      {
+        "package": "swiper",
+        "title": "Prototype pollution in swiper",
+        "url": "https://github.com/advisories/GHSA-hmx5-qpq5-p643",
+        "affectedRange": ">=6.5.1 <12.1.2"
+      }
+    ],
+    "comparison": "The production-only audit totals are identical for the 4.3.1 baseline and 4.3.2 candidate. Critical counts are affected package entries, not unique advisories.",
+    "scopeLimit": "--omit=dev follows npm dependency classification for these isolated manifests; it does not establish shipped mini-program bundle reachability, exploitability, or product vulnerability. No product bundle has been analyzed.",
     "riskRemediationClaimed": false
   },
   "checks": {

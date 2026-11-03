@@ -33,7 +33,11 @@
     "docs/sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json",
     "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-top-20261102.png",
     "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-summary-20261102.png",
-    "docs/sp01-huawei-gfxinfo-swipe-20261102.json"
+    "docs/sp01-huawei-gfxinfo-swipe-20261102.json",
+    "docs/sp01-taro-432-compatibility-20261103.md",
+    "docs/sp01-taro-432-compatibility-20261103.json",
+    "tools/sp01-taro-431-baseline-audit/npm-audit-production-report-20261103.json",
+    "tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -2224,7 +2228,8 @@
           "separatelyIdentifiableWebViewPresentedFrameStreamFound": false,
           "acceptanceEvidence": false
         },
-        "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json"
+        "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
+        "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

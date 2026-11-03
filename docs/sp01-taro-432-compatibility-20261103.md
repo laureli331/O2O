@@ -18,8 +18,12 @@
 | Webpack | 5.91.0 | 5.91.0 |
 | public npm audit 受影响包条目 | 55 | 54 |
 | Critical / High / Moderate / Low | 4 / 18 / 32 / 1 | 4 / 18 / 31 / 1 |
+| `npm audit --omit=dev` 受影响包条目 | 21 | 21 |
+| 其中 Critical / High / Moderate / Low | 3 / 2 / 15 / 1 | 3 / 2 / 15 / 1 |
 
 两份报告均在 2026-11-03 从 `https://registry.npmjs.org` 刷新。差异为受影响包键 `stylus` 从候选报告消失，未新增键；已复核的 Taro CLI、components、webpack runner、adm-zip、decompress、download-git-repo、git-clone、swiper 严重度未变。npm audit 的“包条目”不是唯一公告数、可利用漏洞数或产品漏洞数；本次没有证据证明风险已修复，也没有把审计失败包装成通过。
+
+另按 npm 的生产依赖分类执行 `npm audit --omit=dev --json --registry=https://registry.npmjs.org/`。基线与候选各有479个生产依赖，报告结果相同：21个受影响包条目（3 critical、2 high、15 moderate、1 low）。三个 critical 条目对应 `@tarojs/components`、`@tarojs/taro`、`swiper`；报告内可见的直接 critical 公告为 Swiper 原型污染 [GHSA-hmx5-qpq5-p643](https://github.com/advisories/GHSA-hmx5-qpq5-p643)。包条目可能沿依赖链传播，不能将三条当作三个独立公告。`--omit=dev` 只按这份隔离 manifest 的依赖分类过滤；它没有证明这些包能进入已发布小程序包、可被利用或构成产品漏洞，当前没有产品产物模块图可查。命令因报告漏洞返回1，原始报告分别保存在配套 baseline/candidate 目录。本次没有提出风险修复结论。
 
 ## 实际验证
 
@@ -33,6 +37,6 @@
 
 ## 处理决定
 
-该复核只说明 Taro 4.3.2 在当前锁定版本下可以构建隔离合成样例。它没有解决完整第三方声明诊断，也没有消除仍列出的 4 个 critical 受影响包条目。候选不转为正式锁，不开始 SP07，不据此放行 SP01。R01 仍 pending；正式产品工程建立后须按实际模块图、开发者工具和真机证据重新评估。
+该复核只说明 Taro 4.3.2 在当前锁定版本下可以构建隔离合成样例。它没有解决完整第三方声明诊断；全量 audit 有4个、omit-dev审计有3个 critical 受影响包条目，且本轮没有证明产品包可达性或风险已修复。候选不转为正式锁，不开始 SP07，不据此放行 SP01。R01 仍 pending；正式产品工程建立后须按实际模块图、开发者工具和真机证据重新评估。
 
 机器可读结果与精确命令数据见 [配套 JSON](sp01-taro-432-compatibility-20261103.json)。

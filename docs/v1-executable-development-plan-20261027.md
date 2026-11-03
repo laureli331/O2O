@@ -6,7 +6,7 @@
 
 ### 2026-11-03 Taro 4.3.2 隔离候选复核
 
-保留React/React DOM/类型18.3.1、TypeScript5.9.3及Taro runner要求的Webpack5.91.0后，Taro4.3.2隔离合成样例通过应用strict检查、顶层依赖树检查和weapp构建；完整第三方声明检查仍有1,056条诊断，分布在108个声明文件。最新public npm audit报告54个受影响包条目（4 critical/18 high/31 moderate/1 low），4.3.1对照为55条；只有`stylus`包键从报告消失，不代表风险已修复。该候选未采用为正式工程依赖；未验证开发者工具、真机或产品。R01及SP01保持未通过，SP07不启动。详见[Taro 4.3.2复核记录](sp01-taro-432-compatibility-20261103.md)及[结构化结果](sp01-taro-432-compatibility-20261103.json)。
+保留React/React DOM/类型18.3.1、TypeScript5.9.3及Taro runner要求的Webpack5.91.0后，Taro4.3.2隔离合成样例通过应用strict检查、顶层依赖树检查和weapp构建；完整第三方声明检查仍有1,056条诊断，分布在108个声明文件。最新public npm audit报告54个受影响包条目（4 critical/18 high/31 moderate/1 low），4.3.1对照为55条；只有`stylus`包键从报告消失，不代表风险已修复。`--omit=dev`复核中基线与候选均为21个受影响包条目（3 critical/2 high/15 moderate/1 low），各有479个生产依赖；它只反映隔离manifest的npm依赖分类，不证明产品包可达性或可利用性。该候选未采用为正式工程依赖；未验证开发者工具、真机或产品。R01及SP01保持未通过，SP07不启动。详见[Taro 4.3.2复核记录](sp01-taro-432-compatibility-20261103.md)及[结构化结果](sp01-taro-432-compatibility-20261103.json)。
 
 ### 2026-11-02 Pakomo 弱网采样暂停（历史快照）与屏幕休眠处理
 

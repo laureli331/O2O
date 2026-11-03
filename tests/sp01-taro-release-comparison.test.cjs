@@ -57,6 +57,23 @@ test('public registry audit comparison records package-entry delta without claim
   }
 });
 
+test('production-only audits preserve exact counts and do not claim product exploitability', () => {
+  const baseline = readJson(path.join(baselineDir, 'npm-audit-production-report-20261103.json'));
+  const candidate = readJson(path.join(candidateDir, 'npm-audit-production-report-20261103.json'));
+  const evidence = readJson(evidencePath);
+  const production = evidence.productionDependencyAudit;
+
+  assert.deepEqual(severityCounts(baseline), { info: 0, low: 1, moderate: 15, high: 2, critical: 3, total: 21 });
+  assert.deepEqual(severityCounts(candidate), { info: 0, low: 1, moderate: 15, high: 2, critical: 3, total: 21 });
+  assert.equal(baseline.metadata.dependencies.prod, 479);
+  assert.equal(candidate.metadata.dependencies.prod, 479);
+  assert.deepEqual(production.criticalAffectedPackageEntries, ['@tarojs/components', '@tarojs/taro', 'swiper']);
+  assert.equal(production.commandExitCode, 1);
+  assert.equal(production.riskRemediationClaimed, false);
+  assert.match(production.scopeLimit, /does not establish shipped mini-program bundle reachability/);
+  assert.equal(production.directCriticalAdvisoriesObserved[0].url, 'https://github.com/advisories/GHSA-hmx5-qpq5-p643');
+});
+
 test('Taro 4.3.2 evidence links actual checks and keeps R01/SP01 pending', () => {
   const evidence = readJson(evidencePath);
   const review = readJson(path.join(root, 'docs/sp01-readiness-review-20261030.json'));
@@ -78,15 +95,23 @@ test('Taro 4.3.2 evidence links actual checks and keeps R01/SP01 pending', () =>
   assert.equal(evidence.decision.candidateAdopted, false);
   assert.equal(evidence.decision.r01Status, 'pending');
   assert.equal(evidence.decision.sp01Passed, false);
+  assert.equal(evidence.productionDependencyAudit.candidate.affectedPackageEntries, 21);
+  assert.equal(evidence.productionDependencyAudit.candidate.severity.critical, 3);
+  assert.equal(evidence.productionDependencyAudit.riskRemediationClaimed, false);
   assert.equal(r01.state, 'pending');
   assert.equal(r01.latestTaro432CompatibilityEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
+  assert.equal(r01.latestTaro432ProductionAuditEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
   assert.ok(review.sources.includes('docs/sp01-taro-432-compatibility-20261103.json'));
   assert.ok(review.sources.includes('docs/sp01-taro-432-compatibility-20261103.md'));
+  assert.ok(review.sources.includes('tools/sp01-taro-431-baseline-audit/npm-audit-production-report-20261103.json'));
+  assert.ok(review.sources.includes('tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json'));
   assert.equal(sp01.executionProgress.latestTaro432CompatibilityEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
+  assert.equal(sp01.executionProgress.latestTaro432ProductionAuditEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
 
   const markdown = fs.readFileSync(path.join(root, 'docs/sp01-taro-432-compatibility-20261103.md'), 'utf8');
   assert.match(markdown, /v4\.3\.2/);
   assert.match(markdown, /React 18\.3\.1/);
-  assert.match(markdown, /4 个 critical/);
+  assert.match(markdown, /\| 4 \/ 18 \/ 32 \/ 1 \|/);
+  assert.match(markdown, /--omit=dev/);
   assert.match(markdown, /R01.*pending/);
 });
