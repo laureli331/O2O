@@ -114,17 +114,18 @@
       "kind": "technical-choice-and-risk",
       "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证。用户确认保留Webpack 5.91.0以遵守精确peer；未采用5.104.1覆盖。2026-11-02官方npm registry显示Taro稳定latest已到4.3.2，但CLI仍依赖download-git-repo ^3.0.2（该包latest仍为3.0.2），components稳定latest仍为4.3.1且依赖Swiper 11.1.15，4.3.2 runner仍精确peer webpack 5.91.0；追加核对发现4.3.2核心要求components/helper 4.3.2并依赖runtime 4.3.2，而三者精确稳定版本在本次npm registry查询均返回E404，已见components beta 4.3.2-beta.2则绑定同号beta Taro/runtime，不作为稳定替代。因此新稳定元数据未解决已审查路径，且本次查询时无法形成全套稳定4.3.2锁，没有更新锁或采用该版本。2026-11-02另以官方Taro Vite runner 4.3.1做隔离对照：React 18.3.1/TS 5.9.3严格类型检查与144模块的weapp样例构建通过，候选不含Webpack，但引入Vite 4与网页Vite 8并存，仍保留Taro CLI模板下载链和Swiper，npm审计45项（4 critical）；未采用，R01仍pending。 2026-11-03追加Taro 4.3.2隔离候选：React/DOM/types 18.3.1、TS 5.9.3、Webpack 5.91.0满足当前版本约束；strict应用类型检查、依赖树和隔离weapp合成样例构建通过，但108个第三方声明文件有1,056条诊断；最新public npm audit为54个受影响包条目（4 critical/18 high/31 moderate/1 low），4.3.1对照为55条，仅stylus键消失，不能称作风险修复。候选未采用，R01仍pending。详见docs/sp01-taro-432-compatibility-20261103.json。",
+      "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证。用户确认保留Webpack 5.91.0以遵守精确peer；未采用5.104.1覆盖。2026-11-02官方npm registry显示Taro稳定latest已到4.3.2，但CLI仍依赖download-git-repo ^3.0.2（该包latest仍为3.0.2），components稳定latest仍为4.3.1且依赖Swiper 11.1.15，4.3.2 runner仍精确peer webpack 5.91.0；追加核对发现4.3.2核心要求components/helper 4.3.2并依赖runtime 4.3.2，而三者精确稳定版本在本次npm registry查询均返回E404，已见components beta 4.3.2-beta.2则绑定同号beta Taro/runtime，不作为稳定替代。因此新稳定元数据未解决已审查路径，且本次查询时无法形成全套稳定4.3.2锁，没有更新锁或采用该版本。2026-11-02另以官方Taro Vite runner 4.3.1做隔离对照：React 18.3.1/TS 5.9.3严格类型检查与144模块的weapp样例构建通过，候选不含Webpack，但引入Vite 4与网页Vite 8并存，仍保留Taro CLI模板下载链和Swiper，npm审计45项（4 critical）；未采用，R01仍pending。 2026-11-03追加Taro 4.3.2隔离候选：React/DOM/types 18.3.1、TS 5.9.3、Webpack 5.91.0满足当前版本约束；strict应用类型检查、依赖树和隔离weapp合成样例构建通过，但108个第三方声明文件有1,056条诊断；最新public npm audit为54个受影响包条目（4 critical/18 high/31 moderate/1 low），4.3.1对照为55条，仅stylus键消失，不能称作风险修复。候选未采用，R01仍pending。详见docs/sp01-taro-432-compatibility-20261103.json。 2026-11-03独立临时副本将合成页改为实际引用Taro Swiper/SwiperItem并执行weapp构建，Webpack图137模块、0错误/警告、0个swiper npm模块，WXML含原生swiper与swiper-item；本机Taro包源码显示H5 Stencil实现会导入swiper/bundle，而weapp插件映射到原生标签。该结果只限隔离合成页，不证明正式产品包；不做Swiper版本覆盖，R01仍pending。",
       "evidence": "docs/sp01-r01-registry-audit-20261101.json",
       "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
       "residualRiskReview": "docs/sp01-r01-residual-risk-20261031.md",
       "registryAuditEvidence": "docs/sp01-r01-registry-audit-20261101.json",
       "latestRegistryFollowupEvidence": "docs/sp01-r01-registry-follow-up-20261102.json",
       "viteRunnerComparisonEvidence": "docs/sp01-taro-vite-runner-comparison-20261102.json",
-      "nextAction": "保留Taro 4.3.2为隔离候选，不冻结正式锁：其全量第三方声明检查仍失败，public npm audit仍有4个critical受影响包条目；只构建了隔离合成样例，未验证开发者工具、真机或产品。正式产品依赖冻结前继续审查这些失败和风险；实际产品建立后再按真实模块图复核。R01及SP01保持pending，不开始SP07。",
+      "nextAction": "保留Taro 4.3.2为隔离候选，不冻结正式锁。最新omit-dev审计仍有21个受影响包条目（3 critical），但独立合成WeChat Swiper页的137模块Webpack图未包含上游swiper npm模块，且WXML输出原生swiper标签；这只限样例，产品包可达性和其余审计风险仍待正式工程实际模块图与源码审查。完整第三方声明检查仍有1,056条诊断；开发者工具、真机或产品页均未验。R01及SP01保持pending，不开始SP07。",
       "vulnerabilityReproductionAuthorizedByThisReview": false,
       "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
-      "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json"
+      "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
+      "latestTaro432WeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture"
     },
     {
       "id": "R02",

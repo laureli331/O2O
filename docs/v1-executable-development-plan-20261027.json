@@ -2229,7 +2229,8 @@
           "acceptanceEvidence": false
         },
         "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
-        "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json"
+        "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
+        "latestTaro432WeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

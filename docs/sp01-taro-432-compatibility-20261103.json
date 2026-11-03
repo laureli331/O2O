@@ -157,12 +157,39 @@
       "devtoolsCompilationVerified": false,
       "realDeviceVerified": false,
       "productAcceptancePassed": false
+    },
+    "weappSwiperImportFixture": {
+      "command": "npm run build:weapp in an isolated temp copy with a synthetic page importing Swiper and SwiperItem",
+      "buildExitCode": 0,
+      "webpack": {
+        "moduleCount": 137,
+        "errorCount": 0,
+        "warningCount": 0,
+        "swiperPackageModuleCount": 0,
+        "taroComponentsPackageModuleCount": 0,
+        "weappComponentMappingModuleCount": 1
+      },
+      "generatedWxmlContainsNativeSwiperTags": true,
+      "outputContainsSwiperBundle": false,
+      "statsSha256": "2ecdf68c9e8cc124555318723f1c4255bc8231991957723ea9f6b6d79dacc014",
+      "installedSourceInspection": {
+        "taroComponentsVersion": "4.3.2",
+        "declaredSwiperDependency": "11.1.15",
+        "h5ImplementationImports": "swiper/bundle",
+        "h5ImplementationFile": "node_modules/@tarojs/components/dist/esm/swiper-59728a6c.js",
+        "weappSwiperMapping": "Swiper = 'swiper'",
+        "weappMappingFile": "node_modules/@tarojs/plugin-platform-weapp/dist/components-react.js",
+        "weappComponentsPath": "@tarojs/plugin-platform-weapp/dist/components-react"
+      },
+      "productBundleVerified": false,
+      "scopeLimit": "This is an isolated fixture proving only that its Taro Swiper/SwiperItem imports compile to native weapp tags without the upstream swiper package in this synthetic bundle. It does not establish reachability, exploitability, or security status for a real product bundle, H5 target, or other dependency path."
     }
   },
   "decision": {
     "candidateAdopted": false,
     "r01Status": "pending",
     "sp01Passed": false,
-    "reason": "The full third-party declaration check fails, the audit still reports four critical affected package entries, and only an isolated synthetic sample was built. This is not product or device acceptance evidence."
+    "reason": "The full third-party declaration check has 1,056 diagnostics across 108 files and the npm audits still report critical affected package entries. A separate isolated weapp fixture using Taro Swiper/SwiperItem emitted native tags without the upstream swiper npm module, but no product bundle exists to establish product-level reachability or remediate the remaining audit risks. The candidate remains isolated and R01/SP01 remain pending.",
+    "latestWeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture"
   }
 }

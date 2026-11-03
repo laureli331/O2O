@@ -35,8 +35,19 @@
 | `npm run build:weapp` | 退出码 0，编译约 3.47 秒；仅为隔离合成样例。 |
 | 产物清点 | 17 个文件，共 307,122 字节；未验证开发者工具编译、真机或产品验收。 |
 
+## 微信端 Swiper 依赖可达性抽查
+
+为把生产依赖审计中的 Swiper 条目与目标平台分开判断，我复用了隔离候选的安装依赖和构建配置，在系统临时目录复制候选工程；只把合成页改为导入并使用 `Swiper`、`SwiperItem` 后运行一次 `npm run build:weapp`。没有改仓库工程、锁文件、云资源或权限设置，也未新增依赖。
+
+- 安装源码确认 `@tarojs/components@4.3.2` 声明依赖 `swiper@11.1.15`，其 H5 Stencil 组件实现从 `swiper/bundle` 导入上游库（`dist/esm/swiper-59728a6c.js`）。
+- 同一安装的微信平台插件把 `Swiper` 映射为原生标签字符串 `swiper`，平台组件路径指向 `dist/components-react`（`@tarojs/plugin-platform-weapp/dist/components-react.js` 与 `dist/index.js`）。
+- 带有真实 Taro `Swiper`/`SwiperItem` 引用的隔离微信构建退出码为 0；Webpack 统计 137 个模块、0 错误、0 警告。统计图中 `swiper` npm 包模块为 0，`@tarojs/components` 包模块为 0，微信平台组件映射模块为 1。生成的 WXML 模板包含原生 `<swiper>` 与 `<swiper-item>`；输出 JS 未发现 `swiper/bundle` 或 `SwiperJS`。统计文件 SHA-256：`2ecdf68c9e8cc124555318723f1c4255bc8231991957723ea9f6b6d79dacc014`。
+- 这说明本次隔离 Taro 4.3.2 微信目标下，常规 `Swiper`/`SwiperItem` 使用没有把上游 `swiper` 包带入合成小程序产物；并说明 `npm audit --omit=dev` 的 Swiper 条目来自依赖树，不能单独证明微信包可达。它不是正式产品页/完整业务依赖图，也不证明 H5 目标、其他组件路径或最终产品包安全。
+
+因此不对 Swiper 做未经验证的版本覆盖，也不把该抽查写成漏洞修复。它是 R01 的平台范围证据；正式产品模块图、完整审计风险处理和第三方声明策略仍须复核。
+
 ## 处理决定
 
-该复核只说明 Taro 4.3.2 在当前锁定版本下可以构建隔离合成样例。它没有解决完整第三方声明诊断；全量 audit 有4个、omit-dev审计有3个 critical 受影响包条目，且本轮没有证明产品包可达性或风险已修复。候选不转为正式锁，不开始 SP07，不据此放行 SP01。R01 仍 pending；正式产品工程建立后须按实际模块图、开发者工具和真机证据重新评估。
+该复核只说明 Taro 4.3.2 在当前锁定版本下可以构建隔离合成样例。全量 audit 有4个、omit-dev审计有3个 critical 受影响包条目；Swiper 的独立合成微信组件图未加载该 npm 包，但产品级可达性和风险处理尚未完成。完整第三方声明检查也仍有诊断。候选不转为正式锁，不开始 SP07，不据此放行 SP01。R01 仍 pending；正式产品工程建立后须按实际模块图、开发者工具和真机证据重新评估。
 
 机器可读结果与精确命令数据见 [配套 JSON](sp01-taro-432-compatibility-20261103.json)。

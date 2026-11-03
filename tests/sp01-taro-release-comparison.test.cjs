@@ -74,6 +74,24 @@ test('production-only audits preserve exact counts and do not claim product expl
   assert.equal(production.directCriticalAdvisoriesObserved[0].url, 'https://github.com/advisories/GHSA-hmx5-qpq5-p643');
 });
 
+test('isolated weapp Swiper fixture records native mapping without claiming product security', () => {
+  const evidence = readJson(evidencePath);
+  const check = evidence.checks.weappSwiperImportFixture;
+
+  assert.equal(check.buildExitCode, 0);
+  assert.equal(check.webpack.moduleCount, 137);
+  assert.equal(check.webpack.errorCount, 0);
+  assert.equal(check.webpack.warningCount, 0);
+  assert.equal(check.webpack.swiperPackageModuleCount, 0);
+  assert.equal(check.webpack.taroComponentsPackageModuleCount, 0);
+  assert.equal(check.webpack.weappComponentMappingModuleCount, 1);
+  assert.equal(check.generatedWxmlContainsNativeSwiperTags, true);
+  assert.equal(check.outputContainsSwiperBundle, false);
+  assert.equal(check.productBundleVerified, false);
+  assert.match(check.scopeLimit, /isolated fixture/);
+  assert.match(check.statsSha256, /^[a-f0-9]{64}$/);
+});
+
 test('Taro 4.3.2 evidence links actual checks and keeps R01/SP01 pending', () => {
   const evidence = readJson(evidencePath);
   const review = readJson(path.join(root, 'docs/sp01-readiness-review-20261030.json'));
@@ -101,17 +119,21 @@ test('Taro 4.3.2 evidence links actual checks and keeps R01/SP01 pending', () =>
   assert.equal(r01.state, 'pending');
   assert.equal(r01.latestTaro432CompatibilityEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
   assert.equal(r01.latestTaro432ProductionAuditEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
+  assert.equal(r01.latestTaro432WeappReachabilityEvidence, 'docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture');
   assert.ok(review.sources.includes('docs/sp01-taro-432-compatibility-20261103.json'));
   assert.ok(review.sources.includes('docs/sp01-taro-432-compatibility-20261103.md'));
   assert.ok(review.sources.includes('tools/sp01-taro-431-baseline-audit/npm-audit-production-report-20261103.json'));
   assert.ok(review.sources.includes('tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json'));
   assert.equal(sp01.executionProgress.latestTaro432CompatibilityEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
   assert.equal(sp01.executionProgress.latestTaro432ProductionAuditEvidence, 'docs/sp01-taro-432-compatibility-20261103.json');
+  assert.equal(sp01.executionProgress.latestTaro432WeappReachabilityEvidence, 'docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture');
 
   const markdown = fs.readFileSync(path.join(root, 'docs/sp01-taro-432-compatibility-20261103.md'), 'utf8');
   assert.match(markdown, /v4\.3\.2/);
   assert.match(markdown, /React 18\.3\.1/);
   assert.match(markdown, /\| 4 \/ 18 \/ 32 \/ 1 \|/);
   assert.match(markdown, /--omit=dev/);
+  assert.match(markdown, /Swiper 依赖可达性抽查/);
+  assert.match(markdown, /原生 `<swiper>`/);
   assert.match(markdown, /R01.*pending/);
 });
