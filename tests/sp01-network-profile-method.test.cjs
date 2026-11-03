@@ -392,3 +392,66 @@ test('third Huawei 4G Cloudflare round preserves the 50.7 percent loss observati
   assert.equal(r04.state, 'pending');
   assert.equal(readiness.sp01Passed, false);
 });
+
+test('public Wi-Fi evidence keeps CloudBase round trips separate from Cloudflare link metrics and leaves R04 pending', () => {
+  const appPath = 'docs/sp01-network-public-wifi-app-round1-20261103.json';
+  const cloudflarePath = 'docs/sp01-network-cloudflare-public-wifi-20261103.json';
+  const app = require(`../${appPath}`);
+  const cloudflare = require(`../${cloudflarePath}`);
+  const appRecomputed = summarizeSamples(app.samples);
+  const screenshotPath = path.join(__dirname, '..', cloudflare.sourceImage);
+  const screenshot = fs.readFileSync(screenshotPath);
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  const method = fs.readFileSync(path.join(__dirname, '../docs/sp01-network-profile-method-20261031.md'), 'utf8');
+
+  assert.equal(app.samples.length, 30);
+  assert.ok(app.samples.every(sample => sample.ok));
+  assert.deepEqual(appRecomputed, app.userReportedSummary);
+  assert.deepEqual(appRecomputed, app.independentlyRecomputed);
+  assert.equal(app.networkCondition.networkTypeReportedByProbe, 'wifi');
+  assert.equal(app.networkCondition.publicAccessIndependentlyVerified, false);
+  assert.equal(app.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(app.deviceContext.modelIndependentlyVerified, false);
+  assert.equal(app.scope, 'application-roundtrip-not-link-rtt-or-packet-loss');
+  assert.equal(app.r04Passed, false);
+  assert.equal(app.sp01Passed, false);
+
+  assert.equal(cloudflare.target, 'speed.cloudflare.com');
+  assert.equal(cloudflare.scope, 'phone-to-Cloudflare, not phone-to-CloudBase');
+  assert.deepEqual({
+    downloadMbps: cloudflare.downloadMbps,
+    uploadMbps: cloudflare.uploadMbps,
+    latencyMs: cloudflare.latencyMs,
+    jitterMs: cloudflare.jitterMs,
+    packetLossPercent: cloudflare.packetLossPercent
+  }, { downloadMbps: 87.2, uploadMbps: 56.7, latencyMs: 111, jitterMs: 39.3, packetLossPercent: 0 });
+  assert.equal(cloudflare.networkCondition.wifiIndicatorVisibleInScreenshot, true);
+  assert.equal(cloudflare.networkCondition.cellularIndicatorVisibleInScreenshot, true);
+  assert.equal(cloudflare.networkCondition.publicAccessIndependentlyVerified, false);
+  assert.equal(cloudflare.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(cloudflare.deviceContext.modelIndependentlyVerifiedByScreenshot, false);
+  assert.equal(cloudflare.publicWifiStableRangeFrozen, false);
+  assert.equal(cloudflare.r04Passed, false);
+  assert.equal(cloudflare.sp01Passed, false);
+  assert.deepEqual([...screenshot.subarray(0, 2)], [0xff, 0xd8]);
+  assert.equal(crypto.createHash('sha256').update(screenshot).digest('hex').toUpperCase(), cloudflare.sourceImageSha256);
+  assert.notEqual(cloudflare.scope, app.scope);
+
+  assert.equal(r04.latestPublicWifiAppSampleEvidence, appPath);
+  assert.equal(r04.latestPublicWifiCloudflareEvidence, cloudflarePath);
+  assert.equal(r04.publicWifiEvidence.publicAccessIndependentlyVerified, false);
+  assert.equal(r04.publicWifiEvidence.stableRangeFrozen, false);
+  assert.ok(r04.evidence.split('; ').includes(appPath));
+  assert.ok(r04.evidence.split('; ').includes(cloudflarePath));
+  assert.ok(r04.evidence.split('; ').includes(cloudflare.sourceImage));
+  assert.ok(readiness.sources.includes(appPath));
+  assert.ok(readiness.sources.includes(cloudflarePath));
+  assert.ok(readiness.sources.includes(cloudflare.sourceImage));
+  assert.equal(r04.state, 'pending');
+  assert.equal(readiness.sp01Passed, false);
+  assert.match(method, /公共\/免费 Wi-Fi 请求场景/);
+  assert.match(method, /Cloudflare链路指标与CloudBase应用往返分开/);
+  assert.match(method, /不冻结公共 Wi-Fi 稳定范围/);
+  assert.match(method, /R04 与 SP01 仍待完成/);
+});

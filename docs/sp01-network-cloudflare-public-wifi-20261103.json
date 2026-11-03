@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R04",
+  "sampleType": "reported-public-wifi-scenario-phone-to-cloudflare-speed-test",
+  "source": "User-provided Cloudflare Speed Test screenshot submitted with the public Wi-Fi scenario sample; screenshot retained in the repository.",
+  "sourceImage": "docs/evidence/sp01-network-cloudflare-public-wifi-20261103.jpg",
+  "sourceImageSha256": "09C147183ED832EA150E21ABB67C484F2FB52E165BC7CDAC4855D5377AA91920",
+  "deviceContext": {
+    "manufacturer": "not independently verified",
+    "model": "not independently verified",
+    "modelIndependentlyVerifiedByScreenshot": false
+  },
+  "networkCondition": {
+    "scenarioContext": "Submitted in response to a request for public/free Wi-Fi evidence; access point type and actual default route are not independently verified.",
+    "wifiIndicatorVisibleInScreenshot": true,
+    "cellularIndicatorVisibleInScreenshot": true,
+    "cellularIndicatorLabelInScreenshot": "4G",
+    "publicAccessIndependentlyVerified": false,
+    "pakomoOrVpnState": "unknown"
+  },
+  "reportedLocalTime": "15:29:39",
+  "target": "speed.cloudflare.com",
+  "scope": "phone-to-Cloudflare, not phone-to-CloudBase",
+  "downloadMbps": 87.2,
+  "uploadMbps": 56.7,
+  "throughputDisplayLabel": "90th percentile",
+  "latencyMs": 111,
+  "downloadLatencyMs": 135,
+  "uploadLatencyMs": 150,
+  "jitterMs": 39.3,
+  "downloadJitterMs": 59.5,
+  "uploadJitterMs": 87.4,
+  "packetLossPercent": 0,
+  "networkQualityStars": {
+    "streaming": "3/5",
+    "gaming": "2/5",
+    "videoCalls": "2/5"
+  },
+  "independentRoundsInReportedPublicWifiScenario": 1,
+  "publicWifiStableRangeFrozen": false,
+  "weakNetworkInjectionVerified": false,
+  "comparisonNote": "Keep separate from the same-turn sp01IdentityProbe application-roundtrip report. Cloudflare and CloudBase are different targets and metrics; screenshot indicators alone do not establish which access point or route carried the test.",
+  "interpretation": "One Cloudflare result in the reported public-Wi-Fi scenario shows the listed link measurements. The screenshot displays both Wi-Fi and 4G indicators; it does not independently identify the public access point, device, default route, or Pakomo/VPN state. Do not treat its 0% packet-loss display as zero loss on CloudBase or as a stable public-Wi-Fi profile.",
+  "r04Passed": false,
+  "sp01Passed": false
+}
