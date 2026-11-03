@@ -1,0 +1,8 @@
+{
+  "dependencies": { "@babel/runtime": "7.29.10" },
+  "devDependencies": { "@babel/core": "7.29.7", "postcss": "8.5.32" },
+  "overrides": {
+    "schema-utils@^4.0.0": "4.3.3",
+    "glob@>=10.2.0 <10.5.0": "10.5.0"
+  }
+}

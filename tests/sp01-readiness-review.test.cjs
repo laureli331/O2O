@@ -638,7 +638,7 @@ test('SP01 review preserves gates, source files and historical evidence boundari
   assert.deepEqual(cloudSnapshot.environment.functions, [{ name: 'sp01IdentityProbe', status: 'Active', runtime: 'Nodejs16.13', timeoutSeconds: 3 }]);
   assert.equal(cloudSnapshot.query.invokedFunction, false);
   assert.equal(cloudSnapshot.query.cloudWrites, false);
-  assert.equal(review.updatedAt, '2026-11-02');
+  assert.equal(review.updatedAt, '2026-11-03');
   assert.deepEqual(review.devicePowerSettingsObservation, {
     observedAt: '2026-11-02',
     device: 'HUAWEI SEA-AL10 / Android 10',

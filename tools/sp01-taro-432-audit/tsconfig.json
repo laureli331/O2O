@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "types": ["node", "@tarojs/taro"],
+    "lib": ["ES2020", "DOM"]
+  },
+  "include": ["src", "config", "types"]
+}

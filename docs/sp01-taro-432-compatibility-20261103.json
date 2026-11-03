@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R01",
+  "scope": "isolated-candidate-compatibility-only",
+  "sources": {
+    "officialRelease": "https://github.com/NervJS/taro/releases/tag/v4.3.2",
+    "previousRelease": "https://github.com/NervJS/taro/releases/tag/v4.3.1",
+    "candidateManifest": "tools/sp01-taro-432-audit/package.json",
+    "candidateLock": "tools/sp01-taro-432-audit/package-lock.json",
+    "baselineAudit": "tools/sp01-taro-431-baseline-audit/npm-audit-public-report-20261103.json",
+    "candidateAudit": "tools/sp01-taro-432-audit/npm-audit-public-report-20261103.json"
+  },
+  "reuseSurvey": {
+    "internal": "Reused the existing isolated SP01 Taro sample shape and type-check scripts; no production page or SP07 project was created.",
+    "official": "Reviewed the official Taro 4.3.2 release and installed @tarojs/cli 4.3.2 default template. The candidate configuration and synthetic page remain adapted from the already-audited 4.3.1 template so this test isolates the toolchain upgrade. The default 4.3.2 template was not copied because it adds optional sample/platform configuration and includes PropsWithChildren<any>, conflicting with the project no-any rule.",
+    "thirdParty": "No additional third-party library was introduced. Taro package metadata and installed source were inspected; sampled CLI and webpack runner packages declare MIT and Node >=18. The exact webpack runner peer is webpack 5.91.0.",
+    "decision": "Keep as a reversible local comparison only. Do not freeze for the formal app until remaining type and security risks are reviewed."
+  },
+  "versionMatrix": {
+    "taroFamily": "4.3.2",
+    "react": "18.3.1",
+    "reactDom": "18.3.1",
+    "reactTypes": "18.3.1",
+    "reactDomTypes": "18.3.1",
+    "typescript": "5.9.3",
+    "webpack": "5.91.0",
+    "nodeTested": "20.19.3",
+    "npmTested": "10.8.2",
+    "runnerWebpackPeer": "5.91.0"
+  },
+  "publicRegistryAudit": {
+    "registry": "https://registry.npmjs.org",
+    "date": "2026-11-03",
+    "comparisonUnit": "npm audit affected package entries and metadata severity totals; not unique advisories, exploit counts, or product vulnerabilities",
+    "baselineTaro": "4.3.1",
+    "baseline": {
+      "affectedPackageEntries": 55,
+      "severity": {
+        "low": 1,
+        "moderate": 32,
+        "high": 18,
+        "critical": 4
+      },
+      "productionDependencies": 479,
+      "totalDependencies": 1230
+    },
+    "candidateTaro": "4.3.2",
+    "candidate": {
+      "affectedPackageEntries": 54,
+      "severity": {
+        "low": 1,
+        "moderate": 31,
+        "high": 18,
+        "critical": 4
+      },
+      "productionDependencies": 479,
+      "totalDependencies": 1230
+    },
+    "removedAffectedPackageKeys": [
+      "stylus"
+    ],
+    "addedAffectedPackageKeys": [],
+    "reviewedCorePackageSeveritiesUnchanged": [
+      "@tarojs/cli",
+      "@tarojs/components",
+      "@tarojs/webpack5-runner",
+      "adm-zip",
+      "decompress",
+      "download-git-repo",
+      "git-clone",
+      "swiper"
+    ],
+    "riskRemediationClaimed": false
+  },
+  "checks": {
+    "appStrictTypecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "result": "Application TS/TSX strict check passed; own declaration inventory was empty and no declaration compiler ran."
+    },
+    "ownDeclarationInventory": {
+      "exitCode": 0,
+      "declarationCount": 0,
+      "compilerExecuted": false
+    },
+    "vendorDeclarationFullTree": {
+      "command": "npm run typecheck:vendor",
+      "npmScriptExitCode": 2,
+      "typescriptExitCode": 2,
+      "diagnosticCount": 1056,
+      "declarationFileCount": 108,
+      "skipLibCheck": false,
+      "passed": false
+    },
+    "dependencyTree": {
+      "command": "npm ls --all --depth=0",
+      "exitCode": 0,
+      "result": "No dependency mismatches reported."
+    },
+    "weappBuild": {
+      "command": "npm run build:weapp",
+      "exitCode": 0,
+      "compileSeconds": 3.47,
+      "scope": "isolated synthetic sample only"
+    },
+    "artifacts": {
+      "command": "node inspect-artifacts.cjs",
+      "fileCount": 17,
+      "totalBytes": 307122,
+      "devtoolsCompilationVerified": false,
+      "realDeviceVerified": false,
+      "productAcceptancePassed": false
+    }
+  },
+  "decision": {
+    "candidateAdopted": false,
+    "r01Status": "pending",
+    "sp01Passed": false,
+    "reason": "The full third-party declaration check fails, the audit still reports four critical affected package entries, and only an isolated synthetic sample was built. This is not product or device acceptance evidence."
+  }
+}

@@ -1,0 +1,7 @@
+node_modules/
+.npm-cache/
+dist/
+.taro/
+*.log
+.swc/
+npm-audit-public-stderr-*.txt

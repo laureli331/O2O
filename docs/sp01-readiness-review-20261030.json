@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-30",
-  "updatedAt": "2026-11-02",
+  "updatedAt": "2026-11-03",
   "task": "SP01",
   "status": "in-progress",
   "scope": "preparation-review-not-product-acceptance",
@@ -52,7 +52,12 @@
     "docs/sp01-network-huawei-pakomo-live-weak-diagnostic-20261102.json",
     "docs/sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json",
     "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-top-20261102.png",
-    "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-summary-20261102.png"
+    "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-summary-20261102.png",
+    "docs/sp01-taro-432-compatibility-20261103.json",
+    "docs/sp01-taro-432-compatibility-20261103.md",
+    "tools/sp01-taro-431-baseline-audit/README.md",
+    "tools/sp01-taro-431-baseline-audit/npm-audit-public-report-20261103.json",
+    "tools/sp01-taro-432-audit/npm-audit-public-report-20261103.json"
   ],
   "knownFacts": {
     "targetAppId": "wx2414399d423dfb65",
@@ -107,15 +112,16 @@
       "kind": "technical-choice-and-risk",
       "state": "pending",
       "topic": "Taro exact dependency combination",
-      "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证。用户确认保留Webpack 5.91.0以遵守精确peer；未采用5.104.1覆盖。2026-11-02官方npm registry显示Taro稳定latest已到4.3.2，但CLI仍依赖download-git-repo ^3.0.2（该包latest仍为3.0.2），components稳定latest仍为4.3.1且依赖Swiper 11.1.15，4.3.2 runner仍精确peer webpack 5.91.0；追加核对发现4.3.2核心要求components/helper 4.3.2并依赖runtime 4.3.2，而三者精确稳定版本在本次npm registry查询均返回E404，已见components beta 4.3.2-beta.2则绑定同号beta Taro/runtime，不作为稳定替代。因此新稳定元数据未解决已审查路径，且本次查询时无法形成全套稳定4.3.2锁，没有更新锁或采用该版本。2026-11-02另以官方Taro Vite runner 4.3.1做隔离对照：React 18.3.1/TS 5.9.3严格类型检查与144模块的weapp样例构建通过，候选不含Webpack，但引入Vite 4与网页Vite 8并存，仍保留Taro CLI模板下载链和Swiper，npm审计45项（4 critical）；未采用，R01仍pending。",
+      "known": "已采用局部维护候选用于当前SP01准备；2026-11-01通过官方npm registry刷新审计，当前48个受影响包条目（4 critical/13 high/31 moderate）、25个去重公告URL；--omit=dev仍有19条。10-30历史候选快照32条保留不覆盖。已按本机源码核对远程模板、Swiper原生映射、H5开发服务和必用编译链。隔离最小weapp样例构建成功，139项模块中0项名称匹配Swiper；CLI普通weapp构建虽载入模板下载依赖，但未调用模板抓取；Swiper与H5开发服务器未加载。隔离Webpack 5.112.2覆盖构建失败，5.104.1覆盖则通过shared/weapp/web合成检查，但偏离Taro runner精确peer 5.91.0且没有产品页面/交互验证。用户确认保留Webpack 5.91.0以遵守精确peer；未采用5.104.1覆盖。2026-11-02官方npm registry显示Taro稳定latest已到4.3.2，但CLI仍依赖download-git-repo ^3.0.2（该包latest仍为3.0.2），components稳定latest仍为4.3.1且依赖Swiper 11.1.15，4.3.2 runner仍精确peer webpack 5.91.0；追加核对发现4.3.2核心要求components/helper 4.3.2并依赖runtime 4.3.2，而三者精确稳定版本在本次npm registry查询均返回E404，已见components beta 4.3.2-beta.2则绑定同号beta Taro/runtime，不作为稳定替代。因此新稳定元数据未解决已审查路径，且本次查询时无法形成全套稳定4.3.2锁，没有更新锁或采用该版本。2026-11-02另以官方Taro Vite runner 4.3.1做隔离对照：React 18.3.1/TS 5.9.3严格类型检查与144模块的weapp样例构建通过，候选不含Webpack，但引入Vite 4与网页Vite 8并存，仍保留Taro CLI模板下载链和Swiper，npm审计45项（4 critical）；未采用，R01仍pending。 2026-11-03追加Taro 4.3.2隔离候选：React/DOM/types 18.3.1、TS 5.9.3、Webpack 5.91.0满足当前版本约束；strict应用类型检查、依赖树和隔离weapp合成样例构建通过，但108个第三方声明文件有1,056条诊断；最新public npm audit为54个受影响包条目（4 critical/18 high/31 moderate/1 low），4.3.1对照为55条，仅stylus键消失，不能称作风险修复。候选未采用，R01仍pending。详见docs/sp01-taro-432-compatibility-20261103.json。",
       "evidence": "docs/sp01-r01-registry-audit-20261101.json",
       "localMaintenanceCandidate": "docs/sp01-maintenance-candidate-20261030.json",
       "residualRiskReview": "docs/sp01-r01-residual-risk-20261031.md",
       "registryAuditEvidence": "docs/sp01-r01-registry-audit-20261101.json",
       "latestRegistryFollowupEvidence": "docs/sp01-r01-registry-follow-up-20261102.json",
       "viteRunnerComparisonEvidence": "docs/sp01-taro-vite-runner-comparison-20261102.json",
-      "nextAction": "用户已确认保留Webpack 5.91.0以符合Taro精确peer，不采用5.104.1覆盖；2026-11-02注册表复核显示Taro latest为4.3.2，但CLI下载器和Swiper路径仍在，runner仍精确peer webpack 5.91.0；components/helper/runtime精确4.3.2稳定包在本次查询中返回E404，不能混用beta/stable或更新现有锁。保持条件性构建工具风险。R01仍pending：尚无已验证的稳定Taro 4依赖组合解决所审查的公告路径，且当前没有产品包可做可达性复核。真实小程序页面建立后重跑锁审计并检查正式weapp模块图。不得把npm audit计数或样例构建误写成产品漏洞数/风险已修复。",
-      "vulnerabilityReproductionAuthorizedByThisReview": false
+      "nextAction": "保留Taro 4.3.2为隔离候选，不冻结正式锁：其全量第三方声明检查仍失败，public npm audit仍有4个critical受影响包条目；只构建了隔离合成样例，未验证开发者工具、真机或产品。正式产品依赖冻结前继续审查这些失败和风险；实际产品建立后再按真实模块图复核。R01及SP01保持pending，不开始SP07。",
+      "vulnerabilityReproductionAuthorizedByThisReview": false,
+      "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json"
     },
     {
       "id": "R02",

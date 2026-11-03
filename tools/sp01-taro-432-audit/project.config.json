@@ -1,0 +1,7 @@
+{
+  "appid": "touristappid",
+  "projectname": "SP01-TARO-BUILD-ONLY",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "dist/",
+  "setting": { "es6": true, "minified": true }
+}
