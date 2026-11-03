@@ -18,6 +18,8 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /不能确认具体参数已生效/);
   assert.match(source, /sp01-pakomo-current-device-snapshot-20261102\.json/);
   assert.match(source, /不能回溯证明六轮采样时 VPN/);
+  assert.match(source, /sp01-network-huawei-cloudflare-4g-20261103\.json/);
+  assert.match(source, /下载12\.7Mbps、上传15\.8Mbps/);
   assert.match(source, /R04 与 SP01 继续保持待完成/);
 });
 
@@ -49,7 +51,7 @@ test('Huawei reported-4g evidence retains raw samples and independently matches 
 
   const review = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
   assert.match(review, /华为探针报告4G.*30\/30.*P50 327ms.*P95 949ms.*最大1747ms/);
-  assert.match(review, /VPN\/Pakomo状态、精确时长和 LTE 链路指标未记录/);
+  assert.match(review, /VPN\/Pakomo状态和精确时长未记录/);
 });
 
 test('R04 records user-reported app-scope isolation without claiming measured weak-network effect', () => {
@@ -221,4 +223,53 @@ test('second Cloudflare round retains variable loss rather than replacing the fi
   assert.equal(first.packetLossPercent - second.packetLossPercent, 12.5);
   assert.equal(second.normalNetworkStableRangeFrozen, false);
   assert.equal(second.scope, first.scope);
+});
+
+test('Huawei cellular Cloudflare evidence is retained separately from the CloudBase 4G sample', () => {
+  const evidencePath = 'docs/sp01-network-huawei-cloudflare-4g-20261103.json';
+  const evidence = require(`../${evidencePath}`);
+  const appRoundtrip = require('../docs/sp01-network-huawei-cellular-4g-20261103.json');
+  const screenshotPath = path.join(__dirname, '..', evidence.sourceImage);
+  const screenshot = fs.readFileSync(screenshotPath);
+
+  assert.equal(evidence.target, 'speed.cloudflare.com');
+  assert.equal(evidence.scope, 'phone-to-Cloudflare, not phone-to-CloudBase');
+  assert.deepEqual({
+    downloadMbps: evidence.downloadMbps,
+    uploadMbps: evidence.uploadMbps,
+    latencyMs: evidence.latencyMs,
+    downloadLatencyMs: evidence.downloadLatencyMs,
+    uploadLatencyMs: evidence.uploadLatencyMs,
+    jitterMs: evidence.jitterMs,
+    downloadJitterMs: evidence.downloadJitterMs,
+    uploadJitterMs: evidence.uploadJitterMs,
+    packetLossPercent: evidence.packetLossPercent
+  }, {
+    downloadMbps: 12.7,
+    uploadMbps: 15.8,
+    latencyMs: 218,
+    downloadLatencyMs: 220,
+    uploadLatencyMs: 224,
+    jitterMs: 105,
+    downloadJitterMs: 269,
+    uploadJitterMs: 178,
+    packetLossPercent: 17.1
+  });
+  assert.equal(evidence.networkCondition.cellularIndicatorVisibleInScreenshot, true);
+  assert.equal(evidence.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(evidence.independentRoundsForThisDeviceAndAccess, 1);
+  assert.equal(evidence.stableCellularRangeFrozen, false);
+  assert.equal(evidence.r04Passed, false);
+  assert.equal(evidence.sp01Passed, false);
+  assert.deepEqual([...screenshot.subarray(0, 2)], [0xff, 0xd8]);
+  assert.notEqual(evidence.scope, appRoundtrip.scope);
+
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  assert.equal(r04.latestCellularCloudflareEvidence, evidencePath);
+  assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.ok(readiness.sources.includes(evidencePath));
+  assert.ok(r04.evidence.includes('sp01-network-huawei-cellular-4g-20261103.json'));
+  assert.equal(r04.state, 'pending');
+  assert.equal(readiness.sp01Passed, false);
 });

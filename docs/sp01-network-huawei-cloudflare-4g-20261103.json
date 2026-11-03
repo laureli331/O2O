@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R04",
+  "sampleType": "reported-cellular-4g-phone-to-cloudflare-speed-test",
+  "source": "user-provided Cloudflare Speed Test screenshot after the assistant could not open the browser; screenshot retained in the repository",
+  "sourceImage": "docs/evidence/sp01-network-huawei-cloudflare-4g-20261103.jpg",
+  "deviceContext": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10",
+    "source": "active-session Huawei backup-device context and immediately preceding ADB identification; model is not visible in the screenshot",
+    "modelIndependentlyVerifiedByScreenshot": false
+  },
+  "networkCondition": {
+    "accessReportedByScreenshot": "4g",
+    "cellularIndicatorVisibleInScreenshot": true,
+    "defaultNetworkIndependentlyVerifiedImmediatelyBeforeTest": "LTE cellular",
+    "pakomoOrVpnState": "unknown",
+    "profile": "not stated"
+  },
+  "reportedLocalTime": "13:48:35",
+  "target": "speed.cloudflare.com",
+  "scope": "phone-to-Cloudflare, not phone-to-CloudBase",
+  "downloadMbps": 12.7,
+  "uploadMbps": 15.8,
+  "throughputDisplayLabel": "90th percentile",
+  "latencyMs": 218,
+  "downloadLatencyMs": 220,
+  "uploadLatencyMs": 224,
+  "jitterMs": 105,
+  "downloadJitterMs": 269,
+  "uploadJitterMs": 178,
+  "packetLossPercent": 17.1,
+  "networkQualityStars": {
+    "streaming": "3/5",
+    "gaming": "2/5",
+    "videoCalls": "1/5"
+  },
+  "independentRoundsForThisDeviceAndAccess": 1,
+  "stableCellularRangeFrozen": false,
+  "weakNetworkInjectionVerified": false,
+  "comparisonNote": "Keep separate from the 2026-11-03 Huawei 4G sp01IdentityProbe application-roundtrip sample; Cloudflare and CloudBase are different targets and metrics.",
+  "interpretation": "One Cloudflare test round reports high packet loss and jitter on the 4G path. It does not establish a stable cellular range, CloudBase path behavior, weak-network injection, or zero loss for the separate 30/30 CloudBase calls.",
+  "r04Passed": false,
+  "sp01Passed": false
+}

@@ -14,6 +14,8 @@ Pakomo 已安装到华为备用机；此前用户报告一次仅微信单应用�
 
 2026-11-03 新增[华为探针报告为4G的样本](sp01-network-huawei-cellular-4g-20261103.json)：30次只读 `sp01IdentityProbe` 调用全部成功，独立复算 P50=327ms、最近秩 P95=949ms、最大1747ms。报告中的 `networkType` 为 `4g`；设备身份来自当时的华为备用机上下文，探针粘贴内容本身没有设备字段。该轮未记录 Pakomo/VPN 状态、配置档、精确运行时长或单调时钟，也没有独立测量蜂窝链路 RTT、吞吐、抖动和丢包。因此只作为应用层蜂窝网络诊断样本，不证明弱网注入、生效参数、链路质量或稳定范围；R04 与 SP01 仍待完成。
 
+同日新增[华为备用机 4G Cloudflare 测速截图](sp01-network-huawei-cloudflare-4g-20261103.json)：单轮显示下载12.7Mbps、上传15.8Mbps、延迟218ms（下载220ms、上传224ms）、抖动105ms（下载269ms、上传178ms）、丢包17.1%；截图网络评分为流媒体3/5、游戏2/5、视频通话1/5。截图可见4G标记；设备型号 SEA-AL10 来自本轮活跃设备上下文，截图未显示型号。该读数是手机到 Cloudflare 的独立链路观察，与同日 `sp01IdentityProbe` 的30次应用层往返分开记录，不能相互替代或合并推断。它只是一轮，且 Pakomo/VPN 状态未知；不能冻结稳定蜂窝网络范围或证明弱网注入。原图保存于 `docs/evidence/sp01-network-huawei-cloudflare-4g-20261103.jpg`。R04 与 SP01 仍待完成。
+
 回退：本文件仅记录测量方法，没有云端部署、文件写入或设置更改；若手机浏览器无法显示必要字段，保留失败观察并另选已验证工具。
 
 2026-11-02 的[华为设备当前状态快照](sp01-pakomo-current-device-snapshot-20261102.json)由只读 ADB 检查记录：Pakomo 包仍安装且进程运行；当时系统连接的是已验证 Wi-Fi，网络能力标记为 `NOT_VPN`，筛选后的 connectivity 输出中没有 VPN transport network agent。该快照只说明检查时的系统网络状态；不能回溯证明六轮采样时 VPN 或 Pakomo 配置状态，也不能证明其具体整形参数生效。检查没有启动/停止 VPN、改设备设置或调用 CloudBase。
