@@ -1053,7 +1053,8 @@
           "2026-11-03对Taro 4.3.2隔离候选复验：React/DOM/types18.3.1、TS5.9.3、Webpack5.91.0符合已确认约束；应用strict检查、依赖树和隔离weapp合成样例构建通过；108个第三方声明文件存在1,056条诊断，最新public npm audit仍有4个critical受影响包条目。候选未冻结，R01/SP01未通过，未进入SP07。详见docs/sp01-taro-432-compatibility-20261103.json。",
           "2026-11-03官方npm registry只读复核：@tarojs/components/helper/runtime 4.3.2稳定包均已发布；11-02 E404保留为历史时点，不再作为当前缺包结论。未安装依赖、未改manifest/lock、未运行构建、未改云端。见docs/sp01-r01-registry-refresh-20261103.json。",
           "2026-11-03 R01解压依赖互操作边界：隔离npm override实测download@7.1.0对维护版ESM解压器直接调用失败（TypeError）；测试专用.default适配仅通过一份本地良性ZIP样例。未执行完整Taro远程模板链或恶意归档测试，未改正式依赖/锁；R01/SP01仍pending、SP07未启动。详见docs/sp01-taro-decompress-interop-20261103.json。",
-          "2026-11-03 actual Gitee fetchTemplate clone=true at v4.0 commit c4cd3830794aa4e053d1c20e991d125f586cd1d9 matched all 15 template directories and 535 files; no .git metadata, zero decompress calls, license unknown/no adoption; no dependencies, project init, or cloud writes."
+          "2026-11-03 actual Gitee fetchTemplate clone=true at v4.0 commit c4cd3830794aa4e053d1c20e991d125f586cd1d9 matched all 15 template directories and 535 files; no .git metadata, zero decompress calls, license unknown/no adoption; no dependencies, project init, or cloud writes.",
+          "2026-11-03实际Gitee fetchTemplate抓取期间require并执行15个远程creator模块；固定提交静态审阅未发现明显副作用但不作为安全证明；来源tag未固定为不可变提交，未观察到签名校验，模板许可证未知且未采纳。R01/SP01仍pending。"
         ],
         "postRunTimeoutReadOnlyCloudRecheckBeforeTimeoutAdjustment": {
           "source": "wechatide-cli-read-only-after-user-run-timeout",
@@ -2241,7 +2242,9 @@
         "latestRegistryRefreshEvidence": "docs/sp01-r01-registry-refresh-20261103.json",
         "latestDecompressInteropEvidence": "docs/sp01-taro-decompress-interop-20261103.json",
         "latestTemplateFetchIntegrationSummary": "Installed Taro CLI fetchTemplate passed a benign 179-byte loopback ZIP and a separate local Git clone fixture; the clone matched content, removed .git metadata, invoked decompress zero times, and cleaned its temporary directory. actual Gitee fetchTemplate clone=true also passed: 15 template directories and 535 files matched with no mismatches. The Gitee repository license is unknown, so no template was adopted. No dependencies were installed and no project was initialized. Full interactive init, GitHub remote, malicious archive, security disposition, production audit, third-party declarations, and formal product reachability remain open.",
-        "latestActualGiteeTemplateFetchEvidence": "docs/sp01-taro-decompress-interop-20261103.json"
+        "latestActualGiteeTemplateFetchEvidence": "docs/sp01-taro-decompress-interop-20261103.json",
+        "latestRemoteTemplateCodeExecutionEvidence": "docs/sp01-taro-decompress-interop-20261103.json",
+        "latestRemoteTemplateCodeExecutionSummary": "2026-11-03 actual Gitee fetchTemplate 加载并执行15个creator模块；有限静态审阅未发现明显副作用，但v4.0不是不可变pin且没有观察到签名/提交固定校验。许可证未知、模板未采纳；不构成安全放行，R01/SP01仍pending。"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

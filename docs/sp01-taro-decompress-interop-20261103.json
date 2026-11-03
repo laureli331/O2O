@@ -155,13 +155,15 @@
     "productBuildOrDeviceTested": false,
     "cloudServiceUsed": false,
     "securityFindingResolved": false,
-    "actualGiteeRemoteTemplateFetchExecuted": true
+    "actualGiteeRemoteTemplateFetchExecuted": true,
+    "remoteTemplateCreatorModulesLoaded": true,
+    "remoteTemplateCreatorModulesStaticallyReviewed": true
   },
   "decision": {
     "r01Status": "pending",
     "sp01Passed": false,
     "sp07Started": false,
-    "nextAction": "Actual Gitee fetchTemplate clone=true integration passed at v4.0 commit c4cd3830794aa4e053d1c20e991d125f586cd1d9: all 15 template directories and 535 files matched with no .git metadata and zero decompress calls. The Gitee repository has no root license file, so license is unknown and no template was adopted. Full interactive taro init, GitHub remote path, malicious archive behavior, security disposition, formal product module reachability, full/production audit, and third-party declaration diagnostics remain open; do not copy the test-only adapter into formal dependencies."
+    "nextAction": "Actual Gitee fetchTemplate clone=true integration passed at v4.0 commit c4cd3830794aa4e053d1c20e991d125f586cd1d9: all 15 template directories and 535 files matched with no .git metadata and zero decompress calls. However, fetchTemplate required and evaluated 15 remote template_creator.js modules; bounded static review found no obvious shell/network/filesystem side effects at this commit, but v4.0 is not an immutable source pin and no signature enforcement was observed. The repository license is unknown, so no template was adopted. Full interactive taro init, GitHub remote path, malicious archive behavior, security disposition, formal product module reachability, full/production audit, and third-party declaration diagnostics remain open; do not copy the test-only adapter into formal dependencies or treat the template as security-cleared."
   },
   "references": [
     {
@@ -231,6 +233,38 @@
     "githubRemoteFetched": false,
     "maliciousArchiveTested": false,
     "cloudCalls": 0,
-    "databaseOrStorageWrites": 0
+    "databaseOrStorageWrites": 0,
+    "creatorModulesLoadedDuringFetch": 15,
+    "creatorCodeEvaluatedDuringFetch": true
+  },
+  "remoteTemplateCodeExecutionReview": {
+    "sourceRef": "v4.0",
+    "resolvedCommit": "c4cd3830794aa4e053d1c20e991d125f586cd1d9",
+    "sourceRefIsImmutableCommit": false,
+    "immutableCommitPinOrSignatureEnforcementObserved": false,
+    "fetchTemplateRequiresRemoteCreatorModules": true,
+    "sourceEvidence": "tools/sp01-taro-432-audit/node_modules/@tarojs/cli/dist/create/fetchTemplate.js:100-103,121-123",
+    "remoteCreatorFilesLoaded": 15,
+    "creatorFilesStaticallyReviewed": 15,
+    "creatorModulesImportOnlyBuiltinPath": true,
+    "observedTopLevelShellOrChildProcess": false,
+    "observedTopLevelNetworkCalls": false,
+    "observedTopLevelFilesystemAccess": false,
+    "staticReviewScope": "Read all 15 fixed-commit template_creator.js files and searched for shell/child-process, network, filesystem, and process.env markers. No obvious matching side-effect APIs were observed. This is a bounded static review, not a proof of safety.",
+    "fullInteractiveTaroInitExecuted": false,
+    "creatorHandlersInvoked": false,
+    "packageLifecycleHooks": [
+      {
+        "template": "ascf",
+        "hook": "prepare",
+        "command": "husky"
+      }
+    ],
+    "otherNpmInstallLifecycleHooksFound": false,
+    "dependenciesInstalled": false,
+    "npmLifecycleHooksExecuted": false,
+    "license": "unknown",
+    "adopted": false,
+    "securityConclusion": "Remote template JavaScript executes at fetch time because fetchTemplate requires the creator modules. No obvious side effect was identified in the bounded static review at this resolved commit, but the v4.0 ref is not an immutable pin and no signature or commit-pin enforcement was observed. Do not treat this as security clearance or adopt the template without license resolution, immutable source selection, and an explicit trust decision."
   }
 }

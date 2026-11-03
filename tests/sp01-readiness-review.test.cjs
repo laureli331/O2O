@@ -161,16 +161,43 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.equal(actualGitee.rootLicenseFilesFound, 0);
       assert.equal(actualGitee.repositoryLicense, 'unknown');
       assert.equal(actualGitee.adopted, false);
+      const creatorExecution = decompressInterop.remoteTemplateCodeExecutionReview;
+      assert.equal(creatorExecution.sourceRef, 'v4.0');
+      assert.equal(creatorExecution.resolvedCommit, actualGitee.sourceCommit);
+      assert.equal(creatorExecution.sourceRefIsImmutableCommit, false);
+      assert.equal(creatorExecution.fetchTemplateRequiresRemoteCreatorModules, true);
+      assert.equal(creatorExecution.remoteCreatorFilesLoaded, 15);
+      assert.equal(creatorExecution.creatorFilesStaticallyReviewed, 15);
+      assert.equal(creatorExecution.creatorModulesImportOnlyBuiltinPath, true);
+      assert.equal(creatorExecution.observedTopLevelShellOrChildProcess, false);
+      assert.equal(creatorExecution.observedTopLevelNetworkCalls, false);
+      assert.equal(creatorExecution.observedTopLevelFilesystemAccess, false);
+      assert.equal(creatorExecution.fullInteractiveTaroInitExecuted, false);
+      assert.equal(creatorExecution.creatorHandlersInvoked, false);
+      assert.deepEqual(creatorExecution.packageLifecycleHooks, [
+        { template: 'ascf', hook: 'prepare', command: 'husky' }
+      ]);
+      assert.equal(creatorExecution.dependenciesInstalled, false);
+      assert.equal(creatorExecution.npmLifecycleHooksExecuted, false);
+      assert.equal(creatorExecution.license, 'unknown');
+      assert.equal(creatorExecution.adopted, false);
+      assert.match(creatorExecution.securityConclusion, /Remote template JavaScript executes at fetch time/);
+      assert.match(creatorExecution.securityConclusion, /not an immutable pin/);
+      assert.equal(decompressInterop.scope.remoteTemplateCreatorModulesLoaded, true);
       assert.equal(decompressInterop.scope.templateFetchFunctionIntegrationExecuted, true);
       assert.equal(decompressInterop.scope.templateFetchCloneIntegrationExecuted, true);
       assert.equal(decompressInterop.scope.actualGiteeRemoteTemplateFetchExecuted, true);
       assert.equal(decompressInterop.decision.r01Status, 'pending');
       assert.equal(decompressInterop.decision.sp01Passed, false);
       assert.equal(item.latestDecompressInteropEvidence, 'docs/sp01-taro-decompress-interop-20261103.json');
+      assert.equal(item.latestRemoteTemplateCodeExecutionEvidence, 'docs/sp01-taro-decompress-interop-20261103.json');
+      assert.match(item.latestRemoteTemplateCodeExecutionSummary, /抓取时require并执行了15个远程creator模块/);
       assert.match(item.latestDecompressInteropSummary, /actual Gitee.*535 files/);
       assert.ok(review.sources.includes('docs/sp01-taro-decompress-interop-20261103.json'));
       assert.ok(review.sources.includes('docs/sp01-taro-decompress-interop-20261103.md'));
       assert.equal(planSp01.executionProgress.latestDecompressInteropEvidence, 'docs/sp01-taro-decompress-interop-20261103.json');
+      assert.equal(planSp01.executionProgress.latestRemoteTemplateCodeExecutionEvidence, 'docs/sp01-taro-decompress-interop-20261103.json');
+      assert.match(planSp01.executionProgress.latestRemoteTemplateCodeExecutionSummary, /加载并执行15个creator模块/);
       assert.match(planSp01.executionProgress.latestTemplateFetchIntegrationSummary, /actual Gitee.*535 files/);
       assert.match(item.latestDecompressInteropSummary, /local Git clone fixture/);
       assert.match(planSp01.executionProgress.latestTemplateFetchIntegrationSummary, /local Git clone fixture/);
@@ -183,6 +210,8 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.match(decompressInteropMarkdown, /未执行完整交互式 taro init 或恶意归档测试/);
       assert.match(decompressInteropMarkdown, /Gitee 默认源.*clone=true/);
       assert.match(decompressInteropMarkdown, /实际 Gitee.*535 个文件/);
+      assert.match(decompressInteropMarkdown, /抓取时执行远程模板 creator 代码/);
+      assert.match(decompressInteropMarkdown, /没有发现明显副作用.*仍不能作为安全放行/);
       assert.match(decompressInteropMarkdown, /许可证.*未知/);
     } else if (item.id === 'R03') {
       const capability = require('../docs/sp01-device-capability-20261030.json');

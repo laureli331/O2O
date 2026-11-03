@@ -24,6 +24,8 @@
 
 随后用安装版 Taro CLI 的真实 `fetchTemplate()` 从 Gitee `v4.0`（提交 `c4cd3830794aa4e053d1c20e991d125f586cd1d9`）执行 `clone=true`：15个顶层模板目录、535个文件均与源逐项匹配，零差异；输出不含 `.git` 元数据，解压调用0次，CLI临时目录已清理。仓库没有根许可证文件，许可证未知，因此没有采用模板。没有安装依赖、初始化项目或写入云端。完整交互式 `taro init`、GitHub远程路径、恶意归档安全测试、审计处置、第三方声明诊断和正式产品模块图仍待完成；R01/SP01保持pending，SP07未开始。详见[互操作边界记录](sp01-taro-decompress-interop-20261103.md)及[配套JSON](sp01-taro-decompress-interop-20261103.json)。
 
+后续复查确认 `fetchTemplate()` 抓取时会 `require()` 并求值15个远程 `template_creator.js`。对固定快照的有限静态审阅未发现明显副作用，但这不构成安全证明；`v4.0` 是可变 ref，未观察到 commit pin 或签名验证。模板清单含未执行的 `ascf` `prepare: husky` hook；没有安装依赖、运行 hook 或执行完整 `taro init`。许可证未知且没有采用模板，R01/SP01仍pending。
+
 ### 2026-11-02 Pakomo 弱网采样暂停（历史快照）与屏幕休眠处理
 
 本节前两段记录的是当时的预检状态，后续采样和设置变化以本节新增记录为准。预检时读取到屏幕超时600000毫秒、“USB供电时保持唤醒”原值为关闭；当时的采样准备操作结束后曾恢复原值0。

@@ -20,6 +20,7 @@
 - 2026-11-03 R01 模板抓取函数集成补充：安装版 CLI 的 `init → Project.create → fetchTemplates → fetchTemplate` 路径已从源码确认。GitHub 默认归档路径会进入受影响的解压依赖；Gitee 默认克隆路径走 git-clone、跳过该依赖。本机用隔离的127.0.0.1夹具调用安装版 `fetchTemplate()`，179字节合成ZIP内容匹配且临时目录已清理；无外网/云调用或数据写入。这没有运行完整交互式 `taro init`、远程GitHub下载或恶意ZIP，R01/SP01仍pending。详见[互操作记录](sp01-taro-decompress-interop-20261103.md)和[结构化结果](sp01-taro-decompress-interop-20261103.json)。
 - 同一模板抓取函数的 `clone=true` 分支随后使用临时本地 Git 仓库复验：模板文件匹配、输出移除 `.git`、decompress调用数为0、临时目录已确认清理；没有访问实际 Gitee 远程。故此只验证本地克隆实现，不证明 Gitee 网络可用或完整 `taro init` 通过。R01/SP01继续pending。
 - 2026-11-03 实际 Gitee 抓取补充：用安装版 Taro CLI 的真实 `fetchTemplate()` 从 Gitee `v4.0`（提交 `c4cd3830794aa4e053d1c20e991d125f586cd1d9`）执行 `clone=true`，15/15个模板目录、535/535个文件逐项匹配，零差异、无 `.git` 元数据、解压调用0次，CLI临时目录已清理。仓库未找到根许可证文件，许可证未知，因此没有采用模板。没有安装依赖、初始化项目或写入云数据库/存储；这不等于完整交互式 `taro init`、GitHub路径或恶意归档验证。R01/SP01仍pending，SP07未开始。详见[机器证据](sp01-taro-decompress-interop-20261103.json)及[复核记录](sp01-taro-decompress-interop-20261103.md)。
+- 同轮信任边界复核：抓取时 `fetchTemplate()` 通过 `require()` 加载并求值了15个远程 `template_creator.js`。固定提交文件的有限静态审阅未发现明显 shell/网络/文件系统副作用，但这不等于安全放行；引用为可变 `v4.0`，没有观察到不可变 commit pin 或签名验证。另见模板 `ascf` 有未执行的 `prepare: husky` hook；没有安装依赖或运行完整 `taro init`。模板许可证仍未知、未采用，R01/SP01保持pending。
 - 补充 `--omit=dev` 审计：基线与候选均为21个受影响包条目（3 critical/2 high/15 moderate/1 low），各479个生产依赖；该分类不证明产品包可达性或可利用性。原始报告及限制见[Taro复核记录](sp01-taro-432-compatibility-20261103.md)。
 - React网页候选已完成严格编译、类型负例、实验锁重放及Chrome最小入口加载/刷新；当前SP01依赖候选已获用户采用，但尚未最终冻结，也不要求现在先有正式后台页面。
 - 三台主机及一台备用手机的真实运行信息已登记，早期口述版本保留为历史；当前Chrome实测156.0.8078.73。
