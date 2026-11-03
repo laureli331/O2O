@@ -55,6 +55,8 @@
     "docs/evidence/sp01-network-huawei-pakomo-screen-sleep-follow-up-summary-20261102.png",
     "docs/sp01-taro-432-compatibility-20261103.json",
     "docs/sp01-taro-432-compatibility-20261103.md",
+    "docs/sp01-taro-432-maintenance-followup-20261103.json",
+    "docs/sp01-taro-432-maintenance-followup-20261103.md",
     "tools/sp01-taro-431-baseline-audit/README.md",
     "tools/sp01-taro-431-baseline-audit/npm-audit-public-report-20261103.json",
     "tools/sp01-taro-432-audit/npm-audit-public-report-20261103.json",
@@ -121,11 +123,13 @@
       "registryAuditEvidence": "docs/sp01-r01-registry-audit-20261101.json",
       "latestRegistryFollowupEvidence": "docs/sp01-r01-registry-follow-up-20261102.json",
       "viteRunnerComparisonEvidence": "docs/sp01-taro-vite-runner-comparison-20261102.json",
-      "nextAction": "保留Taro 4.3.2为隔离候选，不冻结正式锁。最新omit-dev审计仍有21个受影响包条目（3 critical），但独立合成WeChat Swiper页的137模块Webpack图未包含上游swiper npm模块，且WXML输出原生swiper标签；这只限样例，产品包可达性和其余审计风险仍待正式工程实际模块图与源码审查。完整第三方声明检查仍有1,056条诊断；开发者工具、真机或产品页均未验。R01及SP01保持pending，不开始SP07。",
+      "nextAction": "保留Taro 4.3.2为隔离候选，不冻结正式锁。2026-11-03维护跟进中，未加覆盖基线与四项临时覆盖候选的全量审计分别为54与51个受影响包条目（均4 critical）；--omit=dev均为21条（3 critical），生产审计没有变化。glob 10.5.0已被npm registry标记deprecated，第三方声明全检仍有1,056条诊断，因此不采纳候选。真实产品包可达性与剩余风险尚未完成审查；开发者工具、真机或产品页均未验。R01及SP01保持pending，不开始SP07。",
       "vulnerabilityReproductionAuthorizedByThisReview": false,
       "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
       "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
-      "latestTaro432WeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture"
+      "latestTaro432WeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture",
+      "latestMaintenanceFollowupEvidence": "docs/sp01-taro-432-maintenance-followup-20261103.json",
+      "latestMaintenanceFollowupSummary": "未加覆盖的Taro 4.3.2隔离基线54条全量审计，四项局部覆盖候选51条，均4 critical；生产审计两边均21条、3 critical。严格依赖安装、npm ls、应用strict类型检查、合成weapp构建及常规ZIP兼容检查通过；108个第三方声明文件仍有1,056条诊断。glob 10.5.0被registry标记deprecated，候选未采纳，R01/SP01仍pending。"
     },
     {
       "id": "R02",

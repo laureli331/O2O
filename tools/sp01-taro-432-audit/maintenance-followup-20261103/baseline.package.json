@@ -1,0 +1,44 @@
+{
+  "name": "sp01-taro-probe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Isolated compatibility audit of Taro 4.3.2 using the existing SP01 probe",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "typecheck": "npm run typecheck:app && npm run typecheck:own-declarations",
+    "typecheck:app": "tsc --noEmit --project tsconfig.app.json",
+    "typecheck:own-declarations": "node check-own-declarations.cjs",
+    "typecheck:vendor": "tsc --noEmit --project tsconfig.json"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.24.4",
+    "@tarojs/components": "4.3.2",
+    "@tarojs/helper": "4.3.2",
+    "@tarojs/plugin-platform-weapp": "4.3.2",
+    "@tarojs/runtime": "4.3.2",
+    "@tarojs/shared": "4.3.2",
+    "@tarojs/taro": "4.3.2",
+    "@tarojs/plugin-framework-react": "4.3.2",
+    "@tarojs/react": "4.3.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.24.4",
+    "@babel/preset-react": "7.24.1",
+    "@babel/plugin-transform-class-properties": "7.25.9",
+    "@tarojs/cli": "4.3.2",
+    "@tarojs/taro-loader": "4.3.2",
+    "@tarojs/webpack5-runner": "4.3.2",
+    "@types/node": "20.19.43",
+    "@types/react": "18.3.1",
+    "@types/react-dom": "18.3.1",
+    "babel-preset-taro": "4.3.2",
+    "postcss": "8.5.32",
+    "typescript": "5.9.3",
+    "webpack": "5.91.0"
+  }
+}

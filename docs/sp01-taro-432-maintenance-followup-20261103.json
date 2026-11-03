@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R01",
+  "scope": "isolated-candidate-compatibility-only",
+  "reuseSurvey": {
+    "internal": "Copied the existing isolated Taro 4.3.2 sample, checks, and archive fixture into a separate temporary candidate; did not alter the existing audit tree or create a product project.",
+    "official": "Kept the user-confirmed React 18.3.1, TypeScript 5.9.3, and exact Webpack 5.91.0 direction. Checked package metadata through the official npm registry; no new platform API or third-party feature library was introduced.",
+    "thirdParty": "Reviewed package versions, license, repository, registry metadata, install compatibility, and the required WeChat-target build. The registry marks glob 10.5.0 deprecated and says older versions contain public security issues fixed in the current version; this makes the tested pin unsuitable for long-term adoption.",
+    "decision": "Keep this reversible experiment as evidence only. Do not freeze the candidate lock or move it into a formal app."
+  },
+  "versionConstraints": {
+    "taroFamily": "4.3.2",
+    "react": "18.3.1",
+    "reactDom": "18.3.1",
+    "reactTypes": "18.3.1",
+    "reactDomTypes": "18.3.1",
+    "typescript": "5.9.3",
+    "webpack": "5.91.0",
+    "nodeTested": "20.19.3",
+    "npmTested": "10.8.2",
+    "strictPeerDependencies": true
+  },
+  "candidate": {
+    "baselineManifest": "tools/sp01-taro-432-audit/maintenance-followup-20261103/baseline.package.json",
+    "baselineLock": "tools/sp01-taro-432-audit/maintenance-followup-20261103/baseline.package-lock.json",
+    "manifest": "tools/sp01-taro-432-audit/maintenance-followup-20261103/candidate.package.json",
+    "lock": "tools/sp01-taro-432-audit/maintenance-followup-20261103/candidate.package-lock.json",
+    "experimentOverrides": {
+      "adm-zip@^0.5.12": "0.6.1",
+      "serialize-javascript@^6.0.2": "7.1.4",
+      "schema-utils@^4.0.0": "4.3.3",
+      "glob@>=10.2.0 <10.5.0": "10.5.0"
+    },
+    "initialStrictPeerFailure": "schema-utils 4.8.2 declared optional peer webpack ^5.112.0, conflicting with the required webpack 5.91.0. Pinning schema-utils 4.3.3 in the isolated candidate allowed strict peer resolution; this is compatibility evidence, not a risk-remediation claim.",
+    "lockPackageRecordsChanged": 18,
+    "adoptionStatus": "not-adopted"
+  },
+  "checks": {
+    "cleanInstall": {
+      "command": "npm ci --ignore-scripts --no-audit --no-fund --strict-peer-deps --registry=https://registry.npmjs.org",
+      "exitCode": 0,
+      "addedPackages": 1133,
+      "elapsedSecondsApprox": 33
+    },
+    "dependencyTree": {
+      "command": "npm ls --all --json",
+      "exitCode": 0,
+      "problems": []
+    },
+    "applicationTypecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "appStrictPassed": true,
+      "ownDeclarationCount": 0,
+      "ownDeclarationCompilerExecuted": false
+    },
+    "thirdPartyDeclarationTypecheck": {
+      "command": "npm run typecheck:vendor -- --pretty false",
+      "exitCode": 2,
+      "diagnostics": 1056,
+      "declarationFiles": 108,
+      "skipLibCheck": false
+    },
+    "weappBuild": {
+      "command": "npm run build:weapp",
+      "exitCode": 0,
+      "taro": "4.3.2",
+      "webpack": "5.91.0",
+      "syntheticSampleOnly": true
+    },
+    "archiveCompatibility": {
+      "candidateAdmZip": "0.6.1",
+      "fixtureGeneratorAdmZip": "0.5.18",
+      "passed": true,
+      "cases": [
+        "unicode path extraction",
+        "empty file extraction",
+        "overwrite behavior"
+      ],
+      "vulnerabilityReproductionPerformed": false,
+      "cloudChanged": false
+    }
+  },
+  "auditComparison": {
+    "registry": "https://registry.npmjs.org",
+    "date": "2026-11-03",
+    "unit": "npm audit affected package entries and severity totals; not unique advisories, exploitability, or product vulnerability counts",
+    "isolated432Baseline": {
+      "report": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-baseline-full.json",
+      "affectedPackageEntries": 54,
+      "severity": {
+        "low": 1,
+        "moderate": 31,
+        "high": 18,
+        "critical": 4
+      },
+      "dependencyEntries": 1230
+    },
+    "isolated432Candidate": {
+      "report": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-candidate-full.json",
+      "affectedPackageEntries": 51,
+      "severity": {
+        "low": 1,
+        "moderate": 32,
+        "high": 14,
+        "critical": 4
+      },
+      "dependencyEntries": 1224
+    },
+    "productionDependencyComparison": {
+      "baselineReport": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-baseline-production.json",
+      "candidateReport": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-candidate-production.json",
+      "baselineAffectedPackageEntries": 21,
+      "candidateAffectedPackageEntries": 21,
+      "baselineSeverity": {
+        "low": 1,
+        "moderate": 15,
+        "high": 2,
+        "critical": 3
+      },
+      "candidateSeverity": {
+        "low": 1,
+        "moderate": 15,
+        "high": 2,
+        "critical": 3
+      },
+      "riskRemediationClaimed": false
+    },
+    "comparisonBoundary": "This is an unmodified Taro 4.3.2 lock versus a local override candidate. It is separate from the already-recorded Taro 4.3.1-to-4.3.2 release comparison (55 to 54 affected package entries)."
+  },
+  "registryPackageReview": [
+    {
+      "name": "adm-zip",
+      "version": "0.6.1",
+      "license": "MIT",
+      "repository": "https://github.com/cthackers/adm-zip",
+      "registryModifiedDate": "2026-09-11",
+      "metadata": "https://registry.npmjs.org/adm-zip/0.6.1"
+    },
+    {
+      "name": "serialize-javascript",
+      "version": "7.1.4",
+      "license": "BSD-3-Clause",
+      "repository": "https://github.com/yahoo/serialize-javascript",
+      "registryModifiedDate": "2026-10-23",
+      "metadata": "https://registry.npmjs.org/serialize-javascript/7.1.4"
+    },
+    {
+      "name": "schema-utils",
+      "version": "4.3.3",
+      "license": "MIT",
+      "repository": "https://github.com/webpack/schema-utils",
+      "registryModifiedDate": "2026-10-31",
+      "metadata": "https://registry.npmjs.org/schema-utils/4.3.3"
+    },
+    {
+      "name": "glob",
+      "version": "10.5.0",
+      "license": "ISC",
+      "repository": "https://github.com/isaacs/node-glob",
+      "registryModifiedDate": "2026-10-28",
+      "deprecated": true,
+      "metadata": "https://registry.npmjs.org/glob/10.5.0"
+    }
+  ],
+  "evidenceArtifacts": {
+    "fullAuditBaseline": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-baseline-full.json",
+    "fullAuditCandidate": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-candidate-full.json",
+    "productionAuditBaseline": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-baseline-production.json",
+    "productionAuditCandidate": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-audit-candidate-production.json",
+    "dependencyTree": "tools/sp01-taro-432-audit/maintenance-followup-20261103/npm-ls-candidate.json",
+    "vendorDeclarationDiagnostics": "tools/sp01-taro-432-audit/maintenance-followup-20261103/vendor-typecheck.log",
+    "applicationTypecheckLog": "tools/sp01-taro-432-audit/maintenance-followup-20261103/typecheck.log",
+    "applicationTypecheckExitCode": "tools/sp01-taro-432-audit/maintenance-followup-20261103/typecheck.exit-code.txt",
+    "weappBuildLog": "tools/sp01-taro-432-audit/maintenance-followup-20261103/build-weapp.log",
+    "weappBuildExitCode": "tools/sp01-taro-432-audit/maintenance-followup-20261103/build-weapp.exit-code.txt",
+    "archiveCompatibilityLog": "tools/sp01-taro-432-audit/maintenance-followup-20261103/archive.log",
+    "archiveCompatibilityExitCode": "tools/sp01-taro-432-audit/maintenance-followup-20261103/archive.exit-code.txt"
+  },
+  "readinessDecision": {
+    "r01State": "pending",
+    "sp01Passed": false,
+    "sp07Started": false,
+    "reason": "The candidate is not adopted; glob 10.5.0 is deprecated, production audit results are unchanged, four critical full-audit entries remain, and third-party declaration checking still fails with 1,056 diagnostics. Product artifact reachability and remaining risk review are not established by this synthetic build."
+  },
+  "rollback": "Revert this evidence commit to remove the report and test; no formal project, cloud resource, phone setting, or existing audit directory was changed."
+}

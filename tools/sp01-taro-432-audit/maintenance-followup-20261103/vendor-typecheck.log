@@ -1,0 +1,1085 @@
+
+> sp01-taro-probe@1.0.0 typecheck:vendor
+> tsc --noEmit --project tsconfig.json --pretty false
+
+node_modules/@tarojs/components/types/Ad.d.ts(116,5): error TS7008: Member '1000' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(122,5): error TS7008: Member '1001' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(128,5): error TS7008: Member '1002' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(134,5): error TS7008: Member '1003' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(140,5): error TS7008: Member '1004' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(146,5): error TS7008: Member '1005' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(152,5): error TS7008: Member '1006' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(158,5): error TS7008: Member '1007' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Ad.d.ts(164,5): error TS7008: Member '1008' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/AnimationVideo.d.ts(41,15): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/AnimationVideo.d.ts(45,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/AnimationView.d.ts(31,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/ArCamera.d.ts(23,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/ArCamera.d.ts(27,12): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/ArCamera.d.ts(31,15): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/ArCamera.d.ts(35,16): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Audio.d.ts(79,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Audio.d.ts(81,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Audio.d.ts(83,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Audio.d.ts(85,7): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/AwemeData.d.ts(29,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Button.d.ts(3,38): error TS2307: Cannot find module 'react-native' or its corresponding type declarations.
+node_modules/@tarojs/components/types/Button.d.ts(335,5): error TS7008: Member 'default' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(337,5): error TS7008: Member 'mini' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(342,5): error TS7008: Member 'primary' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(344,5): error TS7008: Member 'default' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(346,5): error TS7008: Member 'warn' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(351,5): error TS7008: Member 'submit' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(353,5): error TS7008: Member 'reset' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(366,7): error TS7008: Member 'getPhoneNumber' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(368,7): error TS7008: Member 'openSetting' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(370,7): error TS7008: Member 'launchApp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(372,7): error TS7008: Member 'share' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(374,7): error TS7008: Member 'liveActivity' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(376,7): error TS7008: Member 'getPhoneNumberAndRiskLevel' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(382,7): error TS7008: Member 'contact' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(386,7): error TS7008: Member 'share' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(390,7): error TS7008: Member 'getPhoneNumber' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(395,7): error TS7008: Member 'getRealtimePhoneNumber' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(397,7): error TS7008: Member 'getUserInfo' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(401,7): error TS7008: Member 'launchApp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(403,7): error TS7008: Member 'openSetting' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(405,7): error TS7008: Member 'feedback' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(407,7): error TS7008: Member 'chooseAvatar' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(411,7): error TS7008: Member 'agreePrivacyAuthorization' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(416,7): error TS7008: Member '['getPhoneNumber|agreePrivacyAuthorization']' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(421,7): error TS7008: Member '['getRealtimePhoneNumber|agreePrivacyAuthorization']' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(426,7): error TS7008: Member '['getUserInfo|agreePrivacyAuthorization']' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(433,7): error TS7008: Member 'share' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(435,7): error TS7008: Member 'getAuthorize' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(437,7): error TS7008: Member 'contactShare' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(439,7): error TS7008: Member 'lifestyle' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(448,7): error TS7008: Member 'share' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(450,7): error TS7008: Member 'getUserInfo' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(454,7): error TS7008: Member 'launchApp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(456,7): error TS7008: Member 'openSetting' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(458,7): error TS7008: Member 'feedback' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(460,7): error TS7008: Member 'openGroupProfile' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(462,7): error TS7008: Member 'addFriend' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(464,7): error TS7008: Member 'addColorSign' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(466,7): error TS7008: Member 'openPublicProfile' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(468,7): error TS7008: Member 'addGroupApp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(470,7): error TS7008: Member 'shareMessageToFriend' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(477,7): error TS7008: Member 'share' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(479,7): error TS7008: Member 'getPhoneNumber' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(481,7): error TS7008: Member 'im' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(483,7): error TS7008: Member 'platformIm' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(485,7): error TS7008: Member 'navigateToVideoView' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(487,7): error TS7008: Member 'openAwemeUserProfile' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(489,7): error TS7008: Member 'openWebcastRoom' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(491,7): error TS7008: Member 'addCalendarEvent' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(493,7): error TS7008: Member 'addShortcut' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(495,7): error TS7008: Member 'joinGroup' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(497,7): error TS7008: Member 'privateMessage' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(499,7): error TS7008: Member 'authorizePrivateMessage' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(505,5): error TS7008: Member 'en' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(507,5): error TS7008: Member 'zh_CN' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(509,5): error TS7008: Member 'zh_TW' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(546,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(548,5): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Button.d.ts(550,5): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(61,5): error TS7008: Member 'normal' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(63,5): error TS7008: Member 'scanCode' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(68,5): error TS7008: Member 'low' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(70,5): error TS7008: Member 'medium' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(72,5): error TS7008: Member 'high' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(77,5): error TS7008: Member 'front' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(79,5): error TS7008: Member 'back' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(84,5): error TS7008: Member 'auto' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(86,5): error TS7008: Member 'on' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(88,5): error TS7008: Member 'off' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(90,5): error TS7008: Member 'torch' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(95,5): error TS7008: Member 'small' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(97,5): error TS7008: Member 'medium' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Camera.d.ts(99,5): error TS7008: Member 'large' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CommentDetail.d.ts(40,14): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/CommentDetail.d.ts(44,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/CommentDetail.d.ts(46,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+node_modules/@tarojs/components/types/CommentList.d.ts(52,20): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/CommentList.d.ts(56,16): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/CommentList.d.ts(60,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/CommentList.d.ts(62,1): error TS1046: Top-level declarations in .d.ts files must start with either a 'declare' or 'export' modifier.
+node_modules/@tarojs/components/types/CoverImage.d.ts(58,5): error TS7008: Member 'scaleToFill' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(60,5): error TS7008: Member 'aspectFit' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(62,5): error TS7008: Member 'aspectFill' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(64,5): error TS7008: Member 'widthFix' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(66,5): error TS7008: Member 'heightFix' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(68,5): error TS7008: Member 'top' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(70,5): error TS7008: Member 'bottom' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(72,5): error TS7008: Member 'center' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(74,5): error TS7008: Member 'left' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(76,5): error TS7008: Member 'right' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(78,5): error TS7008: Member ''top left'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(80,5): error TS7008: Member ''top right'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(82,5): error TS7008: Member ''bottom left'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/CoverImage.d.ts(84,5): error TS7008: Member ''bottom right'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Editor.d.ts(65,5): error TS7008: Member 'html' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Editor.d.ts(66,5): error TS7008: Member 'text' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Editor.d.ts(67,5): error TS7008: Member 'delta' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/FollowSwan.d.ts(17,25): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/FunctionalPageNavigator.d.ts(34,5): error TS7008: Member 'develop' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/FunctionalPageNavigator.d.ts(36,5): error TS7008: Member 'trial' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/FunctionalPageNavigator.d.ts(38,5): error TS7008: Member 'release' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/FunctionalPageNavigator.d.ts(43,5): error TS7008: Member 'loginAndGetUserInfo' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/FunctionalPageNavigator.d.ts(45,5): error TS7008: Member 'requestPayment' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/FunctionalPageNavigator.d.ts(47,5): error TS7008: Member 'chooseAddress' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(26,5): error TS7008: Member 'success' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(28,5): error TS7008: Member 'success_no_circle' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(30,5): error TS7008: Member 'info' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(32,5): error TS7008: Member 'warn' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(34,5): error TS7008: Member 'waiting' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(36,5): error TS7008: Member 'cancel' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(38,5): error TS7008: Member 'download' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(40,5): error TS7008: Member 'search' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(42,5): error TS7008: Member 'clear' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(44,5): error TS7008: Member 'circle' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Icon.d.ts(46,5): error TS7008: Member 'info_circle' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(96,5): error TS7008: Member 'scaleToFill' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(98,5): error TS7008: Member 'aspectFit' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(100,5): error TS7008: Member 'aspectFill' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(102,5): error TS7008: Member 'widthFix' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(104,5): error TS7008: Member 'heightFix' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(106,5): error TS7008: Member 'top' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(108,5): error TS7008: Member 'bottom' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(110,5): error TS7008: Member 'center' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(112,5): error TS7008: Member 'left' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(114,5): error TS7008: Member 'right' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(116,5): error TS7008: Member ''top left'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(118,5): error TS7008: Member ''top right'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(120,5): error TS7008: Member ''bottom left'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Image.d.ts(122,5): error TS7008: Member ''bottom right'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/InlinePaymentPanel.d.ts(37,22): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/InlinePaymentPanel.d.ts(41,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Input.d.ts(229,5): error TS7008: Member 'text' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(233,5): error TS7008: Member 'number' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(237,5): error TS7008: Member 'idcard' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(241,5): error TS7008: Member 'digit' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(245,5): error TS7008: Member ''safe-password'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(249,5): error TS7008: Member 'nickname' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(253,5): error TS7008: Member 'numberpad' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(257,5): error TS7008: Member 'digitpad' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(261,5): error TS7008: Member 'idcardpad' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(266,5): error TS7008: Member 'send' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(268,5): error TS7008: Member 'search' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(270,5): error TS7008: Member 'next' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(272,5): error TS7008: Member 'go' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Input.d.ts(274,5): error TS7008: Member 'done' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Lifestyle.d.ts(15,14): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Like.d.ts(56,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Like.d.ts(60,15): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Like.d.ts(64,12): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(149,5): error TS7008: Member 'live' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(151,5): error TS7008: Member 'RTC' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(156,5): error TS7008: Member 'vertical' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(158,5): error TS7008: Member 'horizontal' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(163,5): error TS7008: Member 'contain' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(165,5): error TS7008: Member 'fillCrop' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(170,5): error TS7008: Member 'speaker' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(172,5): error TS7008: Member 'ear' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(190,5): error TS7008: Member '2001' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(192,5): error TS7008: Member '2002' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(194,5): error TS7008: Member '2003' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(196,5): error TS7008: Member '2004' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(198,5): error TS7008: Member '2005' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(200,5): error TS7008: Member '2006' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(202,5): error TS7008: Member '2007' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(204,5): error TS7008: Member '2008' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(206,5): error TS7008: Member '2009' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(208,5): error TS7008: Member ''-2301'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(210,5): error TS7008: Member ''-2302'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(212,5): error TS7008: Member '2101' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(214,5): error TS7008: Member '2102' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(216,5): error TS7008: Member '2103' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(218,5): error TS7008: Member '2104' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(220,5): error TS7008: Member '2105' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(222,5): error TS7008: Member '2106' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(224,5): error TS7008: Member '2107' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(226,5): error TS7008: Member '2108' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(228,5): error TS7008: Member '3001' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(230,5): error TS7008: Member '3002' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(232,5): error TS7008: Member '3003' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePlayer.d.ts(234,5): error TS7008: Member '3005' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(243,5): error TS7008: Member 'vertical' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(245,5): error TS7008: Member 'horizontal' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(250,5): error TS7008: Member 'auto' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(252,5): error TS7008: Member 'enable' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(254,5): error TS7008: Member 'disable' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(259,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(261,5): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(263,5): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(265,5): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(267,5): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(269,5): error TS7008: Member '5' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(271,5): error TS7008: Member '6' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(273,5): error TS7008: Member '7' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(278,5): error TS7008: Member 'auto' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(280,5): error TS7008: Member 'media' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(282,5): error TS7008: Member 'voicecall' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(287,5): error TS7008: Member 'smooth' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(289,5): error TS7008: Member 'nature' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(294,5): error TS7008: Member 'standard' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(296,5): error TS7008: Member 'pink' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(298,5): error TS7008: Member 'nostalgia' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(300,5): error TS7008: Member 'blues' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(302,5): error TS7008: Member 'romantic' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(304,5): error TS7008: Member 'cool' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(306,5): error TS7008: Member 'fresher' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(308,5): error TS7008: Member 'solor' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(310,5): error TS7008: Member 'aestheticism' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(312,5): error TS7008: Member 'whitening' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(314,5): error TS7008: Member 'cerisered' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/LivePusher.d.ts(332,5): error TS7008: Member 'progress' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Login.d.ts(28,22): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Login.d.ts(32,17): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Lottie.d.ts(65,17): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Lottie.d.ts(69,18): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Lottie.d.ts(73,22): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Lottie.d.ts(77,20): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Lottie.d.ts(81,23): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Lottie.d.ts(85,23): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Lottie.d.ts(89,21): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Map.d.ts(261,5): error TS7008: Member 'panelId' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(262,5): error TS7008: Member 'layoutId' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(595,7): error TS7008: Member 'begin' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(596,7): error TS7008: Member 'end' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(600,7): error TS7008: Member 'gesture' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(602,7): error TS7008: Member 'update' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(606,7): error TS7008: Member 'drag' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(608,7): error TS7008: Member 'scale' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Map.d.ts(610,7): error TS7008: Member 'update' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/MovableView.d.ts(129,5): error TS7008: Member 'touch' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/MovableView.d.ts(131,5): error TS7008: Member ''touch-out-of-bounds'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/MovableView.d.ts(133,5): error TS7008: Member ''out-of-bounds'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/MovableView.d.ts(135,5): error TS7008: Member 'friction' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/MovableView.d.ts(137,5): error TS7008: Member '''' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(83,5): error TS7008: Member 'self' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(85,5): error TS7008: Member 'miniProgram' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(90,5): error TS7008: Member 'navigate' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(92,5): error TS7008: Member 'redirect' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(94,5): error TS7008: Member 'switchTab' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(96,5): error TS7008: Member 'reLaunch' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(98,5): error TS7008: Member 'navigateBack' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(100,5): error TS7008: Member 'exit' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(105,5): error TS7008: Member 'develop' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(107,5): error TS7008: Member 'trial' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Navigator.d.ts(109,5): error TS7008: Member 'release' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(24,5): error TS7008: Member ''-2'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(26,5): error TS7008: Member ''-1'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(28,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(30,5): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(32,5): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(34,5): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(36,5): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(38,5): error TS7008: Member '5' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OfficialAccount.d.ts(40,5): error TS7008: Member '6' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(50,5): error TS7008: Member 'groupName' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(52,5): error TS7008: Member 'userNickName' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(54,5): error TS7008: Member 'userAvatarUrl' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(56,5): error TS7008: Member 'userGender' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(58,5): error TS7008: Member 'userCity' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(60,5): error TS7008: Member 'userProvince' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(62,5): error TS7008: Member 'userCountry' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(64,5): error TS7008: Member 'userLanguage' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(69,5): error TS7008: Member 'en' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(71,5): error TS7008: Member 'zh_CN' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/OpenData.d.ts(73,5): error TS7008: Member 'zh_TW' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/PageContainer.d.ts(88,5): error TS7008: Member 'top' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/PageContainer.d.ts(90,5): error TS7008: Member 'bottom' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/PageContainer.d.ts(92,5): error TS7008: Member 'right' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/PageContainer.d.ts(94,5): error TS7008: Member 'center' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(2,49): error TS2307: Cannot find module 'react-native' or its corresponding type declarations.
+node_modules/@tarojs/components/types/Picker.d.ts(38,5): error TS7008: Member 'selector' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(40,5): error TS7008: Member 'multiSelector' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(42,5): error TS7008: Member 'time' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(44,5): error TS7008: Member 'date' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(46,5): error TS7008: Member 'region' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(232,5): error TS7008: Member 'year' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(234,5): error TS7008: Member 'month' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(236,5): error TS7008: Member 'day' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(296,5): error TS7008: Member 'province' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(298,5): error TS7008: Member 'city' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(300,5): error TS7008: Member 'region' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Picker.d.ts(302,5): error TS7008: Member ''sub-district'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/RichText.d.ts(69,5): error TS7008: Member 'ensp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/RichText.d.ts(71,5): error TS7008: Member 'emsp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/RichText.d.ts(73,5): error TS7008: Member 'nbsp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/RtcRoom.d.ts(76,19): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/RtcRoom.d.ts(80,13): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Slider.d.ts(102,5): error TS7008: Member 'value' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/StickyHeader.d.ts(21,24): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Swiper.d.ts(241,5): error TS7008: Member 'autoplay' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Swiper.d.ts(243,5): error TS7008: Member 'touch' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Swiper.d.ts(245,5): error TS7008: Member '''' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Swiper.d.ts(250,5): error TS7008: Member 'default' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Swiper.d.ts(252,5): error TS7008: Member 'linear' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Swiper.d.ts(254,5): error TS7008: Member 'easeInCubic' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Swiper.d.ts(256,5): error TS7008: Member 'easeOutCubic' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Swiper.d.ts(258,5): error TS7008: Member 'easeInOutCubic' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Tabs.d.ts(42,17): error TS2304: Cannot find name 'CommonEventFunction'.
+node_modules/@tarojs/components/types/Text.d.ts(43,5): error TS7008: Member 'ensp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Text.d.ts(45,5): error TS7008: Member 'emsp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Text.d.ts(47,5): error TS7008: Member 'nbsp' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Text.d.ts(51,5): error TS7008: Member 'clip' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Text.d.ts(53,5): error TS7008: Member 'fade' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Text.d.ts(55,5): error TS7008: Member 'ellipsis' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Text.d.ts(57,5): error TS7008: Member 'visible' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Textarea.d.ts(20,3): error TS2300: Duplicate identifier 'placeholderStyle'.
+node_modules/@tarojs/components/types/Textarea.d.ts(161,3): error TS2300: Duplicate identifier 'placeholderStyle'.
+node_modules/@tarojs/components/types/Video.d.ts(413,5): error TS7008: Member 'controlType' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(464,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(466,5): error TS7008: Member '90' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(468,5): error TS7008: Member ''-90'' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(473,5): error TS7008: Member 'contain' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(475,5): error TS7008: Member 'fill' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(477,5): error TS7008: Member 'cover' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(482,5): error TS7008: Member 'bottom' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(484,5): error TS7008: Member 'center' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(541,5): error TS7008: Member 'play' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(543,5): error TS7008: Member 'centerplay' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(545,5): error TS7008: Member 'mute' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(547,5): error TS7008: Member 'fullscreen' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(549,5): error TS7008: Member 'retry' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/Video.d.ts(551,5): error TS7008: Member 'mobilenetplay' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/View.d.ts(2,38): error TS2307: Cannot find module 'react-native' or its corresponding type declarations.
+node_modules/@tarojs/components/types/VoipRoom.d.ts(32,5): error TS7008: Member 'camera' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/VoipRoom.d.ts(33,5): error TS7008: Member 'video' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/VoipRoom.d.ts(37,5): error TS7008: Member 'front' implicitly has an 'any' type.
+node_modules/@tarojs/components/types/VoipRoom.d.ts(38,5): error TS7008: Member 'back' implicitly has an 'any' type.
+node_modules/@tarojs/helper/dist/babelRegister.d.ts(1,40): error TS7016: Could not find a declaration file for module '@babel/core'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/core/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__core` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/core';`
+node_modules/@tarojs/helper/dist/utils.d.ts(3,24): error TS7016: Could not find a declaration file for module '@babel/core'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/core/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__core` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/core';`
+node_modules/@tarojs/helper/dist/utils.d.ts(4,28): error TS7016: Could not find a declaration file for module '@babel/generator'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/generator/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__generator` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/generator';`
+node_modules/@tarojs/helper/dist/utils.d.ts(8,27): error TS7016: Could not find a declaration file for module 'resolve'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/resolve/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/resolve` if it exists or add a new declaration (.d.ts) file containing `declare module 'resolve';`
+node_modules/@tarojs/helper/dist/utils.d.ts(76,52): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(76,105): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(77,50): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(77,131): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(78,33): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(79,31): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(80,32): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(82,53): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(82,122): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/helper/dist/utils.d.ts(86,30): error TS7016: Could not find a declaration file for module '@babel/traverse'. 'E:/O2O/.local/sp01-taro-432-maintenance-candidate-20261103/node_modules/@babel/traverse/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/babel__traverse` if it exists or add a new declaration (.d.ts) file containing `declare module '@babel/traverse';`
+node_modules/@tarojs/runtime/dist/dsl/instance.d.ts(1,27): error TS2307: Cannot find module '@vue/runtime-core' or its corresponding type declarations.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(38,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(40,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(42,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(44,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(46,7): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(87,7): error TS7008: Member ''uint8'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(88,7): error TS7008: Member ''int8'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(89,7): error TS7008: Member ''uint32'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(90,7): error TS7008: Member ''int32'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/inference.d.ts(91,7): error TS7008: Member ''float32'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(8,7): error TS7008: Member 'v1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(10,7): error TS7008: Member 'v2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(17,7): error TS7008: Member 'v1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(19,7): error TS7008: Member 'v2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(34,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(36,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(38,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(74,7): error TS7008: Member '5' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(138,7): error TS7008: Member '8' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(175,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(228,7): error TS7008: Member '7' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(254,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(256,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(258,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(260,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(262,7): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(264,7): error TS7008: Member '5' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(266,7): error TS7008: Member '6' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(268,7): error TS7008: Member '7' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(270,7): error TS7008: Member '8' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(272,7): error TS7008: Member '9' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(274,7): error TS7008: Member '10' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(276,7): error TS7008: Member '11' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(278,7): error TS7008: Member '12' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(280,7): error TS7008: Member '13' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(282,7): error TS7008: Member '14' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(284,7): error TS7008: Member '15' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(286,7): error TS7008: Member '16' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(288,7): error TS7008: Member '17' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(290,7): error TS7008: Member '18' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(314,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(334,7): error TS7008: Member '6' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(360,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(399,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(622,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(624,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(626,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(628,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(658,7): error TS7008: Member 'v1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(660,7): error TS7008: Member 'v2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(675,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(677,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(679,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(688,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(690,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(699,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(701,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(710,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(712,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(721,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(723,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(732,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(734,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(758,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(760,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(787,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(789,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(791,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(808,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(810,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(812,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(843,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(845,7): error TS7008: Member '2000000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(847,7): error TS7008: Member '2000001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(849,7): error TS7008: Member '2000002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(851,7): error TS7008: Member '2000003' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(853,7): error TS7008: Member '2003000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(855,7): error TS7008: Member '2003001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ai/visionkit.d.ts(857,7): error TS7008: Member '2003002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/alipay/index.d.ts(33,7): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/alipay/index.d.ts(35,7): error TS7008: Member '9000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/alipay/index.d.ts(37,7): error TS7008: Member '8000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/alipay/index.d.ts(39,7): error TS7008: Member '4000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/alipay/index.d.ts(41,7): error TS7008: Member '6001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/alipay/index.d.ts(43,7): error TS7008: Member '6002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/alipay/index.d.ts(45,7): error TS7008: Member '6004' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/debug.d.ts(31,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/debug.d.ts(33,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/debug.d.ts(188,7): error TS7006: Parameter 'pageInstance' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/index.d.ts(83,5): error TS7010: 'preload', which lacks return-type annotation, implicitly has an 'any' return type.
+node_modules/@tarojs/taro/types/api/base/index.d.ts(94,5): error TS7010: 'preload', which lacks return-type annotation, implicitly has an 'any' return type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(116,7): error TS7008: Member 'navigation' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(118,7): error TS7008: Member 'render' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(120,7): error TS7008: Member 'script' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(125,7): error TS7008: Member 'appLaunch' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(127,7): error TS7008: Member 'route' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(129,7): error TS7008: Member 'firstRender' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(131,7): error TS7008: Member 'firstPaint' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(133,7): error TS7008: Member 'firstContentfulPaint' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(135,7): error TS7008: Member 'evaluateScript' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(149,9): error TS7008: Member 'navigation' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(151,9): error TS7008: Member 'render' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(153,9): error TS7008: Member 'script' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(183,7): error TS7008: Member 'font' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/performance.d.ts(185,7): error TS7008: Member 'image' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(59,7): error TS7008: Member 'portrait' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(61,7): error TS7008: Member 'landscape' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(151,7): error TS7008: Member 'dark' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(153,7): error TS7008: Member 'light' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(162,7): error TS7008: Member 'portrait' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(164,7): error TS7008: Member 'landscape' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(262,7): error TS7008: Member 'dark' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(264,7): error TS7008: Member 'light' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(273,7): error TS7008: Member 'portrait' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(275,7): error TS7008: Member 'landscape' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(373,7): error TS7008: Member 'dark' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(375,7): error TS7008: Member 'light' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(384,7): error TS7008: Member 'portrait' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(386,7): error TS7008: Member 'landscape' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(473,7): error TS7008: Member 'dark' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(475,7): error TS7008: Member 'light' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(511,7): error TS7008: Member 'authorized' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(513,7): error TS7008: Member 'denied' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/system.d.ts(515,7): error TS7008: Member ''not determined'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(65,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(67,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(69,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(71,7): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(76,7): error TS7008: Member 'default' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(78,7): error TS7008: Member 'nativeFunctionalized' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(80,7): error TS7008: Member 'browseOnly' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(82,7): error TS7008: Member 'embedded' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(105,7): error TS7008: Member 'light' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/app-event.d.ts(107,7): error TS7008: Member 'dark' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(47,9): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(49,9): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(51,9): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(53,9): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(58,9): error TS7008: Member 'default' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(60,9): error TS7008: Member 'nativeFunctionalized' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(62,9): error TS7008: Member 'browseOnly' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(64,9): error TS7008: Member 'embedded' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(112,9): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(114,9): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(116,9): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(118,9): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(123,9): error TS7008: Member 'default' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(125,9): error TS7008: Member 'nativeFunctionalized' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(127,9): error TS7008: Member 'browseOnly' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/base/weapp/life-cycle.d.ts(129,9): error TS7008: Member 'embedded' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(47,7): error TS7008: Member 'jpg' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(49,7): error TS7008: Member 'png' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(177,7): error TS7008: Member 'jpg' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(179,7): error TS7008: Member 'png' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1541,7): error TS7008: Member ''repeat'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1543,7): error TS7008: Member ''repeat-x'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1545,7): error TS7008: Member ''repeat-y'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1547,7): error TS7008: Member ''no-repeat'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1553,7): error TS7008: Member 'butt' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1555,7): error TS7008: Member 'round' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1557,7): error TS7008: Member 'square' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1562,7): error TS7008: Member 'bevel' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1564,7): error TS7008: Member 'round' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1566,7): error TS7008: Member 'miter' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1571,7): error TS7008: Member 'left' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1573,7): error TS7008: Member 'center' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1575,7): error TS7008: Member 'right' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1582,7): error TS7008: Member 'top' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1586,7): error TS7008: Member 'bottom' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1590,7): error TS7008: Member 'middle' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1594,7): error TS7008: Member 'normal' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1598,7): error TS7008: Member 'hanging' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1602,7): error TS7008: Member 'alphabetic' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/canvas/index.d.ts(1606,7): error TS7008: Member 'ideographic' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(233,9): error TS7008: Member 'text' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(234,9): error TS7008: Member 'arraybuffer' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(500,73): error TS2344: Type 'P' does not satisfy the constraint 'string | ArrayBuffer | IAnyObject'.
+  Type 'P' is not assignable to type 'ArrayBuffer'.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(500,112): error TS2344: Type 'R' does not satisfy the constraint 'string | ArrayBuffer | IAnyObject'.
+  Type 'R' is not assignable to type 'ArrayBuffer'.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(712,74): error TS2344: Type 'P' does not satisfy the constraint 'string | ArrayBuffer | IAnyObject'.
+  Type 'P' is not assignable to type 'ArrayBuffer'.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(712,113): error TS2344: Type 'R' does not satisfy the constraint 'string | ArrayBuffer | IAnyObject'.
+  Type 'R' is not assignable to type 'ArrayBuffer'.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1348,9): error TS7008: Member 'init' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1350,9): error TS7008: Member 'update' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1352,9): error TS7008: Member 'enqueue' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1354,9): error TS7008: Member 'dequeue' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1360,9): error TS7008: Member 'init' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1362,9): error TS7008: Member 'update' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1364,9): error TS7008: Member 'replace' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1366,9): error TS7008: Member 'add' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/cloud/index.d.ts(1368,9): error TS7008: Member 'remove' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-ble.d.ts(29,7): error TS7008: Member 'write' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-ble.d.ts(31,7): error TS7008: Member 'writeNoResponse' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-ble.d.ts(145,7): error TS7008: Member 'notification' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-ble.d.ts(146,7): error TS7008: Member 'indication' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-ble.d.ts(174,7): error TS7008: Member 'write' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-ble.d.ts(176,7): error TS7008: Member 'writeNoResponse' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-peripheral.d.ts(364,9): error TS7008: Member 'low' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-peripheral.d.ts(366,9): error TS7008: Member 'medium' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth-peripheral.d.ts(368,9): error TS7008: Member 'high' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(43,7): error TS7008: Member 'low' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(45,7): error TS7008: Member 'medium' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(47,7): error TS7008: Member 'high' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(65,7): error TS7008: Member 'central' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(67,7): error TS7008: Member 'peripheral' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(73,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(75,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(77,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(79,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/bluetooth.d.ts(81,7): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/calendar.d.ts(43,7): error TS7008: Member 'day' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/calendar.d.ts(45,7): error TS7008: Member 'week' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/calendar.d.ts(47,7): error TS7008: Member 'month' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/calendar.d.ts(49,7): error TS7008: Member 'year' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/compass.d.ts(46,7): error TS7008: Member 'high' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/compass.d.ts(48,7): error TS7008: Member 'medium' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/compass.d.ts(50,7): error TS7008: Member 'low' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/compass.d.ts(52,7): error TS7008: Member ''no-contact'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/compass.d.ts(54,7): error TS7008: Member 'unreliable' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/compass.d.ts(56,7): error TS7008: Member ''unknow ${value}'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/gyroscope.d.ts(31,7): error TS7008: Member 'game' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/gyroscope.d.ts(33,7): error TS7008: Member 'ui' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/gyroscope.d.ts(35,7): error TS7008: Member 'normal' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/iBeacon.d.ts(93,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/iBeacon.d.ts(95,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/iBeacon.d.ts(97,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/iBeacon.d.ts(99,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/memory.d.ts(17,7): error TS7008: Member '5' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/memory.d.ts(19,7): error TS7008: Member '10' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/memory.d.ts(21,7): error TS7008: Member '15' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/motion.d.ts(19,7): error TS7008: Member 'game' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/motion.d.ts(21,7): error TS7008: Member 'ui' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/motion.d.ts(23,7): error TS7008: Member 'normal' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/network.d.ts(55,7): error TS7008: Member 'wifi' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/network.d.ts(57,7): error TS7008: Member ''2g'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/network.d.ts(59,7): error TS7008: Member ''3g'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/network.d.ts(61,7): error TS7008: Member ''4g'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/network.d.ts(63,7): error TS7008: Member ''5g'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/network.d.ts(65,7): error TS7008: Member ''unknown'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/network.d.ts(67,7): error TS7008: Member ''none'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/nfc.d.ts(57,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/nfc.d.ts(59,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(36,7): error TS7008: Member 'barCode' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(38,7): error TS7008: Member 'qrCode' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(40,7): error TS7008: Member 'datamatrix' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(42,7): error TS7008: Member 'pdf417' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(47,7): error TS7008: Member 'QR_CODE' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(49,7): error TS7008: Member 'AZTEC' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(51,7): error TS7008: Member 'CODABAR' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(53,7): error TS7008: Member 'CODE_39' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(55,7): error TS7008: Member 'CODE_93' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(57,7): error TS7008: Member 'CODE_128' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(59,7): error TS7008: Member 'DATA_MATRIX' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(61,7): error TS7008: Member 'EAN_8' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(63,7): error TS7008: Member 'EAN_13' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(65,7): error TS7008: Member 'ITF' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(67,7): error TS7008: Member 'MAXICODE' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(69,7): error TS7008: Member 'PDF_417' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(71,7): error TS7008: Member 'RSS_14' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(73,7): error TS7008: Member 'RSS_EXPANDED' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(75,7): error TS7008: Member 'UPC_A' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(77,7): error TS7008: Member 'UPC_E' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(79,7): error TS7008: Member 'UPC_EAN_EXTENSION' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(81,7): error TS7008: Member 'WX_CODE' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/scan.d.ts(83,7): error TS7008: Member 'CODE_25' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/screen.d.ts(59,7): error TS7008: Member 'start' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/screen.d.ts(61,7): error TS7008: Member 'stop' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/screen.d.ts(81,7): error TS7008: Member 'on' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/screen.d.ts(83,7): error TS7008: Member 'off' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/device/sms.d.ts(24,58): error TS2724: 'TaroGeneral' has no exported member named 'CallbackResul'. Did you mean 'CallbackResult'?
+node_modules/@tarojs/taro/types/api/files/index.d.ts(90,7): error TS7008: Member 'doc' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(92,7): error TS7008: Member 'docx' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(94,7): error TS7008: Member 'xls' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(96,7): error TS7008: Member 'xlsx' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(98,7): error TS7008: Member 'ppt' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(100,7): error TS7008: Member 'pptx' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(102,7): error TS7008: Member 'pdf' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(507,7): error TS7008: Member 'ascii' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(508,7): error TS7008: Member 'base64' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(509,7): error TS7008: Member 'binary' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(510,7): error TS7008: Member 'hex' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(512,7): error TS7008: Member 'ucs2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(514,7): error TS7008: Member ''ucs-2'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(516,7): error TS7008: Member 'utf16le' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(518,7): error TS7008: Member ''utf-16le'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(519,7): error TS7008: Member ''utf-8'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(520,7): error TS7008: Member 'utf8' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(521,7): error TS7008: Member 'latin1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(525,7): error TS7008: Member 'a' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(526,7): error TS7008: Member 'ax' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(527,7): error TS7008: Member ''a+'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(528,7): error TS7008: Member ''ax+'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(529,7): error TS7008: Member 'as' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(530,7): error TS7008: Member ''as+'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(531,7): error TS7008: Member 'r' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(532,7): error TS7008: Member ''r+'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(533,7): error TS7008: Member 'w' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(534,7): error TS7008: Member 'wx' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(535,7): error TS7008: Member ''w+'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(536,7): error TS7008: Member ''wx+'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(775,9): error TS7008: Member 'ascii' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(776,9): error TS7008: Member 'base64' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(777,9): error TS7008: Member 'binary' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(778,9): error TS7008: Member 'hex' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(780,9): error TS7008: Member 'ucs2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(782,9): error TS7008: Member ''ucs-2'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(784,9): error TS7008: Member 'utf16le' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(786,9): error TS7008: Member ''utf-16le'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(787,9): error TS7008: Member ''utf-8'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(788,9): error TS7008: Member 'utf8' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(789,9): error TS7008: Member 'latin1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(1170,9): error TS7008: Member 'br' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/files/index.d.ts(1197,9): error TS7008: Member 'br' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/framework/index.d.ts(49,79): error TS2344: Type 'T' does not satisfy the constraint 'App'.
+node_modules/@tarojs/taro/types/api/location/index.d.ts(346,7): error TS7008: Member 'wgs84' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/location/index.d.ts(348,7): error TS7008: Member 'gcj02' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(74,7): error TS7008: Member ''auto'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(76,7): error TS7008: Member ''buildInMic'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(78,7): error TS7008: Member ''headsetMic'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(80,7): error TS7008: Member ''mic'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(82,7): error TS7008: Member ''camcorder'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(84,7): error TS7008: Member ''voice_communication'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(86,7): error TS7008: Member ''voice_recognition'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(384,7): error TS7008: Member '10001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(386,7): error TS7008: Member '10002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(388,7): error TS7008: Member '10003' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(390,7): error TS7008: Member '10004' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/audio.d.ts(392,7): error TS7008: Member ''-1'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/background-audio.d.ts(81,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/background-audio.d.ts(83,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/background-audio.d.ts(85,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/camera.d.ts(150,7): error TS7008: Member 'high' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/camera.d.ts(152,7): error TS7008: Member 'normal' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/camera.d.ts(154,7): error TS7008: Member 'low' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/camera.d.ts(156,7): error TS7008: Member 'original' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(105,7): error TS7008: Member ''up'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(107,7): error TS7008: Member ''up-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(109,7): error TS7008: Member ''down'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(111,7): error TS7008: Member ''down-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(113,7): error TS7008: Member ''left-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(115,7): error TS7008: Member ''right'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(117,7): error TS7008: Member ''right-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(119,7): error TS7008: Member ''left'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(171,7): error TS7008: Member 'original' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(173,7): error TS7008: Member 'compressed' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(178,7): error TS7008: Member 'album' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(180,7): error TS7008: Member 'camera' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(182,7): error TS7008: Member 'user' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(184,7): error TS7008: Member 'environment' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(272,7): error TS7008: Member 'all' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(274,7): error TS7008: Member 'video' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(276,7): error TS7008: Member 'image' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(278,7): error TS7008: Member 'file' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(282,7): error TS7008: Member 'video' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(284,7): error TS7008: Member 'image' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(286,7): error TS7008: Member 'file' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(309,7): error TS7008: Member ''1:1'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(311,7): error TS7008: Member ''3:4'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(313,7): error TS7008: Member ''4:3'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(315,7): error TS7008: Member ''4:5'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(317,7): error TS7008: Member ''5:4'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(319,7): error TS7008: Member ''9:16'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/image.d.ts(321,7): error TS7008: Member ''16:9'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/map.d.ts(36,5): error TS7010: 'moveAlong', which lacks return-type annotation, implicitly has an 'any' return type.
+node_modules/@tarojs/taro/types/api/media/map.d.ts(36,15): error TS7051: Parameter has a name but no type. Did you mean 'arg0: object'?
+node_modules/@tarojs/taro/types/api/media/media-recorder.d.ts(62,9): error TS7008: Member 'start' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/media-recorder.d.ts(64,9): error TS7008: Member 'stop' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/media-recorder.d.ts(66,9): error TS7008: Member 'pause' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/media-recorder.d.ts(68,9): error TS7008: Member 'resume' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/media-recorder.d.ts(70,9): error TS7008: Member 'timeupdate' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(80,7): error TS7008: Member ''auto'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(82,7): error TS7008: Member ''buildInMic'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(84,7): error TS7008: Member ''headsetMic'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(86,7): error TS7008: Member ''mic'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(88,7): error TS7008: Member ''camcorder'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(90,7): error TS7008: Member ''voice_communication'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(92,7): error TS7008: Member ''voice_recognition'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(97,7): error TS7008: Member 'mp3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(99,7): error TS7008: Member 'aac' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(101,7): error TS7008: Member 'wav' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(103,7): error TS7008: Member 'PCM' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(108,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(110,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(117,7): error TS7008: Member '8000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(121,7): error TS7008: Member '11025' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(125,7): error TS7008: Member '12000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(129,7): error TS7008: Member '16000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(133,7): error TS7008: Member '22050' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(137,7): error TS7008: Member '24000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(141,7): error TS7008: Member '32000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(145,7): error TS7008: Member '44100' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/recorder.d.ts(149,7): error TS7008: Member '48000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video-decoder.d.ts(74,9): error TS7008: Member 'start' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video-decoder.d.ts(76,9): error TS7008: Member 'stop' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video-decoder.d.ts(78,9): error TS7008: Member 'seek' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video-decoder.d.ts(80,9): error TS7008: Member 'bufferchange' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video-decoder.d.ts(82,9): error TS7008: Member 'ended' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video-processing.d.ts(71,7): error TS7008: Member 'audio' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video-processing.d.ts(73,7): error TS7008: Member 'video' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(71,7): error TS7008: Member 'up' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(73,7): error TS7008: Member 'down' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(75,7): error TS7008: Member 'left' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(77,7): error TS7008: Member 'right' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(79,7): error TS7008: Member ''up-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(81,7): error TS7008: Member ''down-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(83,7): error TS7008: Member ''left-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(85,7): error TS7008: Member ''right-mirrored'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(226,7): error TS7008: Member 'low' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(228,7): error TS7008: Member 'medium' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(230,7): error TS7008: Member 'high' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(279,7): error TS7008: Member 'back' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(281,7): error TS7008: Member 'front' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(285,7): error TS7008: Member 'album' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(287,7): error TS7008: Member 'camera' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(363,7): error TS7008: Member 'video' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(365,7): error TS7008: Member 'image' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(367,7): error TS7008: Member 'mix' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(371,7): error TS7008: Member 'album' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(373,7): error TS7008: Member 'camera' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(377,7): error TS7008: Member 'back' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/video.d.ts(379,7): error TS7008: Member 'front' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(59,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(61,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(63,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(65,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(67,7): error TS7008: Member '4' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(69,7): error TS7008: Member '5' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(167,7): error TS7008: Member 'voice' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(169,7): error TS7008: Member 'video' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(195,7): error TS7008: Member '[-1]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(197,7): error TS7008: Member '[-2]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(199,7): error TS7008: Member '[-3]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(201,7): error TS7008: Member '[-1000]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(224,7): error TS7008: Member 'voice' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(226,7): error TS7008: Member 'video' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(256,7): error TS7008: Member '[-20000]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(258,7): error TS7008: Member '[-20001]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(260,7): error TS7008: Member '[-20002]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(262,7): error TS7008: Member '[-20003]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(264,7): error TS7008: Member '[-30000]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(266,7): error TS7008: Member '[-30001]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(268,7): error TS7008: Member '[-30002]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(270,7): error TS7008: Member '[-30003]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(272,7): error TS7008: Member '[-30004]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(274,7): error TS7008: Member '[-1]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(276,7): error TS7008: Member '[-2]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(278,7): error TS7008: Member '[-3]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/media/voip.d.ts(280,7): error TS7008: Member '[-1000]' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(32,7): error TS7008: Member 'binding' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(34,7): error TS7008: Member 'unionProduct' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(39,7): error TS7008: Member 'develop' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(41,7): error TS7008: Member 'trial' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(43,7): error TS7008: Member 'release' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(69,7): error TS7008: Member 'develop' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(71,7): error TS7008: Member 'trial' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/navigate/index.d.ts(73,7): error TS7008: Member 'release' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(172,7): error TS7008: Member 'json' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(177,7): error TS7008: Member 'text' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(182,7): error TS7008: Member 'base64' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(187,7): error TS7008: Member 'arraybuffer' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(193,7): error TS7008: Member 'OPTIONS' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(195,7): error TS7008: Member 'GET' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(197,7): error TS7008: Member 'HEAD' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(199,7): error TS7008: Member 'POST' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(201,7): error TS7008: Member 'PUT' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(203,7): error TS7008: Member 'PATCH' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(205,7): error TS7008: Member 'DELETE' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(207,7): error TS7008: Member 'TRACE' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(209,7): error TS7008: Member 'CONNECT' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(215,7): error TS7008: Member 'text' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(217,7): error TS7008: Member 'arraybuffer' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(223,7): error TS7008: Member ''no-cors'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(225,7): error TS7008: Member 'cors' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(227,7): error TS7008: Member ''same-origin'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(232,7): error TS7008: Member 'include' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(234,7): error TS7008: Member ''same-origin'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(236,7): error TS7008: Member 'omit' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(241,7): error TS7008: Member 'default' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(243,7): error TS7008: Member ''no-cache'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(245,7): error TS7008: Member 'reload' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(247,7): error TS7008: Member ''force-cache'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(249,7): error TS7008: Member ''only-if-cached'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(256,7): error TS7008: Member 'index' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(260,7): error TS7008: Member 'page' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/network/request.d.ts(264,7): error TS7008: Member 'querystring' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/authorize.d.ts(20,7): error TS7008: Member ''scope.record'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/authorize.d.ts(21,7): error TS7008: Member ''scope.writePhotosAlbum'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/authorize.d.ts(22,7): error TS7008: Member ''scope.camera'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(126,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(128,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(130,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(166,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(168,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(172,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(174,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(176,7): error TS7008: Member '3' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/channels.d.ts(178,7): error TS7008: Member '6' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/settings.d.ts(127,7): error TS7008: Member 'accept' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/settings.d.ts(129,7): error TS7008: Member 'reject' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/settings.d.ts(131,7): error TS7008: Member 'ban' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(35,7): error TS7008: Member 'fingerPrint' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(37,7): error TS7008: Member 'facial' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(41,7): error TS7008: Member 'speech' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(64,7): error TS7008: Member 'fingerPrint' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(66,7): error TS7008: Member 'facial' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(70,7): error TS7008: Member 'speech' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(88,7): error TS7008: Member 'fingerPrint' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(90,7): error TS7008: Member 'facial' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/soter.d.ts(94,7): error TS7008: Member 'speech' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(64,7): error TS2411: Property 'behavior' of type 'string | undefined' is not assignable to 'string' index type 'string'.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(74,7): error TS2411: Property 'keep' of type 'boolean | undefined' is not assignable to 'string' index type 'string'.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(84,7): error TS2411: Property 'refuse' of type 'boolean | undefined' is not assignable to 'string' index type 'string'.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(88,7): error TS2411: Property 'result' of type 'ISubscribeResult | undefined' is not assignable to 'string' index type 'string'.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(98,7): error TS2411: Property 'show' of type 'boolean | undefined' is not assignable to 'string' index type 'string'.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(120,7): error TS7008: Member 'accept' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(125,7): error TS7008: Member 'reject' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(130,7): error TS7008: Member 'ban' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(135,7): error TS7008: Member 'filter' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(139,7): error TS7008: Member 'fail' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(191,7): error TS7008: Member 'accept' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(193,7): error TS7008: Member 'reject' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(195,7): error TS7008: Member 'ban' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(197,7): error TS7008: Member 'filter' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(199,7): error TS7008: Member 'acceptWithAudio' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/open-api/subscribe-message.d.ts(302,30): error TS2503: Cannot find namespace 'subscribeService'.
+node_modules/@tarojs/taro/types/api/payment/index.d.ts(26,7): error TS7008: Member 'MD5' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/payment/index.d.ts(28,7): error TS7008: Member ''HMAC-SHA256'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/payment/index.d.ts(30,7): error TS7008: Member 'RSA' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/payment/index.d.ts(74,7): error TS7008: Member 'orderInfo' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/payment/index.d.ts(91,7): error TS7008: Member 'MD5' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/payment/index.d.ts(93,7): error TS7008: Member ''HMAC-SHA256'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/payment/index.d.ts(95,7): error TS7008: Member 'RSA' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/skyline/index.d.ts(139,44): error TS2304: Cannot find name 'bool'.
+node_modules/@tarojs/taro/types/api/skyline/index.d.ts(139,79): error TS2314: Generic type 'Array<T>' requires 1 type argument(s).
+node_modules/@tarojs/taro/types/api/skyline/index.d.ts(191,14): error TS2370: A rest parameter must be of an array type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(131,7): error TS7008: Member 'weakNetwork' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(133,7): error TS7008: Member 'always' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(135,7): error TS7008: Member 'none' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(139,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(141,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(143,7): error TS7008: Member '2' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(209,7): error TS7008: Member 'request' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(211,7): error TS7008: Member 'enterWeakNetwork' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(213,7): error TS7008: Member 'exitWeakNetwork' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(220,7): error TS7008: Member 'weakNetwork' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(222,7): error TS7008: Member 'always' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/storage/cache-manager.d.ts(224,7): error TS7008: Member 'none' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(19,7): error TS7008: Member 'article' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(21,7): error TS7008: Member 'doc' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(23,7): error TS7008: Member 'cartoon' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(25,7): error TS7008: Member 'av' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(41,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(43,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(62,7): error TS7008: Member 'article' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(64,7): error TS7008: Member 'doc' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(66,7): error TS7008: Member 'cartoon' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(68,7): error TS7008: Member 'av' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(84,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(86,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(113,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(115,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(134,7): error TS7008: Member 'article' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(136,7): error TS7008: Member 'doc' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(138,7): error TS7008: Member 'cartoon' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(140,7): error TS7008: Member 'av' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(150,7): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(152,7): error TS7008: Member '1' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(171,7): error TS7008: Member 'article' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(173,7): error TS7008: Member 'doc' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(175,7): error TS7008: Member 'cartoon' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/bookshelf.d.ts(177,7): error TS7008: Member 'av' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/swan/download-package.d.ts(38,7): error TS2411: Property 'errMsg' of type 'string' is not assignable to 'string' index type 'IAppKeyResult[]'.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(24,7): error TS7008: Member 'linear' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(26,7): error TS7008: Member 'ease' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(28,7): error TS7008: Member ''ease-in'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(30,7): error TS7008: Member ''ease-in-out'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(32,7): error TS7008: Member ''ease-out'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(34,7): error TS7008: Member ''step-start'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(36,7): error TS7008: Member ''step-end'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(309,7): error TS7008: Member 'linear' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(311,7): error TS7008: Member 'ease' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(313,7): error TS7008: Member ''ease-in'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(315,7): error TS7008: Member ''ease-in-out'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(317,7): error TS7008: Member ''ease-out'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(319,7): error TS7008: Member ''step-start'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/ui/animation.d.ts(321,7): error TS7008: Member ''step-end'' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/api/wxml/index.d.ts(73,15): error TS2430: Interface 'ObserveCallbackResult' incorrectly extends interface 'CallbackResult'.
+  Types of property 'errMsg' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+node_modules/@tarojs/taro/types/compile/config/h5.d.ts(9,57): error TS2307: Cannot find module 'vite' or its corresponding type declarations.
+node_modules/@tarojs/taro/types/compile/config/h5.d.ts(35,53): error TS7006: Parameter 'webpack' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/compile/config/project.d.ts(172,27): error TS7008: Member 'error' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/compile/config/project.d.ts(172,34): error TS7008: Member 'stats' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/compile/config/project.d.ts(172,41): error TS7008: Member 'isWatch' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/compile/config/rn.d.ts(61,53): error TS2304: Cannot find name 'Input'.
+node_modules/@tarojs/taro/types/compile/config/rn.d.ts(83,87): error TS2304: Cannot find name 'taroResolver'.
+node_modules/@tarojs/taro/types/compile/config/rn.d.ts(83,126): error TS2304: Cannot find name 'styleTransformer'.
+node_modules/@tarojs/taro/types/compile/config/util.d.ts(99,22): error TS2304: Cannot find name 'ViteConfig'.
+node_modules/@tarojs/taro/types/compile/config/util.d.ts(99,35): error TS2304: Cannot find name 'WebpackConfig'.
+node_modules/@tarojs/taro/types/global.d.ts(107,5): error TS7008: Member '1000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(113,5): error TS7008: Member '1001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(119,5): error TS7008: Member '1002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(125,5): error TS7008: Member '1003' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(131,5): error TS7008: Member '1004' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(137,5): error TS7008: Member '1005' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(143,5): error TS7008: Member '1006' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(149,5): error TS7008: Member '1007' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(155,5): error TS7008: Member '1008' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(163,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(167,5): error TS7008: Member '10000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(171,5): error TS7008: Member '10001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(175,5): error TS7008: Member '10002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(179,5): error TS7008: Member '10003' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(183,5): error TS7008: Member '10004' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(187,5): error TS7008: Member '10005' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(191,5): error TS7008: Member '10006' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(195,5): error TS7008: Member '10007' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(199,5): error TS7008: Member '10008' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(203,5): error TS7008: Member '10009' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(207,5): error TS7008: Member '10012' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(211,5): error TS7008: Member '10013' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(218,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(222,5): error TS7008: Member '11000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(226,5): error TS7008: Member '11001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(230,5): error TS7008: Member '11002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(234,5): error TS7008: Member '11003' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(238,5): error TS7008: Member '11004' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(242,5): error TS7008: Member '11005' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(246,5): error TS7008: Member '11006' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(253,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(257,5): error TS7008: Member '12000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(261,5): error TS7008: Member '12001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(265,5): error TS7008: Member '12002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(269,5): error TS7008: Member '12003' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(273,5): error TS7008: Member '12004' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(277,5): error TS7008: Member '12005' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(281,5): error TS7008: Member '12006' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(285,5): error TS7008: Member '12007' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(289,5): error TS7008: Member '12008' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(293,5): error TS7008: Member '12009' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(297,5): error TS7008: Member '12010' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(301,5): error TS7008: Member '12011' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(305,5): error TS7008: Member '12013' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(312,5): error TS7008: Member '0' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(314,5): error TS7008: Member '13000' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(316,5): error TS7008: Member '13001' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(318,5): error TS7008: Member '13002' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(320,5): error TS7008: Member '13003' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(322,5): error TS7008: Member '13004' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(324,5): error TS7008: Member '13005' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(326,5): error TS7008: Member '13006' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(328,5): error TS7008: Member '13010' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(332,5): error TS7008: Member '13019' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(336,5): error TS7008: Member '13011' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(340,5): error TS7008: Member '13012' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(344,5): error TS7008: Member '13013' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(348,5): error TS7008: Member '13014' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(352,5): error TS7008: Member '13015' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(356,5): error TS7008: Member '13016' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(360,5): error TS7008: Member '13017' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(364,5): error TS7008: Member '13018' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(368,5): error TS7008: Member '13021' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(372,5): error TS7008: Member '13022' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(376,5): error TS7008: Member '13023' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/global.d.ts(380,5): error TS7008: Member '13024' implicitly has an 'any' type.
+node_modules/@tarojs/taro/types/index.d.ts(176,23): error TS2688: Cannot find type definition file for '@tarojs/plugin-platform-alipay/types/shims-alipay'.
+node_modules/@tarojs/taro/types/index.d.ts(177,23): error TS2688: Cannot find type definition file for '@tarojs/plugin-platform-jd/types/shims-jd'.
+node_modules/@tarojs/taro/types/index.d.ts(178,23): error TS2688: Cannot find type definition file for '@tarojs/plugin-platform-swan/types/shims-swan'.
+node_modules/@tarojs/taro/types/index.d.ts(179,23): error TS2688: Cannot find type definition file for '@tarojs/plugin-platform-tt/types/shims-tt'.
+node_modules/@tarojs/taro/types/index.d.ts(180,23): error TS2688: Cannot find type definition file for '@tarojs/plugin-platform-weapp/types/shims-weapp'.
+node_modules/@tarojs/taro/types/index.d.ts(181,23): error TS2688: Cannot find type definition file for '@tarojs/taro-h5/types/overlay'.
+node_modules/@tarojs/taro/types/index.d.ts(182,23): error TS2688: Cannot find type definition file for '@tarojs/taro-rn/types/overlay'.
+node_modules/@tarojs/taro/types/index.d.ts(195,51): error TS2371: A parameter initializer is only allowed in a function or constructor implementation.
+node_modules/@tarojs/taro/types/index.d.ts(195,62): error TS2371: A parameter initializer is only allowed in a function or constructor implementation.
+node_modules/@tarojs/taro/types/taro.component.d.ts(2,17): error TS2307: Cannot find module 'vue' or its corresponding type declarations.
+node_modules/@tarojs/taro/types/taro.config.d.ts(757,13): error TS2320: Interface 'Config' cannot simultaneously extend types 'PageConfig' and 'AppConfig'.
+  Named property 'usingComponents' of types 'PageConfig' and 'AppConfig' are not identical.
+node_modules/webpack-chain/types/index.d.ts(1,10): error TS2305: Module '"tapable"' has no exported member 'Tapable'.
+node_modules/webpack-chain/types/index.d.ts(57,41): error TS2694: Namespace 'exports' has no exported member 'Plugin'.
+node_modules/webpack-chain/types/index.d.ts(66,28): error TS2694: Namespace 'exports' has no exported member 'ExternalsElement'.
+node_modules/webpack-chain/types/index.d.ts(66,55): error TS2694: Namespace 'exports' has no exported member 'ExternalsElement'.
+node_modules/webpack-chain/types/index.d.ts(75,24): error TS2694: Namespace 'exports' has no exported member 'Options'.
+node_modules/webpack-chain/types/index.d.ts(78,31): error TS2694: Namespace 'exports' has no exported member 'Options'.
+node_modules/webpack-chain/types/index.d.ts(81,53): error TS2694: Namespace 'exports' has no exported member 'Plugin'.
+node_modules/webpack-chain/types/index.d.ts(101,49): error TS2694: Namespace 'exports' has no exported member 'Plugin'.
+node_modules/webpack-chain/types/index.d.ts(104,68): error TS2694: Namespace 'exports' has no exported member 'Plugin'.
+node_modules/webpack-chain/types/index.d.ts(213,26): error TS2694: Namespace 'exports' has no exported member 'Options'.
+node_modules/webpack-chain/types/index.d.ts(238,57): error TS2694: Namespace 'exports' has no exported member 'ResolvePlugin'.
+node_modules/webpack-chain/types/index.d.ts(249,48): error TS2694: Namespace 'exports' has no exported member 'ResolvePlugin'.
+node_modules/webpack-chain/types/index.d.ts(261,44): error TS2694: Namespace 'exports' has no exported member 'Condition'.
+node_modules/webpack-chain/types/index.d.ts(262,44): error TS2694: Namespace 'exports' has no exported member 'Condition'.
+node_modules/webpack-chain/types/index.d.ts(266,25): error TS2694: Namespace 'exports' has no exported member 'Condition'.
+node_modules/webpack-chain/types/index.d.ts(266,45): error TS2694: Namespace 'exports' has no exported member 'Condition'.
+node_modules/webpack-chain/types/index.d.ts(284,34): error TS2694: Namespace 'exports' has no exported member 'Condition'.
+node_modules/webpack-chain/types/index.d.ts(284,54): error TS2694: Namespace 'exports' has no exported member 'Condition'.
+node_modules/webpack-chain/types/index.d.ts(292,58): error TS2694: Namespace 'exports' has no exported member 'Plugin'.
+node_modules/webpack-chain/types/index.d.ts(380,69): error TS2694: Namespace 'exports' has no exported member 'Plugin'.
+node_modules/webpack/types.d.ts(14397,15): error TS2417: Class static side 'typeof WebpackError' incorrectly extends base class static side '{ readonly prototype: Error; captureStackTrace(targetObject: object, constructorOpt?: Function | undefined): void; prepareStackTrace(err: Error, stackTraces: CallSite[]): any; stackTraceLimit: number; }'.
+  Types of property 'prepareStackTrace' are incompatible.
+    Type '((err: Error, stackTraces: CallSite[]) => any) | undefined' is not assignable to type '(err: Error, stackTraces: CallSite[]) => any'.
+      Type 'undefined' is not assignable to type '(err: Error, stackTraces: CallSite[]) => any'.

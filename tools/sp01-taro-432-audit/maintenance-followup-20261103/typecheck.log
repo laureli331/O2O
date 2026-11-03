@@ -1,0 +1,13 @@
+
+> sp01-taro-probe@1.0.0 typecheck
+> npm run typecheck:app && npm run typecheck:own-declarations
+
+
+> sp01-taro-probe@1.0.0 typecheck:app
+> tsc --noEmit --project tsconfig.app.json
+
+
+> sp01-taro-probe@1.0.0 typecheck:own-declarations
+> node check-own-declarations.cjs
+
+{"success":true,"declarationCount":0,"compilerExecuted":false,"compilerExitCode":null}
