@@ -88,3 +88,42 @@ test('unfinished malicious-archive test and its missing evidence remain visible'
   const review = readJson('docs/sp01-closeout-review-20261103.json');
   assert.equal(review.items.find((item) => item.id === 'MA01').evidenceFileCurrentlyPresent, evidenceExists);
 });
+
+test('SP01 E06 closeout records the bounded JSON fallback without claiming product recovery', () => {
+  const evidencePath = 'docs/sp01-e06-closeout-20261104.json';
+  const evidence = readJson(evidencePath);
+  const plan = readJson('docs/v1-executable-development-plan-20261027.json');
+  const quality = readJson('docs/v1-quality-acceptance-20261027.json');
+  const sp01 = plan.tasks.find((task) => task.id === 'SP01');
+  const qr06 = quality.criteria.find((criterion) => criterion.id === 'QR06');
+
+  assert.equal(evidence.task, 'SP01');
+  assert.equal(evidence.gate, 'E06');
+  assert.equal(evidence.targetAppId, 'wx2414399d423dfb65');
+  assert.equal(evidence.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
+  assert.equal(evidence.currentPlan.label, '体验版');
+  assert.equal(evidence.currentPlan.publicPlanMappingVerified, false);
+  assert.equal(evidence.rollbackConsoleObservation.featureReportedAvailable, true);
+  assert.equal(evidence.rollbackConsoleObservation.recoveryPoints, 'none-shown');
+  assert.equal(evidence.rollbackConsoleObservation.retention, 'not-displayed');
+  assert.equal(evidence.rollbackConsoleObservation.cost, 'not-displayed');
+  assert.equal(evidence.jsonFallbackRoundTrip.userReportedSuccessful, true);
+  assert.equal(evidence.jsonFallbackRoundTrip.cleanupConfirmed, true);
+  assert.deepEqual(evidence.jsonFallbackRoundTrip.collections, [
+    'sp01_json_rt_20261103_source',
+    'sp01_json_rt_20261103_imported'
+  ]);
+  assert.equal(evidence.stageDisposition, 'e06-preparation-satisfied-with-bounded-json-fallback');
+  assert.equal(evidence.e06PreparationGateSatisfied, true);
+  assert.equal(evidence.sp01TaskSignoffComplete, false);
+  assert.equal(evidence.realBusinessRestorePerformed, false);
+
+  assert.equal(plan.sp01StageBoundaryClarification.latestRecoveryDisposition.evidence, evidencePath);
+  assert.equal(plan.sp01StageBoundaryClarification.latestRecoveryDisposition.e06PreparationGateSatisfied, true);
+  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.productAcceptancePassed, false);
+  assert.equal(qr06.productResult, 'not-executed');
+  for (const source of evidence.sourceEvidence) {
+    assert.equal(fs.existsSync(path.join(root, source)), true, `E06 source exists: ${source}`);
+  }
+});

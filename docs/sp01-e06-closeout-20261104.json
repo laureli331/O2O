@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "task": "SP01",
+  "gate": "E06",
+  "targetAppId": "wx2414399d423dfb65",
+  "targetEnvironmentId": "cloud1-d2gjahlq39bf141c7",
+  "evidenceClass": "user-reported-console-observation-and-user-reported-controlled-test",
+  "currentPlan": {
+    "label": "体验版",
+    "source": "user-reported-current-CloudBase-console view",
+    "publicPlanMappingVerified": false
+  },
+  "rollbackConsoleObservation": {
+    "featureReportedAvailable": true,
+    "recoveryPoints": "none-shown",
+    "retention": "not-displayed",
+    "cost": "not-displayed",
+    "independentlyQueried": false,
+    "restoreExecuted": false
+  },
+  "jsonFallbackRoundTrip": {
+    "method": "CloudBase document database JSON collection export/import",
+    "userReportedSuccessful": true,
+    "recordCount": 1,
+    "syntheticRecordId": "sp01_json_rt_case_cf48293356094b4fadca8c2531e62035",
+    "collections": [
+      "sp01_json_rt_20261103_source",
+      "sp01_json_rt_20261103_imported"
+    ],
+    "recordLevelOrBytewiseParityIndependentlyVerified": false,
+    "cleanupConfirmed": true,
+    "remainingTestCollectionsReported": false
+  },
+  "e06PreparationGateSatisfied": true,
+  "stageDisposition": "e06-preparation-satisfied-with-bounded-json-fallback",
+  "limitations": [
+    "The current plan label and rollback availability are user-reported console observations, not an independent entitlement query.",
+    "No recovery point was available in the console view; no rollback was executed.",
+    "Retention duration and cost were not displayed and remain unknown.",
+    "The one-record synthetic JSON round trip does not establish exact record parity, indexes, permissions, cross-collection relations, file storage, functions, funds, or transaction-state recovery.",
+    "This E06 preparation result does not pass QR06 or product recovery acceptance."
+  ],
+  "realBusinessRestorePerformed": false,
+  "sp01TaskSignoffComplete": false,
+  "sourceEvidence": [
+    "docs/sp01-recovery-capability-20261101.json",
+    "docs/sp01-closeout-review-20261103.json",
+    "docs/v1-executable-development-plan-20261027.md",
+    "docs/v1-quality-acceptance-20261027.json"
+  ],
+  "downstreamOwners": [
+    "SP08",
+    "SP11",
+    "SP13",
+    "SP35",
+    "SP36"
+  ],
+  "downstreamOriginalQr06Requirement": "After isolated business-shaped data and authorization/fund relationships exist, back up to an isolated target, simulate interruption, restore and reconcile object relations, authorization, funds, inventory, versions and messages; do not revive cancelled, expired or revoked states, and do not duplicate counts or refunds. Missing evidence or failed expectations blocks the applicable stage/final release."
+}

@@ -6048,6 +6048,21 @@
     "productAcceptancePassed": false,
     "taskStatusesChanged": false,
     "firstProductTaskDependenciesChanged": false,
-    "qualityThresholdsChanged": false
+    "qualityThresholdsChanged": false,
+    "latestRecoveryDisposition": {
+      "date": "2026-11-04",
+      "evidence": "docs/sp01-e06-closeout-20261104.json",
+      "e06PreparationGateSatisfied": true,
+      "basis": "User-reported current plan and rollback console state plus a user-reported successful one-record synthetic JSON export/import round trip and confirmed cleanup.",
+      "limitations": [
+        "Public plan mapping and exact entitlement were not independently verified.",
+        "No rollback point was shown; retention and cost were not displayed.",
+        "No record-level parity artifact or real business-data restore exists.",
+        "QR06 remains not-executed and belongs to later product-data stages."
+      ],
+      "sp01TaskSignoffComplete": false,
+      "sp01StatusChanged": false,
+      "productAcceptancePassed": false
+    }
   }
 }
