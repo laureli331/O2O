@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R01",
+  "method": "npm view read-only metadata queries against https://registry.npmjs.org/",
+  "queries": {
+    "@tarojs/components@4.3.2": {
+      "version": "4.3.2",
+      "license": "MIT",
+      "swiperDependency": "11.1.15",
+      "result": "published"
+    },
+    "@tarojs/helper@4.3.2": {
+      "version": "4.3.2",
+      "license": "MIT",
+      "result": "published"
+    },
+    "@tarojs/runtime@4.3.2": {
+      "version": "4.3.2",
+      "license": "MIT",
+      "result": "published"
+    },
+    "@tarojs/cli@4.3.2": {
+      "version": "4.3.2",
+      "license": "MIT",
+      "downloadGitRepoDependencyRange": "^3.0.2",
+      "result": "published"
+    },
+    "download-git-repo": {
+      "latest": "3.0.2",
+      "result": "unchanged-from-2026-11-02-snapshot"
+    },
+    "decompress": {
+      "latest": "4.2.1",
+      "advisory": "https://github.com/advisories/GHSA-mp2f-45pm-3cg9"
+    }
+  },
+  "historicalCorrection": {
+    "supersedesCurrentAvailabilityConclusionIn": "docs/sp01-r01-registry-follow-up-20261102.json",
+    "historicalSnapshotPreserved": true,
+    "november2QueryCauseDetermined": false
+  },
+  "sources": {
+    "registry": "https://registry.npmjs.org/",
+    "taro432ProjectSource": "https://raw.githubusercontent.com/NervJS/taro/v4.3.2/packages/taro-cli/src/create/project.ts",
+    "decompressSecurityAdvisory": "https://github.com/advisories/GHSA-mp2f-45pm-3cg9"
+  },
+  "scope": {
+    "installedPackages": false,
+    "manifestOrLockChanged": false,
+    "buildRun": false,
+    "cloudChanged": false,
+    "productRuntimeReachabilityVerified": false,
+    "exploitabilityVerified": false,
+    "riskRemediationClaimed": false
+  },
+  "decision": {
+    "r01Status": "pending",
+    "sp01Passed": false,
+    "sp07Started": false,
+    "reason": "The stable Taro 4.3.2 family is now present in the registry, but the CLI download dependency path, audit findings, third-party declaration diagnostics, and lack of a formal product bundle remain open. Registry availability alone does not resolve R01."
+  }
+}

@@ -37,7 +37,9 @@
     "docs/sp01-taro-432-compatibility-20261103.md",
     "docs/sp01-taro-432-compatibility-20261103.json",
     "tools/sp01-taro-431-baseline-audit/npm-audit-production-report-20261103.json",
-    "tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json"
+    "tools/sp01-taro-432-audit/npm-audit-production-report-20261103.json",
+    "docs/sp01-r01-registry-refresh-20261103.json",
+    "docs/sp01-r01-registry-refresh-20261103.md"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -1046,7 +1048,8 @@
           "2026-11-02为延长华为备用机SEA-AL10的本地测试可用时间，通过ADB将screen_off_timeout从1800000毫秒改为7200000毫秒并读回确认；USB供电、stay_on_while_plugged_in=2、Awake且mStayOn=true。属于可恢复的设备测试准备，不是SP01验收证据，测量结束后应恢复原30分钟。",
           "2026-11-02后续屏幕休眠关联采样：华为SEA-AL10、USB供电保持唤醒，Pakomo light启动为forwarding/active且状态计数activeFlows=3、delayed=72、dropped=0；30次只读CloudBase往返30/30成功，中位数401ms、P95 726ms、最大1897ms。启动响应至确认停止72779ms，超过本次60000ms授权上限12779ms，仅记录为诊断、不计R04验收；随后Wi-Fi为VALIDATED且未发现VPN网络代理，无数据库/存储写入或云端部署。屏幕超时读回7200000ms，USB供电时保持唤醒；长测结束恢复1800000ms。见docs/sp01-network-huawei-pakomo-screen-sleep-follow-up-20261102.json。",
           "2026-11-02本地方法复验：华为备用机SEA-AL10/Android 10/微信8.0.79/基础库3.17.5，在微信AppBrandUI00宿主层用SurfaceFlinger --latency清零并采集一次1500ms合成拖动；89帧跨1451.66ms、中位呈现间隔16.42ms、超过1.5刷新周期的间隔0。复用现有ADB与Android内置SurfaceFlinger能力，未新增第三方依赖、未调用网络或云端。WebView合成层及输入事件边界未隔离，未独立核实位移；仅为采样器可行性，不是产品FPS/QP05证据。详见docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestControlledSurfaceFlingerLatencyDragProbe。",
-          "2026-11-03对Taro 4.3.2隔离候选复验：React/DOM/types18.3.1、TS5.9.3、Webpack5.91.0符合已确认约束；应用strict检查、依赖树和隔离weapp合成样例构建通过；108个第三方声明文件存在1,056条诊断，最新public npm audit仍有4个critical受影响包条目。候选未冻结，R01/SP01未通过，未进入SP07。详见docs/sp01-taro-432-compatibility-20261103.json。"
+          "2026-11-03对Taro 4.3.2隔离候选复验：React/DOM/types18.3.1、TS5.9.3、Webpack5.91.0符合已确认约束；应用strict检查、依赖树和隔离weapp合成样例构建通过；108个第三方声明文件存在1,056条诊断，最新public npm audit仍有4个critical受影响包条目。候选未冻结，R01/SP01未通过，未进入SP07。详见docs/sp01-taro-432-compatibility-20261103.json。",
+          "2026-11-03官方npm registry只读复核：@tarojs/components/helper/runtime 4.3.2稳定包均已发布；11-02 E404保留为历史时点，不再作为当前缺包结论。未安装依赖、未改manifest/lock、未运行构建、未改云端。见docs/sp01-r01-registry-refresh-20261103.json。"
         ],
         "postRunTimeoutReadOnlyCloudRecheckBeforeTimeoutAdjustment": {
           "source": "wechatide-cli-read-only-after-user-run-timeout",
@@ -2230,7 +2233,8 @@
         },
         "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
         "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
-        "latestTaro432WeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture"
+        "latestTaro432WeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture",
+        "latestRegistryRefreshEvidence": "docs/sp01-r01-registry-refresh-20261103.json"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

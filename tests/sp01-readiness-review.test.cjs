@@ -88,6 +88,25 @@ test('SP01 current review covers the exact contract criteria without silently re
       assert.match(registryFollowupMarkdown, /swiper@11\.1\.15/);
       assert.match(registryFollowupMarkdown, /稳定发布组在本次查询时不完整/);
       assert.match(registryFollowupMarkdown, /R01 继续 pending/);
+      const registryRefresh = require('../docs/sp01-r01-registry-refresh-20261103.json');
+      const registryRefreshMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-r01-registry-refresh-20261103.md'), 'utf8');
+      assert.equal(registryRefresh.queries['@tarojs/components@4.3.2'].result, 'published');
+      assert.equal(registryRefresh.queries['@tarojs/helper@4.3.2'].result, 'published');
+      assert.equal(registryRefresh.queries['@tarojs/runtime@4.3.2'].result, 'published');
+      assert.equal(registryRefresh.historicalCorrection.historicalSnapshotPreserved, true);
+      assert.equal(registryRefresh.scope.manifestOrLockChanged, false);
+      assert.equal(registryRefresh.decision.r01Status, 'pending');
+      assert.equal(registryRefresh.decision.sp01Passed, false);
+      assert.equal(registryRefresh.decision.sp07Started, false);
+      assert.equal(item.latestRegistryRefreshEvidence, 'docs/sp01-r01-registry-refresh-20261103.json');
+      assert.ok(review.sources.includes('docs/sp01-r01-registry-refresh-20261103.json'));
+      assert.ok(review.sources.includes('docs/sp01-r01-registry-refresh-20261103.md'));
+      assert.match(registryRefreshMarkdown, /更正.*11 月 2 日/);
+      assert.match(registryRefreshMarkdown, /R01 继续 pending/);
+      const planSp01 = plan.tasks.find((task) => task.id === 'SP01');
+      assert.equal(planSp01.executionProgress.latestRegistryRefreshEvidence, 'docs/sp01-r01-registry-refresh-20261103.json');
+      assert.ok(plan.sources.includes('docs/sp01-r01-registry-refresh-20261103.json'));
+      assert.ok(plan.sources.includes('docs/sp01-r01-registry-refresh-20261103.md'));
       assert.equal(item.state, 'pending');
     } else if (item.id === 'R03') {
       const capability = require('../docs/sp01-device-capability-20261030.json');
