@@ -1,0 +1,1553 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "version": "1.0",
+  "document": "docs/backend-architecture-contract-20261103.md",
+  "planDocument": "docs/v1-executable-development-plan-20261027.md",
+  "qualityDocument": "docs/v1-quality-acceptance-20261027.md",
+  "deliveryScope": "documentation-and-validation-only",
+  "integratedAgainstCommit": "bd1e51616bd6a4ea3280af69cf232f47c9d449cb",
+  "authorization": {
+    "userApprovedArchitectureReviewRecommendations": true,
+    "productImplementationPerformed": false,
+    "productAcceptancePassed": false,
+    "cloudOperationsPerformed": false,
+    "newDependenciesInstalled": false,
+    "testCodeWritten": false
+  },
+  "sources": [
+    "AGENTS.md",
+    "docs/prd.md",
+    "docs/unified-react18-shared-core-20261030.md",
+    "docs/sp01-readiness-review-20261030.json",
+    "docs/sp01-shared-core-evidence-20261030.json",
+    "docs/v1-scope-confirmed-20261026.json",
+    "docs/monetization-decisions-20261015.json",
+    "tools/sp01-shared-core-probe/check-boundaries.cjs",
+    "miniprogram/cloudfunctions/quickstartFunctions/index.js"
+  ],
+  "sourceFingerprints": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "bb3bf03c609d623fbc7910de1c853bc15c055c11f56f28b54c3dbe45841d0fbe",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "docs/prd.md",
+      "sha256": "1726e47026b1af9f4697a82bb8b8430ed70e88df9423d41806ac140514e8698b",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "docs/unified-react18-shared-core-20261030.md",
+      "sha256": "53b3b75caf4f64d48be26f8b4ddae4c385e7690889bb4abc517e007f49dc3bf4",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "docs/sp01-readiness-review-20261030.json",
+      "sha256": "d6b92ec0fdd8c34000cf5aa14abe93149185d543e015a48439140eea06f0d0a4",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "docs/sp01-shared-core-evidence-20261030.json",
+      "sha256": "8d98aa9d521eb2138c6da41b4eabdf093806417b94f0935c1efda1cb04dae4d6",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "docs/v1-scope-confirmed-20261026.json",
+      "sha256": "38c582ef8f03fd647c44abe4673d6f02e14dddf8b9485d2b90641156eefca13c",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "docs/monetization-decisions-20261015.json",
+      "sha256": "bc93d7d3ceb73f1bce6f96a59343da4aa4ed8b2db2e621f93818b0a0b5a1f022",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "tools/sp01-shared-core-probe/check-boundaries.cjs",
+      "sha256": "42bace61c959f2be42e74d8500febbe81e1ec2f88aef10505c26650a6cfb4ebf",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    },
+    {
+      "path": "miniprogram/cloudfunctions/quickstartFunctions/index.js",
+      "sha256": "5b3994c3191adbcb04ed7a0f8e0a357cd623dafb94563365a19e8dde79fbb35a",
+      "meaning": "本轮读取快照；可变源后续变化须重核，不作为历史记录永久有效证明"
+    }
+  ],
+  "referenceConversation": "chatgpt-conversation://6ae9c65e-beb0-83e8-9f7f-fcefef617152",
+  "architecture": {
+    "shape": "one-logical-backend-with-modular-shared-core",
+    "businessRulesAndApplicationFlows": "packages/shared",
+    "officialEngineeringPrerequisitesUnchanged": true,
+    "directoriesCreated": false,
+    "moduleCountDoesNotImplyPackagesOrFunctions": true,
+    "dependencyGraph": {
+      "nodes": [
+        "ui",
+        "react",
+        "state",
+        "application-client",
+        "application-server",
+        "api",
+        "domain",
+        "contracts",
+        "ports",
+        "web-adapter",
+        "weapp-adapter",
+        "cloud-adapter",
+        "cloud-entry"
+      ],
+      "dependencies": {
+        "ui": [
+          "react",
+          "state",
+          "application-client"
+        ],
+        "react": [
+          "state",
+          "contracts"
+        ],
+        "state": [
+          "application-client",
+          "contracts"
+        ],
+        "application-client": [
+          "api",
+          "domain",
+          "ports"
+        ],
+        "application-server": [
+          "domain",
+          "contracts",
+          "ports"
+        ],
+        "api": [
+          "contracts",
+          "ports"
+        ],
+        "domain": [
+          "contracts"
+        ],
+        "contracts": [],
+        "ports": [
+          "contracts"
+        ],
+        "web-adapter": [
+          "ports"
+        ],
+        "weapp-adapter": [
+          "ports"
+        ],
+        "cloud-adapter": [
+          "ports"
+        ],
+        "cloud-entry": [
+          "application-server",
+          "cloud-adapter"
+        ]
+      }
+    },
+    "logicalContractsAreNotInventedSdkSignatures": true,
+    "physicalDecisionsOwner": "SP08",
+    "versionAndStrictnessSource": "AGENTS.md"
+  },
+  "modules": [
+    {
+      "id": "BM01",
+      "name": "身份与资格",
+      "owns": "登录主体、核验/年龄/手机号资格及身份复用",
+      "publicInterface": "输出当前可信资格；不以登录替代实名，不存原始完整姓名身份证；运营限制作为独立事实合并检查",
+      "tasks": [
+        "SP09"
+      ]
+    },
+    {
+      "id": "BM02",
+      "name": "需求与申请",
+      "owns": "四类公开需求、服务轮次、当前条件版本、候选与申请状态",
+      "publicInterface": "发布/编辑/申请/撤回及候选事实；最终选人由交易用例协调，不自行另算佣金或形成第二交易",
+      "tasks": [
+        "SP15",
+        "SP16"
+      ]
+    },
+    {
+      "id": "BM03",
+      "name": "接单资料",
+      "owns": "三类本人资料、时段、忙碌及合法只读视图",
+      "publicInterface": "提供当前资料；不恢复人员目录/找人，不因忙碌限并发",
+      "tasks": [
+        "SP14"
+      ]
+    },
+    {
+      "id": "BM04",
+      "name": "私人工具",
+      "owns": "本人收藏、草稿、地址簿与复制来源",
+      "publicInterface": "输出有权快照，新对象不继承授权/凭据；不因地址改删改变既有交易",
+      "tasks": [
+        "SP14",
+        "SP15"
+      ]
+    },
+    {
+      "id": "BM05",
+      "name": "交易与履约",
+      "owns": "当前双方、约定/费用有效版本、到期/延期/交付异议/取消/故障保护",
+      "publicInterface": "统一转换及当事人事实；服务三类与闲置保留各自确认策略，外部调用者不能散写类型分支",
+      "tasks": [
+        "SP18",
+        "SP19",
+        "SP20"
+      ]
+    },
+    {
+      "id": "BM06",
+      "name": "佣金",
+      "owns": "唯一费率/封顶/基数规则、确认时标准快照、唯一主记录与获准更正差额",
+      "publicInterface": "接收合法交易/费用事实计算；不从账单或UI复制算法，不把线下实付当计佣前提",
+      "tasks": [
+        "SP17",
+        "SP20",
+        "SP30"
+      ]
+    },
+    {
+      "id": "BM07",
+      "name": "账单",
+      "owns": "归账、实际出账、应缴/暂缓/抵付/欠费/核准抵扣",
+      "publicInterface": "按已核实付款分配，独立维护期限和限制原因；不伪造收款、覆盖原账或创建钱包",
+      "tasks": [
+        "SP29",
+        "SP30"
+      ]
+    },
+    {
+      "id": "BM08",
+      "name": "平台支付",
+      "owns": "入驻/广告位/制作/佣金的渠道付款和退款事实、查单、对账",
+      "publicInterface": "核验实际渠道与订单/金额/归属，向应用用例提供事实；不托管居民货款、不自行取消别的权益",
+      "tasks": [
+        "SP13",
+        "SP23",
+        "SP27",
+        "SP30"
+      ]
+    },
+    {
+      "id": "BM09",
+      "name": "评价",
+      "owns": "资格、八角色三维数值、一次修改/回应、内容版本和汇总",
+      "publicInterface": "只消费合法交易/既有经历事实；不另写交易完成规则，不恢复V17入口，不因图文拒绝删合法数值",
+      "tasks": [
+        "SP21"
+      ]
+    },
+    {
+      "id": "BM10",
+      "name": "运营处置",
+      "owns": "案件、必要证据、首次回应/结论、独立限制记录和配置版本",
+      "publicInterface": "只对有权原对象处置；日志归共用管理账号，不裁判居民债务、不代双方解除交付异议",
+      "tasks": [
+        "SP12",
+        "SP21"
+      ]
+    },
+    {
+      "id": "BM11",
+      "name": "商家入驻",
+      "owns": "主体档案、审核、通知成功后的窗口、实际开通和续费权益",
+      "publicInterface": "接收已核实平台款，按原规则维护30天权益和必要更正；不把审核或付款当已经开通",
+      "tasks": [
+        "SP23",
+        "SP24"
+      ]
+    },
+    {
+      "id": "BM12",
+      "name": "活动券",
+      "owns": "活动合法版本、库存、本人券、所属商家一次核销与券争议事实",
+      "publicInterface": "原子领券/核销，保护原已领有效券；不造居民交易佣金或评价资格",
+      "tasks": [
+        "SP25"
+      ]
+    },
+    {
+      "id": "BM13",
+      "name": "广告",
+      "owns": "素材版本、三位置区间、保留/排期、制作进度与投放权益",
+      "publicInterface": "消费独立付款/退款事实，按当前九档价和24小时保留；不从旧分类推广恢复规则",
+      "tasks": [
+        "SP26",
+        "SP27",
+        "SP28"
+      ]
+    },
+    {
+      "id": "BM14",
+      "name": "通知",
+      "owns": "站内消息、发送意图、渠道状态与去重/补偿进度",
+      "publicInterface": "可靠投递事实与结果；未读/微信失败不改变交易、资金或业务期限，不创造第二套状态事实",
+      "tasks": [
+        "SP11"
+      ]
+    },
+    {
+      "id": "BM15",
+      "name": "分析",
+      "owns": "已授权来源的汇总、批次/日事件、截止及数据版本",
+      "publicInterface": "只读业务事实并按合同归集，不能写交易/资金/资格；未知不填0，不推断GMV",
+      "tasks": [
+        "SP28",
+        "SP33"
+      ]
+    },
+    {
+      "id": "BM16",
+      "name": "AI能力",
+      "owns": "Provider适配合同、整理请求/用量/次数及结构化候选",
+      "publicInterface": "只产候选，由既有确定性规则验证并由用户采用；不能直写交易、计佣、退款或审核结论",
+      "tasks": [
+        "SP31",
+        "SP32"
+      ]
+    }
+  ],
+  "transactions": [
+    {
+      "id": "TX01",
+      "scenario": "接受任一副作用命令",
+      "consistentFacts": "当前权限/对象版本、幂等接受记录、操作结果及同次业务变更",
+      "failureAndRaceAcceptance": "同键异载荷拒绝；请求成功后断网、重复请求和不同actor同键不能重复或串单",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX02",
+      "scenario": "正式选人/闲置确认",
+      "consistentFacts": "当前有效申请/时间/费用告知、需求当前轮次唯一承接、交易、原佣金标准快照、必要联系授权、事件意图",
+      "failureAndRaceAcceptance": "两人并发只能一成功；闲置必须买家确认当前版本；任何失败不留下部分授权/快照或另一交易",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX03",
+      "scenario": "费用/内容/延期确认",
+      "consistentFacts": "当前版本双方明确同意、原/新有效快照；关联内容与费用须都满足才一起生效",
+      "failureAndRaceAcceptance": "待确认不覆盖旧值；新内容不能被旧同意带过；拒绝/撤回保留历史，不因请求自动改到期",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX04",
+      "scenario": "正常结束与异议/保护",
+      "consistentFacts": "当前有效到期、有效交付异议/解除版本、故障及恢复保护、唯一结束事实、权限回收及事件意图",
+      "failureAndRaceAcceptance": "截止有效收到的异议及时，严格超过且无阻断才结束；取消不复活。SP08须证明可信接收时点、持久化顺序和竞争优先级，不能自行加宽限或用客户端时间",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX05",
+      "scenario": "形成主计佣",
+      "consistentFacts": "合法正常结束及有效费用/首次补费窗口、原标准快照、唯一主记录、实际形成月份和事件",
+      "failureAndRaceAcceptance": "未知费用不填0、不能因结束就立即造佣金；7.4补费窗口/费用异议独立。已有主记录更正不再新造主记录或二次封顶",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX06",
+      "scenario": "实收与抵付/多收",
+      "consistentFacts": "已验证渠道付款唯一事实、当前可缴项、按最早到期的分配、剩余应缴和多收待退",
+      "failureAndRaceAcceptance": "争议暂缓款不自动占款，部分缴纳不刷新期限；不同实际付款都留事实，同回调只一次；退款不令原有效抵付重新欠缴",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX07",
+      "scenario": "退款申请与确认",
+      "consistentFacts": "原付款、实际可退/已退/处理中金额、唯一退款操作、渠道请求及可核对结果",
+      "failureAndRaceAcceptance": "并发不能超退；渠道未知先查，不重复发起；0拟退不造转账；入驻/制作/广告位/多收各依本来的规则",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX08",
+      "scenario": "领券与核销",
+      "consistentFacts": "当前活动/有效期/经营资格、账号限领、库存与本人券；核销核对当前码/版本、所属商家及一次结果",
+      "failureAndRaceAcceptance": "最后一张不超发；换码旧确认失效；核销最多一次；停领/入驻到期不能作废已领有效券",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX09",
+      "scenario": "广告区间占用/释放",
+      "consistentFacts": "已通过素材、完整区间、固定位置、主体重叠限制、实际保留期限及付款/核对状态",
+      "failureAndRaceAcceptance": "单次预查询“无重叠”不是并发安全证据；SP08/SP27须用经验证的冲突锚点/串行化或等价原子机制验证相邻与重叠区间；未知不释放重售",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX10",
+      "scenario": "评价与修改/回应",
+      "consistentFacts": "当前资格/方向/自然人、窗口、唯一数值与一次修改消耗、当前图文/回应版本和可见汇总版本",
+      "failureAndRaceAcceptance": "重试不多耗机会，旧审核不覆盖新候选；数值与内容审核独立；列表与汇总版本一致，不靠永久混版容忍错误",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX11",
+      "scenario": "审核通知与入驻窗口",
+      "consistentFacts": "审核当前版、站内消息实际成功生成事实及对应72小时窗口起点",
+      "failureAndRaceAcceptance": "待发意图不等于站内消息已成功生成；不等已读或微信送达。只审核通过或写入发送队列不能提前启动窗口",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "TX12",
+      "scenario": "实际成功出账",
+      "consistentFacts": "当前应缴来源、账户/月份唯一账单及项目一致版本、成功出账时点与期限",
+      "failureAndRaceAcceptance": "计划时间/队列开始不是成功出账；失败/部分批次不能公开成完整账单或启动72小时。实际事务规模和分批发布协议须SP08验证",
+      "physicalImplementation": "SP08按实际数据库/SDK能力提交映射和最小实证；后续任务执行真实用例，不以本文标记通过",
+      "productResult": "not-executed"
+    }
+  ],
+  "invariants": [
+    {
+      "id": "BI01",
+      "name": "命令幂等",
+      "scope": "可信actor/归属＋操作＋操作键；绑定载荷摘要和原操作结果",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI02",
+      "name": "正式承接",
+      "scope": "需求当前服务轮次至多一正式承接；重开是新轮次，不永久锁死同一帖",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI03",
+      "name": "主计佣",
+      "scope": "正式交易唯一主记录；更正另记原记录引用/批准依据与差额",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI04",
+      "name": "账单",
+      "scope": "本人账号＋实际归账月份唯一，项目来自有权且未重复归账的事实",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI05",
+      "name": "付款/退款",
+      "scope": "实际通道＋外部付款交易唯一；退款操作/渠道结果唯一且总额约束原付款",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI06",
+      "name": "评价",
+      "scope": "交易/合法经历＋作者自然人＋方向唯一；同方向最多一次成功修改与一条公开回应",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI07",
+      "name": "活动券",
+      "scope": "微信账号＋活动最多一领；每券最多一次核销，券与所属活动/商家关联不可由客户端替换",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI08",
+      "name": "广告",
+      "scope": "固定位置与时间区间无重售，同主体重叠期最多一位；不是普通单字段unique能直接证明",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI09",
+      "name": "通知",
+      "scope": "原业务事件＋有效版本＋接收者/渠道唯一投递意图；真实新事件不被旧去重键吞掉",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BI10",
+      "name": "权限关联",
+      "scope": "原始业务对象、当前轮次/双方/版本与授权范围一致；新对象不继承旧授权，结束不恢复旧地址/凭据",
+      "enforcement": "服务器检查关联＋经实际验证的数据库约束/事务；物理方案SP08确认，应用层先查再写不构成证据",
+      "productResult": "not-executed"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "BA01",
+      "title": "Module职责与唯一规则所有者",
+      "tasks": [
+        "SP07",
+        "SP08",
+        "SP09",
+        "SP11",
+        "SP12",
+        "SP13",
+        "SP14",
+        "SP15",
+        "SP16",
+        "SP17",
+        "SP18",
+        "SP19",
+        "SP20",
+        "SP21",
+        "SP23",
+        "SP24",
+        "SP25",
+        "SP26",
+        "SP27",
+        "SP28",
+        "SP29",
+        "SP30",
+        "SP31",
+        "SP32",
+        "SP33"
+      ],
+      "sourceAcceptance": [
+        "T06",
+        "T12",
+        "T13",
+        "T14",
+        "RT09"
+      ],
+      "input": "逐项登记业务事实、规则、公开Interface及读写消费者；选取计佣规则变更，追踪全部调用处。",
+      "expected": "16项职责有唯一所有者；跨Module仅通过Interface，同一事务由shared用例协调；修改规则只改所有者及受影响合同，不在UI、云入口或账单复制算法。",
+      "requiredEvidence": [
+        "Module图",
+        "Interface前置/不变量/顺序/错误/配置表",
+        "规则到源码/测试映射",
+        "调用图及审查意见"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA02",
+      "title": "实际依赖图与端侧业务门禁",
+      "tasks": [
+        "SP07",
+        "SP08",
+        "SP15",
+        "SP18"
+      ],
+      "sourceAcceptance": [
+        "T01",
+        "T06",
+        "T12"
+      ],
+      "input": "对实际构建图检查UI/shared/Adapter/云入口；注入端侧佣金或资格判断、别名/动态反向导入、any/抑制绕过和云端引入store负例。",
+      "expected": "正式门禁拒绝这些负例、接受合法展示/事件绑定；React及类型18.3.1、TS5.9.3、strict及唯一根锁符合既定约束；服务器入口不携带React/客户端store，生产入口不包含QuickStart/探针。",
+      "requiredEvidence": [
+        "实际锁图",
+        "编译/AST/依赖图",
+        "正负例原始输出",
+        "端侧语义代码审查及构建/部署白名单"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA03",
+      "title": "可信身份、对象授权与输入收窄",
+      "tasks": [
+        "SP08",
+        "SP09",
+        "SP10",
+        "SP11",
+        "SP12",
+        "SP13",
+        "SP14",
+        "SP15",
+        "SP16",
+        "SP17",
+        "SP18",
+        "SP19",
+        "SP20",
+        "SP21",
+        "SP23",
+        "SP24",
+        "SP25",
+        "SP26",
+        "SP27",
+        "SP28",
+        "SP29",
+        "SP30",
+        "SP31",
+        "SP32",
+        "SP33"
+      ],
+      "sourceAcceptance": [
+        "T01",
+        "T02",
+        "T04",
+        "RT01",
+        "DT01"
+      ],
+      "input": "未登录/资格未知、他人ID/文件/活动、同身份换账号、过期授权、伪造角色/时间/金额、未知字段和请求滥用。",
+      "expected": "服务器以可信身份与当前对象逐次授权；未知输入校验收窄，拒绝越权读取和写入；按原门槛验证发布/接单资格并保留合法浏览。频控/限额据原SP08及实际配置确认，不在本文编造预算。",
+      "requiredEvidence": [
+        "实际入口的拒绝响应",
+        "读写前后事实",
+        "文件拒绝/授权撤销证据",
+        "凭据来源和脱敏日志"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA04",
+      "title": "原子幂等与未知结果",
+      "tasks": [
+        "SP08",
+        "SP11",
+        "SP13",
+        "SP14",
+        "SP15",
+        "SP16",
+        "SP17",
+        "SP18",
+        "SP19",
+        "SP20",
+        "SP21",
+        "SP23",
+        "SP25",
+        "SP26",
+        "SP27",
+        "SP29",
+        "SP30",
+        "SP31"
+      ],
+      "sourceAcceptance": [
+        "T06",
+        "AT08",
+        "BX17"
+      ],
+      "input": "同键同载荷重放、同键异载荷、跨账号同键、不同实际付款、业务成功后断网、并发及外部超时。",
+      "expected": "幂等键绑定可信归属/操作/载荷；同操作不重复变更，异载荷拒绝；业务、幂等结果和必要可靠意图一致；外部未知有权查原操作，不盲重试、不假成功。",
+      "requiredEvidence": [
+        "实际事务读写集",
+        "操作状态与唯一记录",
+        "故障注入前后事实",
+        "查单结果及并发输出"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA05",
+      "title": "状态机、截止竞争与故障保护",
+      "tasks": [
+        "SP08",
+        "SP19",
+        "SP20",
+        "SP21"
+      ],
+      "sourceAcceptance": [
+        "T07",
+        "T08",
+        "T09",
+        "BX01",
+        "BX02",
+        "BX03",
+        "BX14",
+        "BX15",
+        "RT03",
+        "RT07"
+      ],
+      "input": "四业务逐状态/角色/当前版本测试；截止收到异议、延期待确认、重复解除、正常结束、取消、受影响故障和重复恢复事件。",
+      "expected": "转换有来源/触发者/前置/原子写集/错误与事件；有效截止异议优先、严格超过才结束；保护按原规则，不加任意宽限、不复活取消或回滚实付，状态种类不合并成一个成功字段。",
+      "requiredEvidence": [
+        "完整转换表",
+        "可信接收时点与持久顺序证据",
+        "可控时钟/竞争结果",
+        "非法转换拒绝与恢复前后快照"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA06",
+      "title": "数据库物理约束与真实并发",
+      "tasks": [
+        "SP08",
+        "SP18",
+        "SP20",
+        "SP25",
+        "SP27"
+      ],
+      "sourceAcceptance": [
+        "T06",
+        "BX06",
+        "RT04",
+        "RT16"
+      ],
+      "input": "多人选人、最后库存、重复核销、主计佣/评价重复、广告重叠与相邻区间，含事务重试和中断。",
+      "expected": "BI01—BI10均映射实际库/索引/确定键/事务能力；唯一性和跨对象关联可证明，不能假定SQL外键/范围排他或仅靠预查询；未知的实际限制阻断依赖项。",
+      "requiredEvidence": [
+        "物理模型",
+        "字段/索引/查询/所有者清单",
+        "官方文档及相关源码位置",
+        "实际SDK版本/限制",
+        "受控并发和失败恢复原始输出"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA07",
+      "title": "唯一主计佣与原标准快照",
+      "tasks": [
+        "SP08",
+        "SP17",
+        "SP18",
+        "SP19",
+        "SP20",
+        "SP30"
+      ],
+      "sourceAcceptance": [
+        "T12",
+        "T13",
+        "BX04",
+        "BX05",
+        "BX06"
+      ],
+      "input": "四类费率/整次封顶、材料垫付与服务费区分、选人快照、已结束费用未知、首次补费72小时及改价/异议、重复生成和更正。",
+      "expected": "按当前原合同计算与舍入；未知费不填0，未到可计佣条件不造主记录；每交易至多一主记录，实际形成月归账；更正引用原标准重算留差额，不重置封顶。",
+      "requiredEvidence": [
+        "金额边界与原公式断言",
+        "标准快照",
+        "窗口时序",
+        "唯一性并发证据",
+        "主记录/更正/归账来源链"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA08",
+      "title": "实收、账单、抵付、多收与退款分离",
+      "tasks": [
+        "SP08",
+        "SP13",
+        "SP29",
+        "SP30"
+      ],
+      "sourceAcceptance": [
+        "T14",
+        "BX07",
+        "BX08",
+        "BX09",
+        "BX13",
+        "BX16",
+        "BX17",
+        "BX18"
+      ],
+      "input": "迟于计划实际出账、部分争议、15元分配10/20元应缴、零应缴、多次实际支付、回调重放、并发退款和未知渠道结果。",
+      "expected": "实际成功出账才起期限，分批失败不公开完整账单；实收按原到期抵付且不侵占暂缓项；多收/核准抵扣分别留证；不超退、不重复实付、不因退多收恢复已缴欠款。",
+      "requiredEvidence": [
+        "渠道核验/查单",
+        "账单发布协议与唯一性",
+        "分配与期限明细",
+        "可退/处理中/已退总额对账",
+        "故障和恢复证据"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA09",
+      "title": "业务事件可靠性与实际通知起点",
+      "tasks": [
+        "SP08",
+        "SP11",
+        "SP13",
+        "SP20",
+        "SP23"
+      ],
+      "sourceAcceptance": [
+        "T18",
+        "BX07",
+        "DT10"
+      ],
+      "input": "业务提交后进程中断、事件重复/迟到/乱序、站内消息生成失败/成功、微信失败、重复恢复。",
+      "expected": "业务事实与可靠发送意图的一致性可证明，失败可领取/重放且去重；外部调用不放可重试事务内；入驻72小时从站内消息实际生成起算，意图/已读/微信送达均不冒充起点。",
+      "requiredEvidence": [
+        "持久意图与业务事务关系",
+        "领取/重试/去重协议",
+        "消息真实生成时点",
+        "积压/失败处理及恢复输出"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA10",
+      "title": "错误语义与QuickStart隔离",
+      "tasks": [
+        "SP07",
+        "SP08",
+        "SP13"
+      ],
+      "sourceAcceptance": [
+        "T01",
+        "T18",
+        "AT07"
+      ],
+      "input": "注入基础设施/供应商异常、版本冲突、未知结果；核对生产构建和部署入口及当前示例catch路径。",
+      "expected": "不得任意catch转成功；既有幂等结果须识别并重读核对；客户端保留可恢复状态且得到安全错误/请求标识；QuickStart和探针保留作资料但不进入正式生产，不因本次诊断宣称已修复。",
+      "requiredEvidence": [
+        "各错误分类及映射",
+        "异常注入输出",
+        "构建/部署清单与依赖图",
+        "无误吞异常审查"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA11",
+      "title": "可追踪且不泄露的业务记录",
+      "tasks": [
+        "SP08",
+        "SP11",
+        "SP12",
+        "SP13",
+        "SP17",
+        "SP28",
+        "SP29",
+        "SP30",
+        "SP33"
+      ],
+      "sourceAcceptance": [
+        "T17",
+        "T18",
+        "AT10",
+        "DT09",
+        "DT10"
+      ],
+      "input": "从一个请求跟踪到用例/事务/异步消息/佣金与账单；故意缺失供应商用量、错误与历史规则版。",
+      "expected": "requestId和业务/事件/版本可关联；未知不写0；日志不含密钥/原证件/私密正文；共用管理账号不伪称实际自然人；告警阈值/保留据E03/E06确认，未定不放行相关项。",
+      "requiredEvidence": [
+        "端到端追踪示例",
+        "字段与脱敏表",
+        "日志搜索结果",
+        "告警处理记录及实际保留/删除配置"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA12",
+      "title": "AI隔离、替换与确定性校验",
+      "tasks": [
+        "SP08",
+        "SP31",
+        "SP32"
+      ],
+      "sourceAcceptance": [
+        "AT04",
+        "AT05",
+        "AT06",
+        "AT08",
+        "AT09",
+        "AT10",
+        "AT12"
+      ],
+      "input": "不合法/恶意结构化输出、超时、同请求并发、Provider替换和用户未采用候选。",
+      "expected": "业务合同/用量规则归shared，供应商协议归Adapter；AI只生成经验证候选，不直接写交易/权限/佣金/退款；未知不暗重调，换Provider无需改交易/计佣；实际能力按AG01取证。",
+      "requiredEvidence": [
+        "Provider合同与适配清单",
+        "相同用例替身/受控实际结果",
+        "次数/用量事实",
+        "非法输出拒绝和实际已授权接口证据"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA13",
+      "title": "迁移、备份与恢复不破坏事实",
+      "tasks": [
+        "SP08",
+        "SP11",
+        "SP13",
+        "SP35"
+      ],
+      "sourceAcceptance": [
+        "BX12",
+        "BX14",
+        "BX15",
+        "BX17",
+        "DT10"
+      ],
+      "input": "结构/索引版本升级失败、备份还原、业务提交/发送间中断、付款或退款外部已成功后恢复。",
+      "expected": "变更有前后版本/前置/兼容/恢复与回退；演练覆盖关键事实与事件进度，不重计/重退/复活撤权；外部资金核对补偿，敏感数据按E03用途保留，真实迁移/破坏性操作另授权。",
+      "requiredEvidence": [
+        "版本化迁移及回退说明",
+        "实际备份恢复演练",
+        "逐项对账",
+        "权限/索引一致性和敏感保留证据"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA14",
+      "title": "分阶段代表链路验证",
+      "tasks": [
+        "SP15",
+        "SP16",
+        "SP17",
+        "SP18",
+        "SP19",
+        "SP20",
+        "SP22"
+      ],
+      "sourceAcceptance": [
+        "T01",
+        "T06",
+        "T07",
+        "T08",
+        "T09",
+        "T10",
+        "T12",
+        "BX06"
+      ],
+      "input": "先发布/申请→正式选人子链，再沿同一跑腿交易验证到期/费用条件→唯一主计佣，并增加拒绝/重复/竞争/故障。",
+      "expected": "实际用例穿过Interface/shared规则/可信Adapter；SP18不依赖SP20；SP19—20完成后补全同链，SP22扩四业务和原全部异常；不是仅写库或仅内存模型成功。",
+      "requiredEvidence": [
+        "同一对象/轮次/请求的全链证据",
+        "分阶段接口与快照",
+        "实际读写和异常恢复",
+        "四业务回归"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA15",
+      "title": "阶段放行与风险相称的交付",
+      "tasks": [
+        "SP07",
+        "SP08",
+        "SP22",
+        "SP34",
+        "SP35",
+        "SP36"
+      ],
+      "sourceAcceptance": [
+        "T01",
+        "T06",
+        "T14",
+        "RT01",
+        "DT01"
+      ],
+      "input": "逐卡核对原前置、当前阶段适用BA实例、真实环境/权限、未定预算和最终性能/设备门槛。",
+      "expected": "36卡依赖/任务状态不改，不能跨阶段反向要求；各卡原验收与当前适用BA同时满足，未定或无证据受阻；正常/异常/越权/并发/时点/恢复按风险验证，最终仍走SP34/35/36。",
+      "requiredEvidence": [
+        "阶段实例及不适用来源",
+        "真实环境/供应商/设备",
+        "未决项",
+        "审查与回退点",
+        "测试输出和对应Git提交"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    },
+    {
+      "id": "BA16",
+      "title": "复用调查与限制复杂度",
+      "tasks": [
+        "SP07",
+        "SP08",
+        "SP11",
+        "SP13",
+        "SP31"
+      ],
+      "sourceAcceptance": [
+        "T17",
+        "AT07"
+      ],
+      "input": "对当前任务分别比较项目已有、官方能力/SDK、成熟第三方/GitHub及必要自写，覆盖数据库/可靠事件/Provider适配等实际变化点。",
+      "expected": "按AGENTS次序读文档及相关源码，核对许可/维护/兼容，以最小验证比较接入/改造/测试/升级/回退总成本；无理由不造基础轮子，不为小能力搬整套系统；关键依赖/费用/架构变化另确认。",
+      "requiredEvidence": [
+        "当前卡复用记录",
+        "来源链接/版本/源码",
+        "许可维护兼容核对",
+        "最小验证与采用/不采用理由",
+        "关键决定的用户确认"
+      ],
+      "stageApplication": "各责任卡仅执行当前阶段适用实例；最终产品通过需对应实际环境与原始证据，文档/探针不替代",
+      "failurePolicy": "任一适用预期不满足、关键参数未定或原始证据不足，均失败/受阻；不以总分或其他通过项抵消",
+      "retest": "保留原失败输入/时钟/版本；复验该实例及所有受影响消费者的正常、异常、权限、并发和恢复链路",
+      "productResult": "not-executed"
+    }
+  ],
+  "taskBindings": [
+    {
+      "task": "SP07",
+      "acceptanceIds": [
+        "BA01",
+        "BA02",
+        "BA10",
+        "BA15",
+        "BA16"
+      ],
+      "moduleIds": [],
+      "phaseRule": "建立实际工程与正负例门禁，原SP01—SP06前置不变；不要求未实现的全业务闭环",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP08",
+      "acceptanceIds": [
+        "BA01",
+        "BA02",
+        "BA03",
+        "BA04",
+        "BA05",
+        "BA06",
+        "BA07",
+        "BA08",
+        "BA09",
+        "BA10",
+        "BA11",
+        "BA12",
+        "BA13",
+        "BA15",
+        "BA16"
+      ],
+      "moduleIds": [],
+      "phaseRule": "交付具体逻辑/物理合同、能力映射与实证；未决关键项阻断其依赖实施和验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP09",
+      "acceptanceIds": [
+        "BA01",
+        "BA03"
+      ],
+      "moduleIds": [
+        "BM01"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP10",
+      "acceptanceIds": [
+        "BA03"
+      ],
+      "moduleIds": [],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP11",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA09",
+        "BA11",
+        "BA13",
+        "BA16"
+      ],
+      "moduleIds": [
+        "BM14"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP12",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA11"
+      ],
+      "moduleIds": [
+        "BM10"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP13",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA08",
+        "BA09",
+        "BA10",
+        "BA11",
+        "BA13",
+        "BA16"
+      ],
+      "moduleIds": [
+        "BM08"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP14",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04"
+      ],
+      "moduleIds": [
+        "BM03",
+        "BM04"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP15",
+      "acceptanceIds": [
+        "BA01",
+        "BA02",
+        "BA03",
+        "BA04",
+        "BA14"
+      ],
+      "moduleIds": [
+        "BM02",
+        "BM04"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP16",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA14"
+      ],
+      "moduleIds": [
+        "BM02"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP17",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA07",
+        "BA11",
+        "BA14"
+      ],
+      "moduleIds": [
+        "BM06"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP18",
+      "acceptanceIds": [
+        "BA01",
+        "BA02",
+        "BA03",
+        "BA04",
+        "BA06",
+        "BA07",
+        "BA14"
+      ],
+      "moduleIds": [
+        "BM05"
+      ],
+      "phaseRule": "验收选人子链和标准快照/授权，不以前置方式要求SP20已实现",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP19",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA05",
+        "BA07",
+        "BA14"
+      ],
+      "moduleIds": [
+        "BM05"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP20",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA05",
+        "BA06",
+        "BA07",
+        "BA09",
+        "BA14"
+      ],
+      "moduleIds": [
+        "BM05",
+        "BM06"
+      ],
+      "phaseRule": "与SP19延续SP18同一代表链，验证结束条件与唯一主计佣及异常",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP21",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA05"
+      ],
+      "moduleIds": [
+        "BM09",
+        "BM10"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP22",
+      "acceptanceIds": [
+        "BA14",
+        "BA15"
+      ],
+      "moduleIds": [],
+      "phaseRule": "扩展四业务和全部适用异常，居民核心通过再扩商家经营",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP23",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA09"
+      ],
+      "moduleIds": [
+        "BM08",
+        "BM11"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP24",
+      "acceptanceIds": [
+        "BA01",
+        "BA03"
+      ],
+      "moduleIds": [
+        "BM11"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP25",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA06"
+      ],
+      "moduleIds": [
+        "BM12"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP26",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04"
+      ],
+      "moduleIds": [
+        "BM13"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP27",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA06"
+      ],
+      "moduleIds": [
+        "BM08",
+        "BM13"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP28",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA11"
+      ],
+      "moduleIds": [
+        "BM13",
+        "BM15"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP29",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA08",
+        "BA11"
+      ],
+      "moduleIds": [
+        "BM07"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP30",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA07",
+        "BA08",
+        "BA11"
+      ],
+      "moduleIds": [
+        "BM06",
+        "BM07",
+        "BM08"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP31",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA04",
+        "BA12",
+        "BA16"
+      ],
+      "moduleIds": [
+        "BM16"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP32",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA12"
+      ],
+      "moduleIds": [
+        "BM16"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP33",
+      "acceptanceIds": [
+        "BA01",
+        "BA03",
+        "BA11"
+      ],
+      "moduleIds": [
+        "BM15"
+      ],
+      "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP34",
+      "acceptanceIds": [
+        "BA15"
+      ],
+      "moduleIds": [],
+      "phaseRule": "原全部真实接入和集成验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP35",
+      "acceptanceIds": [
+        "BA13",
+        "BA15"
+      ],
+      "moduleIds": [],
+      "phaseRule": "原真机、性能、隐私、安全与恢复验收",
+      "productResult": "not-executed"
+    },
+    {
+      "task": "SP36",
+      "acceptanceIds": [
+        "BA15"
+      ],
+      "moduleIds": [],
+      "phaseRule": "独立上线批准及原14天观察，不由文档授权",
+      "productResult": "not-executed"
+    }
+  ],
+  "diagnostics": [
+    {
+      "id": "AR01",
+      "source": "tools/sp01-shared-core-probe/check-boundaries.cjs",
+      "observation": "checkUiTypes接受UI中calculateCommission业务计算内存负例，返回空违规列表",
+      "method": "本地内存调用现有检查器，无源码改动",
+      "status": "reproduced-gap-not-fixed",
+      "requiredTasks": [
+        "SP07"
+      ],
+      "productionExposureProven": false
+    },
+    {
+      "id": "AR02",
+      "source": "miniprogram/cloudfunctions/quickstartFunctions/index.js",
+      "observation": "createCollection注入SYNTHETIC_NETWORK_FAILURE仍返回success:true",
+      "method": "本地VM与假的wx SDK，无云端调用或数据写入",
+      "status": "reproduced-gap-not-fixed",
+      "requiredTasks": [
+        "SP07",
+        "SP08"
+      ],
+      "productionExposureProven": false
+    }
+  ],
+  "preservedContract": {
+    "taskCount": 36,
+    "taskDependenciesAndStatusesUnchanged": true,
+    "baselineCases": 82,
+    "commerceCases": 20,
+    "qualityCriteria": 56,
+    "originalMeasurementsAndDeviceGatesUnchanged": true,
+    "oldSnapshotsRetained": true,
+    "businessRuleChanges": false
+  },
+  "validation": {
+    "scope": "documents-and-existing-local-tests-only",
+    "baselineFullSuite": {
+      "tests": 1615,
+      "passed": 1615,
+      "failed": 0
+    },
+    "finalChecks": "contract-and-tracked-regression-passed;workspace-full-suite-not-passed",
+    "negativeChecks": {
+      "scope": "in-memory-contract-consistency-only;not-product-or-guard-implementation-tests",
+      "mutationsRejected": 10,
+      "categories": [
+        "missing-rule-owner",
+        "cyclic-dependency",
+        "server-imports-client",
+        "false-product-pass",
+        "unknown-task",
+        "unknown-acceptance-source",
+        "missing-commission-transaction",
+        "missing-commission-uniqueness",
+        "reverse-task-prerequisite",
+        "plan-quality-reference-drift"
+      ]
+    },
+    "productAcceptanceExecuted": false,
+    "contractChecks": {
+      "result": "passed",
+      "modules": 16,
+      "transactions": 12,
+      "invariants": 10,
+      "acceptanceItems": 16,
+      "boundTasks": 30,
+      "originalPlanAndQualitySemanticsPreserved": true,
+      "sourceFingerprintsMatchedAtCheck": true,
+      "localLinksAndUtf8Checked": true
+    },
+    "targetedPlanSuite": {
+      "command": "node --test tests/executable-development-plan.test.cjs",
+      "tests": 44,
+      "passed": 44,
+      "failed": 0
+    },
+    "trackedRegression": {
+      "command": "node --test <all git-tracked tests/*.test.cjs>",
+      "testFilesSelectedBy": "git ls-files -- tests/*.test.cjs",
+      "tests": 1615,
+      "passed": 1615,
+      "failed": 0,
+      "skipped": 0
+    },
+    "workspaceFullSuite": {
+      "command": "node --test tests/*.test.cjs",
+      "result": "failed",
+      "knownFailingTest": "tests/sp01-taro-malicious-archive.test.cjs",
+      "observedFailure": "line 12: expected docs/sp01-taro-malicious-archive-20261103.json to exist; file absent",
+      "testTrackedAtRun": false,
+      "ownedByThisChange": false,
+      "action": "保留执行Agent的未完成文件；由其补齐真实受控探针证据后重新全量检查，不伪造结果、不删除/跳过该项来宣称工作区通过"
+    },
+    "workspaceAllChecksPassed": false,
+    "userConfirmedExecutionAgentPaused": true
+  }
+}

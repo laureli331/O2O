@@ -41,7 +41,9 @@
     "docs/sp01-r01-registry-refresh-20261103.json",
     "docs/sp01-r01-registry-refresh-20261103.md",
     "docs/sp01-taro-decompress-interop-20261103.json",
-    "docs/sp01-taro-decompress-interop-20261103.md"
+    "docs/sp01-taro-decompress-interop-20261103.md",
+    "docs/backend-architecture-contract-20261103.md",
+    "docs/backend-architecture-contract-20261103.json"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -2923,6 +2925,19 @@
         ],
         "pageCarriers": [],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA02",
+          "BA10",
+          "BA15",
+          "BA16"
+        ],
+        "phaseRule": "建立实际工程与正负例门禁，原SP01—SP06前置不变；不要求未实现的全业务闭环",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -2980,6 +2995,29 @@
         ],
         "pageCarriers": [],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA02",
+          "BA03",
+          "BA04",
+          "BA05",
+          "BA06",
+          "BA07",
+          "BA08",
+          "BA09",
+          "BA10",
+          "BA11",
+          "BA12",
+          "BA13",
+          "BA15",
+          "BA16"
+        ],
+        "phaseRule": "交付具体逻辑/物理合同、能力映射与实证；未决关键项阻断其依赖实施和验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3051,6 +3089,16 @@
           "previews/v05.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3117,6 +3165,15 @@
           "previews/g03.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA03"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3198,6 +3255,21 @@
           "previews/v14.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA09",
+          "BA11",
+          "BA13",
+          "BA16"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3286,6 +3358,17 @@
           "previews/v27.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA11"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3361,6 +3444,23 @@
           "previews/v12.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA08",
+          "BA09",
+          "BA10",
+          "BA11",
+          "BA13",
+          "BA16"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3453,6 +3553,17 @@
           "previews/v10.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3561,6 +3672,19 @@
           "previews/v09.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA02",
+          "BA03",
+          "BA04",
+          "BA14"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3640,6 +3764,18 @@
           "previews/v10.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA14"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3707,6 +3843,20 @@
           "previews/v16.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA07",
+          "BA11",
+          "BA14"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3802,6 +3952,21 @@
           "previews/v08.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA02",
+          "BA03",
+          "BA04",
+          "BA06",
+          "BA07",
+          "BA14"
+        ],
+        "phaseRule": "验收选人子链和标准快照/授权，不以前置方式要求SP20已实现",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3884,6 +4049,20 @@
           "previews/v07.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA05",
+          "BA07",
+          "BA14"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -3975,6 +4154,22 @@
           "previews/v15.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA05",
+          "BA06",
+          "BA07",
+          "BA09",
+          "BA14"
+        ],
+        "phaseRule": "与SP19延续SP18同一代表链，验证结束条件与唯一主计佣及异常",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4083,6 +4278,18 @@
           "previews/v20.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA05"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4190,6 +4397,16 @@
           "previews/services.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA14",
+          "BA15"
+        ],
+        "phaseRule": "扩展四业务和全部适用异常，居民核心通过再扩商家经营",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4284,6 +4501,18 @@
           "previews/v27.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA09"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4390,6 +4619,16 @@
           "previews/v23.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4474,6 +4713,18 @@
           "previews/v27.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA06"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4557,6 +4808,17 @@
           "previews/v11.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4647,6 +4909,18 @@
           "previews/v12.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA06"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4716,6 +4990,17 @@
           "previews/v13.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA11"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4798,6 +5083,19 @@
           "previews/v22.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA08",
+          "BA11"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4883,6 +5181,20 @@
           "previews/v22.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA07",
+          "BA08",
+          "BA11"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -4971,6 +5283,19 @@
           "previews/v05.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA04",
+          "BA12",
+          "BA16"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -5057,6 +5382,17 @@
           "previews/v04.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA12"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -5153,6 +5489,17 @@
           "previews/v21.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA01",
+          "BA03",
+          "BA11"
+        ],
+        "phaseRule": "按原任务依赖，仅当前阶段适用实例；最终全量由SP34/SP35/SP36验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -5274,6 +5621,15 @@
           "previews/g04.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA15"
+        ],
+        "phaseRule": "原全部真实接入和集成验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -5383,6 +5739,16 @@
           "previews/g04.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA13",
+          "BA15"
+        ],
+        "phaseRule": "原真机、性能、隐私、安全与恢复验收",
+        "productAcceptancePassed": false
       }
     },
     {
@@ -5439,6 +5805,15 @@
         ],
         "pageCarriers": [],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "backendArchitecture": {
+        "document": "docs/backend-architecture-contract-20261103.md",
+        "data": "docs/backend-architecture-contract-20261103.json",
+        "acceptanceIds": [
+          "BA15"
+        ],
+        "phaseRule": "独立上线批准及原14天观察，不由文档授权",
+        "productAcceptancePassed": false
       }
     }
   ],
@@ -5636,5 +6011,31 @@
       "humanReply": "采用，先取实际依据再确认，未定不放行",
       "decision": "SP01/SP05明确测量方案，SP08/SP13/SP31取得实际数据后提出具体预算由用户确认；未确认不得通过对应性能验收或最终放行。"
     }
+  },
+  "backendArchitectureContract": {
+    "version": "1.0",
+    "document": "docs/backend-architecture-contract-20261103.md",
+    "data": "docs/backend-architecture-contract-20261103.json",
+    "acceptanceIds": [
+      "BA01",
+      "BA02",
+      "BA03",
+      "BA04",
+      "BA05",
+      "BA06",
+      "BA07",
+      "BA08",
+      "BA09",
+      "BA10",
+      "BA11",
+      "BA12",
+      "BA13",
+      "BA14",
+      "BA15",
+      "BA16"
+    ],
+    "businessRuleChanges": false,
+    "existingTaskCountAndDependenciesUnchanged": true,
+    "productAcceptancePassed": false
   }
 }
