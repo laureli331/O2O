@@ -14,7 +14,7 @@ Pakomo 已安装到华为备用机；此前用户报告一次仅微信单应用�
 
 2026-11-03 新增[华为探针报告为4G的样本](sp01-network-huawei-cellular-4g-20261103.json)：30次只读 `sp01IdentityProbe` 调用全部成功，独立复算 P50=327ms、最近秩 P95=949ms、最大1747ms。报告中的 `networkType` 为 `4g`；设备身份来自当时的华为备用机上下文，探针粘贴内容本身没有设备字段。该轮未记录 Pakomo/VPN 状态、配置档、精确运行时长或单调时钟，也没有独立测量蜂窝链路 RTT、吞吐、抖动和丢包。因此只作为应用层蜂窝网络诊断样本，不证明弱网注入、生效参数、链路质量或稳定范围；R04 与 SP01 仍待完成。
 
-同日新增[华为备用机 4G Cloudflare 测速截图](sp01-network-huawei-cloudflare-4g-20261103.json)：单轮显示下载12.7Mbps、上传15.8Mbps、延迟218ms（下载220ms、上传224ms）、抖动105ms（下载269ms、上传178ms）、丢包17.1%；截图网络评分为流媒体3/5、游戏2/5、视频通话1/5。截图可见4G标记；设备型号 SEA-AL10 来自本轮活跃设备上下文，截图未显示型号。该读数是手机到 Cloudflare 的独立链路观察，与同日 `sp01IdentityProbe` 的30次应用层往返分开记录，不能相互替代或合并推断。它只是一轮，且 Pakomo/VPN 状态未知；不能冻结稳定蜂窝网络范围或证明弱网注入。原图保存于 `docs/evidence/sp01-network-huawei-cloudflare-4g-20261103.jpg`。R04 与 SP01 仍待完成。
+同日新增两轮[华为备用机 4G Cloudflare 测速](sp01-network-huawei-cloudflare-4g-20261103.json)：第一轮下载12.7Mbps、上传15.8Mbps、延迟218ms（下载220ms、上传224ms）、抖动105ms（下载269ms、上传178ms）、丢包17.1%；第二轮下载3.57Mbps、上传14.3Mbps、延迟212ms（下载229ms、上传362ms）、抖动145ms（下载172ms、上传215ms）、丢包9.3%。第二轮截图显示流媒体、游戏、视频通话均1/5。两轮截图均可见4G标记；SEA-AL10 型号来自同一设备上下文，截图未显示型号。第二轮单独记录在[证据 JSON](sp01-network-huawei-cloudflare-4g-round2-20261103.json)及[原图](evidence/sp01-network-huawei-cloudflare-4g-round2-20261103.jpg)。两轮读数有差异，且 Pakomo/VPN 状态未被逐轮核实，因此保留两轮原值但不冻结稳定蜂窝网络范围。它们是手机到 Cloudflare 的链路观察，与同日 `sp01IdentityProbe` 的30次应用层往返分开记录，不能相互替代或合并推断，也不证明弱网注入。R04 与 SP01 仍待完成。
 
 回退：本文件仅记录测量方法，没有云端部署、文件写入或设置更改；若手机浏览器无法显示必要字段，保留失败观察并另选已验证工具。
 

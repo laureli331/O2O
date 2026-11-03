@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "task": "SP01",
+  "item": "R04",
+  "round": 2,
+  "sampleType": "reported-cellular-4g-phone-to-cloudflare-speed-test",
+  "source": "user-provided Cloudflare Speed Test screenshot in response to a request for an independent repeat round; original screenshot retained in the repository",
+  "sourceImage": "docs/evidence/sp01-network-huawei-cloudflare-4g-round2-20261103.jpg",
+  "sourceImageSha256": "FFF31148A12E1F483175104A2B001148F913DDCF37BA275821F234831EF04D07",
+  "deviceContext": {
+    "manufacturer": "HUAWEI",
+    "model": "SEA-AL10",
+    "androidVersion": "10",
+    "source": "same Huawei backup-device context as the first requested 4G round; model is not visible in this screenshot",
+    "modelIndependentlyVerifiedByScreenshot": false
+  },
+  "networkCondition": {
+    "accessReportedByScreenshot": "4g",
+    "cellularIndicatorVisibleInScreenshot": true,
+    "defaultNetworkIndependentlyVerifiedAtTestTime": false,
+    "pakomoOrVpnState": "unknown",
+    "profile": "not stated"
+  },
+  "reportedLocalTime": "14:17:00",
+  "target": "speed.cloudflare.com",
+  "scope": "phone-to-Cloudflare, not phone-to-CloudBase",
+  "downloadMbps": 3.57,
+  "uploadMbps": 14.3,
+  "throughputDisplayLabel": "90th percentile",
+  "latencyMs": 212,
+  "downloadLatencyMs": 229,
+  "uploadLatencyMs": 362,
+  "jitterMs": 145,
+  "downloadJitterMs": 172,
+  "uploadJitterMs": 215,
+  "packetLossPercent": 9.3,
+  "networkQualityStars": {
+    "streaming": "1/5",
+    "gaming": "1/5",
+    "videoCalls": "1/5"
+  },
+  "independentRoundsForThisDeviceAndAccess": 2,
+  "previousRoundEvidence": "docs/sp01-network-huawei-cloudflare-4g-20261103.json",
+  "stableCellularRangeFrozen": false,
+  "weakNetworkInjectionVerified": false,
+  "comparisonToPreviousRound": {
+    "previousRoundDownloadMbps": 12.7,
+    "previousRoundUploadMbps": 15.8,
+    "previousRoundLatencyMs": 218,
+    "previousRoundJitterMs": 105,
+    "previousRoundPacketLossPercent": 17.1,
+    "observedDifference": "download throughput and packet-loss/jitter results vary between two rounds; VPN/Pakomo state and exact test conditions are not independently established"
+  },
+  "interpretation": "This second Cloudflare round reports substantially lower download throughput and lower packet loss than the first round, while latency is similar and jitter is higher. Two rounds with unknown Pakomo/VPN state do not establish a stable cellular range, CloudBase path behavior, weak-network injection, or per-request packet loss. Keep it separate from the 2026-11-03 Huawei 4G sp01IdentityProbe application-roundtrip sample.",
+  "r04Passed": false,
+  "sp01Passed": false
+}

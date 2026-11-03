@@ -1,6 +1,7 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const { summarizeSamples } = require('../tools/sp01-network-probe/summarize.cjs');
@@ -19,7 +20,9 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /sp01-pakomo-current-device-snapshot-20261102\.json/);
   assert.match(source, /不能回溯证明六轮采样时 VPN/);
   assert.match(source, /sp01-network-huawei-cloudflare-4g-20261103\.json/);
+  assert.match(source, /sp01-network-huawei-cloudflare-4g-round2-20261103\.json/);
   assert.match(source, /下载12\.7Mbps、上传15\.8Mbps/);
+  assert.match(source, /第二轮下载3\.57Mbps、上传14\.3Mbps/);
   assert.match(source, /R04 与 SP01 继续保持待完成/);
 });
 
@@ -266,10 +269,57 @@ test('Huawei cellular Cloudflare evidence is retained separately from the CloudB
 
   const readiness = require('../docs/sp01-readiness-review-20261030.json');
   const r04 = readiness.openItems.find(item => item.id === 'R04');
-  assert.equal(r04.latestCellularCloudflareEvidence, evidencePath);
+  assert.equal(r04.firstCellularCloudflareEvidence, evidencePath);
+  assert.ok(r04.cellularCloudflareEvidence.includes(evidencePath));
   assert.ok(r04.evidence.split('; ').includes(evidencePath));
   assert.ok(readiness.sources.includes(evidencePath));
   assert.ok(r04.evidence.includes('sp01-network-huawei-cellular-4g-20261103.json'));
+  assert.equal(r04.state, 'pending');
+  assert.equal(readiness.sp01Passed, false);
+});
+
+test('second Huawei 4G Cloudflare round preserves its screenshot and does not freeze a stable range', () => {
+  const evidencePath = 'docs/sp01-network-huawei-cloudflare-4g-round2-20261103.json';
+  const evidence = require(`../${evidencePath}`);
+  const first = require('../docs/sp01-network-huawei-cloudflare-4g-20261103.json');
+  const screenshotPath = path.join(__dirname, '..', evidence.sourceImage);
+  const screenshot = fs.readFileSync(screenshotPath);
+
+  assert.equal(evidence.round, 2);
+  assert.equal(evidence.reportedLocalTime, '14:17:00');
+  assert.equal(evidence.sourceImageSha256, 'FFF31148A12E1F483175104A2B001148F913DDCF37BA275821F234831EF04D07');
+  assert.equal(evidence.target, 'speed.cloudflare.com');
+  assert.equal(evidence.scope, 'phone-to-Cloudflare, not phone-to-CloudBase');
+  assert.equal(evidence.networkCondition.accessReportedByScreenshot, '4g');
+  assert.equal(evidence.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(evidence.downloadMbps, 3.57);
+  assert.equal(evidence.uploadMbps, 14.3);
+  assert.equal(evidence.latencyMs, 212);
+  assert.equal(evidence.downloadLatencyMs, 229);
+  assert.equal(evidence.uploadLatencyMs, 362);
+  assert.equal(evidence.jitterMs, 145);
+  assert.equal(evidence.downloadJitterMs, 172);
+  assert.equal(evidence.uploadJitterMs, 215);
+  assert.equal(evidence.packetLossPercent, 9.3);
+  assert.equal(evidence.independentRoundsForThisDeviceAndAccess, 2);
+  assert.equal(evidence.stableCellularRangeFrozen, false);
+  assert.equal(evidence.r04Passed, false);
+  assert.equal(evidence.sp01Passed, false);
+  assert.notEqual(evidence.packetLossPercent, first.packetLossPercent);
+  assert.deepEqual([...screenshot.subarray(0, 2)], [0xff, 0xd8]);
+  assert.equal(crypto.createHash('sha256').update(screenshot).digest('hex').toUpperCase(), evidence.sourceImageSha256);
+
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  assert.equal(r04.latestCellularCloudflareEvidence, evidencePath);
+  assert.equal(r04.firstCellularCloudflareEvidence, 'docs/sp01-network-huawei-cloudflare-4g-20261103.json');
+  assert.deepEqual(r04.cellularCloudflareEvidence, [
+    'docs/sp01-network-huawei-cloudflare-4g-20261103.json',
+    evidencePath
+  ]);
+  assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.ok(readiness.sources.includes(evidencePath));
+  assert.ok(readiness.sources.includes(evidence.sourceImage));
   assert.equal(r04.state, 'pending');
   assert.equal(readiness.sp01Passed, false);
 });
