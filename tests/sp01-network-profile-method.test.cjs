@@ -3,6 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const { summarizeSamples } = require('../tools/sp01-network-probe/summarize.cjs');
 
 test('R04 network profile method keeps Cloudflare link results separate from CloudBase round trips', () => {
   const source = fs.readFileSync(path.join(__dirname, '../docs/sp01-network-profile-method-20261031.md'), 'utf8');
@@ -18,6 +19,37 @@ test('R04 network profile method keeps Cloudflare link results separate from Clo
   assert.match(source, /sp01-pakomo-current-device-snapshot-20261102\.json/);
   assert.match(source, /不能回溯证明六轮采样时 VPN/);
   assert.match(source, /R04 与 SP01 继续保持待完成/);
+});
+
+test('Huawei reported-4g evidence retains raw samples and independently matches the supplied summary', () => {
+  const evidencePath = 'docs/sp01-network-huawei-cellular-4g-20261103.json';
+  const evidence = require(`../${evidencePath}`);
+  const values = [1747, 644, 330, 329, 379, 317, 319, 283, 949, 308, 377, 326, 576, 409, 318, 377, 314, 330, 313, 391, 333, 322, 314, 327, 395, 310, 301, 342, 321, 317];
+  const recomputed = summarizeSamples(evidence.samples);
+
+  assert.deepEqual(evidence.samples.map(sample => sample.elapsedMs), values);
+  assert.ok(evidence.samples.every(sample => sample.ok));
+  assert.equal(evidence.networkCondition.networkTypeReportedByProbe, '4g');
+  assert.equal(evidence.networkCondition.independentlyVerified, false);
+  assert.equal(evidence.networkCondition.pakomoOrVpnState, 'unknown');
+  assert.equal(evidence.scope, 'application-roundtrip-not-link-rtt-or-packet-loss');
+  assert.deepEqual(recomputed, evidence.userReportedSummary);
+  assert.deepEqual(recomputed, evidence.independentlyRecomputed);
+  assert.equal(evidence.runDurationRecorded, false);
+  assert.equal(evidence.r04Passed, false);
+  assert.equal(evidence.sp01Passed, false);
+
+  const readiness = require('../docs/sp01-readiness-review-20261030.json');
+  const r04 = readiness.openItems.find(item => item.id === 'R04');
+  assert.equal(r04.latestCellularNetworkSampleEvidence, evidencePath);
+  assert.ok(r04.evidence.split('; ').includes(evidencePath));
+  assert.ok(readiness.sources.includes(evidencePath));
+  assert.equal(r04.state, 'pending');
+  assert.equal(readiness.sp01Passed, false);
+
+  const review = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
+  assert.match(review, /华为探针报告4G.*30\/30.*P50 327ms.*P95 949ms.*最大1747ms/);
+  assert.match(review, /VPN\/Pakomo状态、精确时长和 LTE 链路指标未记录/);
 });
 
 test('R04 records user-reported app-scope isolation without claiming measured weak-network effect', () => {
