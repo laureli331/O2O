@@ -43,17 +43,20 @@ test('SP01 boundary clarification preserves task and acceptance gates', () => {
   assert.equal(review.projectCodeOrCloudResourcesChanged, false);
   assert.equal(review.statusChangesMade, false);
   assert.equal(review.thresholdsChanged, false);
+  assert.deepEqual(review.decisionUpdate.acceptedItems, ['R01', 'R04']);
+  assert.equal(review.decisionUpdate.sp01OrE06MarkedPassed, false);
+  assert.deepEqual(review.requiredUserDecisions.map((decision) => decision.id), ['R06']);
 
   const classifications = Object.fromEntries(review.items.map((item) => [item.id, item.classification]));
   assert.deepEqual(classifications, {
-    R01: 'B',
+    R01: 'D',
     R02: 'D',
     R03: 'C',
-    R04: 'B',
+    R04: 'D',
     R05: 'C',
     R06: 'A',
     QD03: 'A',
-    MA01: 'B'
+    MA01: 'D'
   });
   assert.deepEqual(review.statusSnapshot.firstProductTaskPrerequisites,
     ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);

@@ -55,8 +55,8 @@
     {
       "id": "R01",
       "topic": "Taro version, source and risk disposition",
-      "classification": "B",
-      "readinessState": "pending",
+      "classification": "D",
+      "readinessState": "source-readiness-pending; closeout-choice-user-confirmed",
       "evidence": [
         "docs/sp01-taro-432-compatibility-20261103.json",
         "docs/sp01-taro-432-maintenance-followup-20261103.json",
@@ -81,12 +81,9 @@
         "riskDisposition": "development-candidate only; perform bounded package reachability review against the actual graph at SP08; any confirmed applicable reachable critical issue blocks its affected integration/release gate",
         "formalLockCreated": false
       },
-      "minimumNextStep": "User confirms the recommended candidate and bounded risk treatment, or chooses to keep SP01 open until the risks are resolved.",
-      "exitCriteria": "Chosen exact candidate, source, bootstrap path, remaining risk, rollback and downstream hard stop are written and confirmed.",
-      "decisionOptions": [
-        "confirm-recommended-development-candidate-and-bounded-follow-up",
-        "keep-sp01-open-until-risk-resolution"
-      ]
+      "userConfirmedChoice": "recommended-development-candidate-and-bounded-follow-up",
+      "minimumNextStep": "Carry the confirmed candidate and guardrails into SP01 signoff; create the formal dependency lock in SP07 and review actual package reachability at SP08.",
+      "exitCriteria": "SP01 candidate/source/bootstrap choice and bounded risk treatment are confirmed. This does not claim advisories fixed, malicious-archive evidence passed, or product security accepted."
     },
     {
       "id": "R02",
@@ -127,8 +124,8 @@
     {
       "id": "R04",
       "topic": "normal and controlled weak-network conditions",
-      "classification": "B",
-      "readinessState": "pending",
+      "classification": "D",
+      "readinessState": "source-readiness-pending; closeout-profile-user-confirmed",
       "evidence": [
         "docs/sp01-readiness-review-20261030.json#openItems.R04",
         "docs/sp01-network-huawei-pakomo-counter-correlated-20261102.json",
@@ -147,8 +144,9 @@
         "publicWifi": "supplemental real-world scenario, not the controlled QP07 injection profile",
         "effectClaimed": false
       },
-      "minimumNextStep": "User confirms whether this profile split is the intended SP01/QP07 setup.",
-      "exitCriteria": "The normal/weak profiles, evidence fields and time/authorization boundaries are recorded and confirmed; no observed profile is described as effective without proof.",
+      "userConfirmedChoice": "home-wifi-vpn-off-normal; Pakomo-WeChat-only-light-controlled-weak; public-wifi-supplemental",
+      "minimumNextStep": "Carry the confirmed profile split and evidence boundaries into SP01 signoff; keep actual per-request shaping and product-path recovery unproven until QP07.",
+      "exitCriteria": "SP01 test profiles and scope are confirmed. No claim is made that Pakomo settings were independently proven effective or that product recovery passed.",
       "downstreamValidation": {
         "criteria": "QP07",
         "ownerTasks": [
@@ -222,14 +220,14 @@
     {
       "id": "MA01",
       "topic": "malicious remote archive test",
-      "classification": "B",
-      "readinessState": "test-preserved-evidence-missing",
+      "classification": "D",
+      "readinessState": "test-preserved-unverified-remote-archive-path-not-selected",
       "testFile": "tests/sp01-taro-malicious-archive.test.cjs",
       "expectedEvidenceFile": "docs/sp01-taro-malicious-archive-20261103.json",
       "evidenceFileCurrentlyPresent": false,
-      "whyCurrentStage": "Only triggered if the remote ZIP/archive template route is selected; the recommended local scaffold avoids this execution path.",
-      "minimumNextStep": "Preserve the test unchanged; if the remote archive path is selected in the future, run the actual isolated test and produce evidence before enabling that path.",
-      "exitCriteria": "Either the local-only bootstrap route is confirmed and the test remains explicitly conditional, or the actual archive test passes with complete evidence and cleanup."
+      "whyCurrentStage": "The user confirmed the project-controlled local scaffold. The unverified test only applies if remote ZIP/archive template execution is later selected; it is not passed or removed.",
+      "minimumNextStep": "Preserve the test unchanged; before any future remote archive path is enabled, run the isolated test and produce the required evidence.",
+      "exitCriteria": "Current SP01 bootstrap choice excludes remote archive execution. If a future task reintroduces it, require real isolated evidence, passing test and cleanup before enabling that path."
     }
   ],
   "planClarification": {
@@ -247,16 +245,14 @@
     "dependenciesChanged": false,
     "statusFieldsChanged": false
   },
+  "decisionUpdate": {
+    "recordedAfterReview": true,
+    "userStatement": "按建议收口",
+    "acceptedItems": ["R01", "R04"],
+    "sourceReadinessStatusesChanged": false,
+    "sp01OrE06MarkedPassed": false
+  },
   "requiredUserDecisions": [
-    {
-      "id": "R01",
-      "recommended": "confirm-recommended-development-candidate-and-bounded-follow-up",
-      "alternative": "keep-sp01-open-until-risk-resolution"
-    },
-    {
-      "id": "R04",
-      "recommended": "confirm-home-wifi-normal-and-pakomo-light-controlled-weak-profile; public-wifi-supplemental"
-    },
     {
       "id": "R06",
       "requiredInput": "read-only target plan and recovery entitlement/retention/cost evidence"
