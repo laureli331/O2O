@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-03",
+  "document": "docs/sp01-closeout-review-20261103.md",
+  "sourceDocuments": [
+    "docs/v1-executable-development-plan-20261027.md",
+    "docs/v1-executable-development-plan-20261027.json",
+    "docs/v1-quality-acceptance-20261027.md",
+    "docs/v1-quality-acceptance-20261027.json",
+    "docs/backend-architecture-contract-20261103.md",
+    "docs/backend-architecture-contract-20261103.json",
+    "docs/sp01-readiness-review-20261030.md",
+    "docs/sp01-readiness-review-20261030.json"
+  ],
+  "reviewScope": "sp01-closeout-only",
+  "sourceEvidenceReviewReadOnly": true,
+  "planDocumentationClarificationApplied": true,
+  "projectCodeOrCloudResourcesChanged": false,
+  "statusChangesMade": false,
+  "thresholdsChanged": false,
+  "statusSnapshot": {
+    "planStatus": "execution-backlog-preconditions-open",
+    "sp01Status": "in-progress",
+    "e06GatePassed": false,
+    "sp01Passed": false,
+    "sp07Started": false,
+    "productAcceptancePassed": false,
+    "taskCount": 36,
+    "firstProductTask": "SP07",
+    "firstProductTaskPrerequisites": [
+      "SP01",
+      "SP02",
+      "SP03",
+      "SP04",
+      "SP05",
+      "SP06"
+    ]
+  },
+  "boundary": {
+    "sp01Deliverables": [
+      "actual environment facts",
+      "version candidates with sources and lock/rollback plan",
+      "current E06 recovery capability and cost evidence",
+      "critical decisions needed before SP07"
+    ],
+    "formalProductModuleGraphOwnerTasks": [
+      "SP07",
+      "SP08"
+    ],
+    "futureProductMeasurementsAreNotSp01Evidence": true,
+    "futureAcceptanceCannotBeMarkedPassedEarly": true,
+    "unknownCurrentSp01RequiredChoicesStillBlockSignoff": true
+  },
+  "items": [
+    {
+      "id": "R01",
+      "topic": "Taro version, source and risk disposition",
+      "classification": "B",
+      "readinessState": "pending",
+      "evidence": [
+        "docs/sp01-taro-432-compatibility-20261103.json",
+        "docs/sp01-taro-432-maintenance-followup-20261103.json",
+        "docs/sp01-r01-registry-refresh-20261103.json",
+        "docs/sp01-taro-decompress-interop-20261103.json"
+      ],
+      "currentFacts": [
+        "Taro 4.3.2 isolated candidate passed application strict type checking and synthetic weapp build with React/DOM/types 18.3.1, TypeScript 5.9.3 and Webpack 5.91.0.",
+        "Third-party declaration diagnostics and npm audit advisories remain; affected-package counts are not proof of product exploitability or remediation.",
+        "Remote template fetch evaluates creator modules; the license-unknown Gitee template was not adopted; full interactive init and malicious archive validation were not performed."
+      ],
+      "riskLocation": "development-tooling-and-template-bootstrap; actual product runtime reachability is not yet established",
+      "whyCurrentStage": "SP01 requires candidate source, risk treatment and confirmation of key technical choices.",
+      "recommendedPath": {
+        "candidate": {
+          "taro": "4.3.2",
+          "react": "18.3.1",
+          "typescript": "5.9.3",
+          "webpack": "5.91.0"
+        },
+        "bootstrap": "project-controlled-local-scaffold; do not execute remote template creator modules or use the license-unknown Gitee template",
+        "riskDisposition": "development-candidate only; perform bounded package reachability review against the actual graph at SP08; any confirmed applicable reachable critical issue blocks its affected integration/release gate",
+        "formalLockCreated": false
+      },
+      "minimumNextStep": "User confirms the recommended candidate and bounded risk treatment, or chooses to keep SP01 open until the risks are resolved.",
+      "exitCriteria": "Chosen exact candidate, source, bootstrap path, remaining risk, rollback and downstream hard stop are written and confirmed.",
+      "decisionOptions": [
+        "confirm-recommended-development-candidate-and-bounded-follow-up",
+        "keep-sp01-open-until-risk-resolution"
+      ]
+    },
+    {
+      "id": "R02",
+      "topic": "shared core and version-policy preparation",
+      "classification": "D",
+      "readinessState": "preparation-evidence-ready-for-sp01-signoff",
+      "evidence": [
+        "docs/sp01-readiness-review-20261030.json#openItems.R02",
+        "docs/unified-react18-shared-core-20261030.md"
+      ],
+      "whyCurrentStage": "Preparation decisions are recorded; formal product-state and boundary checks depend on implementation.",
+      "minimumNextStep": "Carry existing preparation evidence into SP01 signoff; do not create the formal shared package now.",
+      "exitCriteria": "Reference existing evidence at signoff; retain product implementation checks in SP07/SP08."
+    },
+    {
+      "id": "R03",
+      "topic": "device performance sampling and QP05 product evidence",
+      "classification": "C",
+      "readinessState": "pending-for-product-measurement",
+      "evidence": [
+        "docs/sp01-huawei-gfxinfo-swipe-20261102.json",
+        "docs/sp01-readiness-review-20261030.json#openItems.R03"
+      ],
+      "whyCurrentStage": "SP01 records known devices and method limits; actual page frame/input traces require product pages.",
+      "assignedTasks": [
+        "SP05",
+        "SP35"
+      ],
+      "trigger": "After relevant product pages and content fixtures exist.",
+      "originalThreshold": "QP05: each applicable device group 3 rounds, each at least 30 timed segments with frozen segment duration and 200 records plus legal heavy content; each segment average at least 55 FPS with no app-attributable jank over 100 ms; retain frame/input traces, long-frame detail, per-segment statistics and recording.",
+      "failureBlocks": [
+        "SP35",
+        "final product acceptance"
+      ],
+      "minimumNextStep": "Keep the unavailable independent iOS frame stream and Android host-layer limitation recorded; execute QP05 only against the actual product page.",
+      "exitCriteria": "All QP05 groups and rounds satisfy the original threshold with raw evidence; otherwise SP35 remains blocked."
+    },
+    {
+      "id": "R04",
+      "topic": "normal and controlled weak-network conditions",
+      "classification": "B",
+      "readinessState": "pending",
+      "evidence": [
+        "docs/sp01-readiness-review-20261030.json#openItems.R04",
+        "docs/sp01-network-huawei-pakomo-counter-correlated-20261102.json",
+        "docs/sp01-network-huawei-pakomo-bounded-20261102.json",
+        "docs/sp01-network-public-wifi-app-round1-20261103.json"
+      ],
+      "currentFacts": [
+        "Home Wi-Fi has 30 successful read-only CloudBase application round trips.",
+        "Pakomo UI shows a WeChat-only light profile with 100 ms delay, 30 ms jitter, 1 percent packet loss and 2048/1024 Kbps; exact per-request application was not proven by retained samples.",
+        "Public Wi-Fi and cellular observations remain separate diagnostic samples and do not establish stable ranges or CloudBase link metrics."
+      ],
+      "whyCurrentStage": "SP01/QM01 needs a confirmed reproducible normal/weak test configuration and evidence method; product recovery outcomes belong to later cards.",
+      "recommendedPath": {
+        "normal": "home Wi-Fi, VPN off",
+        "controlledWeak": "Pakomo light profile applied only to WeChat using the visible 100/30/1%, 2048/1024 Kbps settings",
+        "publicWifi": "supplemental real-world scenario, not the controlled QP07 injection profile",
+        "effectClaimed": false
+      },
+      "minimumNextStep": "User confirms whether this profile split is the intended SP01/QP07 setup.",
+      "exitCriteria": "The normal/weak profiles, evidence fields and time/authorization boundaries are recorded and confirmed; no observed profile is described as effective without proof.",
+      "downstreamValidation": {
+        "criteria": "QP07",
+        "ownerTasks": [
+          "SP11",
+          "business-cards",
+          "SP35"
+        ],
+        "trigger": "When real read, write, query and image paths exist.",
+        "originalThreshold": "Inject the frozen rate/latency/loss settings before and after each applicable path and execute 3 rounds per scenario; preserve state/input and prevent duplicate business effects; missing configuration/evidence or any failure blocks the affected task and final acceptance."
+      }
+    },
+    {
+      "id": "R05",
+      "topic": "endurance workload and product memory budget",
+      "classification": "C",
+      "readinessState": "workload-confirmed-product-budget-not-yet-measurable",
+      "evidence": [
+        "docs/sp01-readiness-review-20261030.json#openItems.R05",
+        "docs/v1-quality-acceptance-20261027.json#criteria.QP08"
+      ],
+      "whyCurrentStage": "The user confirmed the preparation workload; actual loop and attributable memory growth need product pages.",
+      "assignedTasks": [
+        "SP05",
+        "SP35"
+      ],
+      "trigger": "After product pages and repeated user-flow loop are implemented.",
+      "originalThreshold": "QP08: 60 minutes, at least 60 full mixed-user cycles, record every 10 minutes; no crash/blank screen/uncaught exception/duplicate business effect; resource/memory must satisfy a user-confirmed measured budget with no sustained leak.",
+      "failureBlocks": [
+        "SP35",
+        "final product acceptance"
+      ],
+      "minimumNextStep": "SP05 defines the actual loop; propose numeric memory growth budget from product measurement for user confirmation.",
+      "exitCriteria": "The confirmed budget and raw 60-minute product run pass; otherwise SP35 remains blocked."
+    },
+    {
+      "id": "R06",
+      "topic": "E06 current recovery capability, plan and cost",
+      "classification": "A",
+      "readinessState": "pending",
+      "evidence": [
+        "docs/sp01-recovery-capability-20261101.json",
+        "docs/sp01-readiness-review-20261030.json#openItems.R06"
+      ],
+      "currentFacts": [
+        "User-reported read-only console view showed a backup/rollback entry, no data and no warning.",
+        "That observation does not establish the active target plan, rollback entitlement, retention, price or a tested alternative.",
+        "No current cloud query or restore action was performed in this review."
+      ],
+      "whyCurrentStage": "E06 is an explicit SP01 evidence gate and must establish a recovery path before proceeding to product data stages.",
+      "minimumNextStep": "User provides read-only target environment plan/entitlement details and visible backup/rollback retention/cost; if unavailable, report 'not displayed' and provide the existing export/restore capability view.",
+      "exitCriteria": "Target plan is mapped; rollback/backup entitlement, retention and cost are explicit; a feasible fallback with limitations is documented. Do not perform a real business-data restore before such data exists.",
+      "downstreamRestoreOwnerTasks": [
+        "SP08",
+        "SP11",
+        "SP13",
+        "SP35",
+        "SP36"
+      ],
+      "downstreamTrigger": "After isolated business-shaped data and authorization/fund relationships exist.",
+      "downstreamOriginalThreshold": "Actual restore must preserve object relationships, authorization, funds, inventory, versions and messages; must not revive cancelled/expired/revoked states or double count/refund. Failure blocks the relevant stage/final release."
+    },
+    {
+      "id": "QD03",
+      "topic": "stage signoff and SP01-S06 to SP07 gate",
+      "classification": "A",
+      "readinessState": "pending-as-aggregate-gate",
+      "whyCurrentStage": "QD03 is the aggregate review of task prerequisites and confirmations; it is not a separate technical cause beyond open A/B items.",
+      "minimumNextStep": "Close current A/B items and verify SP01-S06 deliverables/dependencies.",
+      "exitCriteria": "Only record signoff when the original prerequisites, confirmations and E06 gate are actually satisfied."
+    },
+    {
+      "id": "MA01",
+      "topic": "malicious remote archive test",
+      "classification": "B",
+      "readinessState": "test-preserved-evidence-missing",
+      "testFile": "tests/sp01-taro-malicious-archive.test.cjs",
+      "expectedEvidenceFile": "docs/sp01-taro-malicious-archive-20261103.json",
+      "evidenceFileCurrentlyPresent": false,
+      "whyCurrentStage": "Only triggered if the remote ZIP/archive template route is selected; the recommended local scaffold avoids this execution path.",
+      "minimumNextStep": "Preserve the test unchanged; if the remote archive path is selected in the future, run the actual isolated test and produce evidence before enabling that path.",
+      "exitCriteria": "Either the local-only bootstrap route is confirmed and the test remains explicitly conditional, or the actual archive test passes with complete evidence and cleanup."
+    }
+  ],
+  "planClarification": {
+    "markdownLocations": [
+      "docs/v1-executable-development-plan-20261027.md#SP01",
+      "docs/v1-quality-acceptance-20261027.md#SP01"
+    ],
+    "machineReadableLocations": [
+      "docs/v1-executable-development-plan-20261027.json#sp01StageBoundaryClarification",
+      "docs/v1-quality-acceptance-20261027.json#sp01StageBoundaryClarification"
+    ],
+    "before": "SP01 is described as a specifications/evidence/confirmation card; QP05-QP10 and recovery criteria are distributed across SP01 and later tasks.",
+    "after": "Add a non-normative stage mapping that distinguishes SP01 setup from later product evidence, without changing tasks, dependencies, status, thresholds or release gates.",
+    "thresholdsChanged": false,
+    "dependenciesChanged": false,
+    "statusFieldsChanged": false
+  },
+  "requiredUserDecisions": [
+    {
+      "id": "R01",
+      "recommended": "confirm-recommended-development-candidate-and-bounded-follow-up",
+      "alternative": "keep-sp01-open-until-risk-resolution"
+    },
+    {
+      "id": "R04",
+      "recommended": "confirm-home-wifi-normal-and-pakomo-light-controlled-weak-profile; public-wifi-supplemental"
+    },
+    {
+      "id": "R06",
+      "requiredInput": "read-only target plan and recovery entitlement/retention/cost evidence"
+    }
+  ],
+  "verification": {
+    "planTest": "node --test tests/executable-development-plan.test.cjs",
+    "closeoutTest": "node --test tests/sp01-closeout-boundary.test.cjs",
+    "fullSuite": "node --test tests/*.test.cjs",
+    "mustNotClaimPassWithoutRawEvidence": true
+  }
+}

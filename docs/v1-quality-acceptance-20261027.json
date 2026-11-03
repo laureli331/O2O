@@ -13373,5 +13373,62 @@
     "businessRuleChanges": false,
     "existingTaskCountAndDependenciesUnchanged": true,
     "productAcceptancePassed": false
+  },
+  "sp01StageBoundaryClarification": {
+    "date": "2026-11-03",
+    "source": "docs/sp01-closeout-review-20261103.json",
+    "interpretationOnly": true,
+    "criteria": {
+      "QP05": {
+        "preparationOwner": "SP01/SP05",
+        "productEvidenceOwner": "SP35"
+      },
+      "QP06": {
+        "preparationOwner": "SP01",
+        "endpointEvidenceOwners": [
+          "SP08",
+          "SP13",
+          "SP31"
+        ],
+        "finalReviewOwner": "SP35"
+      },
+      "QP07": {
+        "configurationOwner": "SP01",
+        "interruptionRecoveryOwners": [
+          "SP11",
+          "business-cards",
+          "SP35"
+        ]
+      },
+      "QP08": {
+        "workloadConfirmed": true,
+        "cycleSpecificationOwner": "SP05",
+        "productEnduranceOwner": "SP35"
+      },
+      "QP09": {
+        "productEvidenceOwner": "SP35"
+      },
+      "QP10": {
+        "earlyEvidenceOwners": [
+          "SP07",
+          "SP15",
+          "SP18"
+        ],
+        "finalEvidenceOwner": "SP35"
+      },
+      "QR06_QS08": {
+        "currentPlanAndRecoveryCapabilityOwner": "SP01/E06",
+        "realBusinessRestoreOwners": [
+          "SP08",
+          "SP11",
+          "SP13",
+          "SP35",
+          "SP36"
+        ]
+      }
+    },
+    "thresholdsChanged": false,
+    "releaseGateChanged": false,
+    "taskStatusesChanged": false
   }
 }

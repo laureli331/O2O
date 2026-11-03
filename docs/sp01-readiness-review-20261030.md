@@ -2,6 +2,8 @@
 
 本清单按原SP01和配套合同核对，结构化对应见[JSON](sp01-readiness-review-20261030.json)。目的是合并分散进度、补齐当前规格与确认，保留历史失败；没有新增门槛或降低标准。SP01、E06仍未通过，SP07未开始。
 
+2026-11-03阶段边界复核见[SP01收口审查](sp01-closeout-review-20261103.md)及[结构化数据](sp01-closeout-review-20261103.json)。该补充解释哪些未完成事项属于SP01当前放行条件、哪些由后续SP卡实测；不改变本清单JSON中的pending、E06未通过、SP01未通过或SP07未开始状态，也不改变质量合同门槛。
+
 最新用户确认覆盖下文R02的旧提问：拒绝双React主版本，统一React/DOM/类型18.3.1、对齐TypeScript、业务逻辑全部集中shared。无需再问React19方案，旧网页19验证仅为历史；当前架构见[统一方案](unified-react18-shared-core-20261030.md)。刷新率需普通显示设置的当前/可选项，不是开发者实时FPS。
 
 刷新率补充：用户确认是当前选中的设置：OPPO120Hz、华为主机BON-AL00为90Hz、备用SEA-AL10为60Hz、苹果60Hz，见[原始登记](sp01-refresh-rate-report-20261030.json)。已登记selectedRefreshRateHz；实际刷新时序、渲染FPS及采样能力仍未测，refreshRateHz实测字段保留未知。未改手机设置或验收门槛，不将高刷设置直接按60Hz验收通过。

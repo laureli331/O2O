@@ -6037,5 +6037,17 @@
     "businessRuleChanges": false,
     "existingTaskCountAndDependenciesUnchanged": true,
     "productAcceptancePassed": false
+  },
+  "sp01StageBoundaryClarification": {
+    "date": "2026-11-03",
+    "source": "docs/sp01-closeout-review-20261103.json",
+    "formalProductModuleGraphOwnerTasks": [
+      "SP07",
+      "SP08"
+    ],
+    "productAcceptancePassed": false,
+    "taskStatusesChanged": false,
+    "firstProductTaskDependenciesChanged": false,
+    "qualityThresholdsChanged": false
   }
 }
