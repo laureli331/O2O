@@ -18,6 +18,8 @@
 
 源码核查确认 Taro CLI 的远程模板链经 `download-git-repo@3.0.2` 使用 `download@7.1.0`，后者以 CommonJS `require` 导入并直接调用 `decompress`。GitHub 安全公告将原始 `decompress@4.2.1` 列为受影响且无补丁版本；维护版 `@xhmikosr/decompress@10.2.2` 已修复，但为 ESM。独立 npm override 复验中，旧调用直接接维护版时报 `TypeError: decompress is not a function`；仅测试专用 default 导出适配后，一份本地合成ZIP成功解压。该结果不覆盖完整Taro模板链或恶意归档安全；正式依赖/锁未变，R01/SP01继续pending，SP07未启动。详见[互操作记录](sp01-taro-decompress-interop-20261103.md)及[JSON](sp01-taro-decompress-interop-20261103.json)。
 
+同日再检查安装版 CLI 的实际分支并用本机夹具调用其 `fetchTemplate()`：GitHub 默认归档路径可到达 `decompress@4.2.1`，Gitee 默认 `clone=true` 路径走 `git-clone` 并避开该包；179字节合成 ZIP 在隔离临时目录解压并核对成功。随后用隔离的本地 Git 仓库复验 `clone=true` 路径，模板内容匹配、输出不保留 `.git`、解压函数调用为0，临时目录已清理。没有请求真实 Gitee/GitHub 远程、未执行完整交互式 `taro init` 或恶意归档测试，无云数据访问。R01/SP01仍pending，SP07未启动。
+
 ### 2026-11-02 Pakomo 弱网采样暂停（历史快照）与屏幕休眠处理
 
 本节前两段记录的是当时的预检状态，后续采样和设置变化以本节新增记录为准。预检时读取到屏幕超时600000毫秒、“USB供电时保持唤醒”原值为关闭；当时的采样准备操作结束后曾恢复原值0。

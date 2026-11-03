@@ -137,7 +137,7 @@
       "registryAuditEvidence": "docs/sp01-r01-registry-audit-20261101.json",
       "latestRegistryFollowupEvidence": "docs/sp01-r01-registry-follow-up-20261102.json",
       "viteRunnerComparisonEvidence": "docs/sp01-taro-vite-runner-comparison-20261102.json",
-      "nextAction": "沿已安装Taro CLI源码确认download-git-repo的真实远程模板调用路径，评估是否需要独立隔离集成复验；不要将测试专用default导出适配带入正式依赖。全量/生产审计、恶意归档安全证据、第三方声明诊断与正式产品模块图仍未闭环；R01及SP01保持pending，不开始SP07。详见docs/sp01-taro-decompress-interop-20261103.json。",
+      "nextAction": "已核对安装版CLI模板初始化路径，并用良性本机回环ZIP调用其模板抓取函数；这不是完整交互式taro init、真实远程GitHub或恶意归档测试。继续评估未来初始化使用Gitee git-clone路径的可行性；不要将测试专用default导出适配带入正式依赖。全量/生产审计、恶意归档安全证据、第三方声明诊断与正式产品模块图仍未闭环；R01及SP01保持pending，不开始SP07。详见docs/sp01-taro-decompress-interop-20261103.json。",
       "vulnerabilityReproductionAuthorizedByThisReview": false,
       "latestTaro432CompatibilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
       "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
@@ -145,7 +145,8 @@
       "latestMaintenanceFollowupEvidence": "docs/sp01-taro-432-maintenance-followup-20261103.json",
       "latestMaintenanceFollowupSummary": "未加覆盖的Taro 4.3.2隔离基线54条全量审计，四项局部覆盖候选51条，均4 critical；生产审计两边均21条、3 critical。严格依赖安装、npm ls、应用strict类型检查、合成weapp构建及常规ZIP兼容检查通过；108个第三方声明文件仍有1,056条诊断。glob 10.5.0被registry标记deprecated，候选未采纳，R01/SP01仍pending。",
       "latestRegistryRefreshEvidence": "docs/sp01-r01-registry-refresh-20261103.json",
-      "latestDecompressInteropEvidence": "docs/sp01-taro-decompress-interop-20261103.json"
+      "latestDecompressInteropEvidence": "docs/sp01-taro-decompress-interop-20261103.json",
+      "latestDecompressInteropSummary": "Installed Taro CLI fetchTemplate passed a benign 179-byte loopback ZIP and a separate local Git clone fixture; the clone returned matching content, retained no .git metadata, invoked decompress zero times, and its temporary directory was removed. Actual Gitee/GitHub remotes, full interactive init, malicious archive, security disposition, formal product reachability, and third-party declarations remain open."
     },
     {
       "id": "R02",

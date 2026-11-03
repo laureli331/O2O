@@ -2238,7 +2238,8 @@
         "latestTaro432ProductionAuditEvidence": "docs/sp01-taro-432-compatibility-20261103.json",
         "latestTaro432WeappReachabilityEvidence": "docs/sp01-taro-432-compatibility-20261103.json#checks.weappSwiperImportFixture",
         "latestRegistryRefreshEvidence": "docs/sp01-r01-registry-refresh-20261103.json",
-        "latestDecompressInteropEvidence": "docs/sp01-taro-decompress-interop-20261103.json"
+        "latestDecompressInteropEvidence": "docs/sp01-taro-decompress-interop-20261103.json",
+        "latestTemplateFetchIntegrationSummary": "Installed Taro CLI fetchTemplate passed a benign 179-byte loopback ZIP and a separate local Git clone fixture; the clone returned matching content, retained no .git metadata, invoked decompress zero times, and its temporary directory was removed. Actual Gitee/GitHub remotes, full interactive init, malicious archive, security disposition, formal product reachability, and third-party declarations remain open."
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

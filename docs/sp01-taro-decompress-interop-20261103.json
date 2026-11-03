@@ -36,7 +36,12 @@
     "taroCli": {
       "package": "@tarojs/cli",
       "dependency": "download-git-repo",
-      "fullRemoteTemplateInvocationExecuted": false
+      "fullRemoteTemplateInvocationExecuted": false,
+      "initCommandPath": "dist/presets/commands/init.js",
+      "projectCreationPath": "dist/create/project.js",
+      "templateFetcherPath": "dist/create/fetchTemplate.js",
+      "githubDefaultTemplate": "github:NervJS/taro-project-templates#v4.0",
+      "giteeDefaultTemplate": "direct:https://gitee.com/o2team/taro-project-templates.git#v4.0"
     },
     "downloadGitRepo": {
       "version": "3.0.2",
@@ -96,6 +101,45 @@
     "cloudCalls": 0,
     "databaseOrStorageWrites": 0
   },
+  "cliTemplateCallPath": {
+    "installedCliSourceInspected": true,
+    "initCreatesProjectAndCallsTemplateFetch": true,
+    "githubTemplateCanReachDownloadAndDecompress": true,
+    "giteeCloneAvoidsDownloadAndDecompress": true,
+    "evidence": "Installed @tarojs/cli dist source routes init -> Project.create -> Project.fetchTemplates -> fetchTemplate. github: source is classified as git and Project sets clone=false; download-git-repo then uses download@7.1.0, which calls decompress. The Gitee default URL includes gitee, so Project sets clone=true; download-git-repo uses git-clone and bypasses download/decompress."
+  },
+  "localTemplateFetchIntegration": {
+    "success": true,
+    "installedCliFunctionInvoked": true,
+    "functionPath": "tools/sp01-taro-432-audit/node_modules/@tarojs/cli/dist/create/fetchTemplate.js",
+    "sourceMode": "direct:http://127.0.0.1:<ephemeral-port>/fixture.zip",
+    "sourceClassification": "git",
+    "clone": false,
+    "archiveBytes": 179,
+    "syntheticZipContentMatched": true,
+    "destinationCreatedInsideIsolatedTemp": true,
+    "temporaryDirectoryRemovedAfterRun": true,
+    "externalNetworkRequests": 0,
+    "cloudCalls": 0,
+    "databaseOrStorageWrites": 0,
+    "maliciousArchiveTested": false
+  },
+  "localGiteeCloneIntegration": {
+    "success": true,
+    "installedCliFunctionInvoked": true,
+    "functionPath": "tools/sp01-taro-432-audit/node_modules/@tarojs/cli/dist/create/fetchTemplate.js",
+    "sourceMode": "direct:file URL; generated local Git repository only",
+    "sourceClassification": "git",
+    "cloneBranch": true,
+    "gitFixtureContentMatched": true,
+    "gitMetadataRemovedFromOutput": true,
+    "decompressInvocations": 0,
+    "externalNetworkRequests": 0,
+    "cloudCalls": 0,
+    "databaseOrStorageWrites": 0,
+    "temporaryDirectoryRemovedAfterRun": true,
+    "actualGiteeRemoteRequested": false
+  },
   "supersededSetup": {
     "path": ".local/sp01-decompress-interop-20261103-7f3a",
     "countedAsEvidence": false,
@@ -105,6 +149,8 @@
     "formalDependenciesChanged": false,
     "formalManifestOrLockChanged": false,
     "taroRemoteTemplateEndToEndExecuted": false,
+    "templateFetchFunctionIntegrationExecuted": true,
+    "templateFetchCloneIntegrationExecuted": true,
     "maliciousArchiveOrVulnerabilityExploitTested": false,
     "productBuildOrDeviceTested": false,
     "cloudServiceUsed": false,
@@ -114,7 +160,7 @@
     "r01Status": "pending",
     "sp01Passed": false,
     "sp07Started": false,
-    "nextAction": "Read the exact installed Taro CLI to download-git-repo call path and decide whether a separate, fully isolated integration check is required. Do not copy the test-only adapter into the formal dependency graph; keep the security, product reachability, and third-party declaration review open."
+    "nextAction": "The installed CLI fetchTemplate function path is verified with one benign loopback ZIP, but full interactive taro init, remote GitHub access, and malicious archive behavior remain untested. Assess the scoped developer-time security risk and whether the future project setup can use the Gitee git-clone route; do not copy the test-only adapter into the formal dependency graph. Full/production audit, malicious-archive security evidence, third-party declaration diagnostics, and formal product module reachability remain open."
   },
   "references": [
     {
