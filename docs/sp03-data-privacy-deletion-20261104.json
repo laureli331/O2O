@@ -2,7 +2,24 @@
   "task": "SP03",
   "title": "数据用途、访问、保留与删除清单",
   "version": "2026-11-04-draft-2",
-  "status": "draft-not-accepted",
+  "status": "preparation-deliverable-complete",
+  "preparationCompletion": {
+    "date": "2026-11-04",
+    "scope": "task-preparation-only",
+    "evidence": [
+      "docs/sp03-data-privacy-deletion-20261104.md",
+      "docs/sp03-data-privacy-deletion-20261104.json",
+      "tests/sp03-data-privacy-deletion.test.cjs",
+      "tests/executable-development-plan.test.cjs"
+    ],
+    "summary": "F01-F22及技术日志、供应商处理、AI与统计类别均列明用途/可见边界/生命周期/删除或必要保留线索和未确认期限；用户已确认通用数据边界。",
+    "openGates": ["E03", "AG01", "DG01"],
+    "productAcceptancePassed": false,
+    "realPersonalDataProcessed": false,
+    "realAICallsEnabled": false,
+    "productionAnalyticsEnabled": false,
+    "cloudResourcesChanged": false
+  },
   "productAcceptancePassed": false,
   "realPersonalDataProcessed": false,
   "storageOrCloudChanged": false,
@@ -431,14 +448,16 @@
     { "criterion": "QC20", "owner": "SP28广告计量以及SP35/最终质量验收。", "trigger": "广告计费和统计实现后。", "gate": "广告计价版本、事件口径、去重、归因和金额对账均以实际服务端事实验证。", "blocksIfFailed": "广告收费和推广报表正式放行；不阻止SP03列出待确认数据范围。" }
   ],
   "sourceConflict": {
-    "description": "当前可执行计划SP03依赖SP01/SP02；docs/external-evidence.md中的旧DP链记录DP41先于DP03，DP41尚未完成。",
-    "impact": "本草案可用于列出AI供应商的数据流和待确认字段；不能关闭AG01，不能批准真实AI调用，也不能单方面改写SP03/DP03依赖或标记任务完成。",
-    "resolution": "后续由计划维护者按架构合同和当前执行计划澄清DP41/DP03与SP03映射；本文件不改变依赖。",
+    "description": "当前可执行计划将SP03映射到DP03且仅依赖SP01/SP02；旧版docs/external-evidence.md、docs/development-plan.md与docs/development-decisions.json保留DP41先于DP03的历史依赖。当前SP02的legacyTasks映射包含DP41用于证据整理，但不表示AG01/DG01已通过。",
+    "resolution": "以当前可执行SP计划作为本轮执行依赖：DP03对应的SP03准备清单只依赖SP01/SP02；保留旧DP图作历史追溯，不改写其原记录。DP41关联的平台/AI供应商/统计证据仍按E03、AG01、DG01核实。",
+    "effect": "当前SP03准备交付可完成；E03仍阻断其适用证据未完成前的真实个人信息处理，AG01阻断真实AI调用，DG01阻断生产统计。未关闭这些证据门不阻断准备清单交付，也不代表产品验收通过。",
+    "activeSP03Dependencies": ["SP01", "SP02"],
+    "legacyDP41BeforeDP03Preserved": true,
     "dependencyResolutionChanged": false
   },
   "acceptanceBoundary": {
-    "currentDeliverable": "仅形成有来源、可审阅、明确未决项的逐类数据用途/访问/生命周期/删除草案。",
+    "currentDeliverable": "准备阶段交付完成：形成有来源、可审阅、明确未决项的逐类数据用途/访问/生命周期/删除清单，并记录用户确认的通用边界。清单内容仍是后续产品设计与证据核实的输入。",
     "notCompletedByThisDraft": ["用户确认E03", "AI供应商证据AG01", "生产统计证据DG01", "数据库字段/安全规则/删除作业实现", "恢复、真实供应商、真实个人信息和全产品验收"],
-    "taskMayBeMarkedCompleteOnlyAfter": "按SP03卡片及质量合同完成适用于本阶段的用户确认与证据闭环；不可把下游真实产品验收倒置为前置，也不能将未确认的法律/供应商事项写作通过。"
+    "taskMayBeMarkedCompleteOnlyAfter": "本阶段清单覆盖SP03要求的数据类别、用途、访问、生命周期、删除/必要保留和未决确认项，且用户已确认通用边界；将未确认期限及供应商事项保留为E03/AG01/DG01开放门。该准备交付完成不关闭这些证据门、不通过产品验收、不启用真实个人信息、AI或生产统计。"
   }
 }

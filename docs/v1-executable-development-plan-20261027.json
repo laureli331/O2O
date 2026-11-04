@@ -45,7 +45,9 @@
     "docs/backend-architecture-contract-20261103.md",
     "docs/backend-architecture-contract-20261103.json",
     "docs/sp01-task-signoff-20261104.md",
-    "docs/sp01-task-signoff-20261104.json"
+    "docs/sp01-task-signoff-20261104.json",
+    "docs/sp03-data-privacy-deletion-20261104.md",
+    "docs/sp03-data-privacy-deletion-20261104.json"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -2417,8 +2419,46 @@
         "DG01"
       ],
       "features": [],
-      "status": "planned",
+      "status": "complete",
       "productAcceptancePassed": false,
+      "scopeResolution": {
+        "date": "2026-11-04",
+        "activeDependencies": [
+          "SP01",
+          "SP02"
+        ],
+        "legacyDP41BeforeDP03Preserved": true,
+        "currentResolution": "当前可执行SP计划中的SP03仅依赖SP01/SP02；旧DP41先于DP03关系留作历史追溯，不作为新增前置，也不表示AG01/DG01已通过。",
+        "openEvidenceGates": [
+          "E03",
+          "AG01",
+          "DG01"
+        ],
+        "productAcceptancePassed": false,
+        "formalProductImplementationAuthorized": false
+      },
+      "executionProgress": {
+        "date": "2026-11-04",
+        "preparationBlockers": [],
+        "openEvidenceGates": [
+          "E03",
+          "AG01",
+          "DG01"
+        ],
+        "nextAction": "继续SP04；E03/AG01/DG01及适用产品行为按各自后续触发卡验证，未关闭时分别阻断真实个人信息处理、真实AI调用、生产统计或受影响产品放行，不倒置为SP03准备交付的前置。"
+      },
+      "completion": {
+        "date": "2026-11-04",
+        "scope": "task-preparation-only",
+        "environment": "Windows 11 local documentation and tests; no CloudBase writes or production changes.",
+        "evidence": [
+          "docs/sp03-data-privacy-deletion-20261104.md",
+          "docs/sp03-data-privacy-deletion-20261104.json",
+          "tests/sp03-data-privacy-deletion.test.cjs",
+          "tests/executable-development-plan.test.cjs"
+        ],
+        "scopeNote": "SP03 preparation checklist delivery only. E03/AG01/DG01 remain open; this does not pass product acceptance, enable real personal data/AI/production analytics, sign QD03, or authorize SP07."
+      },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
         "data": "docs/v1-quality-acceptance-20261027.json",

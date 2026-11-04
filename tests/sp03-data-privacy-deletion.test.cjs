@@ -11,15 +11,25 @@ const markdownPath = path.join(root, 'docs', 'sp03-data-privacy-deletion-2026110
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8');
 const load = () => JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
-test('SP03 inventory is explicitly a draft and preserves the no-real-data boundary', () => {
+test('SP03 preparation deliverable is complete while product and evidence gates remain open', () => {
   const inventory = load();
   assert.equal(inventory.task, 'SP03');
-  assert.equal(inventory.status, 'draft-not-accepted');
+  assert.equal(inventory.status, 'preparation-deliverable-complete');
+  assert.equal(inventory.preparationCompletion.scope, 'task-preparation-only');
+  assert.equal(inventory.preparationCompletion.date, '2026-11-04');
+  assert.deepEqual(inventory.preparationCompletion.openGates, ['E03', 'AG01', 'DG01']);
+  assert.equal(inventory.preparationCompletion.productAcceptancePassed, false);
   assert.equal(inventory.productAcceptancePassed, false);
   assert.equal(inventory.realPersonalDataProcessed, false);
+  assert.equal(inventory.preparationCompletion.realAICallsEnabled, false);
+  assert.equal(inventory.preparationCompletion.productionAnalyticsEnabled, false);
+  assert.equal(inventory.preparationCompletion.cloudResourcesChanged, false);
   assert.equal(inventory.storageOrCloudChanged, false);
   assert.equal(inventory.retentionPeriodsInvented, false);
   assert.equal(inventory.sourceConflict.dependencyResolutionChanged, false);
+  assert.deepEqual(inventory.sourceConflict.activeSP03Dependencies, ['SP01', 'SP02']);
+  assert.equal(inventory.sourceConflict.legacyDP41BeforeDP03Preserved, true);
+  assert.match(inventory.acceptanceBoundary.currentDeliverable, /准备阶段交付完成/);
 });
 
 test('SP03 inventory maps every PRD field group F01-F22 exactly once', () => {
@@ -109,7 +119,8 @@ test('user-confirmed SP03 boundaries are recorded without closing open evidence 
   assert.match(markdown, /撤回后立即停止公开展示\/读取/);
   assert.match(markdown, /(?:不|不能)据此认定具体自然人操作者/);
   assert.match(markdown, /具体保存期限.*仍无充分依据/);
-  assert.equal(inventory.status, 'draft-not-accepted');
+  assert.equal(inventory.status, 'preparation-deliverable-complete');
+  assert.deepEqual(inventory.preparationCompletion.openGates, ['E03', 'AG01', 'DG01']);
   assert.equal(inventory.productAcceptancePassed, false);
   assert.equal(inventory.realPersonalDataProcessed, false);
   for (const record of inventory.records) assert.equal(record.retention.period, null, `${record.id} must remain open`);
@@ -161,9 +172,10 @@ test('CloudBase backup evidence is scoped to console observations, not a deletio
   }
 });
 
-test('Markdown and JSON expose the same draft, source conflict, unresolved terms and scope boundaries', () => {
+test('Markdown and JSON expose the completed preparation scope, source conflict, open gates and unresolved terms', () => {
   const inventory = load();
   const markdown = fs.readFileSync(markdownPath, 'utf8');
+  assert.match(markdown, /SP03.*准备阶段交付|准备阶段交付.*SP03/);
   assert.match(markdown, /SP03.*草案|草案.*SP03/);
   assert.match(markdown, /E03/);
   assert.match(markdown, /AG01/);
@@ -179,6 +191,10 @@ test('Markdown and JSON expose the same draft, source conflict, unresolved terms
   assert.match(markdown, /索引、权限、跨集合关系/);
   assert.match(markdown, /未确认|待确认/);
   assert.match(markdown, /不等于.*通过|未.*通过/);
+  assert.equal(inventory.status, 'preparation-deliverable-complete');
+  assert.deepEqual(inventory.sourceConflict.activeSP03Dependencies, ['SP01', 'SP02']);
+  assert.equal(inventory.sourceConflict.legacyDP41BeforeDP03Preserved, true);
+  assert.match(inventory.sourceConflict.effect, /不阻断准备清单交付/);
   for (const record of inventory.records) assert.ok(markdown.includes(record.id), `Markdown missing ${record.id}`);
   for (const source of inventory.sources) assert.ok(markdown.includes(source.path), `Markdown missing ${source.path}`);
 });

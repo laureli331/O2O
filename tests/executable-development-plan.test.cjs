@@ -1245,3 +1245,37 @@ test('SP01 records the confirmed 2026-10-29 cleanup and keeps direct-download at
   a.equal(latestClient.cleanup.storageDirectoryReadOnlyFileCount, 0);
   a.equal(latestClient.cleanup.permissionSettingsChanged, false);
 });
+
+test('SP03 preparation sign-off preserves open evidence gates and SP07 boundary', () => {
+  const plan = load();
+  const sp03 = plan.tasks.find((task) => task.id === 'SP03');
+  const sp04 = plan.tasks.find((task) => task.id === 'SP04');
+  const sp07 = plan.tasks.find((task) => task.id === 'SP07');
+
+  a.equal(sp03.status, 'complete');
+  a.equal(sp03.productAcceptancePassed, false);
+  a.deepEqual(sp03.dependsOn, ['SP01', 'SP02']);
+  a.deepEqual(sp03.scopeResolution.activeDependencies, ['SP01', 'SP02']);
+  a.equal(sp03.scopeResolution.legacyDP41BeforeDP03Preserved, true);
+  a.deepEqual(sp03.scopeResolution.openEvidenceGates, ['E03', 'AG01', 'DG01']);
+  a.equal(sp03.scopeResolution.productAcceptancePassed, false);
+  a.equal(sp03.scopeResolution.formalProductImplementationAuthorized, false);
+  a.deepEqual(sp03.executionProgress.preparationBlockers, []);
+  a.deepEqual(sp03.executionProgress.openEvidenceGates, ['E03', 'AG01', 'DG01']);
+  a.equal(sp03.completion.scope, 'task-preparation-only');
+  a.equal(sp03.completion.date, '2026-11-04');
+  a.match(sp03.completion.environment, /no CloudBase writes or production changes/);
+  for (const evidence of sp03.completion.evidence) {
+    a(fs.existsSync(path.join(root, evidence)), `missing SP03 completion evidence: ${evidence}`);
+  }
+  a(plan.sources.includes('docs/sp03-data-privacy-deletion-20261104.md'));
+  a(plan.sources.includes('docs/sp03-data-privacy-deletion-20261104.json'));
+
+  a.equal(sp04.status, 'in-progress');
+  a.equal(sp07.status, 'planned');
+  a.deepEqual(sp07.dependsOn, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
+  a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.qd03SignedOff, false);
+  const markdown = read('docs/v1-executable-development-plan-20261027.md');
+  a(markdown.includes('SP03状态：`complete`'));
+  a(markdown.includes('SP07仍为`planned`'));
+});
