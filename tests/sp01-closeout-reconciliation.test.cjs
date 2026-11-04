@@ -52,8 +52,10 @@ test('SP01 post-review reconciliation closes preparation facts without changing 
 
   assert.equal(sp01.status, 'complete');
   assert.equal(sp01.productAcceptancePassed, false);
-  assert.equal(sp07.status, 'planned');
+  assert.equal(sp07.status, 'in-progress');
   assert.equal(sp07.productAcceptancePassed, false);
+  assert.equal(sp07.executionProgress.scope, 'bounded-local-foundation-only');
+  assert.equal(sp07.executionProgress.productModulesImplemented, false);
   assert.equal(plan.sp01StageBoundaryClarification.latestCloseoutReconciliation.document, reconciliationPath);
   assert.equal(plan.sp01StageBoundaryClarification.latestCloseoutReconciliation.currentDecisionBlockerCount, 0);
   assert.equal(plan.sp01StageBoundaryClarification.latestCloseoutReconciliation.taskStatusesChanged, false);

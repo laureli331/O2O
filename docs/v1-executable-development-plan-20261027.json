@@ -53,7 +53,9 @@
     "docs/sp01-closeout-reconciliation-20261104.md",
     "docs/sp01-closeout-reconciliation-20261104.json",
     "docs/sp06-resource-and-batch-plan-20261104.md",
-    "docs/sp06-resource-and-batch-plan-20261104.json"
+    "docs/sp06-resource-and-batch-plan-20261104.json",
+    "docs/qd03-sp07-local-foundation-20261104.md",
+    "docs/qd03-sp07-local-foundation-20261104.json"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -3116,7 +3118,26 @@
       ],
       "evidenceGates": [],
       "features": [],
-      "status": "planned",
+      "status": "in-progress",
+      "executionProgress": {
+        "date": "2026-11-04",
+        "scope": "bounded-local-foundation-only",
+        "signoff": "docs/qd03-sp07-local-foundation-20261104.json",
+        "workspacesCreated": ["packages/shared", "apps/mini-program", "apps/admin-web", "apps/cloud-functions"],
+        "productModulesImplemented": false,
+        "formalBusinessPagesImplemented": false,
+        "cloudFunctionsImplemented": false,
+        "quickStartModified": false,
+        "remoteTemplateExecutionEnabled": false,
+        "completedAcceptance": [
+          "Fresh dependency installation from the committed lockfile succeeds in an isolated clean-room copy.",
+          "Strict shared-code checks, dependency-tree verification, and web/WeChat mini-program builds pass in the working tree and clean-room copy."
+        ],
+        "remainingAcceptance": [
+          "Review SP07 isolation, secret-handling defaults, and recovery/rollback evidence; the static source scan is only a bounded check, not a security clearance.",
+          "The full repository regression is not green: the preserved malicious-archive test still lacks its required evidence JSON. This keeps remote template/archive execution disabled and must not be reported as a passed suite."
+        ]
+      },
       "productAcceptancePassed": false,
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
@@ -6303,6 +6324,17 @@
       "preservedMaliciousArchiveTest": "tests/sp01-taro-malicious-archive.test.cjs",
       "missingEvidenceJson": "docs/sp01-taro-malicious-archive-20261103.json",
       "missingEvidenceBlocks": "only a future path that re-enables remote archive execution; not this bounded task-preparation signoff"
+    },
+    "latestQD03Signoff": {
+      "date": "2026-11-04",
+      "document": "docs/qd03-sp07-local-foundation-20261104.json",
+      "signed": true,
+      "scope": "SP01-SP06-preparation-to-SP07-foundation-entry",
+      "prerequisiteTasks": ["SP01", "SP02", "SP03", "SP04", "SP05", "SP06"],
+      "originalCriterionProductResult": "not-executed",
+      "productAcceptancePassed": false,
+      "remoteTemplateExecutionEnabled": false,
+      "laterGatesPreserved": ["QP05", "QP06", "QP07", "QP08", "QP09", "QP10", "QS02", "QR06"]
     }
   }
 }

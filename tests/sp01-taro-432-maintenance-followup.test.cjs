@@ -91,7 +91,7 @@ test('maintenance candidate package pins and independent validation artifacts ma
   }
 });
 
-test('readiness index keeps R01 pending and does not start SP07', () => {
+test('readiness index keeps R01 pending while later QD03 starts only the scoped SP07 foundation', () => {
   const readiness = json('docs/sp01-readiness-review-20261030.json');
   const r01 = readiness.openItems.find((item) => item.id === 'R01');
   const plan = json('docs/v1-executable-development-plan-20261027.json');
@@ -100,6 +100,8 @@ test('readiness index keeps R01 pending and does not start SP07', () => {
   assert.equal(readiness.sp07Started, false);
   assert.equal(r01.state, 'pending');
   assert.equal(r01.latestMaintenanceFollowupEvidence, 'docs/sp01-taro-432-maintenance-followup-20261103.json');
-  assert.equal(sp07.status, 'planned');
+  assert.equal(sp07.status, 'in-progress');
   assert.equal(sp07.productAcceptancePassed, false);
+  assert.equal(sp07.executionProgress.scope, 'bounded-local-foundation-only');
+  assert.equal(sp07.executionProgress.productModulesImplemented, false);
 });

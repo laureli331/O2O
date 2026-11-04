@@ -1,0 +1,6 @@
+{
+  "name": "@xianglin/cloud-functions",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Reserved workspace; no cloud function implementation or deployment configuration is enabled."
+}

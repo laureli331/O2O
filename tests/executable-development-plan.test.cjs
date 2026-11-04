@@ -57,7 +57,7 @@ test('SP01 signoff evidence closes only its preparation card and preserves downs
  a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.status,'complete');
  a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.productAcceptancePassed,false);
  a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.qd03SignedOff,false);
- a.equal(sp07.status,'planned');a.deepEqual(sp07.dependsOn,['SP01','SP02','SP03','SP04','SP05','SP06']);
+ a.equal(sp07.status,'in-progress');a.deepEqual(sp07.dependsOn,['SP01','SP02','SP03','SP04','SP05','SP06']);
  a.equal(plan.firstProductTask,'SP07');
  a.deepEqual(plan.firstProductTaskPrerequisites,['SP01','SP02','SP03','SP04','SP05','SP06']);
  a(plan.sources.includes('docs/sp01-task-signoff-20261104.md'));
@@ -1299,10 +1299,10 @@ test('SP03 preparation sign-off preserves open evidence gates and SP07 boundary'
   a.deepEqual(sp04.scopeResolution.preparationBlockers, []);
   a.deepEqual(sp04.scopeResolution.openEvidenceGates, ['E05', 'E06']);
   a.equal(sp04.completion.scope, 'task-preparation-only');
-  a.equal(sp07.status, 'planned');
+  a.equal(sp07.status, 'in-progress');
   a.deepEqual(sp07.dependsOn, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
   a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.qd03SignedOff, false);
   const markdown = read('docs/v1-executable-development-plan-20261027.md');
   a(markdown.includes('SP03状态：`complete`'));
-  a(markdown.includes('SP07仍为`planned`'));
+  a(markdown.includes('SP07本地基础工程已启动'));
 });

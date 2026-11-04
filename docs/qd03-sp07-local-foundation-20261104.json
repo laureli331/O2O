@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "criterionId": "QD03",
+  "source": {
+    "developmentPlan": "docs/v1-executable-development-plan-20261027.json",
+    "qualityContract": "docs/v1-quality-acceptance-20261027.json",
+    "backendArchitectureContract": "docs/backend-architecture-contract-20261103.json",
+    "prerequisiteSignoffs": [
+      "docs/sp01-task-signoff-20261104.json",
+      "docs/sp02-platform-evidence-20261104.json",
+      "docs/sp03-data-privacy-deletion-20261104.json",
+      "docs/sp04-operations-configuration-20261104.json",
+      "docs/sp05-page-acceptance-contract-20261104.json",
+      "docs/sp06-resource-and-batch-plan-20261104.json"
+    ]
+  },
+  "scope": "SP01-SP06-preparation-to-SP07-foundation-entry",
+  "prerequisiteTasks": ["SP01", "SP02", "SP03", "SP04", "SP05", "SP06"],
+  "prerequisiteStatuses": {
+    "SP01": "complete",
+    "SP02": "complete",
+    "SP03": "complete",
+    "SP04": "complete",
+    "SP05": "complete",
+    "SP06": "complete"
+  },
+  "decision": {
+    "status": "signed-for-scoped-foundation",
+    "basis": "User-approved bounded closeout: SP01-SP06 preparation deliverables are complete and traceable; the local foundation may begin while product acceptance remains a separate, unpassed gate.",
+    "productAcceptancePassed": false,
+    "productResult": "not-executed",
+    "authorizes": [
+      "Local workspace manifests, lockfile, shared-core skeleton, and web/mini-program placeholder shells.",
+      "Local strict checks and builds for the newly created foundation."
+    ],
+    "doesNotAuthorizeOrClaim": [
+      "Product business modules, approved product pages, production integrations, cloud deployment, purchases, or release.",
+      "Completion of the full QD03 product/launch criterion or any later quality criterion."
+    ]
+  },
+  "preservedLaterGates": [
+    {"criterionId": "QP05", "ownerTasks": ["SP05", "SP35"], "trigger": "Real product pages and frozen measurement scripts are available.", "status": "not-executed", "originalThresholdPreserved": true},
+    {"criterionId": "QP06", "ownerTasks": ["SP08", "SP13", "SP35"], "trigger": "Actual UI/cloud/supplier endpoints and measured workloads exist; user confirms budgets before the corresponding pass.", "status": "not-executed", "originalThresholdPreserved": true},
+    {"criterionId": "QP07", "ownerTasks": ["SP35"], "trigger": "Product flows and recoverable test data exist for weak-network/repeat-request scenarios.", "status": "not-executed", "originalThresholdPreserved": true},
+    {"criterionId": "QP08", "ownerTasks": ["SP05", "SP35"], "trigger": "Real product pages, approved 60-minute/60-cycle workload, and user-approved measured memory budget are available.", "status": "not-executed", "originalThresholdPreserved": true},
+    {"criterionId": "QP09", "ownerTasks": ["SP35"], "trigger": "Admin product screens exist and can be measured in the confirmed browser.", "status": "not-executed", "originalThresholdPreserved": true},
+    {"criterionId": "QP10", "ownerTasks": ["SP07", "SP15", "SP18", "SP35"], "trigger": "Foundation measurement entry, applicable product baselines, and final candidate are available at their assigned stages.", "status": "not-executed", "originalThresholdPreserved": true},
+    {"criterionId": "QS02", "ownerTasks": ["SP08", "SP35"], "trigger": "The implemented private-file sharing and revocation flow is available for real permission tests.", "status": "not-executed", "originalThresholdPreserved": true},
+    {"criterionId": "QR06", "ownerTasks": ["SP08", "SP11", "SP13", "SP35", "SP36"], "trigger": "Product data, backup points, and a controlled restore/reconciliation case exist.", "status": "not-executed", "originalThresholdPreserved": true}
+  ],
+  "remoteArchiveExecution": {
+    "enabled": false,
+    "adoptedTemplateSource": null,
+    "preservedTest": "tests/sp01-taro-malicious-archive.test.cjs",
+    "evidenceJson": "docs/sp01-taro-malicious-archive-20261103.json",
+    "evidenceJsonPresent": false,
+    "effect": "The missing malicious-archive evidence blocks any future re-enablement of remote archive/template execution; the local authored scaffold does not fetch or execute remote templates.",
+    "remainingRisk": "Taro CLI and dependency audit posture are not declared security-cleared; dependency advisories and third-party declaration diagnostics remain recorded for their assigned review and release gates."
+  },
+  "validation": {
+    "date": "2026-11-05",
+    "runtime": {
+      "os": "Windows 11",
+      "node": "20.19.3",
+      "npm": "10.8.2"
+    },
+    "cleanRoom": {
+      "evidenceDate": "2026-11-04",
+      "path": ".local/sp07-clean-room-20261104",
+      "copiedInputs": ["package.json", "package-lock.json", "tsconfig.json", "tsconfig.base.json", "apps", "packages"],
+      "install": {
+        "command": "npm ci --ignore-scripts --no-audit --no-fund",
+        "exitCode": 0,
+        "packagesAdded": 1163,
+        "durationSeconds": 23
+      },
+      "checks": [
+        {"command": "npm run check:shared", "exitCode": 0},
+        {"command": "npm run build:web", "exitCode": 0},
+        {"command": "npm run build:weapp", "exitCode": 0}
+      ],
+      "limitations": [
+        "The clean-room copy intentionally contained only manifests, TypeScript configuration, apps, and packages; repository tests were run in the working tree.",
+        "npm emitted deprecation/security advisories, including glob@10.5.0 and unsupported legacy dependencies; this is not a dependency security clearance.",
+        "Vite emitted its existing CJS/ESM config-loader warning."
+      ]
+    },
+    "workingTree": {
+      "checks": [
+        {"command": "npm run check:foundation", "passed": 50, "failed": 0},
+        {"command": "npm run check:shared", "exitCode": 0},
+        {"command": "npm run build:web", "exitCode": 0},
+        {"command": "npm run build:weapp", "exitCode": 0},
+        {"command": "npm ls --all --depth=0", "exitCode": 0}
+      ],
+      "sourceScan": {
+        "scope": ["apps", "packages"],
+        "credentialFileCount": 0,
+        "staticPatternMatches": 0,
+        "limitations": "A bounded text-pattern scan only; it is not a secret-scanner or security audit."
+      },
+      "fullRegression": {
+        "command": "node --test over PowerShell-expanded tests/*.test.cjs",
+        "total": 1645,
+        "passed": 1644,
+        "failed": 1,
+        "skipped": 0,
+        "soleFailure": "R01 malicious archive probe evidence is bounded and does not claim cross-platform clearance",
+        "failure": "The preserved test requires docs/sp01-taro-malicious-archive-20261103.json, which is absent.",
+        "disposition": "Preserve the failing evidence gate; do not skip, weaken, or claim the suite passed. It blocks future remote archive/template execution per the existing SP01 boundary."
+      }
+    }
+  },
+  "rollback": {
+    "method": "Revert this scoped signoff and the isolated SP07 foundation commit; retain all SP01-SP06 preparation records and historical snapshots.",
+    "externalStateChanged": false
+  }
+}

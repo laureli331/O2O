@@ -112,14 +112,17 @@ test('SP05 preparation contract traces accepted pages, states, design tokens and
   assert.equal(sp05.executionProgress.formalEngineeringStarted, false);
 });
 
-test('SP05 contract cites reusable project artifacts and does not add a library or enter SP07', () => {
+test('SP05 contract cites reusable artifacts and does not add libraries or authorize SP07 product modules', () => {
   const contract = readJson('docs/sp05-page-acceptance-contract-20261104.json');
   const plan = readJson('docs/v1-executable-development-plan-20261027.json');
   const sp07 = plan.tasks.find((task) => task.id === 'SP07');
   for (const source of contract.sources) assert.ok(fs.existsSync(path.join(root, source)), source);
   assert.deepEqual(contract.reuseSurvey.newDependencies, []);
   assert.equal(contract.reuseSurvey.adoptedApproach, 'reuse-current-page-manifest-shared-states-and-approved-ui-tokens');
-  assert.equal(sp07.status, 'planned');
+  assert.equal(sp07.status, 'in-progress');
+  assert.equal(sp07.executionProgress.scope, 'bounded-local-foundation-only');
+  assert.equal(sp07.executionProgress.productModulesImplemented, false);
+  assert.equal(sp07.productAcceptancePassed, false);
   assert.equal(plan.firstProductTask, 'SP07');
   assert.deepEqual(plan.firstProductTaskPrerequisites, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
   assert.ok(contract.sources.includes('docs/backend-architecture-contract-20261103.md'));
