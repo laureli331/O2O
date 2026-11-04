@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-11-04",
   "task": "SP05",
-  "status": "draft-awaiting-user-confirmation",
+  "status": "preparation-confirmed-product-validation-not-executed",
   "productAcceptancePassed": false,
   "scope": {
     "preparationOnly": true,
@@ -323,11 +323,13 @@
       "roundsPerDeviceGroup": 3,
       "minSegmentsPerRound": 30,
       "datasetRecords": 200,
-      "freezeSegmentDurationSeconds": null,
-      "status": "awaiting-user-confirmation",
-      "recommendation": {
+      "freezeSegmentDurationSeconds": 10,
+      "status": "preparation-parameter-confirmed-product-not-executed",
+      "confirmedDecision": {
         "segmentDurationSeconds": 10,
-        "reason": "A 10-second segment makes the continuous-action clip sustained while preserving the original 3 rounds × at least 30 segments gate. This is a recommendation, not a confirmed parameter."
+        "confirmedBy": "user",
+        "confirmedOn": "2026-11-04",
+        "reason": "The user confirmed 10 seconds per sustained-operation clip; original 3 rounds × at least 30 segments, 200-record dataset, and acceptance thresholds remain unchanged."
       },
       "unmodifiedAcceptanceThresholds": true,
       "blocks": "SP35 QP05 product acceptance until the segment length and all required device-group evidence are confirmed and pass."
@@ -385,7 +387,7 @@
         "query a business object",
         "restore the same baseline page"
       ],
-      "cycleRecipeStatus": "awaiting-user-confirmation",
+      "cycleRecipeStatus": "confirmed",
       "observationMethodCandidate": {
         "web": "Chrome Performance Monitor plus stable-start/midpoint/end heap snapshots and node/listener counts; validate on formal pages before use",
         "miniProgram": "Page-attributable resource/memory source remains unverified; Android WebView process PSS is not a single mini-program page budget",
@@ -394,7 +396,7 @@
       "attributableMemoryGrowthBudget": null,
       "memoryBudgetStatus": "not-set-no-formal-page-level-baseline",
       "recommendedBudgetTiming": "Existing stage decision: define the measurement method in SP05; establish page attribution and repeatability on formal pages; propose a numeric growth budget from measured product data for user confirmation before SP35 runs the 60-minute QP08 product test. If attribution or repeatability fails, QP08 stays blocked; do not substitute whole-device or host-process memory.",
-      "status": "workload-confirmed-cycle-recipe-awaiting-user-confirmation-product-budget-deferred-to-sp35",
+      "status": "workload-and-cycle-recipe-confirmed-product-budget-deferred-to-sp35",
       "blocks": "SP35 QP08 product endurance run until the confirmed cycle recipe, valid page-attributable resource measurement and user-approved growth budget are available."
     },
     "QP09": {
@@ -418,22 +420,34 @@
       "blocks": "SP35 QP09 product performance acceptance until actual Windows/browser support matrix and confirmed task budgets pass."
     }
   },
-  "decisionsPending": [
+  "decisionsConfirmed": [
     {
       "id": "QP05_SEGMENT_DURATION",
-      "question": "Confirm the frozen duration for each sustained-operation clip.",
-      "recommendation": "10 seconds per clip",
+      "decision": "Freeze each sustained-operation clip at 10 seconds.",
+      "valueSeconds": 10,
       "decisionOwner": "user",
-      "blocks": "SP05 contract acceptance of the QP05 preparation parameter; QP05 product acceptance remains SP35."
+      "confirmedOn": "2026-11-04",
+      "scope": "Preparation parameter confirmed; original QP05 product gate and evidence requirements remain assigned to SP35."
     },
     {
       "id": "QP08_CYCLE_RECIPE",
-      "question": "Confirm or adjust the eight-step mixed loop: list, detail, return, modal open/close, enter/cancel publish form, image load, business query, restore the same baseline page.",
-      "recommendation": "Adopt the sequence above, then calibrate one complete cycle against the formal pages before SP35.",
+      "decision": "Adopt the proposed eight-step mixed endurance cycle unchanged.",
+      "steps": [
+        "browse a list",
+        "open a detail",
+        "return to the list",
+        "open and close a modal",
+        "enter and cancel a publish form",
+        "load an image",
+        "query a business object",
+        "restore the same baseline page"
+      ],
       "decisionOwner": "user",
-      "blocks": "SP05 QP08 cycle specification; product endurance remains SP35."
+      "confirmedOn": "2026-11-04",
+      "scope": "Cycle recipe confirmed; calibrate a complete cycle against formal pages and retain the SP35 page-attributable memory budget gate."
     }
   ],
+  "decisionsPending": [],
   "verification": {
     "performedThisDelivery": [
       "documentation/source cross-check",

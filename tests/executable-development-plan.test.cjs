@@ -1050,17 +1050,17 @@ function validateUiProgress(p){
  a.deepEqual(ui.activePages,manifest.pages.map(x=>x.file));a.deepEqual(ui.excludedPages,manifest.excludedPages);a.equal(ui.stylesheetSha256,proof.stylesheetSha256);
  for(const key of ['layoutStateChecks','pilotInteractionChecks','nodeTests'])a.equal(ui.validation[key],proof[key]);
  a.equal(ui.realMiniProgramTested,false);a.equal(ui.livePaymentTested,false);a.equal(ui.formalTaskCompleted,false);
- const sp=p.tasks.find(x=>x.id==='SP05');a.equal(sp.prototypeProgress.uiDeliveryRef,'prototypeUiDelivery');a.equal(sp.status,'awaiting-acceptance');a.equal(sp.productAcceptancePassed,false);a(sp.prototypeProgress.remaining.length>=3);a.equal(sp.prototypeProgress.contractRef,'docs/sp05-page-acceptance-contract-20261104.json');a.equal(sp.prototypeProgress.contractMarkdownRef,'docs/sp05-page-acceptance-contract-20261104.md');a.equal(sp.executionProgress.formalEngineeringStarted,false);a.equal(sp.executionProgress.productValidationPerformed,false);a.match(sp.executionProgress.nextAction,/QP05_SEGMENT_DURATION/);a.match(sp.executionProgress.nextAction,/QP08_CYCLE_RECIPE/);
+ const sp=p.tasks.find(x=>x.id==='SP05');a.equal(sp.prototypeProgress.uiDeliveryRef,'prototypeUiDelivery');a.equal(sp.status,'complete');a.equal(sp.productAcceptancePassed,false);a.deepEqual(sp.prototypeProgress.remaining,[]);a.equal(sp.completion.scope,'task-preparation-only');a.equal(sp.completion.scopeNote.includes('产品验收未通过'),true);a(sp.completion.evidence.includes('docs/sp05-page-acceptance-contract-20261104.json'));a.equal(sp.prototypeProgress.contractRef,'docs/sp05-page-acceptance-contract-20261104.json');a.equal(sp.prototypeProgress.contractMarkdownRef,'docs/sp05-page-acceptance-contract-20261104.md');a.equal(sp.executionProgress.formalEngineeringStarted,false);a.equal(sp.executionProgress.productValidationPerformed,false);a.equal(sp.executionProgress.status,'preparation-complete-product-validation-deferred');a.match(sp.executionProgress.nextAction,/SP06/);a.match(sp.executionProgress.nextAction,/QD03/);a.match(sp.executionProgress.nextAction,/SP35/);
  for(const f of ui.evidence)a(p.sources.includes(f)&&fs.existsSync(path.join(root,f)));
  return true;
 }
-test('development plan records completed UI rollout separately from unfinished formal task SP05',()=>a(validateUiProgress(load())));
+test('development plan records SP05 preparation complete separately from deferred product validation',()=>a(validateUiProgress(load())));
 test('all current execution entry documents expose the completed UI baseline and implementation source',()=>{
  for(const f of ['docs/v1-executable-development-plan-20261027.md','docs/development-plan.md','docs/post-registration-development.md','CONTEXT.md']){const doc=read(f);a(doc.includes('ui-consistency-rollout-delivery-20261027.md'),f);a(doc.includes('f729b0e'),f);}
  const p=load(),doc=read(p.document);for(const text of p.tasks.find(t=>t.id==='SP05').prototypeProgress.remaining)a(doc.includes(text),text);
 });
 test('UI progress cannot claim real-device completion or omit accepted page coverage',()=>{
- for(const mutate of [p=>p.prototypeUiDelivery.realMiniProgramTested=true,p=>p.prototypeUiDelivery.activePages.pop(),p=>p.tasks.find(t=>t.id==='SP05').status='complete']){const p=load();mutate(p);a.throws(()=>validateUiProgress(p));}
+ for(const mutate of [p=>p.prototypeUiDelivery.realMiniProgramTested=true,p=>p.prototypeUiDelivery.activePages.pop(),p=>p.tasks.find(t=>t.id==='SP05').productAcceptancePassed=true]){const p=load();mutate(p);a.throws(()=>validateUiProgress(p));}
 });
 test('SP01 separates confirmed runtime and user-reported database mode from runtime execution and API verification',()=>{
  const techDoc=read('docs/sp01-technical-environment-20261027.md');

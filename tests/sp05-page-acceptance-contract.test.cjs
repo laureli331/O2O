@@ -18,7 +18,7 @@ test('SP05 preparation contract traces accepted pages, states, design tokens and
   const sp05 = plan.tasks.find((task) => task.id === 'SP05');
 
   assert.equal(contract.task, 'SP05');
-  assert.equal(contract.status, 'draft-awaiting-user-confirmation');
+  assert.equal(contract.status, 'preparation-confirmed-product-validation-not-executed');
   assert.equal(contract.scope.preparationOnly, true);
   assert.equal(contract.scope.formalEngineeringStarted, false);
   assert.equal(contract.scope.productValidationPerformed, false);
@@ -54,8 +54,8 @@ test('SP05 preparation contract traces accepted pages, states, design tokens and
 
   assert.equal(contract.qualityPlan.QP05.preparationOwner, 'SP01/SP05');
   assert.equal(contract.qualityPlan.QP05.productEvidenceOwner, 'SP35');
-  assert.equal(contract.qualityPlan.QP05.freezeSegmentDurationSeconds, null);
-  assert.equal(contract.qualityPlan.QP05.status, 'awaiting-user-confirmation');
+  assert.equal(contract.qualityPlan.QP05.freezeSegmentDurationSeconds, 10);
+  assert.equal(contract.qualityPlan.QP05.status, 'preparation-parameter-confirmed-product-not-executed');
   assert.equal(contract.qualityPlan.QP05.referenceRefreshHz, 60);
   assert.equal(contract.qualityPlan.QP05.minAverageFpsPerSegment, 55);
   assert.equal(contract.qualityPlan.QP05.maxAttributableStallMs, 100);
@@ -73,7 +73,17 @@ test('SP05 preparation contract traces accepted pages, states, design tokens and
     minimumCompleteCycles: 60,
     checkpointMinutes: 10,
   });
-  assert.equal(contract.qualityPlan.QP08.cycleRecipeStatus, 'awaiting-user-confirmation');
+  assert.deepEqual(contract.qualityPlan.QP08.cycleRecipe, [
+    'browse a list',
+    'open a detail',
+    'return to the list',
+    'open and close a modal',
+    'enter and cancel a publish form',
+    'load an image',
+    'query a business object',
+    'restore the same baseline page',
+  ]);
+  assert.equal(contract.qualityPlan.QP08.cycleRecipeStatus, 'confirmed');
   assert.equal(contract.qualityPlan.QP08.attributableMemoryGrowthBudget, null);
   assert.equal(contract.qualityPlan.QP08.memoryBudgetStatus, 'not-set-no-formal-page-level-baseline');
 
@@ -84,13 +94,18 @@ test('SP05 preparation contract traces accepted pages, states, design tokens and
   assert.equal(contract.deviceSnapshots.webBrowser.exactVersion, '156.0.8078.47');
   assert.equal(contract.deviceSnapshots.webBrowser.windowsBuild, null);
 
-  assert.equal(contract.decisionsPending.length, 2);
-  assert.deepEqual(contract.decisionsPending.map((decision) => decision.id), [
+  assert.deepEqual(contract.decisionsPending, []);
+  assert.deepEqual(contract.decisionsConfirmed.map((decision) => decision.id), [
     'QP05_SEGMENT_DURATION',
     'QP08_CYCLE_RECIPE',
   ]);
-  assert.equal(sp05.status, 'awaiting-acceptance');
+  assert.equal(sp05.status, 'complete');
   assert.equal(sp05.productAcceptancePassed, false);
+  assert.equal(sp05.completion.scope, 'task-preparation-only');
+  assert.equal(sp05.completion.scopeNote.includes('产品验收未通过'), true);
+  assert.ok(sp05.completion.evidence.includes('docs/sp05-page-acceptance-contract-20261104.json'));
+  assert.ok(sp05.completion.evidence.includes('tests/sp05-page-acceptance-contract.test.cjs'));
+  assert.deepEqual(sp05.prototypeProgress.remaining, []);
   assert.equal(sp05.prototypeProgress.contractRef, 'docs/sp05-page-acceptance-contract-20261104.json');
   assert.equal(sp05.prototypeProgress.contractMarkdownRef, 'docs/sp05-page-acceptance-contract-20261104.md');
   assert.equal(sp05.executionProgress.productValidationPerformed, false);
@@ -117,15 +132,16 @@ test('SP05 contract cites reusable project artifacts and does not add a library 
   assert.ok(plan.sources.includes('docs/sp05-page-acceptance-contract-20261104.json'));
 });
 
-test('SP05 plan and human-readable contract retain the pending decisions without claiming product acceptance', () => {
+test('SP05 plan and human-readable contract record approved preparation decisions without claiming product acceptance', () => {
   const contract = readJson('docs/sp05-page-acceptance-contract-20261104.json');
   const plan = readJson('docs/v1-executable-development-plan-20261027.json');
   const markdown = readText('docs/sp05-page-acceptance-contract-20261104.md');
   const planMarkdown = readText('docs/v1-executable-development-plan-20261027.md');
   const sp05 = plan.tasks.find((task) => task.id === 'SP05');
 
-  for (const decision of contract.decisionsPending) assert.ok(markdown.includes(decision.id));
-  for (const item of sp05.prototypeProgress.remaining) assert.ok(planMarkdown.includes(item));
+  for (const decision of contract.decisionsConfirmed) assert.ok(markdown.includes(decision.id));
+  assert.match(markdown, /每段持续操作片段 \*\*10秒\*\*，已由用户确认/);
+  assert.match(markdown, /用户已确认采用以下八步混合循环/);
   assert.ok(markdown.includes('QP05'));
   assert.ok(markdown.includes('QP07'));
   assert.ok(markdown.includes('QP08'));
@@ -136,6 +152,8 @@ test('SP05 plan and human-readable contract retain the pending decisions without
   assert.ok(markdown.includes('QP08_MEMORY_BUDGET_TIMING') === false);
   assert.equal(sp05.executionProgress.productValidationPerformed, false);
   assert.equal(sp05.executionProgress.formalEngineeringStarted, false);
-  assert.match(sp05.executionProgress.nextAction, /QP05_SEGMENT_DURATION/);
-  assert.match(sp05.executionProgress.nextAction, /QP08_CYCLE_RECIPE/);
+  assert.match(sp05.executionProgress.nextAction, /SP06/);
+  assert.match(sp05.executionProgress.nextAction, /QD03/);
+  assert.match(sp05.executionProgress.nextAction, /SP35/);
+  assert.doesNotMatch(sp05.executionProgress.nextAction, /等待用户确认/);
 });
