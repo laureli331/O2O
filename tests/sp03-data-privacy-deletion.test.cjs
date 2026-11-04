@@ -75,6 +75,46 @@ test('F12 audit attribution follows the confirmed shared-account boundary', () =
   assert.match(markdown, /不新增独立运营账号或双人复核/);
 });
 
+test('user-confirmed SP03 boundaries are recorded without closing open evidence gates', () => {
+  const inventory = load();
+  const markdown = fs.readFileSync(markdownPath, 'utf8');
+  const confirmed = inventory.confirmedUserBoundaries;
+  const records = new Map(inventory.records.map((record) => [record.id, record]));
+  const e03 = inventory.confirmations.find((entry) => entry.gate === 'E03');
+
+  assert.equal(confirmed.confirmedOn, '2026-11-04');
+  assert.deepEqual(confirmed.rules.map((rule) => rule.id), ['UB01', 'UB02', 'UB03', 'UB04']);
+  assert.match(confirmed.rules[0].rule, /业务必需字段.*优先保存核验结论/);
+  assert.match(confirmed.rules[1].rule, /经授权.*当前任务/);
+  assert.match(confirmed.rules[2].rule, /立即停止公开.*未结任务或争议.*最少数据/);
+  assert.match(confirmed.rules[3].rule, /共用账号.*(?:不|不能)据此认定具体自然人操作者/);
+  assert.equal(confirmed.operationalGates.realPersonalDataProcessing, 'disabled-until-applicable-evidence-is-complete');
+  assert.equal(confirmed.operationalGates.realAICalls, 'disabled-until-AG01-and-E03-evidence-is-complete');
+  assert.equal(confirmed.operationalGates.productionAnalyticsCollection, 'disabled-until-DG01-evidence-is-complete');
+  assert.ok(confirmed.stillUnconfirmed.some((item) => item.includes('保存期限')));
+  assert.ok(confirmed.stillUnconfirmed.some((item) => item.includes('备份')));
+
+  assert.match(records.get('F01').purpose.confirmed, /用户已确认.*业务必需字段.*核验结论/);
+  assert.match(records.get('F13').purpose.confirmed, /用户已确认.*业务必需字段.*核验结论/);
+  assert.match(records.get('F02').deletion.systemAction, /撤回后立即停止公开.*未结任务.*最少数据/);
+  assert.match(records.get('F04').deletion.systemAction, /撤回后立即停止公开.*未结任务.*最少数据/);
+  assert.match(records.get('F06').deletion.systemAction, /撤回后立即停止公开.*未结任务.*最少数据/);
+  assert.match(records.get('F03').purpose.proposed, /联系渠道仅按发布者明确授权展示/);
+  assert.match(e03.owner, /已由用户确认/);
+  assert.ok(e03.questions.some((question) => question.includes('期限')));
+  assert.ok(e03.questions.some((question) => question.includes('备份删除传播')));
+
+  assert.match(markdown, /用户已确认的通用边界（2026-11-04）/);
+  assert.match(markdown, /仅处理业务必需字段；优先保存核验结论/);
+  assert.match(markdown, /撤回后立即停止公开展示\/读取/);
+  assert.match(markdown, /(?:不|不能)据此认定具体自然人操作者/);
+  assert.match(markdown, /具体保存期限.*仍无充分依据/);
+  assert.equal(inventory.status, 'draft-not-accepted');
+  assert.equal(inventory.productAcceptancePassed, false);
+  assert.equal(inventory.realPersonalDataProcessed, false);
+  for (const record of inventory.records) assert.equal(record.retention.period, null, `${record.id} must remain open`);
+});
+
 test('inventory cites repository sources, official privacy baseline and downstream acceptance ownership', () => {
   const inventory = load();
   for (const source of inventory.sources) {
