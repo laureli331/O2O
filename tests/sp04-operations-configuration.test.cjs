@@ -164,11 +164,11 @@ test('SP04 records the generated preview and separates the failed client attempt
 test('SP04 keeps the CloudBase screenshot separate from AppID ownership evidence', () => {
   const record = evidence();
   assert.equal(record.date, '2026-10-27');
-  assert.equal(record.lastUpdated, '2026-11-02');
+  assert.equal(record.lastUpdated, '2026-11-04');
   assert.equal(record.localPreviewAvailability.httpStatus, 200);
   assert.equal(record.localPreviewAvailability.scope, 'local-static-directory-only');
   const doc = read('docs/sp04-operations-configuration-20261027.md');
-  assert.ok(doc.includes('创建日期：2026-10-27；最近更新：2026-11-02'));
+  assert.ok(doc.includes('创建日期：2026-10-27；最近更新：2026-11-04'));
   assert.ok(doc.includes('120Hz、90Hz、60Hz、60Hz'));
   assert.ok(doc.includes('公共免费 WiFi 尚未实测'));
   assert.ok(doc.includes('Cloudflare 两次丢包率分别为14.3%和1.8%'));
@@ -314,7 +314,7 @@ test('SP04 records the DevTools project list without claiming all local projects
   assert.ok(doc.includes('此结果仅适用于该开发者工具当时显示的已登记工程列表'));
 });
 
-test('SP04 keeps an inaccessible official category source separate from eligibility conclusions', () => {
+test('SP04 preserves category lookup history and separates current official labels from account eligibility', () => {
   const record = evidence();
   assert.equal(record.officialCategorySourceLookup.lookupDate, '2026-10-27');
   assert.equal(record.officialCategorySourceLookup.officialUrl, 'https://developers.weixin.qq.com/miniprogram/product/material/');
@@ -322,14 +322,22 @@ test('SP04 keeps an inaccessible official category source separate from eligibil
   assert.equal(record.officialCategorySourceLookup.officialDomainRestrictedSearch, 'no-results');
   assert.equal(record.officialCategorySourceLookup.provesCategoryUnavailable, false);
   assert.equal(record.officialCategorySourceLookup.latestPublicSearchAttempt.result, 'no-official-results');
+  assert.equal(record.officialCategorySourceLookup.previousOfficialPageFetch.date, '2026-10-29');
   const latest = record.officialCategorySourceLookup.latestOfficialPageFetch;
+  assert.equal(latest.date, '2026-11-04');
+  assert.equal(latest.source, 'PowerShell Invoke-WebRequest read-only HTTP fetch of official page');
   assert.equal(latest.httpStatus, 200);
+  assert.equal(latest.responseLengthCharacters, 434398);
   assert.equal(latest.subjectTable, '非个人主体小程序开放的服务类目');
   assert.match(latest.matchedCategories['家政服务'], /家电维修/);
   assert.match(latest.matchedCategories['跑腿'], /代为购买和送达/);
+  assert.match(latest.matchedCategories['跑腿'], /外卖平台/);
+  assert.equal(latest.personalTableCrossCheck['外送'], '适用于生活类外送服务，如跑腿等。');
   assert.equal(latest.secondhandExactLabelFound, false);
+  assert.deepEqual(latest.unrelatedSecondhandLabelsFound, ['二手车（汽车相关）', '二手房（房屋中介）']);
   assert.equal(latest.categoryApplicabilityResolved, false);
   assert.equal(latest.officialEvidenceUrl, 'https://developers.weixin.qq.com/miniprogram/product/material/');
+  assert.ok(latest.categoryApplicabilityScope.includes('目标账号的类目选择器'));
   assert.deepEqual(record.categoryPickerObservation, {
     sourceScreenshots: [
       'codex-clipboard-bec8e09b-c65b-4574-bcc0-8ceb0636029d.png',
@@ -357,13 +365,13 @@ test('SP04 keeps an inaccessible official category source separate from eligibil
     evidenceMethod: 'review-of-user-provided-screenshots',
   });
   const doc = read('docs/sp04-operations-configuration-20261027.md');
-  assert.ok(doc.includes('本轮尝试打开微信官方'));
-  assert.ok(doc.includes('不能据此判断相关类目不存在、可申请或不可申请'));
+  assert.ok(doc.includes('2026-10-27—28 的历史查询曾遇到官方页面打开失败'));
+  assert.ok(doc.includes('公开页面已支持家政服务和跑腿的文字范围，但不能决定目标账号的类目选择器/审核结果'));
   assert.ok(doc.includes('“生活服务 > 家政服务”的说明包含家电维修'));
   assert.ok(doc.includes('搜索“跑腿”时，截图只显示“物流服务 > 查件”和“物流服务 > 装卸搬运”'));
   assert.ok(doc.includes('没有保存最终服务类目'));
-  assert.ok(doc.includes('本次通过只读 HTTP 请求取得微信官方'));
-  assert.ok(doc.includes('页面未以“二手交易”这一独立名称列出'));
+  assert.ok(doc.includes('本次通过 PowerShell `Invoke-WebRequest` 只读取得微信官方'));
+  assert.ok(doc.includes('本次对页面文本检索未找到通用`二手交易`、`闲置交易`或`闲置物品`类目名称'));
 });
 
 test('SP04 records the exact user-confirmed service area and three service modules', () => {
