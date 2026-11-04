@@ -56,6 +56,25 @@ test('sensitive identity, private data, AI payloads, logs and suppliers retain f
   assert.ok(inventory.confirmations.some((entry) => entry.gate === 'E03'));
 });
 
+test('F12 audit attribution follows the confirmed shared-account boundary', () => {
+  const inventory = load();
+  const f12 = inventory.records.find((record) => record.id === 'F12');
+  const markdown = fs.readFileSync(markdownPath, 'utf8');
+  const auditText = [
+    ...f12.dataClasses,
+    f12.visibility.confirmed,
+    f12.visibility.proposed,
+    ...f12.safeguards
+  ].join(' ');
+
+  assert.match(auditText, /共用管理账号/);
+  assert.match(auditText, /只归账号/);
+  assert.match(auditText, /不.*识别具体自然人操作者/);
+  assert.doesNotMatch(auditText, /操作者级身份留痕|共享账号操作人识别方案/);
+  assert.match(markdown, /F12[\s\S]*?管理日志只归账号[\s\S]*?不能据此识别具体自然人操作者/);
+  assert.match(markdown, /不新增独立运营账号或双人复核/);
+});
+
 test('inventory cites repository sources, official privacy baseline and downstream acceptance ownership', () => {
   const inventory = load();
   for (const source of inventory.sources) {
