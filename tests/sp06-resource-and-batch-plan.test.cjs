@@ -10,24 +10,35 @@ const read = (relativePath) => fs.readFileSync(path.join(root, relativePath), 'u
 const load = () => JSON.parse(read('docs/sp06-resource-and-batch-plan-20261104.json'));
 const plan = () => JSON.parse(read('docs/v1-executable-development-plan-20261027.json'));
 
-test('SP06 record preserves confirmed capacity and keeps unknown contributor hours uncounted', () => {
+test('SP06 closes the preparation plan and records the confirmed operations-only partner role', () => {
   const record = load();
 
   assert.equal(record.task, 'SP06');
-  assert.equal(record.status, 'in-progress');
+  assert.equal(record.status, 'complete');
+  assert.equal(record.productAcceptancePassed, false);
+  assert.equal(record.qd03SignedOff, false);
+  assert.equal(record.sp07Started, false);
   assert.deepEqual(record.confirmedAvailability, {
     ownerHoursPerWeekLowerBound: 8,
     ownerHoursPerWeekUpperBound: null,
     partnerOperationsShift: '09:00-17:00',
-    partnerEngineeringOrAcceptanceRole: 'unknown',
+    partnerEngineeringOrAcceptanceRole: 'operations-only',
     partnerEngineeringHoursCounted: 0,
     serviceWindow: '09:00-22:00',
   });
+  assert.equal(record.planAcceptance.partnerRole, 'operations-only');
+  assert.equal(record.planAcceptance.dependencyBatchSequenceAccepted, true);
+  assert.equal(record.planAcceptance.estimationMethodAccepted, true);
   assert.equal(record.effortEstimate.status, 'not-quantified');
   assert.equal(record.effortEstimate.totalHours, null);
   assert.equal(record.schedule.calendarDatesAssigned, false);
   assert.equal(record.riskReserve.fixedPercentage, null);
   assert.match(record.effortEstimate.reason, /no measured delivery baseline/i);
+  assert.equal(record.budget.actualFeasibility, 'unverified');
+  assert.equal(record.budget.purchaseAuthorization, false);
+  assert.deepEqual(record.openEvidenceGates, ['E05']);
+  assert.equal(record.completion.scope, 'task-preparation-only');
+  assert.match(record.completion.scopeNote, /E05.*remains? open/i);
 });
 
 test('SP06 execution batches cover SP07-SP36 exactly once and respect dependency order', () => {
@@ -37,6 +48,8 @@ test('SP06 execution batches cover SP07-SP36 exactly once and respect dependency
   const seen = [];
 
   assert.equal(record.executionBatches.length, 8);
+  assert.equal(record.planAcceptance.dependencyBatchSequenceAccepted, true);
+  assert.equal(record.schedule.planningRuleAccepted, true);
   for (const [batchIndex, batch] of record.executionBatches.entries()) {
     assert.equal(batch.order, batchIndex + 1);
     assert.ok(batch.taskIds.length > 0);
@@ -107,12 +120,22 @@ test('SP06 plan source is linked from both machine-readable and human-readable p
 
   assert.ok(executablePlan.sources.includes(pathInPlan));
   assert.ok(executablePlan.sources.includes(source));
-  assert.equal(sp06.status, 'in-progress');
+  assert.equal(sp06.status, 'complete');
   assert.equal(sp06.productAcceptancePassed, false);
   assert.equal(sp06.executionProgress.executionBatches, 8);
+  assert.equal(sp06.executionProgress.partnerEngineeringParticipation, 'operations-only');
+  assert.equal(sp06.executionProgress.dependencyBatchSequenceAccepted, true);
+  assert.equal(sp06.executionProgress.estimationMethodAccepted, true);
+  assert.equal(sp06.executionProgress.actualBudgetFeasibilityVerified, false);
+  assert.deepEqual(sp06.executionProgress.preparationBlockers, []);
+  assert.deepEqual(sp06.executionProgress.openEvidenceGates, ['E05']);
   assert.equal(sp06.executionProgress.sp07Started, false);
   assert.equal(sp06.executionProgress.qd03SignedOff, false);
+  assert.equal(sp06.completion.scope, 'task-preparation-only');
+  assert.match(sp06.completion.scopeNote, /E05.*remains? open/i);
+  assert.deepEqual(sp06.executionProgress.remainingForAcceptance, []);
   assert.match(mainDoc, /SP06资源、预算与依赖批次记录/);
+  assert.match(mainDoc, /SP06准备交付已完成/);
   assert.ok(fs.existsSync(path.join(root, pathInPlan)));
   assert.ok(fs.existsSync(path.join(root, source)));
 });

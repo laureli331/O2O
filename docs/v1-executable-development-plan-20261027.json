@@ -3026,25 +3026,45 @@
         "E05"
       ],
       "features": [],
-      "status": "in-progress",
+      "status": "complete",
       "productAcceptancePassed": false,
       "executionProgress": {
         "date": "2026-11-04",
         "record": "docs/sp06-resource-and-batch-plan-20261104.json",
-        "scope": "resource, cost-category, dependency-batch, estimation-method, and later-acceptance ownership draft",
+        "scope": "SP06 preparation plan completed; product and real-operation gates remain separate",
         "ownerAvailabilityConfirmed": "at least 8 hours per week; exact allocation and upper bound unknown",
-        "partnerEngineeringParticipation": "unknown; no partner engineering hours counted",
+        "partnerEngineeringParticipation": "operations-only",
+        "partnerEngineeringHoursCounted": 0,
         "executionBatches": 8,
+        "dependencyBatchSequenceAccepted": true,
+        "estimationMethodAccepted": true,
         "totalHoursOrCalendarDurationEstimated": false,
         "actualBudgetFeasibilityVerified": false,
         "productAcceptancePassed": false,
-        "remainingForAcceptance": [
-          "confirm partner engineering or acceptance-review participation",
-          "accept the dependency-batch sequence and estimation method",
-          "confirm account-specific service charges and any purchase list before treating budget as feasible"
+        "preparationBlockers": [],
+        "openEvidenceGates": [
+          "E05"
+        ],
+        "remainingForAcceptance": [],
+        "downstreamOpenItems": [
+          "Record actual task hours, external waits, defects, and retest time during engineering; form rolling ranges after the first completed engineering batch.",
+          "Verify account-specific charges and provider quotations before paid-service selection, configuration, or purchase; no purchase is authorized.",
+          "Keep E05 open until real provider supply, coverage, and applicable operating admission evidence are verified before affected real-service activation or release."
         ],
         "sp07Started": false,
         "qd03SignedOff": false
+      },
+      "completion": {
+        "date": "2026-11-04",
+        "scope": "task-preparation-only",
+        "environment": "Windows 11 local documentation and Node.js test review; no CloudBase writes, purchases, or production changes.",
+        "evidence": [
+          "docs/sp06-resource-and-batch-plan-20261104.md",
+          "docs/sp06-resource-and-batch-plan-20261104.json",
+          "tests/sp06-resource-and-batch-plan.test.cjs",
+          "tests/executable-development-plan.test.cjs"
+        ],
+        "scopeNote": "SP06 preparation deliverable only. User confirmed partner operations-only and accepted the eight-batch order and rolling-estimate method. Actual budget feasibility remains unverified and E05 remains open; no purchase is authorized. This does not pass product acceptance, sign QD03, or authorize SP07."
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",

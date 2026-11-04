@@ -2,15 +2,25 @@
   "schemaVersion": 1,
   "task": "SP06",
   "date": "2026-11-04",
-  "status": "in-progress",
+  "status": "complete",
   "sourcePlanRevision": "execution-backlog-1.2-sp06-resource-plan-draft",
   "productAcceptancePassed": false,
   "qd03SignedOff": false,
+  "sp07Started": false,
+  "openEvidenceGates": ["E05"],
+  "planAcceptance": {
+    "confirmedDate": "2026-11-04",
+    "partnerRole": "operations-only",
+    "dependencyBatchSequenceAccepted": true,
+    "estimationMethodAccepted": true,
+    "actualBudgetFeasibilityConfirmed": false,
+    "purchaseAuthorizationGranted": false
+  },
   "confirmedAvailability": {
     "ownerHoursPerWeekLowerBound": 8,
     "ownerHoursPerWeekUpperBound": null,
     "partnerOperationsShift": "09:00-17:00",
-    "partnerEngineeringOrAcceptanceRole": "unknown",
+    "partnerEngineeringOrAcceptanceRole": "operations-only",
     "partnerEngineeringHoursCounted": 0,
     "serviceWindow": "09:00-22:00"
   },
@@ -18,7 +28,8 @@
     "ownerCapacityIsMinimumNotExact": true,
     "ownerTimeAllocationByActivity": "not-confirmed",
     "partnerOperationsShiftIsNotEngineeringCapacity": true,
-    "partnerZeroHoursMeansNotCountedNotConfirmedUnavailable": true,
+    "partnerOperationsOnlyConfirmed": true,
+    "partnerEngineeringAndAcceptanceHoursAreOutOfScope": true,
     "after22Requests": "next-day processing per user confirmation"
   },
   "executionBatches": [
@@ -82,8 +93,9 @@
   "schedule": {
     "calendarDatesAssigned": false,
     "totalDurationWeeks": null,
-    "reason": "No measured implementation/acceptance throughput exists yet, owner availability is a lower bound rather than a fixed weekly allocation, and partner engineering participation is unknown.",
-    "planningRule": "Use the eight dependency batches as sequence only. Record actual hours, wait time, defects, and retest time per task. After the first completed engineering batch, prepare rolling ranges with assumptions; do not treat the result as a committed launch date."
+    "reason": "No measured implementation/acceptance throughput exists yet, and owner availability is a lower bound rather than a fixed weekly allocation.",
+    "planningRule": "Use the eight dependency batches as sequence only. Record actual hours, wait time, defects, and retest time per task. After the first completed engineering batch, prepare rolling ranges with assumptions; do not treat the result as a committed launch date.",
+    "planningRuleAccepted": true
   },
   "effortEstimate": {
     "status": "not-quantified",
@@ -218,12 +230,24 @@
       "failureBlocks": "Real provider activation or release of affected services; not SP06 documentation."
     }
   ],
-  "currentOpenItems": [
-    "Confirm whether the partner participates in engineering or acceptance review; until then count no partner development hours.",
-    "Record measured task hours and external waits as tasks execute; the current plan intentionally contains no total-hour or calendar-duration estimate.",
-    "Confirm actual CloudBase entitlement, billing, expiry, and relevant provider quotations before choosing paid services or purchases.",
-    "Obtain user acceptance of the finite batch sequence and itemized costs before marking SP06 complete."
+  "preparationBlockers": [],
+  "downstreamOpenItems": [
+    "Record measured task hours, external waits, defects, and retest time as engineering tasks execute; form rolling ranges after the first completed engineering batch.",
+    "Verify account-specific CloudBase entitlement, actual billing, expiry, and provider quotations before any paid service selection, configuration, or purchase.",
+    "Keep E05 open until actual service-provider supply, coverage, and applicable operating admission evidence are verified before affected real-service activation or release."
   ],
+  "completion": {
+    "date": "2026-11-04",
+    "scope": "task-preparation-only",
+    "environment": "Windows 11 local documentation and Node.js test review; no CloudBase writes, purchases, or production changes.",
+    "evidence": [
+      "docs/sp06-resource-and-batch-plan-20261104.md",
+      "docs/sp06-resource-and-batch-plan-20261104.json",
+      "tests/sp06-resource-and-batch-plan.test.cjs",
+      "tests/executable-development-plan.test.cjs"
+    ],
+    "scopeNote": "SP06 preparation deliverable only. The user confirmed the partner is operations-only and accepted the eight-batch order and rolling-estimate method. Actual budget feasibility remains unverified and E05 remains open; no purchase is authorized. Product acceptance is false, QD03 is unsigned, and SP07 remains planned."
+  },
   "references": [
     {
       "title": "CloudBase resource point pricing",
