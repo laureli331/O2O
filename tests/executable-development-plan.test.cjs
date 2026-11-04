@@ -1050,7 +1050,7 @@ function validateUiProgress(p){
  a.deepEqual(ui.activePages,manifest.pages.map(x=>x.file));a.deepEqual(ui.excludedPages,manifest.excludedPages);a.equal(ui.stylesheetSha256,proof.stylesheetSha256);
  for(const key of ['layoutStateChecks','pilotInteractionChecks','nodeTests'])a.equal(ui.validation[key],proof[key]);
  a.equal(ui.realMiniProgramTested,false);a.equal(ui.livePaymentTested,false);a.equal(ui.formalTaskCompleted,false);
- const sp=p.tasks.find(x=>x.id==='SP05');a.equal(sp.prototypeProgress.uiDeliveryRef,'prototypeUiDelivery');a.equal(sp.status,'planned');a.equal(sp.productAcceptancePassed,false);a(sp.prototypeProgress.remaining.length>=3);
+ const sp=p.tasks.find(x=>x.id==='SP05');a.equal(sp.prototypeProgress.uiDeliveryRef,'prototypeUiDelivery');a.equal(sp.status,'awaiting-acceptance');a.equal(sp.productAcceptancePassed,false);a(sp.prototypeProgress.remaining.length>=3);a.equal(sp.prototypeProgress.contractRef,'docs/sp05-page-acceptance-contract-20261104.json');a.equal(sp.prototypeProgress.contractMarkdownRef,'docs/sp05-page-acceptance-contract-20261104.md');a.equal(sp.executionProgress.formalEngineeringStarted,false);a.equal(sp.executionProgress.productValidationPerformed,false);a.match(sp.executionProgress.nextAction,/QP05_SEGMENT_DURATION/);a.match(sp.executionProgress.nextAction,/QP08_CYCLE_RECIPE/);
  for(const f of ui.evidence)a(p.sources.includes(f)&&fs.existsSync(path.join(root,f)));
  return true;
 }

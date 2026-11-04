@@ -47,7 +47,11 @@
     "docs/sp01-task-signoff-20261104.md",
     "docs/sp01-task-signoff-20261104.json",
     "docs/sp03-data-privacy-deletion-20261104.md",
-    "docs/sp03-data-privacy-deletion-20261104.json"
+    "docs/sp03-data-privacy-deletion-20261104.json",
+    "docs/sp05-page-acceptance-contract-20261104.md",
+    "docs/sp05-page-acceptance-contract-20261104.json",
+    "docs/sp01-closeout-reconciliation-20261104.md",
+    "docs/sp01-closeout-reconciliation-20261104.json"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -2903,7 +2907,7 @@
       ],
       "evidenceGates": [],
       "features": [],
-      "status": "planned",
+      "status": "awaiting-acceptance",
       "productAcceptancePassed": false,
       "prototypeProgress": {
         "uiDeliveryRef": "prototypeUiDelivery",
@@ -2912,10 +2916,12 @@
           "规范、逐页映射、测试证据与回退提交已归档"
         ],
         "remaining": [
-          "完成SP01、SP04的技术与真实配置前置核对",
-          "将原型页面状态、权限和返回规则整理成正式组件及接口验收合同",
-          "形成微信真机胶囊、键盘、安全区与通知差异清单，实际执行留到SP35"
-        ]
+          "用户确认QP05_SEGMENT_DURATION：持续操作片段时长（建议10秒）",
+          "用户确认QP08_CYCLE_RECIPE：八步混合耐久循环步骤",
+          "按确认结果定稿SP05准备合同并运行专项与计划回归"
+        ],
+        "contractRef": "docs/sp05-page-acceptance-contract-20261104.json",
+        "contractMarkdownRef": "docs/sp05-page-acceptance-contract-20261104.md"
       },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
@@ -2970,6 +2976,13 @@
           "previews/g04.html"
         ],
         "completionRule": "本卡原验收与本卡适用实例均通过；跨阶段条款只执行当前里程碑要求，其最终全量/上线/稳定观察由指定后续任务验收，不形成逆向前置。"
+      },
+      "executionProgress": {
+        "date": "2026-11-04",
+        "status": "awaiting-user-confirmation",
+        "formalEngineeringStarted": false,
+        "productValidationPerformed": false,
+        "nextAction": "等待用户确认 QP05_SEGMENT_DURATION 与 QP08_CYCLE_RECIPE；确认后定稿 SP05 准备合同并复验。QP05/QP07/QP08/QP09 产品级验收仍归各责任卡，真实页面验证归 SP35。"
       }
     },
     {

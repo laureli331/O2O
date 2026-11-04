@@ -1,0 +1,457 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "task": "SP05",
+  "status": "draft-awaiting-user-confirmation",
+  "productAcceptancePassed": false,
+  "scope": {
+    "preparationOnly": true,
+    "formalEngineeringStarted": false,
+    "productValidationPerformed": false,
+    "productAcceptancePassed": false,
+    "formalProductModuleDiagramRequired": false,
+    "boundary": "This contract packages the approved prototype/page and shared-state specifications. Formal module boundaries are governed by the backend architecture contract and implemented from SP07 onward; real product/device evidence remains assigned to its original task cards."
+  },
+  "sources": [
+    "docs/v1-executable-development-plan-20261027.md",
+    "docs/v1-executable-development-plan-20261027.json",
+    "docs/v1-quality-acceptance-20261027.md",
+    "docs/v1-quality-acceptance-20261027.json",
+    "docs/backend-architecture-contract-20261103.md",
+    "docs/backend-architecture-contract-20261103.json",
+    "docs/prototype-development-handoff-20261026.md",
+    "docs/superpowers/specs/2026-10-25-g-series-shared-states-design.md",
+    "docs/ui-consistency-rollout-delivery-20261027.md",
+    "docs/ui-consistency-pages-20261027.json",
+    "docs/superpowers/specs/2026-10-27-ui-consistency-design-tokens.json",
+    "docs/sp01-endurance-web-budget-proposal-20261031.md",
+    "docs/sp01-closeout-reconciliation-20261104.md",
+    "docs/sp01-closeout-reconciliation-20261104.json",
+    "docs/sp04-operations-configuration-20261027.md",
+    "docs/sp04-operations-configuration-20261027.json",
+    "docs/sp01-device-capability-20261030.md",
+    "docs/sp01-device-capability-20261030.json",
+    "docs/sp01-device-capability-huawei-follow-up-20261102.json",
+    "docs/sp01-huawei-gfxinfo-swipe-20261102.json",
+    "docs/sp01-network-profile-method-20261031.md",
+    "docs/sp01-network-huawei-paired-reruns-20261102.json"
+  ],
+  "reuseSurvey": {
+    "projectArtifacts": [
+      "docs/prototype-development-handoff-20261026.md",
+      "docs/superpowers/specs/2026-10-25-g-series-shared-states-design.md",
+      "docs/ui-consistency-pages-20261027.json",
+      "docs/superpowers/specs/2026-10-27-ui-consistency-design-tokens.json",
+      "docs/sp01-endurance-web-budget-proposal-20261031.md"
+    ],
+    "officialReferences": [
+      {
+        "url": "https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/",
+        "inheritedUse": "background isolation, modal focus and return behavior in the already approved prototype handoff"
+      },
+      {
+        "url": "https://design-system.service.gov.uk/components/error-message/",
+        "inheritedUse": "actionable error guidance and retaining entered values in the already approved prototype handoff"
+      },
+      {
+        "url": "https://developer.chrome.com/docs/devtools/performance-monitor",
+        "inheritedUse": "candidate Web measurement tool documented in the SP01 endurance proposal; not yet validated on formal product pages"
+      },
+      {
+        "url": "https://developer.chrome.com/docs/devtools/memory-problems/heap-snapshots",
+        "inheritedUse": "candidate Web heap comparison method documented in the SP01 endurance proposal; not yet validated on formal product pages"
+      }
+    ],
+    "thirdPartyEvaluation": "No new library is needed for a documentation-only page/state contract. No package source, license or maintenance profile is being proposed for adoption.",
+    "adoptedApproach": "reuse-current-page-manifest-shared-states-and-approved-ui-tokens",
+    "adaptation": "Index the existing 33 active HTML carriers, six exclusions, 24 G states and accepted UI tokens; preserve their source ownership and existing browser-only evidence scope.",
+    "newDependencies": []
+  },
+  "pageInventory": {
+    "pages": [
+      "G01",
+      "G02",
+      "G03",
+      "G04"
+    ],
+    "activeHtmlFiles": [
+      "ad-cooperation.html",
+      "banner-admin.html",
+      "g01.html",
+      "g02.html",
+      "g03.html",
+      "g04.html",
+      "services.html",
+      "v01-v02.html",
+      "v03.html",
+      "v04.html",
+      "v05.html",
+      "v07.html",
+      "v08.html",
+      "v09.html",
+      "v10.html",
+      "v11.html",
+      "v12.html",
+      "v13.html",
+      "v14.html",
+      "v15-duty.html",
+      "v15.html",
+      "v16.html",
+      "v18.html",
+      "v19.html",
+      "v20-duty.html",
+      "v20.html",
+      "v21.html",
+      "v22.html",
+      "v23.html",
+      "v24.html",
+      "v25.html",
+      "v26.html",
+      "v27.html"
+    ],
+    "excludedHtmlFiles": {
+      "discovery-buttons.html": "design-lab",
+      "navigation-icon-options.html": "design-lab",
+      "v06.html": "redirect",
+      "v15-mobile-legacy.html": "archive",
+      "v15-rework.html": "archive",
+      "v17.html": "archive"
+    },
+    "interpretation": "The 33 active files are prototype carriers, not a claim of 33 final mini-program routes. G01-G04 are shared state contracts applied only where a matching action exists. V06 remains a redirect to services; V17 remains archive-only.",
+    "prototypeEvidenceBoundary": "Existing browser checks prove only the recorded synthetic HTML interactions and layouts. They do not prove mini-program runtime, real authorization, cloud, payment, performance, memory, or device acceptance."
+  },
+  "stateContract": {
+    "source": "docs/superpowers/specs/2026-10-25-g-series-shared-states-design.md",
+    "handoffMapping": "docs/prototype-development-handoff-20261026.md",
+    "groups": {
+      "G01": [
+        "G01-01",
+        "G01-02",
+        "G01-03",
+        "G01-04",
+        "G01-05",
+        "G01-06",
+        "G01-07",
+        "G01-08"
+      ],
+      "G02": [
+        "G02-01",
+        "G02-02",
+        "G02-03",
+        "G02-04",
+        "G02-05",
+        "G02-06"
+      ],
+      "G03": [
+        "G03-01",
+        "G03-02",
+        "G03-03",
+        "G03-04",
+        "G03-05",
+        "G03-06"
+      ],
+      "G04": [
+        "G04-01",
+        "G04-02",
+        "G04-03",
+        "G04-04"
+      ]
+    },
+    "stateCount": 24,
+    "rules": [
+      "Keep first-load failure distinct from true empty and no-filter-match states; retain prior content, filters and position when refresh fails.",
+      "For submissions, prevent duplicate actions; on unknown outcome query the same request; preserve user inputs until a definitive result; re-review changed versions.",
+      "For images, retain valid inputs after a per-image failure, reject invalid format/size/count according to each field's existing contract, and share public snapshots only with recipient re-authorization.",
+      "For exits, deletion and important actions, keep cancellation non-mutating, confirm only permitted objects, and retain consequential outcomes on the original record rather than relying only on a transient toast.",
+      "Do not multiply all 24 states across every page. Apply each state only where the source mapping defines a matching action or runtime state."
+    ],
+    "authorityBoundary": "Client presentation does not authorize private data or replace server-side permission, money, time, version or status enforcement."
+  },
+  "visualBaseline": {
+    "source": "docs/superpowers/specs/2026-10-27-ui-consistency-design-tokens.json",
+    "approvalScope": "approved-all-active-delivered",
+    "spacingScale": [
+      4,
+      8,
+      12,
+      16,
+      20,
+      24,
+      32
+    ],
+    "radius": {
+      "tag": 4,
+      "button": 8,
+      "field": 8,
+      "card": 12,
+      "dialog": 16,
+      "sheetTop": 20
+    },
+    "mobile": {
+      "pageInset": 16,
+      "cardInset": 16,
+      "cardGap": 12,
+      "sectionGap": 24,
+      "fieldGap": 16,
+      "primaryMinHeight": 46,
+      "touchMinWidth": 44,
+      "touchMinHeight": 44,
+      "bodyFont": 14,
+      "cardTitleFont": 16,
+      "navigationTitleFont": 18,
+      "helperFont": 12
+    },
+    "admin": {
+      "pageInset": 24,
+      "cardInset": 20,
+      "cardGap": 16,
+      "sectionGap": 24,
+      "bodyFont": 14,
+      "cardTitleFont": 16,
+      "pageTitleFont": 20
+    },
+    "protectedExceptions": [
+      "business-rules",
+      "approved-content-order",
+      "filled-navigation-svg-paths",
+      "capsule-safe-area",
+      "masonry",
+      "centered-profile",
+      "archived-comparison-pages"
+    ],
+    "additionalRules": [
+      "Retain the WeChat capsule and explicitly approved edge-image/layout exceptions.",
+      "Mini-program page navigation remains full-screen; child pages hide the TabBar as specified in the SP05 card.",
+      "Do not reopen the completed 33-page prototype rollout without a newly confirmed substantive change."
+    ]
+  },
+  "deviceSnapshots": {
+    "sourceStatus": "user-reported-device-probe-results; refresh at SP35 before final candidate acceptance",
+    "devices": [
+      {
+        "brand": "OPPO",
+        "model": "PLJ110 / Find X9",
+        "os": "Android 17",
+        "wechat": "8.0.79",
+        "baseLibrary": "3.17.5",
+        "platform": "android",
+        "reportedSelectedRefreshHz": 120,
+        "renderer": "webview"
+      },
+      {
+        "brand": "HUAWEI",
+        "model": "BON-AL00 / nova 11 SE",
+        "os": "Android 12",
+        "wechat": "8.0.79",
+        "baseLibrary": "3.17.5",
+        "platform": "android",
+        "reportedSelectedRefreshHz": 90,
+        "renderer": "webview"
+      },
+      {
+        "brand": "HUAWEI",
+        "model": "SEA-AL10",
+        "os": "Android 10",
+        "wechat": "8.0.78",
+        "baseLibrary": "3.17.5",
+        "platform": "android",
+        "reportedSelectedRefreshHz": 60,
+        "renderer": "webview"
+      },
+      {
+        "brand": "Apple",
+        "model": "iPhone XR / iPhone11,8",
+        "os": "iOS 18.7.11",
+        "wechat": "8.0.80",
+        "baseLibrary": "3.17.5",
+        "platform": "ios",
+        "reportedSelectedRefreshHz": 60,
+        "renderer": "webview"
+      }
+    ],
+    "deviceClassMapping": "not-assigned; no mapping to entry-android or mainstream-android is inferred",
+    "behaviorDifferences": [
+      {
+        "area": "capsule, safe area and system insets",
+        "currentEvidence": "not measured on formal product pages",
+        "owner": "SP35"
+      },
+      {
+        "area": "keyboard, focus, scroll and return position",
+        "currentEvidence": "not measured on formal product pages",
+        "owner": "SP35"
+      },
+      {
+        "area": "notifications and platform permission prompts",
+        "currentEvidence": "not measured on formal product pages",
+        "owner": "SP35"
+      }
+    ],
+    "webBrowser": {
+      "browser": "Chrome",
+      "exactVersion": "156.0.8078.47",
+      "windowsBuild": null,
+      "verificationOwner": "SP35"
+    },
+    "evidenceSources": [
+      "docs/sp04-operations-configuration-20261027.md",
+      "docs/sp04-operations-configuration-20261027.json",
+      "docs/sp01-device-capability-20261030.md",
+      "docs/sp01-device-capability-20261030.json",
+      "docs/sp01-device-capability-huawei-follow-up-20261102.json"
+    ]
+  },
+  "qualityPlan": {
+    "QP05": {
+      "sourceContract": {
+        "id": "QP05",
+        "title": "60Hz滚动≥55FPS且无>100ms应用卡顿",
+        "precondition": "使用本合同冻结的版本、适用页面/角色/状态及环境；完成对应SP卡前置；真实能力须过其证据门槛",
+        "method": "每组3轮，每轮至少30段持续操作片段，冻结段长，使用200条和合法重内容，记录实际刷新率",
+        "expected": "每段平均≥55FPS且无>100ms应用可归因卡顿、视觉跳变/错触；高刷和空闲段不替代",
+        "evidence": "帧/输入轨迹、长帧明细、每段统计和录屏",
+        "productResult": "not-executed",
+        "failurePolicy": "任何适用预期不满足、缺原始证据或缺关键参数均失败/受阻，不放行；修复后原实例与受影响链路复验",
+        "retest": "保留失败输入、版本与证据；同配置重跑失败实例、相关正常/异常/边界及受影响回归",
+        "rollback": "按对应SP卡回退说明和前后状态核对；不回滚外部资金事实、不删除历史"
+      },
+      "preparationOwner": "SP01/SP05",
+      "productEvidenceOwner": "SP35",
+      "referenceRefreshHz": 60,
+      "minAverageFpsPerSegment": 55,
+      "maxAttributableStallMs": 100,
+      "roundsPerDeviceGroup": 3,
+      "minSegmentsPerRound": 30,
+      "datasetRecords": 200,
+      "freezeSegmentDurationSeconds": null,
+      "status": "awaiting-user-confirmation",
+      "recommendation": {
+        "segmentDurationSeconds": 10,
+        "reason": "A 10-second segment makes the continuous-action clip sustained while preserving the original 3 rounds × at least 30 segments gate. This is a recommendation, not a confirmed parameter."
+      },
+      "unmodifiedAcceptanceThresholds": true,
+      "blocks": "SP35 QP05 product acceptance until the segment length and all required device-group evidence are confirmed and pass."
+    },
+    "QP07": {
+      "sourceContract": {
+        "id": "QP07",
+        "title": "弱网断网恢复",
+        "precondition": "使用本合同冻结的版本、适用页面/角色/状态及环境；完成对应SP卡前置；真实能力须过其证据门槛",
+        "method": "按SP01冻结限速/延迟/丢包配置在读/写/查询/图片前后注入，逐场景3轮",
+        "expected": "所有既定状态和输入保留预期一致，无重复业务；弱网不机械套正常网时间，超时/等待预算须确认",
+        "evidence": "注入参数、请求/对象ID、恢复视频及三轮结果",
+        "productResult": "not-executed",
+        "failurePolicy": "任何适用预期不满足、缺原始证据或缺关键参数均失败/受阻，不放行；修复后原实例与受影响链路复验",
+        "retest": "保留失败输入、版本与证据；同配置重跑失败实例、相关正常/异常/边界及受影响回归",
+        "rollback": "按对应SP卡回退说明和前后状态核对；不回滚外部资金事实、不删除历史"
+      },
+      "configurationOwner": "SP01",
+      "productRecoveryOwners": [
+        "SP11",
+        "each-applicable-business-card",
+        "SP35"
+      ],
+      "existingProbeIsProductEvidence": false,
+      "status": "preparation-evidence-recorded-product-tests-not-run",
+      "blocks": "SP11/business-card QP07 instances and SP35 final QP07 acceptance until each product path passes."
+    },
+    "QP08": {
+      "sourceContract": {
+        "id": "QP08",
+        "title": "长时运行与泄漏",
+        "precondition": "使用本合同冻结的版本、适用页面/角色/状态及环境；完成对应SP卡前置；真实能力须过其证据门槛",
+        "method": "SP01/SP05确认时长、循环数、资源/内存观测和增长预算后，执行相同混合用户循环",
+        "expected": "无崩溃/白屏/未捕获异常/重复业务；资源/内存符合已确认预算，无持续累积泄漏；无可测依据不假通过",
+        "evidence": "设备资源轨迹、分段节点/监听器/请求、起终点及预算批准",
+        "productResult": "not-executed",
+        "failurePolicy": "任何适用预期不满足、缺原始证据或缺关键参数均失败/受阻，不放行；修复后原实例与受影响链路复验",
+        "retest": "保留失败输入、版本与证据；同配置重跑失败实例、相关正常/异常/边界及受影响回归",
+        "rollback": "按对应SP卡回退说明和前后状态核对；不回滚外部资金事实、不删除历史"
+      },
+      "preparationOwner": "SP05",
+      "productEnduranceOwner": "SP35",
+      "confirmedWorkload": {
+        "durationMinutes": 60,
+        "minimumCompleteCycles": 60,
+        "checkpointMinutes": 10
+      },
+      "cycleRecipe": [
+        "browse a list",
+        "open a detail",
+        "return to the list",
+        "open and close a modal",
+        "enter and cancel a publish form",
+        "load an image",
+        "query a business object",
+        "restore the same baseline page"
+      ],
+      "cycleRecipeStatus": "awaiting-user-confirmation",
+      "observationMethodCandidate": {
+        "web": "Chrome Performance Monitor plus stable-start/midpoint/end heap snapshots and node/listener counts; validate on formal pages before use",
+        "miniProgram": "Page-attributable resource/memory source remains unverified; Android WebView process PSS is not a single mini-program page budget",
+        "source": "docs/sp01-endurance-web-budget-proposal-20261031.md"
+      },
+      "attributableMemoryGrowthBudget": null,
+      "memoryBudgetStatus": "not-set-no-formal-page-level-baseline",
+      "recommendedBudgetTiming": "Existing stage decision: define the measurement method in SP05; establish page attribution and repeatability on formal pages; propose a numeric growth budget from measured product data for user confirmation before SP35 runs the 60-minute QP08 product test. If attribution or repeatability fails, QP08 stays blocked; do not substitute whole-device or host-process memory.",
+      "status": "workload-confirmed-cycle-recipe-awaiting-user-confirmation-product-budget-deferred-to-sp35",
+      "blocks": "SP35 QP08 product endurance run until the confirmed cycle recipe, valid page-attributable resource measurement and user-approved growth budget are available."
+    },
+    "QP09": {
+      "sourceContract": {
+        "id": "QP09",
+        "title": "网页后台性能",
+        "precondition": "使用本合同冻结的版本、适用页面/角色/状态及环境；完成对应SP卡前置；真实能力须过其证据门槛",
+        "method": "登记实际Windows浏览器/视口/数据，按独立Web预算测核心队列、筛选、详情、确认、看板",
+        "expected": "已确认Web预算及主任务响应逐组通过；不能用INP代替微信指标或一次按钮反馈",
+        "evidence": "Web支持矩阵、时间轨迹及逐任务结果",
+        "productResult": "not-executed",
+        "failurePolicy": "任何适用预期不满足、缺原始证据或缺关键参数均失败/受阻，不放行；修复后原实例与受影响链路复验",
+        "retest": "保留失败输入、版本与证据；同配置重跑失败实例、相关正常/异常/边界及受影响回归",
+        "rollback": "按对应SP卡回退说明和前后状态核对；不回滚外部资金事实、不删除历史"
+      },
+      "productEvidenceOwner": "SP35",
+      "numericWebBudgets": null,
+      "existingChromeProbeIsProductEvidence": false,
+      "budgetTiming": "Freeze and user-confirm independent Web task budgets after formal admin pages and representative data exist, before SP35 QP09 product performance acceptance.",
+      "status": "product-budget-and-results-deferred-to-sp35",
+      "blocks": "SP35 QP09 product performance acceptance until actual Windows/browser support matrix and confirmed task budgets pass."
+    }
+  },
+  "decisionsPending": [
+    {
+      "id": "QP05_SEGMENT_DURATION",
+      "question": "Confirm the frozen duration for each sustained-operation clip.",
+      "recommendation": "10 seconds per clip",
+      "decisionOwner": "user",
+      "blocks": "SP05 contract acceptance of the QP05 preparation parameter; QP05 product acceptance remains SP35."
+    },
+    {
+      "id": "QP08_CYCLE_RECIPE",
+      "question": "Confirm or adjust the eight-step mixed loop: list, detail, return, modal open/close, enter/cancel publish form, image load, business query, restore the same baseline page.",
+      "recommendation": "Adopt the sequence above, then calibrate one complete cycle against the formal pages before SP35.",
+      "decisionOwner": "user",
+      "blocks": "SP05 QP08 cycle specification; product endurance remains SP35."
+    }
+  ],
+  "verification": {
+    "performedThisDelivery": [
+      "documentation/source cross-check",
+      "contract schema and source-alignment tests"
+    ],
+    "notPerformed": [
+      "formal product build or product page test",
+      "real WeChat-device page acceptance",
+      "FPS/frame-trace acceptance",
+      "formal-page memory attribution or endurance run",
+      "Web-admin product performance test",
+      "real payment, cloud business path, or production operation"
+    ],
+    "futureOwners": {
+      "QP05": "SP35",
+      "QP07": "SP11 and each applicable business card, final review SP35",
+      "QP08": "SP35",
+      "QP09": "SP35"
+    }
+  }
+}
