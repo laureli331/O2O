@@ -17,7 +17,7 @@ test('SP04 separates the current identity probe from the removed Node 20 transac
   const record = evidence();
   const latest = record.latestIdentityProbeDeployment;
   const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
-  const currentCheck = record.remainingChecks.find((item) => item.includes('sp01IdentityProbe'));
+  const currentCheck = record.historicalCheckSnapshots.find((item) => item.includes('sp01IdentityProbe'));
   const doc = read('docs/sp04-operations-configuration-20261027.md');
 
   assert.deepEqual(latest, {
@@ -218,11 +218,11 @@ test('SP04 reflects the target-project read-only CLI evidence without claiming a
   assert.equal(project.environmentIdConfigured, true);
   assert.equal(project.appJsEnvironmentValue, record.environmentDetailsScreenshot.visibleEnvironmentId);
   assert.ok(task.executionProgress.completedChecks.some((item) => item.includes('目标AppID') && item.includes('0个云函数') && item.includes('0个数据库集合')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('当前活动窗口加载路径') && item.includes('仍未核实')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('当前环境已选中cloud1') && item.includes('sp01IdentityProbe') && item.includes('Nodejs16.13')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标')));
-  assert.ok(!record.remainingChecks.some((item) => item.includes('该QuickStart仍未配置EnvId')));
-  assert.ok(!record.remainingChecks.some((item) => item.includes('待只读桥接恢复后核验')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('当前活动窗口加载路径') && item.includes('仍未核实')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('当前环境已选中cloud1') && item.includes('sp01IdentityProbe') && item.includes('Nodejs16.13')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('在运行弱网用例前测量家中WiFi和公共免费WiFi的实际网络指标')));
+  assert.ok(!record.historicalCheckSnapshots.some((item) => item.includes('该QuickStart仍未配置EnvId')));
+  assert.ok(!record.historicalCheckSnapshots.some((item) => item.includes('待只读桥接恢复后核验')));
   assert.ok(doc.includes('cloud_fn_list'));
   assert.ok(doc.includes('cloud_db_read_struct'));
   assert.ok(doc.includes('显式传入目标AppID及EnvID'));
@@ -279,8 +279,8 @@ test('SP04 excludes old cloud1 based on the user-reported subject difference wit
     ],
   });
   assert.equal(record.evidenceGates.find((gate) => gate.id === 'E06').passed, false);
-  assert.ok(record.remainingChecks.some((item) => item.includes('不符合官方同主体共享条件')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('新号自己的CloudBase环境')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('不符合官方同主体共享条件')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('新号自己的CloudBase环境')));
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('一个腾讯云账号只能绑定一个小程序'));
   assert.ok(doc.includes('旧号为个人主体，新号为个体工商户/公司主体'));
@@ -289,9 +289,9 @@ test('SP04 excludes old cloud1 based on the user-reported subject difference wit
   assert.ok(doc.includes('不代表托管、登录、域名或费用已经配置'));
   const plan = load('docs/v1-executable-development-plan-20261027.json');
   const task = plan.tasks.find((entry) => entry.id === 'SP04');
-  assert.equal(task.status, 'in-progress');
+  assert.equal(task.status, 'complete');
   assert.equal(task.productAcceptancePassed, false);
-  assert.ok(task.executionProgress.blockedChecks.some((item) => item.includes('目标新AppID自己的CloudBase环境')));
+  assert.ok(task.executionProgress.historicalBlockedChecks.some((item) => item.includes('目标新AppID自己的CloudBase环境')));
 });
 
 test('SP04 records the DevTools project list without claiming all local projects were searched', () => {
@@ -308,7 +308,7 @@ test('SP04 records the DevTools project list without claiming all local projects
     scope: 'wechat-devtools-registered-project-list-only',
     evidenceMethod: 'read-only-visible-ui-observation',
   });
-  assert.ok(record.remainingChecks.some((item) => item.includes('列表外或其他账号/设备')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('列表外或其他账号/设备')));
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('目标新AppID对应工程当时未出现在当前列表中'));
   assert.ok(doc.includes('此结果仅适用于该开发者工具当时显示的已登记工程列表'));
@@ -461,7 +461,7 @@ test('SP04 records no confirmed repair or errand providers without inventing cre
     tenLocationCoverageStatus: 'not-confirmed',
   });
   assert.equal(record.evidenceGates.find((gate) => gate.id === 'E05').passed, false);
-  assert.ok(record.remainingChecks.some((item) => item.includes('目前没有已确认愿意接单的维修或代买代取服务者')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('目前没有已确认愿意接单的维修或代买代取服务者')));
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
   assert.ok(doc.includes('资质审核状态和十个地点的实际覆盖尚未确认'));
@@ -488,7 +488,7 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
   });
   const e06 = record.evidenceGates.find((gate) => gate.id === 'E06');
   assert.equal(e06.passed, false);
-  assert.ok(!record.remainingChecks.some((check) => check.includes('数据库模式仍仅为用户报告')));
+  assert.ok(!record.historicalCheckSnapshots.some((check) => check.includes('数据库模式仍仅为用户报告')));
   assert.ok(e06.reason.includes('较早的开发者工具cloudfunctions根目录“当前环境”菜单截图显示为空'));
   assert.ok(e06.reason.includes('已导入cloud1'));
   assert.ok(e06.reason.includes('报告当前环境已选中cloud1'));
@@ -509,13 +509,13 @@ test('SP04 cross-references the latest CloudBase screenshots while keeping runti
     environmentImportPerformed: false,
     deploymentPerformed: false,
   });
-  const accountRemaining = record.remainingChecks.find((item) => item.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
+  const accountRemaining = record.historicalCheckSnapshots.find((item) => item.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   assert.ok(accountRemaining.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
   assert.ok(accountRemaining.includes('已导入cloud1'));
   assert.ok(accountRemaining.includes('当前环境已选中cloud1'));
   assert.ok(accountRemaining.includes('首轮临时函数随后由用户删除'));
-  assert.ok(record.remainingChecks.some((item) => item.includes('旧事务探针阶段的恢复状态见latestProbeDeploymentRecovery')));
-  assert.ok(record.remainingChecks.some((item) => item.includes('latestIdentityProbeDeployment')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('旧事务探针阶段的恢复状态见latestProbeDeploymentRecovery')));
+  assert.ok(record.historicalCheckSnapshots.some((item) => item.includes('latestIdentityProbeDeployment')));
   assert.ok(!accountRemaining.includes('先只读核对腾讯云账号中心'));
   assert.equal(record.latestTemporaryProbeDeploymentAttempt.functionName, 'sp01EnvProbe');
   assert.equal(record.latestTemporaryProbeDeploymentAttempt.postDeploymentReadOnly.runtime, 'Nodejs16.13');
@@ -707,15 +707,15 @@ test('SP04 records browser installation separately from tested support and block
 
   const plan = load('docs/v1-executable-development-plan-20261027.json');
   const task = plan.tasks.find((entry) => entry.id === 'SP04');
-  assert.equal(task.status, 'in-progress');
+  assert.equal(task.status, 'complete');
   assert.equal(task.productAcceptancePassed, false);
-  assert.ok(task.executionProgress.blockedChecks.length >= 1);
+  assert.ok(task.executionProgress.historicalBlockedChecks.length >= 1);
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('控制台兑换码体验') && check.includes('初次使用个人版一个月免费说明')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('湘阴渡社区') && check.includes('湘阴村')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('09:00') && check.includes('22:00')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('顾客服务时段09:00—22:00') && check.includes('22:00后请求次日处理')));
   assert.ok(task.executionProgress.completedChecks.some((check) => check.includes('2026-11-02') && check.includes('iPhone XR') && check.includes('120Hz') && check.includes('60Hz')));
-  assert.ok(task.executionProgress.blockedChecks.every((check) => !check.includes('顾客可预约服务时段')));
+  assert.ok(task.executionProgress.historicalBlockedChecks.every((check) => !check.includes('顾客可预约服务时段')));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.md'));
   assert.ok(plan.sources.includes('docs/sp04-operations-configuration-20261027.json'));
 });
@@ -808,7 +808,7 @@ test('SP04 records the latest read-only identity-probe status without treating i
   assert.ok(sp01.executionProgress.completedChecks.includes(evidenceText));
   assert.ok(sp04.executionProgress.completedChecks.includes(evidenceText));
   assert.deepEqual(sp04.executionProgress.latestIdentityProbePostConfirmationReadOnlyCheck, expected);
-  assert.deepEqual(record.remainingChecks.at(-1), '真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；之后只读查看日志设置菜单，看到设置列显示字段、设置保存时长、投递到CLS、删除日志四项；没有选择菜单项，CLS投递和保存时长状态未知。Nodejs16.13在官方支持列表中，但部署包兼容性、请求是否到达或失败根因仍未确认；未获新授权前不改设置、不重试。');
+  assert.deepEqual(record.historicalCheckSnapshots.at(-1), '真实客户端身份调用已尝试但未验证成功：账号A返回IDENTITY_CALL_FAILED、云函数返回码-1、请求ID未提供，未生成测试包或云端文件。用户按sp01IdentityProbe筛选并查询最近24小时后报告无记录；之后只读查看日志设置菜单，看到设置列显示字段、设置保存时长、投递到CLS、删除日志四项；没有选择菜单项，CLS投递和保存时长状态未知。Nodejs16.13在官方支持列表中，但部署包兼容性、请求是否到达或失败根因仍未确认；未获新授权前不改设置、不重试。');
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('用户报告真实客户端调用返回`IDENTITY_CALL_FAILED`'));
 });

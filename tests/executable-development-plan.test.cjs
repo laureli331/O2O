@@ -733,18 +733,38 @@ test('SP01 records the local diagnostic project AppID separately from the new ta
   }
 });
 
-test('SP04 plan progress records no confirmed service providers as a blocker and keeps product engineering gated', () => {
+test('SP04 closes preparation while retaining E05/E06 as downstream product and operation gates', () => {
   const p = load();
   const task = p.tasks.find((entry) => entry.id === 'SP04');
+  const record = JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
   const doc = read('docs/v1-executable-development-plan-20261027.md');
-  a.equal(task.status, 'in-progress');
+  a.equal(task.status, 'complete');
   a.equal(task.productAcceptancePassed, false);
   a(task.executionProgress.completedChecks.some((check) => check.includes('目前没有已确认愿意接单的家电维修或代买代取服务者')));
   a(task.executionProgress.completedChecks.some((check) => check.includes('CloudBase截图') && check.includes('当前环境为无') && check.includes('未改云端设置')));
-  a(task.executionProgress.blockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
-  a(task.executionProgress.blockedChecks.some((check) => check.includes('cloudfunctions文件夹当前环境已选中cloud1') && check.includes('SP01事务探针通过') && check.includes('存储跨账号客户端探针在该测试文件上失败')));
+  a.deepEqual(task.executionProgress.preparationBlockers, []);
+  a.deepEqual(task.executionProgress.blockedChecks, []);
+  a.deepEqual(task.executionProgress.openEvidenceGates, ['E05', 'E06']);
+  a.equal(task.executionProgress.historicalBlockedChecks.length, 2);
+  a.equal(task.completion.scope, 'task-preparation-only');
+  a.deepEqual(task.scopeResolution.openEvidenceGates, ['E05', 'E06']);
+  a.equal(task.scopeResolution.productAcceptancePassed, false);
+  a.equal(task.scopeResolution.formalProductImplementationAuthorized, false);
+  a.equal(record.status, 'complete');
+  a.equal(record.productAcceptancePassed, false);
+  a.equal(record.deliveryScope, 'task-preparation-only');
+  a.deepEqual(record.remainingChecks, []);
+  a.equal(record.historicalCheckSnapshots.length, 14);
+  a.deepEqual(record.evidenceGates.map((gate) => [gate.id, gate.passed]), [['E05', false], ['E06', false]]);
+  a(task.executionProgress.historicalBlockedChecks.some((check) => check.includes('资质审核状态和十个地点的实际覆盖尚未确认')));
+  a(task.downstreamResponsibilities.E05.some((item) => item.owner === 'SP36'));
+  a(task.downstreamResponsibilities.E06.some((item) => item.owner === 'SP35'));
+  a(record.downstreamResponsibilities.E05.some((item) => item.owner === 'SP36'));
+  a(record.downstreamResponsibilities.E06.some((item) => item.owner === 'SP35'));
   a(doc.includes('目前没有已确认愿意接单的家电维修或代买代取服务者'));
   a(doc.includes('开发者工具云函数菜单早期显示“当前环境：(无)”且子菜单“(空)”'));
+  a(doc.includes('SP04准备交付：complete'));
+  a(doc.includes('E05、E06仍未通过'));
   a.equal(p.firstProductTask, 'SP07');
   a.deepEqual(p.firstProductTaskPrerequisites, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
 });
@@ -1075,8 +1095,8 @@ test('SP01 separates the account-association report from the later cloud1 import
  a.equal(sp04.executionProgress.latestUserReportedEnvironmentImport.result,'user-reported-imported');
  a(!sp01.executionProgress.nextAction.includes('账号关联尚未核实'));
  a(!sp01.executionProgress.nextAction.includes('先只读核对腾讯云账号中心'));
- a(!sp04.executionProgress.blockedChecks.some(check=>check.includes('需先核对与app.js绑定的模板关系')));
- a(sp04.executionProgress.blockedChecks.some(check=>check.includes('用户报告已将cloud1导入')));
+ a(!sp04.executionProgress.historicalBlockedChecks.some(check=>check.includes('需先核对与app.js绑定的模板关系')));
+ a(sp04.executionProgress.historicalBlockedChecks.some(check=>check.includes('用户报告已将cloud1导入')));
  for(const doc of [techDoc,planDoc,sp04Doc]){
   a(doc.includes('账号中心')||doc.includes('腾讯云账号中心'));
   a(doc.includes('未附截图'));
@@ -1157,11 +1177,14 @@ test('SP01 records the selected menu separately from the deployed temporary prob
   a.deepEqual(sp04.latestIdentityProbeLogInspection.runtimeCompatibilityReview,runtimeReview);
   a.deepEqual(sp04Task.executionProgress.latestIdentityProbeLogInspection.runtimeCompatibilityReview,runtimeReview);
  a.equal(sp04Task.executionProgress.latestIdentityProbeClientSafetyFix.clientRetestPerformed,true);
- a(sp04Task.executionProgress.nextAction.includes('IDENTITY_CALL_FAILED'));
-  a(sp04Task.executionProgress.nextAction.includes('官方支持列表包含Nodejs16.13'));
- a(sp04Task.executionProgress.nextAction.includes('未选择菜单项'));
- a(sp04Task.executionProgress.nextAction.includes('CLS投递及保存时长状态未知'));
- a(sp04Task.executionProgress.nextAction.includes('未获新授权前不改设置、不重试'));
+ a(sp04Task.executionProgress.nextAction.includes('SP04准备交付已完成'));
+ a(sp04Task.executionProgress.nextAction.includes('SP05、SP06及QD03'));
+ a(!sp04Task.executionProgress.nextAction.includes('IDENTITY_CALL_FAILED'));
+ a.equal(sp04.latestIdentityProbeClientAttempt.result,'IDENTITY_CALL_FAILED');
+ a.equal(sp04.latestIdentityProbeLogInspection.clsDeliveryState,'unknown-not-selected');
+ a.equal(sp04.latestIdentityProbeLogInspection.retentionSettingState,'unknown-not-selected');
+ a.equal(sp04.latestIdentityProbeLogInspection.settingsChanged,false);
+ a.equal(sp04.latestIdentityProbeLogInspection.clientRetestPerformed,false);
  a(!sp04Task.executionProgress.nextAction.includes('账号A在真实微信客户端扫码打开隔离探针'));
  a(read('docs/sp01-cloud-probe-runbook-20261028.md').includes('O2O-SP01-preview-20261028-193939.jpg'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);
@@ -1198,7 +1221,7 @@ test('SP01 runtime-form evidence and SP04 next actions reflect the latest confir
  const techDoc=read('docs/sp01-technical-environment-20261027.md');
  const sp04=JSON.parse(read('docs/sp04-operations-configuration-20261027.json'));
  const runtimeCase=techDoc.split('\n').find(line=>line.includes('ENV-RUNTIME-01'));
-  const sp04AccountCheck=sp04.remainingChecks.find(line=>line.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
+  const sp04AccountCheck=sp04.historicalCheckSnapshots.find(line=>line.includes('用户随后报告腾讯云账号中心已关联目标小程序'));
  a(runtimeCase.includes('运行时验收通过：只读详情为Active / Nodejs20.19'));
  a(runtimeCase.includes('inspect结构化回包为Node.js v20.19.3、SDK 3.18.7'));
  a(!runtimeCase.includes('临时函数已删除'));
@@ -1271,7 +1294,11 @@ test('SP03 preparation sign-off preserves open evidence gates and SP07 boundary'
   a(plan.sources.includes('docs/sp03-data-privacy-deletion-20261104.md'));
   a(plan.sources.includes('docs/sp03-data-privacy-deletion-20261104.json'));
 
-  a.equal(sp04.status, 'in-progress');
+  a.equal(sp04.status, 'complete');
+  a.equal(sp04.productAcceptancePassed, false);
+  a.deepEqual(sp04.scopeResolution.preparationBlockers, []);
+  a.deepEqual(sp04.scopeResolution.openEvidenceGates, ['E05', 'E06']);
+  a.equal(sp04.completion.scope, 'task-preparation-only');
   a.equal(sp07.status, 'planned');
   a.deepEqual(sp07.dependsOn, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
   a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.qd03SignedOff, false);
