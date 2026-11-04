@@ -83,8 +83,11 @@ test('CloudBase backup evidence is scoped to console observations, not a deletio
   assert.ok(cloudBase.observations.some((item) => item.includes('自动开启数据库备份')));
   assert.ok(cloudBase.observations.some((item) => item.includes('暂无数据')));
   assert.ok(cloudBase.observations.some((item) => item.includes('保留期口径差异')));
+  assert.ok(cloudBase.observations.some((item) => item.includes('JSON 导出/导入往返') && item.includes('有限替代流程')));
+  assert.ok(cloudBase.observations.some((item) => item.includes('docs/sp01-e06-closeout-20261104.md')));
   assert.ok(cloudBase.notVerified.some((item) => item.includes('保留时长')));
   assert.ok(cloudBase.notVerified.some((item) => item.includes('实际回档')));
+  assert.ok(cloudBase.notVerified.some((item) => item.includes('索引、权限、跨集合关系')));
   assert.deepEqual(cloudBase.officialSources, inventory.externalSources.map((source) => source.url));
   assert.match(inventory.documentationConflict.accountPlanMapping, /未确认/);
   assert.match(inventory.documentationConflict.effect, /不据此推定/);
@@ -112,6 +115,9 @@ test('Markdown and JSON expose the same draft, source conflict, unresolved terms
   assert.match(markdown, /最多保留14天/);
   assert.match(markdown, /最多7天/);
   assert.match(markdown, /没有把控制台“微信体验版”映射/);
+  assert.match(markdown, /JSON 导出\/导入往返/);
+  assert.match(markdown, /不证明.*真实回档/);
+  assert.match(markdown, /索引、权限、跨集合关系/);
   assert.match(markdown, /未确认|待确认/);
   assert.match(markdown, /不等于.*通过|未.*通过/);
   for (const record of inventory.records) assert.ok(markdown.includes(record.id), `Markdown missing ${record.id}`);
