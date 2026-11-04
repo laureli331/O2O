@@ -2305,7 +2305,8 @@
           "docs/v1-quality-acceptance-20261027.json"
         ],
         "scopeNote": "SP01 preparation and technical-facts deliverable complete only. This does not pass product acceptance, sign QD03, or authorize SP07.",
-        "scope": "task-preparation-only"
+      "scope": "task-preparation-only",
+      "commit": "ca44ac82d292da1b0fbdb94f3d1b02b457829733"
       }
     },
     {

@@ -41,6 +41,8 @@ test('SP01 signoff evidence closes only its preparation card and preserves downs
  a.equal(sp01.status,'complete');a.equal(sp01.productAcceptancePassed,false);
  a.equal(sp01.completion.date,'2026-11-04');
  a.equal(sp01.completion.scope,'task-preparation-only');
+ a.match(sp01.completion.commit,/^[a-f0-9]{40}$/);
+ a.equal(cp.execFileSync('git',['rev-parse',`${sp01.completion.commit}^{commit}`],{cwd:root,encoding:'utf8'}).trim(),sp01.completion.commit);
  a.match(sp01.completion.environment,/wx2414399d423dfb65.*cloud1-d2gjahlq39bf141c7/);
  a(sp01.completion.evidence.includes('docs/sp01-task-signoff-20261104.md'));
  a(sp01.completion.evidence.includes('docs/sp01-task-signoff-20261104.json'));
