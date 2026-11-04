@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "check:boundaries": "node ../../scripts/check-workspace-boundaries.cjs",
     "typecheck": "tsc --project tsconfig.json",
-    "build": "npm run typecheck && vite build"
+    "build": "npm run check:boundaries && npm run typecheck && vite build"
   },
   "dependencies": {
     "@xianglin/shared": "*",

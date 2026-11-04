@@ -45,10 +45,13 @@ QP05—QP10、QS02、QR06 均为 `not-executed`，原合同门槛不降低：
 | --- | --- | --- |
 | 干净副本 | `npm ci --ignore-scripts --no-audit --no-fund` | 退出码0，23秒安装1163个包 |
 | 干净副本 | `npm run check:shared`、`npm run build:web`、`npm run build:weapp` | 均退出码0 |
-| 当前工作树 | `npm run check:foundation` | 50/50通过 |
+| 当前工作树 | `npm run check:boundaries`、`npm run check:foundation` | 边界门禁通过；基础检查57/57通过 |
 | 当前工作树 | `npm run check:shared`、`npm run build:web`、`npm run build:weapp`、`npm ls --all --depth=0` | 均退出码0 |
+| 当前工作树 | Web 与 Taro 构建入口 | 均先运行 `check:boundaries`，再运行类型检查与对应打包器 |
 | 当前工作树 | `apps`、`packages` 静态凭据/API关键词扫描 | 凭据文件0个，匹配0项；仅为有限文本扫描，不代表安全审计通过 |
-| 当前工作树 | 全量 `tests/*.test.cjs` | 1645项中1644通过、1失败、0跳过。唯一失败是保留的恶意归档证据门禁缺少 `docs/sp01-taro-malicious-archive-20261103.json`；测试未跳过或降级 |
+| 当前工作树 | 全量 `tests/*.test.cjs` | 1652项中1651通过、1失败、0跳过。唯一失败是保留的恶意归档证据门禁缺少 `docs/sp01-taro-malicious-archive-20261103.json`；测试未跳过或降级 |
+
+新增边界门禁检查工作区范围、源文件相对导入、shared层的平台全局引用与显式 `any`、跨应用导入、云端部署/实时SDK接线，以及门禁先于 Webpack/Vite 打包的顺序。它属于AST与静态路径回归检查，不能发现所有动态加载、反射、运行时行为、密钥泄露或依赖漏洞，也不构成安全审计通过。
 
 安装时 npm 输出了旧依赖弃用/安全提示（包括 `glob@10.5.0` 与若干旧版工具链包）；Vite 也输出现有 CJS/ESM 配置加载提示。它们没有被本次构建结果消除，本记录不宣称依赖安全清零。全量测试仍非全绿，故 SP07 继续为 `in-progress`；当前本地工作区与构建验证有证据，产品验收仍为 `false`。
 

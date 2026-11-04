@@ -3120,7 +3120,7 @@
       "features": [],
       "status": "in-progress",
       "executionProgress": {
-        "date": "2026-11-04",
+        "date": "2026-11-05",
         "scope": "bounded-local-foundation-only",
         "signoff": "docs/qd03-sp07-local-foundation-20261104.json",
         "workspacesCreated": ["packages/shared", "apps/mini-program", "apps/admin-web", "apps/cloud-functions"],
@@ -3131,7 +3131,8 @@
         "remoteTemplateExecutionEnabled": false,
         "completedAcceptance": [
           "Fresh dependency installation from the committed lockfile succeeds in an isolated clean-room copy.",
-          "Strict shared-code checks, dependency-tree verification, and web/WeChat mini-program builds pass in the working tree and clean-room copy."
+          "Strict shared-code checks, dependency-tree verification, and web/WeChat mini-program builds pass in the working tree and clean-room copy.",
+          "An AST/static workspace boundary regression gate is implemented, exercised by positive and negative fixtures, and run before both formal web and WeChat mini-program bundlers in the working tree."
         ],
         "remainingAcceptance": [
           "Review SP07 isolation, secret-handling defaults, and recovery/rollback evidence; the static source scan is only a bounded check, not a security clearance.",

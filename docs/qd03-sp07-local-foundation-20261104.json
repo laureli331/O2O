@@ -88,7 +88,8 @@
     },
     "workingTree": {
       "checks": [
-        {"command": "npm run check:foundation", "passed": 50, "failed": 0},
+        {"command": "npm run check:boundaries", "exitCode": 0},
+        {"command": "npm run check:foundation", "passed": 57, "failed": 0},
         {"command": "npm run check:shared", "exitCode": 0},
         {"command": "npm run build:web", "exitCode": 0},
         {"command": "npm run build:weapp", "exitCode": 0},
@@ -100,10 +101,16 @@
         "staticPatternMatches": 0,
         "limitations": "A bounded text-pattern scan only; it is not a secret-scanner or security audit."
       },
+      "workspaceBoundaryGate": {
+        "scope": "AST/static checks for workspace shape, approved source-root imports, shared platform-global and explicit-any references, cross-app imports, cloud deploy/live-SDK wiring, and the boundary-gate-before-bundler build order.",
+        "integratedBuilds": ["apps/admin-web: check:boundaries before vite build", "apps/mini-program: check:boundaries before taro build"],
+        "limitations": "This is a source-boundary regression gate, not a secret-scanner, dependency audit, security review, or proof against dynamic imports/reflection/runtime behavior.",
+        "result": "passed"
+      },
       "fullRegression": {
         "command": "node --test over PowerShell-expanded tests/*.test.cjs",
-        "total": 1645,
-        "passed": 1644,
+        "total": 1652,
+        "passed": 1651,
         "failed": 1,
         "skipped": 0,
         "soleFailure": "R01 malicious archive probe evidence is bounded and does not claim cross-platform clearance",

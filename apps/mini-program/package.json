@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "check:boundaries": "node ../../scripts/check-workspace-boundaries.cjs",
     "typecheck": "npm run typecheck:app && npm run typecheck:own-declarations",
     "typecheck:app": "tsc --project tsconfig.app.json",
     "typecheck:own-declarations": "node check-own-declarations.cjs",
     "typecheck:vendor": "tsc --project tsconfig.json",
-    "build": "npm run typecheck && taro build --type weapp"
+    "build": "npm run check:boundaries && npm run typecheck && taro build --type weapp"
   },
   "dependencies": {
     "@babel/runtime": "7.24.4",

@@ -147,11 +147,14 @@ test('SP07 records clean-room checks honestly and preserves the sole missing-evi
   assert.match(validation.workingTree.sourceScan.limitations, /not a secret-scanner or security audit/i);
 
   const regression = validation.workingTree.fullRegression;
-  assert.equal(regression.total, 1645);
-  assert.equal(regression.passed, 1644);
+  assert.equal(regression.total, 1652);
+  assert.equal(regression.passed, 1651);
   assert.equal(regression.failed, 1);
   assert.equal(regression.skipped, 0);
   assert.match(regression.failure, /sp01-taro-malicious-archive-20261103\.json/);
+  assert.equal(validation.workingTree.workspaceBoundaryGate.result, 'passed');
+  assert.match(validation.workingTree.workspaceBoundaryGate.limitations, /not a secret-scanner/i);
+  assert.equal(sp07.executionProgress.date, '2026-11-05');
   assert.equal(sp07.status, 'in-progress');
   assert.equal(sp07.productAcceptancePassed, false);
   assert.ok(sp07.executionProgress.remainingAcceptance.some((item) => /full repository regression is not green/i.test(item)));
