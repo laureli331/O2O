@@ -258,6 +258,15 @@
       "requiredInput": "read-only target plan and recovery entitlement/retention/cost evidence"
     }
   ],
+  "postReviewUpdate": {
+    "latestReconciliation": "docs/sp01-closeout-reconciliation-20261104.json",
+    "historicalSnapshotPreserved": true,
+    "currentR06UserInputStillRequired": false,
+    "currentR06Disposition": "D-E06-preparation-satisfied-with-bounded-json-fallback",
+    "sp01StatusChanged": false,
+    "sp01TaskSignoffComplete": false,
+    "sp07Started": false
+  },
   "verification": {
     "planTest": "node --test tests/executable-development-plan.test.cjs",
     "closeoutTest": "node --test tests/sp01-closeout-boundary.test.cjs",

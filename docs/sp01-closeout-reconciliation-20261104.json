@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "document": "docs/sp01-closeout-reconciliation-20261104.md",
+  "review": "docs/sp01-closeout-review-20261103.json",
+  "e06Evidence": "docs/sp01-e06-closeout-20261104.json",
+  "scope": "reconcile-SP01-closeout-evidence-after-user-confirmed-R01-R04-and-E06-follow-up",
+  "sourceCommit": "66745424",
+  "readOnlySourceReview": true,
+  "projectCodeOrCloudResourcesChanged": false,
+  "qualityThresholdsChanged": false,
+  "taskStatusesChanged": false,
+  "conclusion": {
+    "currentSP01DecisionBlockers": [],
+    "sp01ReadyForTaskSignoffReview": true,
+    "sp01SignoffAuthorizedByThisRecord": false,
+    "sp01StatusChanged": false,
+    "sp07Started": false,
+    "productAcceptancePassed": false,
+    "interpretation": "Current SP01 preparation decisions and the bounded E06 fallback are documented; this reconciliation is evidence for a separate SP01 task-signoff review and does not itself mark the task complete or release SP07."
+  },
+  "currentItems": [
+    {
+      "id": "R01",
+      "classification": "D",
+      "currentFact": "The user accepted the bounded SP07 development candidate Taro 4.3.2, React 18.3.1, TypeScript 5.9.3 and Webpack 5.91.0, using the project-controlled local scaffold and excluding remote template creator execution.",
+      "remainingRisk": "The candidate is not a formal product lock; third-party declaration findings and audit advisories remain. No malicious-archive evidence was produced.",
+      "ownerOrTrigger": "SP07 creates the formal project lock; SP08 reviews the actual dependency graph and reachability.",
+      "failureBlocks": "Any confirmed applicable reachable critical issue blocks its affected integration/release gate; it is not an unverified SP01 pass."
+    },
+    {
+      "id": "R02",
+      "classification": "D",
+      "currentFact": "The single React 18.3.1, TypeScript 5.9.3 and shared-business-core constraints are recorded in the accepted architecture decisions.",
+      "remainingRisk": "No formal product shared package exists yet.",
+      "ownerOrTrigger": "SP07/SP08 implement and verify shared-core boundaries in the formal project.",
+      "failureBlocks": "The applicable implementation task and its dependent integration gate."
+    },
+    {
+      "id": "R03",
+      "classification": "C",
+      "currentFact": "Device inventory, refresh rates and measurement-method limitations are recorded; Android host-layer feasibility is not WebView FPS evidence, and an independent iOS frame stream is unavailable.",
+      "ownerOrTrigger": "SP05 freezes product pages/content/segment duration; SP35 executes QP05 after those pages exist.",
+      "originalThreshold": "QP05: each applicable device group has 3 rounds, each with at least 30 timed segments using frozen segment duration and 200 records plus legal heavy content; each segment averages at least 55 FPS with no app-attributable jank over 100 ms; retain frame/input traces, long-frame detail, per-segment statistics and recording.",
+      "failureBlocks": "SP35 and final product acceptance; missing device evidence is not an SP01 product-test failure."
+    },
+    {
+      "id": "R04",
+      "classification": "D",
+      "currentFact": "The user confirmed normal testing as home Wi-Fi with VPN off; controlled weak testing as Pakomo light profile limited to WeChat; public Wi-Fi remains supplemental. Existing samples are diagnostic and do not prove per-request shaping.",
+      "ownerOrTrigger": "SP11 and each applicable business card run QP07 after read/write/query/image paths exist; SP35 performs final review.",
+      "originalThreshold": "Under the frozen rate/latency/loss configuration, inject before and after each applicable read/write/query/image path and execute 3 rounds per scenario; preserve state/input and prevent duplicate business effects. Missing parameters/evidence or any failed expectation blocks the affected task and final acceptance.",
+      "failureBlocks": "The affected business card and SP35; no current product endpoint exists to run this test in SP01."
+    },
+    {
+      "id": "R05",
+      "classification": "C",
+      "currentFact": "The user confirmed a 60-minute workload, at least 60 full cycles, and a record every 10 minutes; a product-attributable memory-growth budget cannot be derived before implementation.",
+      "ownerOrTrigger": "SP05 defines the real page loop and resource observation; propose the numeric budget from measured product data for user confirmation; SP35 executes QP08.",
+      "originalThreshold": "QP08: 60 minutes, at least 60 full mixed-user cycles, record every 10 minutes; no crash, blank screen, uncaught exception or duplicate business effect; resources/memory must meet the user-confirmed measured budget with no sustained leak.",
+      "failureBlocks": "SP35 and final product acceptance; do not invent a budget or report this product test passed."
+    },
+    {
+      "id": "R06",
+      "classification": "D",
+      "e06PreparationSatisfied": true,
+      "realBusinessRestorePerformed": false,
+      "currentFact": "The user reports the target environment shows plan label 体验版, rollback entry available but no recovery point, retention and cost not displayed; a one-record synthetic document-database JSON export/import round trip was reported successful and both temporary collections were reported deleted.",
+      "evidence": "docs/sp01-e06-closeout-20261104.json",
+      "remainingLimitations": [
+        "The public plan-to-entitlement mapping and exact current entitlement were not independently verified.",
+        "No rollback point was available; no actual rollback or record-level parity artifact exists.",
+        "Retention and cost remain not displayed/unknown.",
+        "The bounded synthetic JSON round trip does not test indexes, permissions, relations, files, functions, funds or business-state consistency.",
+        "QR06 remains not-executed and is not passed by E06 preparation."
+      ],
+      "ownerOrTrigger": "SP08/SP11/SP13 prepare isolated business-shaped recovery data; SP35/SP36 execute the original QR06 acceptance after those objects exist.",
+      "originalThreshold": "QR06 requires an actual isolated backup/restore and reconciliation of object relations, authorization, funds, inventory, versions and messages; cancelled, expired or revoked states must not revive and counts/refunds must not duplicate.",
+      "failureBlocks": "The applicable later recovery task and final release; no product restore is required before product data exists."
+    },
+    {
+      "id": "QD03",
+      "classification": "C",
+      "currentFact": "QD03 is an aggregate SP01-SP06 to SP07 release gate, not a separate defect in the SP01 environment-preparation deliverable.",
+      "ownerOrTrigger": "Evaluate after SP01 through SP06 deliverables, confirmations and evidence gates are individually reconciled.",
+      "blocks": "SP07 until all original SP01-SP06 prerequisites and QD03 signoff conditions are actually satisfied."
+    },
+    {
+      "id": "MA01",
+      "classification": "D",
+      "currentFact": "The current accepted local-scaffold path excludes remote archive template execution; the malicious-archive test file is preserved, but its separate evidence JSON is absent and the test has not passed.",
+      "testFile": "tests/sp01-taro-malicious-archive.test.cjs",
+      "testFilePreserved": true,
+      "evidenceJson": "docs/sp01-taro-malicious-archive-20261103.json",
+      "evidenceJsonPresent": false,
+      "testPassed": false,
+      "trigger": "only-if-a-future-task-selects-remote-archive-template-execution",
+      "ownerOrTrigger": "If a future task reintroduces remote archive execution, first produce isolated malicious-archive evidence, pass the preserved test and verify cleanup before enabling that path.",
+      "failureBlocks": "That future archive-path enablement; the absent evidence is not silently cleared or treated as a current-SP01 test pass."
+    }
+  ],
+  "historicalReviewReconciliation": {
+    "historicalReviewDatePreserved": "2026-11-03",
+    "historicalR06ClassificationPreserved": "A",
+    "historicalRequiredUserDecisionPreserved": true,
+    "currentR06UserInputStillRequired": false,
+    "currentR06Disposition": "D-E06-preparation-satisfied-with-bounded-json-fallback",
+    "appendOnlyUpdate": true
+  },
+  "qualityCriteriaUnchanged": [
+    "QP05",
+    "QP06",
+    "QP07",
+    "QP08",
+    "QS02",
+    "QR06"
+  ],
+  "evidence": [
+    "docs/sp01-closeout-review-20261103.json",
+    "docs/sp01-closeout-review-20261103.md",
+    "docs/sp01-e06-closeout-20261104.json",
+    "docs/sp01-e06-closeout-20261104.md",
+    "docs/v1-executable-development-plan-20261027.json",
+    "docs/v1-executable-development-plan-20261027.md",
+    "docs/v1-quality-acceptance-20261027.json",
+    "docs/v1-quality-acceptance-20261027.md",
+    "docs/backend-architecture-contract-20261103.json",
+    "docs/backend-architecture-contract-20261103.md",
+    "docs/sp01-taro-decompress-interop-20261103.json",
+    "tests/sp01-taro-malicious-archive.test.cjs"
+  ]
+}

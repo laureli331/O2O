@@ -6063,6 +6063,17 @@
       "sp01TaskSignoffComplete": false,
       "sp01StatusChanged": false,
       "productAcceptancePassed": false
+    },
+    "latestCloseoutReconciliation": {
+      "date": "2026-11-04",
+      "document": "docs/sp01-closeout-reconciliation-20261104.json",
+      "currentDecisionBlockerCount": 0,
+      "sp01Status": "in-progress",
+      "sp01TaskSignoffComplete": false,
+      "sp07Status": "planned",
+      "taskStatusesChanged": false,
+      "productAcceptancePassed": false,
+      "qd03StillBlocksSp07UntilOriginalPrerequisitesAreSignedOff": true
     }
   }
 }
