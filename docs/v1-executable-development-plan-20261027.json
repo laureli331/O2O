@@ -51,7 +51,9 @@
     "docs/sp05-page-acceptance-contract-20261104.md",
     "docs/sp05-page-acceptance-contract-20261104.json",
     "docs/sp01-closeout-reconciliation-20261104.md",
-    "docs/sp01-closeout-reconciliation-20261104.json"
+    "docs/sp01-closeout-reconciliation-20261104.json",
+    "docs/sp06-resource-and-batch-plan-20261104.md",
+    "docs/sp06-resource-and-batch-plan-20261104.json"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -3024,8 +3026,26 @@
         "E05"
       ],
       "features": [],
-      "status": "planned",
+      "status": "in-progress",
       "productAcceptancePassed": false,
+      "executionProgress": {
+        "date": "2026-11-04",
+        "record": "docs/sp06-resource-and-batch-plan-20261104.json",
+        "scope": "resource, cost-category, dependency-batch, estimation-method, and later-acceptance ownership draft",
+        "ownerAvailabilityConfirmed": "at least 8 hours per week; exact allocation and upper bound unknown",
+        "partnerEngineeringParticipation": "unknown; no partner engineering hours counted",
+        "executionBatches": 8,
+        "totalHoursOrCalendarDurationEstimated": false,
+        "actualBudgetFeasibilityVerified": false,
+        "productAcceptancePassed": false,
+        "remainingForAcceptance": [
+          "confirm partner engineering or acceptance-review participation",
+          "accept the dependency-batch sequence and estimation method",
+          "confirm account-specific service charges and any purchase list before treating budget as feasible"
+        ],
+        "sp07Started": false,
+        "qd03SignedOff": false
+      },
       "qualityContract": {
         "document": "docs/v1-quality-acceptance-20261027.md",
         "data": "docs/v1-quality-acceptance-20261027.json",
@@ -5991,7 +6011,7 @@
       }
     }
   ],
-  "revision": "execution-backlog-1.1-ui-rollout-synced",
+  "revision": "execution-backlog-1.2-sp06-resource-plan-draft",
   "prototypeUiDelivery": {
     "status": "complete-prototype-only",
     "date": "2026-10-27",

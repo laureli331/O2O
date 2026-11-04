@@ -1,0 +1,256 @@
+{
+  "schemaVersion": 1,
+  "task": "SP06",
+  "date": "2026-11-04",
+  "status": "in-progress",
+  "sourcePlanRevision": "execution-backlog-1.2-sp06-resource-plan-draft",
+  "productAcceptancePassed": false,
+  "qd03SignedOff": false,
+  "confirmedAvailability": {
+    "ownerHoursPerWeekLowerBound": 8,
+    "ownerHoursPerWeekUpperBound": null,
+    "partnerOperationsShift": "09:00-17:00",
+    "partnerEngineeringOrAcceptanceRole": "unknown",
+    "partnerEngineeringHoursCounted": 0,
+    "serviceWindow": "09:00-22:00"
+  },
+  "capacityInterpretation": {
+    "ownerCapacityIsMinimumNotExact": true,
+    "ownerTimeAllocationByActivity": "not-confirmed",
+    "partnerOperationsShiftIsNotEngineeringCapacity": true,
+    "partnerZeroHoursMeansNotCountedNotConfirmedUnavailable": true,
+    "after22Requests": "next-day processing per user confirmation"
+  },
+  "executionBatches": [
+    {
+      "order": 1,
+      "name": "工程底座与测量入口",
+      "taskIds": ["SP07", "SP08"],
+      "entry": "SP01-SP06 preparation gates are accepted and QD03 is signed off.",
+      "sequencingBasis": "SP08 depends on SP07."
+    },
+    {
+      "order": 2,
+      "name": "身份、内容、通知与管理基础",
+      "taskIds": ["SP09", "SP10", "SP11", "SP12", "SP13", "SP14"],
+      "entry": "Batch 1 has completed the relevant predecessor tasks.",
+      "sequencingBasis": "Preserves the plan dependencies among SP09-SP14; payment provider adapters and operational verification remain independently gated."
+    },
+    {
+      "order": 3,
+      "name": "居民发布、申请与选择",
+      "taskIds": ["SP15", "SP16", "SP17", "SP18"],
+      "entry": "SP09-SP14 predecessor tasks required by each card are complete.",
+      "sequencingBasis": "SP16 follows SP15; SP18 follows SP16 and SP17."
+    },
+    {
+      "order": 4,
+      "name": "履约、争议与核心闭环",
+      "taskIds": ["SP19", "SP20", "SP21", "SP22"],
+      "entry": "The publish/apply/select predecessors required by each card are complete.",
+      "sequencingBasis": "Follows the task graph through the core operation and review closure."
+    },
+    {
+      "order": 5,
+      "name": "服务者资料与优惠能力",
+      "taskIds": ["SP23", "SP24", "SP25"],
+      "entry": "SP22 and all other listed predecessors for each card are complete.",
+      "sequencingBasis": "SP24 follows SP23; SP25 follows SP23 and SP24."
+    },
+    {
+      "order": 6,
+      "name": "推广、佣金与账务",
+      "taskIds": ["SP26", "SP27", "SP28", "SP29", "SP30"],
+      "entry": "Earlier business, identity, and eligibility predecessors required by each card are complete.",
+      "sequencingBasis": "SP27 follows SP26, SP28 follows SP27, and SP30 follows SP29 plus its other predecessors."
+    },
+    {
+      "order": 7,
+      "name": "AI、质量测量与运营看板",
+      "taskIds": ["SP31", "SP32", "SP33"],
+      "entry": "All predecessor cards listed for each task are complete; AI and real-user gates remain separately controlled.",
+      "sequencingBasis": "SP32 follows SP31; SP33 follows SP22, SP30, and SP32."
+    },
+    {
+      "order": 8,
+      "name": "集成、真机验收与发布门禁",
+      "taskIds": ["SP34", "SP35", "SP36"],
+      "entry": "All predecessor cards listed for each task are complete; production release still requires its explicit authorization.",
+      "sequencingBasis": "SP35 follows SP34 and SP05; SP36 follows SP35, SP04, and SP06."
+    }
+  ],
+  "schedule": {
+    "calendarDatesAssigned": false,
+    "totalDurationWeeks": null,
+    "reason": "No measured implementation/acceptance throughput exists yet, owner availability is a lower bound rather than a fixed weekly allocation, and partner engineering participation is unknown.",
+    "planningRule": "Use the eight dependency batches as sequence only. Record actual hours, wait time, defects, and retest time per task. After the first completed engineering batch, prepare rolling ranges with assumptions; do not treat the result as a committed launch date."
+  },
+  "effortEstimate": {
+    "status": "not-quantified",
+    "totalHours": null,
+    "reason": "No measured delivery baseline is available; converting task count or the minimum weekly availability into total hours/weeks would invent precision.",
+    "perTaskRecordFields": [
+      "implementationHours",
+      "normalNegativeBoundaryAndConcurrencyTestHours",
+      "verificationAndEvidenceHours",
+      "documentationAndCommitHours",
+      "externalWaitHours",
+      "defectAndRetestHours"
+    ]
+  },
+  "riskReserve": {
+    "fixedPercentage": null,
+    "approach": "Reserve one acceptance-directed correction and same-case retest loop per task gate. Track external reviews as elapsed wait separately from engineering hours. If a task needs another loop, record the cause and revise the next rolling estimate from observed data."
+  },
+  "budget": {
+    "monthlyCashCeilingYuan": 500,
+    "monthlyCashCeilingSource": "docs/v1-pricing-budget-confirmed-20261018.md",
+    "actualFeasibility": "unverified",
+    "actualMonthlySpendYuan": null,
+    "actualInvoiceVerified": false,
+    "paymentConfirmed": false,
+    "autoRenewalEnabled": false,
+    "payAsYouGoEnabled": false,
+    "cloudPlanEvidence": {
+      "source": "docs/evidence/sp03-cloudbase-plan-20261104.png",
+      "userReportedPlanLabel": "微信体验版",
+      "observedQuotaPointsPerMonth": 40000,
+      "observedPurchaseAreaPriceYuanPerMonth": 19.9,
+      "exactEntitlementMappingVerified": false,
+      "expiryVerified": false,
+      "invoiceOrPaymentReceiptVerified": false,
+      "interpretation": "Console screenshot and user report are evidence of displayed values only; they do not establish a paid order, actual charge, exact entitlement mapping, or expiry date."
+    },
+    "costItems": [
+      {
+        "category": "CloudBase plan and actual resource consumption",
+        "actualAmountYuan": null,
+        "status": "package mapping, invoice, expiry, product usage volume, and post-baseline consumption not verified"
+      },
+      {
+        "category": "Business registration, filing, and service-category qualification",
+        "actualAmountYuan": null,
+        "status": "no quote or payment authorization recorded"
+      },
+      {
+        "category": "Domain, hosting, and release-related services",
+        "actualAmountYuan": null,
+        "status": "provider and required plan not selected"
+      },
+      {
+        "category": "SMS, identity, and notification services",
+        "actualAmountYuan": null,
+        "status": "real provider, actual volume, and included quota not verified"
+      },
+      {
+        "category": "AI provider and model usage",
+        "actualAmountYuan": null,
+        "status": "provider, model, volume, and account rate not verified; no real-user calls authorized"
+      },
+      {
+        "category": "Payment and refund channel fees",
+        "actualAmountYuan": null,
+        "status": "merchant eligibility, channel, and fee schedule not verified; no real money movement authorized"
+      },
+      {
+        "category": "Partner/personnel cash compensation",
+        "actualAmountYuan": null,
+        "status": "amount and arrangement not confirmed; do not interpret as zero"
+      },
+      {
+        "category": "Test equipment and connectivity",
+        "actualAmountYuan": null,
+        "status": "existing devices are available by prior user report; no new purchase identified or authorized"
+      }
+    ],
+    "purchaseList": [],
+    "purchaseAuthorization": false,
+    "budgetRule": "The ¥500 monthly ceiling is a limit, not proof that the launch budget is feasible. Keep one-time costs, monthly fixed costs, usage-based costs, personnel cash, and external waiting separate. No purchase or paid-plan change is authorized by this record."
+  },
+  "laterAcceptanceOwnership": [
+    {
+      "criteria": ["QP05"],
+      "ownerTask": "SP35",
+      "trigger": "Implemented final candidate and available iPhone/Android real-device test setup.",
+      "threshold": "At 60 Hz, three rounds per device group, at least 30 measured segments per round, average at least 55 FPS, and no app-attributable stall over 100 ms.",
+      "failureBlocks": "SP35 acceptance and any release gate that depends on it; not SP06."
+    },
+    {
+      "criteria": ["QP06"],
+      "ownerTasks": ["SP08", "SP13", "SP31", "SP35"],
+      "trigger": "Actual interfaces are implemented and the user-approved latency/error budgets are recorded.",
+      "threshold": "Measure actual interface groups against the user-confirmed budgets; missing budgets block the affected endpoint acceptance and SP35 signoff.",
+      "failureBlocks": "Affected endpoint task and SP35; not SP06."
+    },
+    {
+      "criteria": ["QP07"],
+      "ownerTasks": ["SP11", "SP15", "SP18", "SP35"],
+      "trigger": "Relevant real read/write/query/image paths exist.",
+      "threshold": "Three rounds for each applicable path, covering weak-network behavior, unknown outcomes, retries, and recovery under the original quality contract.",
+      "failureBlocks": "Affected business task and SP35; not SP06."
+    },
+    {
+      "criteria": ["QP08"],
+      "ownerTask": "SP35",
+      "trigger": "A final product candidate and actual measured memory/resource budget exist.",
+      "threshold": "60 minutes, at least 60 complete mixed cycles, record every 10 minutes; memory/resource budget must be measured and user-confirmed.",
+      "failureBlocks": "SP35 acceptance and release gate; not SP06."
+    },
+    {
+      "criteria": ["QP09"],
+      "ownerTask": "SP35",
+      "trigger": "The actual web admin pages are implemented.",
+      "threshold": "Measure implemented web pages under the original quality contract.",
+      "failureBlocks": "SP35 acceptance and release gate; not SP06."
+    },
+    {
+      "criteria": ["QP10"],
+      "ownerTasks": ["SP07", "SP15", "SP18", "SP35"],
+      "trigger": "Formal engineering exists, then the first applicable flows and final candidate are available.",
+      "threshold": "SP07 establishes measurement entry; SP15/SP18 record early baseline; SP35 records final candidate evidence.",
+      "failureBlocks": "The affected current task or SP35 if its applicable measurement fails; no pre-product performance result is required to close SP06."
+    },
+    {
+      "criteria": ["QS08"],
+      "ownerTasks": ["SP04", "SP36"],
+      "trigger": "Before activating a real provider and again at the release gate.",
+      "threshold": "All provider admission, credentials, service scope, qualification, dispute, and operational controls are evidenced; unknown items fail the gate.",
+      "failureBlocks": "Real provider activation or release of affected services; not SP06 documentation."
+    }
+  ],
+  "currentOpenItems": [
+    "Confirm whether the partner participates in engineering or acceptance review; until then count no partner development hours.",
+    "Record measured task hours and external waits as tasks execute; the current plan intentionally contains no total-hour or calendar-duration estimate.",
+    "Confirm actual CloudBase entitlement, billing, expiry, and relevant provider quotations before choosing paid services or purchases.",
+    "Obtain user acceptance of the finite batch sequence and itemized costs before marking SP06 complete."
+  ],
+  "references": [
+    {
+      "title": "CloudBase resource point pricing",
+      "url": "https://cloud.tencent.com/document/product/876/127357",
+      "checkedAt": "2026-11-04",
+      "factsUsed": "The official page states 1,000 points correspond to ¥1, publishes Shanghai-region resource unit prices, describes free experience constraints, and says the free-environment renewal policy does not apply to 微信体验版."
+    },
+    {
+      "title": "CloudBase public plan pricing",
+      "url": "https://cloudbase.cloud.tencent.com/pricing",
+      "checkedAt": "2026-11-04",
+      "factsUsed": "The public page lists FREE 3,000 points/month, PERSONAL ¥19.9/month promotional price and 40,000 points/month, and STANDARD ¥199/month with 330,000 points/month; account-specific mapping and bill remain unverified."
+    },
+    {
+      "title": "Confirmed monthly cash ceiling",
+      "url": "docs/v1-pricing-budget-confirmed-20261018.md",
+      "factsUsed": "The confirmed monthly cash limit is ¥500 and includes actual cash paid to partner/personnel; this is not evidence of feasibility or zero labor cost."
+    },
+    {
+      "title": "Console plan evidence",
+      "url": "docs/evidence/sp03-cloudbase-plan-20261104.png",
+      "factsUsed": "User-provided console screenshot; display evidence only, not a verified order, invoice, exact entitlement, or expiry."
+    },
+    {
+      "title": "Quality acceptance contract",
+      "url": "docs/v1-quality-acceptance-20261027.md",
+      "factsUsed": "Retains QP05/QP06/QP07/QP08/QP09/QP10 and QS08 thresholds with later-task ownership."
+    }
+  ]
+}
