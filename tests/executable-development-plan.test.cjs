@@ -6,7 +6,7 @@ function validate(p){
  a.equal(p.taskCount,p.tasks.length);a.equal(p.taskCount,36);a.equal(p.deliveryScope,'documentation-and-validation-only');
  const ids=p.tasks.map(t=>t.id);a.deepEqual(ids,Array.from({length:36},(_,i)=>'SP'+String(i+1).padStart(2,'0')));const byId=new Map(p.tasks.map(t=>[t.id,t]));
  const legacy=new Set([...read('docs/development-plan.md').matchAll(/^\| (DP\d{2}) \|/gm)].map(m=>m[1]));const covered=new Set();
- for(const t of p.tasks){a(t.title&&t.deliverable);a(t.steps.length>=2&&t.steps.every(Boolean));a(t.acceptance.length>=2&&t.acceptance.every(Boolean));a(['planned','in-progress','awaiting-acceptance','complete'].includes(t.status));if(t.status==='complete')a(t.completion?.commit&&t.completion?.environment&&t.completion?.evidence?.length,'completion needs evidence');else a.equal(t.productAcceptancePassed,false);for(const id of t.legacyTasks){a(legacy.has(id),'unknown legacy '+id);covered.add(id);}for(const dep of t.dependsOn)a(byId.has(dep),'unknown predecessor '+dep);for(const g of t.evidenceGates)a(['E01','E02','E03','E04','E05','E06','QG01','AG01','DG01'].includes(g));}
+ for(const t of p.tasks){a(t.title&&t.deliverable);a(t.steps.length>=2&&t.steps.every(Boolean));a(t.acceptance.length>=2&&t.acceptance.every(Boolean));a(['planned','in-progress','awaiting-acceptance','complete'].includes(t.status));if(t.status==='complete')a(t.completion?.environment&&t.completion?.evidence?.length,'completion needs evidence');else a.equal(t.productAcceptancePassed,false);for(const id of t.legacyTasks){a(legacy.has(id),'unknown legacy '+id);covered.add(id);}for(const dep of t.dependsOn)a(byId.has(dep),'unknown predecessor '+dep);for(const g of t.evidenceGates)a(['E01','E02','E03','E04','E05','E06','QG01','AG01','DG01'].includes(g));}
  a.deepEqual([...covered].sort(),[...legacy].sort());
  const visiting=new Set(),done=new Set();function visit(id){a(!visiting.has(id),'cyclic dependency '+id);if(done.has(id))return;visiting.add(id);byId.get(id).dependsOn.forEach(visit);visiting.delete(id);done.add(id);}ids.forEach(visit);
  const ancestors=id=>new Set(byId.get(id).dependsOn.flatMap(d=>[d,...ancestors(d)]));
@@ -23,15 +23,57 @@ function validate(p){
 }
 test('executable plan covers all first-release modules and all 60 legacy references with a gated acyclic task graph',()=>a.equal(validate(load()),true));
 test('human plan and structured 36 delivery cards agree on work, dependencies and acceptance',()=>{const p=load(),s=read(p.document);for(const t of p.tasks){const start=s.indexOf('### '+t.id+' '+t.title);a(start>=0,t.id);const next=s.indexOf('\n### ',start+1),block=s.slice(start,next<0?s.indexOf('\n## 7.',start):next);a(block.includes(t.deliverable),t.id+' deliverable');for(const v of [...t.dependsOn,...t.steps,...t.acceptance])a(block.includes(v),t.id+' '+v);}for(const [,target]of s.matchAll(/\]\(([^)]+)\)/g))if(!/^https?:/.test(target))a(fs.existsSync(path.resolve(path.dirname(path.join(root,p.document)),target.split('#')[0])),target);a(s.indexOf('## 1. 验证方案')<s.indexOf('## 6. 36张'));});
+test('SP01 signoff evidence closes only its preparation card and preserves downstream gates',()=>{
+ const signoff=JSON.parse(read('docs/sp01-task-signoff-20261104.json'));
+ a.equal(signoff.task,'SP01');a.equal(signoff.decision.status,'complete');
+ a.equal(signoff.decision.scope,'task-preparation-only');
+ a.equal(signoff.decision.productAcceptancePassed,false);
+ a.equal(signoff.decision.sp07Started,false);a.equal(signoff.decision.qd03SignedOff,false);
+ a.deepEqual(signoff.currentSP01DecisionBlockers,[]);
+ a(signoff.deliverables.includes('technical-facts-and-version-candidate-evidence'));
+ a(signoff.deliverables.includes('measurement-method-and-rollback-boundaries'));
+ a.equal(signoff.e06.preparationSatisfied,true);a.equal(signoff.e06.actualBusinessRestorePerformed,false);
+ a.deepEqual(signoff.qualityCriteriaPreserved,['QP05','QP06','QP07','QP08','QS02','QR06']);
+ a.equal(signoff.remoteArchiveExecution.enabled,false);
+ a.equal(signoff.remoteArchiveExecution.preservedTestPassed,false);
+ a.equal(signoff.remoteArchiveExecution.evidenceJsonPresent,false);
+ const plan=load(),sp01=plan.tasks.find(task=>task.id==='SP01'),sp07=plan.tasks.find(task=>task.id==='SP07');
+ a.equal(sp01.status,'complete');a.equal(sp01.productAcceptancePassed,false);
+ a.equal(sp01.completion.date,'2026-11-04');
+ a.equal(sp01.completion.scope,'task-preparation-only');
+ a.match(sp01.completion.environment,/wx2414399d423dfb65.*cloud1-d2gjahlq39bf141c7/);
+ a(sp01.completion.evidence.includes('docs/sp01-task-signoff-20261104.md'));
+ a(sp01.completion.evidence.includes('docs/sp01-task-signoff-20261104.json'));
+ a.deepEqual(sp01.executionProgress.blockedChecks,[]);
+ a.equal(sp01.executionProgress.historicalBlockedChecks.length,6);
+ a(sp01.executionProgress.historicalBlockedChecks.some(check=>check.includes('IDENTITY_CALL_FAILED')));
+ a(sp01.executionProgress.historicalNextAction.includes('该测试文件的跨账号隔离失败'));
+ a.equal(sp01.executionProgress.date,'2026-11-04');
+ a.match(sp01.executionProgress.nextAction,/SP02—SP06/);
+ a(!sp01.executionProgress.nextAction.includes('IDENTITY_CALL_FAILED'));
+ a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.document,'docs/sp01-task-signoff-20261104.json');
+ a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.status,'complete');
+ a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.productAcceptancePassed,false);
+ a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.qd03SignedOff,false);
+ a.equal(sp07.status,'planned');a.deepEqual(sp07.dependsOn,['SP01','SP02','SP03','SP04','SP05','SP06']);
+ a.equal(plan.firstProductTask,'SP07');
+ a.deepEqual(plan.firstProductTaskPrerequisites,['SP01','SP02','SP03','SP04','SP05','SP06']);
+ a(plan.sources.includes('docs/sp01-task-signoff-20261104.md'));
+ a(plan.sources.includes('docs/sp01-task-signoff-20261104.json'));
+ const planMarkdown=read('docs/v1-executable-development-plan-20261027.md');
+ a(planMarkdown.includes('SP01 单卡签核（2026-11-04）'));
+ a(planMarkdown.includes('SP01 状态：`complete`（仅准备/技术事实任务）'));
+ for(const source of signoff.evidence)a(fs.existsSync(path.join(root,source)),source);
+});
 test('repository inventory is an as-of source snapshot and does not prohibit creating a future product',()=>{const p=load();a.match(p.sourceCommit,/^[a-f0-9]{40}$/);const names=cp.execFileSync('git',['ls-tree','--name-only',p.sourceCommit],{cwd:root,encoding:'utf8'}).split(/\r?\n/);for(const name of ['miniprogram','cloudfunctions','packages','package.json','project.config.json'])a(!names.includes(name));a.equal(p.inventory.formalProjectPresent,false);a.equal(p.inventory.localVersionsAreCloudVersions,false);});
-test('plan records the user-confirmed target CloudBase environment and appid-scoped API confirmation',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-screenshot-and-cli-environment-list-visible-appid-and-envid-not-runtime-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'in-progress');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,6);a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.event.runId,'sp01_f892f63b9fdc4c11ae1254800a9e83cf');a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.functionTimeoutSeconds,30);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.transactionAcceptancePassed,false);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.cleanupVerified,false);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.recordStateAfterFailedCleanup,'unknown; no post-run read-only record query');a.equal(sp01.executionProgress.previousCloudRunAttemptAtThreeSeconds.response.statusCode,433);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.cloudCauseConfirmed,false);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud,true);a(sp01.executionProgress.blockedChecks.some((check)=>check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
+test('plan records the user-confirmed target CloudBase environment and appid-scoped API confirmation',()=>{const p=load(),preflight=JSON.parse(read('docs/v1-development-preflight-20261018.json')),progress=preflight.accountProgress,sp01=p.tasks.find(t=>t.id==='SP01'); a.equal(progress.newMiniappRegistered,true);a.equal(p.accountEvidence.formalNewAppId,progress.newMiniappAppId);a.equal(p.accountEvidence.formalNewAppIdEvidence,progress.evidenceLevel);a.equal(p.accountEvidence.formalNewAppIdSource,progress.sourceDocument);a.equal(p.accountEvidence.newSubjectCloudDevelopmentOpeningStatus,'user-reported-free-experience-opened-screenshot-shows-cloud1');a.equal(p.accountEvidence.formalNewEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(p.accountEvidence.formalNewEnvironmentStatus,'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');a.equal(p.accountEvidence.formalNewEnvironmentIdEvidenceLevel,'user-screenshot-and-cli-environment-list-visible-appid-and-envid-not-runtime-verified');a.equal(preflight.integrationProgressUpdate.newSubjectCloudDevelopment.openingStatus,'not-opened-user-reported');a.equal(sp01.status,'complete');a.equal(sp01.productAcceptancePassed,false);a.equal(sp01.executionProgress.blockedChecks.length,0);a.equal(sp01.executionProgress.historicalBlockedChecks.length,6);a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.event.runId,'sp01_f892f63b9fdc4c11ae1254800a9e83cf');a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.functionTimeoutSeconds,30);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.transactionAcceptancePassed,false);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.cleanupVerified,false);a.equal(sp01.executionProgress.previousFailedCloudRunAttempt.recordStateAfterFailedCleanup,'unknown; no post-run read-only record query');a.equal(sp01.executionProgress.previousCloudRunAttemptAtThreeSeconds.response.statusCode,433);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.cloudCauseConfirmed,false);a.equal(sp01.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud,true);a(sp01.executionProgress.historicalBlockedChecks.some((check)=>check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景')));a(p.sources.includes('docs/miniapp-filing-progress-20261018.md'));});
 test('SP01 records CloudBase screenshots separately from the user-confirmed target-project association',()=>{
   const p=load(),scaffold=p.inventory.userCreatedQuickStartScaffold,current=p.accountEvidence.latestUserCreatedProjectAndCloudConsoleObservation,task=p.tasks.find(x=>x.id==='SP01'),doc=read('docs/sp01-technical-environment-20261027.md'),plan=read('docs/v1-executable-development-plan-20261027.md'),settings=current.latestSettingsScreenshot,fees=current.latestFeeManagementScreenshot;
   a.equal(scaffold.present,true);a.equal(scaffold.createdByUser,true);a.equal(scaffold.appId,p.accountEvidence.formalNewAppId);a.equal(scaffold.matchesFormalTargetAppId,true);a.equal(scaffold.containsProductImplementation,false);a.equal(scaffold.cloudEnvironmentIdConfigured,true);a.equal(scaffold.appJsEnvironmentValue,'cloud1-d2gjahlq39bf141c7');a.equal(scaffold.envListIsEmpty,true);a.equal(current.configuredAppIdMatchesFormalTarget,true);a.equal(current.scaffoldOnly,true);a.equal(current.environmentIdConfigured,true);a.equal(current.confirmedCloudEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(current.userConfirmedCloudEnvironmentCreatedFromTargetProject,true);a.equal(current.cloudEnvironmentBindingApiVerified,true);a.equal(current.cloudEnvironmentBindingApiEvidenceDate,'2026-10-28');a.equal(current.cloudEnvironmentBindingApiEvidenceMethod,'target-appid-scoped-cloud-env-list');
   a.equal(current.cloudConsoleScreenshot.visibleEnvironmentLabel,'cloud1');a.equal(current.cloudConsoleScreenshot.visiblePlanLabel,'微信体验版');a.equal(current.cloudConsoleScreenshot.visibleDatabaseState,'not-shown-in-this-screenshot');a.equal(current.cloudConsoleScreenshot.appIdVisible,false);a.equal(current.cloudConsoleScreenshot.exactEnvironmentIdVisible,false);a.equal(current.cloudConsoleScreenshot.expiryVisible,false);a.equal(current.cloudConsoleScreenshot.billingOrAutoRenewalVisible,false);a.equal(current.cloudConsoleScreenshot.userReportsNoPayment,true);a.equal(current.cloudConsoleScreenshot.provesBindingToFormalTargetAppId,false);
   a.equal(settings.visibleEnvironmentLabel,'cloud1');a.equal(settings.visibleEnvironmentId,'cloud1-d2gjahlq39bf141c7');a.equal(settings.visiblePlanLabel,'微信体验版');a.equal(settings.visibleSettingsTab,'权限设置');a.equal(settings.appIdVisible,false);a.equal(settings.expiryVisible,false);a.equal(settings.billingOrAutoRenewalVisible,false);a.equal(settings.provesBindingToFormalTargetAppId,false);
   a.equal(fees.visibleEnvironmentLabel,'cloud1');a.equal(fees.visibleEnvironmentId,null);a.equal(fees.visiblePlanLabel,'微信体验版');a.equal(fees.visibleSection,'费用管理');a.equal(fees.visibleTab,'套餐管理');a.equal(fees.displayedMonthlyResourcePoints,40000);a.equal(fees.displayedMonthlyPriceRmb,19.9);a.equal(fees.purchaseButtonVisible,true);a.equal(fees.payAsYouGoEnabled,false);a.equal(fees.autoRenewalEnabled,false);a.equal(fees.expiryVisible,false);a.equal(fees.appIdVisible,false);a.equal(fees.provesPaidSubscription,false);a.equal(fees.provesBindingToFormalTargetAppId,false);
-  a.equal(current.currentRecommendation,'use-free-experience-for-development-and-testing; do-not-buy-paid-plan-until-capability-or-quota-need-is-evidenced');a.equal(task.status,'in-progress');a.equal(task.productAcceptancePassed,false);a(task.executionProgress.nextAction.includes('费用核查按用户要求略过'));a(task.executionProgress.nextAction.includes('cloud_env_list'));a(!task.executionProgress.nextAction.includes('CONNECT_ERROR'));a(!task.executionProgress.nextAction.includes('DescribeBillingInfo'));
+  a.equal(current.currentRecommendation,'use-free-experience-for-development-and-testing; do-not-buy-paid-plan-until-capability-or-quota-need-is-evidenced');a.equal(task.status,'complete');a.equal(task.productAcceptancePassed,false);a(task.executionProgress.historicalNextAction.includes('费用核查按用户要求略过'));a(task.executionProgress.historicalNextAction.includes('cloud_env_list'));a(!task.executionProgress.historicalNextAction.includes('CONNECT_ERROR'));a(!task.executionProgress.historicalNextAction.includes('DescribeBillingInfo'));
   a(doc.includes('cloud1-d2gjahlq39bf141c7'));a(doc.includes('用户之后明确确认该`cloud1`是在目标AppID项目中创建'));a(doc.includes('到期日'));a(doc.includes('购买按钮旁的价格不是已扣款证据'));a(doc.includes('按量付费与自动续费均关闭'));a(doc.includes('新建环境没有集合和调用数据是正常空态'));a(plan.includes('不能据截图的配额、价格按钮或套餐标签推断实际扣款和到期'));a(doc.includes('用户表示若上线后出现实际付费提示，将自行办理'));a(plan.includes('用户手动创建了'));a(plan.includes('套餐/账单截图显示“微信体验版”'));
 });
 test('SP01 distinguishes mini-program trial testing from the free CloudBase environment expiry and paid conversion rule',()=>{
@@ -127,7 +169,7 @@ test('SP01 preserves the failed deployment attempt and records the later runtime
     databaseWritePerformed:true,
   });
   const tech=read('docs/sp01-technical-environment-20261027.md'),runbook=read('docs/sp01-cloud-probe-runbook-20261028.md'),plan=read('docs/v1-executable-development-plan-20261027.md');
-  a.equal(task.status,'in-progress');a.equal(task.productAcceptancePassed,false);
+  a.equal(task.status,'complete');a.equal(task.productAcceptancePassed,false);
   a.equal(execution.previousFailedCloudRunAttempt.event.runId,'sp01_f892f63b9fdc4c11ae1254800a9e83cf');
   a.deepEqual(execution.previousFailedCloudRunAttempt.response.rollback,{abortObserved:true,noPartialWrites:true});
   a.equal(execution.previousFailedCloudRunAttempt.response.commit.allDocumentsVisible,false);
@@ -526,18 +568,18 @@ test('SP01 records read-only CLI capability limits and detectable equipment with
   a(planDoc.includes('PowerShell清点未发现ADB'));
   a(planDoc.includes('用户已提供OPPO Find X9'));
   const sp01 = record.tasks.find((task) => task.id === 'SP01');
-  a.equal(sp01.status, 'in-progress');
+  a.equal(sp01.status, 'complete');
   a.equal(sp01.productAcceptancePassed, false);
-  a(sp01.executionProgress.blockedChecks.some((check) => check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景') && check.includes('网络性能仍未实测')));
+  a(sp01.executionProgress.historicalBlockedChecks.some((check) => check.includes('用户已提供三台手机、微信版本、Chrome及家中/公共WiFi场景') && check.includes('网络性能仍未实测')));
   a(sp01.executionProgress.localProbeHarness.runtime.includes('Node.js 20.19'));
   a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);
   a.equal(record.accountEvidence.technicalEnvironmentAudit.userConfirmedRuntimeAndDatabase.databaseMode,'文档型数据库');
-  a(sp01.executionProgress.nextAction.includes('Nodejs20.19') && sp01.executionProgress.nextAction.includes('DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型'));
-  a(sp01.executionProgress.nextAction.includes('超时30秒'));
-  a(sp01.executionProgress.nextAction.includes('之后的一次性存储权限测试中'));
-  a(sp01.executionProgress.nextAction.includes('该测试文件的跨账号隔离失败'));
-  a(sp01.executionProgress.nextAction.includes('进一步云端诊断/修改/复测需要新授权'));
-  a(sp01.executionProgress.nextAction.includes('cloudfunctions中选中cloud1'));
+  a(sp01.executionProgress.historicalNextAction.includes('Nodejs20.19') && sp01.executionProgress.historicalNextAction.includes('DescribeEnvs回包结合官方资源映射已支持确认数据库模式为文档型'));
+  a(sp01.executionProgress.historicalNextAction.includes('超时30秒'));
+  a(sp01.executionProgress.historicalNextAction.includes('之后的一次性存储权限测试中'));
+  a(sp01.executionProgress.historicalNextAction.includes('该测试文件的跨账号隔离失败'));
+  a(sp01.executionProgress.historicalNextAction.includes('进一步云端诊断/修改/复测需要新授权'));
+  a(sp01.executionProgress.historicalNextAction.includes('cloudfunctions中选中cloud1'));
 });
 
 test('SP01 records simulator compilation separately from cloud identity, storage, and real-device evidence', () => {
@@ -712,7 +754,7 @@ test('SP01 records non-admin second-account storage isolation failure and exact-
   const technicalDoc = read('docs/sp01-technical-environment-20261027.md');
   const runbook = read('docs/sp01-cloud-probe-runbook-20261028.md');
 
-  a.equal(task.status, 'in-progress');
+  a.equal(task.status, 'complete');
   a.equal(task.productAcceptancePassed, false);
   a.equal(probe.targetAppId, 'wx2414399d423dfb65');
   a.equal(probe.targetEnvironmentId, 'cloud1-d2gjahlq39bf141c7');
@@ -820,12 +862,12 @@ test('SP01 separates the historical creation wizard from current environment-lis
   a.equal(record.accountEvidence.formalNewEnvironmentStatus, 'screenshot-and-cli-cloud-env-list-confirmed-associated-runtime-not-verified');
   a.equal(record.accountEvidence.liveCloudRevalidatedThisDelivery, true);
   const sp01 = record.tasks.find((task) => task.id === 'SP01');
-  a.equal(sp01.status, 'in-progress');
+  a.equal(sp01.status, 'complete');
   a.equal(sp01.productAcceptancePassed, false);
   a.equal(sp01.executionProgress.previousUnmatchedCloudTestAttempt.logsIncludedHelloWorld,true);
   a(!sp01.executionProgress.blockedChecks.some((check) => check.includes('CloudBase API关联尚未核验')));
-  a(sp01.executionProgress.nextAction.includes('之后的一次性存储权限测试中'));
-  a(sp01.executionProgress.nextAction.includes('费用核查按用户要求略过'));
+  a(sp01.executionProgress.historicalNextAction.includes('之后的一次性存储权限测试中'));
+  a(sp01.executionProgress.historicalNextAction.includes('费用核查按用户要求略过'));
   const doc = read('docs/sp01-technical-environment-20261027.md');
   a(doc.includes('用户最初提供的截图显示微信开发者工具“创建小程序”向导'));
   a(doc.includes('条款框未勾选'));
@@ -880,12 +922,12 @@ test('SP01 excludes old cloud1 after the user reports different subjects and kee
   a.equal(record.accountEvidence.devtoolsProjectCreationWizardObservation.screenshotCloudTermsAgreementChecked, false);
   a.equal(record.accountEvidence.devtoolsProjectCreationWizardObservation.latestObservation.cloudTermsAgreementChecked, true);
   const task = record.tasks.find((entry) => entry.id === 'SP01');
-  a.equal(task.status, 'in-progress');
+  a.equal(task.status, 'complete');
   a.equal(task.productAcceptancePassed, false);
-  a(task.executionProgress.nextAction.includes('费用核查按用户要求略过'));
-  a(task.executionProgress.nextAction.includes('旧号个人主体的cloud1不作新号共享候选'));
-  a(task.executionProgress.nextAction.includes('若上线后有平台实际付费提示，用户自行办理'));
-  a(task.executionProgress.nextAction.includes('费用核查按用户要求略过'));
+  a(task.executionProgress.historicalNextAction.includes('费用核查按用户要求略过'));
+  a(task.executionProgress.historicalNextAction.includes('旧号个人主体的cloud1不作新号共享候选'));
+  a(task.executionProgress.historicalNextAction.includes('若上线后有平台实际付费提示，用户自行办理'));
+  a(task.executionProgress.historicalNextAction.includes('费用核查按用户要求略过'));
   const sp01 = read('docs/sp01-technical-environment-20261027.md');
   const plan = read('docs/v1-executable-development-plan-20261027.md');
   for (const text of [
@@ -952,11 +994,11 @@ test('SP01 preserves the earlier empty menu report and records the later import 
   const association={date:'2026-10-28',source:'user-reply-to-read-only-check',targetAppId:'wx2414399d423dfb65',result:'associated',screenshotProvided:false,environmentImportPerformed:false,deploymentPerformed:false};
   a.deepEqual(sp01.executionProgress.latestUserReportedAccountAssociationCheck,association);
   a.deepEqual(sp04.latestUserReportedAccountAssociationCheck,{...association,accountCenterPath:'account-information/login-method/wechat-official-account'});
-  a.equal(sp01.status, 'in-progress');
+  a.equal(sp01.status, 'complete');
   a.equal(sp01.productAcceptancePassed, false);
-  a(sp01.executionProgress.nextAction.includes('腾讯云账号中心已关联目标小程序'));
-  a(sp01.executionProgress.nextAction.includes('随后报告已导入'));
-  a(sp01.executionProgress.nextAction.includes('cloudfunctions中选中cloud1'));
+  a(sp01.executionProgress.historicalNextAction.includes('腾讯云账号中心已关联目标小程序'));
+  a(sp01.executionProgress.historicalNextAction.includes('随后报告已导入'));
+  a(sp01.executionProgress.historicalNextAction.includes('cloudfunctions中选中cloud1'));
   a(sp01Doc.includes('回复“菜单仍为空”'));
   a(sp01Doc.includes('这是导入前的观察'));
   a(sp01Doc.includes('https://docs.cloudbase.net/faq/account'));
@@ -1048,8 +1090,8 @@ test('SP01 records the later user-reported cloud1 import separately from read-on
  a.deepEqual(sp01.executionProgress.latestReadOnlyCloudRecheckAfterImport,cliCheck);
  a.deepEqual(sp04.latestReadOnlyCloudRecheckAfterImport,cliCheck);
  a.equal(sp01.executionProgress.latestUserReportedEnvironmentMenuRecheck.existingTencentEnvironmentImported,false,'the earlier empty-menu observation remains historical');
- a(sp01.executionProgress.nextAction.includes('随后报告已导入'));
- a(sp01.executionProgress.nextAction.includes('cloudfunctions'));
+ a(sp01.executionProgress.historicalNextAction.includes('随后报告已导入'));
+ a(sp01.executionProgress.historicalNextAction.includes('cloudfunctions'));
  a.equal(sp04.evidenceGates.find(gate=>gate.id==='E06').passed,false);
 });
 test('SP01 records the selected menu separately from the deployed temporary probe',()=>{

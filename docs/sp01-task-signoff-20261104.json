@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-04",
+  "task": "SP01",
+  "decision": {
+    "status": "complete",
+    "scope": "task-preparation-only",
+    "productAcceptancePassed": false,
+    "qd03SignedOff": false,
+    "sp07Started": false,
+    "basis": "The SP01 card delivers technical facts, sourced version candidates, measurement methods, environment isolation and rollback boundaries. The user approved this bounded closeout after review."
+  },
+  "sourceCommit": "667454242fb3a501c1df7786f59e053977899426",
+  "currentSP01DecisionBlockers": [],
+  "deliverables": [
+    "technical-facts-and-version-candidate-evidence",
+    "measurement-method-and-rollback-boundaries",
+    "target-environment-association-and-runtime-database-storage-evidence",
+    "bounded-E06-synthetic-JSON-export-import-preparation"
+  ],
+  "evidence": [
+    "docs/sp01-technical-environment-20261027.md",
+    "docs/sp01-closeout-review-20261103.md",
+    "docs/sp01-closeout-reconciliation-20261104.md",
+    "docs/sp01-closeout-reconciliation-20261104.json",
+    "docs/sp01-e06-closeout-20261104.md",
+    "docs/sp01-e06-closeout-20261104.json",
+    "docs/sp01-cloud-probe-runbook-20261028.md",
+    "docs/sp01-taro-432-compatibility-20261103.md",
+    "docs/sp01-taro-432-compatibility-20261103.json",
+    "docs/sp01-taro-decompress-interop-20261103.md",
+    "docs/sp01-taro-decompress-interop-20261103.json",
+    "docs/backend-architecture-contract-20261103.md",
+    "docs/backend-architecture-contract-20261103.json",
+    "docs/v1-quality-acceptance-20261027.md",
+    "docs/v1-quality-acceptance-20261027.json"
+  ],
+  "e06": {
+    "preparationSatisfied": true,
+    "basis": "The user reported a synthetic single-record document-database JSON export/import round trip and later confirmed deletion of both temporary collections. The evidence record notes that independent field/byte parity was not retained.",
+    "actualBusinessRestorePerformed": false,
+    "qr06ProductAcceptancePassed": false,
+    "unverified": [
+      "public package label mapping to this environment's entitlement",
+      "available recovery point",
+      "retention period and recovery cost",
+      "field-by-field or byte-for-byte parity of the synthetic round trip"
+    ]
+  },
+  "qualityCriteriaPreserved": [
+    "QP05",
+    "QP06",
+    "QP07",
+    "QP08",
+    "QS02",
+    "QR06"
+  ],
+  "downstreamGates": [
+    {
+      "criterion": "QP05",
+      "owner": "SP05 prepares actual page, content and segment duration; SP35 performs product evidence review",
+      "trigger": "Applicable product pages and content exist",
+      "originalThreshold": "3 rounds per applicable device group; at least 30 timed segments per round with frozen segment duration and 200 records plus lawful heavy content; every segment averages at least 55 FPS and has no application-attributable jank over 100 ms; retain frame/input traces, long-frame details, per-segment statistics and recording.",
+      "failureBlocks": "SP35 and final product acceptance"
+    },
+    {
+      "criterion": "QP06",
+      "owner": "SP01 defines measurement method; SP08, SP13 and SP31 gather endpoint evidence; SP35 reviews final budgets",
+      "trigger": "Actual product endpoints and suppliers exist",
+      "originalThreshold": "Per-endpoint UI/cloud/supplier latency and errors with approved budgets; record P50, P95, maximum, failures and unknown outcomes. Unapproved endpoint budgets remain blocked; AI, payment and verification do not inherit ordinary request budgets.",
+      "failureBlocks": "The affected endpoint integration and final product acceptance"
+    },
+    {
+      "criterion": "QP07",
+      "owner": "SP01 records the network profile method; SP11 and applicable business cards test interruption recovery; SP35 reviews",
+      "trigger": "Real read/write/query/image paths exist",
+      "originalThreshold": "Apply the frozen limit/latency/loss configuration before and after each applicable path for 3 rounds per scenario; preserve state and input and create no duplicate business effect; retain injection settings, request/object IDs, recovery video and all round results.",
+      "failureBlocks": "Affected business card and final product acceptance"
+    },
+    {
+      "criterion": "QP08",
+      "owner": "SP05 defines product loop; measured memory budget is proposed for user confirmation; SP35 performs endurance evidence review",
+      "trigger": "Actual product pages and repeatable mixed-user loop exist",
+      "originalThreshold": "60 minutes, at least 60 full cycles and a record every 10 minutes (user-confirmed workload); no crash, blank screen, uncaught exception or duplicate business effect; resource use must meet a user-confirmed measured budget with no sustained leak.",
+      "failureBlocks": "SP35 and final product acceptance"
+    },
+    {
+      "criterion": "QS02",
+      "owner": "SP08 and other applicable product task cards; SP35 performs final cross-product review",
+      "trigger": "Private file, thumbnail, metadata, URL or authorization-revocation behavior exists in the product",
+      "originalThreshold": "After revocation, end or unlisting, backend denies unauthorized private-file reads; only lawful versions are public; metadata does not expose location; do not claim to revoke copies already saved by users. Retain before/after URL, authorization and version evidence.",
+      "failureBlocks": "Affected product card and final product acceptance"
+    },
+    {
+      "criterion": "QR06",
+      "owner": "SP08/SP11/SP13 prepare isolated business-shaped data; SP35/SP36 perform and reconcile actual restoration",
+      "trigger": "Business records, relationships, permissions, funds, inventory, versions or messages exist",
+      "originalThreshold": "Restore an isolated backup containing unknown requests/funds/ads/coupons/reviews and reconcile relationships, authorization, funds, inventory, versions and messages; do not revive canceled/expired/revoked state or duplicate counts/refunds. Retain actual backup point, restore log, full-object reconciliation, rollback and retest evidence.",
+      "failureBlocks": "Applicable downstream tasks and final product acceptance"
+    },
+    {
+      "criterion": "QD03",
+      "owner": "SP01-SP06 delivery owners; final gate review before SP07",
+      "trigger": "All SP01-SP06 deliverables and required confirmations are ready for aggregate review",
+      "originalThreshold": "Verify every SP01-SP06 prerequisite, task dependency, threshold, evidence record and required confirmation; unresolved parameters remain explicitly blocked and are not defaulted.",
+      "failureBlocks": "SP07 entry"
+    }
+  ],
+  "candidateAndRiskDisposition": {
+    "taroCandidate": "Taro 4.3.2 / React 18.3.1 / TypeScript 5.9.3 / Webpack 5.91.0, with project-controlled local scaffold; user-confirmed as a candidate, not a formal dependency lock.",
+    "remoteArchiveExecution": "not-enabled",
+    "thirdPartyDeclarationsAndAdvisories": "not-cleared; evaluate actual locked and reachable production dependency graph in SP07/SP08; applicable reachable critical risk blocks affected integration/release.",
+    "maliciousArchiveEvidence": "not-proven; preserve the existing test and missing-evidence status; only becomes an SP01/engineering blocker if remote archive execution is selected again."
+  },
+  "remoteArchiveExecution": {
+    "enabled": false,
+    "preservedTest": "tests/sp01-taro-malicious-archive.test.cjs",
+    "preservedTestPresent": true,
+    "preservedTestPassed": false,
+    "evidenceJson": "docs/sp01-taro-malicious-archive-20261103.json",
+    "evidenceJsonPresent": false,
+    "trigger": "Reopening remote ZIP/template archive execution in a future implementation path",
+    "requiredBeforeEnablement": "Isolated malicious-archive evidence, preserved test passing, and cleanup proof"
+  },
+  "verificationChecklist": [
+    "SP01 task deliverable and its three original acceptance points are traceable to linked evidence.",
+    "Target AppID/environment association, runtime candidate, document database observation, storage permission observation and rollback boundaries are recorded with evidence level.",
+    "Unknowns remain labeled unknown; no old-account environment is treated as the new-account environment.",
+    "E06 synthetic JSON preparation is distinguished from actual business restore and QR06 acceptance.",
+    "QP05/QP06/QP07/QP08/QS02/QR06 original thresholds and owners remain assigned downstream.",
+    "QD03 remains unsigned, SP07 remains planned, and product acceptance remains false."
+  ],
+  "changeBoundary": {
+    "cloudResourcesChanged": false,
+    "productCodeChanged": false,
+    "qualityThresholdsChanged": false,
+    "sp07Started": false,
+    "historicalEvidenceDeleted": false
+  }
+}

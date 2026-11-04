@@ -368,7 +368,7 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
   const latestUpload = task.executionProgress.latestCloudDeploymentEvidence;
   const runbook = fs.readFileSync(path.join(root, 'docs/sp01-cloud-probe-runbook-20261028.md'), 'utf8');
 
-  assert.equal(task.status, 'in-progress');
+  assert.equal(task.status, 'complete');
   assert.equal(task.productAcceptancePassed, false);
   assert.match(harness.evidenceScope, /before-authorized-transaction-recovery/);
   assert.equal(harness.functionName, 'sp01EnvProbe');
@@ -516,7 +516,7 @@ test('SP01 progress distinguishes authorized recovery work from cloud acceptance
     list: [],
     cloudWritePerformed: false,
   });
-  assert.equal(task.status, 'in-progress');
+  assert.equal(task.status, 'complete');
   assert.equal(task.productAcceptancePassed, false);
   assert.equal(task.executionProgress.previousCloudRunAttemptAtThreeSeconds.event.runId, 'sp01_f4157fdc182bda6f9fd8e37395d4943e');
   assert.equal(task.executionProgress.latestLocalSdkCompatibilityDiagnosis.fixUploadedToCloud, true);

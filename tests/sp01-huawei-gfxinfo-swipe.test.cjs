@@ -83,7 +83,7 @@ test('Huawei gfxinfo swipe evidence stays limited to host-sampler feasibility', 
   assert.equal(review.sp07Started, false);
 
   const sp01 = plan.tasks.find((task) => task.id === 'SP01');
-  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.status, 'complete');
   assert.deepEqual(sp01.executionProgress.latestLocalGfxinfoSwipeProbe, {
     date: '2026-11-02',
     evidence: 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAgentTriggeredSwipeFollowUp',
@@ -138,7 +138,7 @@ test('Huawei SurfaceFlinger alternating swipe is recorded as host-only sampler f
   assert.equal(review.sp07Started, false);
 
   const sp01 = plan.tasks.find((task) => task.id === 'SP01');
-  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.status, 'complete');
   assert.equal(sp01.executionProgress.latestSurfaceFlingerSwipeProbe.evidence, 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#surfaceFlingerAlternatingSwipeProbe');
   assert.equal(sp01.executionProgress.latestSurfaceFlingerSwipeProbe.acceptanceEvidence, false);
   const reviewMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');
@@ -178,7 +178,7 @@ test('Huawei atrace follow-up remains host-process feasibility evidence only', (
   assert.equal(review.sp07Started, false);
 
   const sp01 = plan.tasks.find((task) => task.id === 'SP01');
-  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.status, 'complete');
   assert.equal(sp01.executionProgress.latestAtraceHostProcessDiagnostic.evidence, 'docs/sp01-huawei-gfxinfo-swipe-20261102.json#latestAtraceHostProcessDiagnostic');
   assert.equal(sp01.executionProgress.latestAtraceHostProcessDiagnostic.acceptanceEvidence, false);
   const reviewMarkdown = fs.readFileSync(path.join(__dirname, '../docs/sp01-readiness-review-20261030.md'), 'utf8');

@@ -50,7 +50,7 @@ test('SP01 post-review reconciliation closes preparation facts without changing 
   assert.equal(priorReview.postReviewUpdate.historicalSnapshotPreserved, true);
   assert.equal(priorReview.postReviewUpdate.currentR06UserInputStillRequired, false);
 
-  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.status, 'complete');
   assert.equal(sp01.productAcceptancePassed, false);
   assert.equal(sp07.status, 'planned');
   assert.equal(sp07.productAcceptancePassed, false);

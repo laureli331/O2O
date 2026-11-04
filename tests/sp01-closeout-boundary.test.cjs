@@ -21,7 +21,7 @@ test('SP01 boundary clarification preserves task and acceptance gates', () => {
   assert.equal(plan.firstProductTask, 'SP07');
   assert.deepEqual(plan.firstProductTaskPrerequisites, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
   assert.equal(plan.status, 'execution-backlog-preconditions-open');
-  assert.equal(plan.tasks.find((task) => task.id === 'SP01').status, 'in-progress');
+  assert.equal(plan.tasks.find((task) => task.id === 'SP01').status, 'complete');
   assert.equal(plan.tasks.find((task) => task.id === 'SP01').productAcceptancePassed, false);
   assert.equal(quality.productValidationPerformed, false);
   assert.equal(quality.releaseGate.applicablePassPercent, 100);
@@ -120,7 +120,7 @@ test('SP01 E06 closeout records the bounded JSON fallback without claiming produ
 
   assert.equal(plan.sp01StageBoundaryClarification.latestRecoveryDisposition.evidence, evidencePath);
   assert.equal(plan.sp01StageBoundaryClarification.latestRecoveryDisposition.e06PreparationGateSatisfied, true);
-  assert.equal(sp01.status, 'in-progress');
+  assert.equal(sp01.status, 'complete');
   assert.equal(sp01.productAcceptancePassed, false);
   assert.equal(qr06.productResult, 'not-executed');
   for (const source of evidence.sourceEvidence) {
