@@ -342,8 +342,12 @@ test('SP04 preserves category lookup history and separates current official labe
     sourceScreenshots: [
       'codex-clipboard-bec8e09b-c65b-4574-bcc0-8ceb0636029d.png',
       'codex-clipboard-54786573-29f3-42d1-a95c-f2586d709fe7.png',
+      'codex-clipboard-dd219202-034b-4148-aaf7-ffdff5225b00.png',
+      'codex-clipboard-a0d8bf56-7e17-49a5-8fec-86860ca2e649.png',
+      'codex-clipboard-7bc58b37-8810-4097-9fdc-aa358a5a2cf1.png',
     ],
     screenshotAppIdVisible: false,
+    targetMiniProgramConfirmedByUser: true,
     selectedAndSaved: false,
     homeServicesOption: {
       path: ['生活服务', '家政服务'],
@@ -358,20 +362,42 @@ test('SP04 preserves category lookup history and separates current official labe
       exactRunErrandCategoryVisible: false,
     },
     secondhandSearch: {
-      observed: false,
-      result: null,
+      observed: true,
+      term: '二手',
+      result: '暂无匹配类目',
+      screenshot: 'codex-clipboard-dd219202-034b-4148-aaf7-ffdff5225b00.png',
     },
-    scope: 'visible-user-provided-portal-screenshots-only',
-    evidenceMethod: 'review-of-user-provided-screenshots',
+    informationPublishSearch: {
+      observed: true,
+      term: '信息发布',
+      result: '暂无匹配类目',
+      screenshot: 'codex-clipboard-a0d8bf56-7e17-49a5-8fec-86860ca2e649.png',
+    },
+    idleSearch: {
+      observed: true,
+      term: '闲置',
+      visibleResult: ['生活服务', '休闲娱乐'],
+      screenshot: 'codex-clipboard-7bc58b37-8810-4097-9fdc-aa358a5a2cf1.png',
+      interpretation: '仅记录选择器显示的类目路径，不作为居民二手物品发布类目依据',
+    },
+    scope: 'user-confirmed-target-mini-program-picker; AppID-not-visible-in-screenshots',
+    evidenceMethod: 'user-provided-screenshots-and-explicit-user-target-confirmation',
   });
+  assert.equal(record.evidenceGates.find((gate) => gate.id === 'E05').passed, false);
+  assert.match(record.evidenceGates.find((gate) => gate.id === 'E05').reason, /搜索“二手”和“信息发布”均显示“暂无匹配类目”/);
+  assert.match(record.evidenceGates.find((gate) => gate.id === 'E05').reason, /闲置.*生活服务 > 休闲娱乐/);
   const doc = read('docs/sp04-operations-configuration-20261027.md');
   assert.ok(doc.includes('2026-10-27—28 的历史查询曾遇到官方页面打开失败'));
-  assert.ok(doc.includes('公开页面已支持家政服务和跑腿的文字范围，但不能决定目标账号的类目选择器/审核结果'));
+  assert.ok(doc.includes('公开页面已支持家政服务和跑腿的文字范围，但不能决定目标账号的类别适用性或审核结果'));
   assert.ok(doc.includes('“生活服务 > 家政服务”的说明包含家电维修'));
   assert.ok(doc.includes('搜索“跑腿”时，截图只显示“物流服务 > 查件”和“物流服务 > 装卸搬运”'));
-  assert.ok(doc.includes('没有保存最终服务类目'));
+  assert.ok(doc.includes('没有保存服务类目'));
   assert.ok(doc.includes('本次通过 PowerShell `Invoke-WebRequest` 只读取得微信官方'));
   assert.ok(doc.includes('本次对页面文本检索未找到通用`二手交易`、`闲置交易`或`闲置物品`类目名称'));
+  assert.ok(doc.includes('用户明确确认本次三张截图属于目标小程序的类目选择器'));
+  assert.ok(doc.includes('搜索“二手”和“信息发布”均显示“暂无匹配类目”'));
+  assert.ok(doc.includes('搜索“闲置”显示“生活服务 > 休闲娱乐”'));
+  assert.ok(doc.includes('截图未显示 AppID，目标小程序归属依据是用户明确确认'));
 });
 
 test('SP04 records the exact user-confirmed service area and three service modules', () => {
