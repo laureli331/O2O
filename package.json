@@ -15,7 +15,7 @@
     "check:shared": "npm run check --workspace @xianglin/shared",
     "build:weapp": "npm run build --workspace @xianglin/mini-program",
     "build:web": "npm run build --workspace @xianglin/admin-web",
-    "check:foundation": "node --test tests/qd03-sp07-foundation.test.cjs tests/executable-development-plan.test.cjs tests/sp07-workspace-boundaries.test.cjs"
+    "check:foundation": "node --test tests/qd03-sp07-foundation.test.cjs tests/executable-development-plan.test.cjs tests/sp07-workspace-boundaries.test.cjs tests/sp07-performance-measurement-entry.test.cjs"
   },
   "devDependencies": {
     "@types/node": "20.19.43",

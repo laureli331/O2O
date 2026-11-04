@@ -55,7 +55,9 @@
     "docs/sp06-resource-and-batch-plan-20261104.md",
     "docs/sp06-resource-and-batch-plan-20261104.json",
     "docs/qd03-sp07-local-foundation-20261104.md",
-    "docs/qd03-sp07-local-foundation-20261104.json"
+    "docs/qd03-sp07-local-foundation-20261104.json",
+    "docs/performance-measurement-entry-20261105.md",
+    "docs/performance-measurement-entry-20261105.json"
   ],
   "architecture": {
     "frontend": "taro-react-typescript",
@@ -3132,11 +3134,13 @@
         "completedAcceptance": [
           "Fresh dependency installation from the committed lockfile succeeds in an isolated clean-room copy.",
           "Strict shared-code checks, dependency-tree verification, and web/WeChat mini-program builds pass in the working tree and clean-room copy.",
-          "An AST/static workspace boundary regression gate is implemented, exercised by positive and negative fixtures, and run before both formal web and WeChat mini-program bundlers in the working tree."
+          "An AST/static workspace boundary regression gate is implemented, exercised by positive and negative fixtures, and run before both formal web and WeChat mini-program bundlers in the working tree.",
+          "QP10 measurement evidence intake and SP07/SP15/SP18/SP35 ownership are registered in docs/performance-measurement-entry-20261105.json; no product measurement is claimed."
         ],
         "remainingAcceptance": [
           "Review SP07 isolation, secret-handling defaults, and recovery/rollback evidence; the static source scan is only a bounded check, not a security clearance.",
-          "The full repository regression is not green: the preserved malicious-archive test still lacks its required evidence JSON. This keeps remote template/archive execution disabled and must not be reported as a passed suite."
+          "The full repository regression is not green: the preserved malicious-archive test still lacks its required evidence JSON. This keeps remote template/archive execution disabled and must not be reported as a passed suite.",
+          "QP10 product measurements remain unexecuted in SP07; SP15/SP18 early baselines and SP35 final-candidate full retest remain assigned to their registered triggers and original acceptance thresholds."
         ]
       },
       "productAcceptancePassed": false,

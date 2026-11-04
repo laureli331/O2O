@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-05",
+  "criterionId": "QP10",
+  "document": "docs/performance-measurement-entry-20261105.md",
+  "registrationStatus": "registered",
+  "scope": "performance-evidence-intake-and-stage-ownership",
+  "productMeasurementsExecuted": false,
+  "productMeasurementCount": 0,
+  "thresholdsChanged": false,
+  "ownerTasks": ["SP07", "SP15", "SP18", "SP35"],
+  "entryOwner": "SP07",
+  "downstream": {
+    "SP15": {
+      "role": "early-baseline",
+      "trigger": "first-implemented-core-flow",
+      "status": "not-executed"
+    },
+    "SP18": {
+      "role": "early-baseline",
+      "trigger": "first-implemented-core-flow",
+      "status": "not-executed"
+    },
+    "affectedChanges": {
+      "role": "remeasure-affected-groups-and-compare",
+      "trigger": "a-relevant-change-and-reproducible-product-scenario",
+      "status": "not-triggered"
+    },
+    "SP35": {
+      "role": "final-candidate-full-retest",
+      "trigger": "final-candidate-build",
+      "status": "not-executed"
+    }
+  },
+  "criterionReferences": ["QP05", "QP06", "QP08", "QP09", "QP10"],
+  "requiredRunRecordFields": [
+    "runId",
+    "ownerTaskAndCriterion",
+    "groupRoundAndSegmentId",
+    "startedAtAndEndedAt",
+    "gitCommitAndBuildIdentity",
+    "lockfileAndDependencyVersions",
+    "runtimeConfigurationAndDataset",
+    "deviceOsWechatBaseLibraryAndRenderer",
+    "refreshRateFontAndViewport",
+    "webOsBrowserViewportAndZoom",
+    "pageRoleStateAndOperationSteps",
+    "networkTypeAndInjectionParameters",
+    "cacheConditionAndWorkload",
+    "measurementToolVersionAndResolution",
+    "measurementClockOverheadAndCaptureConfiguration",
+    "rawSamplesAndEvidencePaths",
+    "thresholdSourceAndExpectedResult",
+    "perGroupPerRoundActualStatisticsAndOutcome",
+    "failureUnknownReproductionInputAndDisposition",
+    "fixCommitAndSameConditionRetest",
+    "affectedGroupRegressionAndComparison",
+    "reviewerAndReviewDate"
+  ],
+  "missingEvidenceDisposition": "not-passed",
+  "failurePolicy": "Keep every failed, timed-out, unknown, and inconclusive sample. Missing required conditions or raw evidence, or any applicable group/round below its unchanged criterion, is not passed; retest under the same frozen conditions and retest affected groups.",
+  "reuseReview": {
+    "projectReuse": [
+      "Existing QP10 quality-contract record and SP07/downstream task ownership.",
+      "Existing node:test runner and JSON/Markdown evidence convention.",
+      "tools/sp01-device-probe reports documented WeChat performance-entry capabilities but explicitly does not claim FPS."
+    ],
+    "officialSources": [
+      "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/wx.getPerformance.html",
+      "https://developers.weixin.qq.com/miniprogram/dev/api/base/performance/PerformanceEntry.html",
+      "https://github.com/wechat-miniprogram/api-typings",
+      "https://perfetto.dev/docs/data-sources/frametimeline"
+    ],
+    "selectedApproach": "Register a versioned evidence intake using existing repository formats and tests; do not add a sampler or third-party runtime dependency at SP07.",
+    "adaptation": "Metadata and test assertions only; product-specific instrumentation remains with the SP card that owns the real page and acceptance run.",
+    "licenseAndMaintenance": "No third-party code or dependency is introduced by this registry.",
+    "measurementCapabilityLimit": "The current WeChat API typings expose no FPS/per-frame entry. Existing Perfetto samples observe the WeChat AppBrand host layer but do not establish a distinct mini-program WebView frame stream or application attribution; neither is accepted as product QP05 evidence without further validation on the actual product scenario."
+  },
+  "rollback": {
+    "method": "Revert only the QP10 registry, its test and plan references; no product or cloud state is changed.",
+    "externalStateChanged": false
+  }
+}
