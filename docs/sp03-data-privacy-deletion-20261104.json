@@ -27,6 +27,24 @@
     { "path": "docs/evidence/sp03-cloudbase-plan-20261104.png", "use": "用户提供的 CloudBase 费用管理页，显示当前套餐为微信体验版" },
     { "path": "docs/evidence/sp03-cloudbase-backup-20261104.png", "use": "用户提供的 CloudBase 数据库设置页，显示系统自动开启备份及当前暂无回档记录" }
   ],
+  "externalSources": [
+    {
+      "title": "CloudBase 备份与回档",
+      "url": "https://cloud.tencent.com/document/product/876/48441",
+      "scope": "CloudBase 通用产品文档；说明每日自动备份、最多保留14天及回档生成额外集合。未把用户控制台中的‘微信体验版’映射到该保留策略。"
+    },
+    {
+      "title": "CloudBase 控制台指南 PDF",
+      "url": "https://main.qcloudimg.com/raw/document/product/pdf/876_46890_cn.pdf",
+      "scope": "官方控制台指南写免费版每日备份、最多保留7天，升配后最多14天；没有证据证明用户控制台‘微信体验版’等同此处‘免费版’。"
+    }
+  ],
+  "documentationConflict": {
+    "topic": "CloudBase 自动数据库备份保留口径",
+    "claims": ["CloudBase 通用产品文档：每日备份，最多14天。", "官方控制台指南：免费版每日备份、最多7天；升配后最多14天。"],
+    "accountPlanMapping": "未确认：控制台显示‘微信体验版’，公开文档未建立该标签与免费版/升配版的对应关系。",
+    "effect": "不据此推定 cloud1 的实际备份保留期、套餐费用或可回档数据；保留为供应商/控制台待核实项。"
+  },
   "legalBaseline": {
     "sources": [
       {
@@ -353,7 +371,12 @@
       "observedEnvironment": "cloud1-d2gjahlq39bf141c7",
       "observations": [
         "费用管理页显示当前套餐为微信体验版。",
-        "数据库设置页提示系统自动开启数据库备份，数据库回档列表当时显示暂无数据；用户反馈回档入口可用，但未显示可用备份或保留期限。"
+        "数据库设置页提示系统自动开启数据库备份，数据库回档列表当时显示暂无数据；用户反馈回档入口可用，但未显示可用备份或保留期限。",
+        "公开官方文档存在保留期口径差异：CloudBase 通用文档称最多14天；控制台指南称免费版最多7天、升配后最多14天。现有证据不能将‘微信体验版’映射到任一口径。"
+      ],
+      "officialSources": [
+        "https://cloud.tencent.com/document/product/876/48441",
+        "https://main.qcloudimg.com/raw/document/product/pdf/876_46890_cn.pdf"
       ],
       "evidence": ["docs/evidence/sp03-cloudbase-plan-20261104.png", "docs/evidence/sp03-cloudbase-backup-20261104.png"],
       "notVerified": [

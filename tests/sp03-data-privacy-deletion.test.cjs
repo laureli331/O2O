@@ -69,7 +69,8 @@ test('inventory cites repository sources, official privacy baseline and downstre
 });
 
 test('CloudBase backup evidence is scoped to console observations, not a deletion or recovery pass', () => {
-  const cloudBase = load().supplierProcessing.find((entry) => entry.supplierClass === 'CloudBase云数据库/云函数/云存储');
+  const inventory = load();
+  const cloudBase = inventory.supplierProcessing.find((entry) => entry.supplierClass === 'CloudBase云数据库/云函数/云存储');
   assert.equal(cloudBase.status, 'console-observed; terms-and-retention-unconfirmed');
   assert.deepEqual(cloudBase.evidence, [
     'docs/evidence/sp03-cloudbase-plan-20261104.png',
@@ -81,8 +82,21 @@ test('CloudBase backup evidence is scoped to console observations, not a deletio
   assert.ok(cloudBase.observations.some((item) => item.includes('微信体验版')));
   assert.ok(cloudBase.observations.some((item) => item.includes('自动开启数据库备份')));
   assert.ok(cloudBase.observations.some((item) => item.includes('暂无数据')));
+  assert.ok(cloudBase.observations.some((item) => item.includes('保留期口径差异')));
   assert.ok(cloudBase.notVerified.some((item) => item.includes('保留时长')));
   assert.ok(cloudBase.notVerified.some((item) => item.includes('实际回档')));
+  assert.deepEqual(cloudBase.officialSources, inventory.externalSources.map((source) => source.url));
+  assert.match(inventory.documentationConflict.accountPlanMapping, /未确认/);
+  assert.match(inventory.documentationConflict.effect, /不据此推定/);
+  assert.deepEqual(inventory.documentationConflict.claims, [
+    'CloudBase 通用产品文档：每日备份，最多14天。',
+    '官方控制台指南：免费版每日备份、最多7天；升配后最多14天。'
+  ]);
+  for (const record of inventory.records) {
+    if (record.retention && Object.hasOwn(record.retention, 'period')) {
+      assert.equal(record.retention.period, null, `${record.id} must not infer a plan retention period`);
+    }
+  }
 });
 
 test('Markdown and JSON expose the same draft, source conflict, unresolved terms and scope boundaries', () => {
@@ -95,6 +109,9 @@ test('Markdown and JSON expose the same draft, source conflict, unresolved terms
   assert.match(markdown, /DP41/);
   assert.match(markdown, /微信体验版/);
   assert.match(markdown, /暂无数据/);
+  assert.match(markdown, /最多保留14天/);
+  assert.match(markdown, /最多7天/);
+  assert.match(markdown, /没有把控制台“微信体验版”映射/);
   assert.match(markdown, /未确认|待确认/);
   assert.match(markdown, /不等于.*通过|未.*通过/);
   for (const record of inventory.records) assert.ok(markdown.includes(record.id), `Markdown missing ${record.id}`);
