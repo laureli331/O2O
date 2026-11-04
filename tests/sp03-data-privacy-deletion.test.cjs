@@ -68,6 +68,23 @@ test('inventory cites repository sources, official privacy baseline and downstre
   assert.ok(inventory.confirmations.length > 0);
 });
 
+test('CloudBase backup evidence is scoped to console observations, not a deletion or recovery pass', () => {
+  const cloudBase = load().supplierProcessing.find((entry) => entry.supplierClass === 'CloudBase云数据库/云函数/云存储');
+  assert.equal(cloudBase.status, 'console-observed; terms-and-retention-unconfirmed');
+  assert.deepEqual(cloudBase.evidence, [
+    'docs/evidence/sp03-cloudbase-plan-20261104.png',
+    'docs/evidence/sp03-cloudbase-backup-20261104.png'
+  ]);
+  for (const evidencePath of cloudBase.evidence) {
+    assert.ok(fs.existsSync(path.join(root, evidencePath)), `missing evidence ${evidencePath}`);
+  }
+  assert.ok(cloudBase.observations.some((item) => item.includes('微信体验版')));
+  assert.ok(cloudBase.observations.some((item) => item.includes('自动开启数据库备份')));
+  assert.ok(cloudBase.observations.some((item) => item.includes('暂无数据')));
+  assert.ok(cloudBase.notVerified.some((item) => item.includes('保留时长')));
+  assert.ok(cloudBase.notVerified.some((item) => item.includes('实际回档')));
+});
+
 test('Markdown and JSON expose the same draft, source conflict, unresolved terms and scope boundaries', () => {
   const inventory = load();
   const markdown = fs.readFileSync(markdownPath, 'utf8');
@@ -76,6 +93,8 @@ test('Markdown and JSON expose the same draft, source conflict, unresolved terms
   assert.match(markdown, /AG01/);
   assert.match(markdown, /DG01/);
   assert.match(markdown, /DP41/);
+  assert.match(markdown, /微信体验版/);
+  assert.match(markdown, /暂无数据/);
   assert.match(markdown, /未确认|待确认/);
   assert.match(markdown, /不等于.*通过|未.*通过/);
   for (const record of inventory.records) assert.ok(markdown.includes(record.id), `Markdown missing ${record.id}`);

@@ -23,7 +23,9 @@
     { "path": "docs/v1-quality-acceptance-20261027.md", "use": "QS09、QS10、QR08等下游质量归属" },
     { "path": "docs/v1-quality-acceptance-20261027.json", "use": "质量合同的机器可读验收条目" },
     { "path": "docs/development-plan.md", "use": "旧版DP03与外部证据依赖对照" },
-    { "path": "docs/development-decisions.json", "use": "当前外部证据状态对照" }
+    { "path": "docs/development-decisions.json", "use": "当前外部证据状态对照" },
+    { "path": "docs/evidence/sp03-cloudbase-plan-20261104.png", "use": "用户提供的 CloudBase 费用管理页，显示当前套餐为微信体验版" },
+    { "path": "docs/evidence/sp03-cloudbase-backup-20261104.png", "use": "用户提供的 CloudBase 数据库设置页，显示系统自动开启备份及当前暂无回档记录" }
   ],
   "legalBaseline": {
     "sources": [
@@ -343,7 +345,24 @@
     }
   ],
   "supplierProcessing": [
-    { "supplierClass": "CloudBase云数据库/云函数/云存储", "processing": "托管业务数据、文件和运行请求；具体地域、备份保留、日志和子处理条款须从当前控制台/合同核实。", "gate": "E03", "status": "terms-and-retention-not-confirmed", "action": "进入生产个人信息前确认区域、访问控制、删除/备份传播、日志保留与合同责任。" },
+    {
+      "supplierClass": "CloudBase云数据库/云函数/云存储",
+      "processing": "托管业务数据、文件和运行请求；具体地域、备份保留、日志和子处理条款须从当前控制台/合同核实。",
+      "gate": "E03",
+      "status": "console-observed; terms-and-retention-unconfirmed",
+      "observedEnvironment": "cloud1-d2gjahlq39bf141c7",
+      "observations": [
+        "费用管理页显示当前套餐为微信体验版。",
+        "数据库设置页提示系统自动开启数据库备份，数据库回档列表当时显示暂无数据；用户反馈回档入口可用，但未显示可用备份或保留期限。"
+      ],
+      "evidence": ["docs/evidence/sp03-cloudbase-plan-20261104.png", "docs/evidence/sp03-cloudbase-backup-20261104.png"],
+      "notVerified": [
+        "备份实际覆盖范围、具体保留时长和计费条件。",
+        "删除/撤权后备份副本的传播与恢复时行为。",
+        "实际回档、删除后恢复读取及再次清除验证。"
+      ],
+      "action": "进入生产个人信息前确认区域、访问控制、备份保留/费用、删除与备份传播、日志保留和合同责任；产品建成后按QS09/SP35实测恢复不会复活已删除或撤权数据。"
+    },
     { "supplierClass": "身份/手机号核验（如采用）", "processing": "可能处理手机号或资格核验字段；目前未选定具体验证供应商。", "gate": "E03", "status": "not-selected", "action": "选型后取得数据处理条款、字段、留存、删除、地域与安全资料。" },
     { "supplierClass": "内容安全审核（如采用）", "processing": "可能接收用户文本或图片；实际供应商与接口未确认。", "gate": "E03", "status": "not-selected", "action": "确定审核范围、传输字段、处理地域、留存/删除、调用失败回退。" },
     { "supplierClass": "支付服务提供方（正式支付启用时）", "processing": "支付服务方处理支付凭据；项目仅接收必要交易状态及对账标识。", "gate": "E03", "status": "not-enabled-for-resident-funds", "action": "正式启用前核实商户合同、回调字段、退款、对账和资料保留。" },
