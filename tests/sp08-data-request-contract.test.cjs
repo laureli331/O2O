@@ -110,3 +110,25 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
 });
+
+test('SP08 database capability map distinguishes documented platform limits from synthetic probe evidence', () => {
+  const map = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-database-capability-map-20261105.json'), 'utf8'));
+
+  assert.equal(map.taskId, 'SP08');
+  assert.equal(map.productAcceptancePassed, false);
+  assert.equal(map.cloudMutationsPerformed, false);
+  assert.equal(map.selectedDatabase.mode, 'document');
+  assert.equal(map.transaction.documented.serverSideOnly, true);
+  assert.equal(map.transaction.documented.maxDurationSeconds, 10);
+  assert.equal(map.transaction.documented.queryMethods.includes('where'), false);
+  assert.equal(map.indexes.documented.uniqueIndex.supported, true);
+  assert.equal(map.indexes.documented.uniqueIndex.missingFieldTreatedAsNull, true);
+  assert.equal(map.transaction.syntheticProbe.commit.allDocumentsVisible, true);
+  assert.equal(map.transaction.syntheticProbe.rollback.noPartialWrites, true);
+  assert.equal(map.transaction.syntheticProbe.concurrentIncrement.finalValue, 2);
+  assert.equal(map.transaction.syntheticProbe.concurrentIncrement.businessScenariosRepresented, false);
+  assert.ok(map.stillUnproven.includes('product-data-access-paths-and-physical-indexes'));
+  assert.ok(map.stillUnproven.includes('business-invariant-concurrency'));
+  assert.ok(map.sources.some((source) => source.url === 'https://docs.cloudbase.net/database/transaction'));
+  assert.ok(map.sources.some((source) => source.url === 'https://docs.cloudbase.net/database/data-index'));
+});

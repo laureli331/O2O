@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "taskId": "SP08",
+  "date": "2026-11-05",
+  "title": "CloudBase 文档型数据库能力映射",
+  "status": "capability-baseline-recorded",
+  "productAcceptancePassed": false,
+  "cloudMutationsPerformed": false,
+  "selectedDatabase": {
+    "provider": "CloudBase",
+    "mode": "document",
+    "modeLabel": "文档型数据库（flexdb）",
+    "appId": "wx2414399d423dfb65",
+    "environmentId": "cloud1-d2gjahlq39bf141c7",
+    "instanceId": "tnt-3suboytjo",
+    "evidencePath": "docs/sp01-technical-environment-20261027.md",
+    "evidenceLevel": "user-provided DescribeEnvs response interpreted with official resource definitions; user also reported the console as document database"
+  },
+  "sdk": {
+    "nodeSdk": "@cloudbase/node-sdk@3.18.7",
+    "databaseSdk": "@cloudbase/database@1.4.3",
+    "evidencePath": "miniprogram/cloudfunctions/sp01EnvProbe/package-lock.json",
+    "scope": "temporary SP01 transaction probe only; not a formal product adapter decision"
+  },
+  "transaction": {
+    "documented": {
+      "serverSideOnly": true,
+      "supportedSdk": "node-sdk",
+      "operations": ["get", "add", "delete", "update", "set"],
+      "snapshotBeginsAt": "first-read",
+      "writeConflictBehavior": "writes lock affected documents; a write-lock conflict can terminate a transaction",
+      "maxDurationSeconds": 10,
+      "queryMethods": ["doc"],
+      "externalCallsInsideTransaction": false,
+      "ddlDuringTransactions": "avoid",
+      "operationCountLimit": "no fixed count stated; practical limit depends on operation latency and 10-second duration"
+    },
+    "syntheticProbe": {
+      "sourcePath": "docs/sp01-cloud-probe-runbook-20261028.md",
+      "runId": "sp01_3db660bc5eb548559f4f6966a34209a2",
+      "functionTimeoutSeconds": 30,
+      "commit": {
+        "allDocumentsVisible": true
+      },
+      "rollback": {
+        "abortObserved": true,
+        "noPartialWrites": true
+      },
+      "concurrentIncrement": {
+        "overlapObserved": true,
+        "bothFulfilled": true,
+        "finalValue": 2,
+        "stateConsistent": true,
+        "businessScenariosRepresented": false
+      },
+      "cleanup": {
+        "success": true,
+        "deletedCount": 3,
+        "fixedProbeIdsVerifiedAbsent": true
+      },
+      "evidenceBoundary": "one controlled synthetic probe validates these exact operations and schedule only; it does not prove product business invariants, all conflict schedules, authorization, query phantom behavior, or durability/recovery"
+    }
+  },
+  "indexes": {
+    "documented": {
+      "types": ["single-field", "compound", "geospatial", "unique"],
+      "uniqueIndex": {
+        "supported": true,
+        "duplicateIndexedValuesRejected": true,
+        "missingFieldTreatedAsNull": true,
+        "multipleMissingOrNullValuesAllowed": false
+      },
+      "maxIndexedFieldBytes": 1024
+    },
+    "environmentEvidence": "no product collection, index, or unique-index enforcement was created or tested in this capability pass"
+  },
+  "designImplications": [
+    "protected business writes must be mediated by a server-side Node SDK path; this does not yet define its authentication or authorization adapter",
+    "transactional queries must use supported document references; collection where queries are not available inside the documented transaction API",
+    "correctness-critical write sets need a concrete addressable document/anchor strategy and transaction schedule before business implementation; pre-checking a query alone is not atomic evidence",
+    "keep external provider/network calls outside a retriable transaction and represent durable follow-up separately according to the backend contract",
+    "unique indexes are a documented option, but each product key, missing-value strategy, migration, and concurrent duplicate test remains undecided/unverified"
+  ],
+  "stillUnproven": [
+    "product-data-access-paths-and-physical-indexes",
+    "business-invariant-concurrency",
+    "authorization-and-owner-scoped-queries",
+    "server-time-and-money-enforcement",
+    "same-request-idempotency-and-unknown-outcome-recovery",
+    "transaction-conflict-retry-and-failure-recovery-for-each-TX01-TX12-workflow",
+    "real provider integration and money movement"
+  ],
+  "sources": [
+    {
+      "url": "https://docs.cloudbase.net/database/transaction",
+      "use": "official document database transaction support, server-side/node-sdk restriction, operations, snapshot/write-conflict semantics, 10-second limit, doc-only method limit and external-call warning",
+      "checked": "2026-11-05"
+    },
+    {
+      "url": "https://docs.cloudbase.net/database/data-index",
+      "use": "official document database index types, unique-index behavior, missing-field-as-null rule and indexed-field size limit",
+      "checked": "2026-11-05"
+    },
+    {
+      "path": "docs/sp01-technical-environment-20261027.md",
+      "use": "target environment mode identification from user-provided DescribeEnvs response and official resource mapping; historical target environment evidence"
+    },
+    {
+      "path": "docs/sp01-cloud-probe-runbook-20261028.md",
+      "use": "exact successful synthetic transaction run and cleanup evidence; not product workload evidence"
+    },
+    {
+      "path": "miniprogram/cloudfunctions/sp01EnvProbe/package-lock.json",
+      "use": "locked SDK versions used by the temporary probe; file remains outside this commit if untracked"
+    },
+    {
+      "path": "docs/backend-architecture-contract-20261103.md",
+      "use": "TX01-TX12 and BI01-BI10 require workload-specific physical atomic evidence; query pre-check alone is insufficient"
+    }
+  ]
+}
