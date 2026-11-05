@@ -43,6 +43,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseTrustedCommandContext, 'function');
   assert.equal(typeof shared.parseCommandResult, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookPhone, 'function');
+  assert.equal(typeof shared.validatePrivateAddressBookText, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
 
@@ -151,7 +152,96 @@ test('private address book phone validation is a pure field-shape contract with 
 
   assert.match(contractsIndex, /export \* from '\.\/private-address-book';/);
   assert.match(source, /does not verify control of the number/);
+  assert.match(source, /Unicode code points/);
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
+test('F09 contact text is trimmed and measured by Unicode code points', () => {
+  const { validatePrivateAddressBookText } = loadTypeScriptModule('contracts/private-address-book.ts');
+
+  assert.deepEqual(validatePrivateAddressBookText('contact', '  张三🛠  '), {
+    ok: true,
+    value: '张三🛠',
+    characterCount: 3,
+  });
+});
+
+test('F09 address-book text fields enforce only their documented code-point limits', () => {
+  const { validatePrivateAddressBookText } = loadTypeScriptModule('contracts/private-address-book.ts');
+
+  for (const [field, text, limit] of [
+    ['contact', '张'.repeat(20), 20],
+    ['contact', '🛠'.repeat(20), 20],
+    ['detailAddress', '路'.repeat(200), 200],
+    ['remark', '注'.repeat(100), 100],
+  ]) {
+    assert.deepEqual(validatePrivateAddressBookText(field, text), {
+      ok: true,
+      value: text,
+      characterCount: limit,
+    });
+  }
+
+  for (const [field, text] of [
+    ['contact', '张'.repeat(21)],
+    ['contact', '🛠'.repeat(21)],
+    ['detailAddress', '路'.repeat(201)],
+    ['remark', '注'.repeat(101)],
+  ]) {
+    assert.deepEqual(validatePrivateAddressBookText(field, text), {
+      ok: false,
+      reason: 'too-long',
+    });
+  }
+
+  const emojiWithModifier = '🧑🏽';
+  assert.deepEqual(validatePrivateAddressBookText('contact', emojiWithModifier.repeat(10)), {
+    ok: true,
+    value: emojiWithModifier.repeat(10),
+    characterCount: 20,
+  });
+  assert.deepEqual(validatePrivateAddressBookText('contact', emojiWithModifier.repeat(11)), {
+    ok: false,
+    reason: 'too-long',
+  });
+
+  assert.deepEqual(validatePrivateAddressBookText('community', '村'.repeat(201)), {
+    ok: true,
+    value: '村'.repeat(201),
+    characterCount: 201,
+  });
+});
+
+test('F09 required text rejects blank and non-string values while optional remark may be absent', () => {
+  const { validatePrivateAddressBookText } = loadTypeScriptModule('contracts/private-address-book.ts');
+
+  for (const field of ['contact', 'community', 'detailAddress']) {
+    assert.deepEqual(validatePrivateAddressBookText(field, '  \t\n '), {
+      ok: false,
+      reason: 'empty',
+    });
+    for (const input of [null, 7, {}, []]) {
+      assert.deepEqual(validatePrivateAddressBookText(field, input), {
+        ok: false,
+        reason: 'not-string',
+      });
+    }
+  }
+
+  assert.deepEqual(validatePrivateAddressBookText('remark', undefined), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validatePrivateAddressBookText('remark', '  '), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validatePrivateAddressBookText('postalCode', '123'), {
+    ok: false,
+    reason: 'unknown-field',
+  });
 });
 
 test('yuan decimal strings convert to integer fen without floating point', () => {
@@ -411,6 +501,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('trusted-command-context-runtime-shape-validation'));
   assert.ok(record.scope.includes('command-result-runtime-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-phone-shape-validation'));
+  assert.ok(record.scope.includes('f09-private-address-book-text-shape-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
