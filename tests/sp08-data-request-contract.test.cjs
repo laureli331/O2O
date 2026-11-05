@@ -39,6 +39,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
 
   assert.equal(typeof shared.parseCnyFen, 'function');
   assert.equal(typeof shared.formatCnyFen, 'function');
+  assert.equal(typeof shared.parseIdleListingPrice, 'function');
   assert.equal(typeof shared.parseCommandEnvelope, 'function');
   assert.equal(typeof shared.parseTrustedCommandContext, 'function');
   assert.equal(typeof shared.parseCommandResult, 'function');
@@ -628,6 +629,55 @@ test('yuan decimal parser rejects unknown, imprecise, malformed, negative, and o
   assert.deepEqual(parseCnyFen('01.00'), { ok: true, value: 100 });
 });
 
+test('F03 idle listing price accepts face-to-face negotiation or a positive PRD-bounded yuan amount', () => {
+  const { parseIdleListingPrice } = loadTypeScriptModule('contracts/idle-listing-price.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F03[^\n]*明确价格须大于0且≤99,999\.99\/最多2位小数，或面议/);
+  assert.deepEqual(parseIdleListingPrice('面议'), {
+    ok: true,
+    value: { kind: 'negotiable' },
+  });
+  assert.deepEqual(parseIdleListingPrice('0.01'), {
+    ok: true,
+    value: { kind: 'fixed', amountFen: 1 },
+  });
+  assert.deepEqual(parseIdleListingPrice('1.2'), {
+    ok: true,
+    value: { kind: 'fixed', amountFen: 120 },
+  });
+  assert.deepEqual(parseIdleListingPrice('99999.99'), {
+    ok: true,
+    value: { kind: 'fixed', amountFen: 9_999_999 },
+  });
+});
+
+test('F03 idle listing price rejects zero, malformed, over-precise, out-of-range, and non-string values', () => {
+  const { parseIdleListingPrice } = loadTypeScriptModule('contracts/idle-listing-price.ts');
+
+  for (const input of [null, undefined, 1, {}, []]) {
+    assert.deepEqual(parseIdleListingPrice(input), { ok: false, reason: 'not-string' });
+  }
+  for (const input of ['0', '0.00']) {
+    assert.deepEqual(parseIdleListingPrice(input), { ok: false, reason: 'not-positive' });
+  }
+  assert.deepEqual(parseIdleListingPrice('100000.00'), { ok: false, reason: 'out-of-range' });
+  assert.deepEqual(parseIdleListingPrice('1.001'), { ok: false, reason: 'too-precise' });
+  for (const input of ['', ' 面议 ', ' 1.00', '+1.00', '-0.01', '1,000.00', '.50']) {
+    assert.deepEqual(parseIdleListingPrice(input), { ok: false, reason: 'invalid-format' });
+  }
+});
+
+test('F03 idle listing price validator reuses the pure exact-fen parser without widening into storage or platform behavior', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'idle-listing-price.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+
+  assert.match(contractsIndex, /export \* from '\.\/idle-listing-price';/);
+  assert.match(source, /parseCnyFen/);
+  assert.match(source, /does not specify that behavior/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
 test('request envelope separates untrusted client data from trusted server context', () => {
   const commandSource = fs.readFileSync(path.join(sharedRoot, 'contracts', 'command.ts'), 'utf8');
   const resultSource = fs.readFileSync(path.join(sharedRoot, 'contracts', 'result.ts'), 'utf8');
@@ -851,12 +901,16 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f09-selected-address-detached-task-snapshot-copy'));
   assert.ok(record.scope.includes('f02-repair-other-public-text-projection'));
   assert.ok(record.scope.includes('f02-repair-other-public-image-count-validation'));
+  assert.ok(record.scope.includes('f03-idle-listing-price-field-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
+  assert.ok(record.notProven.includes('f03-idle-listing-title-and-description-length-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
+  assert.ok(record.reuseDecision.f03IdleListingPrice.includes('parseCnyFen'));
+  assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
 });
 
 test('SP08 database capability map distinguishes documented platform limits from synthetic probe evidence', () => {
