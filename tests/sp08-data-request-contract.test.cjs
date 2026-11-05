@@ -49,6 +49,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parsePrivateAddressBookDefaultPointer, 'function');
   assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
   assert.equal(typeof shared.createPrivateAddressBookTaskSnapshot, 'function');
+  assert.equal(typeof shared.validatePublicImageCount, 'function');
   assert.equal(typeof shared.validateRepairOtherPublicImageCount, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
@@ -486,29 +487,33 @@ test('F02 repair and other public text projection rejects absent, inherited, bla
   });
 });
 
-test('F02 repair and other public image count accepts the inclusive zero-to-nine range', () => {
-  const { validateRepairOtherPublicImageCount } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+test('F02 and F03 public image count accepts the inclusive zero-to-nine range', () => {
+  const { validatePublicImageCount } = loadTypeScriptModule('contracts/public-image-count.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F02[^\n]*公开图片0—9选填/);
+  assert.match(prd, /F03[^\n]*图片0—9/);
 
   for (const count of [0, 1, 9]) {
-    assert.deepEqual(validateRepairOtherPublicImageCount(count), {
+    assert.deepEqual(validatePublicImageCount(count), {
       ok: true,
       value: count,
     });
   }
 });
 
-test('F02 repair and other public image count rejects non-integers and values outside the PRD range', () => {
-  const { validateRepairOtherPublicImageCount } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+test('F02 and F03 public image count rejects non-integers and values outside the PRD range', () => {
+  const { validatePublicImageCount } = loadTypeScriptModule('contracts/public-image-count.ts');
 
   for (const count of [null, undefined, '1', {}, [], NaN, Infinity, 1.5]) {
-    assert.deepEqual(validateRepairOtherPublicImageCount(count), {
+    assert.deepEqual(validatePublicImageCount(count), {
       ok: false,
       reason: 'not-integer',
     });
   }
 
   for (const count of [-1, 10]) {
-    assert.deepEqual(validateRepairOtherPublicImageCount(count), {
+    assert.deepEqual(validatePublicImageCount(count), {
       ok: false,
       reason: 'out-of-range',
     });
