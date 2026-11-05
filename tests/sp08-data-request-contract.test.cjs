@@ -57,7 +57,35 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.validateCancellationOrDeliveryDisputeImageCount, 'function');
   assert.equal(typeof shared.validateRepairOtherPublicImageCount, 'function');
   assert.equal(typeof shared.validateProviderProfileText, 'function');
+  assert.equal(typeof shared.validateProviderLicenseImageCount, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
+});
+
+test('F01 and F07 provider license image count allows zero or one integer image', () => {
+  const { validateProviderLicenseImageCount } = loadTypeScriptModule('contracts/provider-license-image-count.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F01[^\n]*接单营业执照选填，最多1张清晰图片/);
+  assert.match(prd, /F07[^\n]*执照选填1张/);
+  assert.deepEqual(validateProviderLicenseImageCount(0), { ok: true, value: 0 });
+  assert.deepEqual(validateProviderLicenseImageCount(1), { ok: true, value: 1 });
+
+  for (const invalid of [-1, 2]) {
+    assert.deepEqual(validateProviderLicenseImageCount(invalid), { ok: false, reason: 'out-of-range' });
+  }
+  for (const invalid of [0.5, Number.NaN, Number.POSITIVE_INFINITY, '1', null, undefined, {}]) {
+    assert.deepEqual(validateProviderLicenseImageCount(invalid), { ok: false, reason: 'not-integer' });
+  }
+});
+
+test('provider license image count reuses shared integer bounds without claiming image or access validation', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'provider-license-image-count.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+
+  assert.match(contractsIndex, /export \* from '\.\/provider-license-image-count';/);
+  assert.match(source, /validateIntegerCountInRange/);
+  assert.match(source, /0, 1/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
 
 test('F07 provider profile text accepts a trimmed display name measured in Unicode code points', () => {
@@ -1380,6 +1408,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f04-errand-attachment-count-validation'));
   assert.ok(record.scope.includes('f04-errand-positive-service-fee-validation'));
   assert.ok(record.scope.includes('f07-provider-profile-display-name-and-service-intro-text-validation'));
+  assert.ok(record.scope.includes('f01-f07-provider-license-image-count-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
@@ -1405,6 +1434,9 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.evidence.errandServiceFeeValidation, 'packages/shared/src/contracts/errand-service-fee.ts#parseErrandServiceFee');
   assert.equal(record.evidence.integerCountRangeHelper, 'packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange');
   assert.equal(record.evidence.providerProfileTextValidation, 'packages/shared/src/contracts/provider-profile-text.ts#validateProviderProfileText');
+  assert.equal(record.evidence.providerLicenseImageCountValidation, 'packages/shared/src/contracts/provider-license-image-count.ts#validateProviderLicenseImageCount');
+  assert.ok(record.evidence.limitations.includes('F01/F07营业执照图片计数校验仅为字段数量边界'));
+  assert.ok(record.evidence.f07Limitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP14'));
 });
 

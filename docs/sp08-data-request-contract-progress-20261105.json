@@ -31,7 +31,8 @@
     "f04-errand-positive-service-fee-validation",
     "f05-errand-advance-terms-validation",
     "f06-order-objection-text-and-image-count-validation",
-    "f07-provider-profile-display-name-and-service-intro-text-validation"
+    "f07-provider-profile-display-name-and-service-intro-text-validation",
+    "f01-f07-provider-license-image-count-validation"
   ],
   "sources": [
     {
@@ -150,6 +151,10 @@
     {
       "path": "docs/sp08-object-ownership-map-20261105.md",
       "reference": "F07 接单资料归属 SP14；本次只添加 shared 文本字段合同，不实现资料页面和其余字段"
+    },
+    {
+      "path": "docs/prd.md",
+      "reference": "Section 13.1 F01: provider business license is optional, at most one image; F07: license is optional, one image"
     }
   ],
   "reuseDecision": {
@@ -168,7 +173,8 @@
     "f04ErrandServiceFee": "复用 packages/shared/src/contracts/money.ts#parseCnyFen 的十进制字符串到整数分解析与 PRD 99,999.99 元上限，增加 F04 专属正数薄层校验；零因 F04 明确要求正数而拒绝。平台 SDK 和第三方库不适用于替代此共享字段规则，且不新增运行依赖。专项 node:test 覆盖来源、0.01、最大值、零、格式、精度、范围及非字符串。未按未定义规则裁剪空白；只验证字段，不实现报价/修改、版本快照、付款、结算或服务端权限。",
     "f05ErrandAdvanceTerms": "复用 packages/shared/src/contracts/errand-service-fee.ts#parseErrandServiceFee 的精确十进制转分、正数及金额上限逻辑，不复制金额解析或新增第三方依赖。PRD F05 要求申请者说明是否愿意垫付，愿意时填写正数上限；解析器只接受 willingToAdvance 与 advanceLimitYuan 白名单，愿意时验证金额，不愿意时将金额上限归一为 null。专项 node:test 覆盖 PRD 来源、真假分支、缺失/额外/继承字段和金额边界。它不实现申请生命周期、当前时间版本绑定、服务端权限或资金操作。",
     "f06OrderObjectionFields": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange 的0-9整数范围规则，以及 F02/F03 已确认并验证的 String.trim() 与 Array.from() Unicode码点口径。当前项目没有覆盖 F06 理由字段范围的实现；微信/CloudBase SDK 不承担 shared 字段长度规则，第三方库对固定文本边界没有增益。新增独立纯校验与公开导出，不增加运行依赖。node:test 覆盖 F06 PRD 来源、三类文本范围、空值策略、emoji、类型与图片计数边界；不实现异议成立判定、状态迁移、角色权限或文件存储。",
-    "f07ProviderProfileText": "复用 F02/F03/F09 已验证的 String.trim() 与 Array.from() Unicode码点计数模式；PRD F07 给出展示名称1-30、服务介绍1-500，用户确认沿用该口径。项目现有 shared 没有覆盖这两个字段的校验器，因此新增独立纯校验并经 contracts/index.ts 导出；ECMAScript 原生实现及 node:test 足够，不增加 SDK 或第三方依赖。测试覆盖上下界、补充平面字符、组合字符计数、去空白、空白输入、类型和未知字段。该校验不实现 F07 页面、其它资料字段或服务端权限；业务仍归 SP14。"
+    "f07ProviderProfileText": "复用 F02/F03/F09 已验证的 String.trim() 与 Array.from() Unicode码点计数模式；PRD F07 给出展示名称1-30、服务介绍1-500，用户确认沿用该口径。项目现有 shared 没有覆盖这两个字段的校验器，因此新增独立纯校验并经 contracts/index.ts 导出；ECMAScript 原生实现及 node:test 足够，不增加 SDK 或第三方依赖。测试覆盖上下界、补充平面字符、组合字符计数、去空白、空白输入、类型和未知字段。该校验不实现 F07 页面、其它资料字段或服务端权限；业务仍归 SP14。",
+    "providerLicenseImageCount": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange 的整数范围逻辑，为 PRD F01/F07 的可选执照图片数量提供 0–1 薄层校验；专项 node:test 核对 PRD 来源、边界、非整数和无效类型。纯 shared 校验不判断清晰度、文件类型、大小、所有权、上传状态或读取权限；不新增运行依赖。F01 身份/资格归 SP09，F07 接单资料流程归 SP14。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -206,12 +212,12 @@
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 58,
+      "passed": 60,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1711,
+      "passed": 1713,
       "failed": 0
     },
     "checks": {
@@ -221,7 +227,7 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只负责规范化并复制逻辑公开字段；独立字段校验器按PRD对标题1-30、说明1-1000、地标0-50去边缘空白后按用户确认的Unicode码点计数。该本地纯函数不证明服务端强制执行、物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；分类及村/社区字段仅验证字符串和裁剪后非空，不定义最大长度，不校验允许类别目录、社区服务范围或发布资格；以上均不证明物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案。F04 新增 validator 仅验证 PRD 附件数量为整数0–9，不推断媒体类型、公开范围或上传/读取权限；对象映射继续将附件可见范围列为未决。 F04 服务费解析只校验发布者提供的正数十进制金额字符串、最多两位小数及99,999.99元上限；不证明服务端强制执行、金额版本一致性、申请者接受、支付或结算。F05 垫付条款解析只校验意愿布尔值以及愿意垫付时的正数上限，并将不愿意时的金额归一为 null；不实现接受发布者当前正数服务费、当前时间版本绑定、申请唯一性/幂等、修改/撤回、候选可见性或服务端授权与资金执行。F06 字段校验不证明异议受理资格、订单状态、成立判断、授权、状态迁移原子性或图片存储。F07 本增量仅校验展示名称和服务介绍的本地Unicode码点范围；资料页面、其它字段、公开视图和服务端读写权限归SP14，仍须按其原任务和验收完成。",
+    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只负责规范化并复制逻辑公开字段；独立字段校验器按PRD对标题1-30、说明1-1000、地标0-50去边缘空白后按用户确认的Unicode码点计数。该本地纯函数不证明服务端强制执行、物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；分类及村/社区字段仅验证字符串和裁剪后非空，不定义最大长度，不校验允许类别目录、社区服务范围或发布资格；以上均不证明物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案。F04 新增 validator 仅验证 PRD 附件数量为整数0–9，不推断媒体类型、公开范围或上传/读取权限；对象映射继续将附件可见范围列为未决。 F04 服务费解析只校验发布者提供的正数十进制金额字符串、最多两位小数及99,999.99元上限；不证明服务端强制执行、金额版本一致性、申请者接受、支付或结算。F05 垫付条款解析只校验意愿布尔值以及愿意垫付时的正数上限，并将不愿意时的金额归一为 null；不实现接受发布者当前正数服务费、当前时间版本绑定、申请唯一性/幂等、修改/撤回、候选可见性或服务端授权与资金执行。F06 字段校验不证明异议受理资格、订单状态、成立判断、授权、状态迁移原子性或图片存储。F07 本增量仅校验展示名称和服务介绍的本地Unicode码点范围；资料页面、其它字段、公开视图和服务端读写权限归SP14，仍须按其原任务和验收完成。F01/F07营业执照图片计数校验仅为字段数量边界（选填0–1），不证明执照真实性、图像质量、上传或读取权限；F01身份/资格与证照核验归SP09，F07资料页面与服务端读写归SP14。",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,
@@ -235,6 +241,7 @@
     "orderObjectionImageCountValidation": "packages/shared/src/contracts/order-objection-fields.ts#validateCancellationOrDeliveryDisputeImageCount",
     "f06Limitation": "仅校验 PRD F06 三类文本范围和异议图片数量，不证明受理资格、订单当前状态、异议成立判断、权限、状态迁移原子性或真实图片存储；这些由后续订单/异议业务模块验收。",
     "providerProfileTextValidation": "packages/shared/src/contracts/provider-profile-text.ts#validateProviderProfileText",
-    "f07Limitation": "仅校验 F07 展示名称与服务介绍的本地 Unicode 码点文本范围；F07 接单资料页面、其它字段、公开视图和服务端读写权限归 SP14，仍须按原任务和验收合同完成。"
+    "providerLicenseImageCountValidation": "packages/shared/src/contracts/provider-license-image-count.ts#validateProviderLicenseImageCount",
+    "f07Limitation": "仅校验 F07 展示名称与服务介绍的本地 Unicode 码点文本范围，以及 F01/F07 可选执照图片数量 0–1；不校验图像清晰度、类型、大小、所有权、上传状态或读取权限。F01 身份/资格与证照核验归 SP09；F07 接单资料页面、其它字段、公开视图和服务端读写权限归 SP14，仍须按原任务和验收合同完成。"
   }
 }

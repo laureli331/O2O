@@ -8,6 +8,7 @@ export * from './idle-listing-price';
 export * from './money';
 export * from './order-objection-fields';
 export * from './private-address-book';
+export * from './provider-license-image-count';
 export * from './public-image-count';
 export * from './provider-profile-text';
 export * from './repair-other-public-text';
