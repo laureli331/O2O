@@ -40,6 +40,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseCnyFen, 'function');
   assert.equal(typeof shared.formatCnyFen, 'function');
   assert.equal(typeof shared.parseCommandEnvelope, 'function');
+  assert.equal(typeof shared.parseTrustedCommandContext, 'function');
   assert.equal(typeof shared.parseCommandResult, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookPhone, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
@@ -211,6 +212,51 @@ test('request envelope separates untrusted client data from trusted server conte
   assert.doesNotMatch(combined, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\./);
 });
 
+test('trusted command context parser checks the adapter-provided shape without establishing trust', () => {
+  const { parseTrustedCommandContext } = loadTypeScriptModule('contracts/command.ts');
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'command.ts'), 'utf8');
+  const input = { actorId: 'actor-1', receivedAtEpochMs: 1_800_000_000_000, requestId: 'request-1' };
+
+  assert.match(source, /does not authenticate an actor/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+  assert.deepEqual(parseTrustedCommandContext(input), { ok: true, value: input });
+  assert.deepEqual(parseTrustedCommandContext({ actorId: 'actor-1', receivedAtEpochMs: 0, requestId: 'request-1' }), {
+    ok: true,
+    value: { actorId: 'actor-1', receivedAtEpochMs: 0, requestId: 'request-1' },
+  });
+  assert.deepEqual(parseTrustedCommandContext({ ...input, role: 'admin' }), {
+    ok: false,
+    reason: { code: 'unexpected-field', field: 'role' },
+  });
+});
+
+test('trusted command context parser rejects malformed, incomplete, blank, and non-finite facts', () => {
+  const { parseTrustedCommandContext } = loadTypeScriptModule('contracts/command.ts');
+  const valid = { actorId: 'actor-1', receivedAtEpochMs: 1_800_000_000_000, requestId: 'request-1' };
+
+  for (const input of [null, undefined, [], 'context', 1]) {
+    assert.deepEqual(parseTrustedCommandContext(input), { ok: false, reason: { code: 'not-object' } });
+  }
+  assert.deepEqual(parseTrustedCommandContext(Object.create(valid)), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'actorId' },
+  });
+  assert.deepEqual(parseTrustedCommandContext({ ...valid, actorId: '   ' }), {
+    ok: false,
+    reason: { code: 'empty-field', field: 'actorId' },
+  });
+  assert.deepEqual(parseTrustedCommandContext({ ...valid, requestId: '' }), {
+    ok: false,
+    reason: { code: 'empty-field', field: 'requestId' },
+  });
+  for (const receivedAtEpochMs of ['now', Number.NaN, Number.POSITIVE_INFINITY]) {
+    assert.deepEqual(parseTrustedCommandContext({ ...valid, receivedAtEpochMs }), {
+      ok: false,
+      reason: { code: 'invalid-field-type', field: 'receivedAtEpochMs' },
+    });
+  }
+});
+
 test('command envelope parser narrows only the documented generic structure', () => {
   const { parseCommandEnvelope } = loadTypeScriptModule('contracts/command.ts');
   const payload = { nested: [1, true, null] };
@@ -362,6 +408,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.cloudMutationsPerformed, false);
   assert.ok(record.scope.includes('shared-idempotency-reuse-decision'));
   assert.ok(record.scope.includes('command-envelope-runtime-structure-validation'));
+  assert.ok(record.scope.includes('trusted-command-context-runtime-shape-validation'));
   assert.ok(record.scope.includes('command-result-runtime-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-phone-shape-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));

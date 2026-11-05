@@ -145,3 +145,72 @@ export interface TrustedCommandContext {
   readonly receivedAtEpochMs: number;
   readonly requestId: string;
 }
+
+export type TrustedCommandContextField = keyof TrustedCommandContext;
+
+export type TrustedCommandContextValidationReason =
+  | { readonly code: 'not-object' }
+  | { readonly code: 'missing-field'; readonly field: TrustedCommandContextField }
+  | { readonly code: 'unexpected-field'; readonly field: string }
+  | { readonly code: 'invalid-field-type'; readonly field: TrustedCommandContextField }
+  | { readonly code: 'empty-field'; readonly field: 'actorId' | 'requestId' };
+
+export type ParseTrustedCommandContextResult =
+  | { readonly ok: true; readonly value: TrustedCommandContext }
+  | { readonly ok: false; readonly reason: TrustedCommandContextValidationReason };
+
+const TRUSTED_COMMAND_CONTEXT_FIELDS: readonly TrustedCommandContextField[] = [
+  'actorId',
+  'receivedAtEpochMs',
+  'requestId',
+];
+
+/**
+ * Check the shape of values already supplied by trusted server adapters.
+ * This parser does not authenticate an actor, establish clock provenance, or
+ * turn client-supplied data into trusted context.
+ */
+export function parseTrustedCommandContext(input: unknown): ParseTrustedCommandContextResult {
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+    return { ok: false, reason: { code: 'not-object' } };
+  }
+
+  const record = input as Record<string, unknown>;
+  for (const field of Object.keys(record)) {
+    if (!TRUSTED_COMMAND_CONTEXT_FIELDS.includes(field as TrustedCommandContextField)) {
+      return { ok: false, reason: { code: 'unexpected-field', field } };
+    }
+  }
+
+  for (const field of TRUSTED_COMMAND_CONTEXT_FIELDS) {
+    if (!Object.prototype.hasOwnProperty.call(record, field)) {
+      return { ok: false, reason: { code: 'missing-field', field } };
+    }
+  }
+
+  const actorId = record.actorId;
+  if (typeof actorId !== 'string') {
+    return { ok: false, reason: { code: 'invalid-field-type', field: 'actorId' } };
+  }
+  if (actorId.trim().length === 0) {
+    return { ok: false, reason: { code: 'empty-field', field: 'actorId' } };
+  }
+
+  const receivedAtEpochMs = record.receivedAtEpochMs;
+  if (typeof receivedAtEpochMs !== 'number' || !Number.isFinite(receivedAtEpochMs)) {
+    return { ok: false, reason: { code: 'invalid-field-type', field: 'receivedAtEpochMs' } };
+  }
+
+  const requestId = record.requestId;
+  if (typeof requestId !== 'string') {
+    return { ok: false, reason: { code: 'invalid-field-type', field: 'requestId' } };
+  }
+  if (requestId.trim().length === 0) {
+    return { ok: false, reason: { code: 'empty-field', field: 'requestId' } };
+  }
+
+  return {
+    ok: true,
+    value: { actorId, receivedAtEpochMs, requestId },
+  };
+}
