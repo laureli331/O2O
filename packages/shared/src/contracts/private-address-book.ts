@@ -8,6 +8,22 @@ export type ValidatePrivateAddressBookTextResult =
   | { readonly ok: true; readonly value: string; readonly characterCount: number }
   | { readonly ok: false; readonly reason: 'unknown-field' | 'not-string' | 'empty' | 'too-long' };
 
+/** Logical per-owner pointer; this does not define a physical collection or field layout. */
+export interface PrivateAddressBookDefaultPointer {
+  readonly defaultAddressId: string | null;
+}
+
+export type ParsePrivateAddressBookDefaultPointerResult =
+  | { readonly ok: true; readonly value: PrivateAddressBookDefaultPointer }
+  | {
+    readonly ok: false;
+    readonly reason:
+      | { readonly code: 'not-object' }
+      | { readonly code: 'missing-field' }
+      | { readonly code: 'invalid-address-id' }
+      | { readonly code: 'unexpected-field'; readonly field: string };
+  };
+
 const ADDRESS_BOOK_TEXT_LIMITS: Readonly<Record<PrivateAddressBookTextField, {
   readonly minimumCodePoints: number;
   readonly maximumCodePoints?: number;
@@ -32,6 +48,56 @@ export function validatePrivateAddressBookPhone(input: unknown): ValidatePrivate
   }
 
   return { ok: true, value: input };
+}
+
+/**
+ * Narrows a logical per-owner default pointer to zero or one nonblank address ID.
+ * It does not establish that the selected address exists or belongs to that owner.
+ */
+export function parsePrivateAddressBookDefaultPointer(
+  input: unknown,
+): ParsePrivateAddressBookDefaultPointerResult {
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+    return { ok: false, reason: { code: 'not-object' } };
+  }
+
+  if (!Object.prototype.hasOwnProperty.call(input, 'defaultAddressId')) {
+    return { ok: false, reason: { code: 'missing-field' } };
+  }
+
+  const fields = Object.keys(input);
+  const unexpectedField = fields.find((field) => field !== 'defaultAddressId');
+  if (unexpectedField !== undefined) {
+    return { ok: false, reason: { code: 'unexpected-field', field: unexpectedField } };
+  }
+
+  const defaultAddressId = (input as Record<string, unknown>).defaultAddressId;
+  if (defaultAddressId === null) {
+    return { ok: true, value: { defaultAddressId: null } };
+  }
+
+  if (typeof defaultAddressId !== 'string' || defaultAddressId.trim().length === 0) {
+    return { ok: false, reason: { code: 'invalid-address-id' } };
+  }
+
+  return { ok: true, value: { defaultAddressId } };
+}
+
+/**
+ * Applies the confirmed delete transition: deleting the current default clears
+ * the pointer, and no other address is promoted automatically. Callers must
+ * verify address ownership and atomic deletion in the server transaction; this
+ * pure helper does not verify address ownership or atomic deletion.
+ */
+export function clearPrivateAddressBookDefaultOnDelete(
+  pointer: PrivateAddressBookDefaultPointer,
+  deletedAddressId: string,
+): PrivateAddressBookDefaultPointer {
+  if (pointer.defaultAddressId !== deletedAddressId) {
+    return pointer;
+  }
+
+  return { defaultAddressId: null };
 }
 
 /**

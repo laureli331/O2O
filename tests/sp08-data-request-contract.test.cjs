@@ -44,6 +44,8 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseCommandResult, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookPhone, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookText, 'function');
+  assert.equal(typeof shared.parsePrivateAddressBookDefaultPointer, 'function');
+  assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
 
@@ -242,6 +244,74 @@ test('F09 required text rejects blank and non-string values while optional remar
     ok: false,
     reason: 'unknown-field',
   });
+});
+
+test('F09 default-address pointer models zero or one nonblank opaque address id', () => {
+  const { parsePrivateAddressBookDefaultPointer } = loadTypeScriptModule('contracts/private-address-book.ts');
+
+  assert.deepEqual(parsePrivateAddressBookDefaultPointer({ defaultAddressId: null }), {
+    ok: true,
+    value: { defaultAddressId: null },
+  });
+  assert.deepEqual(parsePrivateAddressBookDefaultPointer({ defaultAddressId: 'address-a' }), {
+    ok: true,
+    value: { defaultAddressId: 'address-a' },
+  });
+  assert.deepEqual(parsePrivateAddressBookDefaultPointer({ defaultAddressId: 'address-b' }), {
+    ok: true,
+    value: { defaultAddressId: 'address-b' },
+  });
+  assert.deepEqual(parsePrivateAddressBookDefaultPointer({ defaultAddressId: ' address-c ' }), {
+    ok: true,
+    value: { defaultAddressId: ' address-c ' },
+  });
+});
+
+test('F09 default-address pointer rejects malformed, inherited, blank, or untrusted fields', () => {
+  const { parsePrivateAddressBookDefaultPointer } = loadTypeScriptModule('contracts/private-address-book.ts');
+  const inherited = Object.create({ defaultAddressId: 'address-a' });
+
+  for (const input of [null, undefined, [], 'address-a', 1]) {
+    assert.deepEqual(parsePrivateAddressBookDefaultPointer(input), {
+      ok: false,
+      reason: { code: 'not-object' },
+    });
+  }
+  assert.deepEqual(parsePrivateAddressBookDefaultPointer(inherited), {
+    ok: false,
+    reason: { code: 'missing-field' },
+  });
+  for (const defaultAddressId of ['', '  ', 1, false, undefined]) {
+    assert.deepEqual(parsePrivateAddressBookDefaultPointer({ defaultAddressId }), {
+      ok: false,
+      reason: { code: 'invalid-address-id' },
+    });
+  }
+  assert.deepEqual(parsePrivateAddressBookDefaultPointer({ defaultAddressId: null, ownerId: 'forged' }), {
+    ok: false,
+    reason: { code: 'unexpected-field', field: 'ownerId' },
+  });
+});
+
+test('F09 deleting the current default clears only the pointer and never promotes another address', () => {
+  const { clearPrivateAddressBookDefaultOnDelete } = loadTypeScriptModule('contracts/private-address-book.ts');
+  const currentDefault = { defaultAddressId: 'address-a' };
+
+  assert.deepEqual(clearPrivateAddressBookDefaultOnDelete(currentDefault, 'address-a'), {
+    defaultAddressId: null,
+  });
+  assert.deepEqual(clearPrivateAddressBookDefaultOnDelete(currentDefault, 'address-b'), currentDefault);
+  assert.deepEqual(clearPrivateAddressBookDefaultOnDelete({ defaultAddressId: null }, 'address-a'), {
+    defaultAddressId: null,
+  });
+});
+
+test('F09 default-address helpers remain pure and explicitly do not prove ownership or atomic deletion', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'private-address-book.ts'), 'utf8');
+
+  assert.match(source, /defaultAddressId/);
+  assert.match(source, /does not verify address ownership or atomic deletion/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
 
 test('yuan decimal strings convert to integer fen without floating point', () => {
@@ -502,6 +572,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('command-result-runtime-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-phone-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-text-shape-validation'));
+  assert.ok(record.scope.includes('f09-private-address-book-default-pointer-and-delete-transition'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));

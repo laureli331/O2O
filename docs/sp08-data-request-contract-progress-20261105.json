@@ -17,7 +17,8 @@
     "exact-cny-fen-parser-and-formatter",
     "logical-ownership-and-public-private-snapshot-map-F01-F22",
     "f09-private-address-book-phone-shape-validation",
-    "f09-private-address-book-text-shape-validation"
+    "f09-private-address-book-text-shape-validation",
+    "f09-private-address-book-default-pointer-and-delete-transition"
   ],
   "sources": [
     {
@@ -87,7 +88,7 @@
     }
   ],
   "reuseDecision": {
-    "project": "命令结果运行时解析复用 packages/shared/src/contracts/result.ts 的既有五态结果/错误类型；可信上下文校验复用 command.ts 已定义的 TrustedCommandContext 类型、contracts/index.ts 导出路径、严格 TypeScript 和 node:test 模式。F09文本校验复用已有 shared 私人地址簿模块及公开导出路径。",
+    "project": "命令结果运行时解析复用 packages/shared/src/contracts/result.ts 的既有五态结果/错误类型；可信上下文校验复用 command.ts 已定义的 TrustedCommandContext 类型、contracts/index.ts 导出路径、严格 TypeScript 和 node:test 模式。F09文本校验及默认地址逻辑指针复用已有 shared 私人地址簿模块及公开导出路径，不新增物理模式或运行依赖。",
     "platform": "可信上下文解析只验证由服务端认证/时钟适配器提供的对象结构，不调用平台 API，也不认证身份或证明时间来源；真实适配仍需按实际运行环境验证。",
     "thirdParty": "不新增运行依赖；F09普通文本使用 ECMAScript String.trim() 与 Array.from() 去边缘空白并按Unicode码点计数，不引入额外分词库；有限联合类型收窄无需额外 schema 库，Node 内置 node:test 可覆盖验证。"
   },
@@ -113,15 +114,17 @@
     "commandResultValidation": "packages/shared/src/contracts/result.ts#parseCommandResult",
     "privateAddressBookPhoneValidation": "packages/shared/src/contracts/private-address-book.ts#validatePrivateAddressBookPhone",
     "privateAddressBookTextValidation": "packages/shared/src/contracts/private-address-book.ts#validatePrivateAddressBookText",
+    "privateAddressBookDefaultPointerValidation": "packages/shared/src/contracts/private-address-book.ts#parsePrivateAddressBookDefaultPointer",
+    "privateAddressBookDefaultDeleteTransition": "packages/shared/src/contracts/private-address-book.ts#clearPrivateAddressBookDefaultOnDelete",
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 24,
+      "passed": 28,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1677,
+      "passed": 1681,
       "failed": 0
     },
     "checks": {
@@ -131,7 +134,7 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围，也不验证默认地址唯一性、服务端授权或物理存储。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
+    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,
