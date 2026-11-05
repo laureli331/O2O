@@ -714,6 +714,89 @@ test('F04 service-fee validator reuses the exact-fen parser without defining tra
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
 
+test('F05 errand advance terms require a positive capped amount only when the applicant is willing to advance', () => {
+  const { parseErrandAdvanceTerms } = loadTypeScriptModule('contracts/errand-advance-terms.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /\| F05 \|[^\n]*跑腿只读接受发布者正数服务费和是否垫付、愿垫付的正数上限/);
+  assert.match(prd, /跑腿仍按已确认申请的是否垫付与正数上限规则/);
+
+  assert.deepEqual(parseErrandAdvanceTerms({ willingToAdvance: false }), {
+    ok: true,
+    value: { willingToAdvance: false, advanceLimitFen: null },
+  });
+  assert.deepEqual(parseErrandAdvanceTerms({ willingToAdvance: false, advanceLimitYuan: 'invalid-but-irrelevant' }), {
+    ok: true,
+    value: { willingToAdvance: false, advanceLimitFen: null },
+  });
+  assert.deepEqual(parseErrandAdvanceTerms({ willingToAdvance: true, advanceLimitYuan: '0.01' }), {
+    ok: true,
+    value: { willingToAdvance: true, advanceLimitFen: 1 },
+  });
+  assert.deepEqual(parseErrandAdvanceTerms({ willingToAdvance: true, advanceLimitYuan: '99999.99' }), {
+    ok: true,
+    value: { willingToAdvance: true, advanceLimitFen: 9_999_999 },
+  });
+});
+
+test('F05 errand advance terms reject malformed objects, willingness, and invalid required caps', () => {
+  const { parseErrandAdvanceTerms } = loadTypeScriptModule('contracts/errand-advance-terms.ts');
+
+  for (const input of [null, [], 'not-an-object']) {
+    assert.deepEqual(parseErrandAdvanceTerms(input), {
+      ok: false,
+      reason: { code: 'not-object' },
+    });
+  }
+  assert.deepEqual(parseErrandAdvanceTerms({ advanceLimitYuan: '1' }), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'willingToAdvance' },
+  });
+  assert.deepEqual(parseErrandAdvanceTerms({ willingToAdvance: 'yes', advanceLimitYuan: '1' }), {
+    ok: false,
+    reason: { code: 'invalid-willingness' },
+  });
+  assert.deepEqual(parseErrandAdvanceTerms({ willingToAdvance: true }), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'advanceLimitYuan' },
+  });
+  for (const [advanceLimitYuan, reason] of [
+    ['0', 'not-positive'],
+    ['0.00', 'not-positive'],
+    ['', 'invalid-format'],
+    ['1.001', 'too-precise'],
+    ['100000', 'out-of-range'],
+    [1, 'not-decimal-string'],
+  ]) {
+    assert.deepEqual(parseErrandAdvanceTerms({ willingToAdvance: true, advanceLimitYuan }), {
+      ok: false,
+      reason: { code: 'invalid-advance-limit', reason },
+    });
+  }
+});
+
+test('F05 advance-terms parser accepts only its own allowlisted fields and stays a pure shared contract', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'errand-advance-terms.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const inherited = Object.create({ willingToAdvance: true });
+  inherited.advanceLimitYuan = '1';
+
+  assert.match(contractsIndex, /export \* from '\.\/errand-advance-terms';/);
+  assert.deepEqual(loadTypeScriptModule('contracts/errand-advance-terms.ts').parseErrandAdvanceTerms(inherited), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'willingToAdvance' },
+  });
+  assert.deepEqual(loadTypeScriptModule('contracts/errand-advance-terms.ts').parseErrandAdvanceTerms({
+    willingToAdvance: false,
+    clientOwnerId: 'forged',
+  }), {
+    ok: false,
+    reason: { code: 'unexpected-field', field: 'clientOwnerId' },
+  });
+  assert.match(source, /parseErrandServiceFee/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
 test('F09 default-address pointer models zero or one nonblank opaque address id', () => {
   const { parsePrivateAddressBookDefaultPointer } = loadTypeScriptModule('contracts/private-address-book.ts');
 
