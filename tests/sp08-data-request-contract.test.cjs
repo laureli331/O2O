@@ -40,7 +40,42 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseCnyFen, 'function');
   assert.equal(typeof shared.formatCnyFen, 'function');
   assert.equal(typeof shared.parseCommandEnvelope, 'function');
+  assert.equal(typeof shared.validatePrivateAddressBookPhone, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
+});
+
+test('private address book phone validation accepts an exact eleven-digit value', () => {
+  const { validatePrivateAddressBookPhone } = loadTypeScriptModule('contracts/private-address-book.ts');
+
+  assert.deepEqual(validatePrivateAddressBookPhone('13800138000'), {
+    ok: true,
+    value: '13800138000',
+  });
+  assert.deepEqual(validatePrivateAddressBookPhone('00000000000'), {
+    ok: true,
+    value: '00000000000',
+  });
+});
+
+test('private address book phone validation rejects non-strings and anything other than eleven ASCII digits', () => {
+  const { validatePrivateAddressBookPhone } = loadTypeScriptModule('contracts/private-address-book.ts');
+
+  for (const input of [null, undefined, 13800138000, {}, []]) {
+    assert.deepEqual(validatePrivateAddressBookPhone(input), { ok: false, reason: 'not-string' });
+  }
+
+  for (const input of ['', '1380013800', '138001380000', '138 0013 8000', '+8613800138000', '１３８００１３８０００']) {
+    assert.deepEqual(validatePrivateAddressBookPhone(input), { ok: false, reason: 'not-eleven-digits' });
+  }
+});
+
+test('private address book phone validation is a pure field-shape contract with no ownership claim', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'private-address-book.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+
+  assert.match(contractsIndex, /export \* from '\.\/private-address-book';/);
+  assert.match(source, /does not verify control of the number/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
 
 test('yuan decimal strings convert to integer fen without floating point', () => {
@@ -252,7 +287,8 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.cloudMutationsPerformed, false);
   assert.ok(record.scope.includes('shared-idempotency-reuse-decision'));
   assert.ok(record.scope.includes('command-envelope-runtime-structure-validation'));
-  assert.ok(record.notProven.includes('module-specific-command-validation'));
+  assert.ok(record.scope.includes('f09-private-address-book-phone-shape-validation'));
+  assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));

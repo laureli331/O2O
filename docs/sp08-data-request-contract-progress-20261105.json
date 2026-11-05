@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "taskId": "SP08",
   "date": "2026-11-05",
-  "title": "命令信封运行时校验与既有数据合同增量",
+  "title": "共享请求合同与部分对象字段校验",
   "status": "in-progress",
   "productAcceptancePassed": false,
   "cloudMutationsPerformed": false,
@@ -13,7 +13,8 @@
     "command-result-union",
     "shared-idempotency-reuse-decision",
     "exact-cny-fen-parser-and-formatter",
-    "logical-ownership-and-public-private-snapshot-map-F01-F22"
+    "logical-ownership-and-public-private-snapshot-map-F01-F22",
+    "f09-private-address-book-phone-shape-validation"
   ],
   "sources": [
     {
@@ -50,6 +51,10 @@
       "fact": "金额上限 99,999.99 元；0 是否允许由具体操作规则决定"
     },
     {
+      "path": "docs/prd.md",
+      "reference": "Section 13.1 F09: private address book contact phone is 11 digits; number control is not claimed"
+    },
+    {
       "url": "https://docs.cloudbase.net/cloud-function/resource-integration/cloudbase",
       "use": "核对官方 Node.js 服务端资源访问范围"
     },
@@ -75,9 +80,9 @@
     }
   ],
   "reuseDecision": {
-    "project": "复用 packages/shared/src/contracts/command.ts 的信封类型、严格 TypeScript 和现有 node:test 加载模式；未发现已有运行时 schema 校验器。",
-    "platform": "后端架构合同第4节1-2项要求对 unknown 外部输入做字段白名单和类型检查，并将可信事实留在服务端；该合同没有定义业务操作目录、字段长度参数或每个 payload schema。",
-    "thirdParty": "不新增运行依赖；本次只实现通用信封外层检查，添加 schema 库仍不能填补未定义的业务模块规则，维护/升级成本不合算。"
+    "project": "复用 packages/shared/src/contracts/command.ts 的信封类型、严格 TypeScript 和 node:test 加载模式；检索 packages/shared、apps 与测试未发现 11 位电话校验器。",
+    "platform": "F09 电话要求直接来自 PRD；此项仅为纯字符串格式检查，不需调用平台 API。服务端授权和对象存储仍由后续模块验证。",
+    "thirdParty": "不新增运行依赖；schema 库不会提供 PRD 未定义的号码前缀、号码控制权验证或其它地址簿业务规则。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -86,7 +91,7 @@
     "business-transaction-concurrency",
     "trusted-server-time-and-money-enforcement",
     "idempotency-payload-normalization-and-equivalence-per-operation",
-    "module-specific-command-validation",
+    "remaining-module-specific-command-validation",
     "atomic-idempotency-claim-with-business-write",
     "unknown-outcome-same-request-query-and-recovery",
     "browser-backend-adapter",
@@ -95,15 +100,16 @@
   "evidence": {
     "test": "tests/sp08-data-request-contract.test.cjs",
     "commandEnvelopeValidation": "packages/shared/src/contracts/command.ts#parseCommandEnvelope",
+    "privateAddressBookPhoneValidation": "packages/shared/src/contracts/private-address-book.ts#validatePrivateAddressBookPhone",
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 12,
+      "passed": 15,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1665,
+      "passed": 1668,
       "failed": 0
     },
     "checks": {
@@ -113,7 +119,7 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "信封解析器只做通用结构收窄；模块级操作白名单、字段长度、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明 CloudBase 物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
+    "limitations": "信封解析器只做通用结构收窄；F09 仅验证联系电话字段为 11 位 ASCII 数字，不验证号码真实性、控制权或联系同意。地址簿其余字段长度/计数语义、默认唯一、模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明 CloudBase 物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,
