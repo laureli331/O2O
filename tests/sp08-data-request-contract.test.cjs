@@ -52,6 +52,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
   assert.equal(typeof shared.createPrivateAddressBookTaskSnapshot, 'function');
   assert.equal(typeof shared.validatePublicImageCount, 'function');
+  assert.equal(typeof shared.validateErrandAttachmentCount, 'function');
   assert.equal(typeof shared.validateRepairOtherPublicImageCount, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
@@ -630,6 +631,41 @@ test('F02 and F03 public image count rejects non-integers and values outside the
   }
 });
 
+test('F04 errand attachment count accepts only the inclusive zero-to-nine count range', () => {
+  const { validateErrandAttachmentCount } = loadTypeScriptModule('contracts/errand-attachment-count.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const f04 = ownership.fieldGroups.find((fieldGroup) => fieldGroup.prdFieldId === 'F04');
+
+  assert.match(prd, /\| F04 \|[^\n]*附件0—9/);
+  assert.match(f04.snapshotRule, /附件公开范围尚未由 PRD 明确/);
+
+  for (const count of [0, 1, 9]) {
+    assert.deepEqual(validateErrandAttachmentCount(count), {
+      ok: true,
+      value: count,
+    });
+  }
+});
+
+test('F04 errand attachment count rejects non-integers and values outside the PRD range', () => {
+  const { validateErrandAttachmentCount } = loadTypeScriptModule('contracts/errand-attachment-count.ts');
+
+  for (const count of [null, undefined, '1', {}, [], NaN, Infinity, 1.5]) {
+    assert.deepEqual(validateErrandAttachmentCount(count), {
+      ok: false,
+      reason: 'not-integer',
+    });
+  }
+
+  for (const count of [-1, 10]) {
+    assert.deepEqual(validateErrandAttachmentCount(count), {
+      ok: false,
+      reason: 'out-of-range',
+    });
+  }
+});
+
 test('F09 default-address pointer models zero or one nonblank opaque address id', () => {
   const { parsePrivateAddressBookDefaultPointer } = loadTypeScriptModule('contracts/private-address-book.ts');
 
@@ -1075,6 +1111,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f03-idle-listing-price-field-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-text-length-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-required-category-community-text-shape-validation'));
+  assert.ok(record.scope.includes('f04-errand-attachment-count-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
@@ -1087,10 +1124,14 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.reuseDecision.f03IdleListingRequiredText.includes('String.trim()'));
   assert.ok(record.reuseDecision.f03IdleListingRequiredText.includes('没有给出允许类别目录'));
   assert.ok(record.reuseDecision.f02RepairOtherText.includes('Unicode 码点'));
+  assert.ok(record.reuseDecision.f04ErrandAttachmentCount.includes('validateIntegerCountInRange'));
+  assert.ok(record.reuseDecision.f04ErrandAttachmentCount.includes('不推断附件媒体类型、公开范围或上传/读取权限'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
   assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
   assert.equal(record.evidence.idleListingRequiredTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingRequiredText');
   assert.equal(record.evidence.repairOtherPublicTextValidation, 'packages/shared/src/contracts/repair-other-public-text.ts#validateRepairOtherPublicText');
+  assert.equal(record.evidence.errandAttachmentCountValidation, 'packages/shared/src/contracts/errand-attachment-count.ts#validateErrandAttachmentCount');
+  assert.equal(record.evidence.integerCountRangeHelper, 'packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange');
 });
 
 test('SP08 database capability map distinguishes documented platform limits from synthetic probe evidence', () => {

@@ -1,4 +1,5 @@
 export * from './command';
+export * from './errand-attachment-count';
 export * from './idempotency';
 export * from './idle-listing-text';
 export * from './idle-listing-price';
