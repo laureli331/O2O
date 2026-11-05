@@ -27,7 +27,8 @@
     "f03-idle-listing-price-field-validation",
     "f03-idle-listing-text-length-validation",
     "f03-idle-listing-required-category-community-text-shape-validation",
-    "f04-errand-attachment-count-validation"
+    "f04-errand-attachment-count-validation",
+    "f04-errand-positive-service-fee-validation"
   ],
   "sources": [
     {
@@ -122,6 +123,14 @@
     {
       "path": "docs/sp08-object-ownership-map-20261105.json",
       "reference": "F04 snapshotRule records attachment visibility as unresolved; this count validator does not resolve that rule"
+    },
+    {
+      "path": "docs/prd.md",
+      "reference": "Section 13.1: global amount is at most two decimal places and at most 99,999.99 yuan; zero is allowed only where the operation specifies it"
+    },
+    {
+      "path": "docs/prd.md",
+      "reference": "Section 13.1 F04 and V03: publisher enters a positive errand service fee; applicants accept the published amount without quoting or editing it"
     }
   ],
   "reuseDecision": {
@@ -136,7 +145,8 @@
     "f03IdleListingText": "复用 packages/shared/src/contracts/private-address-book.ts#validatePrivateAddressBookText 中的 String.trim() 与 Array.from() 码点计数模式；该模块不覆盖 F03 字段，故新增独立纯 validator 并经 contracts/index.ts 导出。PRD F03 给出标题/说明/地标范围，Unicode 码点计数由用户确认。原生 ECMAScript 足够，不新增依赖；专项 node:test 覆盖补充平面 emoji、三字段上下界、空白裁剪、缺省可选地标、错误类型及纯函数边界。",
     "f03IdleListingRequiredText": "复用项目既有 String.trim() 普通文本校验模式，使用 ECMAScript 原生实现，不增加运行依赖。PRD 仅要求 F03 分类与村/社区必填，没有给出允许类别目录、服务社区目录或最大长度；validator 只检查字段名、字符串类型及裁剪后非空，不推断目录或长度。node:test 覆盖规范化、空白、非字符串、未知字段和较长文本；无适用的平台 SDK 或第三方库能替代这项共享字段形状规则。",
     "f02RepairOtherText": "复用 F03/F09 已验证的 String.trim() 与 Array.from() Unicode 码点计数模式；PRD F02 给出标题/说明/地标范围，用户确认与 F03 统一采用码点计数。现有 F02 投影器不做长度校验，因此新增独立 shared validator。平台 API 或第三方库不适用于替代此纯文本规则；原生 ECMAScript 足够，不增加依赖。node:test 覆盖三字段上下界、补充平面 emoji、组合变音字符、空白裁剪、可选地标和错误输入。",
-    "f04ErrandAttachmentCount": "复用 F02/F03 图片数量校验中已验证的整数边界逻辑，提取为 shared 的 validateIntegerCountInRange helper，供 validatePublicImageCount 与 F04 独立语义包装共同使用；PRD F04 只明确附件数量 0–9，对应范围由来源测试核对。平台 SDK 不定义共享字段计数边界，成熟第三方库不适用这项纯数值检查，ECMAScript Number.isInteger 足够且不增加依赖。专项 node:test 覆盖 0/1/9、非整数和越界输入。不推断附件媒体类型、公开范围或上传/读取权限；对象映射仍将可见范围列为未决。"
+    "f04ErrandAttachmentCount": "复用 F02/F03 图片数量校验中已验证的整数边界逻辑，提取为 shared 的 validateIntegerCountInRange helper，供 validatePublicImageCount 与 F04 独立语义包装共同使用；PRD F04 只明确附件数量 0–9，对应范围由来源测试核对。平台 SDK 不定义共享字段计数边界，成熟第三方库不适用这项纯数值检查，ECMAScript Number.isInteger 足够且不增加依赖。专项 node:test 覆盖 0/1/9、非整数和越界输入。不推断附件媒体类型、公开范围或上传/读取权限；对象映射仍将可见范围列为未决。",
+    "f04ErrandServiceFee": "复用 packages/shared/src/contracts/money.ts#parseCnyFen 的十进制字符串到整数分解析与 PRD 99,999.99 元上限，增加 F04 专属正数薄层校验；零因 F04 明确要求正数而拒绝。平台 SDK 和第三方库不适用于替代此共享字段规则，且不新增运行依赖。专项 node:test 覆盖来源、0.01、最大值、零、格式、精度、范围及非字符串。未按未定义规则裁剪空白；只验证字段，不实现报价/修改、版本快照、付款、结算或服务端权限。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -174,12 +184,12 @@
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 48,
+      "passed": 51,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1701,
+      "passed": 1704,
       "failed": 0
     },
     "checks": {
@@ -189,13 +199,14 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只负责规范化并复制逻辑公开字段；独立字段校验器按PRD对标题1-30、说明1-1000、地标0-50去边缘空白后按用户确认的Unicode码点计数。该本地纯函数不证明服务端强制执行、物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；分类及村/社区字段仅验证字符串和裁剪后非空，不定义最大长度，不校验允许类别目录、社区服务范围或发布资格；以上均不证明物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案。F04 新增 validator 仅验证 PRD 附件数量为整数0–9，不推断媒体类型、公开范围或上传/读取权限；对象映射继续将附件可见范围列为未决。",
+    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只负责规范化并复制逻辑公开字段；独立字段校验器按PRD对标题1-30、说明1-1000、地标0-50去边缘空白后按用户确认的Unicode码点计数。该本地纯函数不证明服务端强制执行、物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；分类及村/社区字段仅验证字符串和裁剪后非空，不定义最大长度，不校验允许类别目录、社区服务范围或发布资格；以上均不证明物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案。F04 新增 validator 仅验证 PRD 附件数量为整数0–9，不推断媒体类型、公开范围或上传/读取权限；对象映射继续将附件可见范围列为未决。 F04 服务费解析只校验发布者提供的正数十进制金额字符串、最多两位小数及99,999.99元上限；不证明服务端强制执行、金额版本一致性、申请者接受、支付或结算。",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,
       "failed": 0
     },
     "errandAttachmentCountValidation": "packages/shared/src/contracts/errand-attachment-count.ts#validateErrandAttachmentCount",
-    "integerCountRangeHelper": "packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange"
+    "integerCountRangeHelper": "packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange",
+    "errandServiceFeeValidation": "packages/shared/src/contracts/errand-service-fee.ts#parseErrandServiceFee"
   }
 }

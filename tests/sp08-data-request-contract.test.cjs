@@ -666,6 +666,54 @@ test('F04 errand attachment count rejects non-integers and values outside the PR
   }
 });
 
+test('F04 errand service fee requires a positive PRD-bounded exact yuan amount', () => {
+  const { parseErrandServiceFee } = loadTypeScriptModule('contracts/errand-service-fee.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /金额最多2位小数、上限99,999\.99元/);
+  assert.match(prd, /\| F04 \|[^\n]*正数服务费/);
+  assert.match(prd, /跑腿由发布者填写明确的正数服务费/);
+
+  for (const [input, valueFen] of [['0.01', 1], ['1', 100], ['99999.99', 9_999_999]]) {
+    assert.deepEqual(parseErrandServiceFee(input), {
+      ok: true,
+      valueFen,
+    });
+  }
+});
+
+test('F04 errand service fee rejects zero, malformed, imprecise, over-limit, and non-string values', () => {
+  const { parseErrandServiceFee } = loadTypeScriptModule('contracts/errand-service-fee.ts');
+  const invalidInputs = [
+    [0, 'not-decimal-string'],
+    [null, 'not-decimal-string'],
+    [undefined, 'not-decimal-string'],
+    ['', 'invalid-format'],
+    [' 1', 'invalid-format'],
+    ['0', 'not-positive'],
+    ['0.00', 'not-positive'],
+    ['-1', 'invalid-format'],
+    ['1.001', 'too-precise'],
+    ['100000', 'out-of-range'],
+  ];
+
+  for (const [input, reason] of invalidInputs) {
+    assert.deepEqual(parseErrandServiceFee(input), {
+      ok: false,
+      reason,
+    });
+  }
+});
+
+test('F04 service-fee validator reuses the exact-fen parser without defining transaction or transport behavior', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'errand-service-fee.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+
+  assert.match(contractsIndex, /export \* from '\.\/errand-service-fee';/);
+  assert.match(source, /parseCnyFen/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
 test('F09 default-address pointer models zero or one nonblank opaque address id', () => {
   const { parsePrivateAddressBookDefaultPointer } = loadTypeScriptModule('contracts/private-address-book.ts');
 
@@ -1112,6 +1160,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f03-idle-listing-text-length-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-required-category-community-text-shape-validation'));
   assert.ok(record.scope.includes('f04-errand-attachment-count-validation'));
+  assert.ok(record.scope.includes('f04-errand-positive-service-fee-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
@@ -1126,11 +1175,13 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.reuseDecision.f02RepairOtherText.includes('Unicode 码点'));
   assert.ok(record.reuseDecision.f04ErrandAttachmentCount.includes('validateIntegerCountInRange'));
   assert.ok(record.reuseDecision.f04ErrandAttachmentCount.includes('不推断附件媒体类型、公开范围或上传/读取权限'));
+  assert.ok(record.reuseDecision.f04ErrandServiceFee.includes('parseCnyFen'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
   assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
   assert.equal(record.evidence.idleListingRequiredTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingRequiredText');
   assert.equal(record.evidence.repairOtherPublicTextValidation, 'packages/shared/src/contracts/repair-other-public-text.ts#validateRepairOtherPublicText');
   assert.equal(record.evidence.errandAttachmentCountValidation, 'packages/shared/src/contracts/errand-attachment-count.ts#validateErrandAttachmentCount');
+  assert.equal(record.evidence.errandServiceFeeValidation, 'packages/shared/src/contracts/errand-service-fee.ts#parseErrandServiceFee');
   assert.equal(record.evidence.integerCountRangeHelper, 'packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange');
 });
 
