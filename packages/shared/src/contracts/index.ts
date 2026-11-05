@@ -1,5 +1,6 @@
 export * from './command';
 export * from './idempotency';
+export * from './idle-listing-text';
 export * from './idle-listing-price';
 export * from './money';
 export * from './private-address-book';

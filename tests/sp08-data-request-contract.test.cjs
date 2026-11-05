@@ -40,6 +40,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseCnyFen, 'function');
   assert.equal(typeof shared.formatCnyFen, 'function');
   assert.equal(typeof shared.parseIdleListingPrice, 'function');
+  assert.equal(typeof shared.validateIdleListingText, 'function');
   assert.equal(typeof shared.parseCommandEnvelope, 'function');
   assert.equal(typeof shared.parseTrustedCommandContext, 'function');
   assert.equal(typeof shared.parseCommandResult, 'function');
@@ -678,6 +679,67 @@ test('F03 idle listing price validator reuses the pure exact-fen parser without 
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
 
+test('F03 idle listing text trims edge whitespace and counts Unicode code points at title, description, and landmark limits', () => {
+  const { validateIdleListingText } = loadTypeScriptModule('contracts/idle-listing-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /\| F03 \|[^\n]*标题1—30、说明1—1000[^\n]*地标0—50选填/);
+  assert.deepEqual(validateIdleListingText('title', '  闲置😀  '), {
+    ok: true,
+    value: '闲置😀',
+    characterCount: 3,
+  });
+  assert.deepEqual(validateIdleListingText('title', '😀'.repeat(30)), {
+    ok: true,
+    value: '😀'.repeat(30),
+    characterCount: 30,
+  });
+  assert.deepEqual(validateIdleListingText('description', '😀'.repeat(1000)), {
+    ok: true,
+    value: '😀'.repeat(1000),
+    characterCount: 1000,
+  });
+  assert.deepEqual(validateIdleListingText('landmark', undefined), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateIdleListingText('landmark', '  '), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateIdleListingText('landmark', '😀'.repeat(50)), {
+    ok: true,
+    value: '😀'.repeat(50),
+    characterCount: 50,
+  });
+});
+
+test('F03 idle listing text rejects blank required values, over-limit text, and non-string optional landmarks', () => {
+  const { validateIdleListingText } = loadTypeScriptModule('contracts/idle-listing-text.ts');
+
+  assert.deepEqual(validateIdleListingText('title', ' \t\n '), { ok: false, reason: 'empty' });
+  assert.deepEqual(validateIdleListingText('description', ''), { ok: false, reason: 'empty' });
+  assert.deepEqual(validateIdleListingText('title', '😀'.repeat(31)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateIdleListingText('description', '😀'.repeat(1001)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateIdleListingText('landmark', '😀'.repeat(51)), { ok: false, reason: 'too-long' });
+  for (const input of [null, 1, {}, []]) {
+    assert.deepEqual(validateIdleListingText('landmark', input), { ok: false, reason: 'not-string' });
+  }
+  assert.deepEqual(validateIdleListingText('invalid', 'value'), { ok: false, reason: 'unknown-field' });
+});
+
+test('F03 idle listing text validator remains pure and has no platform or persistence behavior', () => {
+  const sourcePath = path.join(sharedRoot, 'contracts', 'idle-listing-text.ts');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const source = fs.existsSync(sourcePath) ? fs.readFileSync(sourcePath, 'utf8') : '';
+
+  assert.match(contractsIndex, /export \* from '\.\/idle-listing-text';/);
+  assert.match(source, /Array\.from\(value\)\.length/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
 test('request envelope separates untrusted client data from trusted server context', () => {
   const commandSource = fs.readFileSync(path.join(sharedRoot, 'contracts', 'command.ts'), 'utf8');
   const resultSource = fs.readFileSync(path.join(sharedRoot, 'contracts', 'result.ts'), 'utf8');
@@ -902,15 +964,18 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f02-repair-other-public-text-projection'));
   assert.ok(record.scope.includes('f02-repair-other-public-image-count-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-price-field-validation'));
+  assert.ok(record.scope.includes('f03-idle-listing-text-length-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
-  assert.ok(record.notProven.includes('f03-idle-listing-title-and-description-length-validation'));
+  assert.ok(!record.notProven.includes('f03-idle-listing-title-and-description-length-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
   assert.ok(record.reuseDecision.f03IdleListingPrice.includes('parseCnyFen'));
+  assert.ok(record.reuseDecision.f03IdleListingText.includes('Unicode 码点'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
+  assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
 });
 
 test('SP08 database capability map distinguishes documented platform limits from synthetic probe evidence', () => {
