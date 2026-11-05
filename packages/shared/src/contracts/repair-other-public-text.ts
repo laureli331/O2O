@@ -7,6 +7,12 @@ export type RepairOtherPublicTextField =
   | 'community'
   | 'landmark';
 
+export type RepairOtherPublicTextLengthField = 'title' | 'description' | 'landmark';
+
+export type ValidateRepairOtherPublicTextResult =
+  | { readonly ok: true; readonly value: string; readonly characterCount: number }
+  | { readonly ok: false; readonly reason: 'unknown-field' | 'not-string' | 'empty' | 'too-long' };
+
 export interface RepairOtherPublicTextProjection {
   readonly title: string;
   readonly description: string;
@@ -33,11 +39,52 @@ export type ParseRepairOtherPublicTextProjectionResult =
 
 const REQUIRED_FIELDS = ['title', 'description', 'business', 'community'] as const;
 
+const PUBLIC_TEXT_LENGTH_LIMITS = {
+  title: { minimumCodePoints: 1, maximumCodePoints: 30 },
+  description: { minimumCodePoints: 1, maximumCodePoints: 1_000 },
+  landmark: { minimumCodePoints: 0, maximumCodePoints: 50 },
+} as const;
+
+/**
+ * Trims edge whitespace and validates the PRD F02 title, description, or
+ * optional landmark. Counts Unicode code points, not UTF-16 code units or
+ * grapheme clusters. This does not validate business/category or community.
+ */
+export function validateRepairOtherPublicText(
+  field: string,
+  input: unknown,
+): ValidateRepairOtherPublicTextResult {
+  if (field !== 'title' && field !== 'description' && field !== 'landmark') {
+    return { ok: false, reason: 'unknown-field' };
+  }
+
+  if (field === 'landmark' && input === undefined) {
+    return { ok: true, value: '', characterCount: 0 };
+  }
+
+  if (typeof input !== 'string') {
+    return { ok: false, reason: 'not-string' };
+  }
+
+  const value = input.trim();
+  const characterCount = Array.from(value).length;
+  const limits = PUBLIC_TEXT_LENGTH_LIMITS[field];
+
+  if (characterCount < limits.minimumCodePoints) {
+    return { ok: false, reason: 'empty' };
+  }
+  if (characterCount > limits.maximumCodePoints) {
+    return { ok: false, reason: 'too-long' };
+  }
+
+  return { ok: true, value, characterCount };
+}
+
 /**
  * Copies only the F02 public text fields and trims edge whitespace. Extra source
  * fields (including private address/contact data) are intentionally discarded.
- * Field length limits are not checked here: this is a projection boundary, not
- * the F02 form validator, and the F02 text-count rule has not been resolved.
+ * Field length limits are not checked here: call
+ * validateRepairOtherPublicText for the F02 title, description, or landmark.
  */
 export function parseRepairOtherPublicTextProjection(
   input: unknown,

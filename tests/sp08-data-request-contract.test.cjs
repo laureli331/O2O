@@ -489,6 +489,76 @@ test('F02 repair and other public text projection rejects absent, inherited, bla
   });
 });
 
+test('F02 public text validates trimmed field limits using Unicode code points', () => {
+  const { validateRepairOtherPublicText } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F02[^\n]*标题1—30、说明1—1000[^\n]*地标0—50/);
+  assert.deepEqual(validateRepairOtherPublicText('title', `  ${'🛠'.repeat(30)}  `), {
+    ok: true,
+    value: '🛠'.repeat(30),
+    characterCount: 30,
+  });
+  assert.deepEqual(validateRepairOtherPublicText('description', 'a'.repeat(1_000)), {
+    ok: true,
+    value: 'a'.repeat(1_000),
+    characterCount: 1_000,
+  });
+  assert.deepEqual(validateRepairOtherPublicText('landmark', '  '), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateRepairOtherPublicText('landmark', '🧭'.repeat(50)), {
+    ok: true,
+    value: '🧭'.repeat(50),
+    characterCount: 50,
+  });
+  assert.deepEqual(validateRepairOtherPublicText('title', '🛠'.repeat(31)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateRepairOtherPublicText('description', 'a'.repeat(1_001)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateRepairOtherPublicText('landmark', '🧭'.repeat(51)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateRepairOtherPublicText('title', ' e\u0301 '), {
+    ok: true,
+    value: 'e\u0301',
+    characterCount: 2,
+  });
+});
+
+test('F02 public text rejects invalid inputs and treats an omitted landmark as optional', () => {
+  const { validateRepairOtherPublicText } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+
+  assert.deepEqual(validateRepairOtherPublicText('category', '维修'), {
+    ok: false,
+    reason: 'unknown-field',
+  });
+  assert.deepEqual(validateRepairOtherPublicText('title', 1), {
+    ok: false,
+    reason: 'not-string',
+  });
+  assert.deepEqual(validateRepairOtherPublicText('title', ' \t\n '), {
+    ok: false,
+    reason: 'empty',
+  });
+  assert.deepEqual(validateRepairOtherPublicText('description', ''), {
+    ok: false,
+    reason: 'empty',
+  });
+  assert.deepEqual(validateRepairOtherPublicText('landmark', undefined), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+});
+
 test('F02 and F03 public image count accepts the inclusive zero-to-nine range', () => {
   const { validatePublicImageCount } = loadTypeScriptModule('contracts/public-image-count.ts');
   const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
@@ -962,20 +1032,23 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f09-private-address-book-default-pointer-and-delete-transition'));
   assert.ok(record.scope.includes('f09-selected-address-detached-task-snapshot-copy'));
   assert.ok(record.scope.includes('f02-repair-other-public-text-projection'));
+  assert.ok(record.scope.includes('f02-repair-other-text-length-validation'));
   assert.ok(record.scope.includes('f02-repair-other-public-image-count-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-price-field-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-text-length-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
-  assert.ok(record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
+  assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
   assert.ok(!record.notProven.includes('f03-idle-listing-title-and-description-length-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
   assert.ok(record.reuseDecision.f03IdleListingPrice.includes('parseCnyFen'));
   assert.ok(record.reuseDecision.f03IdleListingText.includes('Unicode 码点'));
+  assert.ok(record.reuseDecision.f02RepairOtherText.includes('Unicode 码点'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
   assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
+  assert.equal(record.evidence.repairOtherPublicTextValidation, 'packages/shared/src/contracts/repair-other-public-text.ts#validateRepairOtherPublicText');
 });
 
 test('SP08 database capability map distinguishes documented platform limits from synthetic probe evidence', () => {

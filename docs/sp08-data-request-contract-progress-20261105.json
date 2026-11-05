@@ -22,6 +22,7 @@
     "f09-private-address-book-default-pointer-and-delete-transition",
     "f09-selected-address-detached-task-snapshot-copy",
     "f02-repair-other-public-text-projection",
+    "f02-repair-other-text-length-validation",
     "f02-repair-other-public-image-count-validation",
     "f03-idle-listing-price-field-validation",
     "f03-idle-listing-text-length-validation"
@@ -103,6 +104,10 @@
     {
       "path": "docs/prd.md",
       "reference": "Section 13.1 F03: title 1-30, description 1-1000, optional landmark 0-50; Unicode code-point counting confirmed by user on 2026-11-05"
+    },
+    {
+      "path": "docs/prd.md",
+      "reference": "Section 13.1 F02: title 1-30, description 1-1000, optional landmark 0-50; Unicode code-point counting confirmed by user on 2026-11-05"
     }
   ],
   "reuseDecision": {
@@ -114,7 +119,8 @@
     "f02PublicTextProjection": "复用 PRD F02 的逻辑公开字段和 sp08-object-ownership-map-20261105 的白名单；项目内没有既有 F02 投影函数。CloudBase field() 是数据库查询层字段投影，但物理集合/字段/API 尚未定义，不能作为共享纯投影替代，也不能单独证明访问控制；未来服务端需在可信读取路径实施实际裁剪。对五个文本字段显式复制并去边缘空白，比引入 schema/克隆依赖更小且易审查。无第三方运行依赖，node:test 验证字段白名单、私密字段丢弃、输入不变和无效必填字段。只执行逻辑字段结构和基础文本形状检查，不检查 F02 长度或计数口径。",
     "f02F03PublicImageCount": "复用 PRD F02 与 F03 明确相同的公开图片数量范围 0–9；将既有 F02 校验提取到 packages/shared/src/contracts/public-image-count.ts，旧 F02 函数名保留为委托兼容入口。平台 SDK 不定义 shared 字段范围，第三方依赖不适用且无必要，不新增依赖。node:test 核对 PRD 来源及合法边界、非整数和越界。该校验不验证图片格式、大小、内容、所有权、上传状态或存储权限；F04 附件未推断为图片。",
     "f03IdleListingPrice": "复用项目已有 packages/shared/src/contracts/money.ts#parseCnyFen，不复制金额解析逻辑或新增第三方依赖。薄层解析器只接受 PRD 字面值面议，或精确解析后大于零且不超过 9,999,999 分的字符串；保留既有最多两位小数约束，不按未说明的规则去空白。node:test 核对 PRD F03 原文、面议、0.01、最大值、零、畸形、精度、范围和非字符串边界。本函数只验证发布价格字段，不证明交易成交金额、支付/退款或服务端权限。",
-    "f03IdleListingText": "复用 packages/shared/src/contracts/private-address-book.ts#validatePrivateAddressBookText 中的 String.trim() 与 Array.from() 码点计数模式；该模块不覆盖 F03 字段，故新增独立纯 validator 并经 contracts/index.ts 导出。PRD F03 给出标题/说明/地标范围，Unicode 码点计数由用户确认。原生 ECMAScript 足够，不新增依赖；专项 node:test 覆盖补充平面 emoji、三字段上下界、空白裁剪、缺省可选地标、错误类型及纯函数边界。"
+    "f03IdleListingText": "复用 packages/shared/src/contracts/private-address-book.ts#validatePrivateAddressBookText 中的 String.trim() 与 Array.from() 码点计数模式；该模块不覆盖 F03 字段，故新增独立纯 validator 并经 contracts/index.ts 导出。PRD F03 给出标题/说明/地标范围，Unicode 码点计数由用户确认。原生 ECMAScript 足够，不新增依赖；专项 node:test 覆盖补充平面 emoji、三字段上下界、空白裁剪、缺省可选地标、错误类型及纯函数边界。",
+    "f02RepairOtherText": "复用 F03/F09 已验证的 String.trim() 与 Array.from() Unicode 码点计数模式；PRD F02 给出标题/说明/地标范围，用户确认与 F03 统一采用码点计数。现有 F02 投影器不做长度校验，因此新增独立 shared validator。平台 API 或第三方库不适用于替代此纯文本规则；原生 ECMAScript 足够，不增加依赖。node:test 覆盖三字段上下界、补充平面 emoji、组合变音字符、空白裁剪、可选地标和错误输入。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -125,7 +131,6 @@
     "trusted-context-authentication-and-clock-provenance",
     "idempotency-payload-normalization-and-equivalence-per-operation",
     "remaining-module-specific-command-validation",
-    "f02-repair-other-text-length-validation-and-character-count-rule",
     "atomic-idempotency-claim-with-business-write",
     "unknown-outcome-same-request-query-and-recovery",
     "command-result-business-outcome-evidence",
@@ -144,6 +149,7 @@
     "privateAddressBookDefaultDeleteTransition": "packages/shared/src/contracts/private-address-book.ts#clearPrivateAddressBookDefaultOnDelete",
     "privateAddressBookTaskSnapshot": "packages/shared/src/contracts/private-address-book.ts#createPrivateAddressBookTaskSnapshot",
     "repairOtherPublicTextProjection": "packages/shared/src/contracts/repair-other-public-text.ts#parseRepairOtherPublicTextProjection",
+    "repairOtherPublicTextValidation": "packages/shared/src/contracts/repair-other-public-text.ts#validateRepairOtherPublicText",
     "publicImageCountValidation": "packages/shared/src/contracts/public-image-count.ts#validatePublicImageCount",
     "idleListingPriceValidation": "packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice",
     "idleListingTextValidation": "packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText",
@@ -151,12 +157,12 @@
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 43,
+      "passed": 45,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1696,
+      "passed": 1698,
       "failed": 0
     },
     "checks": {
@@ -166,7 +172,7 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只要求标题/说明/主业务/村社区为自有非空字符串、可选地标为字符串，去边缘空白并只复制逻辑公开文本字段；它不执行F02标题1-30、说明1-1000、地标0-50长度校验，PRD对普通文本可见字符计数规则尚未细化到码点/字素簇，也不定义物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；不校验类别、地点白名单、发布资格、物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
+    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只负责规范化并复制逻辑公开字段；独立字段校验器按PRD对标题1-30、说明1-1000、地标0-50去边缘空白后按用户确认的Unicode码点计数。该本地纯函数不证明服务端强制执行、物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；不校验类别、地点白名单、发布资格、物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,
