@@ -40,8 +40,83 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseCnyFen, 'function');
   assert.equal(typeof shared.formatCnyFen, 'function');
   assert.equal(typeof shared.parseCommandEnvelope, 'function');
+  assert.equal(typeof shared.parseCommandResult, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookPhone, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
+});
+
+test('command result parser accepts a success result and preserves its value', () => {
+  const { parseCommandResult } = loadTypeScriptModule('contracts/result.ts');
+  const value = { id: 'item-1', version: 3 };
+
+  assert.deepEqual(parseCommandResult({
+    status: 'succeeded',
+    requestId: 'request-1',
+    value,
+  }), {
+    ok: true,
+    value: { status: 'succeeded', requestId: 'request-1', value },
+  });
+});
+
+test('command result parser preserves processing and unknown without inventing a retry decision', () => {
+  const { parseCommandResult } = loadTypeScriptModule('contracts/result.ts');
+
+  for (const status of ['processing', 'unknown']) {
+    assert.deepEqual(parseCommandResult({ status, requestId: 'request-2' }), {
+      ok: true,
+      value: { status, requestId: 'request-2' },
+    });
+  }
+});
+
+test('command result parser accepts rejected and failed results only with documented error fields', () => {
+  const { parseCommandResult } = loadTypeScriptModule('contracts/result.ts');
+  const error = {
+    category: 'dependency-failure',
+    code: 'supplier-timeout',
+    requestId: 'request-3',
+  };
+
+  for (const status of ['rejected', 'failed']) {
+    assert.deepEqual(parseCommandResult({ status, requestId: 'request-3', error }), {
+      ok: true,
+      value: { status, requestId: 'request-3', error },
+    });
+  }
+});
+
+test('command result parser rejects unknown, incomplete, or cross-request fields', () => {
+  const { parseCommandResult } = loadTypeScriptModule('contracts/result.ts');
+  const inheritedFields = Object.create({ status: 'unknown', requestId: 'request-4' });
+
+  assert.deepEqual(parseCommandResult(null), { ok: false, reason: { code: 'not-object' } });
+  assert.deepEqual(parseCommandResult(inheritedFields), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'status' },
+  });
+  assert.deepEqual(parseCommandResult({ status: 'done', requestId: 'request-4' }), {
+    ok: false,
+    reason: { code: 'invalid-status' },
+  });
+  assert.deepEqual(parseCommandResult({ status: 'succeeded', requestId: 'request-4' }), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'value' },
+  });
+  assert.deepEqual(parseCommandResult({ status: 'unknown', requestId: 'request-4', retry: true }), {
+    ok: false,
+    reason: { code: 'unexpected-field', field: 'retry' },
+  });
+  assert.deepEqual(parseCommandResult({
+    status: 'failed',
+    requestId: 'request-4',
+    error: { category: 'not-safe', code: 'x', requestId: 'request-4' },
+  }), { ok: false, reason: { code: 'invalid-error-category' } });
+  assert.deepEqual(parseCommandResult({
+    status: 'failed',
+    requestId: 'request-4',
+    error: { category: 'internal-failure', code: 'x', requestId: 'request-5' },
+  }), { ok: false, reason: { code: 'request-id-mismatch' } });
 });
 
 test('private address book phone validation accepts an exact eleven-digit value', () => {
@@ -287,7 +362,9 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.cloudMutationsPerformed, false);
   assert.ok(record.scope.includes('shared-idempotency-reuse-decision'));
   assert.ok(record.scope.includes('command-envelope-runtime-structure-validation'));
+  assert.ok(record.scope.includes('command-result-runtime-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-phone-shape-validation'));
+  assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));

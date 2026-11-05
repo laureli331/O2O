@@ -11,6 +11,7 @@
     "command-envelope-runtime-structure-validation",
     "trusted-server-context-types",
     "command-result-union",
+    "command-result-runtime-shape-validation",
     "shared-idempotency-reuse-decision",
     "exact-cny-fen-parser-and-formatter",
     "logical-ownership-and-public-private-snapshot-map-F01-F22",
@@ -80,9 +81,9 @@
     }
   ],
   "reuseDecision": {
-    "project": "复用 packages/shared/src/contracts/command.ts 的信封类型、严格 TypeScript 和 node:test 加载模式；检索 packages/shared、apps 与测试未发现 11 位电话校验器。",
-    "platform": "F09 电话要求直接来自 PRD；此项仅为纯字符串格式检查，不需调用平台 API。服务端授权和对象存储仍由后续模块验证。",
-    "thirdParty": "不新增运行依赖；schema 库不会提供 PRD 未定义的号码前缀、号码控制权验证或其它地址簿业务规则。"
+    "project": "命令结果运行时解析复用 packages/shared/src/contracts/result.ts 的既有五态结果/错误类型、contracts/index.ts 导出路径、严格 TypeScript 和 node:test 模式；不另造结果模型。",
+    "platform": "此项只验证既有响应联合类型的字段结构和追踪 ID 一致性，不调用平台 API；真实业务结果和有权恢复仍由各服务端模块提供证据。",
+    "thirdParty": "不新增运行依赖；有限联合类型收窄无需额外 schema 库，Node 内置 node:test 可覆盖验证。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -94,22 +95,24 @@
     "remaining-module-specific-command-validation",
     "atomic-idempotency-claim-with-business-write",
     "unknown-outcome-same-request-query-and-recovery",
+    "command-result-business-outcome-evidence",
     "browser-backend-adapter",
     "real-provider-and-business-integration"
   ],
   "evidence": {
     "test": "tests/sp08-data-request-contract.test.cjs",
     "commandEnvelopeValidation": "packages/shared/src/contracts/command.ts#parseCommandEnvelope",
+    "commandResultValidation": "packages/shared/src/contracts/result.ts#parseCommandResult",
     "privateAddressBookPhoneValidation": "packages/shared/src/contracts/private-address-book.ts#validatePrivateAddressBookPhone",
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 15,
+      "passed": 19,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1668,
+      "passed": 1672,
       "failed": 0
     },
     "checks": {
@@ -119,7 +122,7 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "信封解析器只做通用结构收窄；F09 仅验证联系电话字段为 11 位 ASCII 数字，不验证号码真实性、控制权或联系同意。地址簿其余字段长度/计数语义、默认唯一、模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明 CloudBase 物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
+    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。信封解析器只做通用结构收窄；F09 仅验证联系电话字段为 11 位 ASCII 数字，不验证号码真实性、控制权或联系同意。地址簿其余字段长度/计数语义、默认唯一、模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明 CloudBase 物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,
