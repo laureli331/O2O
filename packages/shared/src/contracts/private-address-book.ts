@@ -232,3 +232,22 @@ export function parsePrivateAddressBookEntryDraft(
     },
   };
 }
+
+/**
+ * Copies a previously validated address-book value into a detached task value.
+ * Only the five F09 address fields are copied; identifiers, owner metadata and
+ * default-address state are intentionally outside the task snapshot. This is
+ * an in-memory value copy only: it does not persist the snapshot or enforce
+ * authorization, ownership, privacy, or transaction boundaries.
+ */
+export function createPrivateAddressBookTaskSnapshot(
+  entry: PrivateAddressBookEntryDraft,
+): PrivateAddressBookEntryDraft {
+  return {
+    contact: entry.contact,
+    phone: entry.phone,
+    community: entry.community,
+    detailAddress: entry.detailAddress,
+    remark: entry.remark,
+  };
+}

@@ -47,6 +47,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parsePrivateAddressBookEntryDraft, 'function');
   assert.equal(typeof shared.parsePrivateAddressBookDefaultPointer, 'function');
   assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
+  assert.equal(typeof shared.createPrivateAddressBookTaskSnapshot, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
 
@@ -248,6 +249,46 @@ test('F09 private address-book entry draft parser reports field-specific validat
     ok: true,
     value: { ...valid, remark: '请先电话联系' },
   });
+});
+
+test('F09 selecting a validated address creates a detached task snapshot without address-book metadata', () => {
+  const {
+    createPrivateAddressBookTaskSnapshot,
+    parsePrivateAddressBookEntryDraft,
+  } = loadTypeScriptModule('contracts/private-address-book.ts');
+  const parsed = parsePrivateAddressBookEntryDraft({
+    contact: ' 张三 ',
+    phone: '13800138000',
+    community: ' 湘阴渡社区 ',
+    detailAddress: ' 1号楼101室 ',
+    remark: ' 请先电话联系 ',
+  });
+  assert.equal(parsed.ok, true);
+
+  const source = Object.assign({}, parsed.value, {
+    addressId: 'address-book-row-1',
+    ownerId: 'owner-1',
+    isDefault: true,
+  });
+  const snapshot = createPrivateAddressBookTaskSnapshot(source);
+
+  assert.deepEqual(snapshot, {
+    contact: '张三',
+    phone: '13800138000',
+    community: '湘阴渡社区',
+    detailAddress: '1号楼101室',
+    remark: '请先电话联系',
+  });
+  assert.notEqual(snapshot, source);
+  source.contact = '修改后的联系人';
+  assert.equal(snapshot.contact, '张三');
+  assert.deepEqual(Object.keys(snapshot).sort(), [
+    'community',
+    'contact',
+    'detailAddress',
+    'phone',
+    'remark',
+  ]);
 });
 
 test('F09 contact text is trimmed and measured by Unicode code points', () => {
@@ -666,6 +707,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f09-private-address-book-text-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-entry-draft-payload-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-default-pointer-and-delete-transition'));
+  assert.ok(record.scope.includes('f09-selected-address-detached-task-snapshot-copy'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
