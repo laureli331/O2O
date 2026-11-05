@@ -6,6 +6,7 @@ export * from './idempotency';
 export * from './idle-listing-text';
 export * from './idle-listing-price';
 export * from './money';
+export * from './order-objection-fields';
 export * from './private-address-book';
 export * from './public-image-count';
 export * from './repair-other-public-text';

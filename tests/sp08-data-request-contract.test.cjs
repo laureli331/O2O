@@ -53,6 +53,8 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.createPrivateAddressBookTaskSnapshot, 'function');
   assert.equal(typeof shared.validatePublicImageCount, 'function');
   assert.equal(typeof shared.validateErrandAttachmentCount, 'function');
+  assert.equal(typeof shared.validateCancellationOrDeliveryDisputeText, 'function');
+  assert.equal(typeof shared.validateCancellationOrDeliveryDisputeImageCount, 'function');
   assert.equal(typeof shared.validateRepairOtherPublicImageCount, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
@@ -795,6 +797,86 @@ test('F05 advance-terms parser accepts only its own allowlisted fields and stays
   });
   assert.match(source, /parseErrandServiceFee/);
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
+test('F06 objection text validates each PRD range after trimming with Unicode code-point counts', () => {
+  const { validateCancellationOrDeliveryDisputeText } = loadTypeScriptModule('contracts/order-objection-fields.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /\| F06 \|[^\n]*取消\/交付异议说明1—500及0—9图片/);
+  assert.match(prd, /\| F06 \|[^\n]*闲置不同意取消1—300/);
+  assert.match(prd, /\| F06 \|[^\n]*延期\/解除不同意理由0—300/);
+
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('cancellationOrDeliveryDisputeDescription', `  ${'😀'.repeat(500)}  `), {
+    ok: true,
+    value: '😀'.repeat(500),
+    characterCount: 500,
+  });
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('idleCancellationDisagreementReason', ' 原因 '), {
+    ok: true,
+    value: '原因',
+    characterCount: 2,
+  });
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('deferOrReleaseDisagreementReason', undefined), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('deferOrReleaseDisagreementReason', '  '), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('deferOrReleaseDisagreementReason', '😀'.repeat(300)), {
+    ok: true,
+    value: '😀'.repeat(300),
+    characterCount: 300,
+  });
+});
+
+test('F06 objection text rejects required empty values, over-limit values, and invalid input shapes', () => {
+  const { validateCancellationOrDeliveryDisputeText } = loadTypeScriptModule('contracts/order-objection-fields.ts');
+
+  for (const field of ['cancellationOrDeliveryDisputeDescription', 'idleCancellationDisagreementReason']) {
+    assert.deepEqual(validateCancellationOrDeliveryDisputeText(field, '  '), { ok: false, reason: 'empty' });
+    assert.deepEqual(validateCancellationOrDeliveryDisputeText(field, undefined), { ok: false, reason: 'not-string' });
+  }
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('cancellationOrDeliveryDisputeDescription', '😀'.repeat(501)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('idleCancellationDisagreementReason', '😀'.repeat(301)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('deferOrReleaseDisagreementReason', '😀'.repeat(301)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  for (const input of [null, 1, {}, []]) {
+    assert.deepEqual(validateCancellationOrDeliveryDisputeText('deferOrReleaseDisagreementReason', input), {
+      ok: false,
+      reason: 'not-string',
+    });
+  }
+  assert.deepEqual(validateCancellationOrDeliveryDisputeText('unsupported', 'reason'), {
+    ok: false,
+    reason: 'unknown-field',
+  });
+});
+
+test('F06 cancellation and delivery dispute image count is an integer from zero through nine', () => {
+  const { validateCancellationOrDeliveryDisputeImageCount } = loadTypeScriptModule('contracts/order-objection-fields.ts');
+
+  for (const count of [0, 1, 9]) {
+    assert.deepEqual(validateCancellationOrDeliveryDisputeImageCount(count), { ok: true, value: count });
+  }
+  for (const count of [null, undefined, '1', {}, [], NaN, Infinity, 1.5]) {
+    assert.deepEqual(validateCancellationOrDeliveryDisputeImageCount(count), { ok: false, reason: 'not-integer' });
+  }
+  for (const count of [-1, 10]) {
+    assert.deepEqual(validateCancellationOrDeliveryDisputeImageCount(count), { ok: false, reason: 'out-of-range' });
+  }
 });
 
 test('F09 default-address pointer models zero or one nonblank opaque address id', () => {
