@@ -8,6 +8,36 @@ export type ValidatePrivateAddressBookTextResult =
   | { readonly ok: true; readonly value: string; readonly characterCount: number }
   | { readonly ok: false; readonly reason: 'unknown-field' | 'not-string' | 'empty' | 'too-long' };
 
+export interface PrivateAddressBookEntryDraft {
+  readonly contact: string;
+  readonly phone: string;
+  readonly community: string;
+  readonly detailAddress: string;
+  readonly remark: string;
+}
+
+export type PrivateAddressBookEntryDraftField =
+  | 'contact'
+  | 'phone'
+  | 'community'
+  | 'detailAddress'
+  | 'remark';
+
+export type ParsePrivateAddressBookEntryDraftResult =
+  | { readonly ok: true; readonly value: PrivateAddressBookEntryDraft }
+  | {
+    readonly ok: false;
+    readonly reason:
+      | { readonly code: 'not-object' }
+      | { readonly code: 'missing-field'; readonly field: Exclude<PrivateAddressBookEntryDraftField, 'remark'> }
+      | { readonly code: 'unexpected-field'; readonly field: string }
+      | {
+        readonly code: 'invalid-field';
+        readonly field: PrivateAddressBookEntryDraftField;
+        readonly fieldReason: 'not-string' | 'not-eleven-digits' | 'empty' | 'too-long' | 'unknown-field';
+      };
+  };
+
 /** Logical per-owner pointer; this does not define a physical collection or field layout. */
 export interface PrivateAddressBookDefaultPointer {
   readonly defaultAddressId: string | null;
@@ -132,4 +162,73 @@ export function validatePrivateAddressBookText(
   }
 
   return { ok: true, value, characterCount };
+}
+
+/**
+ * Parses only the resident-provided F09 address-book draft fields and returns
+ * normalized text. The server must attach owner identity and enforce address
+ * ownership/default uniqueness; this parser does not define a physical schema.
+ */
+export function parsePrivateAddressBookEntryDraft(
+  input: unknown,
+): ParsePrivateAddressBookEntryDraftResult {
+  if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+    return { ok: false, reason: { code: 'not-object' } };
+  }
+
+  const record = input as Record<string, unknown>;
+  const requiredFields = ['contact', 'phone', 'community', 'detailAddress'] as const;
+  for (const field of requiredFields) {
+    if (!Object.prototype.hasOwnProperty.call(record, field)) {
+      return { ok: false, reason: { code: 'missing-field', field } };
+    }
+  }
+
+  const allowedFields: readonly string[] = [
+    'contact',
+    'phone',
+    'community',
+    'detailAddress',
+    'remark',
+  ];
+  const unexpectedField = Object.keys(record).find((field) => !allowedFields.includes(field));
+  if (unexpectedField !== undefined) {
+    return { ok: false, reason: { code: 'unexpected-field', field: unexpectedField } };
+  }
+
+  const contact = validatePrivateAddressBookText('contact', record.contact);
+  if (!contact.ok) {
+    return { ok: false, reason: { code: 'invalid-field', field: 'contact', fieldReason: contact.reason } };
+  }
+
+  const phone = validatePrivateAddressBookPhone(record.phone);
+  if (!phone.ok) {
+    return { ok: false, reason: { code: 'invalid-field', field: 'phone', fieldReason: phone.reason } };
+  }
+
+  const community = validatePrivateAddressBookText('community', record.community);
+  if (!community.ok) {
+    return { ok: false, reason: { code: 'invalid-field', field: 'community', fieldReason: community.reason } };
+  }
+
+  const detailAddress = validatePrivateAddressBookText('detailAddress', record.detailAddress);
+  if (!detailAddress.ok) {
+    return { ok: false, reason: { code: 'invalid-field', field: 'detailAddress', fieldReason: detailAddress.reason } };
+  }
+
+  const remark = validatePrivateAddressBookText('remark', record.remark);
+  if (!remark.ok) {
+    return { ok: false, reason: { code: 'invalid-field', field: 'remark', fieldReason: remark.reason } };
+  }
+
+  return {
+    ok: true,
+    value: {
+      contact: contact.value,
+      phone: phone.value,
+      community: community.value,
+      detailAddress: detailAddress.value,
+      remark: remark.value,
+    },
+  };
 }

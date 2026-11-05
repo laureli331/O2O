@@ -44,6 +44,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseCommandResult, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookPhone, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookText, 'function');
+  assert.equal(typeof shared.parsePrivateAddressBookEntryDraft, 'function');
   assert.equal(typeof shared.parsePrivateAddressBookDefaultPointer, 'function');
   assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
@@ -156,6 +157,97 @@ test('private address book phone validation is a pure field-shape contract with 
   assert.match(source, /does not verify control of the number/);
   assert.match(source, /Unicode code points/);
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
+test('F09 private address-book entry draft parser returns only normalized PRD fields', () => {
+  const { parsePrivateAddressBookEntryDraft } = loadTypeScriptModule('contracts/private-address-book.ts');
+
+  assert.deepEqual(parsePrivateAddressBookEntryDraft({
+    contact: '  张三🛠  ',
+    phone: '13800138000',
+    community: '  湘阴渡社区  ',
+    detailAddress: '  1号楼101室  ',
+  }), {
+    ok: true,
+    value: {
+      contact: '张三🛠',
+      phone: '13800138000',
+      community: '湘阴渡社区',
+      detailAddress: '1号楼101室',
+      remark: '',
+    },
+  });
+});
+
+test('F09 private address-book entry draft parser rejects malformed, incomplete, and client-asserted fields', () => {
+  const { parsePrivateAddressBookEntryDraft } = loadTypeScriptModule('contracts/private-address-book.ts');
+  const valid = {
+    contact: '张三',
+    phone: '13800138000',
+    community: '湘阴渡社区',
+    detailAddress: '1号楼101室',
+  };
+
+  for (const input of [null, undefined, [], 'entry', 1]) {
+    assert.deepEqual(parsePrivateAddressBookEntryDraft(input), {
+      ok: false,
+      reason: { code: 'not-object' },
+    });
+  }
+
+  for (const field of ['contact', 'phone', 'community', 'detailAddress']) {
+    const input = { ...valid };
+    delete input[field];
+    assert.deepEqual(parsePrivateAddressBookEntryDraft(input), {
+      ok: false,
+      reason: { code: 'missing-field', field },
+    });
+  }
+
+  const inherited = Object.assign(Object.create({ contact: '张三' }), valid);
+  delete inherited.contact;
+  assert.deepEqual(parsePrivateAddressBookEntryDraft(inherited), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'contact' },
+  });
+
+  for (const field of ['ownerId', 'addressId', 'defaultAddressId', 'isDefault']) {
+    assert.deepEqual(parsePrivateAddressBookEntryDraft({ ...valid, [field]: 'client-asserted' }), {
+      ok: false,
+      reason: { code: 'unexpected-field', field },
+    });
+  }
+});
+
+test('F09 private address-book entry draft parser reports field-specific validation failures', () => {
+  const { parsePrivateAddressBookEntryDraft } = loadTypeScriptModule('contracts/private-address-book.ts');
+  const valid = {
+    contact: '张三',
+    phone: '13800138000',
+    community: '湘阴渡社区',
+    detailAddress: '1号楼101室',
+  };
+
+  assert.deepEqual(parsePrivateAddressBookEntryDraft({ ...valid, phone: '123' }), {
+    ok: false,
+    reason: { code: 'invalid-field', field: 'phone', fieldReason: 'not-eleven-digits' },
+  });
+  assert.deepEqual(parsePrivateAddressBookEntryDraft({ ...valid, contact: '   ' }), {
+    ok: false,
+    reason: { code: 'invalid-field', field: 'contact', fieldReason: 'empty' },
+  });
+  assert.deepEqual(parsePrivateAddressBookEntryDraft({ ...valid, remark: 7 }), {
+    ok: false,
+    reason: { code: 'invalid-field', field: 'remark', fieldReason: 'not-string' },
+  });
+  assert.deepEqual(parsePrivateAddressBookEntryDraft({ ...valid, remark: '注'.repeat(101) }), {
+    ok: false,
+    reason: { code: 'invalid-field', field: 'remark', fieldReason: 'too-long' },
+  });
+  assert.deepEqual(parsePrivateAddressBookEntryDraft({ ...valid, remark: '  请先电话联系  ' }), {
+    ok: true,
+    value: { ...valid, remark: '请先电话联系' },
+  });
 });
 
 test('F09 contact text is trimmed and measured by Unicode code points', () => {
@@ -572,6 +664,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('command-result-runtime-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-phone-shape-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-text-shape-validation'));
+  assert.ok(record.scope.includes('f09-private-address-book-entry-draft-payload-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-default-pointer-and-delete-transition'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
