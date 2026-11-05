@@ -9,5 +9,6 @@ export * from './money';
 export * from './order-objection-fields';
 export * from './private-address-book';
 export * from './public-image-count';
+export * from './provider-profile-text';
 export * from './repair-other-public-text';
 export * from './result';

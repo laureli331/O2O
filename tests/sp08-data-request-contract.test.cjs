@@ -56,7 +56,60 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.validateCancellationOrDeliveryDisputeText, 'function');
   assert.equal(typeof shared.validateCancellationOrDeliveryDisputeImageCount, 'function');
   assert.equal(typeof shared.validateRepairOtherPublicImageCount, 'function');
+  assert.equal(typeof shared.validateProviderProfileText, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
+});
+
+test('F07 provider profile text accepts a trimmed display name measured in Unicode code points', () => {
+  const { validateProviderProfileText } = loadTypeScriptModule('contracts/provider-profile-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F07[^\n]*展示名称1—30[^\n]*服务介绍1—500/);
+  assert.deepEqual(validateProviderProfileText('displayName', ' A '), {
+    ok: true,
+    value: 'A',
+    characterCount: 1,
+  });
+  assert.deepEqual(validateProviderProfileText('displayName', `  ${'🛠'.repeat(30)}  `), {
+    ok: true,
+    value: '🛠'.repeat(30),
+    characterCount: 30,
+  });
+  assert.deepEqual(validateProviderProfileText('displayName', 'a'.repeat(31)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateProviderProfileText('serviceIntroduction', '维修'), {
+    ok: true,
+    value: '维修',
+    characterCount: 2,
+  });
+  assert.deepEqual(validateProviderProfileText('serviceIntroduction', '🛠'.repeat(500)), {
+    ok: true,
+    value: '🛠'.repeat(500),
+    characterCount: 500,
+  });
+  assert.deepEqual(validateProviderProfileText('serviceIntroduction', 'a'.repeat(501)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateProviderProfileText('displayName', ' \t\n '), {
+    ok: false,
+    reason: 'empty',
+  });
+  assert.deepEqual(validateProviderProfileText('serviceIntroduction', 'e\u0301'), {
+    ok: true,
+    value: 'e\u0301',
+    characterCount: 2,
+  });
+  assert.deepEqual(validateProviderProfileText('category', '维修'), {
+    ok: false,
+    reason: 'unknown-field',
+  });
+  assert.deepEqual(validateProviderProfileText('displayName', 42), {
+    ok: false,
+    reason: 'not-string',
+  });
 });
 
 test('command result parser accepts a success result and preserves its value', () => {
@@ -1326,6 +1379,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f03-idle-listing-required-category-community-text-shape-validation'));
   assert.ok(record.scope.includes('f04-errand-attachment-count-validation'));
   assert.ok(record.scope.includes('f04-errand-positive-service-fee-validation'));
+  assert.ok(record.scope.includes('f07-provider-profile-display-name-and-service-intro-text-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
@@ -1341,6 +1395,8 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.reuseDecision.f04ErrandAttachmentCount.includes('validateIntegerCountInRange'));
   assert.ok(record.reuseDecision.f04ErrandAttachmentCount.includes('不推断附件媒体类型、公开范围或上传/读取权限'));
   assert.ok(record.reuseDecision.f04ErrandServiceFee.includes('parseCnyFen'));
+  assert.ok(record.reuseDecision.f07ProviderProfileText.includes('Unicode码点'));
+  assert.ok(record.reuseDecision.f07ProviderProfileText.includes('仍归 SP14'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
   assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
   assert.equal(record.evidence.idleListingRequiredTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingRequiredText');
@@ -1348,6 +1404,8 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.evidence.errandAttachmentCountValidation, 'packages/shared/src/contracts/errand-attachment-count.ts#validateErrandAttachmentCount');
   assert.equal(record.evidence.errandServiceFeeValidation, 'packages/shared/src/contracts/errand-service-fee.ts#parseErrandServiceFee');
   assert.equal(record.evidence.integerCountRangeHelper, 'packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange');
+  assert.equal(record.evidence.providerProfileTextValidation, 'packages/shared/src/contracts/provider-profile-text.ts#validateProviderProfileText');
+  assert.ok(record.evidence.f07Limitation.includes('SP14'));
 });
 
 test('SP08 database capability map distinguishes documented platform limits from synthetic probe evidence', () => {
