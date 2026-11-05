@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "taskId": "SP08",
+  "date": "2026-11-05",
+  "title": "共享请求与金额合同增量",
+  "status": "in-progress",
+  "productAcceptancePassed": false,
+  "cloudMutationsPerformed": false,
+  "scope": [
+    "shared-command-envelope-types",
+    "trusted-server-context-types",
+    "command-result-union",
+    "exact-cny-fen-parser-and-formatter"
+  ],
+  "sources": [
+    {
+      "path": "docs/v1-executable-development-plan-20261027.json",
+      "taskId": "SP08",
+      "acceptance": "真实数据库能力、数据/接口/索引/版本/幂等/错误合同；客户端不能伪造身份金额时间；并发唯一性需原子证据；不得从HTML事件名编造接口"
+    },
+    {
+      "path": "docs/backend-architecture-contract-20261103.json",
+      "acceptanceIds": ["BA01", "BA02", "BA03", "BA04", "BA05", "BA06", "BA07", "BA08", "BA09", "BA10", "BA11", "BA12", "BA13", "BA15", "BA16"]
+    },
+    {
+      "path": "docs/prd.md",
+      "fact": "金额上限 99,999.99 元；0 是否允许由具体操作规则决定"
+    },
+    {
+      "url": "https://docs.cloudbase.net/cloud-function/resource-integration/cloudbase",
+      "use": "核对官方 Node.js 服务端资源访问范围"
+    },
+    {
+      "url": "https://docs.cloudbase.net/en/database/doc-crud",
+      "use": "核对官方对小程序/浏览器/Node 数据库 SDK 文档范围的区分"
+    },
+    {
+      "url": "https://docs.cloudbase.net/en/database/data-index",
+      "use": "确认存在官方索引管理文档；未据此推断本产品唯一约束方案"
+    },
+    {
+      "path": "docs/sp01-cloud-probe-runbook-20261028.md",
+      "use": "只复用临时探针已记录的实际 SDK 调用形状；不作为产品业务验证"
+    }
+  ],
+  "reuseDecision": {
+    "project": "复用 packages/shared 严格 TS 配置和 node:test；未发现可复用业务接口/金额模型",
+    "platform": "官方 SDK 文档用于划定调用层与能力边界；未找到产品接口/身份方案",
+    "thirdParty": "不新增运行依赖；整数分转换无需带入完整金额库；测试复用已锁定 TypeScript 与 Node 内置测试运行器"
+  },
+  "notProven": [
+    "cloudbase-authentication-and-security-rules",
+    "physical-business-objects-fields-and-access-paths",
+    "physical-indexes-and-uniqueness",
+    "business-transaction-concurrency",
+    "trusted-server-time-and-money-enforcement",
+    "unknown-outcome-same-request-query-and-recovery",
+    "browser-backend-adapter",
+    "real-provider-and-business-integration"
+  ],
+  "evidence": {
+    "test": "tests/sp08-data-request-contract.test.cjs",
+    "focusedTests": {
+      "passed": 5,
+      "failed": 0
+    },
+    "fullRegression": {
+      "command": "node --test tests/*.test.cjs",
+      "passed": 1658,
+      "failed": 0
+    },
+    "checks": {
+      "sharedTypecheck": "passed",
+      "workspaceBoundaries": "passed",
+      "weappBuild": "passed-with-existing-toolchain-deprecation-warning",
+      "webBuild": "passed-with-vite-config-loader-warning"
+    },
+    "environment": "Windows local workspace; no cloud calls or mutations",
+    "limitations": "本地契约测试不证明 CloudBase 物理约束、权限、事务或产品集成"
+  }
+}

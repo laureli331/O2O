@@ -6,3 +6,5 @@ export interface FoundationBuildMetadata {
 }
 
 export const FOUNDATION_STAGE = 'foundation' as const;
+
+export * from './contracts';
