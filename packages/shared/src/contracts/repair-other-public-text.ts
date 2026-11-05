@@ -13,6 +13,10 @@ export interface RepairOtherPublicTextProjection {
   readonly landmark?: string;
 }
 
+export type ValidateRepairOtherPublicImageCountResult =
+  | { readonly ok: true; readonly value: number }
+  | { readonly ok: false; readonly reason: 'not-integer' | 'out-of-range' };
+
 export type ParseRepairOtherPublicTextProjectionResult =
   | { readonly ok: true; readonly value: RepairOtherPublicTextProjection }
   | {
@@ -84,4 +88,19 @@ export function parseRepairOtherPublicTextProjection(
   }
 
   return { ok: true, value: projection };
+}
+
+/** Validates only the F02 public image count range; it does not inspect images. */
+export function validateRepairOtherPublicImageCount(
+  input: unknown,
+): ValidateRepairOtherPublicImageCountResult {
+  if (typeof input !== 'number' || !Number.isInteger(input)) {
+    return { ok: false, reason: 'not-integer' };
+  }
+
+  if (input < 0 || input > 9) {
+    return { ok: false, reason: 'out-of-range' };
+  }
+
+  return { ok: true, value: input };
 }

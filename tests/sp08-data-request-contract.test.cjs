@@ -49,6 +49,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parsePrivateAddressBookDefaultPointer, 'function');
   assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
   assert.equal(typeof shared.createPrivateAddressBookTaskSnapshot, 'function');
+  assert.equal(typeof shared.validateRepairOtherPublicImageCount, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
 
@@ -485,6 +486,35 @@ test('F02 repair and other public text projection rejects absent, inherited, bla
   });
 });
 
+test('F02 repair and other public image count accepts the inclusive zero-to-nine range', () => {
+  const { validateRepairOtherPublicImageCount } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+
+  for (const count of [0, 1, 9]) {
+    assert.deepEqual(validateRepairOtherPublicImageCount(count), {
+      ok: true,
+      value: count,
+    });
+  }
+});
+
+test('F02 repair and other public image count rejects non-integers and values outside the PRD range', () => {
+  const { validateRepairOtherPublicImageCount } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+
+  for (const count of [null, undefined, '1', {}, [], NaN, Infinity, 1.5]) {
+    assert.deepEqual(validateRepairOtherPublicImageCount(count), {
+      ok: false,
+      reason: 'not-integer',
+    });
+  }
+
+  for (const count of [-1, 10]) {
+    assert.deepEqual(validateRepairOtherPublicImageCount(count), {
+      ok: false,
+      reason: 'out-of-range',
+    });
+  }
+});
+
 test('F09 default-address pointer models zero or one nonblank opaque address id', () => {
   const { parsePrivateAddressBookDefaultPointer } = loadTypeScriptModule('contracts/private-address-book.ts');
 
@@ -815,6 +845,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f09-private-address-book-default-pointer-and-delete-transition'));
   assert.ok(record.scope.includes('f09-selected-address-detached-task-snapshot-copy'));
   assert.ok(record.scope.includes('f02-repair-other-public-text-projection'));
+  assert.ok(record.scope.includes('f02-repair-other-public-image-count-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
