@@ -1,14 +1,38 @@
 export type IdleListingTextField = 'title' | 'description' | 'landmark';
+export type IdleListingRequiredTextField = 'category' | 'community';
 
 export type ValidateIdleListingTextResult =
   | { readonly ok: true; readonly value: string; readonly characterCount: number }
   | { readonly ok: false; readonly reason: 'unknown-field' | 'not-string' | 'empty' | 'too-long' };
+
+export type ValidateIdleListingRequiredTextResult =
+  | { readonly ok: true; readonly value: string }
+  | { readonly ok: false; readonly reason: 'unknown-field' | 'not-string' | 'empty' };
 
 const IDLE_LISTING_TEXT_LIMITS = {
   title: { minimumCodePoints: 1, maximumCodePoints: 30 },
   description: { minimumCodePoints: 1, maximumCodePoints: 1_000 },
   landmark: { minimumCodePoints: 0, maximumCodePoints: 50 },
 } as const;
+
+/**
+ * Validates only the required nonblank shape of the F03 category and
+ * community text. It does not define allowed categories, service-area
+ * membership, or a maximum length because the PRD provides none here.
+ */
+export function validateIdleListingRequiredText(
+  field: string,
+  input: unknown,
+): ValidateIdleListingRequiredTextResult {
+  if (field !== 'category' && field !== 'community') {
+    return { ok: false, reason: 'unknown-field' };
+  }
+  if (typeof input !== 'string') return { ok: false, reason: 'not-string' };
+
+  const value = input.trim();
+  if (value.length === 0) return { ok: false, reason: 'empty' };
+  return { ok: true, value };
+}
 
 /**
  * Trims edge whitespace and validates the PRD F03 title, description, or

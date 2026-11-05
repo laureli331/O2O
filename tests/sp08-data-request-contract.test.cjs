@@ -559,6 +559,44 @@ test('F02 public text rejects invalid inputs and treats an omitted landmark as o
   });
 });
 
+test('F03 required category and community text is trimmed and rejects blank or non-string input', () => {
+  const { validateIdleListingRequiredText } = loadTypeScriptModule('contracts/idle-listing-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F03[^\n]*标题1—30、说明1—1000、分类、村\/社区/);
+  assert.deepEqual(validateIdleListingRequiredText('category', '  家居用品  '), {
+    ok: true,
+    value: '家居用品',
+  });
+  assert.deepEqual(validateIdleListingRequiredText('category', 'x'.repeat(2_000)), {
+    ok: true,
+    value: 'x'.repeat(2_000),
+  });
+  assert.deepEqual(validateIdleListingRequiredText('community', ' 湘阴渡社区 '), {
+    ok: true,
+    value: '湘阴渡社区',
+  });
+  assert.deepEqual(validateIdleListingRequiredText('category', '  '), {
+    ok: false,
+    reason: 'empty',
+  });
+  assert.deepEqual(validateIdleListingRequiredText('community', null), {
+    ok: false,
+    reason: 'not-string',
+  });
+  assert.deepEqual(validateIdleListingRequiredText('community', undefined), {
+    ok: false,
+    reason: 'not-string',
+  });
+  assert.deepEqual(validateIdleListingRequiredText('landmark', 'nearby'), {
+    ok: false,
+    reason: 'unknown-field',
+  });
+
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'idle-listing-text.ts'), 'utf8');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
 test('F02 and F03 public image count accepts the inclusive zero-to-nine range', () => {
   const { validatePublicImageCount } = loadTypeScriptModule('contracts/public-image-count.ts');
   const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
@@ -1036,6 +1074,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f02-repair-other-public-image-count-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-price-field-validation'));
   assert.ok(record.scope.includes('f03-idle-listing-text-length-validation'));
+  assert.ok(record.scope.includes('f03-idle-listing-required-category-community-text-shape-validation'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
@@ -1045,9 +1084,12 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
   assert.ok(record.reuseDecision.f03IdleListingPrice.includes('parseCnyFen'));
   assert.ok(record.reuseDecision.f03IdleListingText.includes('Unicode 码点'));
+  assert.ok(record.reuseDecision.f03IdleListingRequiredText.includes('String.trim()'));
+  assert.ok(record.reuseDecision.f03IdleListingRequiredText.includes('没有给出允许类别目录'));
   assert.ok(record.reuseDecision.f02RepairOtherText.includes('Unicode 码点'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
   assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
+  assert.equal(record.evidence.idleListingRequiredTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingRequiredText');
   assert.equal(record.evidence.repairOtherPublicTextValidation, 'packages/shared/src/contracts/repair-other-public-text.ts#validateRepairOtherPublicText');
 });
 
