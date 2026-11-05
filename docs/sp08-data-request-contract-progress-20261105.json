@@ -2,12 +2,13 @@
   "schemaVersion": 1,
   "taskId": "SP08",
   "date": "2026-11-05",
-  "title": "请求/幂等/金额合同与逻辑对象归属增量",
+  "title": "命令信封运行时校验与既有数据合同增量",
   "status": "in-progress",
   "productAcceptancePassed": false,
   "cloudMutationsPerformed": false,
   "scope": [
     "shared-command-envelope-types",
+    "command-envelope-runtime-structure-validation",
     "trusted-server-context-types",
     "command-result-union",
     "shared-idempotency-reuse-decision",
@@ -42,7 +43,7 @@
     },
     {
       "path": "docs/backend-architecture-contract-20261103.md",
-      "reference": "Section 4 items 3-5: trusted idempotency scope, same-payload replay, different-payload rejection, and no automatic resubmission for unknown outcomes"
+      "reference": "Section 4 items 1-5: unknown input and allowlist validation; trusted facts; idempotency scope/replay/rejection; atomicity and unknown outcomes"
     },
     {
       "path": "docs/prd.md",
@@ -74,9 +75,9 @@
     }
   ],
   "reuseDecision": {
-    "project": "复用 packages/shared 的严格 TypeScript、CommandResult 和 node:test；此前没有幂等重放决策函数，本次在 shared/contracts 增加纯决策并复用既有结果联合类型。",
-    "platform": "后端架构合同第4节定义逻辑行为；CloudBase 官方事务文档仅用于限定后续服务端原子实现，不据此推断本产品接口或物理幂等表。",
-    "thirdParty": "不新增运行依赖；决策仅使用 TypeScript 和现有 CommandResult，测试复用锁定 TypeScript 与 Node 内置测试运行器。"
+    "project": "复用 packages/shared/src/contracts/command.ts 的信封类型、严格 TypeScript 和现有 node:test 加载模式；未发现已有运行时 schema 校验器。",
+    "platform": "后端架构合同第4节1-2项要求对 unknown 外部输入做字段白名单和类型检查，并将可信事实留在服务端；该合同没有定义业务操作目录、字段长度参数或每个 payload schema。",
+    "thirdParty": "不新增运行依赖；本次只实现通用信封外层检查，添加 schema 库仍不能填补未定义的业务模块规则，维护/升级成本不合算。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -85,6 +86,7 @@
     "business-transaction-concurrency",
     "trusted-server-time-and-money-enforcement",
     "idempotency-payload-normalization-and-equivalence-per-operation",
+    "module-specific-command-validation",
     "atomic-idempotency-claim-with-business-write",
     "unknown-outcome-same-request-query-and-recovery",
     "browser-backend-adapter",
@@ -92,15 +94,16 @@
   ],
   "evidence": {
     "test": "tests/sp08-data-request-contract.test.cjs",
+    "commandEnvelopeValidation": "packages/shared/src/contracts/command.ts#parseCommandEnvelope",
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 9,
+      "passed": 12,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1662,
+      "passed": 1665,
       "failed": 0
     },
     "checks": {
@@ -110,7 +113,7 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "本地契约测试不证明 CloudBase 物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
+    "limitations": "信封解析器只做通用结构收窄；模块级操作白名单、字段长度、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明 CloudBase 物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,

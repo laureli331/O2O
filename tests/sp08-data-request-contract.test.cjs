@@ -39,6 +39,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
 
   assert.equal(typeof shared.parseCnyFen, 'function');
   assert.equal(typeof shared.formatCnyFen, 'function');
+  assert.equal(typeof shared.parseCommandEnvelope, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
 
@@ -100,6 +101,113 @@ test('request envelope separates untrusted client data from trusted server conte
   assert.doesNotMatch(combined, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\./);
 });
 
+test('command envelope parser narrows only the documented generic structure', () => {
+  const { parseCommandEnvelope } = loadTypeScriptModule('contracts/command.ts');
+  const payload = { nested: [1, true, null] };
+  const input = {
+    protocolVersion: 1,
+    requestId: 'req-1',
+    objectId: 'object-1',
+    operation: 'module-owned-operation',
+    operationKey: 'op-key-1',
+    expectedVersion: 3,
+    payload,
+  };
+
+  assert.deepEqual(parseCommandEnvelope(input), { ok: true, value: input });
+  const withoutExpectedVersion = { ...input };
+  delete withoutExpectedVersion.expectedVersion;
+  assert.deepEqual(parseCommandEnvelope(withoutExpectedVersion), { ok: true, value: withoutExpectedVersion });
+  assert.deepEqual(parseCommandEnvelope({ ...input, payload: null }), {
+    ok: true,
+    value: { ...input, payload: null },
+  });
+  assert.deepEqual(parseCommandEnvelope({ ...input, operation: 'future-module-operation' }).ok, true);
+});
+
+test('command envelope parser rejects non-object inputs and missing own required fields', () => {
+  const { parseCommandEnvelope } = loadTypeScriptModule('contracts/command.ts');
+  const valid = {
+    protocolVersion: 1,
+    requestId: 'req-1',
+    objectId: 'object-1',
+    operation: 'operation-1',
+    operationKey: 'op-key-1',
+    payload: {},
+  };
+
+  for (const input of [null, undefined, [], 'command', 1]) {
+    assert.deepEqual(parseCommandEnvelope(input), { ok: false, reason: { code: 'not-object' } });
+  }
+
+  for (const field of ['protocolVersion', 'requestId', 'objectId', 'operation', 'operationKey', 'payload']) {
+    const input = { ...valid };
+    delete input[field];
+    assert.deepEqual(parseCommandEnvelope(input), {
+      ok: false,
+      reason: { code: 'missing-field', field },
+    });
+  }
+
+  const inherited = Object.assign(Object.create({ requestId: 'inherited' }), valid);
+  delete inherited.requestId;
+  assert.deepEqual(parseCommandEnvelope(inherited), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'requestId' },
+  });
+});
+
+test('command envelope parser rejects malformed types, unsupported version, empty identifiers, and untrusted extra fields', () => {
+  const { parseCommandEnvelope } = loadTypeScriptModule('contracts/command.ts');
+  const valid = {
+    protocolVersion: 1,
+    requestId: 'req-1',
+    objectId: 'object-1',
+    operation: 'operation-1',
+    operationKey: 'op-key-1',
+    payload: {},
+  };
+
+  assert.deepEqual(parseCommandEnvelope({ ...valid, protocolVersion: 2 }), {
+    ok: false,
+    reason: { code: 'unsupported-protocol-version' },
+  });
+  for (const field of ['requestId', 'objectId', 'operation', 'operationKey']) {
+    assert.deepEqual(parseCommandEnvelope({ ...valid, [field]: '' }), {
+      ok: false,
+      reason: { code: 'empty-field', field },
+    });
+    assert.deepEqual(parseCommandEnvelope({ ...valid, [field]: '   ' }), {
+      ok: false,
+      reason: { code: 'empty-field', field },
+    });
+    assert.deepEqual(parseCommandEnvelope({ ...valid, [field]: 1 }), {
+      ok: false,
+      reason: { code: 'invalid-field-type', field },
+    });
+  }
+  assert.deepEqual(parseCommandEnvelope({ ...valid, expectedVersion: '3' }), {
+    ok: false,
+    reason: { code: 'invalid-field-type', field: 'expectedVersion' },
+  });
+  assert.deepEqual(parseCommandEnvelope({ ...valid, payload: undefined }), {
+    ok: false,
+    reason: { code: 'invalid-field-type', field: 'payload' },
+  });
+  for (const expectedVersion of [Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]) {
+    assert.deepEqual(parseCommandEnvelope({ ...valid, expectedVersion }), {
+      ok: false,
+      reason: { code: 'invalid-field-type', field: 'expectedVersion' },
+    });
+  }
+  for (const field of ['actorId', 'role', 'amountFen', 'receivedAtEpochMs', 'serverTime', 'paymentConfirmed']) {
+    assert.deepEqual(parseCommandEnvelope({ ...valid, [field]: 'forged' }), {
+      ok: false,
+      reason: { code: 'unexpected-field', field },
+    });
+  }
+});
+
 test('idempotency reuse replays the original outcome only for a matching validated payload', () => {
   const { resolveIdempotencyReuse } = loadTypeScriptModule('contracts/idempotency.ts');
   const originalOutcomes = [
@@ -143,6 +251,8 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.productAcceptancePassed, false);
   assert.equal(record.cloudMutationsPerformed, false);
   assert.ok(record.scope.includes('shared-idempotency-reuse-decision'));
+  assert.ok(record.scope.includes('command-envelope-runtime-structure-validation'));
+  assert.ok(record.notProven.includes('module-specific-command-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
