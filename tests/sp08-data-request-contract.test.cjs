@@ -100,6 +100,41 @@ test('request envelope separates untrusted client data from trusted server conte
   assert.doesNotMatch(combined, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\./);
 });
 
+test('idempotency reuse replays the original outcome only for a matching validated payload', () => {
+  const { resolveIdempotencyReuse } = loadTypeScriptModule('contracts/idempotency.ts');
+  const originalOutcomes = [
+    { status: 'succeeded', requestId: 'original-success', value: { version: 2 } },
+    { status: 'rejected', requestId: 'original-rejected', error: { category: 'business-rejected', code: 'RULE', requestId: 'original-rejected' } },
+    { status: 'failed', requestId: 'original-failed', error: { category: 'dependency-failure', code: 'DEPENDENCY', requestId: 'original-failed' } },
+    { status: 'processing', requestId: 'original-processing' },
+    { status: 'unknown', requestId: 'original-unknown' },
+  ];
+
+  for (const originalResult of originalOutcomes) {
+    assert.deepEqual(resolveIdempotencyReuse('same', originalResult), {
+      outcome: 'replay',
+      originalResult,
+    });
+  }
+
+  assert.deepEqual(resolveIdempotencyReuse('different', originalOutcomes[0]), {
+    outcome: 'reject',
+    reason: 'payload-mismatch',
+  });
+});
+
+test('idempotency reuse is a shared pure contract and does not invent storage or transport APIs', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'idempotency.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const sharedIndex = fs.readFileSync(path.join(sharedRoot, 'index.ts'), 'utf8');
+
+  assert.match(contractsIndex, /export \* from '\.\/idempotency';/);
+  assert.match(sharedIndex, /export \* from '\.\/contracts';/);
+  assert.match(source, /IdempotencyPayloadComparison/);
+  assert.match(source, /CommandResult/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+});
+
 test('SP08 progress record keeps this local contract slice distinct from cloud/product acceptance', () => {
   const record = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
 
@@ -107,6 +142,8 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.status, 'in-progress');
   assert.equal(record.productAcceptancePassed, false);
   assert.equal(record.cloudMutationsPerformed, false);
+  assert.ok(record.scope.includes('shared-idempotency-reuse-decision'));
+  assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
 });
