@@ -1,4 +1,5 @@
 export * from './command';
+export * from './account-profile-text';
 export * from './errand-advance-terms';
 export * from './errand-attachment-count';
 export * from './errand-service-fee';

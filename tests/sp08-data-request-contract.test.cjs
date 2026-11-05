@@ -58,7 +58,69 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.validateRepairOtherPublicImageCount, 'function');
   assert.equal(typeof shared.validateProviderProfileText, 'function');
   assert.equal(typeof shared.validateProviderLicenseImageCount, 'function');
+  assert.equal(typeof shared.validateAccountProfileText, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
+});
+
+test('F01 nickname and optional WeChat ID text fields follow the confirmed code-point policy', () => {
+  const { validateAccountProfileText } = loadTypeScriptModule('contracts/account-profile-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F01[^\n]*昵称必填1—20字符[^\n]*微信号选填1—50字符/);
+  assert.deepEqual(validateAccountProfileText('nickname', '  林🛠  '), {
+    ok: true,
+    value: '林🛠',
+    characterCount: 2,
+  });
+  assert.deepEqual(validateAccountProfileText('nickname', '🛠'.repeat(20)), {
+    ok: true,
+    value: '🛠'.repeat(20),
+    characterCount: 20,
+  });
+  assert.deepEqual(validateAccountProfileText('nickname', '🛠'.repeat(21)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateAccountProfileText('nickname', ' \t\n '), {
+    ok: false,
+    reason: 'empty',
+  });
+  assert.deepEqual(validateAccountProfileText('wechatId', undefined), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateAccountProfileText('wechatId', '  '), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateAccountProfileText('wechatId', `wx${'🛠'.repeat(48)}`), {
+    ok: true,
+    value: `wx${'🛠'.repeat(48)}`,
+    characterCount: 50,
+  });
+  assert.deepEqual(validateAccountProfileText('wechatId', '🛠'.repeat(51)), {
+    ok: false,
+    reason: 'too-long',
+  });
+  assert.deepEqual(validateAccountProfileText('wechatId', null), {
+    ok: false,
+    reason: 'not-string',
+  });
+  assert.deepEqual(validateAccountProfileText('phone', '13800138000'), {
+    ok: false,
+    reason: 'unknown-field',
+  });
+});
+
+test('F01 account profile text validator stays a pure shared field contract', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'account-profile-text.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+
+  assert.match(contractsIndex, /export \* from '\.\/account-profile-text';/);
+  assert.match(source, /Array\.from\(value\)\.length/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
 
 test('F01 and F07 provider license image count allows zero or one integer image', () => {
@@ -1409,6 +1471,8 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f04-errand-positive-service-fee-validation'));
   assert.ok(record.scope.includes('f07-provider-profile-display-name-and-service-intro-text-validation'));
   assert.ok(record.scope.includes('f01-f07-provider-license-image-count-validation'));
+  assert.ok(record.scope.includes('f01-account-profile-nickname-and-optional-wechat-id-text-validation'));
+  assert.ok(record.sources.some((source) => source.path === 'docs/prd.md' && typeof source.reference === 'string' && source.reference.includes('F01: nickname required 1-20')));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
   assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
@@ -1426,6 +1490,9 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.reuseDecision.f04ErrandServiceFee.includes('parseCnyFen'));
   assert.ok(record.reuseDecision.f07ProviderProfileText.includes('Unicode码点'));
   assert.ok(record.reuseDecision.f07ProviderProfileText.includes('仍归 SP14'));
+  assert.ok(record.reuseDecision.f01AccountProfileText.includes('Array.from()'));
+  assert.ok(record.reuseDecision.f01AccountProfileText.includes('Unicode 码点'));
+  assert.ok(record.reuseDecision.f01AccountProfileText.includes('微信号格式'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
   assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
   assert.equal(record.evidence.idleListingRequiredTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingRequiredText');
@@ -1435,7 +1502,9 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.evidence.integerCountRangeHelper, 'packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange');
   assert.equal(record.evidence.providerProfileTextValidation, 'packages/shared/src/contracts/provider-profile-text.ts#validateProviderProfileText');
   assert.equal(record.evidence.providerLicenseImageCountValidation, 'packages/shared/src/contracts/provider-license-image-count.ts#validateProviderLicenseImageCount');
+  assert.equal(record.evidence.accountProfileTextValidation, 'packages/shared/src/contracts/account-profile-text.ts#validateAccountProfileText');
   assert.ok(record.evidence.limitations.includes('F01/F07营业执照图片计数校验仅为字段数量边界'));
+  assert.ok(record.evidence.f01AccountProfileTextLimitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP14'));
 });
