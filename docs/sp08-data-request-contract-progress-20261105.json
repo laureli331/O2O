@@ -20,7 +20,8 @@
     "f09-private-address-book-text-shape-validation",
     "f09-private-address-book-entry-draft-payload-validation",
     "f09-private-address-book-default-pointer-and-delete-transition",
-    "f09-selected-address-detached-task-snapshot-copy"
+    "f09-selected-address-detached-task-snapshot-copy",
+    "f02-repair-other-public-text-projection"
   ],
   "sources": [
     {
@@ -94,7 +95,8 @@
     "platform": "可信上下文解析只验证由服务端认证/时钟适配器提供的对象结构，不调用平台 API，也不认证身份或证明时间来源；真实适配仍需按实际运行环境验证。",
     "thirdParty": "不新增运行依赖；F09普通文本使用 ECMAScript String.trim() 与 Array.from() 去边缘空白并按Unicode码点计数，不引入额外分词库；有限联合类型收窄无需额外 schema 库，Node 内置 node:test 可覆盖验证。",
     "f09EntryDraft": "复用项目既有 validatePrivateAddressBookPhone、validatePrivateAddressBookText 与 contracts/index.ts 导出链；当前未发现另一套地址簿草稿解析器。它是共享层固定小对象的纯输入校验，没有适用的平台 SDK 可替代；不引入 Zod 等第三方 schema 运行依赖，以显式白名单解析减少依赖并保持字段错误可审阅。node:test 覆盖正常规范化、必填字段、额外字段和字段级失败。",
-    "f09TaskSnapshot": "复用同一模块的 PrivateAddressBookEntryDraft 与现有导出链，显式投影五个已验证字符串字段到新内存对象。没有适用的平台 SDK 纯值转换，也不引入克隆库，因为五个字符串字段的显式复制更小、更易审阅；测试验证字段白名单和源值修改隔离。该实现不持久化、不定义读取权限或服务端创建事务。"
+    "f09TaskSnapshot": "复用同一模块的 PrivateAddressBookEntryDraft 与现有导出链，显式投影五个已验证字符串字段到新内存对象。没有适用的平台 SDK 纯值转换，也不引入克隆库，因为五个字符串字段的显式复制更小、更易审阅；测试验证字段白名单和源值修改隔离。该实现不持久化、不定义读取权限或服务端创建事务。",
+    "f02PublicTextProjection": "复用 PRD F02 的逻辑公开字段和 sp08-object-ownership-map-20261105 的白名单；项目内没有既有 F02 投影函数。CloudBase field() 是数据库查询层字段投影，但物理集合/字段/API 尚未定义，不能作为共享纯投影替代，也不能单独证明访问控制；未来服务端需在可信读取路径实施实际裁剪。对五个文本字段显式复制并去边缘空白，比引入 schema/克隆依赖更小且易审查。无第三方运行依赖，node:test 验证字段白名单、私密字段丢弃、输入不变和无效必填字段。只执行逻辑字段结构和基础文本形状检查，不检查 F02 长度或计数口径。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -105,6 +107,7 @@
     "trusted-context-authentication-and-clock-provenance",
     "idempotency-payload-normalization-and-equivalence-per-operation",
     "remaining-module-specific-command-validation",
+    "f02-repair-other-text-length-validation-and-character-count-rule",
     "atomic-idempotency-claim-with-business-write",
     "unknown-outcome-same-request-query-and-recovery",
     "command-result-business-outcome-evidence",
@@ -122,15 +125,16 @@
     "privateAddressBookDefaultPointerValidation": "packages/shared/src/contracts/private-address-book.ts#parsePrivateAddressBookDefaultPointer",
     "privateAddressBookDefaultDeleteTransition": "packages/shared/src/contracts/private-address-book.ts#clearPrivateAddressBookDefaultOnDelete",
     "privateAddressBookTaskSnapshot": "packages/shared/src/contracts/private-address-book.ts#createPrivateAddressBookTaskSnapshot",
+    "repairOtherPublicTextProjection": "packages/shared/src/contracts/repair-other-public-text.ts#parseRepairOtherPublicTextProjection",
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 32,
+      "passed": 35,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1685,
+      "passed": 1688,
       "failed": 0
     },
     "checks": {
@@ -140,7 +144,7 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
+    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只要求标题/说明/主业务/村社区为自有非空字符串、可选地标为字符串，去边缘空白并只复制逻辑公开文本字段；它不执行F02标题1-30、说明1-1000、地标0-50长度校验，PRD对普通文本可见字符计数规则尚未细化到码点/字素簇，也不定义物理数据库字段、API或服务端权限。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,

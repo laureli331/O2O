@@ -44,6 +44,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.parseCommandResult, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookPhone, 'function');
   assert.equal(typeof shared.validatePrivateAddressBookText, 'function');
+  assert.equal(typeof shared.parseRepairOtherPublicTextProjection, 'function');
   assert.equal(typeof shared.parsePrivateAddressBookEntryDraft, 'function');
   assert.equal(typeof shared.parsePrivateAddressBookDefaultPointer, 'function');
   assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
@@ -379,6 +380,111 @@ test('F09 required text rejects blank and non-string values while optional remar
   });
 });
 
+test('F02 repair and other public text projection trims and returns only allowlisted public text', () => {
+  const { parseRepairOtherPublicTextProjection } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+  const input = {
+    title: '  冰箱维修  ',
+    description: '  冷藏室不制冷  ',
+    business: '  家电维修  ',
+    community: '  湘阴渡社区  ',
+    landmark: '  2栋旁  ',
+    privateDetailedAddress: '湘阴渡社区2栋101室',
+    phone: '13800138000',
+    ownerId: 'owner-private',
+  };
+
+  assert.deepEqual(parseRepairOtherPublicTextProjection(input), {
+    ok: true,
+    value: {
+      title: '冰箱维修',
+      description: '冷藏室不制冷',
+      business: '家电维修',
+      community: '湘阴渡社区',
+      landmark: '2栋旁',
+    },
+  });
+  assert.deepEqual(input, {
+    title: '  冰箱维修  ',
+    description: '  冷藏室不制冷  ',
+    business: '  家电维修  ',
+    community: '  湘阴渡社区  ',
+    landmark: '  2栋旁  ',
+    privateDetailedAddress: '湘阴渡社区2栋101室',
+    phone: '13800138000',
+    ownerId: 'owner-private',
+  });
+});
+
+test('F02 repair and other public text projection handles optional landmark without inventing it', () => {
+  const { parseRepairOtherPublicTextProjection } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+
+  assert.deepEqual(parseRepairOtherPublicTextProjection({
+    title: '电脑维修',
+    description: '无法开机',
+    business: '维修',
+    community: '湘阴村',
+  }), {
+    ok: true,
+    value: {
+      title: '电脑维修',
+      description: '无法开机',
+      business: '维修',
+      community: '湘阴村',
+    },
+  });
+});
+
+test('F02 repair and other public text projection rejects absent, inherited, blank, or mistyped required text', () => {
+  const { parseRepairOtherPublicTextProjection } = loadTypeScriptModule('contracts/repair-other-public-text.ts');
+  const valid = {
+    title: '电脑维修',
+    description: '无法开机',
+    business: '维修',
+    community: '湘阴村',
+  };
+
+  for (const input of [null, undefined, [], 'request', 1]) {
+    assert.deepEqual(parseRepairOtherPublicTextProjection(input), {
+      ok: false,
+      reason: { code: 'not-object' },
+    });
+  }
+
+  for (const field of ['title', 'description', 'business', 'community']) {
+    const input = { ...valid };
+    delete input[field];
+    assert.deepEqual(parseRepairOtherPublicTextProjection(input), {
+      ok: false,
+      reason: { code: 'missing-field', field },
+    });
+
+    assert.deepEqual(parseRepairOtherPublicTextProjection({ ...valid, [field]: ' \t\n ' }), {
+      ok: false,
+      reason: { code: 'invalid-field', field, fieldReason: 'empty' },
+    });
+
+    assert.deepEqual(parseRepairOtherPublicTextProjection({ ...valid, [field]: 7 }), {
+      ok: false,
+      reason: { code: 'invalid-field', field, fieldReason: 'not-string' },
+    });
+  }
+
+  const inheritedTitle = Object.assign(Object.create({ title: '电脑维修' }), {
+    description: '无法开机',
+    business: '维修',
+    community: '湘阴村',
+  });
+  assert.deepEqual(parseRepairOtherPublicTextProjection(inheritedTitle), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'title' },
+  });
+
+  assert.deepEqual(parseRepairOtherPublicTextProjection({ ...valid, landmark: 7 }), {
+    ok: false,
+    reason: { code: 'invalid-field', field: 'landmark', fieldReason: 'not-string' },
+  });
+});
+
 test('F09 default-address pointer models zero or one nonblank opaque address id', () => {
   const { parsePrivateAddressBookDefaultPointer } = loadTypeScriptModule('contracts/private-address-book.ts');
 
@@ -708,8 +814,10 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f09-private-address-book-entry-draft-payload-validation'));
   assert.ok(record.scope.includes('f09-private-address-book-default-pointer-and-delete-transition'));
   assert.ok(record.scope.includes('f09-selected-address-detached-task-snapshot-copy'));
+  assert.ok(record.scope.includes('f02-repair-other-public-text-projection'));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
+  assert.ok(record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
