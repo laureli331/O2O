@@ -132,3 +132,28 @@ test('SP08 database capability map distinguishes documented platform limits from
   assert.ok(map.sources.some((source) => source.url === 'https://docs.cloudbase.net/database/transaction'));
   assert.ok(map.sources.some((source) => source.url === 'https://docs.cloudbase.net/database/data-index'));
 });
+
+test('SP08 logical ownership map covers PRD field groups without pretending to define physical schemas', () => {
+  const map = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+
+  assert.equal(map.taskId, 'SP08');
+  assert.equal(map.status, 'logical-draft');
+  assert.equal(map.physicalSchemaDefined, false);
+  assert.equal(map.cloudMutationsPerformed, false);
+  assert.deepEqual(map.fieldGroups.map((group) => group.prdFieldId), Array.from({ length: 22 }, (_, index) => `F${String(index + 1).padStart(2, '0')}`));
+  assert.ok(map.fieldGroups.every((group) => (
+    group.ownerModule
+    && Array.isArray(group.publicView)
+    && Array.isArray(group.conditionalView)
+    && Array.isArray(group.privateView)
+    && group.snapshotRule
+  )));
+  assert.ok(map.snapshots.some((snapshot) => snapshot.id === 'public-request-projection' && snapshot.versioned === true));
+  assert.ok(map.snapshots.some((snapshot) => snapshot.id === 'selected-address' && snapshot.editAfterSelectionChangesPriorSnapshot === false));
+  assert.ok(map.snapshots.some((snapshot) => snapshot.id === 'rating-publication' && snapshot.onlyApprovedVersionIsPublic === true));
+  assert.ok(map.unresolved.some((item) => item.id === 'errand-attachment-visibility'));
+  assert.ok(map.unresolved.some((item) => item.id === 'merchant-post-rule-owner'));
+  assert.ok(map.unresolved.some((item) => item.id === 'retention-and-erasure-periods'));
+  assert.ok(map.sources.some((source) => source.path === 'docs/prd.md' && source.reference.includes('F01-F22')));
+  assert.ok(map.sources.some((source) => source.path === 'docs/backend-architecture-contract-20261103.md' && source.reference.includes('Section 3')));
+});

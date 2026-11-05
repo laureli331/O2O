@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "taskId": "SP08",
+  "date": "2026-11-05",
+  "title": "逻辑对象归属与公开私密快照映射",
+  "status": "logical-draft",
+  "productAcceptancePassed": false,
+  "physicalSchemaDefined": false,
+  "cloudMutationsPerformed": false,
+  "scope": [
+    "prd-field-groups-F01-F22",
+    "backend-module-ownership",
+    "public-private-role-views",
+    "versioned-snapshot-rules"
+  ],
+  "reuseDecision": {
+    "project": "复用 packages/shared 的通用命令、结果和金额合同；未发现业务对象/公开视图模型或物理数据访问层。",
+    "officialPlatform": "本切片只整理 PRD 已批准的数据可见性和 Module 所有权；物理 SDK、集合、索引、权限与查询仍须按 SP08 能力映射和实际工程核验，不从预览推导。",
+    "thirdParty": "不引入依赖；此交付是有来源的逻辑映射，不是运行时功能。"
+  },
+  "fieldGroups": [
+    { "prdFieldId": "F01", "object": "账号资料与身份资格", "ownerModule": "身份与资格", "ownerTask": "SP09", "publicView": ["昵称", "受限资格标识"], "conditionalView": ["按当前角色授权显示的打码联系电话/微信号"], "privateView": ["验证状态与必要凭据", "受保护去重标识", "执照原图及必要核查信息"], "snapshotRule": "原始姓名/证件号仅用于获准核验传递，不进入日常对象、日志或公开视图；不把客户端自报资格当可信事实。", "source": "PRD 3.1-3.2; F01" },
+    { "prdFieldId": "F02", "object": "维修/其它需求", "ownerModule": "需求与申请", "ownerTask": "SP15", "publicView": ["标题、说明、主业务、村/社区、地标、公开图片、公开服务时间"], "conditionalView": ["私密详细地址仅当前合法当事人"], "privateView": ["私密详细地址及非公开编辑/历史版本"], "snapshotRule": "发布版按条件版本公开；选前关键条件变化使旧申请失效；选后变更须双方同意并保留原公开版本。", "source": "PRD F02; BA Module 需求与申请" },
+    { "prdFieldId": "F03", "object": "闲置发布及交易约定", "ownerModule": "需求与申请", "ownerTask": "SP15", "publicView": ["标题、说明、分类、村/社区、明确价格或面议、公开图片、地标"], "conditionalView": ["正式交易双方按当前版本确认后取得联系权限"], "privateView": ["未公开联系信息及交易授权记录"], "snapshotRule": "交易确认绑定当时的商品与金额版本；联系获准本身不解码；不得用后续编辑覆盖已确认约定。", "source": "PRD F03; PRD 3.2" },
+    { "prdFieldId": "F04", "object": "跑腿需求", "ownerModule": "需求与申请", "ownerTask": "SP15", "publicView": ["任务类型、标题、说明、村/社区、服务费、公开时间"], "conditionalView": ["代买内容/估算及取送信息按必要履约角色提供"], "privateView": ["精确取送地址及其他履约私密信息"], "snapshotRule": "申请与选择绑定当前金额/时间版本；地址授权与需求公开字段分开；附件公开范围尚未由 PRD 明确。", "source": "PRD F04-F05; PRD 3.2" },
+    { "prdFieldId": "F05", "object": "申请、服务费接受与候选", "ownerModule": "需求与申请", "ownerTask": "SP16", "publicView": ["发布者可看该需求全部候选"], "conditionalView": ["候选仅能看本人申请/接受记录；发布者选择后由交易用例形成双方事实"], "privateView": ["其他候选的非公开资料、联系方式及资格材料"], "snapshotRule": "每人每需求至多一个有效申请；跑腿申请只接受发布者已发布服务费，不产生独立报价字段；资格/金额/时间校验当前版本。", "source": "PRD F05; BA Module 需求与申请/交易与履约" },
+    { "prdFieldId": "F06", "object": "取消、变更、延期、交付异议", "ownerModule": "交易与履约", "ownerTask": "SP18-SP20", "publicView": ["如业务需要，仅展示安全状态摘要；摘要字段未在本切片定名"], "conditionalView": ["当前双方查看其请求、同意与差异"], "privateView": ["当事人说明、私密材料、历史决定及版本"], "snapshotRule": "每项请求关联当前交易/内容版本；旧同意不能同意新内容；待确认不替换已生效版本。", "source": "PRD F06; BA TX03-TX04" },
+    { "prdFieldId": "F07", "object": "接单资料", "ownerModule": "接单资料", "ownerTask": "SP14", "publicView": ["申请卡上下文中的名称、类别、介绍、服务区域及获准公开资料"], "conditionalView": ["仅相关需求发布者按申请卡查看；不开放人员目录/找人"], "privateView": ["执照原图、非公开联系资料及本人编辑内容"], "snapshotRule": "候选查看使用有权只读视图；不因忙碌限并发，不把公开资料快照当资格证明。", "source": "PRD F07; BA Module 接单资料" },
+    { "prdFieldId": "F08", "object": "商家 Banner、投放区间和订单", "ownerModule": "广告", "ownerTask": "SP26-SP28", "releaseScope": "second-edition-delayed", "publicView": ["已审核且当前有效的素材/详情"], "conditionalView": ["商家本人及必要运营的排期、付款和审核状态"], "privateView": ["草稿、审核材料、退款/支付核对与历史版本"], "snapshotRule": "仅记录 PRD 延后业务边界；不得据此启用真实广告销售或产生物理模式。", "source": "PRD F08; BA Module 广告; PRD 15" },
+    { "prdFieldId": "F09", "object": "私人地址簿", "ownerModule": "私人工具", "ownerTask": "SP14", "publicView": [], "conditionalView": ["选入具体任务后仅该任务当前合法当事人"], "privateView": ["地址簿本身仅本人；必要运营不因运营身份自动解码"], "snapshotRule": "选入任务时形成任务地址快照；之后编辑/删除地址簿不回写既有任务。", "source": "PRD F09; PRD 3.2; BA Module 私人工具" },
+    { "prdFieldId": "F10", "object": "收藏、草稿、模板与分享来源", "ownerModule": "私人工具", "ownerTask": "SP14-SP15", "publicView": ["仅明确分享时使用公开卡片字段/公开首图"], "conditionalView": ["本人可访问收藏、草稿与模板"], "privateView": ["草稿、收藏关系、地址和复制来源"], "snapshotRule": "草稿不公开、不自动发布；再发布是新对象，不继承旧申请、授权、地址或推广权益。", "source": "PRD F10; BA Module 私人工具" },
+    { "prdFieldId": "F11", "object": "服务时段、忙碌与限定核验说明", "ownerModule": "接单资料", "ownerTask": "SP14", "publicView": ["仅当前业务入口所需的服务状态提示"], "conditionalView": ["相关需求发布者按资格查看必要时段/忙碌信息"], "privateView": ["本人配置及核验依据"], "snapshotRule": "忙碌/非时段仅提示，不作接单上限或自动取消；可见字段仍须随实际页面和角色Interface核定。", "source": "PRD F11; BA Module 接单资料" },
+    { "prdFieldId": "F12", "object": "举报、申诉与运营处置", "ownerModule": "运营处置", "ownerTask": "SP12", "publicView": [], "conditionalView": ["案件当事人看到与本人相关且经授权的进度/结论"], "privateView": ["举报者身份、必要证据及运营处置记录；操作者只记共用管理账号"], "snapshotRule": "案件绑定有权原对象与操作前后状态；不得向被举报人泄露举报者资料，不把共用账号推断为具体自然人。", "source": "PRD F12; PRD 3.2; BA Module 运营处置" },
+    { "prdFieldId": "F13", "object": "评分资格与实际经历", "ownerModule": "评价", "ownerTask": "SP21", "publicView": ["不公开资格证据或自然人标识"], "conditionalView": ["本人查看资格状态；评价模块核验合法经历"], "privateView": ["经历来源、双方角色及资格证据引用"], "snapshotRule": "评价消费交易/合法目录经历；不得新造交易、计佣、付款或旧联系授权。", "source": "PRD F13; BA Module 评价" },
+    { "prdFieldId": "F14", "object": "双向三维评分", "ownerModule": "评价", "ownerTask": "SP21", "publicView": ["允许公开的评分数值/汇总，不含自然人标识"], "conditionalView": ["作者本人查看自己的当前评分"], "privateView": ["受保护作者/对象标识、资格与修改记录"], "snapshotRule": "自然人/经历/方向形成唯一性范围；评分值没有默认值；公开汇总不得暴露受保护标识。", "source": "PRD F14; BA Module 评价" },
+    { "prdFieldId": "F15", "object": "评价图文及审核版本", "ownerModule": "评价", "ownerTask": "SP21", "publicView": ["仅当前合格公开版本及其允许附件"], "conditionalView": ["作者查看本人原稿；必要审核角色访问审核材料"], "privateView": ["原稿、未审核图、检测结果、原因和版本历史"], "snapshotRule": "文字和图片作为同一审核单元；旧合法公开版在新版通过前保持；私密附件不能由直链绕过访问。", "source": "PRD F15; BA Module 评价" },
+    { "prdFieldId": "F16", "object": "评分回应", "ownerModule": "评价", "ownerTask": "SP21", "publicView": ["仅当前审核通过的回应版本"], "conditionalView": ["被评对象本人编辑/查看其回应"], "privateView": ["未审核文本、版本及审核结论"], "snapshotRule": "同一评分方向最多一个公开回应位置；公开后不自行编辑，驳回后在原位置重提。", "source": "PRD F16; BA Module 评价" },
+    { "prdFieldId": "F17", "object": "文字 AI 整理请求与候选", "ownerModule": "AI 能力", "ownerTask": "SP31-SP32", "publicView": [], "conditionalView": ["仅发起用户查看请求和候选；用户明确采用后才写入其表单"], "privateView": ["输入、候选、请求关联及用量/状态"], "snapshotRule": "候选不自动发布或覆盖；真实调用仍受 AG01 限制。", "source": "PRD F17; BA Module AI 能力" },
+    { "prdFieldId": "F18", "object": "运营统计", "ownerModule": "分析", "ownerTask": "SP33", "publicView": [], "conditionalView": ["仅授权本人管理账号查看经批准的汇总"], "privateView": ["底层业务来源及必要的去重/归集依据"], "snapshotRule": "明确日期/批次/版本；0、未采集、未知分开；不得公开或推断 GMV/客户线下付款。", "source": "PRD F18; BA Module 分析" },
+    { "prdFieldId": "F19", "object": "服务时间、到期、延期与故障保护", "ownerModule": "交易与履约", "ownerTask": "SP18-SP20", "publicView": ["需求公开时限及必要的交易进度"], "conditionalView": ["当前双方的准确约定、延期和异议状态"], "privateView": ["故障证据引用、保护范围及恢复验收细节"], "snapshotRule": "约定时间绑定双方接受的版本；服务端可信时间决定有效性；故障保护单列，不覆盖原约定。", "source": "PRD F19; PRD 6.5; BA TX04" },
+    { "prdFieldId": "F20", "object": "分阶段费用与材料凭据", "ownerModule": "交易与履约", "ownerTask": "SP18-SP20", "publicView": [], "conditionalView": ["当前双方查看有效费用版本及履约凭据"], "privateView": ["凭据原图、费用异议与未生效方案"], "snapshotRule": "按阶段和版本追加；待双方同意不覆盖现值；凭据只向有权当事人开放。", "source": "PRD F20; BA TX03-TX05" },
+    { "prdFieldId": "F21", "object": "佣金、账单、付款/退款与调整", "ownerModule": "split-by-fact", "ownerTask": "SP13/SP17/SP20/SP23/SP27/SP29/SP30", "ownerSlices": [{ "fact": "佣金规则、标准快照、主记录和更正差额", "ownerModule": "佣金" }, { "fact": "归账、实收分配、暂缓、抵付、欠费与账单期限", "ownerModule": "账单" }, { "fact": "渠道付款/退款、查单与对账事实", "ownerModule": "平台支付" }], "publicView": [], "conditionalView": ["本人查看自身应缴/已缴/待核对账户事实；必要运营按处置权限访问"], "privateView": ["付款渠道引用、核对材料、争议、退款及更正历史"], "snapshotRule": "分开业务费用、佣金、实缴、抵付与多收待退；未知不当零；不同事实由唯一所属 Module 写入。", "source": "PRD F21; BA Module 佣金/账单/平台支付" },
+    { "prdFieldId": "F22", "object": "商家主帖", "ownerModule": "unassigned-in-contract", "ownerTask": "SP24", "ownerResolutionStatus": "PRD定义了内容字段与公开版本规则；后端 Module 表未明确指定主帖版本/内容审核的唯一规则所有者。", "ownerSlices": [{ "fact": "关联商家主体及已审核经营档案", "ownerModule": "商家入驻" }, { "fact": "主帖草稿、审核版本、公开替换与风险下架", "ownerModule": "needs-explicit-assignment" }], "publicView": ["仅当前可展示的审核通过版本"], "conditionalView": ["商家本人查看草稿/审核状态；必要运营访问审核材料"], "privateView": ["待审版本、审核原因、历史替换与风险处置"], "snapshotRule": "新版通过后才替换旧公开版；风险下架保留处置记录；SP08须明确唯一规则归属后才能正式设计物理模型。", "source": "PRD F22; BA Module 商家入驻; BA01" }
+  ],
+  "snapshots": [
+    { "id": "public-request-projection", "sourceGroups": ["F02", "F03", "F04"], "versioned": true, "publicFieldsMustBeAllowlisted": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "公开卡片只输出 PRD 明确公开字段；敏感字段需服务端角色投影，不能把完整对象发送后靠 UI 遮挡。F04 附件的具体可见性未定。" },
+    { "id": "candidate-view", "sourceGroups": ["F05", "F07"], "versioned": true, "publicFieldsMustBeAllowlisted": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "发布者看候选集合；候选人只看自己的申请；未选候选保持联系打码。接单资料只在相关申请上下文读取，不开放目录。" },
+    { "id": "selected-trade-agreement", "sourceGroups": ["F03", "F04", "F05", "F06", "F19", "F20"], "versioned": true, "publicFieldsMustBeAllowlisted": false, "editAfterSelectionChangesPriorSnapshot": false, "rule": "选择/闲置确认将当前合法需求轮次、双方接受的条件/服务时间/费用告知及授权事实关联；字段与物理读写集由相应交易卡和 SP08 逐项确定。" },
+    { "id": "selected-address", "sourceGroups": ["F04", "F09"], "versioned": true, "publicFieldsMustBeAllowlisted": false, "editAfterSelectionChangesPriorSnapshot": false, "rule": "用户选址后仅向当前履约所需当事人提供；地址簿改删不改变既有任务；结束/取消后对方地址权限关闭。" },
+    { "id": "contact-authorization", "sourceGroups": ["F01", "F03", "F04", "F05"], "versioned": true, "publicFieldsMustBeAllowlisted": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "打码与解码由服务端按当前对象/角色/版本执行；新对象不继承授权；电话变更关闭旧待处理并撤旧授权；结束后重新打码。" },
+    { "id": "fee-and-evidence", "sourceGroups": ["F06", "F20", "F21"], "versioned": true, "publicFieldsMustBeAllowlisted": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "待确认费用不覆盖有效版本；凭据仅当前有权双方/必要运营可读；付款与佣金作为分离事实追溯。" },
+    { "id": "rating-publication", "sourceGroups": ["F13", "F14", "F15", "F16"], "versioned": true, "onlyApprovedVersionIsPublic": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "数值资格与图文审核分离；公开视图隐藏自然人标识；待审新版不得替换旧合法公开版。" },
+    { "id": "merchant-content-publication", "sourceGroups": ["F08", "F22"], "versioned": true, "onlyApprovedVersionIsPublic": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "仅已审核且当前可展示内容公开；草稿、待审版本和材料保持私有；F22 唯一规则 Module 尚待确认。F08 属第二版延后。" },
+    { "id": "ai-candidate", "sourceGroups": ["F17"], "versioned": true, "publicFieldsMustBeAllowlisted": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "请求/候选仅发起人可见；采用写回本人编辑流程仍须显式确认，不自动发布；未满足 AG01 不调用真实模型。" },
+    { "id": "operations-aggregate", "sourceGroups": ["F12", "F18", "F21"], "versioned": true, "publicFieldsMustBeAllowlisted": true, "editAfterSelectionChangesPriorSnapshot": false, "rule": "管理端只按已批准处置范围访问必要明细；统计仅汇总且保留来源/批次/权限，不把共用账号冒充自然人。" }
+  ],
+  "unresolved": [
+    { "id": "errand-attachment-visibility", "impact": "F04 附件公开还是仅当事人可见未由 PRD 明确；上传和读取入口不能先行开放。", "ownerTask": "SP08/SP15" },
+    { "id": "merchant-post-rule-owner", "impact": "F22 内容草稿、审核版本、原子替换及下架规则在 Module 唯一所有者表中没有明确归属；阻断该功能物理建模/实现，不阻断其他已归属对象的映射。", "ownerTask": "SP08; confirm before SP24" },
+    { "id": "provider-schedule-view", "impact": "F11 哪些申请阶段向发布者展示具体时段尚未逐页面确认；只允许按必要性原则暂定角色范围，具体 DTO 字段等页面合同确认。", "ownerTask": "SP08/SP14" },
+    { "id": "retention-and-erasure-periods", "impact": "真实个人信息的保留期限、删除触发及依法保留依据由 E03 决定；未定前不得启用真实个人信息采集/分析。", "ownerTask": "E03; SP09 and later data activation" },
+    { "id": "physical-schema-and-access", "impact": "本表是逻辑模型；真实集合/字段/索引/安全规则/SDK查询与角色读写清单还需根据产品工程和云环境验证。", "ownerTask": "SP08" },
+    { "id": "business-snapshot-read-write-sets", "impact": "每个 TX01-TX12 的实际读写集、版本冲突、回滚、并发和恢复结果尚无产品代码证据；不得用 SP01 合成事务探针代替。", "ownerTask": "SP08; transaction cases then SP15-SP30" }
+  ],
+  "sourceCoverage": {
+    "prdFieldIds": "F01-F22",
+    "architectureContract": ["BA01 module ownership", "BA03 trusted identity and object authorization", "BA04 transaction boundaries", "BA05 physical data constraints", "BA06 idempotency", "BA07 version conflicts", "BA08 access isolation", "BA09 file access", "BA10 trusted time", "BA11 error/result", "BA12 audit", "BA13 recovery", "BA15 state boundaries", "BA16 responsibility split"],
+    "notEvidenceOf": ["physical collection names", "public API names or SDK signatures", "CloudBase security rules", "product permissions", "business concurrency", "retention approval", "product acceptance"]
+  },
+  "sources": [
+    { "path": "docs/prd.md", "reference": "Sections 3.1-3.2, 13.1, 13.3; field groups F01-F22", "use": "authoritative logical field, role, privacy and snapshot rules" },
+    { "path": "docs/backend-architecture-contract-20261103.md", "reference": "Section 3; BA01-BA16", "use": "unique Module fact ownership, server-side authorization, version and transaction boundaries" },
+    { "path": "docs/v1-executable-development-plan-20261027.md", "reference": "SP08", "use": "requires object ownership and public/private snapshot mapping; API and SDK names must come from actual engineering/docs" },
+    { "path": "docs/sp08-database-capability-map-20261105.md", "reference": "selected database and transaction/index capability", "use": "keeps documented database capability separate from this logical product model" },
+    { "path": "packages/shared/src/contracts/command.ts", "reference": "CommandEnvelope", "use": "reused generic request boundary; not a domain object schema" }
+  ]
+}

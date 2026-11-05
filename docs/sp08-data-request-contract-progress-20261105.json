@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "taskId": "SP08",
   "date": "2026-11-05",
-  "title": "共享请求与金额合同增量",
+  "title": "请求/金额合同与逻辑对象归属增量",
   "status": "in-progress",
   "productAcceptancePassed": false,
   "cloudMutationsPerformed": false,
@@ -10,7 +10,8 @@
     "shared-command-envelope-types",
     "trusted-server-context-types",
     "command-result-union",
-    "exact-cny-fen-parser-and-formatter"
+    "exact-cny-fen-parser-and-formatter",
+    "logical-ownership-and-public-private-snapshot-map-F01-F22"
   ],
   "sources": [
     {
@@ -45,6 +46,10 @@
     {
       "path": "docs/sp01-cloud-probe-runbook-20261028.md",
       "use": "只复用临时探针已记录的实际 SDK 调用形状；不作为产品业务验证"
+    },
+    {
+      "path": "docs/sp08-object-ownership-map-20261105.md",
+      "use": "基于 PRD F01-F22 与后端 Module 所有者表整理逻辑公开/私密视图和快照；不是物理模式或权限通过证据"
     }
   ],
   "reuseDecision": {
@@ -65,13 +70,14 @@
   "evidence": {
     "test": "tests/sp08-data-request-contract.test.cjs",
     "databaseCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
+    "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
-      "passed": 6,
+      "passed": 7,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1659,
+      "passed": 1660,
       "failed": 0
     },
     "checks": {
@@ -81,6 +87,6 @@
       "webBuild": "passed-with-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "本地契约测试不证明 CloudBase 物理约束、权限、事务或产品集成"
+    "limitations": "本地契约测试不证明 CloudBase 物理约束、权限、事务或产品集成；对象归属与公开/私密视图仍是逻辑草案"
   }
 }
