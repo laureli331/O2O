@@ -53,9 +53,9 @@
     "enabled": false,
     "adoptedTemplateSource": null,
     "preservedTest": "tests/sp01-taro-malicious-archive.test.cjs",
-    "evidenceJson": "docs/sp01-taro-malicious-archive-20261103.json",
-    "evidenceJsonPresent": false,
-    "effect": "The missing malicious-archive evidence blocks any future re-enablement of remote archive/template execution; the local authored scaffold does not fetch or execute remote templates.",
+    "evidenceJson": "docs/sp01-taro-malicious-archive-20261105.json",
+    "evidenceJsonPresent": true,
+    "effect": "The isolated record reproduces direct ../ traversal in decompress@4.2.1; this fixture did not reproduce the advisory symlink-chain case and confirmed no read/write outside its isolated sandbox. Security clearance is not established. Remote archive/template execution remains disabled; the local authored scaffold does not fetch or execute remote templates.",
     "remainingRisk": "Taro CLI and dependency audit posture are not declared security-cleared; dependency advisories and third-party declaration diagnostics remain recorded for their assigned review and release gates."
   },
   "validation": {
@@ -109,18 +109,55 @@
       },
       "fullRegression": {
         "command": "node --test over PowerShell-expanded tests/*.test.cjs",
-        "total": 1652,
-        "passed": 1651,
-        "failed": 1,
+        "total": 1653,
+        "passed": 1653,
+        "failed": 0,
         "skipped": 0,
-        "soleFailure": "R01 malicious archive probe evidence is bounded and does not claim cross-platform clearance",
-        "failure": "The preserved test requires docs/sp01-taro-malicious-archive-20261103.json, which is absent.",
-        "disposition": "Preserve the failing evidence gate; do not skip, weaken, or claim the suite passed. It blocks future remote archive/template execution per the existing SP01 boundary."
+        "soleFailure": null,
+        "failure": null,
+        "disposition": "The current repository suite passes. This does not clear R01: direct ../ traversal was reproduced, the advisory symlink-chain case was not reproduced by the fixture, and no cross-platform security clearance is established. Keep remote archive/template execution disabled."
       }
     }
   },
+  "localFoundationReview": {
+    "date": "2026-11-05",
+    "result": "passed-for-bounded-local-foundation-only",
+    "isolation": {
+      "quickStartIncludedInWorkspaces": false,
+      "cloudFunctionWorkspaceHasImplementation": false,
+      "cloudSdkDependency": false,
+      "environmentIdentifier": false,
+      "deployOrPublishScript": false,
+      "productionConfiguration": false,
+      "remoteTemplateOrArchiveExecution": false,
+      "evidence": [
+        "package.json workspaces and scripts",
+        "apps/cloud-functions/package.json",
+        "apps/cloud-functions/README.md",
+        "scripts/check-workspace-boundaries.cjs",
+        "SP07 web and mini-program build entrypoints"
+      ]
+    },
+    "secretHandling": {
+      "credentialNamedFilesInWorkspace": 0,
+      "credentialPatternMatchesInAppsAndPackages": 0,
+      "limitations": "Bounded filename and text-pattern review only; not a secret-scanner, dependency audit, or security clearance."
+    },
+    "productionTestDouble": {
+      "productRuntimeOrProductionEntryPresent": false,
+      "testDoubleDefaultFound": false,
+      "disposition": "No production execution path or test double exists in this foundation. Real-provider and test-substitute isolation remains a pre-activation check under QS08/SP08."
+    },
+    "recovery": {
+      "foundationCommit": "09c608777289de5954cb669fe95fcb887883b10d",
+      "externalStateChanged": false,
+      "rollbackExecuted": false,
+      "method": "If removal is later required, first preserve or commit unrelated working-tree changes, then create a new inverse commit for the SP07 foundation changes. Do not reset or clean this shared checkout; retain SP01-SP06 records and historical evidence.",
+      "currentWorkingTree": "Contains unrelated user changes; no rollback or cleanup was performed."
+    }
+  },
   "rollback": {
-    "method": "Revert this scoped signoff and the isolated SP07 foundation commit; retain all SP01-SP06 preparation records and historical snapshots.",
+    "method": "See localFoundationReview.recovery: preserve unrelated working-tree changes, then use a new inverse commit for the isolated SP07 foundation; retain SP01-SP06 preparation records and historical snapshots.",
     "externalStateChanged": false
   }
 }

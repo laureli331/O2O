@@ -36,8 +36,10 @@ test('SP07 registers QP10 evidence intake without claiming product measurements'
   assert.ok(plan.sources.includes(entryPath));
   assert.ok(plan.sources.includes('docs/performance-measurement-entry-20261105.md'));
   assert.ok(manifest.scripts['check:foundation'].includes('tests/sp07-performance-measurement-entry.test.cjs'));
-  assert.equal(sp07.status, 'in-progress');
+  assert.equal(sp07.status, 'complete');
   assert.equal(sp07.productAcceptancePassed, false);
+  assert.equal(sp07.completion.scope, 'bounded-local-foundation-only');
   assert.ok(sp07.executionProgress.completedAcceptance.some((item) => item.includes(entryPath)));
-  assert.ok(sp07.executionProgress.remainingAcceptance.some((item) => /full repository regression is not green/i.test(item)));
+  assert.deepEqual(sp07.executionProgress.remainingAcceptance, []);
+  assert.equal(sp07.executionProgress.laterValidation.find((item) => item.criterionId === 'QP10').originalThresholdsPreserved, true);
 });

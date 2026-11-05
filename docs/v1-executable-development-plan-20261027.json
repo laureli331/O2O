@@ -3120,12 +3120,42 @@
       ],
       "evidenceGates": [],
       "features": [],
-      "status": "in-progress",
+      "status": "complete",
+    "completion": {
+      "date": "2026-11-05",
+      "scope": "bounded-local-foundation-only",
+      "commit": "09c608777289de5954cb669fe95fcb887883b10d",
+      "environment": "Windows 11 local E:\\O2O workspace and isolated clean-room copy; no CloudBase, QuickStart, or production changes",
+      "evidence": [
+        "docs/qd03-sp07-local-foundation-20261104.md",
+        "docs/qd03-sp07-local-foundation-20261104.json",
+        "tests/qd03-sp07-foundation.test.cjs",
+        "tests/sp07-workspace-boundaries.test.cjs",
+        "tests/sp07-performance-measurement-entry.test.cjs"
+      ]
+    },
       "executionProgress": {
         "date": "2026-11-05",
+        "latestValidation": {
+          "evidence": "docs/qd03-sp07-local-foundation-20261104.json",
+          "command": "node --test over PowerShell-expanded tests/*.test.cjs",
+          "total": 1653,
+          "passed": 1653,
+          "failed": 0,
+          "skipped": 0,
+          "exitCode": 0,
+          "r01Status": "pending",
+          "remoteArchiveExecutionEnabled": false,
+          "securityClearance": "not-established-platform-limited"
+        },
         "scope": "bounded-local-foundation-only",
         "signoff": "docs/qd03-sp07-local-foundation-20261104.json",
-        "workspacesCreated": ["packages/shared", "apps/mini-program", "apps/admin-web", "apps/cloud-functions"],
+        "workspacesCreated": [
+          "packages/shared",
+          "apps/mini-program",
+          "apps/admin-web",
+          "apps/cloud-functions"
+        ],
         "productModulesImplemented": false,
         "formalBusinessPagesImplemented": false,
         "cloudFunctionsImplemented": false,
@@ -3135,12 +3165,138 @@
           "Fresh dependency installation from the committed lockfile succeeds in an isolated clean-room copy.",
           "Strict shared-code checks, dependency-tree verification, and web/WeChat mini-program builds pass in the working tree and clean-room copy.",
           "An AST/static workspace boundary regression gate is implemented, exercised by positive and negative fixtures, and run before both formal web and WeChat mini-program bundlers in the working tree.",
-          "QP10 measurement evidence intake and SP07/SP15/SP18/SP35 ownership are registered in docs/performance-measurement-entry-20261105.json; no product measurement is claimed."
+          "QP10 measurement evidence intake and SP07/SP15/SP18/SP35 ownership are registered in docs/performance-measurement-entry-20261105.json; no product measurement is claimed.",
+          "The bounded isolation, secret-handling defaults, stage-applicable quality gates, and recovery path have been reviewed; the review is not a security clearance and no rollback was executed."
         ],
-        "remainingAcceptance": [
-          "Review SP07 isolation, secret-handling defaults, and recovery/rollback evidence; the static source scan is only a bounded check, not a security clearance.",
-          "The full repository regression is not green: the preserved malicious-archive test still lacks its required evidence JSON. This keeps remote template/archive execution disabled and must not be reported as a passed suite.",
-          "QP10 product measurements remain unexecuted in SP07; SP15/SP18 early baselines and SP35 final-candidate full retest remain assigned to their registered triggers and original acceptance thresholds."
+        "remainingAcceptance": [],
+        "laterValidation": [
+          {
+            "criterionId": "R01",
+            "trigger": "Only if a future change proposes fetching, unpacking, or executing remote templates or archives.",
+            "currentEvidence": "Direct ../ traversal was reproduced in an isolated sandbox; the advisory symlink-chain case was not reproduced by the current fixture, and no cross-platform security clearance is established.",
+            "preservedControl": "Remote template/archive execution stays disabled until a separate evidence-backed security disposition is completed.",
+            "blocks": "Re-enabling the remote path only; does not block this bounded local foundation."
+          },
+          {
+            "criterionId": "QP10",
+            "ownerTasks": [
+              "SP01",
+              "SP05",
+              "SP06",
+              "SP15",
+              "SP18",
+              "SP22",
+              "SP35",
+              "SP36"
+            ],
+            "measurementPhaseOwners": {
+              "earlyBaselines": [
+                "SP15",
+                "SP18"
+              ],
+              "finalCandidate": [
+                "SP35"
+              ]
+            },
+            "trigger": "The measurement entry is registered in SP07. SP15/SP18 run the early baselines after their first implemented core flows are runnable with frozen conditions; affected groups are retested on relevant change; SP35 runs the full final-candidate measurement.",
+            "source": "docs/v1-quality-acceptance-20261027.json#criteria.QP10",
+            "originalThresholdsPreserved": true,
+            "blocks": "The applicable early-baseline, changed-group, or final-candidate gate. Missing parameters or source evidence, or a failed group, blocks that gate; SP07 claims no product measurement."
+          },
+          {
+            "criterionId": "QS08",
+            "ownerTasks": [
+              "SP01",
+              "SP02",
+              "SP06",
+              "SP10",
+              "SP13",
+              "SP22",
+              "SP23",
+              "SP27",
+              "SP31",
+              "SP34",
+              "SP35"
+            ],
+            "finalIntegrationOwners": [
+              "SP34",
+              "SP35"
+            ],
+            "trigger": "Each applicable supplier/capability card verifies its own activation gates before enabling a real capability; SP34 checks integrated paths and SP35 checks final-candidate release conditions.",
+            "source": "docs/v1-quality-acceptance-20261027.json#criteria.QS08",
+            "originalThresholdsPreserved": true,
+            "blocks": "Enabling each real capability until all applicable nine gates pass; production use of test substitutes is blocked if they could create production identity, funding, or review facts."
+          },
+          {
+            "criterionId": "QR02",
+            "ownerTasks": [
+              "SP08",
+              "SP11",
+              "SP13",
+              "SP18",
+              "SP20",
+              "SP21",
+              "SP22",
+              "SP23",
+              "SP24",
+              "SP25",
+              "SP26",
+              "SP27",
+              "SP28",
+              "SP29",
+              "SP30",
+              "SP31",
+              "SP32",
+              "SP33",
+              "SP34",
+              "SP35"
+            ],
+            "trigger": "Run on the assigned cards when real request, retry/re-entry, callback, and distinct-payment scenarios exist.",
+            "source": "docs/v1-quality-acceptance-20261027.json#criteria.QR02",
+            "originalThresholdsPreserved": true,
+            "blocks": "The assigned implementation/integration/release gate if duplicate facts, counts, notifications, or unsafe retry handling occur."
+          },
+          {
+            "criterionId": "QR06",
+            "ownerTasks": [
+              "SP01",
+              "SP22",
+              "SP34",
+              "SP35",
+              "SP36"
+            ],
+            "trigger": "Run on the assigned cards when a real versioned backup/restore target and interrupted-task recovery scenario exist.",
+            "source": "docs/v1-quality-acceptance-20261027.json#criteria.QR06",
+            "originalThresholdsPreserved": true,
+            "blocks": "The assigned restore/recovery/release gate if restored state, relationships, permissions, balances, inventory, versions, or messages are inconsistent or cancelled/expired/revoked facts revive."
+          },
+          {
+            "criterionId": "QR09",
+            "ownerTasks": [
+              "SP08",
+              "SP12",
+              "SP17",
+              "SP18",
+              "SP19",
+              "SP20",
+              "SP21",
+              "SP22",
+              "SP24",
+              "SP25",
+              "SP26",
+              "SP27",
+              "SP30",
+              "SP31",
+              "SP32",
+              "SP33",
+              "SP34",
+              "SP35"
+            ],
+            "trigger": "Run on the assigned cards when real reads/writes, competing terminal states, delayed old-version requests, and versioned data exist.",
+            "source": "docs/v1-quality-acceptance-20261027.json#criteria.QR09",
+            "originalThresholdsPreserved": true,
+            "blocks": "The assigned implementation/integration/release gate if a stale response overwrites current state, a failed write leaves partial updates, or old-version boundaries are violated."
+          }
         ]
       },
       "productAcceptancePassed": false,
@@ -6335,11 +6491,27 @@
       "document": "docs/qd03-sp07-local-foundation-20261104.json",
       "signed": true,
       "scope": "SP01-SP06-preparation-to-SP07-foundation-entry",
-      "prerequisiteTasks": ["SP01", "SP02", "SP03", "SP04", "SP05", "SP06"],
+      "prerequisiteTasks": [
+        "SP01",
+        "SP02",
+        "SP03",
+        "SP04",
+        "SP05",
+        "SP06"
+      ],
       "originalCriterionProductResult": "not-executed",
       "productAcceptancePassed": false,
       "remoteTemplateExecutionEnabled": false,
-      "laterGatesPreserved": ["QP05", "QP06", "QP07", "QP08", "QP09", "QP10", "QS02", "QR06"]
+      "laterGatesPreserved": [
+        "QP05",
+        "QP06",
+        "QP07",
+        "QP08",
+        "QP09",
+        "QP10",
+        "QS02",
+        "QR06"
+      ]
     }
   }
 }

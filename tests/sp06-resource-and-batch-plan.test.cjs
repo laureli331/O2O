@@ -98,7 +98,7 @@ test('SP06 gate leaves later product measurements with their assigned task cards
   const doc = read('docs/sp06-resource-and-batch-plan-20261104.md');
 
   assert.equal(sp06.productAcceptancePassed, false);
-  assert.equal(sp07.status, 'in-progress');
+  assert.equal(sp07.status, 'complete');
   assert.equal(sp07.executionProgress.scope, 'bounded-local-foundation-only');
   assert.equal(sp07.executionProgress.productModulesImplemented, false);
   assert.equal(sp07.productAcceptancePassed, false);

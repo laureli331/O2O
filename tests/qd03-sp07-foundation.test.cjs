@@ -36,7 +36,9 @@ test('QD03 signs only the SP01-SP06 preparation gate and preserves product accep
   ]);
   assert.equal(signoff.remoteArchiveExecution.enabled, false);
   assert.equal(signoff.remoteArchiveExecution.preservedTest, 'tests/sp01-taro-malicious-archive.test.cjs');
-  assert.equal(signoff.remoteArchiveExecution.evidenceJsonPresent, false);
+  assert.equal(signoff.remoteArchiveExecution.evidenceJson, 'docs/sp01-taro-malicious-archive-20261105.json');
+  assert.equal(signoff.remoteArchiveExecution.evidenceJsonPresent, true);
+  assert.equal(fs.existsSync(path.join(root, signoff.remoteArchiveExecution.evidenceJson)), true);
   assert.equal(fs.existsSync(path.join(root, signoff.remoteArchiveExecution.preservedTest)), true);
 
   const latestGate = plan.sp01StageBoundaryClarification.latestQD03Signoff;
@@ -45,7 +47,7 @@ test('QD03 signs only the SP01-SP06 preparation gate and preserves product accep
   assert.equal(latestGate.productAcceptancePassed, false);
   assert.ok(plan.sources.includes('docs/qd03-sp07-local-foundation-20261104.md'));
   assert.ok(plan.sources.includes('docs/qd03-sp07-local-foundation-20261104.json'));
-  assert.equal(plan.tasks.find((task) => task.id === 'SP07').status, 'in-progress');
+  assert.equal(plan.tasks.find((task) => task.id === 'SP07').status, 'complete');
   assert.deepEqual(plan.tasks.find((task) => task.id === 'SP07').dependsOn, signoff.prerequisiteTasks);
 });
 
@@ -129,7 +131,7 @@ test('authored starter TS has no any or platform globals and cloud workspace has
   assert.equal(json('tsconfig.json').compilerOptions.strict, true);
 });
 
-test('SP07 records clean-room checks honestly and preserves the sole missing-evidence regression', () => {
+test('SP07 records current regression results and keeps remote archive execution gated', () => {
   const signoff = json('docs/qd03-sp07-local-foundation-20261104.json');
   const validation = signoff.validation;
   const plan = json('docs/v1-executable-development-plan-20261027.json');
@@ -147,15 +149,72 @@ test('SP07 records clean-room checks honestly and preserves the sole missing-evi
   assert.match(validation.workingTree.sourceScan.limitations, /not a secret-scanner or security audit/i);
 
   const regression = validation.workingTree.fullRegression;
-  assert.equal(regression.total, 1652);
-  assert.equal(regression.passed, 1651);
-  assert.equal(regression.failed, 1);
+  assert.equal(regression.total, 1653);
+  assert.equal(regression.passed, 1653);
+  assert.equal(regression.failed, 0);
   assert.equal(regression.skipped, 0);
-  assert.match(regression.failure, /sp01-taro-malicious-archive-20261103\.json/);
+  assert.equal(regression.failure, null);
+  assert.equal(signoff.remoteArchiveExecution.evidenceJson, 'docs/sp01-taro-malicious-archive-20261105.json');
+  assert.equal(signoff.remoteArchiveExecution.evidenceJsonPresent, true);
+  const archiveEvidence = json(signoff.remoteArchiveExecution.evidenceJson);
+  assert.equal(archiveEvidence.decision.r01Status, 'pending');
+  assert.equal(archiveEvidence.decision.securityClearance, 'not-established-platform-limited');
+  assert.equal(archiveEvidence.decision.remoteArchiveExecutionEnabled, false);
   assert.equal(validation.workingTree.workspaceBoundaryGate.result, 'passed');
   assert.match(validation.workingTree.workspaceBoundaryGate.limitations, /not a secret-scanner/i);
+  const foundationReview = signoff.localFoundationReview;
+  assert.equal(foundationReview.result, 'passed-for-bounded-local-foundation-only');
+  assert.equal(foundationReview.isolation.quickStartIncludedInWorkspaces, false);
+  assert.equal(foundationReview.isolation.cloudFunctionWorkspaceHasImplementation, false);
+  assert.equal(foundationReview.isolation.cloudSdkDependency, false);
+  assert.equal(foundationReview.isolation.environmentIdentifier, false);
+  assert.equal(foundationReview.isolation.deployOrPublishScript, false);
+  assert.equal(foundationReview.isolation.productionConfiguration, false);
+  assert.equal(foundationReview.isolation.remoteTemplateOrArchiveExecution, false);
+  assert.equal(foundationReview.secretHandling.credentialNamedFilesInWorkspace, 0);
+  assert.equal(foundationReview.secretHandling.credentialPatternMatchesInAppsAndPackages, 0);
+  assert.match(foundationReview.secretHandling.limitations, /not a secret-scanner/i);
+  assert.equal(foundationReview.productionTestDouble.productRuntimeOrProductionEntryPresent, false);
+  assert.equal(foundationReview.productionTestDouble.testDoubleDefaultFound, false);
+  assert.equal(foundationReview.recovery.foundationCommit, '09c608777289de5954cb669fe95fcb887883b10d');
+  assert.equal(foundationReview.recovery.externalStateChanged, false);
+  assert.equal(foundationReview.recovery.rollbackExecuted, false);
+  assert.match(foundationReview.recovery.method, /Do not reset or clean/i);
   assert.equal(sp07.executionProgress.date, '2026-11-05');
-  assert.equal(sp07.status, 'in-progress');
+  assert.deepEqual(
+    {
+      total: sp07.executionProgress.latestValidation.total,
+      passed: sp07.executionProgress.latestValidation.passed,
+      failed: sp07.executionProgress.latestValidation.failed,
+      skipped: sp07.executionProgress.latestValidation.skipped,
+      exitCode: sp07.executionProgress.latestValidation.exitCode,
+    },
+    { total: 1653, passed: 1653, failed: 0, skipped: 0, exitCode: 0 },
+  );
+  assert.equal(sp07.executionProgress.latestValidation.r01Status, 'pending');
+  assert.equal(sp07.executionProgress.latestValidation.remoteArchiveExecutionEnabled, false);
+  assert.equal(sp07.executionProgress.latestValidation.securityClearance, 'not-established-platform-limited');
+  assert.equal(sp07.status, 'complete');
   assert.equal(sp07.productAcceptancePassed, false);
-  assert.ok(sp07.executionProgress.remainingAcceptance.some((item) => /full repository regression is not green/i.test(item)));
+  assert.deepEqual(sp07.executionProgress.remainingAcceptance, []);
+  assert.ok(sp07.executionProgress.completedAcceptance.some((item) => /bounded isolation, secret-handling defaults, stage-applicable quality gates, and recovery path have been reviewed/i.test(item)));
+  const laterCriteria = sp07.executionProgress.laterValidation.map((item) => item.criterionId);
+  assert.deepEqual(laterCriteria, ['R01', 'QP10', 'QS08', 'QR02', 'QR06', 'QR09']);
+  assert.equal(sp07.executionProgress.laterValidation[0].blocks, 'Re-enabling the remote path only; does not block this bounded local foundation.');
+  for (const laterItem of sp07.executionProgress.laterValidation.slice(1)) {
+    const expectedOwners = plan.tasks
+      .filter((task) => task.id !== 'SP07' && task.qualityContract?.qualityCriteria?.includes(laterItem.criterionId))
+      .map((task) => task.id);
+    assert.deepEqual(laterItem.ownerTasks, expectedOwners);
+  }
+  assert.deepEqual(sp07.executionProgress.laterValidation[1].measurementPhaseOwners, {
+    earlyBaselines: ['SP15', 'SP18'],
+    finalCandidate: ['SP35'],
+  });
+  assert.deepEqual(sp07.executionProgress.laterValidation[2].finalIntegrationOwners, ['SP34', 'SP35']);
+  for (const laterItem of sp07.executionProgress.laterValidation.slice(1)) {
+    assert.equal(laterItem.originalThresholdsPreserved, true);
+    assert.match(laterItem.source, /docs\/v1-quality-acceptance-20261027\.json#criteria\./);
+  }
+  assert.ok(!sp07.executionProgress.remainingAcceptance.some((item) => /full repository regression is not green/i.test(item)));
 });

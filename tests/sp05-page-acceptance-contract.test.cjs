@@ -119,7 +119,7 @@ test('SP05 contract cites reusable artifacts and does not add libraries or autho
   for (const source of contract.sources) assert.ok(fs.existsSync(path.join(root, source)), source);
   assert.deepEqual(contract.reuseSurvey.newDependencies, []);
   assert.equal(contract.reuseSurvey.adoptedApproach, 'reuse-current-page-manifest-shared-states-and-approved-ui-tokens');
-  assert.equal(sp07.status, 'in-progress');
+  assert.equal(sp07.status, 'complete');
   assert.equal(sp07.executionProgress.scope, 'bounded-local-foundation-only');
   assert.equal(sp07.executionProgress.productModulesImplemented, false);
   assert.equal(sp07.productAcceptancePassed, false);

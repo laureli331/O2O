@@ -6,7 +6,7 @@ function validate(p){
  a.equal(p.taskCount,p.tasks.length);a.equal(p.taskCount,36);a.equal(p.deliveryScope,'documentation-and-validation-only');
  const ids=p.tasks.map(t=>t.id);a.deepEqual(ids,Array.from({length:36},(_,i)=>'SP'+String(i+1).padStart(2,'0')));const byId=new Map(p.tasks.map(t=>[t.id,t]));
  const legacy=new Set([...read('docs/development-plan.md').matchAll(/^\| (DP\d{2}) \|/gm)].map(m=>m[1]));const covered=new Set();
- for(const t of p.tasks){a(t.title&&t.deliverable);a(t.steps.length>=2&&t.steps.every(Boolean));a(t.acceptance.length>=2&&t.acceptance.every(Boolean));a(['planned','in-progress','awaiting-acceptance','complete'].includes(t.status));if(t.status==='complete')a(t.completion?.environment&&t.completion?.evidence?.length,'completion needs evidence');else a.equal(t.productAcceptancePassed,false);for(const id of t.legacyTasks){a(legacy.has(id),'unknown legacy '+id);covered.add(id);}for(const dep of t.dependsOn)a(byId.has(dep),'unknown predecessor '+dep);for(const g of t.evidenceGates)a(['E01','E02','E03','E04','E05','E06','QG01','AG01','DG01'].includes(g));}
+ for(const t of p.tasks){a(t.title&&t.deliverable);a(t.steps.length>=2&&t.steps.every(Boolean));a(t.acceptance.length>=2&&t.acceptance.every(Boolean));a(['planned','in-progress','awaiting-acceptance','complete'].includes(t.status));if(t.status==='complete'){a(t.completion?.environment&&t.completion?.evidence?.length,'completion needs evidence');a.equal(t.productAcceptancePassed,false,'task completion does not imply product acceptance');}else a.equal(t.productAcceptancePassed,false);for(const id of t.legacyTasks){a(legacy.has(id),'unknown legacy '+id);covered.add(id);}for(const dep of t.dependsOn)a(byId.has(dep),'unknown predecessor '+dep);for(const g of t.evidenceGates)a(['E01','E02','E03','E04','E05','E06','QG01','AG01','DG01'].includes(g));}
  a.deepEqual([...covered].sort(),[...legacy].sort());
  const visiting=new Set(),done=new Set();function visit(id){a(!visiting.has(id),'cyclic dependency '+id);if(done.has(id))return;visiting.add(id);byId.get(id).dependsOn.forEach(visit);visiting.delete(id);done.add(id);}ids.forEach(visit);
  const ancestors=id=>new Set(byId.get(id).dependsOn.flatMap(d=>[d,...ancestors(d)]));
@@ -57,7 +57,7 @@ test('SP01 signoff evidence closes only its preparation card and preserves downs
  a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.status,'complete');
  a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.productAcceptancePassed,false);
  a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.qd03SignedOff,false);
- a.equal(sp07.status,'in-progress');a.deepEqual(sp07.dependsOn,['SP01','SP02','SP03','SP04','SP05','SP06']);
+ a.equal(sp07.status,'complete');a.equal(sp07.productAcceptancePassed,false);a.equal(sp07.completion.scope,'bounded-local-foundation-only');a.deepEqual(sp07.dependsOn,['SP01','SP02','SP03','SP04','SP05','SP06']);
  a.equal(plan.firstProductTask,'SP07');
  a.deepEqual(plan.firstProductTaskPrerequisites,['SP01','SP02','SP03','SP04','SP05','SP06']);
  a(plan.sources.includes('docs/sp01-task-signoff-20261104.md'));
@@ -1299,10 +1299,10 @@ test('SP03 preparation sign-off preserves open evidence gates and SP07 boundary'
   a.deepEqual(sp04.scopeResolution.preparationBlockers, []);
   a.deepEqual(sp04.scopeResolution.openEvidenceGates, ['E05', 'E06']);
   a.equal(sp04.completion.scope, 'task-preparation-only');
-  a.equal(sp07.status, 'in-progress');
+  a.equal(sp07.status, 'complete');
   a.deepEqual(sp07.dependsOn, ['SP01', 'SP02', 'SP03', 'SP04', 'SP05', 'SP06']);
   a.equal(plan.sp01StageBoundaryClarification.latestTaskSignoff.qd03SignedOff, false);
   const markdown = read('docs/v1-executable-development-plan-20261027.md');
   a(markdown.includes('SP03状态：`complete`'));
-  a(markdown.includes('SP07本地基础工程已启动'));
+  a(markdown.includes('SP07本地工程基础与自动检查交付已完成'));
 });

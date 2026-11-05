@@ -52,7 +52,7 @@ test('SP01 post-review reconciliation closes preparation facts without changing 
 
   assert.equal(sp01.status, 'complete');
   assert.equal(sp01.productAcceptancePassed, false);
-  assert.equal(sp07.status, 'in-progress');
+  assert.equal(sp07.status, 'complete');
   assert.equal(sp07.productAcceptancePassed, false);
   assert.equal(sp07.executionProgress.scope, 'bounded-local-foundation-only');
   assert.equal(sp07.executionProgress.productModulesImplemented, false);

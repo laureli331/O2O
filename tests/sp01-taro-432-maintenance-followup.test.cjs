@@ -100,7 +100,7 @@ test('readiness index keeps R01 pending while later QD03 starts only the scoped 
   assert.equal(readiness.sp07Started, false);
   assert.equal(r01.state, 'pending');
   assert.equal(r01.latestMaintenanceFollowupEvidence, 'docs/sp01-taro-432-maintenance-followup-20261103.json');
-  assert.equal(sp07.status, 'in-progress');
+  assert.equal(sp07.status, 'complete');
   assert.equal(sp07.productAcceptancePassed, false);
   assert.equal(sp07.executionProgress.scope, 'bounded-local-foundation-only');
   assert.equal(sp07.executionProgress.productModulesImplemented, false);
