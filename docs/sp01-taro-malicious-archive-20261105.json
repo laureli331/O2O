@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "recordedDate": "2026-11-05",
+  "task": "SP01",
+  "item": "R01",
+  "title": "Windows isolated decompressor path-traversal observation",
+  "reuseInvestigation": {
+    "projectImplementation": "Reused the existing isolated Taro 4.3.2 audit dependency tree and the existing R01 evidence test. No new dependency or product code was introduced.",
+    "dependencyPath": "tools/sp01-taro-432-audit/node_modules/decompress",
+    "dependencyVersion": "4.2.1",
+    "formalAdoption": false,
+    "adoptionDecision": "Not adopted; formal product dependencies and lockfiles were not changed. Remote template/archive execution remains disabled."
+  },
+  "advisory": {
+    "id": "GHSA-hrh2-vp3x-79xf",
+    "url": "https://github.com/advisories/GHSA-hrh2-vp3x-79xf",
+    "scope": "The advisory describes path traversal through a symlink chain. This run reproduced direct ../ traversal, but did not reproduce the advisory's symlink-chain scenario. This is a platform-limited local observation, not a general security proof."
+  },
+  "probe": {
+    "platform": "win32",
+    "nodeVersion": "not captured",
+    "gitHead": "04ea3bd7b51ecf1a4fd3c70bd1a9d495d461e520",
+    "externalNetworkRequests": 0,
+    "cloudCalls": 0,
+    "databaseOrStorageWrites": 0,
+    "sandboxRoot": ".local/sp07-r01-probe-a8cbdf93a641033e",
+    "sandboxWasUniqueAndUnderLocal": true,
+    "externalPathResolutionAttempted": true,
+    "outsideSandboxDataReadWriteConfirmed": false,
+    "userDataImpactAssessment": "No read or write outside the isolated sandbox was confirmed. The symlink-chain case nevertheless resolved an attempted source path outside the sandbox and failed with ENOENT; this run does not prove that arbitrary archive paths cannot probe existing filesystem locations.",
+    "tempSandboxRemoved": true,
+    "probeScriptRemoved": true
+  },
+  "results": {
+    "directTraversal": {
+      "archiveEntry": "../outside/direct.txt",
+      "entryContent": "SYNTHETIC_DIRECT_TRAVERSAL",
+      "extractionRootRelativeToSandbox": "direct/out",
+      "destinationRelativeToSandbox": "direct/outside/direct.txt",
+      "decompressError": null,
+      "writeOutsideExtractionRootObserved": true,
+      "writeStayedInsideIsolatedSandbox": true
+    },
+    "symlinkChain": {
+      "reproductionStatus": "not-reproduced-by-this-fixture",
+      "archiveEntries": [
+        {
+          "name": "a",
+          "type": "symlink",
+          "linkname": "."
+        },
+        {
+          "name": "b",
+          "type": "symlink",
+          "linkname": "a/../outside/secret.txt"
+        }
+      ],
+      "attemptedSourcePath": "E:\\O2O\\outside\\secret.txt",
+      "errorName": "Error",
+      "errorCode": "ENOENT",
+      "sentinelRelativeToSandbox": "symlink/outside/secret.txt",
+      "sentinelUnchanged": true,
+      "writeOutsideSandboxObserved": false,
+      "outputEntries": []
+    }
+  },
+  "decision": {
+    "r01SecurityResult": "direct-path-traversal-reproduced; advisory-symlink-chain-not-reproduced",
+    "securityClearance": "not-established-platform-limited",
+    "r01Status": "pending",
+    "sp01Passed": false,
+    "sp07Started": true,
+    "remoteArchiveExecutionEnabled": false,
+    "nextAction": "Keep remote template/archive execution disabled and continue using the local project skeleton. Do not treat this finding as fixed. Any further decompressor testing must use a newly reviewed fixture whose every possible source and destination path remains inside an isolated sandbox."
+  }
+}
