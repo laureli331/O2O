@@ -556,7 +556,7 @@
       "status": "selected-candidate-runtime-unverified",
       "strategy": "deterministic-document-id-plus-add",
       "idEncoding": {
-        "status": "selected-and-implemented-as-shared-pure-contract; server-adapter-and-cloud-runtime-unverified",
+        "status": "shared-contract-and-local-Node-20.19.3-adapter-verified; CloudBase-runtime-unverified",
         "format": "idem_v1_<64 lowercase hexadecimal SHA-256 characters>",
         "input": "UTF-8 JSON.stringify([\"o2o.idempotency\", 1, trustedScope, operation, operationKey])",
         "operationKeySemantics": "exact validated original string; surrounding whitespace is preserved; all-whitespace is rejected",
@@ -609,22 +609,24 @@
       "date": "2026-11-06",
       "source": "apps/cloud-functions/src/adapters/sha256-utf8.ts",
       "targetNodeEngine": ">=20.19.0 <21",
-      "executedNodeVersion": "v24.18.0",
-      "targetRuntimeExecuted": false,
-      "adapterTestCommand": "node --test tests/sp08-node-idempotency-adapter.test.cjs",
+      "executedNodeVersion": "v20.19.3",
+      "targetRuntimeExecuted": true,
+      "adapterTestCommand": "Node v20.19.3 --test tests/sp08-node-idempotency-adapter.test.cjs",
       "adapterTestsPassed": 4,
       "adapterTestsFailed": 0,
-      "sp08ContractTestCommand": "node --test tests/sp08-data-request-contract.test.cjs",
+      "sp08ContractTestCommand": "Node v20.19.3 --test tests/sp08-data-request-contract.test.cjs",
       "sp08ContractTestsPassed": 89,
-      "planRegressionCommand": "node --test tests/executable-development-plan.test.cjs",
+      "planRegressionCommand": "Node v20.19.3 --test tests/executable-development-plan.test.cjs",
       "planRegressionPassed": 46,
-      "fullRegressionCommand": "node --test tests/*.test.cjs",
+      "fullRegressionCommand": "Node v20.19.3 --test --test-reporter=spec (159 files enumerated from tests/*.test.cjs)",
       "fullRegressionPassed": 1746,
       "fullRegressionFailed": 0,
       "fullRegressionSkipped": 0,
-      "workspaceTypeCheckCommand": "npm run check --workspace @xianglin/cloud-functions",
+      "workspaceTypeCheckCommand": "Node v20.19.3 node_modules/typescript/bin/tsc --project apps/cloud-functions/tsconfig.json --noEmit",
       "workspaceTypeCheckPassed": true,
+      "sharedTypeCheckCommand": "Node v20.19.3 node_modules/typescript/bin/tsc --project packages/shared/tsconfig.json --noEmit",
       "sharedTypeCheckPassed": true,
+      "workspaceBoundaryCommand": "Node v20.19.3 scripts/check-workspace-boundaries.cjs",
       "workspaceBoundariesPassed": true,
       "evidence": [
         "ASCII UTF-8 SHA-256 known vector",
@@ -634,7 +636,7 @@
       ],
       "serverAdapterAndCloudRuntimeProven": false,
       "cloudMutationsPerformed": false,
-      "environment": "Windows local workspace; Node v24.18.0; no cloud calls or mutations"
+      "environment": "Windows local workspace; Node v20.19.3; full regression 1746/1746, focused contract 89/89, plan 46/46; no cloud calls or mutations"
     }
   }
 }

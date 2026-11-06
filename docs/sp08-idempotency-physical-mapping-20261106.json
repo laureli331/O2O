@@ -12,7 +12,7 @@
     "storedBinding": "normalized per-operation payload digest + original command result",
     "transactionBoundary": "idempotency claim + business write + original result in the same transaction",
     "idEncoding": {
-      "status": "shared-contract-and-node-adapter-implemented; target-runtime-and-cloud-unverified",
+      "status": "shared-contract-and-node-adapter-implemented; local-target-runtime-verified; cloud-unverified",
       "prefix": "idem_v1_",
       "algorithm": "SHA-256",
       "version": 1,
@@ -34,7 +34,6 @@
         "empty operationKey and malformed digest are rejected"
       ],
       "notProven": [
-        "adapter execution under the selected Node.js 20.19.x runtime",
         "CloudBase SDK/runtime accepts this exact ID format",
         "simultaneous add with the same ID has one winner",
         "business write and claim share an atomic transaction",
@@ -45,8 +44,8 @@
       "set-as-exclusive-claim",
       "application-check-then-write"
     ],
-    "idEncodingStatus": "selected-local-adapter-tested-on-node-24-target-node20-and-cloud-unverified",
-    "idEncodingRationale": "用户已确认 SHA-256 版本化 ID 与精确 operationKey 语义；共享层固定 JSON 数组输入和 ID 格式，Node node:crypto 适配器已用 Node 24.18.0 本地向量验证。目标 Node 20.19.x 尚未执行；服务端 trustedScope 构造和 CloudBase 运行时仍需实证。"
+    "idEncodingStatus": "selected-local-adapter-tested-on-node-20.19.3-cloud-unverified",
+    "idEncodingRationale": "用户已确认 SHA-256 版本化 ID 与精确 operationKey 语义；共享层固定 JSON 数组输入和 ID 格式，Node node:crypto 适配器已在本机 Node 20.19.3 通过向量与集成测试。服务端 trustedScope 构造、CloudBase SDK/运行时接受性、并发和事务恢复仍需实证。"
   },
   "reuseSurvey": {
     "projectCode": "packages/shared/src/contracts/idempotency.ts provides the replay-or-reject decision after server-side payload comparison; it does not implement lookup, persistence, transactions, or recovery.",

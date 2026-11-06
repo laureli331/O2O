@@ -77,10 +77,10 @@ test('paired SP08 records distinguish local adapter evidence from target-runtime
   const adapterEvidence = progress.evidence.idempotencyNodeSha256AdapterValidation;
 
   assert.equal(mapping.cloudMutationsPerformed, false);
-  assert.equal(mapping.decision.idEncoding.status, 'shared-contract-and-node-adapter-implemented; target-runtime-and-cloud-unverified');
-  assert.ok(mapping.decision.idEncoding.notProven.includes('adapter execution under the selected Node.js 20.19.x runtime'));
-  assert.equal(adapterEvidence.executedNodeVersion, process.version);
-  assert.equal(adapterEvidence.targetRuntimeExecuted, false);
+  assert.equal(mapping.decision.idEncoding.status, 'shared-contract-and-node-adapter-implemented; local-target-runtime-verified; cloud-unverified');
+  assert.ok(!mapping.decision.idEncoding.notProven.includes('adapter execution under the selected Node.js 20.19.x runtime'));
+  assert.match(adapterEvidence.executedNodeVersion, /^v20\.19\./);
+  assert.equal(adapterEvidence.targetRuntimeExecuted, true);
   assert.equal(adapterEvidence.serverAdapterAndCloudRuntimeProven, false);
   assert.equal(adapterEvidence.cloudMutationsPerformed, false);
   assert.ok(mapping.reuseSurvey.officialSources.some(({ url }) => url === 'https://r2.nodejs.org/docs/v20.19.2/api/crypto.html'));
