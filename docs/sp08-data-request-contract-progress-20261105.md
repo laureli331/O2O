@@ -200,6 +200,15 @@
 - 明确限制：PRD 未规定阶段编号与建立顺序的数值范围及传输形状，因此本增量不猜测、不校验它们。金额解析器无法单独区分“明确零”和“未知”；调用业务必须先确定状态，禁止把未知转换成 0。F20 的项目分类、单项/方案/整次当前有效累计上限、阶段版本及同意生效、旧凭据结束、新凭据双方可见性、图片上传/私有读取/清理、事务与服务端执行仍由 SP18–SP20 按原任务卡和质量合同验证。此字段增量不改变 PRD 或降低任何验收门槛，也不表示 SP18–SP20 或 SP08 产品验收通过。
 - 验证结果：F20 专项 2/2；SP08 文件测试 83/83；计划守护 46/46；全量 `node --test tests/*.test.cjs` 1736/1736（0 失败、0 跳过）。`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过。小程序构建有 Node `fs.Stats` 弃用提示，网页构建有 Vite 配置加载器兼容提示；自有声明检查发现声明文件数量为0、编译器未执行，不记作声明编译通过。完整命令和环境记录在配套 JSON 的 `evidence.f20Validation`。该增量不访问云端、不改变云资源。
 
+## F21 佣金与账单理由字段校验增量（2026-11-06）
+
+- 来源：`docs/prd.md` 第 13.1 节 F21 规定佣金基数调整申请原因和账单争议原因必填，均为 1–500 字符；`docs/sp08-object-ownership-map-20261105.json#fieldGroups.F21` 将相关事实分属不同模块，`docs/v1-quality-acceptance-20261027.json#requirements.F21` 将验收任务归 SP17、SP29、SP30。
+- 复用调查：项目内 F12 已有相同的去首尾空白、按 `Array.from()` 计数 Unicode 码点逻辑，原来是私有函数；现抽到内部 `trimmed-text-range.ts` helper，F12 与 F21 共用并保持 F12 范围不变。CloudBase/微信 SDK 不负责 shared 字段长度边界，固定规则不需要第三方 schema/字符串库；无新增依赖。
+- 实现：新增 `packages/shared/src/contracts/commission-billing-fields.ts`，公开 `validateCommissionBasisReductionReason` 与 `validateBillingDisputeReason`。仅对字符串去首尾空白并验证 1–500 Unicode 码点；非字符串、空白和超长输入分别返回确定失败原因。由 `contracts/index.ts` 导出。shared 层没有平台 API、云调用或存储副作用。
+- 测试：F21 专项覆盖 PRD 与任务归属、两种理由各自的空白规范化、1/500/501 码点、补充平面 emoji 计数、空白及非字符串输入、公开导出与纯度；同时回归 F12 已有测试以确认 helper 抽取未改变行为。
+- 明确限制：这不是 F21 生命周期实现。佣金费率/上限快照、合格基数、月度唯一记录及调整差额；账单生成、应付/已付分配、抵扣、争议冻结/期限/欠款/追缴；支付退款对账和余额；可信操作者权限、状态/版本、幂等、并发与原子迁移；证据图片上传/私有权限/留存清理，仍由 SP17、SP29、SP30 按原任务卡与质量合同验收。该字段切片不表示 F21 产品验收或 SP08 通过。
+- 验证结果：F21 专项 2/2；SP08 文件测试 85/85；计划守护 46/46；全量 `node --test tests/*.test.cjs` 1738/1738（0 失败、0 跳过）。`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过。小程序构建有 Node `fs.Stats` 弃用提示，网页构建有 Vite 配置加载器兼容提示；自有声明文件数量为0，声明编译器未执行，不记作声明编译通过。完整命令、环境和结果在配套 JSON 的 `evidence.f21Validation`。该增量未访问或修改云资源。
+
 ## 未证明及后续归属
 
 下列事项仍按原门槛保留，阻断 SP08 及其依赖功能的对应验收：

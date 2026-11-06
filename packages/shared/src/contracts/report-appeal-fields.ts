@@ -1,4 +1,5 @@
 import { validateIntegerCountInRange, type ValidateIntegerCountInRangeResult } from './integer-count-range';
+import { validateTrimmedTextRange, type ValidateTrimmedTextRangeResult } from './trimmed-text-range';
 
 export const REPORT_REASON_OPTIONS = [
   '疑似诈骗',
@@ -15,9 +16,7 @@ export type ValidateReportReasonResult =
   | { readonly ok: true; readonly value: ReportReason }
   | { readonly ok: false; readonly reason: 'not-string' | 'unknown-reason' };
 
-export type ValidateReportTextResult =
-  | { readonly ok: true; readonly value: string; readonly characterCount: number }
-  | { readonly ok: false; readonly reason: 'not-string' | 'empty' | 'too-long' };
+export type ValidateReportTextResult = ValidateTrimmedTextRangeResult;
 
 export type ValidateReportSupplementalTextResult =
   | { readonly ok: true; readonly value: string; readonly characterCount: number }
@@ -29,28 +28,6 @@ export type ValidateOperationsActionReasonResult = ValidateReportTextResult;
 
 function isReportReason(input: unknown): input is ReportReason {
   return REPORT_REASON_OPTIONS.some((reason) => reason === input);
-}
-
-function validateTrimmedText(
-  input: unknown,
-  minimumCodePoints: number,
-  maximumCodePoints: number,
-): ValidateReportTextResult {
-  if (typeof input !== 'string') {
-    return { ok: false, reason: 'not-string' };
-  }
-
-  const value = input.trim();
-  const characterCount = Array.from(value).length;
-
-  if (characterCount < minimumCodePoints) {
-    return { ok: false, reason: 'empty' };
-  }
-  if (characterCount > maximumCodePoints) {
-    return { ok: false, reason: 'too-long' };
-  }
-
-  return { ok: true, value, characterCount };
 }
 
 /** Validates only the F12 reason label; it does not define storage or wire codes. */
@@ -82,7 +59,7 @@ export function validateReportSupplementalText(
     return { ok: false, reason: 'empty' };
   }
 
-  return validateTrimmedText(input, reason.value === '其他' ? 1 : 0, 1000);
+  return validateTrimmedTextRange(input, reason.value === '其他' ? 1 : 0, 1000);
 }
 
 /** Validates only the number of F12 report images; file content and access are separate. */
@@ -92,10 +69,10 @@ export function validateReportImageCount(input: unknown): ValidateReportImageCou
 
 /** Validates F12 appeal text after trimming edges and counting Unicode code points. */
 export function validateAppealStatement(input: unknown): ValidateAppealStatementResult {
-  return validateTrimmedText(input, 1, 1000);
+  return validateTrimmedTextRange(input, 1, 1000);
 }
 
 /** Validates F12 operator-action reason text only; it does not perform an action or transition. */
 export function validateOperationsActionReason(input: unknown): ValidateOperationsActionReasonResult {
-  return validateTrimmedText(input, 1, 1000);
+  return validateTrimmedTextRange(input, 1, 1000);
 }

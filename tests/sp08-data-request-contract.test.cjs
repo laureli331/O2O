@@ -2127,3 +2127,57 @@ test('F20 fee scalar validators stay pure and leave authorization, versions, pro
   assert.match(source, /Unicode code points/);
   assert.match(source, /fee proposal lifecycle/i);
 });
+
+test('F21 commission basis reduction and billing dispute reasons validate only 1–500 Unicode code points', () => {
+  const {
+    validateCommissionBasisReductionReason,
+    validateBillingDisputeReason,
+  } = loadTypeScriptModule('contracts/commission-billing-fields.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const quality = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'v1-quality-acceptance-20261027.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /申请原因必填1—500/);
+  assert.match(prd, /填争议佣金金额及1—500字符原因/);
+  const f21Ownership = ownership.fieldGroups.find((group) => group.prdFieldId === 'F21');
+  assert.equal(f21Ownership.ownerModule, 'split-by-fact');
+  assert.match(f21Ownership.ownerTask, /SP17/);
+  assert.match(f21Ownership.ownerTask, /SP29/);
+  assert.match(f21Ownership.ownerTask, /SP30/);
+  assert.ok(quality.requirements.find((requirement) => requirement.id === 'F21').tasks.includes('SP17'));
+  assert.ok(quality.requirements.find((requirement) => requirement.id === 'F21').tasks.includes('SP29'));
+  assert.ok(quality.requirements.find((requirement) => requirement.id === 'F21').tasks.includes('SP30'));
+  assert.ok(progress.scope.includes('f21-commission-billing-reason-field-validation'));
+  assert.equal(progress.evidence.f21CommissionBillingReasonValidation, 'packages/shared/src/contracts/commission-billing-fields.ts#F21 reason validators');
+  assert.equal(progress.evidence.f21CommissionBillingLimitation.productAcceptancePassed, false);
+
+  for (const validate of [validateCommissionBasisReductionReason, validateBillingDisputeReason]) {
+    assert.deepEqual(validate('  😀  '), { ok: true, value: '😀', characterCount: 1 });
+    assert.deepEqual(validate('字'.repeat(500)), {
+      ok: true,
+      value: '字'.repeat(500),
+      characterCount: 500,
+    });
+    assert.deepEqual(validate('😀'.repeat(500)), {
+      ok: true,
+      value: '😀'.repeat(500),
+      characterCount: 500,
+    });
+    assert.deepEqual(validate('字'.repeat(501)), { ok: false, reason: 'too-long' });
+    assert.deepEqual(validate('  '), { ok: false, reason: 'empty' });
+    assert.deepEqual(validate(undefined), { ok: false, reason: 'not-string' });
+  }
+});
+
+test('F21 reason validators stay pure and leave fee, bill, payment, refund, authorization, and transitions to their owner tasks', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'commission-billing-fields.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/commission-billing-fields';/);
+  assert.equal(typeof shared.validateCommissionBasisReductionReason, 'function');
+  assert.equal(typeof shared.validateBillingDisputeReason, 'function');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|fetch\s*\(|collection\s*\(|cloud\.callFunction|payment|refund/i);
+  assert.match(source, /SP17.*SP29.*SP30/s);
+});

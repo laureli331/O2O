@@ -42,7 +42,8 @@
     "f17-ai-organization-text-validation",
     "f18-dashboard-date-range-field-validation",
     "f19-beijing-service-time-range-field-validation",
-    "f20-fee-stage-scalar-field-validation"
+    "f20-fee-stage-scalar-field-validation",
+    "f21-commission-billing-reason-field-validation"
   ],
   "sources": [
     {
@@ -258,7 +259,8 @@
     "f17AiOrganizationText": "复用项目 F02/F03/F07/F15/F16 已验证的 String.trim() 与 Array.from() Unicode 码点模式；现有 validator 是其他字段的语义规则，没有可直接复用的 F17 输入/候选校验器。新增三个必填字段的纯 shared 长度检查并从 contracts/index.ts 导出，不增加依赖。inputText 为 1–1000、candidateTitle 为 1–30、candidateDescription 为 1–1000；node:test 核对 PRD、SP31–SP32 归属、去空白、边界、emoji、组合字符、错误类型、未知字段和纯度。字段检查不构造提示词/候选对象、不校验 AI 合法输出、不接入真实模型、版本/采用/持久化/发布流程。",
     "f18DashboardDateRange": "复用 ECMAScript 原生字符串比较处理固定 YYYY-MM-DD 日期排序，不新增日期库；仓库没有既有看板日期范围 validator，CloudBase SDK 也不承担 shared 日期字段规则。按 PRD F18/DT02，新增纯校验并从 contracts/index.ts 导出：要求两个真实日历日期、起始不晚于结束、结束早于调用方提供的 Asia/Shanghai 今日；不限制可选历史范围，因为最近七个完整自然日只是展示默认值。node:test 覆盖来源、F18→SP33 归属、闰日、非法格式/日期、今天结束、反序、额外字段和无平台/查询副作用。函数不推导当前上海日期、不验证调用方提供的 today 是否可信、不设置默认范围、不做权限检查、汇总、物理字段/API/索引或一致性保证。",
     "f19BeijingServiceTimeRange": "复用 ECMAScript 原生正则、闰年/月份天数校验及固定宽度本地民用时间字符串顺序比较；既有 dashboard-date-range.ts 仅有私有 YYYY-MM-DD 日期校验，提取公共帮助函数会扩大 API，本字段使用独立纯 validator。用户确认 YYYY-MM-DDTHH:mm 明确表示北京时间 Asia/Shanghai 本地民用时间。仅校验精确格式、有效公历日期、00-23时/00-59分以及开始严格早于到期；不解析时区或转 epoch，不依赖当前时钟。无适用平台 SDK或第三方库可替代此共享字段规则，不增加依赖。F19 完整交易时间生命周期、未来时间复验、初次720小时、每次延期168小时、待确认延期唯一性、版本同意、服务端可信时间和故障保护均归 SP18-SP20，不能由本字段校验代替。",
-    "f20FeeStageFields": "金额解析复用 packages/shared/src/contracts/money.ts#parseCnyFen 的精确元字符串转整数分和99,999.99元上限；数量复用 validateIntegerCountInRange；文字沿用既有 String.trim() 与 Array.from() Unicode码点规则。项目内没有 F20 专属纯字段校验器，CloudBase/微信 SDK 不负责 shared 字段边界，第三方校验库对这些固定边界没有额外收益，不新增依赖。新增独立字段函数并从 contracts/index.ts 导出：阶段/单项名称1-30，备注可选0-300，单方案项目数1-20，金额为必填精确十进制字符串并接受明确零，实际支出凭据数量0-3。阶段同名允许；本层不创建对象/版本、不做分类条件、累计总额、双方确认、凭据上传/权限或服务端事务；“未知金额不可记为零”由调用方业务流程识别未知态，不能单靠金额标量解析器判定。"
+    "f20FeeStageFields": "金额解析复用 packages/shared/src/contracts/money.ts#parseCnyFen 的精确元字符串转整数分和99,999.99元上限；数量复用 validateIntegerCountInRange；文字沿用既有 String.trim() 与 Array.from() Unicode码点规则。项目内没有 F20 专属纯字段校验器，CloudBase/微信 SDK 不负责 shared 字段边界，第三方校验库对这些固定边界没有额外收益，不新增依赖。新增独立字段函数并从 contracts/index.ts 导出：阶段/单项名称1-30，备注可选0-300，单方案项目数1-20，金额为必填精确十进制字符串并接受明确零，实际支出凭据数量0-3。阶段同名允许；本层不创建对象/版本、不做分类条件、累计总额、双方确认、凭据上传/权限或服务端事务；“未知金额不可记为零”由调用方业务流程识别未知态，不能单靠金额标量解析器判定。",
+    "f21CommissionBillingReason": "从 F12 report-appeal-fields.ts 提取原有 String.trim() 与 Array.from() Unicode 码点文本范围逻辑到内部 trimmed-text-range.ts，并由 F12/F21 共用；F21 新增两个仅验证 1–500 码点的薄层字段校验器。CloudBase/微信 SDK 不承担 shared 文本长度规则；固定范围不需要第三方 schema 或字符串库，不新增运行依赖。node:test 核对 PRD F21、SP17/SP29/SP30 归属、规范化和上下边界。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -445,6 +447,43 @@
       "planRegressionPassed": 46,
       "fullRegressionCommand": "node --test tests/*.test.cjs",
       "fullRegressionPassed": 1736,
+      "skipped": 0,
+      "sharedTypecheck": "passed",
+      "workspaceBoundaries": "passed",
+      "weappBuild": "passed-with-existing-fs.Stats-deprecation-warning",
+      "webBuild": "passed-with-existing-vite-config-loader-warning",
+      "ownDeclarationCheck": "no-declarations-found-compiler-not-executed",
+      "environment": "Windows local workspace; no cloud calls or mutations"
+    },
+    "f21CommissionBillingReasonValidation": "packages/shared/src/contracts/commission-billing-fields.ts#F21 reason validators",
+    "f21CommissionBillingLimitation": {
+      "ownerTasks": [
+        "SP17",
+        "SP29",
+        "SP30"
+      ],
+      "ownershipSource": "docs/sp08-object-ownership-map-20261105.json#fieldGroups.F21",
+      "scope": "commission-basis-reduction and billing-dispute required-reason field validation only",
+      "notImplemented": [
+        "commission rate/cap snapshots, eligible base calculation, unique monthly records, adjustments, and correction differences",
+        "bill generation, paid/owed allocation, offsets, dispute suspension, deadlines, arrears, and enforcement",
+        "payment/refund channel facts, reconciliation, remaining balances, and overpayment handling",
+        "trusted actor authorization, current business state/version checks, idempotency, concurrency, and atomic transitions",
+        "evidence image upload, private access, retention, and cleanup"
+      ],
+      "productAcceptancePassed": false,
+      "cloudMutationsPerformed": false
+    },
+    "f21Validation": {
+      "focusedCommand": "node --test --test-name-pattern \"F21\" tests/sp08-data-request-contract.test.cjs",
+      "focusedPassed": 2,
+      "failed": 0,
+      "sp08FileCommand": "node --test tests/sp08-data-request-contract.test.cjs",
+      "sp08FilePassed": 85,
+      "planRegressionCommand": "node --test tests/executable-development-plan.test.cjs",
+      "planRegressionPassed": 46,
+      "fullRegressionCommand": "node --test tests/*.test.cjs",
+      "fullRegressionPassed": 1738,
       "skipped": 0,
       "sharedTypecheck": "passed",
       "workspaceBoundaries": "passed",
