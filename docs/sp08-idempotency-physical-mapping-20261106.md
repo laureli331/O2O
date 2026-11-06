@@ -37,14 +37,15 @@
 - 新增 [`private-address-book-idempotency.ts`](../apps/cloud-functions/src/application/private-address-book-idempotency.ts)：复用 F09 命令解析器、create/update/delete 载荷摘要、版本化确定性 ID、同键重放/拒绝合同和原命令结果解析器。没有新增依赖，也未连接 CloudBase SDK。
 - 输入中的 `trustedScope` 必须由已认证服务端上下文构造；调用方还必须先校验通用命令 envelope，并按可信归属边界查询。此 helper 只接收该查询已返回的语义投影，不执行身份认证、查询或所有权校验。
 - 无旧记录时只返回幂等 ID 和载荷摘要候选；同键同摘要时重放通过共享结果联合类型外层解析的存储结果；同键不同摘要时拒绝；畸形命令、摘要或存储结果外层结构返回通用无效结果。这里不验证 `value` 的业务含义。候选不含地址草稿、电话或地址文本。
-- `tests/sp08-f09-idempotency-reuse.test.cjs` 覆盖候选隐私、原结果重放、同键异载荷拒绝、输入与旧结果形状校验，以及可信范围/操作/键对确定性 ID 的区分；`npm run check --workspace @xianglin/cloud-functions` 检查 strict TypeScript。
-- 这是本地应用辅助函数，不证明 CloudBase 产品函数已接线。该组合 helper 不认证 actor、不构造 trustedScope、不执行 owner-scoped lookup、不读取持久记录或调用版本比较、不执行写入、不处理并发唯一性，也不提供“幂等声明＋业务写入＋原结果”的事务原子性或未知结果恢复。上述仍属于服务端实现及目标运行时验收。
+- 对新 `update`/`delete` 决策，helper 接收调用方提供的 owner-scoped 查询当前地址版本语义投影，并与命令 `expectedVersion` 做有限数值精确比较：匹配时才产生新声明候选，版本冲突时拒绝，当前版本缺失或畸形时返回无效结果。已有幂等结果先处理：同摘要重放，异摘要拒绝，不会因地址版本在首次成功后推进而阻止原请求重放。helper 不验证当前版本投影的来源。
+- `tests/sp08-f09-idempotency-reuse.test.cjs` 覆盖候选隐私、原结果重放、同键异载荷拒绝、输入与旧结果形状校验、可信范围/操作/键对确定性 ID 区分、新更新版本匹配、重放优先于版本比较及畸形当前版本拒绝；`npm run check --workspace @xianglin/cloud-functions` 检查 strict TypeScript。
+- 这是本地应用辅助函数，不证明 CloudBase 产品函数已接线。该组合 helper 不认证 actor、不构造 trustedScope、不执行 owner-scoped lookup、不读取持久记录、不执行写入、不处理并发唯一性，也不提供“幂等声明＋业务写入＋原结果”的事务原子性或未知结果恢复。调用方的版本投影必须来自可信 owner-scoped 读取；上述仍属于服务端实现及目标运行时验收。
 
 ### F09 expectedVersion 本地前置比较
 
 - 新增 [`compareExpectedVersion`](../packages/shared/src/contracts/private-address-book.ts)：对调用方提供的 expected/current 两个值先分别要求为有限 JavaScript 数值，再做精确数值相等比较；版本不相等返回 `conflict`，类型错误或非有限值分别返回 `invalid-expected-version` / `invalid-current-version`，不做字符串或其他类型强制转换。
 - `tests/sp08-f09-version-precondition.test.cjs` 覆盖相等、已推进版本冲突及畸形值拒绝；`npm run check:shared` 验证 strict TypeScript。
-- 这只是纯比较器。它不读取当前数据库记录、不定义物理版本字段、不定义创建初始版本或递增方式，也不执行授权、CAS、事务或写入。命令解析和数据库读取尚未连接此比较器，不能据此宣称服务端已阻止过期更新/删除。
+- 这只是纯比较器。它不读取当前数据库记录、不定义物理版本字段、不定义创建初始版本或递增方式，也不执行授权、CAS、事务或写入。它已被本地决策 helper 用于比较调用方传入的当前版本投影，但仍无持久读取来源证明，也不能据此宣称服务端已阻止并发过期更新/删除。
 
 ## 复用调查与平台证据
 
@@ -67,7 +68,7 @@
 
 ## 仍未确定或未验证
 
-- **服务端摘要/版本比较与其它业务操作规范化**：F09 的 create/update/delete 命令字段、默认意图和版本字段已有本地规范化摘要；本地决策辅助函数已组合并通过专项测试；另有有限数值的纯 expectedVersion 比较器。生产函数仍未接入服务端载荷摘要比较、同键原结果重放/不同载荷拒绝，也未读取持久记录并把 expectedVersion 与其当前版本比较。其它业务操作的载荷字段与等价规则继续由各自 SP 卡确定。以上不能单独作为端到端幂等或版本冲突防护证明。
+- **服务端摘要/版本比较与其它业务操作规范化**：F09 的 create/update/delete 命令字段、默认意图和版本字段已有本地规范化摘要；本地决策辅助函数已组合重放/拒绝、重放优先顺序和调用方当前版本投影的纯比较并通过专项测试。生产函数仍未接入服务端载荷摘要比较/重放、可信 owner-scoped 持久读取、版本条件写入或事务。其它业务操作的载荷字段与等价规则继续由各自 SP 卡确定。以上不能单独作为端到端幂等或并发版本保护证明。
 - **CloudBase 运行时实测**：本地适配器已在 Node 20.19.3 下通过测试；仍需按 CloudBase 实际函数包和 SDK 环境证明指定 ID 格式及 `add` 的接受性。该事项属于后续物理映射与运行时验收，不由本地适配器测试替代。
 - **集合和保留期限**：待实际对象映射、数据生命周期及查询/恢复合同确定；本记录不创建集合。
 - **原子性和并发**：必须证明并发 `add` 对相同确定性 ID 产生一个有效所有者，并把幂等记录与业务写入放在同一可恢复事务中。不能用“先查再写”消除竞争；也不把 `set` 当作独占领取，因为官方定义是缺失时新建、存在时覆盖。

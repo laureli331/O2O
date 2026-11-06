@@ -7,6 +7,7 @@ import {
   createPrivateAddressBookCommandPayloadDigest,
   parsePrivateAddressBookCommand,
 } from '../../../../packages/shared/src/contracts/private-address-book-command-digest';
+import { compareExpectedVersion } from '../../../../packages/shared/src/contracts/private-address-book';
 import { parseCommandResult } from '../../../../packages/shared/src/contracts/result';
 import type { CommandResult } from '../../../../packages/shared/src/contracts/result';
 
@@ -28,6 +29,8 @@ export interface PreparePrivateAddressBookIdempotencyDecisionInput {
   readonly command: unknown;
   /** Null means the owner-scoped lookup found no record; other values are validated. */
   readonly existingOutcome: ExistingPrivateAddressBookIdempotencyOutcome | null;
+  /** For a new update/delete only: version projected from the owner-scoped target-address lookup. */
+  readonly currentAddressVersion?: unknown;
   readonly sha256Utf8Hex: IdempotencySha256Utf8Hex;
 }
 
@@ -45,11 +48,15 @@ export type PrivateAddressBookIdempotencyDecision =
   | {
     readonly kind: 'reject';
     readonly documentId: string;
-    readonly reason: 'payload-mismatch';
+    readonly reason: 'payload-mismatch' | 'version-conflict';
   }
   | {
     readonly kind: 'invalid';
-    readonly reason: 'invalid-command' | 'invalid-claim-input' | 'invalid-existing-outcome';
+    readonly reason:
+      | 'invalid-command'
+      | 'invalid-claim-input'
+      | 'invalid-existing-outcome'
+      | 'invalid-current-version';
   };
 
 /**
@@ -58,10 +65,13 @@ export type PrivateAddressBookIdempotencyDecision =
  * The caller must authenticate the actor, derive the scope, parse the generic
  * command envelope, and perform an owner-scoped lookup using the resulting ID.
  * This function does not look up or persist records, execute the business write,
- * compare expectedVersion to current state, authorize a replay, or provide a
- * transaction/concurrency guarantee. A replay validates the result envelope,
- * not the business meaning of its unknown `value`. A candidate still requires the SP08
- * atomic add/write transaction before any business side effect may run.
+ * authorize a replay, or provide a transaction/concurrency guarantee. For a
+ * new update/delete, the caller must supply the target address's current version
+ * from its owner-scoped lookup; an existing same-key replay is resolved first
+ * and does not fail merely because the address version advanced afterward. A
+ * replay validates the result envelope, not the business meaning of its unknown
+ * `value`. A candidate still requires the SP08 atomic add/write transaction and
+ * version-conditional write before any business side effect may run.
  */
 export function preparePrivateAddressBookIdempotencyDecision(
   input: PreparePrivateAddressBookIdempotencyDecisionInput,
@@ -89,6 +99,26 @@ export function preparePrivateAddressBookIdempotencyDecision(
   }
 
   if (input.existingOutcome === null) {
+    if (parsedCommand.value.operation !== 'create') {
+      const versionComparison = compareExpectedVersion(
+        parsedCommand.value.expectedVersion,
+        input.currentAddressVersion,
+      );
+      if (versionComparison.kind === 'conflict') {
+        return {
+          kind: 'reject',
+          documentId: idResult.documentId,
+          reason: 'version-conflict',
+        };
+      }
+      if (versionComparison.kind === 'invalid-current-version') {
+        return { kind: 'invalid', reason: 'invalid-current-version' };
+      }
+      if (versionComparison.kind === 'invalid-expected-version') {
+        return { kind: 'invalid', reason: 'invalid-command' };
+      }
+    }
+
     return {
       kind: 'new-claim-candidate',
       documentId: idResult.documentId,

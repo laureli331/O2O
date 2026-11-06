@@ -53,6 +53,24 @@ function command(name = 'New address') {
   };
 }
 
+function updateCommand(expectedVersion = 3) {
+  return {
+    operation: 'update',
+    expectedVersion,
+    payload: {
+      addressId: 'addr-1',
+      draft: {
+        contact: 'Test user',
+        phone: '13800138000',
+        community: '湘阴渡社区',
+        detailAddress: '测试地址',
+        remark: '',
+      },
+      makeDefault: false,
+    },
+  };
+}
+
 function successfulResult(value = { addressId: 'addr-1', version: 1 }) {
   return { status: 'succeeded', requestId: 'request-original', value };
 }
@@ -190,10 +208,80 @@ test('F09 same-key lookup scope and operation remain part of the deterministic I
   const differentOperation = preparePrivateAddressBookIdempotencyDecision({
     ...input,
     command: { operation: 'delete', expectedVersion: 1, payload: { addressId: 'addr-1' } },
+    currentAddressVersion: 1,
   });
 
   assert.equal(original.kind, 'new-claim-candidate');
   assert.notEqual(original.documentId, differentScope.documentId);
   assert.notEqual(original.documentId, differentKey.documentId);
   assert.notEqual(original.documentId, differentOperation.documentId);
+});
+
+test('F09 new update candidates require an exact finite current address version match', () => {
+  const { preparePrivateAddressBookIdempotencyDecision } = loadTypeScriptModule(
+    'apps/cloud-functions/src/application/private-address-book-idempotency.ts',
+  );
+  const { sha256Utf8Hex } = loadTypeScriptModule('apps/cloud-functions/src/adapters/sha256-utf8.ts');
+  const base = {
+    trustedScope: 'owner:account-1',
+    operationKey: 'client-key-1',
+    command: updateCommand(3),
+    existingOutcome: null,
+    sha256Utf8Hex,
+  };
+
+  const matching = preparePrivateAddressBookIdempotencyDecision({ ...base, currentAddressVersion: 3 });
+  const stale = preparePrivateAddressBookIdempotencyDecision({ ...base, currentAddressVersion: 4 });
+
+  assert.equal(matching.kind, 'new-claim-candidate');
+  assert.equal(stale.kind, 'reject');
+  assert.equal(stale.reason, 'version-conflict');
+  assert.equal(stale.documentId, matching.documentId);
+  assert.doesNotMatch(JSON.stringify(stale), /13800138000|测试地址/);
+});
+
+test('F09 same-key update replay takes precedence over a now-stale current version', () => {
+  const { preparePrivateAddressBookIdempotencyDecision } = loadTypeScriptModule(
+    'apps/cloud-functions/src/application/private-address-book-idempotency.ts',
+  );
+  const { createPrivateAddressBookCommandPayloadDigest } = loadTypeScriptModule(
+    'packages/shared/src/contracts/private-address-book-command-digest.ts',
+  );
+  const { sha256Utf8Hex } = loadTypeScriptModule('apps/cloud-functions/src/adapters/sha256-utf8.ts');
+  const commandValue = updateCommand(3);
+  const digest = createPrivateAddressBookCommandPayloadDigest(commandValue, sha256Utf8Hex);
+  assert.equal(digest.ok, true);
+
+  const result = preparePrivateAddressBookIdempotencyDecision({
+    trustedScope: 'owner:account-1',
+    operationKey: 'client-key-1',
+    command: commandValue,
+    existingOutcome: { payloadDigest: digest.digest, originalResult: successfulResult() },
+    currentAddressVersion: 4,
+    sha256Utf8Hex,
+  });
+
+  assert.equal(result.kind, 'replay');
+  assert.equal(result.originalResult.requestId, 'request-original');
+});
+
+test('F09 new delete candidate rejects a malformed current version without coercion', () => {
+  const { preparePrivateAddressBookIdempotencyDecision } = loadTypeScriptModule(
+    'apps/cloud-functions/src/application/private-address-book-idempotency.ts',
+  );
+  const { sha256Utf8Hex } = loadTypeScriptModule('apps/cloud-functions/src/adapters/sha256-utf8.ts');
+
+  const result = preparePrivateAddressBookIdempotencyDecision({
+    trustedScope: 'owner:account-1',
+    operationKey: 'client-key-1',
+    command: { operation: 'delete', expectedVersion: 3, payload: { addressId: 'addr-1' } },
+    existingOutcome: null,
+    currentAddressVersion: '3',
+    sha256Utf8Hex,
+  });
+
+  assert.deepEqual(result, {
+    kind: 'invalid',
+    reason: 'invalid-current-version',
+  });
 });

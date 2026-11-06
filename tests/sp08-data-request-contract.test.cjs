@@ -1780,15 +1780,16 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   ]);
   assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestPath, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
   assert.deepEqual(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.operations, ['create', 'update', 'delete']);
-  assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.expectedVersion, 'Required and finite for update/delete; absent for create; a local pure comparator checks exact equality of two finite numeric values, but no persisted current-version read or server enforcement is connected');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.expectedVersion, 'Required and finite for update/delete; absent for create; the local decision helper compares it with a caller-supplied finite current-version projection for new commands after idempotency replay/mismatch resolution; no persisted read or transactional enforcement is connected');
   assert.equal(mapping.decision.payloadEncodingUtility.f09VersionPreconditionPath, 'packages/shared/src/contracts/private-address-book.ts#compareExpectedVersion');
   assert.equal(mapping.decision.payloadEncodingUtility.f09VersionPreconditionTest, 'tests/sp08-f09-version-precondition.test.cjs');
-  assert.equal(mapping.decision.payloadEncodingUtility.f09VersionPreconditionStatus, 'local-pure-comparison-only; persisted-read-and-server-enforcement-unproven');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09VersionPreconditionStatus, 'local-pure-comparison-and-decision-order-tested; persisted-read-and-transactional-server-enforcement-unproven');
   assert.match(mapping.decision.payloadEncodingUtility.f09VersionPreconditionContract, /exact equality returns matches and inequality returns conflict/);
   assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionPath, 'apps/cloud-functions/src/application/private-address-book-idempotency.ts');
   assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionTest, 'tests/sp08-f09-idempotency-reuse.test.cjs');
-  assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionStatus, 'local-composition-only; production-handler-and-transaction-unproven');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionStatus, 'local-composition-with-update-delete-version-gate-tested; production-handler-and-transaction-unproven');
   assert.ok(mapping.decision.payloadEncodingUtility.f09ReuseDecisionContract.includes('same-key/same-digest replays the stored result after result-envelope parsing'));
+  assert.ok(mapping.decision.payloadEncodingUtility.f09ReuseDecisionContract.includes('new update/delete compares the expected version with a caller-supplied current-version projection only after existing idempotency outcomes are resolved'));
   assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No production handler wiring, authenticated scope derivation, owner-scoped lookup, business-write transaction, or target-runtime proof'));
   assert.ok(mapping.decision.payloadEncodingUtility.reuseSurvey.decision.includes('strict rejection contract'));
   assert.ok(!mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
@@ -1852,7 +1853,12 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
     'same-key-different-digest-rejects',
     'malformed-command-or-stored-outcome-rejects',
     'trusted-scope-operation-and-key-separate-deterministic-id',
+    'new-update-requires-matching-owner-scoped-address-version',
+    'same-key-replay-precedes-current-version-comparison',
+    'malformed-current-address-version-rejects',
   ]);
+  assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.currentVersionSource, 'caller-supplied semantic projection expected from an owner-scoped lookup; not read or verified by this helper');
+  assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.transactionalCompareAndWriteProven, false);
   assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.productionHandlerConnected, false);
   assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.cloudMutationsPerformed, false);
   assert.ok(progress.notProven.includes('deterministic-id-add-concurrent-collision-transaction-and-recovery-runtime-proof'));
