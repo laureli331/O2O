@@ -39,7 +39,8 @@
     "f15-rating-image-count-validation",
     "f15-rating-text-validation",
     "f16-rating-response-text-validation",
-    "f17-ai-organization-text-validation"
+    "f17-ai-organization-text-validation",
+    "f18-dashboard-date-range-field-validation"
   ],
   "sources": [
     {
@@ -202,6 +203,14 @@
     {
       "path": "docs/sp08-object-ownership-map-20261105.json",
       "reference": "F16 response and public slot are owned by SP21; this increment validates text only."
+    },
+    {
+      "path": "docs/prd.md",
+      "reference": "Section 9.3 / F18 / DT02: dashboard dates use complete Asia/Shanghai natural days, end date is before today, default display is the last seven complete days; invalid/reversed ranges are rejected."
+    },
+    {
+      "path": "docs/sp08-object-ownership-map-20261105.json",
+      "reference": "F18 aggregation and dashboard behavior are owned by SP33; this increment validates only a local date-range input."
     }
   ],
   "reuseDecision": {
@@ -228,7 +237,8 @@
     "f15RatingImageCount": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange，范围严格按 PRD F15 的 0–3 张；项目内已有整数边界 helper。平台 SDK 不定义此共享字段规则，媒体上传能力与计数校验无关；第三方库不适用于纯整数范围判断，Number.isInteger 足够。只增加轻量语义包装，不新增运行依赖。专项 node:test 核对来源、边界和无平台行为；不验证 JPEG/PNG、单张大小、内容、权限或审核。",
     "f15RatingText": "复用项目已有可选普通文本校验模式及 String.trim() / Array.from() Unicode 码点计数，不引入第三方库或运行依赖；现有文本 validator 覆盖其他业务字段，故新增 F15 专属薄层语义校验并从 contracts/index.ts 导出。缺省或裁剪后空白规范为空字符串；非空文本去首尾空白后按 PRD 上限300码点校验。专项 node:test 覆盖来源、可选空值、边界、emoji、无效类型和纯 shared 边界；不验证图文评价单元、内容安全、审核、权限或公开流程。",
     "f16RatingResponseText": "复用 F15 的 validateRatingText 规范化与 Unicode 码点计数，新增 F16 必填语义薄层，不重复实现字符计数，也不引入依赖。缺省或去首尾空白后为空时返回 required；有效文字按已确认的 Unicode 码点计数限制 1–300。node:test 核对 PRD、SP21 归属、缺省/空白、规范化、1/300/301 码点、emoji、错误类型和 shared 纯度。字段范围不实现回应资格、版本、检测/人工审核、驳回重提、唯一公开位置、读取权限或发布。",
-    "f17AiOrganizationText": "复用项目 F02/F03/F07/F15/F16 已验证的 String.trim() 与 Array.from() Unicode 码点模式；现有 validator 是其他字段的语义规则，没有可直接复用的 F17 输入/候选校验器。新增三个必填字段的纯 shared 长度检查并从 contracts/index.ts 导出，不增加依赖。inputText 为 1–1000、candidateTitle 为 1–30、candidateDescription 为 1–1000；node:test 核对 PRD、SP31–SP32 归属、去空白、边界、emoji、组合字符、错误类型、未知字段和纯度。字段检查不构造提示词/候选对象、不校验 AI 合法输出、不接入真实模型、版本/采用/持久化/发布流程。"
+    "f17AiOrganizationText": "复用项目 F02/F03/F07/F15/F16 已验证的 String.trim() 与 Array.from() Unicode 码点模式；现有 validator 是其他字段的语义规则，没有可直接复用的 F17 输入/候选校验器。新增三个必填字段的纯 shared 长度检查并从 contracts/index.ts 导出，不增加依赖。inputText 为 1–1000、candidateTitle 为 1–30、candidateDescription 为 1–1000；node:test 核对 PRD、SP31–SP32 归属、去空白、边界、emoji、组合字符、错误类型、未知字段和纯度。字段检查不构造提示词/候选对象、不校验 AI 合法输出、不接入真实模型、版本/采用/持久化/发布流程。",
+    "f18DashboardDateRange": "复用 ECMAScript 原生字符串比较处理固定 YYYY-MM-DD 日期排序，不新增日期库；仓库没有既有看板日期范围 validator，CloudBase SDK 也不承担 shared 日期字段规则。按 PRD F18/DT02，新增纯校验并从 contracts/index.ts 导出：要求两个真实日历日期、起始不晚于结束、结束早于调用方提供的 Asia/Shanghai 今日；不限制可选历史范围，因为最近七个完整自然日只是展示默认值。node:test 覆盖来源、F18→SP33 归属、闰日、非法格式/日期、今天结束、反序、额外字段和无平台/查询副作用。函数不推导当前上海日期、不验证调用方提供的 today 是否可信、不设置默认范围、不做权限检查、汇总、物理字段/API/索引或一致性保证。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -247,7 +257,8 @@
     "real-provider-and-business-integration",
     "f14-rating-eligibility-identity-experience-uniqueness-edit-window-aggregation-and-publication",
     "f16-rating-response-authorization-version-moderation-resubmission-public-slot-and-publication",
-    "f17-ai-candidate-validation-privacy-version-selection-adoption-and-provider-integration"
+    "f17-ai-candidate-validation-privacy-version-selection-adoption-and-provider-integration",
+    "f18-dashboard-permission-aggregation-cutoff-version-consistency-and-stale-data-recovery (SP33; validate real statistics, role access, matching cutoff/version, and retain last successful result on partial failure)"
   ],
   "evidence": {
     "test": "tests/sp08-data-request-contract.test.cjs",
@@ -271,14 +282,30 @@
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
       "command": "node --test tests/sp08-data-request-contract.test.cjs",
-      "passed": 77,
+      "passed": 79,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1730,
+      "passed": 1732,
       "failed": 0,
       "skipped": 0
+    },
+    "f18Validation": {
+      "focusedCommand": "node --test tests/sp08-data-request-contract.test.cjs",
+      "focusedPassed": 2,
+      "planRegressionCommand": "node --test tests/executable-development-plan.test.cjs",
+      "planRegressionPassed": 46,
+      "fullRegressionCommand": "node --test tests/*.test.cjs",
+      "fullRegressionPassed": 1732,
+      "failed": 0,
+      "skipped": 0,
+      "sharedTypecheck": "passed",
+      "workspaceBoundaries": "passed",
+      "weappBuild": "passed-with-existing-fs.Stats-deprecation-warning",
+      "webBuild": "passed-with-existing-vite-config-loader-warning",
+      "ownDeclarationCheck": "no-declarations-found-compiler-not-executed",
+      "environment": "Windows local workspace; no cloud calls or mutations"
     },
     "checks": {
       "sharedTypecheck": "passed",
@@ -322,6 +349,8 @@
     "f16RatingResponseTextLimitation": "仅校验 F16 回应文字必填1–300 Unicode码点并去首尾空白；不实现回应资格、版本、内容检测/人工审核、驳回重提、唯一公开回应位置、读取权限或发布；完整评价回应生命周期仍归SP21，按其原任务卡与质量合同验收。",
     "aiOrganizationTextValidation": "packages/shared/src/contracts/ai-organization-text.ts#validateAiOrganizationText",
     "f17AiOrganizationTextLimitation": "仅校验 F17 输入文字1–1000、候选标题1–30、候选说明1–1000 Unicode码点并去首尾空白；不解析候选对象或合法字段，不证明私密输入隔离、候选事实准确性、请求/表单版本、用户选择/采用关联、用量/状态、供应商调用或自动写回。完整 AI 能力由 SP31–SP32 按原任务卡和质量合同验收，真实模型仍受 AG01 限制。",
+    "dashboardDateRangeValidation": "packages/shared/src/contracts/dashboard-date-range.ts#validateDashboardDateRange",
+    "f18DashboardDateRangeLimitation": "仅校验看板查询输入为两个规范 YYYY-MM-DD 日历日期、起始不晚于结束且结束早于调用方提供的上海今日；不推导或认证上海今日来源，不限制历史范围，不设置最近7日默认值，不实现 F18 权限、汇总、真实截止时间/版本一致性或部分失败保留旧成功数据。完整看板归SP33，仍须按原任务与质量合同验收。",
     "merchantPostRuleOwnershipDecision": {
       "date": "2026-11-06",
       "status": "confirmed-logical-ownership-only",

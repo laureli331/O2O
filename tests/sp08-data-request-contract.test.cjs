@@ -1887,3 +1887,83 @@ test('F17 AI organization text validator remains a pure field contract, without 
   assert.equal(typeof shared.validateAiOrganizationText, 'function');
   assert.doesNotMatch(source, /\bimport\b|\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|cloud\.callFunction/);
 });
+
+test('F18 dashboard date-range contract uses canonical Shanghai calendar dates and previous-day cutoff', () => {
+  const { validateDashboardDateRange } = loadTypeScriptModule('contracts/dashboard-date-range.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /原统计日期为Asia\/Shanghai完整自然日，结束不晚于前一日，默认最近7个完整自然日/);
+  assert.match(prd, /DT02 \| 日期反序\/今天结束日期\/跨午夜、任务延迟、部分汇总失败/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F18').ownerTask, 'SP33');
+  assert.ok(progress.scope.includes('f18-dashboard-date-range-field-validation'));
+  assert.equal(progress.evidence.dashboardDateRangeValidation, 'packages/shared/src/contracts/dashboard-date-range.ts#validateDashboardDateRange');
+  assert.ok(progress.evidence.f18DashboardDateRangeLimitation.includes('SP33'));
+  assert.equal(progress.evidence.f18Validation.focusedPassed, 2);
+  assert.equal(progress.evidence.f18Validation.planRegressionPassed, 46);
+  assert.equal(progress.evidence.f18Validation.fullRegressionPassed, 1732);
+  assert.equal(progress.evidence.f18Validation.ownDeclarationCheck, 'no-declarations-found-compiler-not-executed');
+
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-11-01', endDate: '2026-11-05' }, '2026-11-06'), {
+    ok: true,
+    startDate: '2026-11-01',
+    endDate: '2026-11-05',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-11-05', endDate: '2026-11-05' }, '2026-11-06'), {
+    ok: true,
+    startDate: '2026-11-05',
+    endDate: '2026-11-05',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2000-01-01', endDate: '2020-12-31' }, '2026-11-06'), {
+    ok: true,
+    startDate: '2000-01-01',
+    endDate: '2020-12-31',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-11-01', endDate: '2026-11-06' }, '2026-11-06'), {
+    ok: false,
+    reason: 'end-date-not-before-today',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-11-04', endDate: '2026-11-03' }, '2026-11-06'), {
+    ok: false,
+    reason: 'start-after-end',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2024-02-29', endDate: '2024-02-29' }, '2024-03-01'), {
+    ok: true,
+    startDate: '2024-02-29',
+    endDate: '2024-02-29',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-02-29', endDate: '2026-02-29' }, '2026-03-02'), {
+    ok: false,
+    reason: 'invalid-date',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-1-01', endDate: '2026-01-02' }, '2026-01-03'), {
+    ok: false,
+    reason: 'invalid-date',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-01-01', endDate: '2026-01-02' }, '2026-02-30'), {
+    ok: false,
+    reason: 'invalid-today',
+  });
+  assert.deepEqual(validateDashboardDateRange({ startDate: '2026-01-01', endDate: '2026-01-02', ownerId: 'forged' }, '2026-01-03'), {
+    ok: false,
+    reason: 'unexpected-field',
+  });
+  for (const value of [undefined, null, 1, [], '2026-01-01']) {
+    assert.deepEqual(validateDashboardDateRange(value, '2026-01-03'), { ok: false, reason: 'not-object' });
+  }
+  assert.deepEqual(validateDashboardDateRange({ startDate: 20260101, endDate: '2026-01-02' }, '2026-01-03'), {
+    ok: false,
+    reason: 'invalid-date',
+  });
+});
+
+test('F18 dashboard date-range validator stays pure and does not choose report defaults or perform queries', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'dashboard-date-range.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/dashboard-date-range';/);
+  assert.equal(typeof shared.validateDashboardDateRange, 'function');
+  assert.doesNotMatch(source, /\bimport\b|\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|Intl\.|fetch\s*\(|collection\s*\(|cloud\.callFunction|aggregate\s*\(/);
+});

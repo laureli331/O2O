@@ -172,6 +172,16 @@
 - 验证结果：F17 专项测试 77/77、计划守护测试 46/46、全量测试 1730/1730 通过；`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过。构建有既有 `fs.Stats` 弃用和 Vite 配置加载器警告；不构成构建失败。仅为本地静态/构建证据，无云端调用或真实模型测试。
 - 后续归属：候选字段合法性/事实校验、私密输入隔离、版本与用户选择/采用关联、模型安全评估、用量/状态及真实供应商调用仍由 SP31–SP32 和 AG01 按原任务与质量合同验收；本增量不证明 AI 功能可用，也不关闭 SP08 或相关后续验收。
 
+## F18 看板日期范围字段校验增量（2026-11-06）
+
+- 来源：`docs/prd.md` 第 9.3 节、F18 和 DT02 规定看板按 Asia/Shanghai 完整自然日，结束日期不晚于前一日；默认最近 7 个完整自然日仅是展示默认值。`docs/sp08-object-ownership-map-20261105.json` 将完整看板归 SP33。
+- 复用调查：shared 中没有既有看板日期范围 validator；CloudBase SDK 不负责共享字段规则。使用 ECMAScript 原生 `YYYY-MM-DD` 字符串比较和明确的闰年/月份日数校验，不引入日期库、SDK 或运行依赖。
+- 实现：`packages/shared/src/contracts/dashboard-date-range.ts#validateDashboardDateRange` 经 `contracts/index.ts` 导出。只验证字段白名单、规范日期、真实日历日期、起止顺序，以及结束日期早于调用方传入的 Shanghai 今日。没有限制历史范围，因为 PRD 只把最近 7 日定义为默认显示。
+- 测试：`tests/sp08-data-request-contract.test.cjs` 覆盖合法单日/多日/历史范围、闰日、无效格式和日期、今天结束、日期反序、额外字段、无效输入、PRD/所有权映射以及 shared 纯度。
+- 验证结果：F18 两项专项测试 2/2；SP08 文件 79/79；计划守护 46/46；全量 `node --test tests/*.test.cjs` 1732/1732（0 失败、0 跳过）。`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过；构建分别有既有 `fs.Stats` 弃用与 Vite 配置加载器警告。`typecheck:own-declarations` 的结果为声明文件数量 0、编译器未执行，不记作声明编译通过。以上均为本地验证，无云端调用或更改。
+- 适配范围与未证明项：不推导当前上海日期，也不验证传入 `todayInShanghai` 的来源；不计算默认日期、不做 F18 汇总/权限检查/物理 API 或索引、不保证数据截止时间和版本一致、不处理部分失败时保留旧成功结果。
+- 后续归属：完整看板、角色权限、真实统计口径、截止时间/版本一致性、无数据与未知状态、部分失败恢复归 SP33，按其原任务卡和质量合同验收。本字段增量不关闭 SP08 的数据库/业务验收，也不提前标记 SP33 通过。
+
 ## 未证明及后续归属
 
 下列事项仍按原门槛保留，阻断 SP08 及其依赖功能的对应验收：
