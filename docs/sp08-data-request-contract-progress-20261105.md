@@ -209,6 +209,15 @@
 - 明确限制：这不是 F21 生命周期实现。佣金费率/上限快照、合格基数、月度唯一记录及调整差额；账单生成、应付/已付分配、抵扣、争议冻结/期限/欠款/追缴；支付退款对账和余额；可信操作者权限、状态/版本、幂等、并发与原子迁移；证据图片上传/私有权限/留存清理，仍由 SP17、SP29、SP30 按原任务卡与质量合同验收。该字段切片不表示 F21 产品验收或 SP08 通过。
 - 验证结果：F21 专项 2/2；SP08 文件测试 85/85；计划守护 46/46；全量 `node --test tests/*.test.cjs` 1738/1738（0 失败、0 跳过）。`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过。小程序构建有 Node `fs.Stats` 弃用提示，网页构建有 Vite 配置加载器兼容提示；自有声明文件数量为0，声明编译器未执行，不记作声明编译通过。完整命令、环境和结果在配套 JSON 的 `evidence.f21Validation`。该增量未访问或修改云资源。
 
+## F22 商家主帖标量字段校验增量（2026-11-06）
+
+- 来源与归属：`docs/prd.md` 第13.1节 F22 规定发布内容须有1–9张审核图片、必填标题1–20个可见字符、必填正文1–1,000个可见字符。用户已确认沿用 Unicode 码点计数。对象归属图 `fieldGroups.F22` 将商家内容规则所有者定为 BM17、实现卡定为 SP24；BM11 仍负责商家主体档案与权益。质量合同 F22 也只挂 SP24。
+- 复用调查：复用 `trimmed-text-range.ts#validateTrimmedTextRange` 的去首尾空白和 `Array.from()` 码点计数，以及 `integer-count-range.ts#validateIntegerCountInRange` 的整数边界；这些是已有 shared helper。小程序/CloudBase SDK 不定义 shared 层的字段范围，固定字段边界不需要第三方 schema 或媒体库；无新增依赖。
+- 实现：`packages/shared/src/contracts/merchant-post-fields.ts` 导出 `validateMerchantPostText` 和 `validateMerchantPostImageCount`，并从 `contracts/index.ts` 公开。文字只接收 `title`/`body`，标题1–20、正文1–1,000；均去首尾空白并按 Unicode 码点计数。图片字段只验证整数1–9，不读取图片或文件内容。
+- 测试：`tests/sp08-data-request-contract.test.cjs` 核对 PRD、BM17/SP24 归属、质量合同、公开导出、文字及图片计数下/上界、超限、空白、非字符串、未知字段和 shared 纯度。
+- 明确限制：不实现草稿、审核版本、公开替换、风险下架、内容安全/分类、图片媒体类型/大小/真实性、上传/私密读取权限、服务端授权或产品页面集成；均按原始责任由 SP24 及其验收闭环。字段 validator 不代表 F22 产品验收通过，也不关闭 SP08 数据库/业务能力验收；未访问或修改云资源。
+- 验证结果：F22 专项 2/2；SP08 文件测试 87/87；计划守护 46/46；全量 `node --test tests/*.test.cjs` 1740/1740（0 失败、0 跳过）。`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过。小程序构建报告 Node `fs.Stats` 弃用提示；网页构建报告 Vite `configLoader: 'native'` 未来默认兼容提示。自有声明检查报告 `declarationCount: 0`、`compilerExecuted: false`，不记作声明编译通过。完整命令与结果在配套 JSON 的 `evidence.f22Validation`。该增量未访问或修改云资源。
+
 ## 未证明及后续归属
 
 下列事项仍按原门槛保留，阻断 SP08 及其依赖功能的对应验收：

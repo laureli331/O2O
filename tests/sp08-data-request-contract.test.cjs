@@ -59,6 +59,8 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.validateProviderProfileText, 'function');
   assert.equal(typeof shared.validateProviderLicenseImageCount, 'function');
   assert.equal(typeof shared.validateAccountProfileText, 'function');
+  assert.equal(typeof shared.validateMerchantPostText, 'function');
+  assert.equal(typeof shared.validateMerchantPostImageCount, 'function');
   assert.equal(shared.COMMAND_PROTOCOL_VERSION, 1);
 });
 
@@ -2180,4 +2182,75 @@ test('F21 reason validators stay pure and leave fee, bill, payment, refund, auth
   assert.equal(typeof shared.validateBillingDisputeReason, 'function');
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|fetch\s*\(|collection\s*\(|cloud\.callFunction|payment|refund/i);
   assert.match(source, /SP17.*SP29.*SP30/s);
+});
+
+test('F22 merchant-post scalar fields validate required Unicode text and image count boundaries', () => {
+  const {
+    validateMerchantPostText,
+    validateMerchantPostImageCount,
+  } = loadTypeScriptModule('contracts/merchant-post-fields.ts');
+
+  assert.deepEqual(validateMerchantPostText('title', ` ${'题'.repeat(20)} `), {
+    ok: true,
+    value: '题'.repeat(20),
+    characterCount: 20,
+  });
+  assert.deepEqual(validateMerchantPostText('title', '题'), {
+    ok: true,
+    value: '题',
+    characterCount: 1,
+  });
+  assert.deepEqual(validateMerchantPostText('title', '😀'.repeat(20)), {
+    ok: true,
+    value: '😀'.repeat(20),
+    characterCount: 20,
+  });
+  assert.deepEqual(validateMerchantPostText('title', '题'.repeat(21)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateMerchantPostText('body', '😀'.repeat(1_000)), {
+    ok: true,
+    value: '😀'.repeat(1_000),
+    characterCount: 1_000,
+  });
+  assert.deepEqual(validateMerchantPostText('body', '字'), {
+    ok: true,
+    value: '字',
+    characterCount: 1,
+  });
+  assert.deepEqual(validateMerchantPostText('body', '字'.repeat(1_001)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateMerchantPostText('body', '  '), { ok: false, reason: 'empty' });
+  assert.deepEqual(validateMerchantPostText('title', undefined), { ok: false, reason: 'not-string' });
+  assert.deepEqual(validateMerchantPostText('phone', '123'), { ok: false, reason: 'unknown-field' });
+
+  assert.deepEqual(validateMerchantPostImageCount(1), { ok: true, value: 1 });
+  assert.deepEqual(validateMerchantPostImageCount(9), { ok: true, value: 9 });
+  assert.deepEqual(validateMerchantPostImageCount(0), { ok: false, reason: 'out-of-range' });
+  assert.deepEqual(validateMerchantPostImageCount(10), { ok: false, reason: 'out-of-range' });
+  assert.deepEqual(validateMerchantPostImageCount(1.5), { ok: false, reason: 'not-integer' });
+  assert.deepEqual(validateMerchantPostImageCount(undefined), { ok: false, reason: 'not-integer' });
+});
+
+test('F22 scalar validation keeps BM17 lifecycle implementation and product acceptance assigned to SP24', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'merchant-post-fields.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const quality = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'v1-quality-acceptance-20261027.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+  const shared = loadTypeScriptModule('index.ts');
+  const f22Ownership = ownership.fieldGroups.find((group) => group.prdFieldId === 'F22');
+
+  assert.match(prd, /F22[^\n]*1—9张审核图片[^\n]*标题必填≤20个可见字符、正文必填≤1,000个可见字符/);
+  assert.equal(f22Ownership.ownerModule, 'BM17');
+  assert.equal(f22Ownership.ownerTask, 'SP24');
+  assert.deepEqual(quality.requirements.find((requirement) => requirement.id === 'F22').tasks, ['SP24']);
+  assert.ok(progress.scope.includes('f22-merchant-post-scalar-field-validation'));
+  assert.equal(progress.evidence.f22MerchantPostScalarValidation, 'packages/shared/src/contracts/merchant-post-fields.ts#F22 scalar field validators');
+  assert.equal(progress.evidence.f22MerchantPostScalarLimitation.productAcceptancePassed, false);
+  assert.equal(progress.evidence.f22MerchantPostScalarLimitation.ownerTask, 'SP24');
+  assert.match(contractsIndex, /export \* from '\.\/merchant-post-fields';/);
+  assert.equal(typeof shared.validateMerchantPostText, 'function');
+  assert.equal(typeof shared.validateMerchantPostImageCount, 'function');
+  assert.match(source, /SP24/);
+  assert.match(source, /Unicode code points/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|fetch\s*\(|collection\s*\(|cloud\.callFunction|uploadFile|downloadFile/i);
 });

@@ -12,6 +12,7 @@ export * from './idempotency';
 export * from './idle-listing-text';
 export * from './idle-listing-price';
 export * from './money';
+export * from './merchant-post-fields';
 export * from './order-objection-fields';
 export * from './private-address-book';
 export * from './provider-license-image-count';
