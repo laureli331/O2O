@@ -1666,3 +1666,33 @@ test('F12 shared validators export only local field checks, without defining cas
   assert.equal(typeof shared.validateOperationsActionReason, 'function');
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
+
+test('F14 rating score validation applies the same inclusive integer range to each dimension', () => {
+  const { validateRatingScore } = loadTypeScriptModule('contracts/rating-score-fields.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+
+  assert.match(prd, /F14[^\r\n]*态度\/效率\/沟通各1—5整数/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F14').ownerTask, 'SP21');
+  for (const field of ['attitude', 'efficiency', 'communication']) {
+    assert.deepEqual(validateRatingScore(field, 1), { ok: true, value: 1 });
+    assert.deepEqual(validateRatingScore(field, 5), { ok: true, value: 5 });
+    for (const value of [0, 6]) {
+      assert.deepEqual(validateRatingScore(field, value), { ok: false, reason: 'out-of-range' });
+    }
+    for (const value of [null, undefined, '1', {}, [], NaN, Infinity, 1.5]) {
+      assert.deepEqual(validateRatingScore(field, value), { ok: false, reason: 'not-integer' });
+    }
+  }
+  assert.deepEqual(validateRatingScore('overall', 5), { ok: false, reason: 'unknown-field' });
+});
+
+test('F14 shared rating validator is a field-only check without defaults, transport, or platform access', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'rating-score-fields.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/rating-score-fields';/);
+  assert.equal(typeof shared.validateRatingScore, 'function');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|\bdefault\b/);
+});

@@ -24,6 +24,7 @@
 - 本次新增 PRD F03 价格字段纯校验 `parseIdleListingPrice(unknown)`：只接受字面“面议”，或由既有 `parseCnyFen` 精确解析且大于零、上限 99,999.99 元的十进制字符串；零、非字符串、格式错误、超过两位小数及超上限分别拒绝。没有按 PRD 未说明的规则去空白，也不定义交易金额、物理字段或 API。
 - 本次新增 PRD F03 标题、说明和可选地标纯文本校验 `validateIdleListingText(field, unknown)`：分别执行 1–30、1–1000、0–50 的码点边界；先去首尾空白，按用户确认口径使用 Unicode 码点计数，缺省地标按空值处理。该函数不校验类别、地点白名单、资格、交易，也不定义物理字段或 API。
 - 本次新增 F03 分类、村/社区必填文本形状校验 `validateIdleListingRequiredText(field, unknown)`：只接受这两个字段的字符串，去首尾空白后拒绝空值；PRD 未提供类别允许值、社区覆盖目录或这两个字段的最大长度，因此不添加上述规则。该函数不验证服务范围、发布资格或服务端执行。
+- 本次新增 PRD F14 评分分值字段校验 `validateRatingScore(field, unknown)`：态度、效率、沟通三个分项都只接受整数 1–5；不设置初始评分值。此字段检查不处理评分资格、自然人身份、经历归属、有效记录唯一性、统计或公开展示，这些仍由评价模块 SP21 按原任务验收。
 - 联系电话校验只接受 11 位 ASCII 数字；不补前缀规则、不去空格、不验证号码控制权或联系同意。
 - 这不是业务级完整校验：逻辑指针形状只能表达每位用户至多一个默认地址；地址存在/归属、并发设置及删除原子性、物理唯一性仍由实际业务模块在服务端落实和验收。村/社区没有来源支持的最大长度或允许值目录；操作枚举、载荷结构/金额规则、何种操作要求期望版本、版本范围及对象当前版本，仍由实际业务模块在服务端校验。
 - 本增量新增 F01–F22 逻辑对象归属、角色视图和快照映射；不定义物理集合、API、SDK 调用或安全规则。
@@ -55,6 +56,7 @@
 18. **F07 接单资料文本字段：**复用 F02/F03/F09 已验证的 `String.trim()` 与 `Array.from()` 码点计数模式；F07 的展示名称和服务介绍范围来自 PRD，用户确认沿用 Unicode 码点口径。现有 shared 中没有覆盖这两个字段的校验器，因此新增独立纯校验并从 `contracts/index.ts` 导出。ECMAScript 原生实现和 `node:test` 已满足固定文本边界验证，不引入 SDK 或第三方依赖；专项测试覆盖上下界、补充平面字符、组合字符计数、去空白及无效类型。F07 业务页面和其它资料字段仍归 SP14。
 19. **F01/F07 营业执照图片数量：**PRD 明确 F01 执照选填、最多 1 张，F07 执照选填 1 张；复用 `integer-count-range.ts#validateIntegerCountInRange`，新增独立语义包装并由 `contracts/index.ts` 导出。专项 `node:test` 核对两条 PRD 来源、0/1、负数/超限、非整数和无效类型。不引入 SDK 或第三方依赖；此函数不判定清晰度、文件格式/大小、执照真实性、所有权、上传或读取权限。F01 身份/资格及证照核验归 SP09，F07 接单资料流程归 SP14。
 20. **F01 昵称与可选微信号文本：**复用 `provider-profile-text.ts` / `private-address-book.ts` 已有的 `String.trim()` 与 `Array.from()` 码点计数模式，并沿用 `contracts/index.ts` 导出；项目此前没有 F01 昵称/微信号校验器。PRD 第13.1节 F01 给出昵称必填1–20、微信号选填1–50，字符计数采用用户已确认的 Unicode 码点口径。原生 ECMAScript 与 `node:test` 足够，无需微信/CloudBase API 或第三方依赖；专项用例覆盖边界、emoji、空白、可选空值、错误类型、未知字段及纯 shared 限制。此实现不验证微信号格式或身份/资格，F01 页面与身份/资格核验仍归 SP09。
+21. **F14 评价分值：**复用 `packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange` 与 `contracts/index.ts` 的共享导出模式；PRD 第13.1节规定态度、效率、沟通各为整数1–5，对象归属映射将评价归 SP21。项目内没有 F14 分项校验器，平台 SDK 与第三方库不能替代这一纯整数范围规则；只增加字段名白名单和 1–5 边界，不引入依赖。专项 `node:test` 覆盖三个分项的 1/5、0/6、非整数/非数值及未知字段。该函数不创建评分记录、不设初始分、不实施资格或权限判断。
 
 ## 本次交付
 
@@ -83,6 +85,7 @@
 | F03 分类、村/社区必填文本形状 | `validateIdleListingRequiredText(field, unknown)` 仅接受分类或村/社区字符串，去首尾空白并拒绝空值；不自行规定长度 | 不校验类别目录、实际服务范围或发布资格；PRD未给这两个字段的最大长度；不定义物理字段、API或服务端权限 |
 | F01/F07 可选营业执照图片数量 | `validateProviderLicenseImageCount(unknown)` 复用整数范围 helper，只接受 0–1 | 不验证清晰度、格式、大小、证照真实性/所有权、上传状态或读取权限；F01 身份/资格归 SP09，F07 接单资料归 SP14 |
 | F01 昵称与可选微信号文本 | `validateAccountProfileText(field, unknown)` 去首尾空白后按 Unicode 码点校验昵称 1–20、微信号 1–50；缺省/空白微信号规范为空值 | 不校验微信号格式、手机号控制权、登录身份、实名/资格、执照真实性或资料页面；相关 F01 身份/资格流程归 SP09 |
+| F14 评价分值字段 | `validateRatingScore(field, unknown)` 仅接受 attitude、efficiency、communication 三个分项及整数 1–5 | 不设置初始分；不验证经历/评分资格、自然人身份、作者/对象归属、唯一有效记录、修改窗口、统计、审核或公开；评价业务归 SP21 |
 
 ## 新增逻辑对象映射
 
@@ -112,8 +115,8 @@
 - `npm run check:shared`：通过。
 - `npm run check:boundaries`：通过。
 - `node --test tests/executable-development-plan.test.cjs`：46/46 通过。
-- `node --test tests/sp08-data-request-contract.test.cjs`：67/67 通过（含 F12 原因、说明、申诉/处置理由、图片数及纯 shared 边界）。
-- `node --test tests/*.test.cjs`：1720/1720 通过，无跳过。
+- `node --test tests/sp08-data-request-contract.test.cjs`：69/69 通过（含 F14 三评分项边界和纯 shared 边界）。
+- `node --test tests/*.test.cjs`：1722/1722 通过，无跳过。
 - `npm run build:weapp`：Webpack 编译成功；输出显示自有声明数量为 0，声明编译器未执行；存在 `fs.Stats` 弃用警告。
 - `npm run build:web`：构建成功；Vite 配置加载器提示格式警告，无构建错误。
 - 以上验证限于本地类型、金额与文本边界、工作区边界和构建回归；它们不等于 SP08 产品验收或后端物理能力验收通过。
@@ -125,6 +128,14 @@
 - 校验项：六个 PRD 举报原因；“其他”要求补充说明；举报补充说明 0–1000、申诉说明和运营动作理由各 1–1000；举报图片数量 0–9。文本去首尾空白后按 Unicode 码点计数。
 - 专项用例覆盖原因白名单、其他说明必填、上下界/空白/类型、图片整数范围以及 shared 平台隔离。此增量不定义 wire code、物理字段或 API，不验证案件读取权限、举报者隐私、操作者身份/审计、通知、状态迁移、事务或服务端权限。
 - F12 的案件可见性和后台处置流程仍由 SP12 按原任务卡与合同验收；本切片不提前判定其通过，也不把这些后续事项转为当前字段校验的阻断。
+
+## F14 评分分值字段校验增量（2026-11-06）
+
+- 来源：`docs/prd.md` 第 13.1 节 F14 规定态度、效率、沟通三项均为整数 1–5；`docs/sp08-object-ownership-map-20261105.md` 将评价对象归 SP21，并要求无初始评分值、公开内容不含自然人标识。
+- 复用：新模块 `packages/shared/src/contracts/rating-score-fields.ts` 复用 `validateIntegerCountInRange`；从既有 `contracts/index.ts` 导出。无新增依赖，不调用平台 SDK、云服务、DOM 或存储。
+- 测试：新增用例覆盖三项各自的 1 和 5、越界 0 和 6、非整数/非数值/空值，以及未知分项；纯 shared 边界检查禁止平台 API、网络/存储调用和隐式评分值。
+- 适配范围：只验证单个分项字段。没有建立 `rating` 对象、传输字段名、API、数据库结构或默认值，也没有执行资格、身份、经历归属、唯一性、修改时限、统计、内容审核和公开脱敏。
+- 后续归属：完整评价生命周期与评价资格由 SP21 按其原任务及质量合同验收；这项本地 validator 不关闭 SP08 的产品/数据库验收，也不提前标记评价模块通过。
 
 ## 未证明及后续归属
 
