@@ -1696,3 +1696,36 @@ test('F14 shared rating validator is a field-only check without defaults, transp
   assert.equal(typeof shared.validateRatingScore, 'function');
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|\bdefault\b/);
 });
+
+test('F15 rating image count accepts the inclusive integer range from zero through three', () => {
+  const { validateRatingImageCount } = loadTypeScriptModule('contracts/rating-image-count.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /F15[^\r\n]*图片选填0—3张JPEG\/PNG单张最多5MB/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F15').ownerTask, 'SP21');
+  assert.ok(progress.scope.includes('f15-rating-image-count-validation'));
+  assert.ok(progress.reuseDecision.f15RatingImageCount.includes('validateIntegerCountInRange'));
+  assert.equal(progress.evidence.ratingImageCountValidation, 'packages/shared/src/contracts/rating-image-count.ts#validateRatingImageCount');
+  assert.ok(progress.evidence.f15Limitation.includes('SP21'));
+  for (const count of [0, 1, 3]) {
+    assert.deepEqual(validateRatingImageCount(count), { ok: true, value: count });
+  }
+  for (const count of [-1, 4]) {
+    assert.deepEqual(validateRatingImageCount(count), { ok: false, reason: 'out-of-range' });
+  }
+  for (const count of [null, undefined, '1', {}, [], NaN, Infinity, 1.5]) {
+    assert.deepEqual(validateRatingImageCount(count), { ok: false, reason: 'not-integer' });
+  }
+});
+
+test('F15 shared image count validator does not infer media validation or platform behavior', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'rating-image-count.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/rating-image-count';/);
+  assert.equal(typeof shared.validateRatingImageCount, 'function');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|JPEG|PNG|MB/);
+});

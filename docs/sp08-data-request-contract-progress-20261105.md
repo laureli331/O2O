@@ -115,8 +115,8 @@
 - `npm run check:shared`：通过。
 - `npm run check:boundaries`：通过。
 - `node --test tests/executable-development-plan.test.cjs`：46/46 通过。
-- `node --test tests/sp08-data-request-contract.test.cjs`：69/69 通过（含 F14 三评分项边界和纯 shared 边界）。
-- `node --test tests/*.test.cjs`：1722/1722 通过，无跳过。
+- `node --test tests/sp08-data-request-contract.test.cjs`：71/71 通过（含 F14 评分分值与 F15 图片数量字段边界和 shared 纯度检查）。
+- `node --test tests/*.test.cjs`：1724/1724 通过，无跳过。
 - `npm run build:weapp`：Webpack 编译成功；输出显示自有声明数量为 0，声明编译器未执行；存在 `fs.Stats` 弃用警告。
 - `npm run build:web`：构建成功；Vite 配置加载器提示格式警告，无构建错误。
 - 以上验证限于本地类型、金额与文本边界、工作区边界和构建回归；它们不等于 SP08 产品验收或后端物理能力验收通过。
@@ -136,6 +136,14 @@
 - 测试：新增用例覆盖三项各自的 1 和 5、越界 0 和 6、非整数/非数值/空值，以及未知分项；纯 shared 边界检查禁止平台 API、网络/存储调用和隐式评分值。
 - 适配范围：只验证单个分项字段。没有建立 `rating` 对象、传输字段名、API、数据库结构或默认值，也没有执行资格、身份、经历归属、唯一性、修改时限、统计、内容审核和公开脱敏。
 - 后续归属：完整评价生命周期与评价资格由 SP21 按其原任务及质量合同验收；这项本地 validator 不关闭 SP08 的产品/数据库验收，也不提前标记评价模块通过。
+
+## F15 评价图片数量字段校验增量（2026-11-06）
+
+- 来源：`docs/prd.md` 第 13.1 节 F15 明确评价图片选填 0–3 张；`docs/sp08-object-ownership-map-20261105.md` 将评价图文及审核版本归 SP21，并规定公开只使用当前合格版本。
+- 复用：新增 `packages/shared/src/contracts/rating-image-count.ts`，复用 `validateIntegerCountInRange` 并从 `contracts/index.ts` 导出；没有新增依赖，也不调用平台 SDK、云服务、DOM 或存储。计数规则属于共享字段校验，第三方库或平台接口没有额外价值。
+- 测试：专项用例核对 PRD 与对象归属来源、0/1/3 合法边界、负数/4 越界、非整数和非数值；共享边界用例确认公开导出及实现不夹带上传、下载或媒体格式规则。
+- 适配范围：仅检查数量为整数 0–3；不验证 JPEG/PNG、单张 5MB 限制、图像内容/元数据、所有权、上传与读取权限、审核结果或新旧公开版本切换。
+- 后续归属：完整评价图文、审核版本、隐私和公开流程由 SP21 按原任务及质量合同验收；本地字段校验不关闭 SP08 产品/数据库验收，也不提前标记 SP21 通过。
 
 ## 未证明及后续归属
 
