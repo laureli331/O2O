@@ -1447,6 +1447,43 @@ test('idempotency reuse is a shared pure contract and does not invent storage or
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });
 
+test('SP08 records deterministic document ID plus add as selected but unproven physical idempotency candidate', () => {
+  const mappingPath = path.join(root, 'docs', 'sp08-idempotency-physical-mapping-20261106.json');
+  const mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
+  const mappingMarkdown = fs.readFileSync(path.join(root, 'docs', 'sp08-idempotency-physical-mapping-20261106.md'), 'utf8');
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.equal(mapping.taskId, 'SP08');
+  assert.equal(mapping.status, 'selected-candidate-runtime-unverified');
+  assert.equal(mapping.decision.strategy, 'deterministic-document-id-plus-add');
+  assert.equal(mapping.decision.createOperation, 'add');
+  assert.match(mapping.decision.scope, /trusted server-derived actor\/ownership.*allowlisted operation.*operationKey/i);
+  assert.match(mapping.decision.storedBinding, /normalized per-operation payload digest.*original command result/i);
+  assert.match(mapping.decision.transactionBoundary, /idempotency claim.*business write.*same transaction/i);
+  assert.ok(mapping.decision.prohibitedApproaches.includes('set-as-exclusive-claim'));
+  assert.ok(mapping.decision.prohibitedApproaches.includes('application-check-then-write'));
+  assert.ok(mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
+  assert.ok(mapping.unresolved.includes('operation-specific-payload-normalization-and-equivalence'));
+  assert.ok(mapping.unresolved.includes('collection-and-retention-policy'));
+  assert.ok(mapping.runtimeProof.requiredCases.includes('simultaneous-add-same-deterministic-id-has-one-winner'));
+  assert.ok(mapping.runtimeProof.requiredCases.includes('same-payload-replays-exact-original-result'));
+  assert.ok(mapping.runtimeProof.requiredCases.includes('different-payload-same-key-is-rejected'));
+  assert.ok(mapping.runtimeProof.requiredCases.includes('lost-response-recovers-through-same-key-query'));
+  assert.equal(mapping.runtimeProof.status, 'not-proven');
+  assert.equal(mapping.cloudMutationsPerformed, false);
+  assert.match(mappingMarkdown, /DATABASE_DUPLICATE_WRITE/);
+  assert.match(mappingMarkdown, /docs\.cloudbase\.net\/database\/transaction/);
+  assert.match(mappingMarkdown, /确定性 ID 的编码和版本.*保持未选/);
+
+  assert.ok(progress.scope.includes('deterministic-document-id-add-idempotency-persistence-candidate'));
+  assert.ok(progress.notProven.includes('deterministic-id-add-concurrent-collision-transaction-and-recovery-runtime-proof'));
+  assert.ok(progress.notProven.includes('atomic-idempotency-claim-with-business-write'));
+  assert.ok(progress.notProven.includes('unknown-outcome-same-request-query-and-recovery'));
+  assert.ok(progress.notProven.includes('physical-indexes-and-uniqueness'));
+  assert.equal(progress.productAcceptancePassed, false);
+  assert.equal(progress.cloudMutationsPerformed, false);
+});
+
 test('SP08 progress record keeps this local contract slice distinct from cloud/product acceptance', () => {
   const record = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
 

@@ -44,7 +44,8 @@
     "f19-beijing-service-time-range-field-validation",
     "f20-fee-stage-scalar-field-validation",
     "f21-commission-billing-reason-field-validation",
-    "f22-merchant-post-scalar-field-validation"
+    "f22-merchant-post-scalar-field-validation",
+    "deterministic-document-id-add-idempotency-persistence-candidate"
   ],
   "sources": [
     {
@@ -231,6 +232,18 @@
     {
       "path": "docs/sp08-object-ownership-map-20261105.json",
       "reference": "F20 transaction and fee-version lifecycle are owned by SP18-SP20; proof files are private and this increment validates scalar field bounds only."
+    },
+    {
+      "path": "docs/sp08-idempotency-physical-mapping-20261106.md",
+      "reference": "2026-11-06 user-selected deterministic document ID plus add candidate; runtime uniqueness, transaction, replay and recovery remain unproven"
+    },
+    {
+      "url": "https://docs.cloudbase.net/api-reference/webv3-pg/database",
+      "use": "核对 CloudBase add 可使用指定文档 ID；只作 API 能力依据，不作为并发幂等通过证据"
+    },
+    {
+      "url": "https://docs.cloudbase.net/error-code/basic",
+      "use": "核对 DATABASE_DUPLICATE_WRITE 错误说明；生产错误对象映射仍待验证"
     }
   ],
   "reuseDecision": {
@@ -285,7 +298,8 @@
     "f18-dashboard-permission-aggregation-cutoff-version-consistency-and-stale-data-recovery (SP33; validate real statistics, role access, matching cutoff/version, and retain last successful result on partial failure)",
     "f19-service-time-transaction-lifecycle-server-time-version-agreement-expiry-extension-and-fault-protection (SP18-SP20; preserve the original PRD and quality gates; this increment is only a shared field validator)",
     "f20-fee-proposal-versioning-mutual-acceptance-stage-uniqueness-current-effective-totals-proof-file-storage-and-private-access (SP18-SP20; this increment validates scalar fields only and does not alter the original PRD or quality gates)",
-    "f22-merchant-post-draft-review-version-publication-replacement-risk-removal-media-validation-and-access-control (SP24; this increment validates scalar title/body text and image count only; full behavior remains subject to the original PRD and quality gates)"
+    "f22-merchant-post-draft-review-version-publication-replacement-risk-removal-media-validation-and-access-control (SP24; this increment validates scalar title/body text and image count only; full behavior remains subject to the original PRD and quality gates)",
+    "deterministic-id-add-concurrent-collision-transaction-and-recovery-runtime-proof"
   ],
   "evidence": {
     "test": "tests/sp08-data-request-contract.test.cjs",
@@ -309,12 +323,12 @@
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
       "command": "node --test tests/sp08-data-request-contract.test.cjs",
-      "passed": 79,
+      "passed": 88,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1732,
+      "passed": 1741,
       "failed": 0,
       "skipped": 0
     },
@@ -535,6 +549,29 @@
         "countsAsDeclarationCompilationPass": false
       },
       "environment": "Windows local workspace; no cloud calls or mutations"
+    },
+    "idempotencyPersistenceDecision": {
+      "path": "docs/sp08-idempotency-physical-mapping-20261106.md",
+      "status": "selected-candidate-runtime-unverified",
+      "strategy": "deterministic-document-id-plus-add",
+      "runtimeProof": "not-proven",
+      "cloudMutationsPerformed": false,
+      "validation": {
+        "focusedCommand": "node --test --test-name-pattern \"SP08 records deterministic document ID\" tests/sp08-data-request-contract.test.cjs",
+        "focusedPassed": 1,
+        "focusedFailed": 0,
+        "sp08FileCommand": "node --test tests/sp08-data-request-contract.test.cjs",
+        "sp08FilePassed": 88,
+        "planRegressionCommand": "node --test tests/executable-development-plan.test.cjs",
+        "planRegressionPassed": 46,
+        "fullRegressionCommand": "node --test tests/*.test.cjs",
+        "fullRegressionPassed": 1741,
+        "fullRegressionFailed": 0,
+        "fullRegressionSkipped": 0,
+        "sharedTypecheck": "passed",
+        "workspaceBoundaries": "passed",
+        "environment": "Windows local workspace; no cloud calls or mutations"
+      }
     }
   }
 }

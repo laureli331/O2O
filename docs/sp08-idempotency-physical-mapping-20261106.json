@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "taskId": "SP08",
+  "date": "2026-11-06",
+  "title": "幂等物理持久化候选",
+  "status": "selected-candidate-runtime-unverified",
+  "cloudMutationsPerformed": false,
+  "decision": {
+    "strategy": "deterministic-document-id-plus-add",
+    "createOperation": "add",
+    "scope": "trusted server-derived actor/ownership scope + allowlisted operation + operationKey",
+    "storedBinding": "normalized per-operation payload digest + original command result",
+    "transactionBoundary": "idempotency claim + business write + original result in the same transaction",
+    "prohibitedApproaches": [
+      "set-as-exclusive-claim",
+      "application-check-then-write"
+    ],
+    "idEncodingStatus": "not-selected",
+    "idEncodingRationale": "固定ID编码和版本规则依赖已定义的服务端范围、操作白名单及载荷等价规则；当前只记录持久化策略，不猜测编码格式。"
+  },
+  "reuseSurvey": {
+    "projectCode": "packages/shared/src/contracts/idempotency.ts provides the replay-or-reject decision after server-side payload comparison; it does not implement lookup, persistence, transactions, or recovery.",
+    "projectCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
+    "officialSources": [
+      {
+        "url": "https://docs.cloudbase.net/api-reference/webv3-pg/database",
+        "finding": "CloudBase database add accepts data and can use a specified document ID; this is API capability evidence, not concurrent idempotency proof."
+      },
+      {
+        "url": "https://docs.cloudbase.net/error-code/basic",
+        "finding": "DATABASE_DUPLICATE_WRITE describes a duplicate indexed key, including a duplicate document ID; exact error handling still needs runtime verification."
+      },
+      {
+        "url": "https://docs.cloudbase.net/database/transaction",
+        "finding": "Document database transactions run server-side through Node SDK; transaction operations include add and have a 10-second maximum."
+      }
+    ],
+    "dependenciesAdded": []
+  },
+  "unresolved": [
+    "deterministic-document-id-encoding-and-versioning",
+    "operation-specific-payload-normalization-and-equivalence",
+    "collection-and-retention-policy"
+  ],
+  "runtimeProof": {
+    "status": "not-proven",
+    "requiredCases": [
+      "simultaneous-add-same-deterministic-id-has-one-winner",
+      "same-payload-replays-exact-original-result",
+      "different-payload-same-key-is-rejected",
+      "lost-response-recovers-through-same-key-query"
+    ]
+  }
+}
