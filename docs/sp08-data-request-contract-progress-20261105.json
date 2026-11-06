@@ -645,7 +645,7 @@
       "date": "2026-11-06",
       "source": "packages/shared/src/contracts/private-address-book-command-digest.ts",
       "operations": ["create", "update", "delete"],
-      "contract": "Strict operation-specific input parsing, F09 draft normalization, canonical JSON digest with injected SHA-256, and V09 default-toggle intent; expectedVersion is shape-checked only",
+      "contract": "Strict operation-specific input parsing, F09 draft normalization, canonical JSON digest with injected SHA-256, and V09 default-toggle intent; expectedVersion is parsed as finite for update/delete and absent for create, with server-record comparison tracked separately",
       "focusedCommand": "node --test --test-name-pattern=\"F09 command\" tests/sp08-data-request-contract.test.cjs",
       "contractCommand": "node --test tests/sp08-data-request-contract.test.cjs",
       "combinedSp08Command": "node --test tests/sp08-data-request-contract.test.cjs tests/sp08-canonical-json.test.cjs tests/sp08-node-idempotency-adapter.test.cjs",
@@ -672,6 +672,20 @@
       "ownershipAndTransactionProven": false,
       "environment": "Windows local workspace; Node v24.18.0; Taro 4.3.2; Vite 8.3.5; no CloudBase calls or mutations",
       "buildNotes": "Weapp build emitted existing Node DEP0180 fs.Stats deprecation warnings; web build emitted existing Vite configLoader compatibility warning. Taro own declaration count was 0 and compilerExecuted was false, so this build did not compile the project's own declarations."
+    },
+    "f09VersionPreconditionComparisonValidation": {
+      "date": "2026-11-06",
+      "source": "packages/shared/src/contracts/private-address-book.ts#compareExpectedVersion",
+      "test": "tests/sp08-f09-version-precondition.test.cjs",
+      "contract": "Pure exact equality for two finite numeric values; rejects malformed expected/current values without coercion",
+      "focusedCommand": "node --test tests/sp08-f09-version-precondition.test.cjs",
+      "focusedTestsPassed": 3,
+      "sharedTypecheckCommand": "npm run check:shared",
+      "sharedTypecheckResult": "passed",
+      "persistedRecordReadConnected": false,
+      "serverConflictEnforcementProven": false,
+      "cloudMutationsPerformed": false,
+      "environment": "Windows local workspace; Node v20.19.3; no CloudBase calls or mutations"
     },
     "f09LocalIdempotencyDecisionValidation": {
       "date": "2026-11-06",

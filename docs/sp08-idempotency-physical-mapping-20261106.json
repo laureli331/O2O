@@ -61,12 +61,16 @@
         "createFields": ["operation", "payload.draft", "payload.makeDefault"],
         "updateFields": ["operation", "expectedVersion", "payload.addressId", "payload.draft", "payload.makeDefault"],
         "deleteFields": ["operation", "expectedVersion", "payload.addressId"],
-        "expectedVersion": "Required and finite for update/delete; absent for create; server comparison remains unimplemented",
+        "expectedVersion": "Required and finite for update/delete; absent for create; a local pure comparator checks exact equality of two finite numeric values, but no persisted current-version read or server enforcement is connected",
         "defaultToggle": "true replaces the logical default pointer; false clears it only when the saved address is currently default",
         "hashInput": "canonical JSON array [domain, version, normalizedCommand] encoded as UTF-8 by the injected SHA-256 adapter",
         "output": "lowercase 64-character SHA-256 hex; no address fields returned",
-        "serverIntegration": "A local reuse-decision helper composes digest comparison and result replay/rejection; production handler is not connected to authenticated scope derivation, owner-scoped lookup, version comparison, persistence, or transaction"
+        "serverIntegration": "A local reuse-decision helper composes digest comparison and result replay/rejection, and a separate pure comparator checks two finite numeric versions; production handler is not connected to authenticated scope derivation, owner-scoped lookup, persisted current-version read/comparison, persistence, or transaction"
       },
+      "f09VersionPreconditionPath": "packages/shared/src/contracts/private-address-book.ts#compareExpectedVersion",
+      "f09VersionPreconditionTest": "tests/sp08-f09-version-precondition.test.cjs",
+      "f09VersionPreconditionStatus": "local-pure-comparison-only; persisted-read-and-server-enforcement-unproven",
+      "f09VersionPreconditionContract": "Rejects non-number and non-finite expected/current values without coercion; exact equality returns matches and inequality returns conflict; does not fetch records, define storage fields or increments, authorize, write, or transact",
       "f09ReuseDecisionPath": "apps/cloud-functions/src/application/private-address-book-idempotency.ts",
       "f09ReuseDecisionTest": "tests/sp08-f09-idempotency-reuse.test.cjs",
       "f09ReuseDecisionStatus": "local-composition-only; production-handler-and-transaction-unproven",
@@ -83,7 +87,7 @@
         "Inspect own property descriptors without invoking getters",
         "The F09 address-book draft digest reuses the existing parser to trim and validate the five normalized draft fields before serialization",
         "The F09 command digest normalizes create/update/delete operation fields, default-toggle intent, and update/delete expected-version values before serialization",
-        "F09 same-command payload equivalence and the local replay/reject decision are tested; the helper performs no server lookup or write and is not connected to a production handler or transaction"
+        "F09 same-command payload equivalence, local replay/reject decision, and pure finite-number version comparison are tested; helpers perform no server lookup or write and are not connected to a production handler or transaction"
       ],
       "localVerification": [
         "tests/sp08-canonical-json.test.cjs: 8 focused behavior and boundary tests",
@@ -102,7 +106,7 @@
         "decision": "Not adopted because its input coercion and typing conflict with the strict rejection contract; maintenance activity was not used to justify adoption"
       },
       "limits": [
-        "F09 expectedVersion is shape-checked as finite but is not compared with the current server record",
+        "F09 expectedVersion has a pure local finite-number equality comparator, but it is not connected to a persisted current-record read or server-side conflict enforcement",
         "No production handler wiring, authenticated scope derivation, owner-scoped lookup, business-write transaction, or target-runtime proof",
         "Other business operations still require their owning SP cards to define and test operation-specific payload equivalence",
         "No CloudBase or business transaction behavior proven"

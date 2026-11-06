@@ -43,6 +43,12 @@ export interface PrivateAddressBookDefaultPointer {
   readonly defaultAddressId: string | null;
 }
 
+export type CompareExpectedVersionResult =
+  | { readonly kind: 'matches' }
+  | { readonly kind: 'conflict' }
+  | { readonly kind: 'invalid-expected-version' }
+  | { readonly kind: 'invalid-current-version' };
+
 export type ParsePrivateAddressBookDefaultPointerResult =
   | { readonly ok: true; readonly value: PrivateAddressBookDefaultPointer }
   | {
@@ -111,6 +117,27 @@ export function parsePrivateAddressBookDefaultPointer(
   }
 
   return { ok: true, value: { defaultAddressId } };
+}
+
+/**
+ * Compares a validated command precondition with the current server-side
+ * version value. It deliberately does not choose the physical field name,
+ * initialize or increment versions, fetch the record, or authorize the caller.
+ */
+export function compareExpectedVersion(
+  expectedVersion: unknown,
+  currentVersion: unknown,
+): CompareExpectedVersionResult {
+  if (typeof expectedVersion !== 'number' || !Number.isFinite(expectedVersion)) {
+    return { kind: 'invalid-expected-version' };
+  }
+  if (typeof currentVersion !== 'number' || !Number.isFinite(currentVersion)) {
+    return { kind: 'invalid-current-version' };
+  }
+
+  return expectedVersion === currentVersion
+    ? { kind: 'matches' }
+    : { kind: 'conflict' };
 }
 
 /**

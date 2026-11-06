@@ -1780,7 +1780,11 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   ]);
   assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestPath, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
   assert.deepEqual(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.operations, ['create', 'update', 'delete']);
-  assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.expectedVersion, 'Required and finite for update/delete; absent for create; server comparison remains unimplemented');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.expectedVersion, 'Required and finite for update/delete; absent for create; a local pure comparator checks exact equality of two finite numeric values, but no persisted current-version read or server enforcement is connected');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09VersionPreconditionPath, 'packages/shared/src/contracts/private-address-book.ts#compareExpectedVersion');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09VersionPreconditionTest, 'tests/sp08-f09-version-precondition.test.cjs');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09VersionPreconditionStatus, 'local-pure-comparison-only; persisted-read-and-server-enforcement-unproven');
+  assert.match(mapping.decision.payloadEncodingUtility.f09VersionPreconditionContract, /exact equality returns matches and inequality returns conflict/);
   assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionPath, 'apps/cloud-functions/src/application/private-address-book-idempotency.ts');
   assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionTest, 'tests/sp08-f09-idempotency-reuse.test.cjs');
   assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionStatus, 'local-composition-only; production-handler-and-transaction-unproven');
@@ -1836,6 +1840,10 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.equal(progress.evidence.f09CommandPayloadDigestContractValidation.source, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
   assert.deepEqual(progress.evidence.f09CommandPayloadDigestContractValidation.operations, ['create', 'update', 'delete']);
   assert.equal(progress.evidence.f09CommandPayloadDigestContractValidation.cloudMutationsPerformed, false);
+  assert.equal(progress.evidence.f09VersionPreconditionComparisonValidation.source, 'packages/shared/src/contracts/private-address-book.ts#compareExpectedVersion');
+  assert.equal(progress.evidence.f09VersionPreconditionComparisonValidation.focusedTestsPassed, 3);
+  assert.equal(progress.evidence.f09VersionPreconditionComparisonValidation.serverConflictEnforcementProven, false);
+  assert.equal(progress.evidence.f09VersionPreconditionComparisonValidation.cloudMutationsPerformed, false);
   assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.source, 'apps/cloud-functions/src/application/private-address-book-idempotency.ts');
   assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.test, 'tests/sp08-f09-idempotency-reuse.test.cjs');
   assert.deepEqual(progress.evidence.f09LocalIdempotencyDecisionValidation.cases, [
@@ -1926,6 +1934,8 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.evidence.f09CommandPayloadDigestContractValidation.source, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
   assert.deepEqual(record.evidence.f09CommandPayloadDigestContractValidation.operations, ['create', 'update', 'delete']);
   assert.equal(record.evidence.f09CommandPayloadDigestContractValidation.cloudMutationsPerformed, false);
+  assert.equal(record.evidence.f09VersionPreconditionComparisonValidation.source, 'packages/shared/src/contracts/private-address-book.ts#compareExpectedVersion');
+  assert.equal(record.evidence.f09VersionPreconditionComparisonValidation.serverConflictEnforcementProven, false);
   assert.ok(record.evidence.f01AccountProfileTextLimitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP14'));
