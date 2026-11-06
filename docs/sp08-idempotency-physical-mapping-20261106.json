@@ -41,7 +41,7 @@
       ]
     },
     "payloadEncodingUtility": {
-      "status": "shared-pure-serializer-and-f09-normalized-draft-digest-implemented; complete-operation-equivalence-unresolved",
+      "status": "shared-pure-serializer-and-f09-command-digest-implemented; server-comparison-unconnected",
       "path": "packages/shared/src/contracts/canonical-json.ts",
       "f09DraftDigestPath": "packages/shared/src/contracts/private-address-book-draft-digest.ts",
       "f09DraftDigestContract": {
@@ -53,17 +53,38 @@
         "adapter": "Injected by the caller; shared code imports no Node, WeChat, CloudBase, or storage API",
         "privacyLimit": "A plain digest is not anonymization or confidentiality for personal address data"
       },
+      "f09CommandDigestPath": "packages/shared/src/contracts/private-address-book-command-digest.ts",
+      "f09CommandDigestContract": {
+        "domain": "o2o.f09.private-address-book-command",
+        "version": 1,
+        "operations": ["create", "update", "delete"],
+        "createFields": ["operation", "payload.draft", "payload.makeDefault"],
+        "updateFields": ["operation", "expectedVersion", "payload.addressId", "payload.draft", "payload.makeDefault"],
+        "deleteFields": ["operation", "expectedVersion", "payload.addressId"],
+        "expectedVersion": "Required and finite for update/delete; absent for create; server comparison remains unimplemented",
+        "defaultToggle": "true replaces the logical default pointer; false clears it only when the saved address is currently default",
+        "hashInput": "canonical JSON array [domain, version, normalizedCommand] encoded as UTF-8 by the injected SHA-256 adapter",
+        "output": "lowercase 64-character SHA-256 hex; no address fields returned",
+        "serverIntegration": "Not connected to server-side idempotency comparison, replay, rejection, ownership validation, version comparison, persistence, or transaction"
+      },
+      "f09DefaultPointerTransition": {
+        "path": "packages/shared/src/contracts/private-address-book.ts#applyPrivateAddressBookDefaultOnSave",
+        "deleteBehavior": "Deleting the current default clears the pointer and does not promote another address",
+        "limit": "Pure logical transition only; server ownership and atomic writes remain unproven"
+      },
       "behavior": [
         "Sort plain-object keys by JavaScript UTF-16 code-unit order and recursively preserve array order",
         "Accept JSON strings, booleans, null, and finite numbers; encode negative zero as JSON zero",
         "Reject unsupported values, non-finite numbers, cycles, accessors, sparse arrays, extra properties, symbols, and non-plain objects",
         "Inspect own property descriptors without invoking getters",
         "The F09 address-book draft digest reuses the existing parser to trim and validate the five normalized draft fields before serialization",
-        "The F09 digest is a local payload primitive only; it does not define complete add/update/delete command equivalence"
+        "The F09 command digest normalizes create/update/delete operation fields, default-toggle intent, and update/delete expected-version values before serialization",
+        "F09 same-command payload equivalence can be calculated locally; server-side comparison, original-result replay, and mismatch rejection remain unconnected"
       ],
       "localVerification": [
         "tests/sp08-canonical-json.test.cjs: 8 focused behavior and boundary tests",
         "tests/sp08-data-request-contract.test.cjs: F09 normalization equivalence, changed-field digest, invalid draft, malformed adapter output, and privacy-safe result tests",
+        "tests/sp08-data-request-contract.test.cjs: F09 create/update/delete parsing, version boundary, command digest, missing nested fields, and default-pointer transitions",
         "npm run check:shared: strict TypeScript check"
       ],
       "reuseSurvey": {
@@ -75,9 +96,9 @@
         "decision": "Not adopted because its input coercion and typing conflict with the strict rejection contract; maintenance activity was not used to justify adoption"
       },
       "limits": [
-        "Only the F09 normalized address-draft payload is encoded; address IDs, operation kind, expected versions, default-pointer changes, and other command fields remain undefined here",
-        "No complete operation-specific payload equivalence or same-key replay/reject behavior connected",
-        "No payload digest comparison or same-key replay/reject behavior connected",
+        "F09 expectedVersion is shape-checked as finite but is not compared with the current server record",
+        "No server-side payload digest comparison, same-key replay/reject integration, ownership validation, or business transaction proof",
+        "Other business operations still require their owning SP cards to define and test operation-specific payload equivalence",
         "No CloudBase or business transaction behavior proven"
       ]
     },
@@ -164,7 +185,8 @@
     ]
   },
   "unresolved": [
-    "operation-specific-payload-normalization-and-equivalence",
+    "other-operation-payload-normalization-and-equivalence",
+    "f09-server-side-command-digest-comparison-and-transaction-integration",
     "collection-and-retention-policy"
   ],
   "runtimeProof": {

@@ -18,7 +18,7 @@
 - 本地 `node:test` 已在 Node 20.19.3 下用 Node 内置 `node:crypto` 核对 ASCII/非 ASCII UTF-8 摘要向量，并把该适配器接入共享 helper 核对已选 ID 已知向量；共享合同测试另覆盖重复输入稳定性、空白键语义和分隔符歧义。适配器位于 `apps/cloud-functions/src/adapters/sha256-utf8.ts`，没有第三方依赖、环境变量、CloudBase SDK 或可部署入口。Node 20.19.2 官方 [Crypto API 文档](https://r2.nodejs.org/docs/v20.19.2/api/crypto.html)说明 `Hash.update` 支持显式输入编码、`Hash.digest('hex')` 返回十六进制字符串。该结果只证明本机 Node 20.19.3 适配器行为，不证明 CloudBase 托管运行时或指定 SDK 的集成。
 - 此本地证明不覆盖 CloudBase 接受该 `_id` 的具体长度/字符约束、指定 SDK 版本的部署执行、并发唯一性或事务原子性。
 
-### 载荷摘要的通用 JSON 编码工具与 F09 局部构件
+### 通用 JSON 编码工具与 F09 完整命令摘要（本地纯合同）
 
 - 新增 [`canonical-json.ts`](../packages/shared/src/contracts/canonical-json.ts)：对已经过具体操作验证和规范化的数据，按对象键的 JavaScript UTF-16 码元顺序递归序列化，保留数组顺序。支持 JSON 的字符串、布尔值、null 和有限数值；`-0` 按 JSON 数字语义编码为 `0`。
 - 不静默删字段或改值：拒绝 `undefined`、函数、symbol、bigint、非有限数、循环引用、访问器属性、稀疏/额外属性数组、带 symbol 键的对象、非普通对象。通过属性描述符读取，不执行 getter；底层只用 JavaScript 内置能力，没有新增运行时依赖，也不导入平台 API。
@@ -26,7 +26,10 @@
 - 专项测试在 `tests/sp08-canonical-json.test.cjs` 覆盖键排序、数组顺序、空字符串/标量、非法值、非有限数、getter 不执行、稀疏和额外数组属性、循环、普通对象边界及检查异常。
 - 新增 [`private-address-book-draft-digest.ts`](../packages/shared/src/contracts/private-address-book-draft-digest.ts) 作为局部构件：先复用 F09 现有解析器执行字段白名单、修剪和校验，再对版本化域 `o2o.f09.private-address-book-entry-draft`、版本 `1` 和规范化后的五字段对象执行规范 JSON 序列化，并调用注入的 SHA-256 UTF-8 适配器。返回值只含摘要或通用失败原因，不返回地址内容；共享层未增加 Node、微信或 CloudBase 依赖。
 - 专项测试在 `tests/sp08-data-request-contract.test.cjs` 验证字段顺序/边缘空白/缺省备注归一后摘要一致、五个字段任一变化会改变摘要、无效草稿不会调用哈希适配器、畸形摘要输出被拒绝，以及返回值不包含地址字段。通过 `npm run check:shared` 验证 strict TypeScript。
-- 复用判断：项目内已有 F09 规范化解析器和稳定 JSON 序列化器，直接组合它们的改造成本更低；SHA-256 沿用调用方注入边界，不新增库。该摘要只是 F09 草稿的局部 payload primitive；它不定义地址新增/编辑/删除操作，也不包含地址 ID、默认指针变化、expected version、权限边界或同键重放/拒绝策略。未完成的操作规范继续属于 SP08 后续命令合同，不用这个局部构件宣称幂等通过。
+- 新增 [`private-address-book-command-digest.ts`](../packages/shared/src/contracts/private-address-book-command-digest.ts)：复用 F09 草稿解析器和稳定 JSON 序列化器，为 `create`、`update`、`delete` 定义本地命令规范化。`create` 包含规范化五字段草稿与 `makeDefault`；`update` 另包含精确保留的 `addressId` 和有限数值 `expectedVersion`；`delete` 包含 `addressId` 与有限数值 `expectedVersion`。`create` 禁止携带版本，更新/删除要求版本字段。域为 `o2o.f09.private-address-book-command`、版本 `1`；SHA-256 仍由调用方注入。返回不包含地址字段。
+- V09 默认地址保存切换由 [`private-address-book.ts`](../packages/shared/src/contracts/private-address-book.ts) 的纯函数表达：开启设默认会替换旧指针；关闭时仅当当前记录正是默认地址才清空指针；删除当前默认地址清空指针且不自动提升其它地址。这些规则仍须在服务器验证归属并与地址写入原子提交。
+- 命令合同测试在 `tests/sp08-data-request-contract.test.cjs` 覆盖 create/update/delete 字段与版本边界、地址草稿空白/缺省字段归一、目标 ID/默认意图/期望版本对摘要的影响、无效输入不调用哈希、摘要格式，以及默认指针转换。验证只证明共享纯函数。
+- 复用判断：项目内已有 F09 规范化解析器、稳定 JSON 序列化器和默认指针类型；直接组合比引入 schema/hash 依赖改造更小。没有新增第三方依赖，SHA-256 沿用注入边界。此项已经实现完整的 F09 本地命令载荷摘要构件（create/update/delete），但不等于已将摘要连接到幂等重放/拒绝，也不等于权限、服务器版本比较、物理写入或事务验收。
 - 地址摘要不是匿名化或保密机制，不能单独替代访问控制；不要将个人地址、摘要或相关请求体写入普通日志。
 
 ## 复用调查与平台证据
@@ -50,7 +53,7 @@
 
 ## 仍未确定或未验证
 
-- **完整操作的载荷规范化与等价性**：已实现 F09 地址草稿五字段的局部摘要构件，但地址新增/编辑/删除的完整命令载荷（含 ID、默认指针和 expected version 等）尚未定型，也未接入服务端的摘要比较、同键重放或不同载荷拒绝流程。其他业务操作仍须由各自任务卡确定字段和等价规则。该构件不能单独作为完整 canonicalizer 业务合同或幂等证明。
+- **服务端摘要比较与其它业务操作规范化**：F09 的 create/update/delete 命令字段、默认意图和版本字段已有本地规范化摘要；尚未接入服务端载荷摘要比较、同键原结果重放或不同载荷拒绝。F09 的 expectedVersion 仅作有限数值形状校验，服务端与当前记录比较仍未实现。其它业务操作的载荷字段与等价规则继续由各自 SP 卡确定。以上不能单独作为端到端幂等证明。
 - **CloudBase 运行时实测**：本地适配器已在 Node 20.19.3 下通过测试；仍需按 CloudBase 实际函数包和 SDK 环境证明指定 ID 格式及 `add` 的接受性。该事项属于后续物理映射与运行时验收，不由本地适配器测试替代。
 - **集合和保留期限**：待实际对象映射、数据生命周期及查询/恢复合同确定；本记录不创建集合。
 - **原子性和并发**：必须证明并发 `add` 对相同确定性 ID 产生一个有效所有者，并把幂等记录与业务写入放在同一可恢复事务中。不能用“先查再写”消除竞争；也不把 `set` 当作独占领取，因为官方定义是缺失时新建、存在时覆盖。

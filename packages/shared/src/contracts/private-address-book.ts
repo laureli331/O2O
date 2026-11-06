@@ -131,6 +131,26 @@ export function clearPrivateAddressBookDefaultOnDelete(
 }
 
 /**
+ * Applies the V09 save-toggle intent to the logical default pointer. Enabling
+ * the toggle replaces the previous default; disabling it clears the pointer
+ * only when the saved address is currently default. Callers must establish
+ * ownership and perform the address/pointer writes atomically on the server.
+ */
+export function applyPrivateAddressBookDefaultOnSave(
+  pointer: PrivateAddressBookDefaultPointer,
+  savedAddressId: string,
+  makeDefault: boolean,
+): PrivateAddressBookDefaultPointer {
+  if (makeDefault) {
+    return { defaultAddressId: savedAddressId };
+  }
+
+  return pointer.defaultAddressId === savedAddressId
+    ? { defaultAddressId: null }
+    : pointer;
+}
+
+/**
  * Trims edge whitespace, then validates the PRD F09 address-book text limits.
  * Counts Unicode code points (not UTF-16 code units); it does not validate
  * community membership or the collection-level single-default invariant.

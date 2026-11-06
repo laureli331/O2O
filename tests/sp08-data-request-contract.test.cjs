@@ -417,6 +417,181 @@ test('F09 normalized address draft payload digest rejects invalid input before h
   assert.deepEqual(invalidDigest, { ok: false, reason: 'invalid-sha256-output' });
 });
 
+test('F09 address command parser normalizes create, update, and delete payloads with their required version boundary', () => {
+  const { parsePrivateAddressBookCommand } = loadTypeScriptModule('index.ts');
+  const draft = {
+    contact: ' 张三 ',
+    phone: '13800138000',
+    community: ' 湘阴渡社区 ',
+    detailAddress: ' 1号楼101室 ',
+  };
+
+  assert.deepEqual(parsePrivateAddressBookCommand({
+    operation: 'create',
+    payload: { draft, makeDefault: true },
+  }), {
+    ok: true,
+    value: {
+      operation: 'create',
+      payload: {
+        draft: {
+          contact: '张三',
+          phone: '13800138000',
+          community: '湘阴渡社区',
+          detailAddress: '1号楼101室',
+          remark: '',
+        },
+        makeDefault: true,
+      },
+    },
+  });
+
+  assert.deepEqual(parsePrivateAddressBookCommand({
+    operation: 'update',
+    expectedVersion: 3,
+    payload: { addressId: 'addr-1', draft, makeDefault: false },
+  }), {
+    ok: true,
+    value: {
+      operation: 'update',
+      expectedVersion: 3,
+      payload: {
+        addressId: 'addr-1',
+        draft: {
+          contact: '张三',
+          phone: '13800138000',
+          community: '湘阴渡社区',
+          detailAddress: '1号楼101室',
+          remark: '',
+        },
+        makeDefault: false,
+      },
+    },
+  });
+
+  assert.deepEqual(parsePrivateAddressBookCommand({
+    operation: 'delete',
+    expectedVersion: 4,
+    payload: { addressId: 'addr-1' },
+  }), {
+    ok: true,
+    value: {
+      operation: 'delete',
+      expectedVersion: 4,
+      payload: { addressId: 'addr-1' },
+    },
+  });
+});
+
+test('F09 command payload digest hashes normalized operation, target, default choice, and expected version without exposing address data', () => {
+  const { createPrivateAddressBookCommandPayloadDigest } = loadTypeScriptModule('index.ts');
+  const hashInputs = [];
+  const hash = (input) => {
+    hashInputs.push(input);
+    return createHash('sha256').update(input, 'utf8').digest('hex');
+  };
+  const first = createPrivateAddressBookCommandPayloadDigest({
+    operation: 'update',
+    expectedVersion: 3,
+    payload: {
+      addressId: 'addr-1',
+      draft: {
+        contact: ' 张三 ',
+        phone: '13800138000',
+        community: ' 湘阴渡社区 ',
+        detailAddress: ' 1号楼101室 ',
+      },
+      makeDefault: true,
+    },
+  }, hash);
+  const same = createPrivateAddressBookCommandPayloadDigest({
+    payload: {
+      makeDefault: true,
+      draft: {
+        detailAddress: '1号楼101室',
+        community: '湘阴渡社区',
+        phone: '13800138000',
+        contact: '张三',
+      },
+      addressId: 'addr-1',
+    },
+    expectedVersion: 3,
+    operation: 'update',
+  }, hash);
+
+  assert.deepEqual(first, { ok: true, digest: first.digest });
+  assert.match(first.digest, /^[a-f0-9]{64}$/);
+  assert.deepEqual(same, first);
+  assert.equal(hashInputs[0], hashInputs[1]);
+  assert.equal(hashInputs[0], '["o2o.f09.private-address-book-command",1,{"expectedVersion":3,"operation":"update","payload":{"addressId":"addr-1","draft":{"community":"湘阴渡社区","contact":"张三","detailAddress":"1号楼101室","phone":"13800138000","remark":""},"makeDefault":true}}]');
+  assert.doesNotMatch(JSON.stringify(first), /张三|13800138000|湘阴渡社区|101室/);
+
+  const differentCases = [
+    { operation: 'update', expectedVersion: 4, payload: { addressId: 'addr-1', draft: { contact: '张三', phone: '13800138000', community: '湘阴渡社区', detailAddress: '1号楼101室' }, makeDefault: true } },
+    { operation: 'update', expectedVersion: 3, payload: { addressId: 'addr-2', draft: { contact: '张三', phone: '13800138000', community: '湘阴渡社区', detailAddress: '1号楼101室' }, makeDefault: true } },
+    { operation: 'update', expectedVersion: 3, payload: { addressId: 'addr-1', draft: { contact: '张三', phone: '13800138000', community: '湘阴渡社区', detailAddress: '1号楼101室' }, makeDefault: false } },
+    { operation: 'delete', expectedVersion: 3, payload: { addressId: 'addr-1' } },
+  ];
+  for (const input of differentCases) {
+    const result = createPrivateAddressBookCommandPayloadDigest(input, hash);
+    assert.equal(result.ok, true);
+    assert.notEqual(result.digest, first.digest);
+  }
+});
+
+test('F09 command parser and digest reject ambiguous or malformed commands before hashing', () => {
+  const { createPrivateAddressBookCommandPayloadDigest, parsePrivateAddressBookCommand } = loadTypeScriptModule('index.ts');
+  let hashCalls = 0;
+  const hash = () => {
+    hashCalls += 1;
+    return 'a'.repeat(64);
+  };
+  const validDraft = { contact: '张三', phone: '13800138000', community: '湘阴渡社区', detailAddress: '1号楼101室' };
+  const invalidInputs = [
+    null,
+    { operation: 'unknown', payload: {} },
+    { operation: 'create', expectedVersion: 1, payload: { draft: validDraft, makeDefault: false } },
+    { operation: 'create', payload: { draft: validDraft, makeDefault: 'false' } },
+    { operation: 'create', payload: { draft: validDraft, makeDefault: false, ownerId: 'client-asserted' } },
+    { operation: 'update', payload: { addressId: 'addr-1', draft: validDraft, makeDefault: false } },
+    { operation: 'update', expectedVersion: 1, payload: { addressId: ' ', draft: validDraft, makeDefault: false } },
+    { operation: 'update', expectedVersion: Number.NaN, payload: { addressId: 'addr-1', draft: validDraft, makeDefault: false } },
+    { operation: 'delete', expectedVersion: 1, payload: { addressId: 'addr-1', ownerId: 'client-asserted' } },
+  ];
+
+  for (const input of invalidInputs) {
+    assert.equal(parsePrivateAddressBookCommand(input).ok, false);
+    assert.equal(createPrivateAddressBookCommandPayloadDigest(input, hash).ok, false);
+  }
+  assert.deepEqual(parsePrivateAddressBookCommand({ operation: 'delete', expectedVersion: 1, payload: {} }), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'payload.addressId' },
+  });
+  assert.deepEqual(parsePrivateAddressBookCommand({ operation: 'create', payload: { makeDefault: false } }), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'payload.draft' },
+  });
+  assert.deepEqual(parsePrivateAddressBookCommand({ operation: 'create', payload: { draft: validDraft } }), {
+    ok: false,
+    reason: { code: 'missing-field', field: 'payload.makeDefault' },
+  });
+  assert.equal(createPrivateAddressBookCommandPayloadDigest({
+    operation: 'create',
+    payload: { draft: validDraft, makeDefault: false },
+  }, () => 'A'.repeat(64)).reason, 'invalid-sha256-output');
+  assert.equal(hashCalls, 0);
+});
+
+test('F09 saving a default address replaces the pointer; turning off the current default clears it', () => {
+  const { applyPrivateAddressBookDefaultOnSave } = loadTypeScriptModule('index.ts');
+  const existing = { defaultAddressId: 'addr-old' };
+
+  assert.deepEqual(applyPrivateAddressBookDefaultOnSave(existing, 'addr-new', true), { defaultAddressId: 'addr-new' });
+  assert.deepEqual(applyPrivateAddressBookDefaultOnSave(existing, 'addr-old', false), { defaultAddressId: null });
+  assert.equal(applyPrivateAddressBookDefaultOnSave(existing, 'addr-other', false), existing);
+  assert.deepEqual(applyPrivateAddressBookDefaultOnSave({ defaultAddressId: null }, 'addr-new', false), { defaultAddressId: null });
+});
+
 test('F09 private address-book entry draft parser rejects malformed, incomplete, and client-asserted fields', () => {
   const { parsePrivateAddressBookEntryDraft } = loadTypeScriptModule('contracts/private-address-book.ts');
   const valid = {
@@ -1596,17 +1771,21 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.ok(mapping.decision.idEncoding.localVerification.includes('Node adapter: SHA-256 of UTF-8 Chinese plus emoji known vector'));
   assert.equal(
     mapping.decision.payloadEncodingUtility.status,
-    'shared-pure-serializer-and-f09-normalized-draft-digest-implemented; complete-operation-equivalence-unresolved',
+    'shared-pure-serializer-and-f09-command-digest-implemented; server-comparison-unconnected',
   );
   assert.equal(mapping.decision.payloadEncodingUtility.path, 'packages/shared/src/contracts/canonical-json.ts');
   assert.equal(mapping.decision.payloadEncodingUtility.f09DraftDigestPath, 'packages/shared/src/contracts/private-address-book-draft-digest.ts');
   assert.deepEqual(mapping.decision.payloadEncodingUtility.f09DraftDigestContract.normalizedFields, [
     'community', 'contact', 'detailAddress', 'phone', 'remark',
   ]);
-  assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No complete operation-specific payload equivalence or same-key replay/reject behavior connected'));
+  assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestPath, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
+  assert.deepEqual(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.operations, ['create', 'update', 'delete']);
+  assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.expectedVersion, 'Required and finite for update/delete; absent for create; server comparison remains unimplemented');
+  assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No server-side payload digest comparison, same-key replay/reject integration, ownership validation, or business transaction proof'));
   assert.ok(mapping.decision.payloadEncodingUtility.reuseSurvey.decision.includes('strict rejection contract'));
   assert.ok(!mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
-  assert.ok(mapping.unresolved.includes('operation-specific-payload-normalization-and-equivalence'));
+  assert.ok(mapping.unresolved.includes('other-operation-payload-normalization-and-equivalence'));
+  assert.ok(mapping.unresolved.includes('f09-server-side-command-digest-comparison-and-transaction-integration'));
   assert.ok(mapping.unresolved.includes('collection-and-retention-policy'));
   assert.ok(mapping.runtimeProof.requiredCases.includes('simultaneous-add-same-deterministic-id-has-one-winner'));
   assert.ok(mapping.runtimeProof.requiredCases.includes('same-payload-replays-exact-original-result'));
@@ -1618,7 +1797,7 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.match(mappingMarkdown, /docs\.cloudbase\.net\/database\/transaction/);
   assert.match(mappingMarkdown, /idem_v1_/);
   assert.match(mappingMarkdown, /`operationKey` 使用已通过命令解析的原始字符串/);
-  assert.match(mappingMarkdown, /只是 F09 草稿的局部 payload primitive/);
+  assert.match(mappingMarkdown, /完整的 F09 本地命令载荷摘要构件/);
   assert.match(mappingMarkdown, /canonical-json\.ts/);
   assert.match(mappingMarkdown, /private-address-book-draft-digest\.ts/);
   assert.match(mappingMarkdown, /不是匿名化或保密机制/);
@@ -1643,6 +1822,13 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.match(mappingMarkdown, /没有证明目标 CloudBase 运行时/);
 
   assert.ok(progress.scope.includes('deterministic-document-id-add-idempotency-persistence-candidate'));
+  assert.ok(progress.scope.includes('f09-private-address-book-command-payload-digest-normalization'));
+  assert.ok(progress.notProven.includes('other-operation-payload-normalization-and-equivalence'));
+  assert.ok(progress.notProven.includes('f09-server-side-command-digest-comparison-and-transaction-integration'));
+  assert.ok(!progress.notProven.includes('idempotency-payload-normalization-and-equivalence-per-operation'));
+  assert.equal(progress.evidence.f09CommandPayloadDigestContractValidation.source, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
+  assert.deepEqual(progress.evidence.f09CommandPayloadDigestContractValidation.operations, ['create', 'update', 'delete']);
+  assert.equal(progress.evidence.f09CommandPayloadDigestContractValidation.cloudMutationsPerformed, false);
   assert.ok(progress.notProven.includes('deterministic-id-add-concurrent-collision-transaction-and-recovery-runtime-proof'));
   assert.ok(progress.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(progress.notProven.includes('unknown-outcome-same-request-query-and-recovery'));
@@ -1659,6 +1845,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.productAcceptancePassed, false);
   assert.equal(record.cloudMutationsPerformed, false);
   assert.ok(record.scope.includes('shared-idempotency-reuse-decision'));
+  assert.ok(record.scope.includes('f09-private-address-book-command-payload-digest-normalization'));
   assert.ok(record.scope.includes('command-envelope-runtime-structure-validation'));
   assert.ok(record.scope.includes('trusted-command-context-runtime-shape-validation'));
   assert.ok(record.scope.includes('command-result-runtime-shape-validation'));
@@ -1685,6 +1872,9 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(!record.notProven.includes('f02-repair-other-text-length-validation-and-character-count-rule'));
   assert.ok(!record.notProven.includes('f03-idle-listing-title-and-description-length-validation'));
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
+  assert.ok(record.notProven.includes('other-operation-payload-normalization-and-equivalence'));
+  assert.ok(record.notProven.includes('f09-server-side-command-digest-comparison-and-transaction-integration'));
+  assert.ok(!record.notProven.includes('idempotency-payload-normalization-and-equivalence-per-operation'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));
   assert.ok(record.reuseDecision.f03IdleListingPrice.includes('parseCnyFen'));
@@ -1714,6 +1904,9 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.equal(record.evidence.providerLicenseImageCountValidation, 'packages/shared/src/contracts/provider-license-image-count.ts#validateProviderLicenseImageCount');
   assert.equal(record.evidence.accountProfileTextValidation, 'packages/shared/src/contracts/account-profile-text.ts#validateAccountProfileText');
   assert.ok(record.evidence.limitations.includes('F01/F07营业执照图片计数校验仅为字段数量边界'));
+  assert.equal(record.evidence.f09CommandPayloadDigestContractValidation.source, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
+  assert.deepEqual(record.evidence.f09CommandPayloadDigestContractValidation.operations, ['create', 'update', 'delete']);
+  assert.equal(record.evidence.f09CommandPayloadDigestContractValidation.cloudMutationsPerformed, false);
   assert.ok(record.evidence.f01AccountProfileTextLimitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP14'));

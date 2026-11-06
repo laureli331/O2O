@@ -46,7 +46,8 @@
     "f21-commission-billing-reason-field-validation",
     "f22-merchant-post-scalar-field-validation",
     "deterministic-document-id-add-idempotency-persistence-candidate",
-    "versioned-sha256-id-input-and-operation-key-contract"
+    "versioned-sha256-id-input-and-operation-key-contract",
+    "f09-private-address-book-command-payload-digest-normalization"
   ],
   "sources": [
     {
@@ -285,7 +286,8 @@
     "business-transaction-concurrency",
     "trusted-server-time-and-money-enforcement",
     "trusted-context-authentication-and-clock-provenance",
-    "idempotency-payload-normalization-and-equivalence-per-operation",
+    "other-operation-payload-normalization-and-equivalence",
+    "f09-server-side-command-digest-comparison-and-transaction-integration",
     "remaining-module-specific-command-validation",
     "atomic-idempotency-claim-with-business-write",
     "unknown-outcome-same-request-query-and-recovery",
@@ -637,6 +639,38 @@
       "serverAdapterAndCloudRuntimeProven": false,
       "cloudMutationsPerformed": false,
       "environment": "Windows local workspace; Node v20.19.3; full regression 1746/1746, focused contract 89/89, plan 46/46; no cloud calls or mutations"
+    },
+    "f09CommandPayloadDigestContractValidation": {
+      "date": "2026-11-06",
+      "source": "packages/shared/src/contracts/private-address-book-command-digest.ts",
+      "operations": ["create", "update", "delete"],
+      "contract": "Strict operation-specific input parsing, F09 draft normalization, canonical JSON digest with injected SHA-256, and V09 default-toggle intent; expectedVersion is shape-checked only",
+      "focusedCommand": "node --test --test-name-pattern=\"F09 command\" tests/sp08-data-request-contract.test.cjs",
+      "contractCommand": "node --test tests/sp08-data-request-contract.test.cjs",
+      "combinedSp08Command": "node --test tests/sp08-data-request-contract.test.cjs tests/sp08-canonical-json.test.cjs tests/sp08-node-idempotency-adapter.test.cjs",
+      "planCommand": "node --test tests/executable-development-plan.test.cjs",
+      "fullRegressionCommand": "node --test tests/*.test.cjs",
+      "sharedTypecheck": "npm run check:shared",
+      "workspaceBoundaries": "npm run check:boundaries",
+      "focusedTestsPassed": 2,
+      "contractTestsPassed": 96,
+      "combinedSp08TestsPassed": 113,
+      "planTestsPassed": 46,
+      "fullRegressionPassed": 1766,
+      "fullRegressionFailed": 0,
+      "fullRegressionSkipped": 0,
+      "sharedTypecheckResult": "passed",
+      "workspaceBoundariesResult": "passed",
+      "weappBuild": "passed",
+      "webBuild": "passed",
+      "pairedJsonParse": "passed",
+      "diffCheck": "passed",
+      "cloudMutationsPerformed": false,
+      "serverDigestComparisonConnected": false,
+      "expectedVersionComparedToStoredRecord": false,
+      "ownershipAndTransactionProven": false,
+      "environment": "Windows local workspace; Node v24.18.0; Taro 4.3.2; Vite 8.3.5; no CloudBase calls or mutations",
+      "buildNotes": "Weapp build emitted existing Node DEP0180 fs.Stats deprecation warnings; web build emitted existing Vite configLoader compatibility warning. Taro own declaration count was 0 and compilerExecuted was false, so this build did not compile the project's own declarations."
     }
   }
 }
