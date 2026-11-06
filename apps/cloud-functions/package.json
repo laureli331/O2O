@@ -2,5 +2,11 @@
   "name": "@xianglin/cloud-functions",
   "version": "0.1.0",
   "private": true,
-  "description": "Reserved workspace; no cloud function implementation or deployment configuration is enabled."
+  "description": "SP08 server adapter workspace; no deployable CloudBase function is enabled.",
+  "engines": {
+    "node": ">=20.19.0 <21"
+  },
+  "scripts": {
+    "check": "tsc --project tsconfig.json"
+  }
 }

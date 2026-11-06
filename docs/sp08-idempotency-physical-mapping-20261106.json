@@ -12,7 +12,7 @@
     "storedBinding": "normalized per-operation payload digest + original command result",
     "transactionBoundary": "idempotency claim + business write + original result in the same transaction",
     "idEncoding": {
-      "status": "selected-and-implemented-as-shared-pure-contract; server-adapter-and-cloud-runtime-unverified",
+      "status": "shared-contract-and-node-adapter-implemented; target-runtime-and-cloud-unverified",
       "prefix": "idem_v1_",
       "algorithm": "SHA-256",
       "version": 1,
@@ -23,15 +23,18 @@
       "operationSource": "server allowlist",
       "operationKeySemantics": "exact validated original string; surrounding whitespace is preserved; all-whitespace is rejected",
       "payloadIncluded": false,
-      "digestAdapter": "injected SHA-256 UTF-8 hex function; shared module imports no platform or Node API",
+      "digestAdapter": "apps/cloud-functions/src/adapters/sha256-utf8.ts uses node:crypto; shared module still injects the digest function and imports no platform or Node API",
       "localVerification": [
-        "known SHA-256 vector",
+        "Node adapter: SHA-256 of UTF-8 ASCII known vector",
+        "Node adapter: SHA-256 of UTF-8 Chinese plus emoji known vector",
+        "Node adapter integrated with shared helper against the selected ID vector",
         "same tuple produces same ID",
         "surrounding operationKey whitespace remains significant",
         "JSON array encoding separates delimiter-containing tuple values",
         "empty operationKey and malformed digest are rejected"
       ],
       "notProven": [
+        "adapter execution under the selected Node.js 20.19.x runtime",
         "CloudBase SDK/runtime accepts this exact ID format",
         "simultaneous add with the same ID has one winner",
         "business write and claim share an atomic transaction",
@@ -42,8 +45,8 @@
       "set-as-exclusive-claim",
       "application-check-then-write"
     ],
-    "idEncodingStatus": "selected-local-contract-runtime-unverified",
-    "idEncodingRationale": "用户已确认 SHA-256 版本化 ID 与精确 operationKey 语义；共享层实现固定 JSON 数组输入和 ID 格式，服务端 trustedScope 构造、Node digest 适配及 CloudBase 运行时仍需实证。"
+    "idEncodingStatus": "selected-local-adapter-tested-on-node-24-target-node20-and-cloud-unverified",
+    "idEncodingRationale": "用户已确认 SHA-256 版本化 ID 与精确 operationKey 语义；共享层固定 JSON 数组输入和 ID 格式，Node node:crypto 适配器已用 Node 24.18.0 本地向量验证。目标 Node 20.19.x 尚未执行；服务端 trustedScope 构造和 CloudBase 运行时仍需实证。"
   },
   "reuseSurvey": {
     "projectCode": "packages/shared/src/contracts/idempotency.ts provides the replay-or-reject decision after server-side payload comparison; it does not implement lookup, persistence, transactions, or recovery.",
@@ -64,6 +67,10 @@
       {
         "url": "https://docs.cloudbase.net/database/transaction",
         "finding": "Document database transactions run server-side through Node SDK; transaction operations include add and have a 10-second maximum."
+      },
+      {
+        "url": "https://r2.nodejs.org/docs/v20.19.2/api/crypto.html",
+        "finding": "Node.js 20.19.2 documents createHash, explicit input encoding for Hash.update, and lowercase hexadecimal Hash.digest('hex'); documentation supports the API shape but is not evidence of local execution on the selected runtime."
       }
     ],
     "dependenciesAdded": []

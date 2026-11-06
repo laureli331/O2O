@@ -1509,7 +1509,8 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.equal(mapping.decision.idEncoding.algorithm, 'SHA-256');
   assert.equal(mapping.decision.idEncoding.operationKeySemantics, 'exact validated original string; surrounding whitespace is preserved; all-whitespace is rejected');
   assert.equal(mapping.decision.idEncoding.payloadIncluded, false);
-  assert.ok(mapping.decision.idEncoding.localVerification.includes('known SHA-256 vector'));
+  assert.ok(mapping.decision.idEncoding.localVerification.includes('Node adapter: SHA-256 of UTF-8 ASCII known vector'));
+  assert.ok(mapping.decision.idEncoding.localVerification.includes('Node adapter: SHA-256 of UTF-8 Chinese plus emoji known vector'));
   assert.ok(!mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
   assert.ok(mapping.unresolved.includes('operation-specific-payload-normalization-and-equivalence'));
   assert.ok(mapping.unresolved.includes('collection-and-retention-policy'));

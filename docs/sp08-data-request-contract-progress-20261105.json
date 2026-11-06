@@ -604,6 +604,37 @@
       "serverAdapterAndCloudRuntimeProven": false,
       "cloudMutationsPerformed": false,
       "environment": "Windows local workspace; no cloud calls or mutations"
+    },
+    "idempotencyNodeSha256AdapterValidation": {
+      "date": "2026-11-06",
+      "source": "apps/cloud-functions/src/adapters/sha256-utf8.ts",
+      "targetNodeEngine": ">=20.19.0 <21",
+      "executedNodeVersion": "v24.18.0",
+      "targetRuntimeExecuted": false,
+      "adapterTestCommand": "node --test tests/sp08-node-idempotency-adapter.test.cjs",
+      "adapterTestsPassed": 4,
+      "adapterTestsFailed": 0,
+      "sp08ContractTestCommand": "node --test tests/sp08-data-request-contract.test.cjs",
+      "sp08ContractTestsPassed": 89,
+      "planRegressionCommand": "node --test tests/executable-development-plan.test.cjs",
+      "planRegressionPassed": 46,
+      "fullRegressionCommand": "node --test tests/*.test.cjs",
+      "fullRegressionPassed": 1746,
+      "fullRegressionFailed": 0,
+      "fullRegressionSkipped": 0,
+      "workspaceTypeCheckCommand": "npm run check --workspace @xianglin/cloud-functions",
+      "workspaceTypeCheckPassed": true,
+      "sharedTypeCheckPassed": true,
+      "workspaceBoundariesPassed": true,
+      "evidence": [
+        "ASCII UTF-8 SHA-256 known vector",
+        "Chinese plus emoji UTF-8 SHA-256 known vector",
+        "shared createIdempotencyDocumentId integration known vector",
+        "static guard confirms no CloudBase SDK, environment secrets, or platform globals"
+      ],
+      "serverAdapterAndCloudRuntimeProven": false,
+      "cloudMutationsPerformed": false,
+      "environment": "Windows local workspace; Node v24.18.0; no cloud calls or mutations"
     }
   }
 }
