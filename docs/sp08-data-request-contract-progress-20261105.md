@@ -220,15 +220,21 @@
 
 ## 幂等物理落点候选（2026-11-06）
 
-用户已选择“确定性文档 ID + `add`”作为 SP08 幂等记录的物理持久化候选。它尚未实现或运行时验证：ID 编码/版本、逐操作载荷规范化与等价规则、集合/保留期，以及同 ID 并发唯一胜者、事务原子占位、原结果重放和丢失响应后的同键恢复仍未证明。
+用户已选择“确定性文档 ID + `add`”并确认版本化 SHA-256 编码。`packages/shared/src/contracts/idempotency.ts` 已实现纯合同：使用固定 JSON 数组序列化 `trustedScope`、allowlist 操作和精确原始 `operationKey`，生成 `idem_v1_<64位小写hex>`；载荷不进入 ID，首尾空格保留，全空白键拒绝。专项本地测试用 Node 内置 crypto 核对已知向量和边界。服务端可信范围构造、Node crypto 适配、CloudBase SDK/ID 接受性、逐操作载荷规范化与等价规则、集合/保留期，以及同 ID 并发唯一胜者、事务原子占位、原结果重放和丢失响应后的同键恢复仍未证明。
 
-选择依据是既有共享层只提供“已比较载荷后的重放/拒绝”纯决策，CloudBase 官方文档提供指定 ID 的 `add`、重复键错误和服务端事务 API；这些文档不等于本业务并发或故障恢复证据。详见[幂等物理映射记录](sp08-idempotency-physical-mapping-20261106.md)。本次只改本地文档和测试，未操作云资源或增加依赖。
+选择依据是既有共享层只提供“已比较载荷后的重放/拒绝”纯决策；CloudBase Node SDK 文档有 `add` 使用显式 `_id` 的示例，但 master 文档未钉定 `3.18.7`，官方错误/事务文档也不等于本业务并发或故障恢复证据。详见[幂等物理映射记录](sp08-idempotency-physical-mapping-20261106.md)。本次只改本地代码、测试和文档，未操作云资源或增加依赖。
 
 ## 2026-11-06 幂等候选记录增量验证
 
 - 新增候选映射断言 1/1；SP08 文件测试 88/88；计划守护 46/46；全量 `node --test tests/*.test.cjs` 1741/1741，0 失败、0 跳过。
 - `npm run check:shared` 与 `npm run check:boundaries` 均通过。验证只覆盖本地合同文档和测试；未运行产品 API、未访问或修改 CloudBase、未部署函数、未写云端数据。
-- 先前 `f18Validation` / `f22Validation` 是对应历史增量的当时测试快照，保留原数值；本轮最新总体验证记录在 JSON 的 `evidence.idempotencyPersistenceDecision.validation`。
+- 该候选的原始增量快照保留在 JSON 的 `evidence.idempotencyPersistenceDecision.validation`。共享层 ID 编码实现后的更新验证单独追加在 `evidence.idempotencyIdEncodingContractValidation`，不覆盖此前快照。
+
+## 2026-11-06 版本化 SHA-256 ID 合同验证
+
+- 已知 SHA-256 向量、重复输入稳定性、保留 operationKey 首尾空格、JSON 数组边界、全空白键拒绝和摘要格式校验均由 SP08 专项测试覆盖；SP08 文件 89/89，SP07 共享层纯度守护 1/1，计划守护 46/46。
+- 最终全量 `node --test tests/*.test.cjs` 1742/1742，0 失败、0 跳过；`npm run check:shared` 与 `npm run check:boundaries` 均通过；配套 JSON 均可解析，工作树差异通过 `git diff --check`。
+- 验证仅证明本地纯合同、类型和仓库边界。CloudBase SDK 对此 ID 格式的接受性、服务端 SHA-256 适配、并发 `add` 唯一性、事务原子性和未知结果恢复仍未证明；未调用或修改 CloudBase。
 
 ## 未证明及后续归属
 

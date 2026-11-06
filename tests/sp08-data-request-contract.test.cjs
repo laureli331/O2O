@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const { createHash } = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
@@ -1435,6 +1436,46 @@ test('idempotency reuse replays the original outcome only for a matching validat
   });
 });
 
+test('idempotency document IDs use the confirmed versioned SHA-256 encoding and exact operation key', () => {
+  const { createIdempotencyDocumentId } = loadTypeScriptModule('contracts/idempotency.ts');
+  const input = {
+    trustedScope: 'tenant/A|actor:17',
+    operation: 'provider.profile.update',
+    operationKey: '  client-42  ',
+  };
+  const sha256Utf8Hex = (serializedInput) => createHash('sha256').update(serializedInput, 'utf8').digest('hex');
+
+  const result = createIdempotencyDocumentId(input, sha256Utf8Hex);
+  assert.deepEqual(result, {
+    ok: true,
+    documentId: 'idem_v1_d53848e3c8063e4a92267c77f8e96c05d0bf6b39b0f4421bb083fcd755bf966b',
+  });
+  assert.deepEqual(createIdempotencyDocumentId(input, sha256Utf8Hex), result);
+
+  const trimmedKeyResult = createIdempotencyDocumentId({ ...input, operationKey: 'client-42' }, sha256Utf8Hex);
+  assert.equal(trimmedKeyResult.ok, true);
+  assert.notEqual(trimmedKeyResult.documentId, result.documentId);
+
+  const delimiterLeft = createIdempotencyDocumentId({
+    trustedScope: 'a|b', operation: 'c', operationKey: 'd',
+  }, sha256Utf8Hex);
+  const delimiterRight = createIdempotencyDocumentId({
+    trustedScope: 'a', operation: 'b|c', operationKey: 'd',
+  }, sha256Utf8Hex);
+  assert.equal(delimiterLeft.ok, true);
+  assert.equal(delimiterRight.ok, true);
+  assert.notEqual(delimiterLeft.documentId, delimiterRight.documentId);
+
+  assert.deepEqual(createIdempotencyDocumentId({ ...input, operationKey: '   ' }, sha256Utf8Hex), {
+    ok: false,
+    reason: 'empty-operation-key',
+  });
+  assert.deepEqual(createIdempotencyDocumentId(input, () => 'not-a-sha256-digest'), {
+    ok: false,
+    reason: 'invalid-sha256-output',
+  });
+});
+
 test('idempotency reuse is a shared pure contract and does not invent storage or transport APIs', () => {
   const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'idempotency.ts'), 'utf8');
   const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
@@ -1444,7 +1485,9 @@ test('idempotency reuse is a shared pure contract and does not invent storage or
   assert.match(sharedIndex, /export \* from '\.\/contracts';/);
   assert.match(source, /IdempotencyPayloadComparison/);
   assert.match(source, /CommandResult/);
-  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
+  assert.match(source, /createIdempotencyDocumentId/);
+  assert.match(source, /IDEMPOTENCY_DOCUMENT_ID_PREFIX/);
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\s*\.|\bwx\s*\.|fetch\s*\(|collection\s*\(|from ['"]node:crypto['"]/);
 });
 
 test('SP08 records deterministic document ID plus add as selected but unproven physical idempotency candidate', () => {
@@ -1462,7 +1505,12 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.match(mapping.decision.transactionBoundary, /idempotency claim.*business write.*same transaction/i);
   assert.ok(mapping.decision.prohibitedApproaches.includes('set-as-exclusive-claim'));
   assert.ok(mapping.decision.prohibitedApproaches.includes('application-check-then-write'));
-  assert.ok(mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
+  assert.equal(mapping.decision.idEncoding.prefix, 'idem_v1_');
+  assert.equal(mapping.decision.idEncoding.algorithm, 'SHA-256');
+  assert.equal(mapping.decision.idEncoding.operationKeySemantics, 'exact validated original string; surrounding whitespace is preserved; all-whitespace is rejected');
+  assert.equal(mapping.decision.idEncoding.payloadIncluded, false);
+  assert.ok(mapping.decision.idEncoding.localVerification.includes('known SHA-256 vector'));
+  assert.ok(!mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
   assert.ok(mapping.unresolved.includes('operation-specific-payload-normalization-and-equivalence'));
   assert.ok(mapping.unresolved.includes('collection-and-retention-policy'));
   assert.ok(mapping.runtimeProof.requiredCases.includes('simultaneous-add-same-deterministic-id-has-one-winner'));
@@ -1473,7 +1521,8 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.equal(mapping.cloudMutationsPerformed, false);
   assert.match(mappingMarkdown, /DATABASE_DUPLICATE_WRITE/);
   assert.match(mappingMarkdown, /docs\.cloudbase\.net\/database\/transaction/);
-  assert.match(mappingMarkdown, /确定性 ID 的编码和版本.*保持未选/);
+  assert.match(mappingMarkdown, /idem_v1_/);
+  assert.match(mappingMarkdown, /`operationKey` 使用已通过命令解析的原始字符串/);
 
   assert.ok(progress.scope.includes('deterministic-document-id-add-idempotency-persistence-candidate'));
   assert.ok(progress.notProven.includes('deterministic-id-add-concurrent-collision-transaction-and-recovery-runtime-proof'));

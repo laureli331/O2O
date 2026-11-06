@@ -2,22 +2,33 @@
 
 ## 已确认的候选
 
-用户于 2026-11-06 选择“确定性文档 ID + `add`”。这是 SP08 的物理持久化候选，不是已实现或已验证的 CloudBase 方案。本轮只更新仓库文档和测试，没有调用或修改云资源，也没有新增依赖。
+用户于 2026-11-06 选择“确定性文档 ID + `add`”，并确认版本化 SHA-256 编码。共享层已实现确定性输入序列化与文档 ID 格式函数，具体 CloudBase 写入、Node `crypto` 适配和运行时并发/恢复仍未实现或验证。本次只改仓库代码、测试和本地记录，没有调用或修改云资源，也没有新增依赖。
 
 候选范围应由可信服务端上下文、允许的业务操作和 `operationKey` 构成。客户端不能决定 actor/owner 或绕过操作白名单。记录需要绑定按具体操作规范化后的载荷摘要和原始命令结果；幂等占位、业务写入及结果应在同一事务边界，满足后端架构合同。这里记录约束，不代表具体业务操作的载荷规范化和事务已经实现。
+
+### 已确认的本地 ID 编码
+
+- 文档 ID 格式为 `idem_v1_<64位小写十六进制 SHA-256>`，总长 72 个 ASCII 字符。版本前缀为 `idem_v1_`。
+- 哈希输入是 UTF-8 编码的 JSON 数组：`["o2o.idempotency", 1, trustedScope, operation, operationKey]`。数组位置固定，JSON 字符串转义避免分隔符拼接歧义。
+- `trustedScope` 必须由服务端根据具体操作构造，包含可信 actor/ownership 边界；`operation` 必须来自服务端 allowlist。当前共享 helper 不推断字段组成、不认证这些值。
+- `operationKey` 使用已通过命令解析的原始字符串，保留首尾空格；全空白仍拒绝，与当前 `parseCommandEnvelope` 行为一致。不同空格形式是不同键。
+- 载荷不进入 ID。相同范围、操作和键的不同载荷必须落到同一幂等记录，再由逐操作载荷摘要/等价规则拒绝，而不能绕过冲突生成新记录。
+- SHA-256 由调用方注入；共享代码不导入 Node、微信或云数据库 API。服务端适配器必须以 UTF-8 对上述序列化文本执行 SHA-256，并返回 64 位小写十六进制摘要。适配器错误继续作为基础设施错误上抛。
+- 文档 ID 不是授权凭据或秘密。服务端必须自行构造可信范围，绝不接受客户端提交的 ID 作为所有权证明；不要把秘密或个人信息放入范围/键。普通 SHA-256 对低熵输入不提供保密性。
+- 本地 node:test 已用 Node 内置 `node:crypto` 核对已知向量、重复输入稳定性、空白键语义和分隔符歧义。此本地证明不覆盖 CloudBase 接受该 `_id` 的具体长度/字符约束、SDK 适配、并发唯一性或事务原子性。
 
 ## 复用调查与平台证据
 
 - 项目内复用：`packages/shared/src/contracts/idempotency.ts` 已定义在服务端比较过载荷后“重放原结果或拒绝不匹配载荷”的纯决策；它没有实现查询、持久化、事务占位或未知结果恢复。
 - 项目能力映射：[`sp08-database-capability-map-20261105.md`](sp08-database-capability-map-20261105.md) 记录 CloudBase 文档型数据库的事务限制、唯一索引语义及 SP01 合成事务实测边界。
-- 官方 API：[数据库 add 参考](https://docs.cloudbase.net/api-reference/webv3-pg/database)说明 `add` 接受文档数据并可使用指定 ID；这证明 API 形状，不证明并发唯一行为适用于本方案。
+- 官方 API：[CloudBase Node SDK 数据库文档](https://github.com/TencentCloudBase/node-sdk/blob/master/docs/database/database.md)示例显示 `add` 可提交显式 `_id`；文档位于 master，未钉定仓库临时探针使用的 `@cloudbase/node-sdk@3.18.7`，只证明 API 形状，不证明并发唯一行为适用于本方案。
+- 补充 API：[数据库 add 参考](https://docs.cloudbase.net/api-reference/webv3-pg/database)说明 `add` 接受文档数据并可使用指定 ID；它不是 Node SDK 指定 ID + add 的版本级运行时证明。
 - 官方错误参考：[数据库错误码](https://docs.cloudbase.net/error-code/basic)将重复索引键列为 `DATABASE_DUPLICATE_WRITE` 的情形，其中包括重复文档 ID；生产函数中如何识别和恢复仍需实测。
 - 官方事务参考：[文档型数据库事务](https://docs.cloudbase.net/database/transaction)说明事务由服务端 Node SDK 执行，事务方法包括 `add`，单个事务最长 10 秒。该平台说明不证明本业务事务的竞争、提交或故障恢复正确。
 - 不新增第三方库：现有 CloudBase SDK/API 足以表达候选写入；目前缺少业务代码和并发证据，故不引入锁库或重试库。
 
 ## 仍未确定或未验证
 
-- **确定性 ID 的编码和版本**：保持未选。需要先由各操作定义可信范围、操作白名单和键语义，再评估长度、冲突域、版本迁移与信息暴露；目前不假设拼接、哈希或具体格式。
 - **载荷规范化与等价性**：按操作分别定义，确保仅语义相同的重放返回原结果，复用同一键但载荷不等价时拒绝。共享层现有纯决策不提供 canonicalizer。
 - **集合和保留期限**：待实际对象映射、数据生命周期及查询/恢复合同确定；本记录不创建集合。
 - **原子性和并发**：必须证明并发 `add` 对相同确定性 ID 产生一个有效所有者，并把幂等记录与业务写入放在同一可恢复事务中。不能用“先查再写”消除竞争；也不把 `set` 当作独占领取，因为官方定义是缺失时新建、存在时覆盖。

@@ -45,7 +45,8 @@
     "f20-fee-stage-scalar-field-validation",
     "f21-commission-billing-reason-field-validation",
     "f22-merchant-post-scalar-field-validation",
-    "deterministic-document-id-add-idempotency-persistence-candidate"
+    "deterministic-document-id-add-idempotency-persistence-candidate",
+    "versioned-sha256-id-input-and-operation-key-contract"
   ],
   "sources": [
     {
@@ -554,6 +555,15 @@
       "path": "docs/sp08-idempotency-physical-mapping-20261106.md",
       "status": "selected-candidate-runtime-unverified",
       "strategy": "deterministic-document-id-plus-add",
+      "idEncoding": {
+        "status": "selected-and-implemented-as-shared-pure-contract; server-adapter-and-cloud-runtime-unverified",
+        "format": "idem_v1_<64 lowercase hexadecimal SHA-256 characters>",
+        "input": "UTF-8 JSON.stringify([\"o2o.idempotency\", 1, trustedScope, operation, operationKey])",
+        "operationKeySemantics": "exact validated original string; surrounding whitespace is preserved; all-whitespace is rejected",
+        "payloadIncludedInId": false,
+        "evidence": "tests/sp08-data-request-contract.test.cjs known vector and boundary cases",
+        "serverAdapterAndCloudRuntimeProven": false
+      },
       "runtimeProof": "not-proven",
       "cloudMutationsPerformed": false,
       "validation": {
@@ -572,6 +582,28 @@
         "workspaceBoundaries": "passed",
         "environment": "Windows local workspace; no cloud calls or mutations"
       }
+    },
+    "idempotencyIdEncodingContractValidation": {
+      "date": "2026-11-06",
+      "source": "packages/shared/src/contracts/idempotency.ts#createIdempotencyDocumentId",
+      "testCommand": "node --test tests/sp08-data-request-contract.test.cjs",
+      "sp08FilePassed": 89,
+      "sp08FileFailed": 0,
+      "purityGuardCommand": "node --test --test-name-pattern=\"authored starter TS has no any or platform globals\" tests/qd03-sp07-foundation.test.cjs",
+      "purityGuardPassed": 1,
+      "planRegressionCommand": "node --test tests/executable-development-plan.test.cjs",
+      "planRegressionPassed": 46,
+      "fullRegressionCommand": "node --test tests/*.test.cjs",
+      "fullRegressionPassed": 1742,
+      "fullRegressionFailed": 0,
+      "fullRegressionSkipped": 0,
+      "sharedTypecheck": "passed",
+      "workspaceBoundaries": "passed",
+      "pairedJsonParse": "passed",
+      "diffCheck": "passed",
+      "serverAdapterAndCloudRuntimeProven": false,
+      "cloudMutationsPerformed": false,
+      "environment": "Windows local workspace; no cloud calls or mutations"
     }
   }
 }

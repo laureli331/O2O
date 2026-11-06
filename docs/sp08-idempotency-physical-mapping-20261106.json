@@ -11,12 +11,39 @@
     "scope": "trusted server-derived actor/ownership scope + allowlisted operation + operationKey",
     "storedBinding": "normalized per-operation payload digest + original command result",
     "transactionBoundary": "idempotency claim + business write + original result in the same transaction",
+    "idEncoding": {
+      "status": "selected-and-implemented-as-shared-pure-contract; server-adapter-and-cloud-runtime-unverified",
+      "prefix": "idem_v1_",
+      "algorithm": "SHA-256",
+      "version": 1,
+      "canonicalInput": "UTF-8 JSON.stringify([\"o2o.idempotency\", 1, trustedScope, operation, operationKey])",
+      "documentIdFormat": "idem_v1_<64 lowercase hexadecimal characters>",
+      "documentIdLengthAsciiCharacters": 72,
+      "trustedScopeSource": "server-derived actor/ownership scope; exact components remain operation-owned",
+      "operationSource": "server allowlist",
+      "operationKeySemantics": "exact validated original string; surrounding whitespace is preserved; all-whitespace is rejected",
+      "payloadIncluded": false,
+      "digestAdapter": "injected SHA-256 UTF-8 hex function; shared module imports no platform or Node API",
+      "localVerification": [
+        "known SHA-256 vector",
+        "same tuple produces same ID",
+        "surrounding operationKey whitespace remains significant",
+        "JSON array encoding separates delimiter-containing tuple values",
+        "empty operationKey and malformed digest are rejected"
+      ],
+      "notProven": [
+        "CloudBase SDK/runtime accepts this exact ID format",
+        "simultaneous add with the same ID has one winner",
+        "business write and claim share an atomic transaction",
+        "unknown outcome recovery"
+      ]
+    },
     "prohibitedApproaches": [
       "set-as-exclusive-claim",
       "application-check-then-write"
     ],
-    "idEncodingStatus": "not-selected",
-    "idEncodingRationale": "固定ID编码和版本规则依赖已定义的服务端范围、操作白名单及载荷等价规则；当前只记录持久化策略，不猜测编码格式。"
+    "idEncodingStatus": "selected-local-contract-runtime-unverified",
+    "idEncodingRationale": "用户已确认 SHA-256 版本化 ID 与精确 operationKey 语义；共享层实现固定 JSON 数组输入和 ID 格式，服务端 trustedScope 构造、Node digest 适配及 CloudBase 运行时仍需实证。"
   },
   "reuseSurvey": {
     "projectCode": "packages/shared/src/contracts/idempotency.ts provides the replay-or-reject decision after server-side payload comparison; it does not implement lookup, persistence, transactions, or recovery.",
@@ -25,6 +52,10 @@
       {
         "url": "https://docs.cloudbase.net/api-reference/webv3-pg/database",
         "finding": "CloudBase database add accepts data and can use a specified document ID; this is API capability evidence, not concurrent idempotency proof."
+      },
+      {
+        "url": "https://github.com/TencentCloudBase/node-sdk/blob/master/docs/database/database.md",
+        "finding": "The Node SDK add example accepts an explicit _id. The master document is not pinned to the locally observed 3.18.7 SDK and does not prove concurrent uniqueness or transaction recovery."
       },
       {
         "url": "https://docs.cloudbase.net/error-code/basic",
@@ -38,7 +69,6 @@
     "dependenciesAdded": []
   },
   "unresolved": [
-    "deterministic-document-id-encoding-and-versioning",
     "operation-specific-payload-normalization-and-equivalence",
     "collection-and-retention-policy"
   ],
