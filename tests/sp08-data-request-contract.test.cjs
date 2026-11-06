@@ -1803,3 +1803,61 @@ test('F16 shared rating response text validator stays field-only', () => {
   assert.equal(typeof shared.validateRatingResponseText, 'function');
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|moderation|review|publish/);
 });
+
+test('F17 AI organization text trims and validates each required field by Unicode code points', () => {
+  const { validateAiOrganizationText } = loadTypeScriptModule('contracts/ai-organization-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /F17 \| 文字AI整理 \| 四类业务，本次文字1—1000；候选标题1—30、说明1—1000/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F17').ownerTask, 'SP31-SP32');
+  assert.ok(progress.scope.includes('f17-ai-organization-text-validation'));
+  assert.ok(progress.reuseDecision.f17AiOrganizationText.includes('Unicode 码点'));
+  assert.equal(progress.evidence.aiOrganizationTextValidation, 'packages/shared/src/contracts/ai-organization-text.ts#validateAiOrganizationText');
+  assert.ok(progress.evidence.f17AiOrganizationTextLimitation.includes('SP31–SP32'));
+
+  assert.deepEqual(validateAiOrganizationText('inputText', '  🛠  '), {
+    ok: true,
+    value: '🛠',
+    characterCount: 1,
+  });
+  assert.deepEqual(validateAiOrganizationText('inputText', 'x'.repeat(1_000)), {
+    ok: true,
+    value: 'x'.repeat(1_000),
+    characterCount: 1_000,
+  });
+  assert.deepEqual(validateAiOrganizationText('inputText', 'x'.repeat(1_001)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateAiOrganizationText('candidateTitle', '🛠'.repeat(30)), {
+    ok: true,
+    value: '🛠'.repeat(30),
+    characterCount: 30,
+  });
+  assert.deepEqual(validateAiOrganizationText('candidateTitle', 'x'.repeat(31)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateAiOrganizationText('candidateDescription', '🛠'.repeat(1_000)), {
+    ok: true,
+    value: '🛠'.repeat(1_000),
+    characterCount: 1_000,
+  });
+  assert.deepEqual(validateAiOrganizationText('candidateDescription', 'x'.repeat(1_001)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateAiOrganizationText('inputText', ' \t\n '), { ok: false, reason: 'empty' });
+  assert.deepEqual(validateAiOrganizationText('candidateTitle', 'e\u0301'), {
+    ok: true,
+    value: 'e\u0301',
+    characterCount: 2,
+  });
+  for (const value of [undefined, null, 1, {}, []]) {
+    assert.deepEqual(validateAiOrganizationText('inputText', value), { ok: false, reason: 'not-string' });
+  }
+  assert.deepEqual(validateAiOrganizationText('candidate', 'x'), { ok: false, reason: 'unknown-field' });
+});
+
+test('F17 AI organization text validator remains a pure field contract, without model or lifecycle behavior', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'ai-organization-text.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/ai-organization-text';/);
+  assert.equal(typeof shared.validateAiOrganizationText, 'function');
+  assert.doesNotMatch(source, /\bimport\b|\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|cloud\.callFunction/);
+});

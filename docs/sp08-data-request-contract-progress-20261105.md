@@ -162,6 +162,15 @@
 - 适配范围：只校验单个回应文字字段；不定义回应资格、对象身份/方向、版本、检测或人工审核、驳回重提、唯一公开位置、权限、存储或发布行为。
 - 后续归属：完整评价回应生命周期仍由 SP21 按原任务卡及质量合同验收；此本地 validator 不关闭 SP08 产品/数据库验收，也不提前标记 SP21 通过。
 
+## F17 AI整理文本字段长度校验增量（2026-11-06）
+
+- 来源：`docs/prd.md` 第 12.2 节 AI02 和第 13.1 节 F17：本次输入去首尾空白后为 1–1000；候选标题为 1–30、说明为 1–1000。用户确认三个字段均采用 Unicode 码点计数。`docs/sp08-object-ownership-map-20261105.json` 将 F17 完整能力归 SP31–SP32，输入和候选仅发起用户可见，AG01 前不真实调用模型。
+- 复用调查：检查了 F02/F03 `validateRepairOtherPublicText`、`validateIdleListingText`，以及 F07/F15/F16 文本 validator。已有实现均是不同业务字段语义，不能直接代表 F17 的输入和候选字段；复用已验证的 `String.trim()` / `Array.from()` 原生模式。微信/CloudBase SDK 不负责 shared 字段长度规则，第三方库对固定字符串边界没有额外收益；无需新依赖。
+- 实现：`packages/shared/src/contracts/ai-organization-text.ts#validateAiOrganizationText`，由 `packages/shared/src/contracts/index.ts` 导出。只接受三个字段名，裁剪边缘空白，按确认口径检查非空和码点上限；不解析候选对象、不构造提示词或合法字段集、不处理表单/请求版本、不调用或重试模型、不持久化、不自动写回或发布。
+- 测试：`tests/sp08-data-request-contract.test.cjs` 核对 PRD 与 SP31–SP32 归属、导出、三个字段边界、超限、空白/缺失类型、未知字段、补充平面 emoji、组合字符码点数和 shared 纯度。
+- 验证结果：F17 专项测试 77/77、计划守护测试 46/46、全量测试 1730/1730 通过；`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过。构建有既有 `fs.Stats` 弃用和 Vite 配置加载器警告；不构成构建失败。仅为本地静态/构建证据，无云端调用或真实模型测试。
+- 后续归属：候选字段合法性/事实校验、私密输入隔离、版本与用户选择/采用关联、模型安全评估、用量/状态及真实供应商调用仍由 SP31–SP32 和 AG01 按原任务与质量合同验收；本增量不证明 AI 功能可用，也不关闭 SP08 或相关后续验收。
+
 ## 未证明及后续归属
 
 下列事项仍按原门槛保留，阻断 SP08 及其依赖功能的对应验收：

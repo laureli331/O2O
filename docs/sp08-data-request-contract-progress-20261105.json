@@ -38,7 +38,8 @@
     "f14-rating-score-field-validation",
     "f15-rating-image-count-validation",
     "f15-rating-text-validation",
-    "f16-rating-response-text-validation"
+    "f16-rating-response-text-validation",
+    "f17-ai-organization-text-validation"
   ],
   "sources": [
     {
@@ -226,7 +227,8 @@
     "f14RatingScore": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange 与 contracts/index.ts 导出模式；PRD F14 规定 attitude、efficiency、communication 三项整数1–5。新增字段白名单薄层，不增加运行依赖或调用平台 API；node:test 覆盖三项上下界、非整数/非数值及未知字段。不设置默认评分。",
     "f15RatingImageCount": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange，范围严格按 PRD F15 的 0–3 张；项目内已有整数边界 helper。平台 SDK 不定义此共享字段规则，媒体上传能力与计数校验无关；第三方库不适用于纯整数范围判断，Number.isInteger 足够。只增加轻量语义包装，不新增运行依赖。专项 node:test 核对来源、边界和无平台行为；不验证 JPEG/PNG、单张大小、内容、权限或审核。",
     "f15RatingText": "复用项目已有可选普通文本校验模式及 String.trim() / Array.from() Unicode 码点计数，不引入第三方库或运行依赖；现有文本 validator 覆盖其他业务字段，故新增 F15 专属薄层语义校验并从 contracts/index.ts 导出。缺省或裁剪后空白规范为空字符串；非空文本去首尾空白后按 PRD 上限300码点校验。专项 node:test 覆盖来源、可选空值、边界、emoji、无效类型和纯 shared 边界；不验证图文评价单元、内容安全、审核、权限或公开流程。",
-    "f16RatingResponseText": "复用 F15 的 validateRatingText 规范化与 Unicode 码点计数，新增 F16 必填语义薄层，不重复实现字符计数，也不引入依赖。缺省或去首尾空白后为空时返回 required；有效文字按已确认的 Unicode 码点计数限制 1–300。node:test 核对 PRD、SP21 归属、缺省/空白、规范化、1/300/301 码点、emoji、错误类型和 shared 纯度。字段范围不实现回应资格、版本、检测/人工审核、驳回重提、唯一公开位置、读取权限或发布。"
+    "f16RatingResponseText": "复用 F15 的 validateRatingText 规范化与 Unicode 码点计数，新增 F16 必填语义薄层，不重复实现字符计数，也不引入依赖。缺省或去首尾空白后为空时返回 required；有效文字按已确认的 Unicode 码点计数限制 1–300。node:test 核对 PRD、SP21 归属、缺省/空白、规范化、1/300/301 码点、emoji、错误类型和 shared 纯度。字段范围不实现回应资格、版本、检测/人工审核、驳回重提、唯一公开位置、读取权限或发布。",
+    "f17AiOrganizationText": "复用项目 F02/F03/F07/F15/F16 已验证的 String.trim() 与 Array.from() Unicode 码点模式；现有 validator 是其他字段的语义规则，没有可直接复用的 F17 输入/候选校验器。新增三个必填字段的纯 shared 长度检查并从 contracts/index.ts 导出，不增加依赖。inputText 为 1–1000、candidateTitle 为 1–30、candidateDescription 为 1–1000；node:test 核对 PRD、SP31–SP32 归属、去空白、边界、emoji、组合字符、错误类型、未知字段和纯度。字段检查不构造提示词/候选对象、不校验 AI 合法输出、不接入真实模型、版本/采用/持久化/发布流程。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -244,7 +246,8 @@
     "browser-backend-adapter",
     "real-provider-and-business-integration",
     "f14-rating-eligibility-identity-experience-uniqueness-edit-window-aggregation-and-publication",
-    "f16-rating-response-authorization-version-moderation-resubmission-public-slot-and-publication"
+    "f16-rating-response-authorization-version-moderation-resubmission-public-slot-and-publication",
+    "f17-ai-candidate-validation-privacy-version-selection-adoption-and-provider-integration"
   ],
   "evidence": {
     "test": "tests/sp08-data-request-contract.test.cjs",
@@ -268,12 +271,12 @@
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
       "command": "node --test tests/sp08-data-request-contract.test.cjs",
-      "passed": 75,
+      "passed": 77,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1728,
+      "passed": 1730,
       "failed": 0,
       "skipped": 0
     },
@@ -284,7 +287,7 @@
       "webBuild": "passed-with-existing-vite-config-loader-warning"
     },
     "environment": "Windows local workspace; no cloud calls or mutations",
-    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只负责规范化并复制逻辑公开字段；独立字段校验器按PRD对标题1-30、说明1-1000、地标0-50去边缘空白后按用户确认的Unicode码点计数。该本地纯函数不证明服务端强制执行、物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；分类及村/社区字段仅验证字符串和裁剪后非空，不定义最大长度，不校验允许类别目录、社区服务范围或发布资格；以上均不证明物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案。F04 新增 validator 仅验证 PRD 附件数量为整数0–9，不推断媒体类型、公开范围或上传/读取权限；对象映射继续将附件可见范围列为未决。 F04 服务费解析只校验发布者提供的正数十进制金额字符串、最多两位小数及99,999.99元上限；不证明服务端强制执行、金额版本一致性、申请者接受、支付或结算。F05 垫付条款解析只校验意愿布尔值以及愿意垫付时的正数上限，并将不愿意时的金额归一为 null；不实现接受发布者当前正数服务费、当前时间版本绑定、申请唯一性/幂等、修改/撤回、候选可见性或服务端授权与资金执行。F06 字段校验不证明异议受理资格、订单状态、成立判断、授权、状态迁移原子性或图片存储。F07 本增量仅校验展示名称和服务介绍的本地Unicode码点范围；资料页面、其它字段、公开视图和服务端读写权限归SP14，仍须按其原任务和验收完成。F01/F07营业执照图片计数校验仅为字段数量边界（选填0–1），不证明执照真实性、图像质量、上传或读取权限；F01身份/资格与证照核验归SP09，F07资料页面与服务端读写归SP14。F01新增昵称与可选微信号校验仅检查去首尾空白后的 Unicode 码点长度；不验证微信号格式/真实性、手机号控制权、登录身份、实名/资格或页面流程，相关页面和身份/资格核验归SP09。F14评分分值校验仅验证attitude/efficiency/communication字段及整数1–5，不设置初始值；评分资格、身份、经历归属、唯一性、修改窗口、统计、审核和公开脱敏由SP21按原任务与质量合同验收。F15 图片数量校验仅验证整数0–3；不验证格式、单张大小、图像内容/元数据、权限、上传或审核；完整图文审核与公开由SP21验收。",
+    "limitations": "命令结果解析只证明响应符合五态结构、错误类别与请求ID字段规则，不证明真实业务结果、服务端操作事实或可重试性；processing/unknown 的同请求有权查询和恢复尚未实现。可信上下文解析只收窄 actor ID、有限数值接收时间和 request ID 的对象结构，不证明认证/归属核验、时间来源/准确性或请求ID关联。信封解析器只做通用结构收窄；F09地址簿草稿解析只接受联系人、11位ASCII电话、社区、详细地址和可选备注，复用字段级文本校验并拒绝额外的owner/ID/default等客户端声称，不证明服务端身份、地址归属、社区服务范围、授权或写入原子性。F09联系电话仅验证11位ASCII数字，不验证号码真实性、控制权或联系同意；文本字段只按PRD校验联系人1-20、详细地址1-200、备注0-100及必填非空，并按已确认的Unicode码点口径去边缘空白后检查，不证明社区属于服务范围。已选地址任务快照仅将已校验草稿的五个字段复制到新的本地内存对象；不证明任务持久化、服务端所有权校验、私密读取权限或与任务创建的原子性。默认地址逻辑以每位用户一个可空defaultAddressId表达零或一个默认项，替换由指针指向新ID，删除当前默认时清空且不提升其它项；该纯逻辑解析/转换不验证地址存在或归属，不保证并发设置唯一性，也不证明删除与指针清理原子。F02共享公开文本投影只负责规范化并复制逻辑公开字段；独立字段校验器按PRD对标题1-30、说明1-1000、地标0-50去边缘空白后按用户确认的Unicode码点计数。该本地纯函数不证明服务端强制执行、物理数据库字段、API或服务端权限。F03文本字段校验对标题1-30、说明1-1000、可选地标0-50先去边缘空白并按用户确认的Unicode码点计数；分类及村/社区字段仅验证字符串和裁剪后非空，不定义最大长度，不校验允许类别目录、社区服务范围或发布资格；以上均不证明物理字段、API或服务端权限。F03价格解析只接受字面面议或严格十进制正数价格并复用整数分解析；不证明成交金额、支付/退款、服务端金额校验或物理数据模型。模块级操作白名单、payload/金额规则、操作所需版本、当前版本冲突校验和服务端授权尚未实现。本地测试不证明CloudBase物理约束、权限、事务或产品集成；幂等载荷比较、范围构造、原子占位/业务写入和同请求查询尚未实现；对象归属与公开/私密视图仍是逻辑草案。F04 新增 validator 仅验证 PRD 附件数量为整数0–9，不推断媒体类型、公开范围或上传/读取权限；对象映射继续将附件可见范围列为未决。 F04 服务费解析只校验发布者提供的正数十进制金额字符串、最多两位小数及99,999.99元上限；不证明服务端强制执行、金额版本一致性、申请者接受、支付或结算。F05 垫付条款解析只校验意愿布尔值以及愿意垫付时的正数上限，并将不愿意时的金额归一为 null；不实现接受发布者当前正数服务费、当前时间版本绑定、申请唯一性/幂等、修改/撤回、候选可见性或服务端授权与资金执行。F06 字段校验不证明异议受理资格、订单状态、成立判断、授权、状态迁移原子性或图片存储。F07 本增量仅校验展示名称和服务介绍的本地Unicode码点范围；资料页面、其它字段、公开视图和服务端读写权限归SP14，仍须按其原任务和验收完成。F01/F07营业执照图片计数校验仅为字段数量边界（选填0–1），不证明执照真实性、图像质量、上传或读取权限；F01身份/资格与证照核验归SP09，F07资料页面与服务端读写归SP14。F01新增昵称与可选微信号校验仅检查去首尾空白后的 Unicode 码点长度；不验证微信号格式/真实性、手机号控制权、登录身份、实名/资格或页面流程，相关页面和身份/资格核验归SP09。F14评分分值校验仅验证attitude/efficiency/communication字段及整数1–5，不设置初始值；评分资格、身份、经历归属、唯一性、修改窗口、统计、审核和公开脱敏由SP21按原任务与质量合同验收。F15 图片数量校验仅验证整数0–3；不验证格式、单张大小、图像内容/元数据、权限、上传或审核；完整图文审核与公开由SP21验收。F17 AI 整理文本校验仅验证三个必填字段的 Unicode 码点长度和去首尾空白；不证明私密输入隔离、候选字段/事实合法性、版本与用户选择关联、模型安全、用量状态、供应商调用或写回发布，完整生命周期归 SP31–SP32，真实模型仍受 AG01 限制。",
     "planRegression": {
       "command": "node --test tests/executable-development-plan.test.cjs",
       "passed": 46,
@@ -316,6 +319,8 @@
     "ratingTextValidation": "packages/shared/src/contracts/rating-text.ts#validateRatingText",
     "f15TextLimitation": "仅校验 F15 可选评价文字：缺省或裁剪后空白规范为空字符串；非空文本去首尾空白并按 Unicode 码点校验最多300，不验证图文评价单元、内容安全、身份/资格、审核、权限或公开版本；完整评价生命周期仍归SP21，按原任务卡和质量合同验收。",
     "ratingResponseTextValidation": "packages/shared/src/contracts/rating-response-text.ts#validateRatingResponseText",
-    "f16RatingResponseTextLimitation": "仅校验 F16 回应文字必填1–300 Unicode码点并去首尾空白；不实现回应资格、版本、内容检测/人工审核、驳回重提、唯一公开回应位置、读取权限或发布；完整评价回应生命周期仍归SP21，按其原任务卡与质量合同验收。"
+    "f16RatingResponseTextLimitation": "仅校验 F16 回应文字必填1–300 Unicode码点并去首尾空白；不实现回应资格、版本、内容检测/人工审核、驳回重提、唯一公开回应位置、读取权限或发布；完整评价回应生命周期仍归SP21，按其原任务卡与质量合同验收。",
+    "aiOrganizationTextValidation": "packages/shared/src/contracts/ai-organization-text.ts#validateAiOrganizationText",
+    "f17AiOrganizationTextLimitation": "仅校验 F17 输入文字1–1000、候选标题1–30、候选说明1–1000 Unicode码点并去首尾空白；不解析候选对象或合法字段，不证明私密输入隔离、候选事实准确性、请求/表单版本、用户选择/采用关联、用量/状态、供应商调用或自动写回。完整 AI 能力由 SP31–SP32 按原任务卡和质量合同验收，真实模型仍受 AG01 限制。"
   }
 }
