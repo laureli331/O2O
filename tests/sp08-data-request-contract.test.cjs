@@ -1544,6 +1544,8 @@ test('SP08 database capability map distinguishes documented platform limits from
 
 test('SP08 logical ownership map covers PRD field groups without pretending to define physical schemas', () => {
   const map = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const backend = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'backend-architecture-contract-20261103.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
 
   assert.equal(map.taskId, 'SP08');
   assert.equal(map.status, 'logical-draft');
@@ -1561,7 +1563,31 @@ test('SP08 logical ownership map covers PRD field groups without pretending to d
   assert.ok(map.snapshots.some((snapshot) => snapshot.id === 'selected-address' && snapshot.editAfterSelectionChangesPriorSnapshot === false));
   assert.ok(map.snapshots.some((snapshot) => snapshot.id === 'rating-publication' && snapshot.onlyApprovedVersionIsPublic === true));
   assert.ok(map.unresolved.some((item) => item.id === 'errand-attachment-visibility'));
-  assert.ok(map.unresolved.some((item) => item.id === 'merchant-post-rule-owner'));
+  const f22 = map.fieldGroups.find((group) => group.prdFieldId === 'F22');
+  const bm11 = backend.modules.find((module) => module.id === 'BM11');
+  const bm17 = backend.modules.find((module) => module.id === 'BM17');
+  assert.equal(f22.ownerModule, 'BM17');
+  assert.equal(f22.ownerTask, 'SP24');
+  assert.deepEqual(f22.ownerSlices.map((slice) => slice.ownerModule), ['BM11', 'BM17']);
+  assert.ok(map.decisions.some((decision) => (
+    decision.id === 'merchant-post-rule-owner'
+    && decision.status === 'confirmed'
+    && decision.ownerModule === 'BM17'
+    && decision.ownerTask === 'SP24'
+  )));
+  assert.equal(map.unresolved.some((item) => item.id === 'merchant-post-rule-owner'), false);
+  assert.match(bm17.owns, /主帖草稿.*审核版本.*公开版本替换.*风险下架/);
+  assert.match(bm17.publicInterface, /BM11/);
+  assert.doesNotMatch(`${bm11.owns} ${bm11.publicInterface}`, /主帖|内容审核版本|风险下架/);
+  assert.equal(backend.version, '1.1');
+  assert.equal(backend.validation.contractChecks.modules, 16);
+  assert.equal(backend.validation.amendmentChecks.modules, 17);
+  assert.equal(backend.validation.amendmentChecks.acceptanceItems, 16);
+  assert.equal(backend.validation.amendmentChecks.productAcceptanceExecuted, false);
+  assert.equal(progress.status, 'in-progress');
+  assert.equal(progress.productAcceptancePassed, false);
+  assert.equal(progress.cloudMutationsPerformed, false);
+  assert.equal(progress.evidence.merchantPostRuleOwnershipDecision.ownerModule, 'BM17');
   assert.ok(map.unresolved.some((item) => item.id === 'retention-and-erasure-periods'));
   assert.ok(map.sources.some((source) => source.path === 'docs/prd.md' && source.reference.includes('F01-F22')));
   assert.ok(map.sources.some((source) => source.path === 'docs/backend-architecture-contract-20261103.md' && source.reference.includes('Section 3')));

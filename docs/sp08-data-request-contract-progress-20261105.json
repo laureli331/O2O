@@ -321,6 +321,17 @@
     "ratingResponseTextValidation": "packages/shared/src/contracts/rating-response-text.ts#validateRatingResponseText",
     "f16RatingResponseTextLimitation": "仅校验 F16 回应文字必填1–300 Unicode码点并去首尾空白；不实现回应资格、版本、内容检测/人工审核、驳回重提、唯一公开回应位置、读取权限或发布；完整评价回应生命周期仍归SP21，按其原任务卡与质量合同验收。",
     "aiOrganizationTextValidation": "packages/shared/src/contracts/ai-organization-text.ts#validateAiOrganizationText",
-    "f17AiOrganizationTextLimitation": "仅校验 F17 输入文字1–1000、候选标题1–30、候选说明1–1000 Unicode码点并去首尾空白；不解析候选对象或合法字段，不证明私密输入隔离、候选事实准确性、请求/表单版本、用户选择/采用关联、用量/状态、供应商调用或自动写回。完整 AI 能力由 SP31–SP32 按原任务卡和质量合同验收，真实模型仍受 AG01 限制。"
+    "f17AiOrganizationTextLimitation": "仅校验 F17 输入文字1–1000、候选标题1–30、候选说明1–1000 Unicode码点并去首尾空白；不解析候选对象或合法字段，不证明私密输入隔离、候选事实准确性、请求/表单版本、用户选择/采用关联、用量/状态、供应商调用或自动写回。完整 AI 能力由 SP31–SP32 按原任务卡和质量合同验收，真实模型仍受 AG01 限制。",
+    "merchantPostRuleOwnershipDecision": {
+      "date": "2026-11-06",
+      "status": "confirmed-logical-ownership-only",
+      "selectedOption": "add-BM17",
+      "ownerModule": "BM17",
+      "merchantProfileAndRightsOwner": "BM11",
+      "implementationOwner": "SP24",
+      "reference": "docs/sp08-object-ownership-map-20261105.json#decisions.merchant-post-rule-owner",
+      "productAcceptancePassed": false,
+      "cloudMutationsPerformed": false
+    }
   }
 }

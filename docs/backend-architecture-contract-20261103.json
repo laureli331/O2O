@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-11-03",
-  "version": "1.0",
+  "version": "1.1",
   "document": "docs/backend-architecture-contract-20261103.md",
   "planDocument": "docs/v1-executable-development-plan-20261027.md",
   "qualityDocument": "docs/v1-quality-acceptance-20261027.md",
@@ -256,7 +256,7 @@
       "id": "BM11",
       "name": "商家入驻",
       "owns": "主体档案、审核、通知成功后的窗口、实际开通和续费权益",
-      "publicInterface": "接收已核实平台款，按原规则维护30天权益和必要更正；不把审核或付款当已经开通",
+      "publicInterface": "接收已核实平台款，按原规则维护30天权益和必要更正；向BM17提供已审核经营档案与当前有效权益只读事实；不把审核或付款当已经开通",
       "tasks": [
         "SP23",
         "SP24"
@@ -309,6 +309,15 @@
       "tasks": [
         "SP31",
         "SP32"
+      ]
+    },
+    {
+      "id": "BM17",
+      "name": "商家内容",
+      "owns": "F22商家主帖草稿、内容审核版本、审核通过后的公开版本替换、内容级风险下架状态及对应历史；不拥有商家主体/入驻权益、运营处置案件或跨产品限制记录",
+      "publicInterface": "提供主帖提交、版本审核、唯一公开版切换与内容级下架事实；依赖BM11已审核经营档案与当前有效权益；仅当前审核通过且可展示版本公开；接受BM10授权处置结果，不管理案件或独立限制",
+      "tasks": [
+        "SP24"
       ]
     }
   ],
@@ -521,7 +530,7 @@
         "RT09"
       ],
       "input": "逐项登记业务事实、规则、公开Interface及读写消费者；选取计佣规则变更，追踪全部调用处。",
-      "expected": "16项职责有唯一所有者；跨Module仅通过Interface，同一事务由shared用例协调；修改规则只改所有者及受影响合同，不在UI、云入口或账单复制算法。",
+      "expected": "17项职责有唯一所有者；跨Module仅通过Interface，同一事务由shared用例协调；修改规则只改所有者及受影响合同，不在UI、云入口或账单复制算法。",
       "requiredEvidence": [
         "Module图",
         "Interface前置/不变量/顺序/错误/配置表",
@@ -1548,6 +1557,27 @@
       "action": "保留执行Agent的未完成文件；由其补齐真实受控探针证据后重新全量检查，不伪造结果、不删除/跳过该项来宣称工作区通过"
     },
     "workspaceAllChecksPassed": false,
-    "userConfirmedExecutionAgentPaused": true
-  }
+    "userConfirmedExecutionAgentPaused": true,
+    "amendmentChecks": {
+      "version": "1.1",
+      "modules": 17,
+      "acceptanceItems": 16,
+      "originalContractChecksPreserved": true,
+      "f22Decision": "BM17",
+      "f22ImplementationOwner": "SP24",
+      "productAcceptanceExecuted": false,
+      "cloudOperationsPerformed": false
+    }
+  },
+  "amendments": [
+    {
+      "date": "2026-11-06",
+      "version": "1.1",
+      "decision": "用户确认方案一：新增BM17商家内容，作为F22内容生命周期规则唯一所有者；BM11继续负责商家主体档案、入驻审核、开通和续费权益。",
+      "scope": "BM17依赖BM11只读已审核经营档案及当前有效权益；内容审核版本、唯一公开版切换和内容级风险下架归BM17；运营处置案件与跨产品限制仍归BM10。",
+      "implementation": "F22物理模型、具体Interface、服务端授权、版本竞争、下架与恢复仍由SP24按原验收实现；本次仅作逻辑所有权文档决定。",
+      "productImplementationPerformed": false,
+      "cloudOperationsPerformed": false
+    }
+  ]
 }
