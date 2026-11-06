@@ -1967,3 +1967,89 @@ test('F18 dashboard date-range validator stays pure and does not choose report d
   assert.equal(typeof shared.validateDashboardDateRange, 'function');
   assert.doesNotMatch(source, /\bimport\b|\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|Intl\.|fetch\s*\(|collection\s*\(|cloud\.callFunction|aggregate\s*\(/);
 });
+
+test('F19 service start and expiry fields validate Beijing civil date-times only', () => {
+  const { validateBeijingServiceTimeRange } = loadTypeScriptModule('contracts/beijing-service-time-range.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /F19 \| 服务时间与到期\/延期[\s\S]*维修\/跑腿\/其它开始日期时间＋服务到期/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F19').ownerTask, 'SP18-SP20');
+  assert.ok(progress.scope.includes('f19-beijing-service-time-range-field-validation'));
+  assert.equal(progress.evidence.beijingServiceTimeRangeValidation, 'packages/shared/src/contracts/beijing-service-time-range.ts#validateBeijingServiceTimeRange');
+  assert.equal(progress.evidence.f19ServiceTimeRangeLimitation.selectedFormatOption, 1);
+  assert.equal(progress.evidence.f19ServiceTimeRangeLimitation.ownerTask, 'SP18-SP20');
+  assert.equal(progress.evidence.f19ServiceTimeRangeLimitation.productAcceptancePassed, false);
+  assert.deepEqual(validateBeijingServiceTimeRange({
+    startDateTime: '2024-02-29T23:59',
+    endDateTime: '2024-03-01T00:00',
+  }), {
+    ok: true,
+    startDateTime: '2024-02-29T23:59',
+    endDateTime: '2024-03-01T00:00',
+  });
+  assert.deepEqual(validateBeijingServiceTimeRange({
+    startDateTime: '2026-11-06T09:00',
+    endDateTime: '2026-11-06T10:30',
+  }), {
+    ok: true,
+    startDateTime: '2026-11-06T09:00',
+    endDateTime: '2026-11-06T10:30',
+  });
+  for (const startDateTime of [
+    '0000-01-01T00:00',
+    '2023-02-29T12:00',
+    '2026-04-31T12:00',
+    '2026-13-01T12:00',
+    '2026-01-01T24:00',
+    '2026-01-01T12:60',
+    '2026-01-01T12:00:00',
+    '2026-01-01T12:00Z',
+    ' 2026-01-01T12:00',
+  ]) {
+    assert.deepEqual(validateBeijingServiceTimeRange({
+      startDateTime,
+      endDateTime: '2026-12-01T00:00',
+    }), { ok: false, reason: 'invalid-start-date-time' });
+  }
+  assert.deepEqual(validateBeijingServiceTimeRange({
+    startDateTime: '2026-01-01T12:00',
+    endDateTime: '2026-02-30T12:00',
+  }), { ok: false, reason: 'invalid-end-date-time' });
+  assert.deepEqual(validateBeijingServiceTimeRange({
+    startDateTime: '2026-01-01T12:00',
+    endDateTime: '2026-01-01T12:00',
+  }), { ok: false, reason: 'start-not-before-end' });
+  assert.deepEqual(validateBeijingServiceTimeRange({
+    startDateTime: '2026-01-02T00:00',
+    endDateTime: '2026-01-01T23:59',
+  }), { ok: false, reason: 'start-not-before-end' });
+  assert.deepEqual(validateBeijingServiceTimeRange({
+    startDateTime: '2026-01-01T12:00',
+    endDateTime: '2026-01-01T13:00',
+    timezone: 'UTC',
+  }), { ok: false, reason: 'unexpected-field' });
+  for (const value of [undefined, null, 1, [], '2026-01-01T12:00']) {
+    assert.deepEqual(validateBeijingServiceTimeRange(value), { ok: false, reason: 'not-object' });
+  }
+  assert.deepEqual(validateBeijingServiceTimeRange({ startDateTime: 202601011200, endDateTime: '2026-01-02T12:00' }), {
+    ok: false,
+    reason: 'invalid-start-date-time',
+  });
+  assert.deepEqual(validateBeijingServiceTimeRange({ startDateTime: '2026-01-01T12:00' }), {
+    ok: false,
+    reason: 'invalid-end-date-time',
+  });
+});
+
+test('F19 Beijing service time validator stays pure and does not implement transaction lifecycle rules', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'beijing-service-time-range.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/beijing-service-time-range';/);
+  assert.equal(typeof shared.validateBeijingServiceTimeRange, 'function');
+  assert.doesNotMatch(source, /\bimport\b|\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|Date\.parse|Intl\.|fetch\s*\(|collection\s*\(|cloud\.callFunction/);
+  assert.match(source, /local wall-clock string/);
+});
