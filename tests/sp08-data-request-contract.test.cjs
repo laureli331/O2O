@@ -1729,3 +1729,40 @@ test('F15 shared image count validator does not infer media validation or platfo
   assert.equal(typeof shared.validateRatingImageCount, 'function');
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|JPEG|PNG|MB/);
 });
+
+test('F15 optional rating text accepts omission and blank as no text, and validates 1-300 Unicode code points when present', () => {
+  const { validateRatingText } = loadTypeScriptModule('contracts/rating-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /F15[^\r\n]*文字选填，填时1—300字符/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F15').ownerTask, 'SP21');
+  assert.ok(progress.scope.includes('f15-rating-text-validation'));
+  assert.ok(progress.reuseDecision.f15RatingText.includes('Array.from'));
+  assert.equal(progress.evidence.ratingTextValidation, 'packages/shared/src/contracts/rating-text.ts#validateRatingText');
+  assert.ok(progress.evidence.f15TextLimitation.includes('SP21'));
+
+  assert.deepEqual(validateRatingText(undefined), { ok: true, value: '', characterCount: 0 });
+  assert.deepEqual(validateRatingText('   \n '), { ok: true, value: '', characterCount: 0 });
+  assert.deepEqual(validateRatingText('  好  '), { ok: true, value: '好', characterCount: 1 });
+  assert.deepEqual(validateRatingText('🛠'.repeat(300)), {
+    ok: true,
+    value: '🛠'.repeat(300),
+    characterCount: 300,
+  });
+  assert.deepEqual(validateRatingText('🛠'.repeat(301)), { ok: false, reason: 'too-long' });
+  for (const value of [null, 1, {}, []]) {
+    assert.deepEqual(validateRatingText(value), { ok: false, reason: 'not-string' });
+  }
+});
+
+test('F15 shared rating text validator is a field-only check without moderation, transport, or platform access', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'rating-text.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/rating-text';/);
+  assert.equal(typeof shared.validateRatingText, 'function');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|moderation|review/);
+});

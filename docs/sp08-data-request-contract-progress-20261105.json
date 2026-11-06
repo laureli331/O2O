@@ -36,7 +36,8 @@
     "f01-account-profile-nickname-and-optional-wechat-id-text-validation",
     "f12-report-appeal-text-reason-and-image-count-validation",
     "f14-rating-score-field-validation",
-    "f15-rating-image-count-validation"
+    "f15-rating-image-count-validation",
+    "f15-rating-text-validation"
   ],
   "sources": [
     {
@@ -214,7 +215,8 @@
     "f01AccountProfileText": "复用项目既有 provider-profile-text.ts/private-address-book.ts 的 String.trim() 与 Array.from() 码点计数模式及 contracts/index.ts 导出；此前没有 F01 昵称/微信号校验器。PRD F01 范围为昵称必填1-20、微信号选填1-50，按用户确认的 Unicode 码点计数。原生 ECMAScript 和 node:test 足够，无适用的微信/CloudBase API或第三方依赖；测试覆盖边界、emoji、空白、选填空值、错误类型/字段及纯 shared 限制。它不校验微信号格式或身份/资格，相关F01页面与身份/资格核验仍归SP09。",
     "f12ReportAppealFields": "复用项目内 validateIntegerCountInRange 的整数范围 helper，以及 F02/F03/F06/F07/F09 已用的 String.trim() 与 Array.from() Unicode 码点模式；PRD F12 明确原因与文本/图片范围，F12 归属映射明确后台处置由 SP12 负责。没有适用的微信/CloudBase SDK 或第三方库可替代共享纯字段检查，故新增独立模块并从 contracts/index.ts 导出，不新增运行依赖。专项 node:test 覆盖六个原因、Other 说明必填、边界/空白/类型、图片数 0-9 与共享层平台隔离。仅做字段检查，不定义 wire code/物理模式/API，不实现案件可见性、操作者身份、通知、状态流转、审计或服务端权限。",
     "f14RatingScore": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange 与 contracts/index.ts 导出模式；PRD F14 规定 attitude、efficiency、communication 三项整数1–5。新增字段白名单薄层，不增加运行依赖或调用平台 API；node:test 覆盖三项上下界、非整数/非数值及未知字段。不设置默认评分。",
-    "f15RatingImageCount": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange，范围严格按 PRD F15 的 0–3 张；项目内已有整数边界 helper。平台 SDK 不定义此共享字段规则，媒体上传能力与计数校验无关；第三方库不适用于纯整数范围判断，Number.isInteger 足够。只增加轻量语义包装，不新增运行依赖。专项 node:test 核对来源、边界和无平台行为；不验证 JPEG/PNG、单张大小、内容、权限或审核。"
+    "f15RatingImageCount": "复用 packages/shared/src/contracts/integer-count-range.ts#validateIntegerCountInRange，范围严格按 PRD F15 的 0–3 张；项目内已有整数边界 helper。平台 SDK 不定义此共享字段规则，媒体上传能力与计数校验无关；第三方库不适用于纯整数范围判断，Number.isInteger 足够。只增加轻量语义包装，不新增运行依赖。专项 node:test 核对来源、边界和无平台行为；不验证 JPEG/PNG、单张大小、内容、权限或审核。",
+    "f15RatingText": "复用项目已有可选普通文本校验模式及 String.trim() / Array.from() Unicode 码点计数，不引入第三方库或运行依赖；现有文本 validator 覆盖其他业务字段，故新增 F15 专属薄层语义校验并从 contracts/index.ts 导出。缺省或裁剪后空白规范为空字符串；非空文本去首尾空白后按 PRD 上限300码点校验。专项 node:test 覆盖来源、可选空值、边界、emoji、无效类型和纯 shared 边界；不验证图文评价单元、内容安全、审核、权限或公开流程。"
   },
   "notProven": [
     "cloudbase-authentication-and-security-rules",
@@ -255,12 +257,12 @@
     "objectOwnershipMap": "docs/sp08-object-ownership-map-20261105.md",
     "focusedTests": {
       "command": "node --test tests/sp08-data-request-contract.test.cjs",
-      "passed": 71,
+      "passed": 73,
       "failed": 0
     },
     "fullRegression": {
       "command": "node --test tests/*.test.cjs",
-      "passed": 1724,
+      "passed": 1726,
       "failed": 0,
       "skipped": 0
     },
@@ -299,6 +301,8 @@
     "ratingScoreValidation": "packages/shared/src/contracts/rating-score-fields.ts#validateRatingScore",
     "f14Limitation": "仅验证态度、效率、沟通字段名及整数1–5范围；不实现评分资格、自然人身份、经历归属、唯一有效记录、编辑时限、统计、审核或公开脱敏。完整评价生命周期由SP21按原任务及质量合同验收。",
     "ratingImageCountValidation": "packages/shared/src/contracts/rating-image-count.ts#validateRatingImageCount",
-    "f15Limitation": "仅校验 F15 图片数量是整数0–3；不验证JPEG/PNG、单张5MB限制、图像内容/元数据、所有权、上传/读取权限、审核结果或公开版本切换。完整评价图文、审核版本、隐私和公开流程归SP21，仍按原任务及质量合同验收。"
+    "f15Limitation": "仅校验 F15 图片数量是整数0–3；不验证JPEG/PNG、单张5MB限制、图像内容/元数据、所有权、上传/读取权限、审核结果或公开版本切换。完整评价图文、审核版本、隐私和公开流程归SP21，仍按原任务及质量合同验收。",
+    "ratingTextValidation": "packages/shared/src/contracts/rating-text.ts#validateRatingText",
+    "f15TextLimitation": "仅校验 F15 可选评价文字：缺省或裁剪后空白规范为空字符串；非空文本去首尾空白并按 Unicode 码点校验最多300，不验证图文评价单元、内容安全、身份/资格、审核、权限或公开版本；完整评价生命周期仍归SP21，按原任务卡和质量合同验收。"
   }
 }

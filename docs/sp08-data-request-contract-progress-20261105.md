@@ -115,8 +115,8 @@
 - `npm run check:shared`：通过。
 - `npm run check:boundaries`：通过。
 - `node --test tests/executable-development-plan.test.cjs`：46/46 通过。
-- `node --test tests/sp08-data-request-contract.test.cjs`：71/71 通过（含 F14 评分分值与 F15 图片数量字段边界和 shared 纯度检查）。
-- `node --test tests/*.test.cjs`：1724/1724 通过，无跳过。
+- `node --test tests/sp08-data-request-contract.test.cjs`：73/73 通过（含 F15 评价文字缺省/空白、Unicode 码点边界及 shared 纯度检查）。
+- `node --test tests/*.test.cjs`：1726/1726 通过，无跳过。
 - `npm run build:weapp`：Webpack 编译成功；输出显示自有声明数量为 0，声明编译器未执行；存在 `fs.Stats` 弃用警告。
 - `npm run build:web`：构建成功；Vite 配置加载器提示格式警告，无构建错误。
 - 以上验证限于本地类型、金额与文本边界、工作区边界和构建回归；它们不等于 SP08 产品验收或后端物理能力验收通过。
@@ -144,6 +144,14 @@
 - 测试：专项用例核对 PRD 与对象归属来源、0/1/3 合法边界、负数/4 越界、非整数和非数值；共享边界用例确认公开导出及实现不夹带上传、下载或媒体格式规则。
 - 适配范围：仅检查数量为整数 0–3；不验证 JPEG/PNG、单张 5MB 限制、图像内容/元数据、所有权、上传与读取权限、审核结果或新旧公开版本切换。
 - 后续归属：完整评价图文、审核版本、隐私和公开流程由 SP21 按原任务及质量合同验收；本地字段校验不关闭 SP08 产品/数据库验收，也不提前标记 SP21 通过。
+
+## F15 可选评价文字字段校验增量（2026-11-06）
+
+- 来源：`docs/prd.md` 第 13.1 节 F15 规定评价文字选填，填写时 1–300 字符；`docs/sp08-object-ownership-map-20261105.md` 将评价对象及完整图文审核流程归 SP21。
+- 复用：复用项目内 `String.trim()` 与 `Array.from()` Unicode 码点校验模式，使用 ECMAScript 原生方法，不引入平台 SDK、第三方库或运行依赖。既有文本校验器对应其它字段语义，因此增加 F15 专属 validator 并从 `packages/shared/src/contracts/index.ts` 导出。
+- 规则：缺省或去首尾空白后为空的可选评价文字规范为 `''`；非空文字去首尾空白后按已确认的 Unicode 码点口径限制最多 300 个码点。拒绝非字符串输入。
+- 测试：新增专项用例覆盖 PRD 来源、SP21 归属、缺省/空白、规范化、1/300/301 码点、补充平面 emoji、错误类型及 shared 平台隔离。
+- 后续归属：本增量只校验可选文字字段，不验证图文评价是否至少包含一项、内容安全、身份/资格、审核、读取权限或公开版本。完整评价生命周期仍由 SP21 按原任务卡和质量合同验收；本地字段校验不关闭 SP08 产品/数据库验收，也不提前标记 SP21 通过。
 
 ## 未证明及后续归属
 
