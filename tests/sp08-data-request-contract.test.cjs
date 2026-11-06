@@ -1511,6 +1511,13 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.equal(mapping.decision.idEncoding.payloadIncluded, false);
   assert.ok(mapping.decision.idEncoding.localVerification.includes('Node adapter: SHA-256 of UTF-8 ASCII known vector'));
   assert.ok(mapping.decision.idEncoding.localVerification.includes('Node adapter: SHA-256 of UTF-8 Chinese plus emoji known vector'));
+  assert.equal(
+    mapping.decision.payloadEncodingUtility.status,
+    'shared-pure-serializer-implemented; operation-normalization-and-digest-integration-unresolved',
+  );
+  assert.equal(mapping.decision.payloadEncodingUtility.path, 'packages/shared/src/contracts/canonical-json.ts');
+  assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No operation-specific normalized payload selected or implemented'));
+  assert.ok(mapping.decision.payloadEncodingUtility.reuseSurvey.decision.includes('strict rejection contract'));
   assert.ok(!mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
   assert.ok(mapping.unresolved.includes('operation-specific-payload-normalization-and-equivalence'));
   assert.ok(mapping.unresolved.includes('collection-and-retention-policy'));
@@ -1524,6 +1531,8 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.match(mappingMarkdown, /docs\.cloudbase\.net\/database\/transaction/);
   assert.match(mappingMarkdown, /idem_v1_/);
   assert.match(mappingMarkdown, /`operationKey` 使用已通过命令解析的原始字符串/);
+  assert.match(mappingMarkdown, /不定义业务等价性/);
+  assert.match(mappingMarkdown, /canonical-json\.ts/);
 
   const sdkAudit = mapping.cloudBaseSdkAudit;
   assert.equal(sdkAudit.sourceKind, 'exact-npm-tarball-inspection');

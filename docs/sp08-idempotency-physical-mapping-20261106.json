@@ -40,6 +40,34 @@
         "unknown outcome recovery"
       ]
     },
+    "payloadEncodingUtility": {
+      "status": "shared-pure-serializer-implemented; operation-normalization-and-digest-integration-unresolved",
+      "path": "packages/shared/src/contracts/canonical-json.ts",
+      "behavior": [
+        "Sort plain-object keys by JavaScript UTF-16 code-unit order and recursively preserve array order",
+        "Accept JSON strings, booleans, null, and finite numbers; encode negative zero as JSON zero",
+        "Reject unsupported values, non-finite numbers, cycles, accessors, sparse arrays, extra properties, symbols, and non-plain objects",
+        "Inspect own property descriptors without invoking getters",
+        "No business-field normalization, payload-equivalence rule, or digest integration"
+      ],
+      "localVerification": [
+        "tests/sp08-canonical-json.test.cjs: 8 focused behavior and boundary tests",
+        "npm run check:shared: strict TypeScript check"
+      ],
+      "reuseSurvey": {
+        "projectSearch": "No existing stable JSON encoder found in the shared workspace",
+        "candidate": "fast-json-stable-stringify@2.1.0",
+        "dependencyState": "transitive dependency of Ajv; not a direct shared dependency",
+        "license": "MIT",
+        "sourceReview": "Local exact package source calls toJSON/getters, coerces non-finite numbers to null, and omits undefined object properties; its declaration contains any",
+        "decision": "Not adopted because its input coercion and typing conflict with the strict rejection contract; maintenance activity was not used to justify adoption"
+      },
+      "limits": [
+        "No operation-specific normalized payload selected or implemented",
+        "No payload digest comparison or same-key replay/reject behavior connected",
+        "No CloudBase or business transaction behavior proven"
+      ]
+    },
     "prohibitedApproaches": [
       "set-as-exclusive-claim",
       "application-check-then-write"

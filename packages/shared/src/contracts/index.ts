@@ -1,4 +1,5 @@
 export * from './command';
+export * from './canonical-json';
 export * from './commission-billing-fields';
 export * from './beijing-service-time-range';
 export * from './dashboard-date-range';
