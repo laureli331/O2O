@@ -49,6 +49,7 @@ test('shared public entry exports the SP08 request and money contracts', () => {
   assert.equal(typeof shared.validatePrivateAddressBookText, 'function');
   assert.equal(typeof shared.parseRepairOtherPublicTextProjection, 'function');
   assert.equal(typeof shared.parsePrivateAddressBookEntryDraft, 'function');
+  assert.equal(typeof shared.createPrivateAddressBookDraftPayloadDigest, 'function');
   assert.equal(typeof shared.parsePrivateAddressBookDefaultPointer, 'function');
   assert.equal(typeof shared.clearPrivateAddressBookDefaultOnDelete, 'function');
   assert.equal(typeof shared.createPrivateAddressBookTaskSnapshot, 'function');
@@ -332,6 +333,88 @@ test('F09 private address-book entry draft parser returns only normalized PRD fi
       remark: '',
     },
   });
+});
+
+test('F09 normalized address draft payload digest treats field order, trimmed edges, and absent remark equivalently', () => {
+  const { createPrivateAddressBookDraftPayloadDigest } = loadTypeScriptModule('index.ts');
+  const hashInputs = [];
+  const hash = (input) => {
+    hashInputs.push(input);
+    return createHash('sha256').update(input, 'utf8').digest('hex');
+  };
+  const first = createPrivateAddressBookDraftPayloadDigest({
+    contact: '  张三🛠  ',
+    phone: '13800138000',
+    community: ' 湘阴渡社区 ',
+    detailAddress: '  1号楼101室  ',
+  }, hash);
+  const second = createPrivateAddressBookDraftPayloadDigest({
+    remark: '',
+    detailAddress: '1号楼101室',
+    community: '湘阴渡社区',
+    phone: '13800138000',
+    contact: '张三🛠',
+  }, hash);
+
+  assert.deepEqual(first, { ok: true, digest: first.digest });
+  assert.match(first.digest, /^[a-f0-9]{64}$/);
+  assert.deepEqual(second, first);
+  assert.equal(hashInputs.length, 2);
+  assert.equal(hashInputs[0], hashInputs[1]);
+  assert.equal(hashInputs[0], '["o2o.f09.private-address-book-entry-draft",1,{"community":"湘阴渡社区","contact":"张三🛠","detailAddress":"1号楼101室","phone":"13800138000","remark":""}]');
+  assert.doesNotMatch(JSON.stringify(first), /张三|13800138000|湘阴渡社区|101室/);
+});
+
+test('F09 normalized address draft payload digest changes when any normalized field changes', () => {
+  const { createPrivateAddressBookDraftPayloadDigest } = loadTypeScriptModule('index.ts');
+  const hash = (input) => createHash('sha256').update(input, 'utf8').digest('hex');
+  const baseline = {
+    contact: '张三',
+    phone: '13800138000',
+    community: '湘阴渡社区',
+    detailAddress: '1号楼101室',
+    remark: '',
+  };
+  const original = createPrivateAddressBookDraftPayloadDigest(baseline, hash);
+  assert.equal(original.ok, true);
+
+  for (const [field, value] of Object.entries({
+    contact: '李四',
+    phone: '13900139000',
+    community: '湘阴村',
+    detailAddress: '2号楼202室',
+    remark: '请先电话联系',
+  })) {
+    const changed = createPrivateAddressBookDraftPayloadDigest({ ...baseline, [field]: value }, hash);
+    assert.equal(changed.ok, true, field);
+    assert.notEqual(changed.digest, original.digest, field);
+  }
+});
+
+test('F09 normalized address draft payload digest rejects invalid input before hashing and rejects malformed digest output', () => {
+  const { createPrivateAddressBookDraftPayloadDigest } = loadTypeScriptModule('index.ts');
+  let hashCalls = 0;
+  const hash = () => {
+    hashCalls += 1;
+    return 'a'.repeat(64);
+  };
+  const invalidDraft = createPrivateAddressBookDraftPayloadDigest({
+    contact: '张三',
+    phone: 'not-a-phone',
+    community: '湘阴渡社区',
+    detailAddress: '1号楼101室',
+  }, hash);
+
+  assert.deepEqual(invalidDraft, { ok: false, reason: 'invalid-draft' });
+  assert.equal(hashCalls, 0);
+
+  const invalidDigest = createPrivateAddressBookDraftPayloadDigest({
+    contact: '张三',
+    phone: '13800138000',
+    community: '湘阴渡社区',
+    detailAddress: '1号楼101室',
+  }, () => 'A'.repeat(64));
+  assert.deepEqual(invalidDigest, { ok: false, reason: 'invalid-sha256-output' });
 });
 
 test('F09 private address-book entry draft parser rejects malformed, incomplete, and client-asserted fields', () => {
@@ -1513,10 +1596,14 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.ok(mapping.decision.idEncoding.localVerification.includes('Node adapter: SHA-256 of UTF-8 Chinese plus emoji known vector'));
   assert.equal(
     mapping.decision.payloadEncodingUtility.status,
-    'shared-pure-serializer-implemented; operation-normalization-and-digest-integration-unresolved',
+    'shared-pure-serializer-and-f09-normalized-draft-digest-implemented; complete-operation-equivalence-unresolved',
   );
   assert.equal(mapping.decision.payloadEncodingUtility.path, 'packages/shared/src/contracts/canonical-json.ts');
-  assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No operation-specific normalized payload selected or implemented'));
+  assert.equal(mapping.decision.payloadEncodingUtility.f09DraftDigestPath, 'packages/shared/src/contracts/private-address-book-draft-digest.ts');
+  assert.deepEqual(mapping.decision.payloadEncodingUtility.f09DraftDigestContract.normalizedFields, [
+    'community', 'contact', 'detailAddress', 'phone', 'remark',
+  ]);
+  assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No complete operation-specific payload equivalence or same-key replay/reject behavior connected'));
   assert.ok(mapping.decision.payloadEncodingUtility.reuseSurvey.decision.includes('strict rejection contract'));
   assert.ok(!mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
   assert.ok(mapping.unresolved.includes('operation-specific-payload-normalization-and-equivalence'));
@@ -1531,8 +1618,10 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.match(mappingMarkdown, /docs\.cloudbase\.net\/database\/transaction/);
   assert.match(mappingMarkdown, /idem_v1_/);
   assert.match(mappingMarkdown, /`operationKey` 使用已通过命令解析的原始字符串/);
-  assert.match(mappingMarkdown, /不定义业务等价性/);
+  assert.match(mappingMarkdown, /只是 F09 草稿的局部 payload primitive/);
   assert.match(mappingMarkdown, /canonical-json\.ts/);
+  assert.match(mappingMarkdown, /private-address-book-draft-digest\.ts/);
+  assert.match(mappingMarkdown, /不是匿名化或保密机制/);
 
   const sdkAudit = mapping.cloudBaseSdkAudit;
   assert.equal(sdkAudit.sourceKind, 'exact-npm-tarball-inspection');

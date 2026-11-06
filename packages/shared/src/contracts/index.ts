@@ -16,6 +16,7 @@ export * from './money';
 export * from './merchant-post-fields';
 export * from './order-objection-fields';
 export * from './private-address-book';
+export * from './private-address-book-draft-digest';
 export * from './provider-license-image-count';
 export * from './public-image-count';
 export * from './provider-profile-text';

@@ -41,17 +41,29 @@
       ]
     },
     "payloadEncodingUtility": {
-      "status": "shared-pure-serializer-implemented; operation-normalization-and-digest-integration-unresolved",
+      "status": "shared-pure-serializer-and-f09-normalized-draft-digest-implemented; complete-operation-equivalence-unresolved",
       "path": "packages/shared/src/contracts/canonical-json.ts",
+      "f09DraftDigestPath": "packages/shared/src/contracts/private-address-book-draft-digest.ts",
+      "f09DraftDigestContract": {
+        "domain": "o2o.f09.private-address-book-entry-draft",
+        "version": 1,
+        "normalizedFields": ["community", "contact", "detailAddress", "phone", "remark"],
+        "hashInput": "canonical JSON array [domain, version, normalizedDraft] encoded as UTF-8 by the injected SHA-256 adapter",
+        "output": "lowercase 64-character SHA-256 hex; no address fields returned",
+        "adapter": "Injected by the caller; shared code imports no Node, WeChat, CloudBase, or storage API",
+        "privacyLimit": "A plain digest is not anonymization or confidentiality for personal address data"
+      },
       "behavior": [
         "Sort plain-object keys by JavaScript UTF-16 code-unit order and recursively preserve array order",
         "Accept JSON strings, booleans, null, and finite numbers; encode negative zero as JSON zero",
         "Reject unsupported values, non-finite numbers, cycles, accessors, sparse arrays, extra properties, symbols, and non-plain objects",
         "Inspect own property descriptors without invoking getters",
-        "No business-field normalization, payload-equivalence rule, or digest integration"
+        "The F09 address-book draft digest reuses the existing parser to trim and validate the five normalized draft fields before serialization",
+        "The F09 digest is a local payload primitive only; it does not define complete add/update/delete command equivalence"
       ],
       "localVerification": [
         "tests/sp08-canonical-json.test.cjs: 8 focused behavior and boundary tests",
+        "tests/sp08-data-request-contract.test.cjs: F09 normalization equivalence, changed-field digest, invalid draft, malformed adapter output, and privacy-safe result tests",
         "npm run check:shared: strict TypeScript check"
       ],
       "reuseSurvey": {
@@ -63,7 +75,8 @@
         "decision": "Not adopted because its input coercion and typing conflict with the strict rejection contract; maintenance activity was not used to justify adoption"
       },
       "limits": [
-        "No operation-specific normalized payload selected or implemented",
+        "Only the F09 normalized address-draft payload is encoded; address IDs, operation kind, expected versions, default-pointer changes, and other command fields remain undefined here",
+        "No complete operation-specific payload equivalence or same-key replay/reject behavior connected",
         "No payload digest comparison or same-key replay/reject behavior connected",
         "No CloudBase or business transaction behavior proven"
       ]
