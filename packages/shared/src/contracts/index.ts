@@ -16,5 +16,6 @@ export * from './report-appeal-fields';
 export * from './rating-score-fields';
 export * from './rating-image-count';
 export * from './rating-text';
+export * from './rating-response-text';
 export * from './repair-other-public-text';
 export * from './result';

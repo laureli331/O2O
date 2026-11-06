@@ -1766,3 +1766,40 @@ test('F15 shared rating text validator is a field-only check without moderation,
   assert.equal(typeof shared.validateRatingText, 'function');
   assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|moderation|review/);
 });
+
+test('F16 required rating response text trims and validates 1-300 Unicode code points', () => {
+  const { validateRatingResponseText } = loadTypeScriptModule('contracts/rating-response-text.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /F16 \| 一次回应 \| 关联原有效评分方向与被评对象；文字必填1—300字符，不配图/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F16').ownerTask, 'SP21');
+  assert.ok(progress.scope.includes('f16-rating-response-text-validation'));
+  assert.ok(progress.reuseDecision.f16RatingResponseText.includes('Unicode 码点'));
+  assert.equal(progress.evidence.ratingResponseTextValidation, 'packages/shared/src/contracts/rating-response-text.ts#validateRatingResponseText');
+  assert.ok(progress.evidence.f16RatingResponseTextLimitation.includes('SP21'));
+
+  assert.deepEqual(validateRatingResponseText(undefined), { ok: false, reason: 'required' });
+  assert.deepEqual(validateRatingResponseText('  \n '), { ok: false, reason: 'required' });
+  assert.deepEqual(validateRatingResponseText('  好  '), { ok: true, value: '好', characterCount: 1 });
+  assert.deepEqual(validateRatingResponseText('🛠'.repeat(300)), {
+    ok: true,
+    value: '🛠'.repeat(300),
+    characterCount: 300,
+  });
+  assert.deepEqual(validateRatingResponseText('🛠'.repeat(301)), { ok: false, reason: 'too-long' });
+  for (const value of [null, 1, {}, []]) {
+    assert.deepEqual(validateRatingResponseText(value), { ok: false, reason: 'not-string' });
+  }
+});
+
+test('F16 shared rating response text validator stays field-only', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'rating-response-text.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/rating-response-text';/);
+  assert.equal(typeof shared.validateRatingResponseText, 'function');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(|uploadFile|downloadFile|moderation|review|publish/);
+});
