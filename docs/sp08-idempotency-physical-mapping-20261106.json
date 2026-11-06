@@ -52,6 +52,14 @@
     "projectCapabilityMap": "docs/sp08-database-capability-map-20261105.md",
     "officialSources": [
       {
+        "url": "https://registry.npmjs.org/@cloudbase/node-sdk/-/node-sdk-3.18.7.tgz",
+        "finding": "Exact @cloudbase/node-sdk 3.18.7 npm tarball inspected locally; package metadata says MIT, Node >=12, and exact @cloudbase/database 1.4.3 dependency. SHA-256 is recorded in cloudBaseSdkAudit."
+      },
+      {
+        "url": "https://registry.npmjs.org/@cloudbase/database/-/database-1.4.3.tgz",
+        "finding": "Exact @cloudbase/database 1.4.3 npm tarball inspected locally; package metadata says ISC. SHA-256 and relevant source observations are recorded in cloudBaseSdkAudit."
+      },
+      {
         "url": "https://docs.cloudbase.net/api-reference/webv3-pg/database",
         "finding": "CloudBase database add accepts data and can use a specified document ID; this is API capability evidence, not concurrent idempotency proof."
       },
@@ -73,6 +81,46 @@
       }
     ],
     "dependenciesAdded": []
+  },
+  "cloudBaseSdkAudit": {
+    "sourceKind": "exact-npm-tarball-inspection",
+    "packages": [
+      {
+        "name": "@cloudbase/node-sdk",
+        "version": "3.18.7",
+        "license": "MIT",
+        "enginesNode": ">=12",
+        "dependencies": {
+          "@cloudbase/database": "1.4.3"
+        },
+        "tarballSha256": "EB09C9A74BDA09B19BA35E42A0220F687B0DD39A24EAC7E383C05F0B8A8E30C4"
+      },
+      {
+        "name": "@cloudbase/database",
+        "version": "1.4.3",
+        "license": "ISC",
+        "tarballSha256": "C6DB4CAE51B4DB5C9E05A112E89F8BE033660DD0156A575E65A2D88D3F998A99"
+      }
+    ],
+    "apiShape": [
+      "Node SDK declarations expose startTransaction and runTransaction, and CollectionReference.add returns a result shape that may include id, ids, inserted, ok, and requestId.",
+      "Database 1.4.3 source returns inserted=1, ok=1, id, and requestId for a successful one-document transaction add; a successful single add returns id and requestId."
+    ],
+    "sourceObservations": [
+      "database 1.4.3 collection.add returns a truthy-code result instead of throwing",
+      "database 1.4.3 runTransaction awaits callback success before attempting commit"
+    ],
+    "localAdapter": {
+      "path": "apps/cloud-functions/src/adapters/cloudbase-add-result.ts",
+      "test": "tests/sp08-node-idempotency-adapter.test.cjs",
+      "behavior": "Accept only a one-document receipt with a nonempty id; reject truthy-code or malformed values using a generic error; transaction mode also requires inserted=1 and ok=1.",
+      "sdkDependencyAdded": false
+    },
+    "limits": [
+      "No target CloudBase runtime or concurrent transaction proof",
+      "The local shape guard is not wired into a product transaction handler",
+      "The source observation does not prove backend commit, rollback, duplicate-ID arbitration, or recovery behavior"
+    ]
   },
   "unresolved": [
     "operation-specific-payload-normalization-and-equivalence",

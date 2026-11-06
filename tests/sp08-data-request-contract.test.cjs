@@ -1525,6 +1525,25 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.match(mappingMarkdown, /idem_v1_/);
   assert.match(mappingMarkdown, /`operationKey` 使用已通过命令解析的原始字符串/);
 
+  const sdkAudit = mapping.cloudBaseSdkAudit;
+  assert.equal(sdkAudit.sourceKind, 'exact-npm-tarball-inspection');
+  assert.deepEqual(sdkAudit.packages.map(({ name, version, license }) => ({ name, version, license })), [
+    { name: '@cloudbase/node-sdk', version: '3.18.7', license: 'MIT' },
+    { name: '@cloudbase/database', version: '1.4.3', license: 'ISC' },
+  ]);
+  assert.equal(sdkAudit.packages[0].enginesNode, '>=12');
+  assert.equal(sdkAudit.packages[0].dependencies['@cloudbase/database'], '1.4.3');
+  assert.match(sdkAudit.packages[0].tarballSha256, /^[A-F0-9]{64}$/);
+  assert.match(sdkAudit.packages[1].tarballSha256, /^[A-F0-9]{64}$/);
+  assert.ok(sdkAudit.sourceObservations.includes('database 1.4.3 collection.add returns a truthy-code result instead of throwing'));
+  assert.ok(sdkAudit.sourceObservations.includes('database 1.4.3 runTransaction awaits callback success before attempting commit'));
+  assert.equal(sdkAudit.localAdapter.path, 'apps/cloud-functions/src/adapters/cloudbase-add-result.ts');
+  assert.equal(sdkAudit.localAdapter.sdkDependencyAdded, false);
+  assert.equal(sdkAudit.limits.includes('No target CloudBase runtime or concurrent transaction proof'), true);
+  assert.match(mappingMarkdown, /3\.18\.7/);
+  assert.match(mappingMarkdown, /1\.4\.3/);
+  assert.match(mappingMarkdown, /没有证明目标 CloudBase 运行时/);
+
   assert.ok(progress.scope.includes('deterministic-document-id-add-idempotency-persistence-candidate'));
   assert.ok(progress.notProven.includes('deterministic-id-add-concurrent-collision-transaction-and-recovery-runtime-proof'));
   assert.ok(progress.notProven.includes('atomic-idempotency-claim-with-business-write'));

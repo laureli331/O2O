@@ -65,6 +65,86 @@ test('Node digest adapter has no cloud SDK, environment-secret, or platform depe
   assert.doesNotMatch(source, /wx-server-sdk|@cloudbase\/node-sdk|process\.env|\b(?:window|document|wx)\b|\bany\b/);
 });
 
+test('CloudBase add response guard rejects SDK error-shaped results instead of treating them as inserted documents', () => {
+  const { requireSingleDocumentAddReceipt } = loadTypeScriptModule(
+    'apps/cloud-functions/src/adapters/cloudbase-add-result.ts',
+  );
+  const sdkFailure = {
+    code: 'DATABASE_DUPLICATE_WRITE',
+    message: 'backend detail must not escape this adapter',
+    requestId: 'request-123',
+  };
+
+  assert.throws(() => requireSingleDocumentAddReceipt(sdkFailure), (error) => {
+    assert.equal(error.code, 'CLOUDBASE_ADD_UNCONFIRMED');
+    assert.equal(error.message, 'CloudBase add did not confirm a document insert');
+    assert.doesNotMatch(error.message, /backend detail|DATABASE_DUPLICATE_WRITE|request-123/);
+    return true;
+  });
+});
+
+test('CloudBase add response guard returns only the confirmed document and optional request IDs', () => {
+  const { requireSingleDocumentAddReceipt } = loadTypeScriptModule(
+    'apps/cloud-functions/src/adapters/cloudbase-add-result.ts',
+  );
+
+  assert.deepEqual(requireSingleDocumentAddReceipt({ id: 'idem_v1_abc', requestId: 'req-1' }), {
+    documentId: 'idem_v1_abc',
+    requestId: 'req-1',
+  });
+  assert.deepEqual(requireSingleDocumentAddReceipt({ id: 'idem_v1_abc' }), {
+    documentId: 'idem_v1_abc',
+  });
+});
+
+test('CloudBase add response guard requires the SDK transaction receipt before callback success', () => {
+  const { requireSingleDocumentAddReceipt } = loadTypeScriptModule(
+    'apps/cloud-functions/src/adapters/cloudbase-add-result.ts',
+  );
+
+  assert.deepEqual(requireSingleDocumentAddReceipt({
+    id: 'idem_v1_abc',
+    requestId: 'req-1',
+    inserted: 1,
+    ok: 1,
+  }, 'transaction'), {
+    documentId: 'idem_v1_abc',
+    requestId: 'req-1',
+  });
+  assert.throws(() => requireSingleDocumentAddReceipt({ id: 'idem_v1_abc' }, 'transaction'), {
+    code: 'CLOUDBASE_ADD_UNCONFIRMED',
+  });
+  assert.throws(() => requireSingleDocumentAddReceipt({
+    id: 'idem_v1_abc', inserted: 0, ok: 1,
+  }, 'transaction'), {
+    code: 'CLOUDBASE_ADD_UNCONFIRMED',
+  });
+});
+
+test('CloudBase add response guard rejects malformed or batch-shaped results for a single document', () => {
+  const { requireSingleDocumentAddReceipt } = loadTypeScriptModule(
+    'apps/cloud-functions/src/adapters/cloudbase-add-result.ts',
+  );
+
+  for (const value of [null, [], {}, { ids: ['doc-1'], requestId: 'req-1' }, { id: '', requestId: 'req-1' }]) {
+    assert.throws(() => requireSingleDocumentAddReceipt(value), {
+      code: 'CLOUDBASE_ADD_UNCONFIRMED',
+    });
+  }
+});
+
+test('CloudBase add response guard remains independent of SDK, environment, and platform APIs', () => {
+  const source = fs.readFileSync(
+    path.join(root, 'apps/cloud-functions/src/adapters/cloudbase-add-result.ts'),
+    'utf8',
+  );
+  const code = source.replace(/\/\*[\s\S]*?\*\/|\/\/[^\r\n]*/g, '');
+
+  assert.doesNotMatch(code, /^\s*import\b/m);
+  assert.doesNotMatch(code, /\brequire\s*\(|\bimport\s*\(/);
+  assert.doesNotMatch(code, /(?:process\.env|\b(?:window|document|wx)\s*\.|:\s*any\b|\bas\s+any\b)/);
+});
+
 test('paired SP08 records distinguish local adapter evidence from target-runtime and cloud proof', () => {
   const mapping = JSON.parse(fs.readFileSync(
     path.join(root, 'docs/sp08-idempotency-physical-mapping-20261106.json'),

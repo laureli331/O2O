@@ -28,6 +28,15 @@
 - 官方事务参考：[文档型数据库事务](https://docs.cloudbase.net/database/transaction)说明事务由服务端 Node SDK 执行，事务方法包括 `add`，单个事务最长 10 秒。该平台说明不证明本业务事务的竞争、提交或故障恢复正确。
 - 不新增第三方库：现有 CloudBase SDK/API 足以表达候选写入；目前缺少业务代码和并发证据，故不引入锁库或重试库。
 
+### 指定 SDK `add` 回执防护
+
+- 复用核查针对候选 SDK 的精确 npm tarball：[`@cloudbase/node-sdk@3.18.7`](https://registry.npmjs.org/@cloudbase/node-sdk/-/node-sdk-3.18.7.tgz) 的包元数据标注 MIT、Node `>=12`，并精确依赖 `@cloudbase/database@1.4.3`；[`@cloudbase/database@1.4.3`](https://registry.npmjs.org/@cloudbase/database/-/database-1.4.3.tgz) 标注 ISC。两个 tarball 的 SHA-256 与可复查信息记录在配套 JSON 的 `cloudBaseSdkAudit`。
+- 读取 1.4.3 的 `src/collection.ts` 后确认：`add` 遇到带 truthy `code` 的服务端响应时直接返回该对象；成功的单文档事务写入返回 `inserted: 1`、`ok: 1`、`id` 和 `requestId`。包内 `src/transaction/index.ts` 显示 `runTransaction` 会等待回调成功，再尝试 `commit`。这是对本地精确 tarball 源码的观察，不是 CloudBase 目标环境的运行结果。
+- 因此新增无 SDK 依赖的纯形状适配器 [`cloudbase-add-result.ts`](../apps/cloud-functions/src/adapters/cloudbase-add-result.ts)：在单条写入需要的确认中拒绝 truthy `code`、缺失/空 `id`、畸形 `requestId`；事务模式还要求 `inserted === 1 && ok === 1`。遇到不确认的响应时只抛通用基础设施错误，不把 SDK 原始错误对象或消息交给调用方。事务回调必须在回执校验失败时抛出，不能把错误对象当成成功结果返回。
+- 复用选择：直接用 CloudBase 的 `add` 与事务 API表达候选，不加锁库；以少量纯适配封装 SDK 已有回执形状。适配器尚未接入正式事务处理函数；CloudBase 产品依赖仍按 SP07 工程门槛处理，没有安装或新增 SDK 依赖。
+- 本地专项验证覆盖错误对象、正常单条回执（有/无请求 ID）、事务成功标志、畸形/批量响应以及适配器不依赖 SDK/平台。测试不能证明实际 CloudBase 事务回滚、并发胜出、唯一性、提交结果或未知结果恢复；没有证明目标 CloudBase 运行时的实际表现，本轮也未执行目标运行时测试。
+- 复用核查来源还包括 CloudBase [事务官方文档](https://docs.cloudbase.net/database/transaction)（平台事务范围/时限）和 [Node SDK 数据库文档](https://github.com/TencentCloudBase/node-sdk/blob/master/docs/database/database.md)（通用 API 形状）。后者是未钉版本的 master 文档，因此精确回执观察以已记录哈希的 1.4.3 tarball 源码为准。
+
 ## 仍未确定或未验证
 
 - **载荷规范化与等价性**：按操作分别定义，确保仅语义相同的重放返回原结果，复用同一键但载荷不等价时拒绝。共享层现有纯决策不提供 canonicalizer。
