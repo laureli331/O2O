@@ -2053,3 +2053,77 @@ test('F19 Beijing service time validator stays pure and does not implement trans
   assert.doesNotMatch(source, /\bimport\b|\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|Date\.parse|Intl\.|fetch\s*\(|collection\s*\(|cloud\.callFunction/);
   assert.match(source, /local wall-clock string/);
 });
+
+test('F20 fee fields validate bounded scalar values without defining fee-plan lifecycle', () => {
+  const {
+    parseFeeItemAmount,
+    validateActualExpenseProofCount,
+    validateFeeItemName,
+    validateFeeItemNote,
+    validateFeePlanItemCount,
+    validateFeeStageName,
+  } = loadTypeScriptModule('contracts/fee-stage-fields.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+  const ownership = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-object-ownership-map-20261105.json'), 'utf8'));
+  const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs', 'sp08-data-request-contract-progress-20261105.json'), 'utf8'));
+
+  assert.match(prd, /F20 \| 分阶段费用及材料凭据 \| 阶段编号\/建立顺序\/名称，可同名；每份1—20项，名称1—30、服务费或实际支出、明确金额、备注0—300；实际支出凭据每项0—3张/);
+  assert.equal(ownership.fieldGroups.find((group) => group.prdFieldId === 'F20').ownerTask, 'SP18-SP20');
+  assert.ok(progress.scope.includes('f20-fee-stage-scalar-field-validation'));
+  assert.equal(progress.evidence.feeStageScalarFieldsValidation, 'packages/shared/src/contracts/fee-stage-fields.ts#F20 field validators');
+  assert.equal(progress.evidence.f20FeeFieldsLimitation.ownerTask, 'SP18-SP20');
+  assert.equal(progress.evidence.f20FeeFieldsLimitation.productAcceptancePassed, false);
+
+  assert.deepEqual(validateFeePlanItemCount(1), { ok: true, value: 1 });
+  assert.deepEqual(validateFeePlanItemCount(20), { ok: true, value: 20 });
+  assert.deepEqual(validateFeePlanItemCount(0), { ok: false, reason: 'out-of-range' });
+  assert.deepEqual(validateFeePlanItemCount(21), { ok: false, reason: 'out-of-range' });
+  assert.deepEqual(validateFeePlanItemCount(1.5), { ok: false, reason: 'not-integer' });
+
+  assert.deepEqual(validateFeeStageName(` ${'阶'.repeat(30)} `), { ok: true, value: '阶'.repeat(30), characterCount: 30 });
+  assert.deepEqual(validateFeeStageName('阶'), { ok: true, value: '阶', characterCount: 1 });
+  assert.deepEqual(validateFeeStageName('😀'.repeat(30)), { ok: true, value: '😀'.repeat(30), characterCount: 30 });
+  assert.deepEqual(validateFeeStageName('阶'.repeat(31)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateFeeItemName('维修'), { ok: true, value: '维修', characterCount: 2 });
+  assert.deepEqual(validateFeeItemName('项'.repeat(30)), { ok: true, value: '项'.repeat(30), characterCount: 30 });
+  assert.deepEqual(validateFeeItemName('项'.repeat(31)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateFeeItemName('  '), { ok: false, reason: 'empty' });
+  assert.deepEqual(validateFeeItemName(1), { ok: false, reason: 'not-string' });
+
+  assert.deepEqual(validateFeeItemNote(undefined), { ok: true, value: '', characterCount: 0 });
+  assert.deepEqual(validateFeeItemNote('   '), { ok: true, value: '', characterCount: 0 });
+  assert.deepEqual(validateFeeItemNote('😀'.repeat(300)), { ok: true, value: '😀'.repeat(300), characterCount: 300 });
+  assert.deepEqual(validateFeeItemNote('字'.repeat(301)), { ok: false, reason: 'too-long' });
+  assert.deepEqual(validateFeeItemNote(null), { ok: false, reason: 'not-string' });
+
+  assert.deepEqual(parseFeeItemAmount('0'), { ok: true, value: 0 });
+  assert.deepEqual(parseFeeItemAmount('99999.99'), { ok: true, value: 9_999_999 });
+  assert.deepEqual(parseFeeItemAmount(undefined), { ok: false, reason: 'required' });
+  assert.deepEqual(parseFeeItemAmount(''), { ok: false, reason: 'required' });
+  assert.deepEqual(parseFeeItemAmount(' '), { ok: false, reason: 'invalid-format' });
+  assert.deepEqual(parseFeeItemAmount(0), { ok: false, reason: 'not-decimal-string' });
+  assert.deepEqual(parseFeeItemAmount('1.001'), { ok: false, reason: 'too-precise' });
+  assert.deepEqual(parseFeeItemAmount('100000'), { ok: false, reason: 'out-of-range' });
+
+  assert.deepEqual(validateActualExpenseProofCount(0), { ok: true, value: 0 });
+  assert.deepEqual(validateActualExpenseProofCount(3), { ok: true, value: 3 });
+  assert.deepEqual(validateActualExpenseProofCount(4), { ok: false, reason: 'out-of-range' });
+  assert.deepEqual(validateActualExpenseProofCount(2.5), { ok: false, reason: 'not-integer' });
+});
+
+test('F20 fee scalar validators stay pure and leave authorization, versions, proofs, and totals to SP18-SP20', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'fee-stage-fields.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/fee-stage-fields';/);
+  assert.equal(typeof shared.parseFeeItemAmount, 'function');
+  assert.equal(typeof shared.validateActualExpenseProofCount, 'function');
+  assert.equal(typeof shared.validateFeeItemName, 'function');
+  assert.equal(typeof shared.validateFeeItemNote, 'function');
+  assert.equal(typeof shared.validateFeePlanItemCount, 'function');
+  assert.equal(typeof shared.validateFeeStageName, 'function');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|Date\.now|fetch\s*\(|collection\s*\(|cloud\.callFunction|uploadFile|downloadFile/);
+  assert.match(source, /Unicode code points/);
+  assert.match(source, /fee proposal lifecycle/i);
+});

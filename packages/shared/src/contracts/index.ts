@@ -6,6 +6,7 @@ export * from './account-profile-text';
 export * from './errand-advance-terms';
 export * from './errand-attachment-count';
 export * from './errand-service-fee';
+export * from './fee-stage-fields';
 export * from './idempotency';
 export * from './idle-listing-text';
 export * from './idle-listing-price';
