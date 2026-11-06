@@ -112,11 +112,19 @@
 - `npm run check:shared`：通过。
 - `npm run check:boundaries`：通过。
 - `node --test tests/executable-development-plan.test.cjs`：46/46 通过。
-- `node --test tests/sp08-data-request-contract.test.cjs`：62/62 通过。
-- `node --test tests/*.test.cjs`：1715/1715 通过。
+- `node --test tests/sp08-data-request-contract.test.cjs`：67/67 通过（含 F12 原因、说明、申诉/处置理由、图片数及纯 shared 边界）。
+- `node --test tests/*.test.cjs`：1720/1720 通过，无跳过。
 - `npm run build:weapp`：Webpack 编译成功；输出显示自有声明数量为 0，声明编译器未执行；存在 `fs.Stats` 弃用警告。
 - `npm run build:web`：构建成功；Vite 配置加载器提示格式警告，无构建错误。
 - 以上验证限于本地类型、金额与文本边界、工作区边界和构建回归；它们不等于 SP08 产品验收或后端物理能力验收通过。
+
+## F12 举报与申诉字段校验增量（2026-11-06）
+
+- 范围依据：`docs/prd.md` 第 13.1 节 F12；`docs/sp08-object-ownership-map-20261105.md` 将后台处置及案件流程归 SP12。
+- 共享实现：`packages/shared/src/contracts/report-appeal-fields.ts`，并从 `packages/shared/src/contracts/index.ts` 导出。复用 `validateIntegerCountInRange` 和既有 `String.trim()` / `Array.from()` Unicode 码点计数方式；没有可替代该纯字段规则的微信/CloudBase SDK 或适用第三方库，不增加依赖。
+- 校验项：六个 PRD 举报原因；“其他”要求补充说明；举报补充说明 0–1000、申诉说明和运营动作理由各 1–1000；举报图片数量 0–9。文本去首尾空白后按 Unicode 码点计数。
+- 专项用例覆盖原因白名单、其他说明必填、上下界/空白/类型、图片整数范围以及 shared 平台隔离。此增量不定义 wire code、物理字段或 API，不验证案件读取权限、举报者隐私、操作者身份/审计、通知、状态迁移、事务或服务端权限。
+- F12 的案件可见性和后台处置流程仍由 SP12 按原任务卡与合同验收；本切片不提前判定其通过，也不把这些后续事项转为当前字段校验的阻断。
 
 ## 未证明及后续归属
 

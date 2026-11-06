@@ -1472,6 +1472,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.scope.includes('f07-provider-profile-display-name-and-service-intro-text-validation'));
   assert.ok(record.scope.includes('f01-f07-provider-license-image-count-validation'));
   assert.ok(record.scope.includes('f01-account-profile-nickname-and-optional-wechat-id-text-validation'));
+  assert.ok(record.scope.includes('f12-report-appeal-text-reason-and-image-count-validation'));
   assert.ok(record.sources.some((source) => source.path === 'docs/prd.md' && typeof source.reference === 'string' && source.reference.includes('F01: nickname required 1-20')));
   assert.ok(record.notProven.includes('command-result-business-outcome-evidence'));
   assert.ok(record.notProven.includes('remaining-module-specific-command-validation'));
@@ -1493,6 +1494,9 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.reuseDecision.f01AccountProfileText.includes('Array.from()'));
   assert.ok(record.reuseDecision.f01AccountProfileText.includes('Unicode 码点'));
   assert.ok(record.reuseDecision.f01AccountProfileText.includes('微信号格式'));
+  assert.ok(record.reuseDecision.f12ReportAppealFields.includes('validateIntegerCountInRange'));
+  assert.ok(record.reuseDecision.f12ReportAppealFields.includes('Unicode 码点'));
+  assert.ok(record.reuseDecision.f12ReportAppealFields.includes('不新增运行依赖'));
   assert.equal(record.evidence.idleListingPriceValidation, 'packages/shared/src/contracts/idle-listing-price.ts#parseIdleListingPrice');
   assert.equal(record.evidence.idleListingTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingText');
   assert.equal(record.evidence.idleListingRequiredTextValidation, 'packages/shared/src/contracts/idle-listing-text.ts#validateIdleListingRequiredText');
@@ -1507,6 +1511,13 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.evidence.f01AccountProfileTextLimitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP09'));
   assert.ok(record.evidence.f07Limitation.includes('SP14'));
+  assert.equal(record.evidence.reportReasonValidation, 'packages/shared/src/contracts/report-appeal-fields.ts#validateReportReason');
+  assert.equal(record.evidence.reportSupplementalTextValidation, 'packages/shared/src/contracts/report-appeal-fields.ts#validateReportSupplementalText');
+  assert.equal(record.evidence.reportImageCountValidation, 'packages/shared/src/contracts/report-appeal-fields.ts#validateReportImageCount');
+  assert.equal(record.evidence.appealStatementValidation, 'packages/shared/src/contracts/report-appeal-fields.ts#validateAppealStatement');
+  assert.equal(record.evidence.operationsActionReasonValidation, 'packages/shared/src/contracts/report-appeal-fields.ts#validateOperationsActionReason');
+  assert.ok(record.notProven.includes('f12-case-access-and-moderation-workflow'));
+  assert.ok(record.evidence.f12Limitation.includes('SP12'));
 });
 
 test('SP08 database capability map distinguishes documented platform limits from synthetic probe evidence', () => {
@@ -1554,4 +1565,104 @@ test('SP08 logical ownership map covers PRD field groups without pretending to d
   assert.ok(map.unresolved.some((item) => item.id === 'retention-and-erasure-periods'));
   assert.ok(map.sources.some((source) => source.path === 'docs/prd.md' && source.reference.includes('F01-F22')));
   assert.ok(map.sources.some((source) => source.path === 'docs/backend-architecture-contract-20261103.md' && source.reference.includes('Section 3')));
+});
+
+test('F12 report reasons match the PRD options without inventing wire codes', () => {
+  const { REPORT_REASON_OPTIONS, validateReportReason } = loadTypeScriptModule('contracts/report-appeal-fields.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F12[^\r\n]*举报原因必选：疑似诈骗、虚假信息、违规内容、骚扰\/隐私泄露、服务\/费用争议、其他/);
+  assert.deepEqual(REPORT_REASON_OPTIONS, ['疑似诈骗', '虚假信息', '违规内容', '骚扰/隐私泄露', '服务/费用争议', '其他']);
+  for (const reason of REPORT_REASON_OPTIONS) {
+    assert.deepEqual(validateReportReason(reason), { ok: true, value: reason });
+  }
+  assert.deepEqual(validateReportReason('spam'), { ok: false, reason: 'unknown-reason' });
+  assert.deepEqual(validateReportReason(undefined), { ok: false, reason: 'not-string' });
+});
+
+test('F12 optional report details are empty for non-other reasons and required for other', () => {
+  const { validateReportSupplementalText } = loadTypeScriptModule('contracts/report-appeal-fields.ts');
+
+  assert.deepEqual(validateReportSupplementalText(undefined, '疑似诈骗'), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateReportSupplementalText('  ', '虚假信息'), {
+    ok: true,
+    value: '',
+    characterCount: 0,
+  });
+  assert.deepEqual(validateReportSupplementalText('  补充说明  ', '虚假信息'), {
+    ok: true,
+    value: '补充说明',
+    characterCount: 4,
+  });
+  assert.deepEqual(validateReportSupplementalText(undefined, '其他'), { ok: false, reason: 'empty' });
+  assert.deepEqual(validateReportSupplementalText('  ', '其他'), { ok: false, reason: 'empty' });
+  assert.deepEqual(validateReportSupplementalText('说明', 'unsupported'), {
+    ok: false,
+    reason: 'invalid-report-reason',
+  });
+  assert.deepEqual(validateReportSupplementalText(null, '疑似诈骗'), { ok: false, reason: 'not-string' });
+});
+
+test('F12 text limits trim edges and count Unicode code points for reports, appeals, and operator reasons', () => {
+  const {
+    validateReportSupplementalText,
+    validateAppealStatement,
+    validateOperationsActionReason,
+  } = loadTypeScriptModule('contracts/report-appeal-fields.ts');
+  const prd = fs.readFileSync(path.join(root, 'docs', 'prd.md'), 'utf8');
+
+  assert.match(prd, /F12[^\r\n]*补充0—1000、图片0—9选填[^\r\n]*申诉说明1—1000必填[^\r\n]*运营动作理由1—1000必填/);
+  for (const validate of [validateAppealStatement, validateOperationsActionReason]) {
+    assert.deepEqual(validate('  😀  '), { ok: true, value: '😀', characterCount: 1 });
+    assert.deepEqual(validate('😀'.repeat(1000)), {
+      ok: true,
+      value: '😀'.repeat(1000),
+      characterCount: 1000,
+    });
+    assert.deepEqual(validate('😀'.repeat(1001)), { ok: false, reason: 'too-long' });
+    assert.deepEqual(validate('  '), { ok: false, reason: 'empty' });
+    assert.deepEqual(validate(undefined), { ok: false, reason: 'not-string' });
+  }
+  const combinedText = 'e\u0301' + '😀'.repeat(998);
+  assert.deepEqual(validateReportSupplementalText(combinedText, '其他'), {
+    ok: true,
+    value: combinedText,
+    characterCount: 1000,
+  });
+  assert.deepEqual(validateReportSupplementalText('😀'.repeat(1001), '虚假信息'), {
+    ok: false,
+    reason: 'too-long',
+  });
+});
+
+test('F12 report image count reuses the shared inclusive integer range 0 through 9', () => {
+  const { validateReportImageCount } = loadTypeScriptModule('contracts/report-appeal-fields.ts');
+
+  for (const count of [0, 1, 9]) {
+    assert.deepEqual(validateReportImageCount(count), { ok: true, value: count });
+  }
+  for (const count of [null, undefined, '1', {}, [], NaN, Infinity, 1.5]) {
+    assert.deepEqual(validateReportImageCount(count), { ok: false, reason: 'not-integer' });
+  }
+  for (const count of [-1, 10]) {
+    assert.deepEqual(validateReportImageCount(count), { ok: false, reason: 'out-of-range' });
+  }
+});
+
+test('F12 shared validators export only local field checks, without defining case access or transitions', () => {
+  const source = fs.readFileSync(path.join(sharedRoot, 'contracts', 'report-appeal-fields.ts'), 'utf8');
+  const contractsIndex = fs.readFileSync(path.join(sharedRoot, 'contracts', 'index.ts'), 'utf8');
+  const shared = loadTypeScriptModule('index.ts');
+
+  assert.match(contractsIndex, /export \* from '\.\/report-appeal-fields';/);
+  assert.equal(typeof shared.validateReportReason, 'function');
+  assert.equal(typeof shared.validateReportSupplementalText, 'function');
+  assert.equal(typeof shared.validateReportImageCount, 'function');
+  assert.equal(typeof shared.validateAppealStatement, 'function');
+  assert.equal(typeof shared.validateOperationsActionReason, 'function');
+  assert.doesNotMatch(source, /\bany\b|\bwindow\b|\bdocument\b|\bwx\s*\.|fetch\s*\(|collection\s*\(/);
 });

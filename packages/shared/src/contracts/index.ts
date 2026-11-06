@@ -12,5 +12,6 @@ export * from './private-address-book';
 export * from './provider-license-image-count';
 export * from './public-image-count';
 export * from './provider-profile-text';
+export * from './report-appeal-fields';
 export * from './repair-other-public-text';
 export * from './result';
