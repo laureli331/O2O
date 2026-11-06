@@ -47,7 +47,8 @@
     "f22-merchant-post-scalar-field-validation",
     "deterministic-document-id-add-idempotency-persistence-candidate",
     "versioned-sha256-id-input-and-operation-key-contract",
-    "f09-private-address-book-command-payload-digest-normalization"
+    "f09-private-address-book-command-payload-digest-normalization",
+    "f09-local-idempotency-reuse-decision-composition"
   ],
   "sources": [
     {
@@ -671,6 +672,42 @@
       "ownershipAndTransactionProven": false,
       "environment": "Windows local workspace; Node v24.18.0; Taro 4.3.2; Vite 8.3.5; no CloudBase calls or mutations",
       "buildNotes": "Weapp build emitted existing Node DEP0180 fs.Stats deprecation warnings; web build emitted existing Vite configLoader compatibility warning. Taro own declaration count was 0 and compilerExecuted was false, so this build did not compile the project's own declarations."
+    },
+    "f09LocalIdempotencyDecisionValidation": {
+      "date": "2026-11-06",
+      "source": "apps/cloud-functions/src/application/private-address-book-idempotency.ts",
+      "test": "tests/sp08-f09-idempotency-reuse.test.cjs",
+      "cases": [
+        "new-claim-candidate-omits-address-payload",
+        "same-key-same-digest-replays-parsed-result-envelope",
+        "same-key-different-digest-rejects",
+        "malformed-command-or-stored-outcome-rejects",
+        "trusted-scope-operation-and-key-separate-deterministic-id"
+      ],
+      "focusedCommand": "node --test tests/sp08-f09-idempotency-reuse.test.cjs",
+      "focusedTestsPassed": 5,
+      "applicationTypecheckCommand": "npm run check --workspace @xianglin/cloud-functions",
+      "applicationTypecheckResult": "passed",
+      "combinedContractCommand": "node --test tests/sp08-data-request-contract.test.cjs tests/sp08-f09-idempotency-reuse.test.cjs",
+      "combinedContractTestsPassed": 101,
+      "sharedTypecheckCommand": "npm run check:shared",
+      "sharedTypecheckResult": "passed",
+      "workspaceBoundaryCommand": "npm run check:boundaries",
+      "workspaceBoundaryResult": "passed",
+      "maliciousArchiveRegressionCommand": "node --test tests/sp01-taro-malicious-archive.test.cjs",
+      "maliciousArchiveRegressionPassed": 1,
+      "fullRegressionCommand": "node --test tests/*.test.cjs",
+      "fullRegressionPassed": 1771,
+      "fullRegressionFailed": 0,
+      "fullRegressionSkipped": 0,
+      "pairedJsonParse": "passed",
+      "diffCheck": "passed",
+      "productionHandlerConnected": false,
+      "authenticationAndOwnerScopedLookupImplemented": false,
+      "businessTransactionAndConcurrencyProven": false,
+      "cloudMutationsPerformed": false,
+      "productAcceptancePassed": false,
+      "environment": "Windows local workspace; local pure application helper only; no CloudBase calls or mutations"
     }
   }
 }

@@ -1771,7 +1771,7 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.ok(mapping.decision.idEncoding.localVerification.includes('Node adapter: SHA-256 of UTF-8 Chinese plus emoji known vector'));
   assert.equal(
     mapping.decision.payloadEncodingUtility.status,
-    'shared-pure-serializer-and-f09-command-digest-implemented; server-comparison-unconnected',
+    'shared-pure-serializer-and-f09-command-digest-implemented; local-reuse-decision-helper-tested; server-transaction-unconnected',
   );
   assert.equal(mapping.decision.payloadEncodingUtility.path, 'packages/shared/src/contracts/canonical-json.ts');
   assert.equal(mapping.decision.payloadEncodingUtility.f09DraftDigestPath, 'packages/shared/src/contracts/private-address-book-draft-digest.ts');
@@ -1781,7 +1781,11 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestPath, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
   assert.deepEqual(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.operations, ['create', 'update', 'delete']);
   assert.equal(mapping.decision.payloadEncodingUtility.f09CommandDigestContract.expectedVersion, 'Required and finite for update/delete; absent for create; server comparison remains unimplemented');
-  assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No server-side payload digest comparison, same-key replay/reject integration, ownership validation, or business transaction proof'));
+  assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionPath, 'apps/cloud-functions/src/application/private-address-book-idempotency.ts');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionTest, 'tests/sp08-f09-idempotency-reuse.test.cjs');
+  assert.equal(mapping.decision.payloadEncodingUtility.f09ReuseDecisionStatus, 'local-composition-only; production-handler-and-transaction-unproven');
+  assert.ok(mapping.decision.payloadEncodingUtility.f09ReuseDecisionContract.includes('same-key/same-digest replays the stored result after result-envelope parsing'));
+  assert.ok(mapping.decision.payloadEncodingUtility.limits.includes('No production handler wiring, authenticated scope derivation, owner-scoped lookup, business-write transaction, or target-runtime proof'));
   assert.ok(mapping.decision.payloadEncodingUtility.reuseSurvey.decision.includes('strict rejection contract'));
   assert.ok(!mapping.unresolved.includes('deterministic-document-id-encoding-and-versioning'));
   assert.ok(mapping.unresolved.includes('other-operation-payload-normalization-and-equivalence'));
@@ -1800,6 +1804,9 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.match(mappingMarkdown, /完整的 F09 本地命令载荷摘要构件/);
   assert.match(mappingMarkdown, /canonical-json\.ts/);
   assert.match(mappingMarkdown, /private-address-book-draft-digest\.ts/);
+  assert.match(mappingMarkdown, /private-address-book-idempotency\.ts/);
+  assert.match(mappingMarkdown, /同键同摘要/);
+  assert.match(mappingMarkdown, /不证明 CloudBase 产品函数/);
   assert.match(mappingMarkdown, /不是匿名化或保密机制/);
 
   const sdkAudit = mapping.cloudBaseSdkAudit;
@@ -1829,6 +1836,17 @@ test('SP08 records deterministic document ID plus add as selected but unproven p
   assert.equal(progress.evidence.f09CommandPayloadDigestContractValidation.source, 'packages/shared/src/contracts/private-address-book-command-digest.ts');
   assert.deepEqual(progress.evidence.f09CommandPayloadDigestContractValidation.operations, ['create', 'update', 'delete']);
   assert.equal(progress.evidence.f09CommandPayloadDigestContractValidation.cloudMutationsPerformed, false);
+  assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.source, 'apps/cloud-functions/src/application/private-address-book-idempotency.ts');
+  assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.test, 'tests/sp08-f09-idempotency-reuse.test.cjs');
+  assert.deepEqual(progress.evidence.f09LocalIdempotencyDecisionValidation.cases, [
+    'new-claim-candidate-omits-address-payload',
+    'same-key-same-digest-replays-parsed-result-envelope',
+    'same-key-different-digest-rejects',
+    'malformed-command-or-stored-outcome-rejects',
+    'trusted-scope-operation-and-key-separate-deterministic-id',
+  ]);
+  assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.productionHandlerConnected, false);
+  assert.equal(progress.evidence.f09LocalIdempotencyDecisionValidation.cloudMutationsPerformed, false);
   assert.ok(progress.notProven.includes('deterministic-id-add-concurrent-collision-transaction-and-recovery-runtime-proof'));
   assert.ok(progress.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(progress.notProven.includes('unknown-outcome-same-request-query-and-recovery'));
@@ -1874,6 +1892,7 @@ test('SP08 progress record keeps this local contract slice distinct from cloud/p
   assert.ok(record.notProven.includes('atomic-idempotency-claim-with-business-write'));
   assert.ok(record.notProven.includes('other-operation-payload-normalization-and-equivalence'));
   assert.ok(record.notProven.includes('f09-server-side-command-digest-comparison-and-transaction-integration'));
+  assert.equal(record.evidence.f09LocalIdempotencyDecisionValidation.productionHandlerConnected, false);
   assert.ok(!record.notProven.includes('idempotency-payload-normalization-and-equivalence-per-operation'));
   assert.ok(record.notProven.includes('business-transaction-concurrency'));
   assert.ok(record.notProven.includes('physical-indexes-and-uniqueness'));

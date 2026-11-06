@@ -283,3 +283,12 @@
 - 明确未实现：服务器端命令摘要比较、同键原结果重放/不同载荷拒绝接线、用户和地址归属授权、expectedVersion 与当前记录比较、社区允许值目录、物理持久化、并发和事务原子性。这些仍按 SP08 及 F09 业务责任保留，不因本地合同通过而视为端到端幂等或产品验收通过；本增量未调用或修改 CloudBase。
 - 本增量的专项、类型、边界、计划守护、全量回归、JSON 配对解析和差异检查结果，记录在配套 JSON 的 `evidence.f09CommandPayloadDigestContractValidation`。
 - 验证：F09 定向 2/2、SP08 合并专项 113/113、F09 合同文件 96/96、计划守护 46/46、全量 1766/1766（失败 0、跳过 0）；`npm run check:shared`、`npm run check:boundaries`、`npm run build:weapp`、`npm run build:web` 均通过。实际构建环境为 Windows / Node v24.18.0 / Taro 4.3.2 / Vite 8.3.5。构建有既存 Node `DEP0180 fs.Stats` 弃用提示和 Vite `configLoader` 兼容性提示；Taro 本项目声明计数为 0、`compilerExecuted=false`，因此不能据此声称本项目声明已编译。JSON 配对解析和 `git diff --check` 通过。
+
+## 2026-11-06 F09 本地同键重放/拒绝决策组合
+
+- 新增 `apps/cloud-functions/src/application/private-address-book-idempotency.ts`：复用 F09 create/update/delete 命令解析器、命令载荷摘要、版本化确定性 ID、共享幂等重用决策及原结果解析器。未新增第三方依赖；复用调查、来源和兼容边界详见[物理映射记录](sp08-idempotency-physical-mapping-20261106.md)。
+- 本地辅助函数接收调用方提供的可信范围及已经按该范围查询出的语义结果投影；它不认证 actor、不派生 trustedScope、不查云数据库、不校验地址归属，也不比较 expectedVersion 与当前记录。
+- 无旧结果时只生成不含地址草稿或联系方式的幂等 ID/摘要候选；相同摘要时解析结果联合类型外层并重放存储结果，不校验未知 `value` 的业务含义；不同摘要时拒绝；命令、哈希输入或旧结果外层形状无效时返回通用无效结果。
+- 专项测试覆盖候选数据隐私、相同载荷重放、同键不同载荷拒绝、命令与旧结果形状错误、范围/操作/键对确定性 ID 的区分。
+- 尚未接入生产函数或 CloudBase；不证明身份与归属授权、expectedVersion 当前值检查、确定性 ID 的 CloudBase 接受性、并发唯一性、声明与业务写入的事务原子性或未知结果恢复。产品验收仍未通过，本增量没有云端调用或写入。
+- 这项本地实现不会替代 F09 服务端事务验收，也不改变各业务 SP 卡对权限、资金、并发和恢复的原验收要求。专项、类型检查、相关回归、全量测试和差异检查结果记录于配套 JSON 的 `evidence.f09LocalIdempotencyDecisionValidation`。
