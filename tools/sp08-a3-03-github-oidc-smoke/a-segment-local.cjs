@@ -4,6 +4,8 @@
 // injected by the caller; this module never performs network requests.
 const crypto = require('node:crypto');
 const tls = require('node:tls');
+const oidc = require('./oidc-smoke.cjs');
+const GITHUB_ISSUER = 'https://token.actions.githubusercontent.com';
 
 const LABEL = 'EXPORTER-Channel-Binding';
 const PREFIX = 'O2O-A303-A\n1\n';
@@ -91,15 +93,31 @@ function verifySyntheticToken(token, policy) {
   if (!claims || claims.iss !== policy.issuer) fail('issuer-claim-rejected');
   return claims;
 }
+function verifyGithubToken(token, policy) {
+  if (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0) fail('github-issuer-policy-missing');
+  const compact = oidc.parseCompactJwt(token);
+  const candidates = policy.githubJwksKeys.filter((key) => key && key.kid === compact.header.kid);
+  if (candidates.length !== 1) fail('jwks-kid-not-found');
+  const claims = oidc.verifyRs256CompactToken(compact, candidates[0]);
+  if (!claims || claims.iss !== GITHUB_ISSUER) fail('issuer-claim-rejected');
+  return claims;
+}
+function requireGithubPolicy(policy) {
+  const required = ['repository_id', 'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha', 'environment', 'run_attempt'];
+  if (!policy.expectedClaims || required.some((name) => typeof policy.expectedClaims[name] !== 'string' || policy.expectedClaims[name].length === 0)
+    || policy.expectedClaims.run_attempt !== '1') fail('github-identity-policy-missing');
+}
 function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, nonce }) {
   if (!socket || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true) fail('tls-peer-rejected');
   if (typeof socket.isSessionReused === 'function' && socket.isSessionReused()) fail('session-resumption-rejected');
   const peer = socket.getPeerCertificate(true);
   if (!peer || !peer.raw || !policy.allowedPeerFingerprints.includes(sha(peer.raw).toString('hex'))) fail('peer-identity-rejected');
-  const claims = verifySyntheticToken(token, policy);
+  const claims = policy.mode === 'github-oidc' ? verifyGithubToken(token, policy) : verifySyntheticToken(token, policy);
   for (const [key, expected] of Object.entries(policy.expectedClaims)) if (claims[key] !== expected) fail('claim-policy-mismatch');
   const commit = commitment(claims, request, jwk, nonce, policy);
-  if (claims.aud !== expectedAudience(commit)) fail('audience-mismatch');
+  const audience = expectedAudience(commit);
+  if (policy.mode === 'github-oidc') oidc.validateClaims(claims, audience, policy.expectedClaims.environment, policy.expectedClaims.run_attempt, Math.floor(Date.now() / 1000));
+  else if (claims.aud !== audience) fail('audience-mismatch');
   const key = crypto.createPublicKey({ key: jwk, format: 'jwk' });
   const exporter = socket.exportKeyingMaterial(32, LABEL, Buffer.alloc(0));
   if (!crypto.verify(null, proofMessage(token, commit, exporter), key, decode(proof, 64))) fail('proof-invalid');
@@ -109,10 +127,12 @@ function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, n
 function startLocalVerificationServer(options) {
   const { policy } = options || {};
   if (!options || !policy || !policy.tlsKey || !policy.tlsCert || !policy.ca
-    || !policy.issuer || !policy.issuerKid || !policy.issuerPublicKey
+    || !policy.issuer || (policy.mode !== 'github-oidc' && (!policy.issuerKid || !policy.issuerPublicKey))
+    || (policy.mode === 'github-oidc' && (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0))
     || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
     || !policy.expectedClaims || !policy.expectedRequest || !policy.service
     || (options.host !== undefined && options.host !== '127.0.0.1')) fail('local-server-policy-missing');
+  if (policy.mode === 'github-oidc') requireGithubPolicy(policy);
   const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
     socket.setTimeout(options.timeoutMs || 5000, () => socket.destroy());
     let data = ''; let complete = false;

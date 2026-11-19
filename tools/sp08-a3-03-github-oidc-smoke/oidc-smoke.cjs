@@ -152,6 +152,15 @@ function parseCompactJwt(token) {
   return { header, payloadBytes, signature, signingInput: `${parts[0]}.${parts[1]}` };
 }
 
+function verifyRs256CompactToken(compact, jwk) {
+  if (!jwk || jwk.kty !== 'RSA' || jwk.alg !== 'RS256' || jwk.use !== 'sig' || typeof jwk.n !== 'string' || typeof jwk.e !== 'string') fail('jwks-key-invalid');
+  let publicKey;
+  try { publicKey = crypto.createPublicKey({ key: { kty: 'RSA', n: jwk.n, e: jwk.e }, format: 'jwk' }); } catch { fail('jwks-key-invalid'); }
+  if (publicKey.asymmetricKeyDetails?.modulusLength < 2048) fail('jwks-key-invalid');
+  if (!crypto.verify('RSA-SHA256', Buffer.from(compact.signingInput, 'ascii'), publicKey, compact.signature)) fail('signature-invalid');
+  return parseJsonUnique(compact.payloadBytes.toString('utf8'));
+}
+
 function requireStringClaim(claims, name) {
   if (typeof claims[name] !== 'string' || claims[name].length === 0) fail('claim-schema');
 }
@@ -327,17 +336,7 @@ async function runOidcSmoke({ env = process.env, request = makeHttpsGet, nowSeco
     const jwk = candidates[0];
     if (jwk.kty !== 'RSA' || jwk.alg !== 'RS256' || jwk.use !== 'sig' || typeof jwk.n !== 'string' || typeof jwk.e !== 'string') fail('jwks-key-invalid');
 
-    let publicKey;
-    try {
-      publicKey = crypto.createPublicKey({ key: { kty: 'RSA', n: jwk.n, e: jwk.e }, format: 'jwk' });
-    } catch {
-      fail('jwks-key-invalid');
-    }
-    if (publicKey.asymmetricKeyDetails?.modulusLength < 2048) fail('jwks-key-invalid');
-    const signatureOk = crypto.verify('RSA-SHA256', Buffer.from(compact.signingInput, 'ascii'), publicKey, compact.signature);
-    if (!signatureOk) fail('signature-invalid');
-
-    const claims = parseJsonUnique(compact.payloadBytes.toString('utf8'));
+    const claims = verifyRs256CompactToken(compact, jwk);
     const claimTypes = validateClaims(claims, expectedAudience, expectedEnvironment, runAttempt, nowSeconds);
     return {
       ok: true,
@@ -369,4 +368,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runOidcSmoke };
+module.exports = { runOidcSmoke, parseCompactJwt, parseJsonUnique, verifyRs256CompactToken, validateClaims };
