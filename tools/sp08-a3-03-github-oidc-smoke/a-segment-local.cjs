@@ -64,6 +64,16 @@ function commitment(claims, request, jwk, nonce, policy) {
   };
 }
 function expectedAudience(value) { return `${AUDIENCE_PREFIX}${b64(sha(Buffer.from(canonical(value), 'utf8')))}`; }
+async function requestDynamicAudienceToken({ identity, request, jwk, nonce, policy, env, runtimeRequest }) {
+  const identityKeys = ['repository_id', 'run_id', 'run_attempt', 'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha'];
+  if (!identity || identityKeys.some((key) => typeof identity[key] !== 'string' || identity[key].length === 0)) fail('github-identity-policy-missing');
+  if (!request || ['env_id', 'action_id', 'resource_id', 'artifact_digest'].some((key) => typeof request[key] !== 'string' || request[key].length === 0)) fail('request-policy-missing');
+  if (!policy || typeof policy.service !== 'string' || !policy.service) fail('local-server-policy-missing');
+  const commit = commitment(identity, request, jwk, nonce, policy);
+  const audience = expectedAudience(commit);
+  const token = await oidc.requestGithubIdToken({ env, audience, request: runtimeRequest });
+  return Object.freeze({ token, commit, audience });
+}
 function proofMessage(token, commit, exporter) {
   if (typeof token !== 'string' || !/^[\x21-\x7e]+$/.test(token)) fail('invalid-token-bytes');
   const tokenBytes = Buffer.from(token, 'ascii');
@@ -167,4 +177,4 @@ function startLocalVerificationServer(options) {
   return { server, close: () => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())), address: () => server.address() };
 }
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer };
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer };

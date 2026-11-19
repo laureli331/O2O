@@ -407,6 +407,48 @@ async function runOidcSmoke({ env = process.env, request = makeHttpsGet, nowSeco
   }
 }
 
+// One-shot token request for the offline A-segment dynamic-audience model.
+// Identity and audience are supplied explicitly by the caller; this helper
+// never infers workflow metadata or changes the fixed smoke path above.
+async function requestGithubIdToken({ env = process.env, audience, request = makeHttpsGet, totalTimeoutMs = TOTAL_TIMEOUT_MS } = {}) {
+  if (!Number.isSafeInteger(totalTimeoutMs) || totalTimeoutMs <= 0 || totalTimeoutMs > TOTAL_TIMEOUT_MS) fail('token-request-config-invalid');
+  if (typeof audience !== 'string' || !audience.startsWith(AUDIENCE_PREFIX)
+    || audience.length !== AUDIENCE_PREFIX.length + 43
+    || !/^[A-Za-z0-9_-]{43}$/.test(audience.slice(AUDIENCE_PREFIX.length))) fail('invalid-dynamic-audience');
+  const bearer = env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+  const rawRequestUrl = env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  const expectedOidcOrigin = env.A303_EXPECTED_OIDC_ORIGIN;
+  if (typeof bearer !== 'string' || bearer.length === 0) fail('missing-runtime-credential');
+  if (typeof expectedOidcOrigin !== 'string' || expectedOidcOrigin.length === 0) fail('missing-oidc-origin-policy');
+  const base = validateHttpsUrl(rawRequestUrl, 'invalid-runtime-url');
+  const expectedOrigin = validateHttpsUrl(expectedOidcOrigin, 'invalid-oidc-origin-policy');
+  if (expectedOrigin.origin !== expectedOidcOrigin || base.origin !== expectedOrigin.origin) fail('runtime-origin-mismatch');
+  if (base.searchParams.has('audience')) fail('runtime-url-has-audience');
+  const url = new URL(base.toString());
+  url.searchParams.set('audience', audience);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), totalTimeoutMs);
+  try {
+    let response;
+    try {
+      response = await raceAbort(Promise.resolve().then(() => request(url, {
+        method: 'GET', headers: { accept: 'application/json', authorization: `Bearer ${bearer}` },
+        maxBytes: RESPONSE_LIMITS.token, timeoutMs: REQUEST_TIMEOUT_MS,
+        followRedirects: false, retries: 0, signal: controller.signal,
+      })), controller.signal);
+    } catch { fail(controller.signal.aborted ? 'total-timeout' : 'transport-failed'); }
+    const body = Buffer.isBuffer(response.body) ? response.body : Buffer.from(response.body || '');
+    if (body.length > RESPONSE_LIMITS.token) fail('response-too-large');
+    if (response.statusCode >= 300 && response.statusCode < 400) fail('redirect-rejected');
+    if (response.statusCode !== 200) fail('http-status-rejected');
+    const contentType = getHeader(response.headers, 'content-type');
+    if (typeof contentType !== 'string' || !/^application\/json(?:\s*;|\s*$)/i.test(contentType)) fail('content-type-rejected');
+    const tokenResponse = parseJsonUnique(body.toString('utf8'));
+    if (!tokenResponse || typeof tokenResponse !== 'object' || typeof tokenResponse.value !== 'string') fail('token-response-invalid');
+    return tokenResponse.value;
+  } finally { clearTimeout(timer); }
+}
+
 if (require.main === module) {
   runOidcSmoke().then((result) => {
     process.stdout.write(`${JSON.stringify(result)}\n`);
@@ -416,4 +458,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runOidcSmoke, parseCompactJwt, parseJsonUnique, verifyRs256CompactToken, validateClaims, loadTrustedGithubJwks, JWKS_SNAPSHOT_TTL_MS };
+module.exports = { runOidcSmoke, requestGithubIdToken, parseCompactJwt, parseJsonUnique, verifyRs256CompactToken, validateClaims, loadTrustedGithubJwks, JWKS_SNAPSHOT_TTL_MS };

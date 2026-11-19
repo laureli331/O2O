@@ -2,6 +2,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
+const oidc = require('../tools/sp08-a3-03-github-oidc-smoke/oidc-smoke.cjs');
+const aSegment = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
 const tls = require('node:tls');
 const net = require('node:net');
 const { spawnSync } = require('node:child_process');
@@ -59,7 +61,7 @@ test('GitHub OIDC mode refuses to start when fixed identity policy is incomplete
   } }), { code: 'github-identity-policy-missing' });
 });
 
-async function runLoopback(mode) {
+async function runLoopback(mode, alterAudience = false) {
   const certScript = `$ErrorActionPreference='Stop'
 function New-KeyCert([string]$name) { $key=[System.Security.Cryptography.RSA]::Create(2048); $req=[System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$name",$key,[System.Security.Cryptography.HashAlgorithmName]::SHA256,[System.Security.Cryptography.RSASignaturePadding]::Pkcs1); return @{key=$key;req=$req} }
 $ca=New-KeyCert 'o2o-test-ca'; $ca.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true,$false,0,$true)); $ca.cert=$ca.req.CreateSelfSigned([datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddHours(1))
@@ -93,7 +95,7 @@ Write-Output $out
       const request = policy.expectedRequest; const nonce = crypto.randomBytes(32).toString('base64url');
       const pair = crypto.generateKeyPairSync('ed25519'); const pub = pair.publicKey.export({ format: 'jwk' }); const jwk = { kty: pub.kty, crv: pub.crv, x: pub.x };
       const commit = commitment(claims, request, jwk, nonce, policy); const audience = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs').expectedAudience(commit);
-      const part = (v) => Buffer.from(JSON.stringify(v)).toString('base64url'); const h = part({ alg: github ? 'RS256' : 'EdDSA', kid: github ? 'github-fixture' : 'fixture-kid', typ: 'JWT' }); const b = part({ iss: policy.issuer, aud: audience, ...claims }); const input = `${h}.${b}`;
+      const part = (v) => Buffer.from(JSON.stringify(v)).toString('base64url'); const h = part({ alg: github ? 'RS256' : 'EdDSA', kid: github ? 'github-fixture' : 'fixture-kid', typ: 'JWT' }); const b = part({ iss: policy.issuer, aud: alterAudience ? `${audience}x` : audience, ...claims }); const input = `${h}.${b}`;
       const token = `${input}.${crypto.sign(github ? 'RSA-SHA256' : null, Buffer.from(input, 'ascii'), issuer.privateKey).toString('base64url')}`;
       const response = new Promise((resolve, reject) => {
         let received = ''; const timer = setTimeout(() => reject(new Error('response-timeout')), 5000);
@@ -104,10 +106,40 @@ Write-Output $out
       assert.equal(clientSocket.getProtocol(), 'TLSv1.3');
       const proof = signCurrentConnection(clientSocket, token, commit, pair.privateKey);
       clientSocket.write(`${JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof })}\n`);
-      assert.deepEqual(await response, { ok: true, result: 'synthetic-local-proof-accepted' });
+      if (alterAudience) assert.deepEqual(await response, { ok: false, code: 'audience-mismatch' });
+      else assert.deepEqual(await response, { ok: true, result: 'synthetic-local-proof-accepted' });
       clientSocket.end();
     } finally { await local.close(); }
 }
 
 test('A proof verifies over a real loopback TLS 1.3 client/server socket', () => runLoopback('synthetic'));
 test('GitHub RS256 proof verifies over a real loopback TLS 1.3 client/server socket', () => runLoopback('github-oidc'));
+test('GitHub RS256 dynamic audience mismatch is rejected by server recomputation', () => runLoopback('github-oidc', true));
+
+test('dynamic audience is derived from explicit workflow identity, request, fresh proof key and nonce before one injected token request', async () => {
+  const pair = crypto.generateKeyPairSync('ed25519');
+  const publicJwk = pair.publicKey.export({ format: 'jwk' });
+  const jwk = { kty: publicJwk.kty, crv: publicJwk.crv, x: publicJwk.x };
+  const identity = { repository_id: '1', run_id: '2', run_attempt: '1', workflow_ref: 'owner/repo/.github/workflows/caller.yml@refs/heads/main', workflow_sha: 'a'.repeat(40), job_workflow_ref: 'owner/repo/.github/workflows/reusable.yml@refs/heads/main', job_workflow_sha: 'b'.repeat(40) };
+  const request_R = { v: 'a303-request-v1', method: 'POST', route_id: 'r', env_id: 'e', resource_id: 'res', action_id: 'act', artifact_digest: 'sha256:fixture', repository_id: '1', run_id: '2', run_attempt: '1', payload: { fixture: true } };
+  const nonce = crypto.randomBytes(32).toString('base64url');
+  const policy = { service: 'fixture-service' };
+  const env = { ACTIONS_ID_TOKEN_REQUEST_URL: 'https://oidc.test/request?job=fixture', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'fixture-bearer', A303_EXPECTED_OIDC_ORIGIN: 'https://oidc.test' };
+  const calls = [];
+  const result = await aSegment.requestDynamicAudienceToken({ identity, request: request_R, jwk, nonce, policy, env, runtimeRequest: async (url, options) => {
+    calls.push({ url: String(url), options });
+    return { statusCode: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ value: 'fixture.signed.token' }) };
+  } });
+  assert.equal(calls.length, 1);
+  assert.equal(new URL(calls[0].url).searchParams.get('audience'), aSegment.expectedAudience(aSegment.commitment(identity, request_R, jwk, nonce, policy)));
+  assert.equal(result.audience, new URL(calls[0].url).searchParams.get('audience'));
+  assert.equal(calls[0].options.method, 'GET');
+  assert.equal(calls[0].options.retries, 0);
+  assert.equal(calls[0].options.followRedirects, false);
+});
+
+test('dynamic audience requires explicit workflow identity and fails closed before requesting a token', async () => {
+  const calls = [];
+  await assert.rejects(aSegment.requestDynamicAudienceToken({ identity: {}, request: {}, jwk: {}, nonce: '', policy: {}, env: {}, runtimeRequest: async () => { calls.push(1); } }), (error) => error.code === 'github-identity-policy-missing');
+  assert.equal(calls.length, 0);
+});
