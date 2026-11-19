@@ -15,6 +15,7 @@ const RESPONSE_LIMITS = Object.freeze({
   discovery: 64 * 1024,
   jwks: 256 * 1024,
 });
+const JWKS_SNAPSHOT_TTL_MS = 15 * 60 * 1000;
 
 class SmokeError extends Error {
   constructor(code) {
@@ -248,6 +249,53 @@ function makeHttpsGet(url, { headers, maxBytes, timeoutMs, signal }) {
   });
 }
 
+// Fixed-origin, read-only key preparation for the bounded A-segment session.
+// Callers cannot supply a discovery/JWKS URL or a trust key.
+async function loadTrustedGithubJwks({ request = makeHttpsGet, now = Date.now(), totalTimeoutMs = TOTAL_TIMEOUT_MS } = {}) {
+  if (typeof now !== 'number' || !Number.isSafeInteger(now) || totalTimeoutMs <= 0 || totalTimeoutMs > TOTAL_TIMEOUT_MS) fail('jwks-loader-config-invalid');
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), totalTimeoutMs);
+  const counts = { total: 0, discovery: 0, jwks: 0 };
+  const getJson = async (kind, url) => {
+    if (counts.total >= 2 || counts[kind] >= 1) fail('request-budget-exceeded');
+    const parsed = validateHttpsUrl(url, 'invalid-request-url');
+    if (parsed.href !== url || parsed.origin !== new URL(ISSUER).origin) fail('fixed-origin-rejected');
+    counts.total += 1;
+    counts[kind] += 1;
+    let response;
+    try {
+      response = await raceAbort(Promise.resolve().then(() => request(parsed, {
+        method: 'GET', headers: { accept: 'application/json' }, maxBytes: RESPONSE_LIMITS[kind],
+        timeoutMs: REQUEST_TIMEOUT_MS, followRedirects: false, retries: 0, signal: controller.signal,
+      })), controller.signal);
+    } catch { fail(controller.signal.aborted ? 'total-timeout' : 'transport-failed'); }
+    const body = Buffer.isBuffer(response.body) ? response.body : Buffer.from(response.body || '');
+    if (body.length > RESPONSE_LIMITS[kind]) fail('response-too-large');
+    if (response.statusCode >= 300 && response.statusCode < 400) fail('redirect-rejected');
+    if (response.statusCode !== 200) fail('http-status-rejected');
+    const contentType = getHeader(response.headers, 'content-type');
+    if (typeof contentType !== 'string' || !/^application\/json(?:\s*;|\s*$)/i.test(contentType)) fail('content-type-rejected');
+    return parseJsonUnique(body.toString('utf8'));
+  };
+  try {
+    const discovery = await getJson('discovery', DISCOVERY_URL);
+    if (!discovery || discovery.issuer !== ISSUER || !Array.isArray(discovery.id_token_signing_alg_values_supported)
+      || !discovery.id_token_signing_alg_values_supported.includes('RS256')) fail('discovery-invalid');
+    const jwksUrl = validateHttpsUrl(discovery.jwks_uri, 'discovery-jwks-url-invalid');
+    if (jwksUrl.href !== JWKS_URL || jwksUrl.origin !== new URL(ISSUER).origin) fail('fixed-origin-rejected');
+    const jwks = await getJson('jwks', JWKS_URL);
+    if (!jwks || !Array.isArray(jwks.keys)) fail('jwks-invalid');
+    const keyIds = jwks.keys.filter((key) => key && typeof key === 'object' && typeof key.kid === 'string').map((key) => key.kid);
+    if (new Set(keyIds).size !== keyIds.length) fail('jwks-duplicate-kid');
+    const keys = jwks.keys.filter((key) => key && typeof key === 'object' && key.kty === 'RSA' && key.alg === 'RS256' && key.use === 'sig'
+      && typeof key.kid === 'string' && key.kid.length > 0 && typeof key.n === 'string' && typeof key.e === 'string')
+      .filter((key) => { try { const pub = crypto.createPublicKey({ key: { kty: 'RSA', n: key.n, e: key.e }, format: 'jwk' }); return (pub.asymmetricKeyDetails?.modulusLength || 0) >= 2048; } catch { return false; } });
+    if (!keys.length) fail('jwks-key-invalid');
+    return Object.freeze({ issuer: ISSUER, keys: Object.freeze(keys), fetchedAt: now, expiresAt: now + JWKS_SNAPSHOT_TTL_MS,
+      requestBudget: Object.freeze({ limit: 2, used: counts.total, redirectsFollowed: 0, retries: 0 }) });
+  } finally { clearTimeout(timer); }
+}
+
 function raceAbort(promise, signal) {
   if (signal.aborted) return Promise.reject(new SmokeError('total-timeout'));
   return new Promise((resolve, reject) => {
@@ -368,4 +416,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runOidcSmoke, parseCompactJwt, parseJsonUnique, verifyRs256CompactToken, validateClaims };
+module.exports = { runOidcSmoke, parseCompactJwt, parseJsonUnique, verifyRs256CompactToken, validateClaims, loadTrustedGithubJwks, JWKS_SNAPSHOT_TTL_MS };

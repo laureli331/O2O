@@ -94,7 +94,11 @@ function verifySyntheticToken(token, policy) {
   return claims;
 }
 function verifyGithubToken(token, policy) {
-  if (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0) fail('github-issuer-policy-missing');
+  const now = Date.now();
+  if (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0
+    || !Number.isSafeInteger(policy.githubJwksFetchedAt) || !Number.isSafeInteger(policy.githubJwksExpiresAt)
+    || policy.githubJwksExpiresAt <= now || policy.githubJwksExpiresAt - policy.githubJwksFetchedAt > oidc.JWKS_SNAPSHOT_TTL_MS
+    || policy.githubJwksFetchedAt > now) fail('github-jwks-snapshot-expired');
   const compact = oidc.parseCompactJwt(token);
   const candidates = policy.githubJwksKeys.filter((key) => key && key.kid === compact.header.kid);
   if (candidates.length !== 1) fail('jwks-kid-not-found');
@@ -128,7 +132,9 @@ function startLocalVerificationServer(options) {
   const { policy } = options || {};
   if (!options || !policy || !policy.tlsKey || !policy.tlsCert || !policy.ca
     || !policy.issuer || (policy.mode !== 'github-oidc' && (!policy.issuerKid || !policy.issuerPublicKey))
-    || (policy.mode === 'github-oidc' && (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0))
+    || (policy.mode === 'github-oidc' && (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0
+      || !Number.isSafeInteger(policy.githubJwksFetchedAt) || !Number.isSafeInteger(policy.githubJwksExpiresAt)
+      || policy.githubJwksExpiresAt <= Date.now() || policy.githubJwksExpiresAt - policy.githubJwksFetchedAt > oidc.JWKS_SNAPSHOT_TTL_MS))
     || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
     || !policy.expectedClaims || !policy.expectedRequest || !policy.service
     || (options.host !== undefined && options.host !== '127.0.0.1')) fail('local-server-policy-missing');

@@ -43,7 +43,7 @@ test('A proof rejects resumed sockets and missing peer authorization', () => {
 test('GitHub OIDC mode refuses to start without trusted JWKS keys', () => {
   assert.throws(() => startLocalVerificationServer({ policy: {
     mode: 'github-oidc', service: 'fixture-service', issuer: 'https://token.actions.githubusercontent.com',
-    githubJwksKeys: [], expectedClaims: {}, expectedRequest: {}, allowedPeerFingerprints: ['00'],
+    githubJwksKeys: [], githubJwksFetchedAt: Date.now(), githubJwksExpiresAt: Date.now() + 60_000, expectedClaims: {}, expectedRequest: {}, allowedPeerFingerprints: ['00'],
     tlsKey: 'key', tlsCert: 'cert', ca: 'ca',
   } }), { code: 'local-server-policy-missing' });
 });
@@ -53,7 +53,7 @@ test('GitHub OIDC mode refuses to start when fixed identity policy is incomplete
   const publicJwk = pair.publicKey.export({ format: 'jwk' });
   assert.throws(() => startLocalVerificationServer({ policy: {
     mode: 'github-oidc', service: 'fixture-service', issuer: 'https://token.actions.githubusercontent.com',
-    githubJwksKeys: [{ ...publicJwk, kid: 'trusted', alg: 'RS256', use: 'sig' }],
+    githubJwksKeys: [{ ...publicJwk, kid: 'trusted', alg: 'RS256', use: 'sig' }], githubJwksFetchedAt: Date.now(), githubJwksExpiresAt: Date.now() + 60_000,
     expectedClaims: { repository_id: '1', workflow_ref: 'r', workflow_sha: 'a', job_workflow_ref: 'j', job_workflow_sha: 'b', environment: 'e' },
     expectedRequest: {}, allowedPeerFingerprints: ['00'], tlsKey: 'key', tlsCert: 'cert', ca: 'ca',
   } }), { code: 'github-identity-policy-missing' });
@@ -79,7 +79,7 @@ Write-Output $out
     const issuer = crypto.generateKeyPairSync(github ? 'rsa' : 'ed25519', github ? { modulusLength: 2048 } : {});
     const identity = { repository_id: '1', workflow_ref: 'repo/.github/workflows/caller.yml@refs/heads/main', workflow_sha: 'a'.repeat(40), job_workflow_ref: 'repo/.github/workflows/reusable.yml@refs/heads/main', job_workflow_sha: 'b'.repeat(40), environment: 'fixture-env', run_attempt: '1' };
     const jwksKey = github ? { ...issuer.publicKey.export({ format: 'jwk' }), kid: 'github-fixture', alg: 'RS256', use: 'sig' } : null;
-    const policy = { mode: github ? 'github-oidc' : undefined, service: 'fixture-service', issuer: github ? 'https://token.actions.githubusercontent.com' : 'synthetic:issuer', issuerKid: github ? undefined : 'fixture-kid', issuerPublicKey: github ? undefined : issuer.publicKey, githubJwksKeys: github ? [jwksKey] : undefined, expectedClaims: github ? identity : {}, expectedRequest: { env_id: 'e', action_id: 'a', resource_id: 'r', artifact_digest: 'd' }, allowedPeerFingerprints: [new crypto.X509Certificate(clientCert).fingerprint256.replaceAll(':', '').toLowerCase()], tlsKey: certs.server.key, tlsCert: serverCert, ca };
+    const policy = { mode: github ? 'github-oidc' : undefined, service: 'fixture-service', issuer: github ? 'https://token.actions.githubusercontent.com' : 'synthetic:issuer', issuerKid: github ? undefined : 'fixture-kid', issuerPublicKey: github ? undefined : issuer.publicKey, githubJwksKeys: github ? [jwksKey] : undefined, githubJwksFetchedAt: github ? Date.now() : undefined, githubJwksExpiresAt: github ? Date.now() + 60_000 : undefined, expectedClaims: github ? identity : {}, expectedRequest: { env_id: 'e', action_id: 'a', resource_id: 'r', artifact_digest: 'd' }, allowedPeerFingerprints: [new crypto.X509Certificate(clientCert).fingerprint256.replaceAll(':', '').toLowerCase()], tlsKey: certs.server.key, tlsCert: serverCert, ca };
     const serverKey = certs.server.key;
     const clientKey = certs.client.key;
     const local = startLocalVerificationServer({ policy });
