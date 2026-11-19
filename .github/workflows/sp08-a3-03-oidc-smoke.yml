@@ -1,0 +1,20 @@
+name: SP08-A3-03 OIDC smoke
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: o2o-a303-oidc-smoke-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  oidc-smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-oidc-smoke-20261118' && github.run_attempt == 1 }}
+    uses: ./.github/workflows/sp08-a3-03-oidc-smoke-reusable.yml
+    permissions:
+      contents: read
+      id-token: write

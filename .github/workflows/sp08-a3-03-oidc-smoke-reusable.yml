@@ -1,0 +1,36 @@
+name: SP08-A3-03 OIDC smoke reusable
+
+on:
+  workflow_call:
+
+jobs:
+  verify-token:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-oidc-smoke-20261118' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    environment:
+      name: SP08-A3-03-OIDC-smoke
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      A303_OIDC_SMOKE_AUDIENCE: urn:o2o:a303-bind-v1:MGPh80-5pKOEFwpv7uHA19ehFSxQ1xx9C1lpadsLec4
+      A303_EXPECTED_GITHUB_ENVIRONMENT: SP08-A3-03-OIDC-smoke
+    steps:
+      - name: Check out the reviewed task files
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+          lfs: false
+
+      - name: Observe the runner-provided OIDC origin without network access
+        id: oidc-origin
+        run: node tools/sp08-a3-03-github-oidc-smoke/oidc-origin-preflight.cjs
+
+      - name: Verify one GitHub OIDC token only after authorization
+        if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-oidc-smoke-20261118' && github.run_attempt == 1 }}
+        env:
+          A303_EXPECTED_OIDC_ORIGIN: ${{ steps.oidc-origin.outputs.origin }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/oidc-smoke.cjs
