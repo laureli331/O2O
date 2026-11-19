@@ -1,0 +1,144 @@
+'use strict';
+
+// Offline-only A-segment proof primitives. The issuer verifier and policy are
+// injected by the caller; this module never performs network requests.
+const crypto = require('node:crypto');
+const tls = require('node:tls');
+
+const LABEL = 'EXPORTER-Channel-Binding';
+const PREFIX = 'O2O-A303-A\n1\n';
+const AUDIENCE_PREFIX = 'urn:o2o:a303-bind-v1:';
+
+function fail(code) { const error = new Error(code); error.code = code; throw error; }
+function parseJsonNoDuplicates(input) {
+  let offset = 0;
+  const ws = () => { while (/[ \t\r\n]/.test(input[offset] || '')) offset += 1; };
+  const string = () => { const start = offset++; while (offset < input.length) { if (input[offset] === '\\') { offset += 2; continue; } if (input[offset++] === '"') return JSON.parse(input.slice(start, offset)); } fail('invalid-json'); };
+  function value(depth) {
+    if (depth > 64) fail('invalid-json'); ws();
+    if (input[offset] === '"') return string();
+    if (input[offset] === '{') { offset += 1; ws(); const out = Object.create(null); const seen = new Set(); if (input[offset] === '}') { offset += 1; return out; } while (offset < input.length) { ws(); if (input[offset] !== '"') fail('invalid-json'); const k = string(); if (seen.has(k)) fail('duplicate-json-key'); seen.add(k); ws(); if (input[offset++] !== ':') fail('invalid-json'); Object.defineProperty(out, k, { value: value(depth + 1), enumerable: true }); ws(); if (input[offset] === '}') { offset += 1; return out; } if (input[offset++] !== ',') fail('invalid-json'); } fail('invalid-json'); }
+    if (input[offset] === '[') { offset += 1; ws(); const out = []; if (input[offset] === ']') { offset += 1; return out; } while (offset < input.length) { out.push(value(depth + 1)); ws(); if (input[offset] === ']') { offset += 1; return out; } if (input[offset++] !== ',') fail('invalid-json'); } fail('invalid-json'); }
+    const tail = input.slice(offset); const literal = /^(?:true|false|null)/.exec(tail); if (literal) { offset += literal[0].length; return literal[0] === 'null' ? null : literal[0] === 'true'; }
+    const number = /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?/.exec(tail); if (number) { offset += number[0].length; const n = JSON.parse(number[0]); if (!Number.isFinite(n)) fail('invalid-json'); return n; } fail('invalid-json');
+  }
+  if (typeof input !== 'string') fail('invalid-json'); const result = value(0); ws(); if (offset !== input.length) fail('invalid-json'); return result;
+}
+function b64(value) { return Buffer.from(value).toString('base64url'); }
+function decode(value, length) {
+  if (typeof value !== 'string' || !/^[A-Za-z0-9_-]+$/.test(value)) fail('invalid-base64url');
+  const bytes = Buffer.from(value, 'base64url');
+  if (bytes.toString('base64url') !== value || (length !== undefined && bytes.length !== length)) fail('invalid-base64url');
+  return bytes;
+}
+function sha(value) { return crypto.createHash('sha256').update(value).digest(); }
+function exactKeys(value, expected) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    && Object.keys(value).sort().join('\0') === [...expected].sort().join('\0');
+}
+function thumbprint(jwk) {
+  if (!exactKeys(jwk, ['kty', 'crv', 'x']) || jwk.kty !== 'OKP' || jwk.crv !== 'Ed25519') fail('invalid-proof-key');
+  decode(jwk.x, 32);
+  const bytes = Buffer.from(JSON.stringify({ crv: jwk.crv, kty: jwk.kty, x: jwk.x }), 'utf8');
+  return b64(sha(bytes));
+}
+function canonical(value) {
+  if (value === null || typeof value === 'boolean' || typeof value === 'string') return JSON.stringify(value);
+  if (typeof value === 'number') { if (!Number.isFinite(value)) fail('invalid-canonical-value'); return JSON.stringify(value); }
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+  if (value && typeof value === 'object') return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`;
+  fail('invalid-canonical-value');
+}
+function commitment(claims, request, jwk, nonce, policy) {
+  return {
+    v: 'a303-bind-v1', svc: policy.service,
+    repository_id: claims.repository_id, run_id: claims.run_id, run_attempt: claims.run_attempt,
+    caller_workflow_ref: claims.workflow_ref, caller_workflow_sha: claims.workflow_sha,
+    called_workflow_ref: claims.job_workflow_ref, called_workflow_sha: claims.job_workflow_sha,
+    env: request.env_id, action: request.action_id, resource: request.resource_id,
+    artifact: request.artifact_digest,
+    request: b64(sha(Buffer.from(canonical(request), 'utf8'))),
+    proof_key_thumbprint: thumbprint(jwk), nonce,
+  };
+}
+function expectedAudience(value) { return `${AUDIENCE_PREFIX}${b64(sha(Buffer.from(canonical(value), 'utf8')))}`; }
+function proofMessage(token, commit, exporter) {
+  if (typeof token !== 'string' || !/^[\x21-\x7e]+$/.test(token)) fail('invalid-token-bytes');
+  const tokenBytes = Buffer.from(token, 'ascii');
+  return Buffer.from(`${PREFIX}${b64(sha(tokenBytes))}\n${b64(sha(Buffer.from(canonical(commit), 'utf8')))}\n${b64(exporter)}`, 'utf8');
+}
+function signCurrentConnection(socket, token, commit, privateKey) {
+  if (!socket || socket.getProtocol() !== 'TLSv1.3') fail('tls-version-rejected');
+  const exporter = socket.exportKeyingMaterial(32, LABEL, Buffer.alloc(0));
+  return b64(crypto.sign(null, proofMessage(token, commit, exporter), privateKey));
+}
+function parseJsonUnique(text) {
+  const value = JSON.parse(text);
+  // The local verifier accepts only the synthetic issuer's compact EdDSA JWT.
+  // Its issuer signs these bytes; duplicate-key rejection is handled by the
+  // existing smoke parser before this helper is used in production integration.
+  return value;
+}
+function verifySyntheticToken(token, policy) {
+  if (typeof token !== 'string' || !/^[\x21-\x7e]+$/.test(token)) fail('invalid-token');
+  const parts = token.split('.');
+  if (parts.length !== 3 || parts.some((part) => !part)) fail('invalid-token');
+  const [head, body, sig] = parts;
+  const header = parseJsonNoDuplicates(decode(head).toString('utf8'));
+  const claims = parseJsonNoDuplicates(decode(body).toString('utf8'));
+  if (!exactKeys(header, ['alg', 'kid', 'typ']) || header.alg !== 'EdDSA' || header.typ !== 'JWT' || header.kid !== policy.issuerKid) fail('issuer-header-rejected');
+  if (!crypto.verify(null, Buffer.from(`${head}.${body}`, 'ascii'), policy.issuerPublicKey, decode(sig, 64))) fail('issuer-signature-rejected');
+  if (!claims || claims.iss !== policy.issuer) fail('issuer-claim-rejected');
+  return claims;
+}
+function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, nonce }) {
+  if (!socket || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true) fail('tls-peer-rejected');
+  if (typeof socket.isSessionReused === 'function' && socket.isSessionReused()) fail('session-resumption-rejected');
+  const peer = socket.getPeerCertificate(true);
+  if (!peer || !peer.raw || !policy.allowedPeerFingerprints.includes(sha(peer.raw).toString('hex'))) fail('peer-identity-rejected');
+  const claims = verifySyntheticToken(token, policy);
+  for (const [key, expected] of Object.entries(policy.expectedClaims)) if (claims[key] !== expected) fail('claim-policy-mismatch');
+  const commit = commitment(claims, request, jwk, nonce, policy);
+  if (claims.aud !== expectedAudience(commit)) fail('audience-mismatch');
+  const key = crypto.createPublicKey({ key: jwk, format: 'jwk' });
+  const exporter = socket.exportKeyingMaterial(32, LABEL, Buffer.alloc(0));
+  if (!crypto.verify(null, proofMessage(token, commit, exporter), key, decode(proof, 64))) fail('proof-invalid');
+  return { ok: true, result: 'synthetic-local-proof-accepted' };
+}
+
+function startLocalVerificationServer(options) {
+  const { policy } = options || {};
+  if (!options || !policy || !policy.tlsKey || !policy.tlsCert || !policy.ca
+    || !policy.issuer || !policy.issuerKid || !policy.issuerPublicKey
+    || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
+    || !policy.expectedClaims || !policy.expectedRequest || !policy.service
+    || (options.host !== undefined && options.host !== '127.0.0.1')) fail('local-server-policy-missing');
+  const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
+    socket.setTimeout(options.timeoutMs || 5000, () => socket.destroy());
+    let data = ''; let complete = false;
+    socket.on('data', (chunk) => {
+      if (complete) return;
+      data += chunk.toString('utf8');
+      if (Buffer.byteLength(data, 'utf8') > (options.maxBytes || 65536)) { complete = true; socket.destroy(); return; }
+      const newline = data.indexOf('\n');
+      if (newline < 0) return;
+      if (newline !== data.length - 1) { complete = true; socket.destroy(); return; }
+      complete = true;
+      try {
+        const envelope = parseJsonNoDuplicates(data.slice(0, newline));
+        if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
+        if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
+        verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
+        socket.end(`${JSON.stringify({ ok: true, result: 'synthetic-local-proof-accepted' })}\n`);
+      } catch (error) {
+        socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`);
+      }
+    });
+    socket.on('error', () => {});
+  });
+  server.on('error', () => {});
+  server.listen(options.port || 0, '127.0.0.1');
+  return { server, close: () => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())), address: () => server.address() };
+}
+
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer };
