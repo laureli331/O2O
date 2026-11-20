@@ -1,43 +1,27 @@
 'use strict';
 
 const crypto = require('node:crypto');
+const { spawnSync } = require('node:child_process');
+const path = require('node:path');
 
 const fail = (code) => { throw new Error(code); };
 const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
 
-function readDerNode(bytes, offset, limit) {
-  if (offset + 2 > limit) fail('csr-der-invalid');
-  const tag = bytes[offset];
-  let length = bytes[offset + 1];
-  let headerLength = 2;
-  if ((length & 0x80) !== 0) {
-    const count = length & 0x7f;
-    if (count < 1 || count > 4 || offset + 2 + count > limit || bytes[offset + 2] === 0) fail('csr-der-invalid');
-    length = 0;
-    for (let index = 0; index < count; index += 1) length = length * 256 + bytes[offset + 2 + index];
-    if (length < 128) fail('csr-der-invalid');
-    headerLength += count;
-  }
-  const start = offset + headerLength;
-  const end = start + length;
-  if (end > limit || end < start) fail('csr-der-invalid');
-  return { tag, start, end };
-}
-
-function csrPublicKey(csrBytes) {
-  const pem = csrBytes.toString('ascii');
-  const match = /^-----BEGIN CERTIFICATE REQUEST-----\s*([A-Za-z0-9+/=\r\n]+)\s*-----END CERTIFICATE REQUEST-----\s*$/.exec(pem);
-  if (!match) fail('csr-pem-invalid');
-  const der = Buffer.from(match[1].replace(/\s/g, ''), 'base64');
-  const outer = readDerNode(der, 0, der.length);
-  if (outer.tag !== 0x30 || outer.end !== der.length) fail('csr-der-invalid');
-  const info = readDerNode(der, outer.start, outer.end);
-  if (info.tag !== 0x30) fail('csr-der-invalid');
-  const version = readDerNode(der, info.start, info.end);
-  const subject = readDerNode(der, version.end, info.end);
-  const spki = readDerNode(der, subject.end, info.end);
-  if (spki.tag !== 0x30) fail('csr-der-invalid');
-  return der.subarray(subject.end, spki.end);
+function csrPublicKey(csrBytes, { pwshPath, timeoutMs }) {
+  if (typeof pwshPath !== 'string' || pwshPath.length === 0) fail('pwsh-path-required');
+  const parser = path.join(__dirname, 'read-csr-spki.ps1');
+  const result = spawnSync(pwshPath, ['-NoProfile', '-NonInteractive', '-File', parser], {
+    input: csrBytes,
+    encoding: 'buffer',
+    timeout: timeoutMs,
+    maxBuffer: 16384,
+    windowsHide: true,
+    shell: false,
+  });
+  if (result.error || result.status !== 0 || result.stdout.byteLength < 1 || result.stdout.byteLength > 8192) fail('csr-signature-invalid-or-parser-failed');
+  const encoded = result.stdout.toString('ascii').trim();
+  if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded)) fail('csr-spki-output-invalid');
+  return Buffer.from(encoded, 'base64');
 }
 
 function validateBudget(budget) {
@@ -65,7 +49,7 @@ function selectSourceRun(runs, expected, budget) {
   return valid[0];
 }
 
-function verifyCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, caPem, expectedCaFingerprint256, privateKeyPem, now = Date.now(), maxBytes = 65536 }) {
+function verifyCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, caPem, expectedCaFingerprint256, privateKeyPem, pwshPath, now = Date.now(), maxBytes = 65536, timeoutMs = 5000 }) {
   for (const [label, value] of Object.entries({ csrBytes, leafPem, caPem, privateKeyPem })) {
     const size = Buffer.isBuffer(value) ? value.byteLength : Buffer.byteLength(value || '');
     if (size < 1 || size > maxBytes) fail(`${label}-size-limit`);
@@ -74,15 +58,17 @@ function verifyCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, caPem,
   if (csrDigest !== expectedCsrSha256) fail('csr-digest-mismatch');
   const ca = new crypto.X509Certificate(caPem);
   const leaf = new crypto.X509Certificate(leafPem);
+  if (ca.raw.equals(leaf.raw)) fail('ca-must-not-be-leaf');
   const caFingerprint = ca.fingerprint256.replaceAll(':', '').toLowerCase();
   if (caFingerprint !== expectedCaFingerprint256.toLowerCase()) fail('ca-fingerprint-mismatch');
   if (!leaf.verify(ca.publicKey) || !leaf.checkIssued(ca)) fail('certificate-chain-invalid');
+  if (!Array.isArray(leaf.keyUsage) || !leaf.keyUsage.includes('1.3.6.1.5.5.7.3.2')) fail('client-auth-eku-required');
   const timestamp = new Date(now);
   if (timestamp < new Date(leaf.validFrom) || timestamp > new Date(leaf.validTo)) fail('certificate-expired-or-not-yet-valid');
   const privateKey = crypto.createPrivateKey(privateKeyPem);
   const derivedPublicKey = crypto.createPublicKey(privateKey).export({ type: 'spki', format: 'der' });
   const leafPublicKey = leaf.publicKey.export({ type: 'spki', format: 'der' });
-  const csrKey = csrPublicKey(csrBytes);
+  const csrKey = csrPublicKey(csrBytes, { pwshPath, timeoutMs });
   if (csrKey.byteLength !== leafPublicKey.byteLength || !crypto.timingSafeEqual(csrKey, leafPublicKey)) fail('csr-leaf-public-key-mismatch');
   if (!crypto.timingSafeEqual(derivedPublicKey, leafPublicKey)) fail('leaf-private-key-mismatch');
   return Object.freeze({ csrSha256: csrDigest, caFingerprint256: caFingerprint, leafFingerprint256: leaf.fingerprint256.replaceAll(':', '').toLowerCase() });

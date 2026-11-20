@@ -3,6 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
+const { spawnSync } = require('node:child_process');
 const { selectSourceRun, validateBudget, verifyCertificateBinding } = require('../tools/sp08-a3-03-github-oidc-smoke/csr-handoff.cjs');
 
 const budget = { maxPolls: 1, maxPages: 1, maxCandidates: 10, maxArtifactBytes: 65536, maxWaitMs: 60000, pollIntervalMs: 5000 };
@@ -29,4 +30,38 @@ test('CSR digest and all certificate inputs are size bounded before parsing', ()
   const digest = crypto.createHash('sha256').update(bytes).digest('hex');
   assert.throws(() => verifyCertificateBinding({ csrBytes: bytes, expectedCsrSha256: '0'.repeat(64), leafPem: 'x', caPem: 'x', expectedCaFingerprint256: '0'.repeat(64), privateKeyPem: 'x' }), /csr-digest-mismatch/);
   assert.throws(() => verifyCertificateBinding({ csrBytes: Buffer.alloc(20), expectedCsrSha256: digest, leafPem: 'x', caPem: 'x', expectedCaFingerprint256: '0'.repeat(64), privateKeyPem: 'x', maxBytes: 10 }), /csrBytes-size-limit/);
+});
+
+test('validates synthetic CSR signature, CSR/leaf/private key binding, CA pin, validity and clientAuth EKU', (t) => {
+  const pwshPath = process.env.O2O_TEST_PWSH;
+  if (!pwshPath) { t.skip('O2O_TEST_PWSH must point to the configured PowerShell 7 executable'); return; }
+  const fixtureScript = String.raw`
+$ErrorActionPreference='Stop'
+function New-KeyRequest([string]$name) { $key=[System.Security.Cryptography.RSA]::Create(2048); $request=[System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$name",$key,[System.Security.Cryptography.HashAlgorithmName]::SHA256,[System.Security.Cryptography.RSASignaturePadding]::Pkcs1); return @{key=$key;request=$request} }
+$ca=New-KeyRequest 'fixture-ca'; $ca.request.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true,$false,0,$true)); $caCert=$ca.request.CreateSelfSigned([datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddHours(1))
+$leaf=New-KeyRequest 'fixture-leaf'; $leaf.request.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false,$false,0,$true)); $leaf.request.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,$true)); $eku=[System.Security.Cryptography.OidCollection]::new(); if($env:FIXTURE_EKU -eq 'yes'){$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.2')); $leaf.request.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))} elseif($env:FIXTURE_EKU -eq 'wrong'){$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.1')); $leaf.request.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))}; $leafCert=$leaf.request.Create($caCert,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddMinutes(30),[byte[]]([guid]::NewGuid().ToByteArray()))
+$csr=$leaf.request.CreateSigningRequestPem(); $obj=@{csr=$csr;ca=$caCert.ExportCertificatePem();leaf=$leafCert.ExportCertificatePem();key=$leaf.key.ExportPkcs8PrivateKeyPem();otherKey=(New-KeyRequest 'other').key.ExportPkcs8PrivateKeyPem()}; $obj | ConvertTo-Json -Compress
+`;
+  function makeFixture(withEku) {
+    const child = spawnSync(pwshPath, ['-NoProfile', '-NonInteractive', '-Command', fixtureScript], { encoding: 'utf8', timeout: 15000, maxBuffer: 32768, env: { ...process.env, FIXTURE_EKU: String(withEku) }, windowsHide: true, shell: false });
+    assert.equal(child.status, 0, child.stderr);
+    return JSON.parse(child.stdout);
+  }
+  const fixture = makeFixture('yes');
+  const csrBytes = Buffer.from(fixture.csr);
+  const expectedCsrSha256 = crypto.createHash('sha256').update(csrBytes).digest('hex');
+  const expectedCaFingerprint256 = new crypto.X509Certificate(fixture.ca).fingerprint256.replaceAll(':', '').toLowerCase();
+  const valid = { csrBytes, expectedCsrSha256, leafPem: fixture.leaf, caPem: fixture.ca, expectedCaFingerprint256, privateKeyPem: fixture.key, pwshPath };
+  assert.equal(verifyCertificateBinding(valid).csrSha256, expectedCsrSha256);
+  assert.throws(() => verifyCertificateBinding({ ...valid, privateKeyPem: fixture.otherKey }), /leaf-private-key-mismatch/);
+  const damagedDer = Buffer.from(fixture.csr.replace(/-----[^-]+-----/g, '').replace(/\s/g, ''), 'base64');
+  damagedDer[damagedDer.length - 12] ^= 1;
+  const damagedB64 = damagedDer.toString('base64').match(/.{1,64}/g).join('\n');
+  const damagedCsr = Buffer.from(`-----BEGIN CERTIFICATE REQUEST-----\n${damagedB64}\n-----END CERTIFICATE REQUEST-----\n`);
+  assert.throws(() => verifyCertificateBinding({ ...valid, csrBytes: damagedCsr, expectedCsrSha256: crypto.createHash('sha256').update(damagedCsr).digest('hex') }), /csr-signature-invalid-or-parser-failed/);
+  for (const eku of ['no', 'wrong']) {
+    const invalid = makeFixture(eku);
+    const invalidCsr = Buffer.from(invalid.csr);
+    assert.throws(() => verifyCertificateBinding({ ...valid, csrBytes: invalidCsr, expectedCsrSha256: crypto.createHash('sha256').update(invalidCsr).digest('hex'), leafPem: invalid.leaf, caPem: invalid.ca, expectedCaFingerprint256: new crypto.X509Certificate(invalid.ca).fingerprint256.replaceAll(':', '').toLowerCase(), privateKeyPem: invalid.key }), /client-auth-eku-required/, `EKU case ${eku}`);
+  }
 });
