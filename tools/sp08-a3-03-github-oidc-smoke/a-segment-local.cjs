@@ -1,1 +1,223 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíç=N‹Z–‹­¦ëeŠw¬ÔÕÍ”ÍÑÉ¥Ğœì((¼¼=™™±¥¹”µ½¹±äµÍ•µ•¹ĞÁÉ½½˜ÁÉ¥µ¥Ñ¥Ù•Ì¸Q¡”¥ÍÍÕ•ÈÙ•É¥™¥•È…¹Á½±¥ä…É”(¼¼¥¹©•Ñ•‰äÑ¡”…±±•ÈìÑ¡¥Ìµ½‘Õ±”¹•Ù•ÈÁ•É™½ÉµÌ¹•Ñİ½É¬É•ÅÕ•ÍÑÌ¸)½¹ÍĞÉåÁÑ¼€ôÉ•ÅÕ¥É” ¹½‘”éÉåÁÑ¼œ¤ì)½¹ÍĞÑ±Ì€ôÉ•ÅÕ¥É” ¹½‘”éÑ±Ìœ¤ì)½¹ÍĞ½¥‘Œ€ôÉ•ÅÕ¥É” œ¸½½¥‘ŒµÍµ½­”¹©Ìœ¤ì)½¹ÍĞ%Q!U	}%MMUH€ô€¡ÑÑÁÌè¼½Ñ½­•¸¹…Ñ¥½¹Ì¹¥Ñ¡Õ‰ÕÍ•É½¹Ñ•¹Ğ¹½´œì()½¹ÍĞ1	0€ô€aA=IQHµ¡…¹¹•°µ	¥¹‘¥¹œœì)½¹ÍĞAI%`€ô€<É<µÌÀÌµq¸Åq¸œì)½¹ÍĞU%9}AI%`€ô€ÕÉ¸é¼É¼é„ÌÀÌµ‰¥¹µØÄèœì()™Õ¹Ñ¥½¸™…¥°¡½‘”¤ì½¹ÍĞ•ÉÉ½È€ô¹•ÜÉÉ½È¡½‘”¤ì•ÉÉ½È¹½‘”€ô½‘”ìÑ¡É½Ü•ÉÉ½Èìô)™Õ¹Ñ¥½¸Á…ÉÍ•)Í½¹9½ÕÁ±¥…Ñ•Ì¡¥¹ÁÕĞ¤ì(€±•Ğ½™™Í•Ğ€ô€Àì(€½¹ÍĞİÌ€ô€ ¤€ôøìİ¡¥±”€ ½lqÑqÉq¹t¼¹Ñ•ÍĞ¡¥¹ÁÕÑm½™™Í•Ñtñğ€œœ¤¤½™™Í•Ğ€¬ô€Äìôì(€½¹ÍĞÍÑÉ¥¹œ€ô€ ¤€ôøì½¹ÍĞÍÑ…ÉĞ€ô½™™Í•Ğ¬¬ìİ¡¥±”€¡½™™Í•Ğ€ğ¥¹ÁÕĞ¹±•¹Ñ ¤ì¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€qpœ¤ì½™™Í•Ğ€¬ô€Èì½¹Ñ¥¹Õ”ìô¥˜€¡¥¹ÁÕÑm½™™Í•Ğ¬­t€ôôô€œˆœ¤É•ÑÕÉ¸)M=8¹Á…ÉÍ”¡¥¹ÁÕĞ¹Í±¥”¡ÍÑ…ÉĞ°½™™Í•Ğ¤¤ìô™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìôì(€™Õ¹Ñ¥½¸Ù…±Õ”¡‘•ÁÑ ¤ì(€€€¥˜€¡‘•ÁÑ €ø€ØĞ¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìİÌ ¤ì(€€€¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€œˆœ¤É•ÑÕÉ¸ÍÑÉ¥¹œ ¤ì(€€€¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€ìœ¤ì½™™Í•Ğ€¬ô€ÄìİÌ ¤ì½¹ÍĞ½ÕĞ€ô=‰©•Ğ¹É•…Ñ”¡¹Õ±°¤ì½¹ÍĞÍ••¸€ô¹•ÜM•Ğ ¤ì¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€ôœ¤ì½™™Í•Ğ€¬ô€ÄìÉ•ÑÕÉ¸½ÕĞìôİ¡¥±”€¡½™™Í•Ğ€ğ¥¹ÁÕĞ¹±•¹Ñ ¤ìİÌ ¤ì¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€„ôô€œˆœ¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ì½¹ÍĞ¬€ôÍÑÉ¥¹œ ¤ì¥˜€¡Í••¸¹¡…Ì¡¬¤¤™…¥° ‘ÕÁ±¥…Ñ”µ©Í½¸µ­•äœ¤ìÍ••¸¹…‘¡¬¤ìİÌ ¤ì¥˜€¡¥¹ÁÕÑm½™™Í•Ğ¬­t€„ôô€œèœ¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ì=‰©•Ğ¹‘•™¥¹•AÉ½Á•ÉÑä¡½ÕĞ°¬°ìÙ…±Õ”èÙ…±Õ”¡‘•ÁÑ €¬€Ä¤°•¹Õµ•É…‰±”èÑÉÕ”ô¤ìİÌ ¤ì¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€ôœ¤ì½™™Í•Ğ€¬ô€ÄìÉ•ÑÕÉ¸½ÕĞìô¥˜€¡¥¹ÁÕÑm½™™Í•Ğ¬­t€„ôô€œ°œ¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìô™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìô(€€€¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€lœ¤ì½™™Í•Ğ€¬ô€ÄìİÌ ¤ì½¹ÍĞ½ÕĞ€ômtì¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€tœ¤ì½™™Í•Ğ€¬ô€ÄìÉ•ÑÕÉ¸½ÕĞìôİ¡¥±”€¡½™™Í•Ğ€ğ¥¹ÁÕĞ¹±•¹Ñ ¤ì½ÕĞ¹ÁÕÍ ¡Ù…±Õ”¡‘•ÁÑ €¬€Ä¤¤ìİÌ ¤ì¥˜€¡¥¹ÁÕÑm½™™Í•Ñt€ôôô€tœ¤ì½™™Í•Ğ€¬ô€ÄìÉ•ÑÕÉ¸½ÕĞìô¥˜€¡¥¹ÁÕÑm½™™Í•Ğ¬­t€„ôô€œ°œ¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìô™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìô(€€€½¹ÍĞÑ…¥°€ô¥¹ÁÕĞ¹Í±¥”¡½™™Í•Ğ¤ì½¹ÍĞ±¥Ñ•É…°€ô€½x üéÑÉÕ•ñ™…±Í•ñ¹Õ±°¤¼¹•á•Œ¡Ñ…¥°¤ì¥˜€¡±¥Ñ•É…°¤ì½™™Í•Ğ€¬ô±¥Ñ•É…±lÁt¹±•¹Ñ ìÉ•ÑÕÉ¸±¥Ñ•É…±lÁt€ôôô€¹Õ±°œ€ü¹Õ±°€è±¥Ñ•É…±lÁt€ôôô€ÑÉÕ”œìô(€€€½¹ÍĞ¹Õµ‰•È€ô€½x´ü üèÁñlÄ´åulÀ´åt¨¤ üép¹lÀ´åt¬¤ü üém•ul¬µtılÀ´åt¬¤ü¼¹•á•Œ¡Ñ…¥°¤ì¥˜€¡¹Õµ‰•È¤ì½™™Í•Ğ€¬ô¹Õµ‰•ÉlÁt¹±•¹Ñ ì½¹ÍĞ¸€ô)M=8¹Á…ÉÍ”¡¹Õµ‰•ÉlÁt¤ì¥˜€ …9Õµ‰•È¹¥Í¥¹¥Ñ”¡¸¤¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìÉ•ÑÕÉ¸¸ìô™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ì(€ô(€¥˜€¡ÑåÁ•½˜¥¹ÁÕĞ€„ôô€ÍÑÉ¥¹œœ¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ì½¹ÍĞÉ•ÍÕ±Ğ€ôÙ…±Õ” À¤ìİÌ ¤ì¥˜€¡½™™Í•Ğ€„ôô¥¹ÁÕĞ¹±•¹Ñ ¤™…¥° ¥¹Ù…±¥µ©Í½¸œ¤ìÉ•ÑÕÉ¸É•ÍÕ±Ğì)ô)™Õ¹Ñ¥½¸ˆØĞ¡Ù…±Õ”¤ìÉ•ÑÕÉ¸	Õ™™•È¹™É½´¡Ù…±Õ”¤¹Ñ½MÑÉ¥¹œ ‰…Í”ØÑÕÉ°œ¤ìô)™Õ¹Ñ¥½¸‘•½‘”¡Ù…±Õ”°±•¹Ñ ¤ì(€¥˜€¡ÑåÁ•½˜Ù…±Õ”€„ôô€ÍÑÉ¥¹œœñğ€„½ymµi„µèÀ´å|µt¬¼¹Ñ•ÍĞ¡Ù…±Õ”¤¤™…¥° ¥¹Ù…±¥µ‰…Í”ØÑÕÉ°œ¤ì(€½¹ÍĞ‰åÑ•Ì€ô	Õ™™•È¹™É½´¡Ù…±Õ”°€‰…Í”ØÑÕÉ°œ¤ì(€¥˜€¡‰åÑ•Ì¹Ñ½MÑÉ¥¹œ ‰…Í”ØÑÕÉ°œ¤€„ôôÙ…±Õ”ñğ€¡±•¹Ñ €„ôôÕ¹‘•™¥¹•€˜˜‰åÑ•Ì¹±•¹Ñ €„ôô±•¹Ñ ¤¤™…¥° ¥¹Ù…±¥µ‰…Í”ØÑÕÉ°œ¤ì(€É•ÑÕÉ¸‰åÑ•Ìì)ô)™Õ¹Ñ¥½¸Í¡„¡Ù…±Õ”¤ìÉ•ÑÕÉ¸ÉåÁÑ¼¹É•…Ñ•!…Í  Í¡„ÈÔØœ¤¹ÕÁ‘…Ñ”¡Ù…±Õ”¤¹‘¥•ÍĞ ¤ìô)™Õ¹Ñ¥½¸•á…Ñ-•åÌ¡Ù…±Õ”°•áÁ•Ñ•¤ì(€É•ÑÕÉ¸Ù…±Õ”€„ôô¹Õ±°€˜˜ÑåÁ•½˜Ù…±Õ”€ôôô€½‰©•Ğœ€˜˜€…ÉÉ…ä¹¥ÍÉÉ…ä¡Ù…±Õ”¤(€€€€˜˜=‰©•Ğ¹­•åÌ¡Ù…±Õ”¤¹Í½ÉĞ ¤¹©½¥¸ pÀœ¤€ôôôl¸¸¹•áÁ•Ñ•‘t¹Í½ÉĞ ¤¹©½¥¸ pÀœ¤ì)ô)™Õ¹Ñ¥½¸Ñ¡Õµ‰ÁÉ¥¹Ğ¡©İ¬¤ì(€¥˜€ …•á…Ñ-•åÌ¡©İ¬°l­Ñäœ°€ÉØœ°€àt¤ñğ©İ¬¹­Ñä€„ôô€=-@œñğ©İ¬¹ÉØ€„ôô€ÈÔÔÄäœ¤™…¥° ¥¹Ù…±¥µÁÉ½½˜µ­•äœ¤ì(€‘•½‘”¡©İ¬¹à°€ÌÈ¤ì(€½¹ÍĞ‰åÑ•Ì€ô	Õ™™•È¹™É½´¡)M=8¹ÍÑÉ¥¹¥™ä¡ìÉØè©İ¬¹ÉØ°­Ñäè©İ¬¹­Ñä°àè©İ¬¹àô¤°€ÕÑ˜àœ¤ì(€É•ÑÕÉ¸ˆØĞ¡Í¡„¡‰åÑ•Ì¤¤ì)ô)™Õ¹Ñ¥½¸…¹½¹¥…°¡Ù…±Õ”¤ì(€¥˜€¡Ù…±Õ”€ôôô¹Õ±°ñğÑåÁ•½˜Ù…±Õ”€ôôô€‰½½±•…¸œñğÑåÁ•½˜Ù…±Õ”€ôôô€ÍÑÉ¥¹œœ¤É•ÑÕÉ¸)M=8¹ÍÑÉ¥¹¥™ä¡Ù…±Õ”¤ì(€¥˜€¡ÑåÁ•½˜Ù…±Õ”€ôôô€¹Õµ‰•Èœ¤ì¥˜€ …9Õµ‰•È¹¥Í¥¹¥Ñ”¡Ù…±Õ”¤¤™…¥° ¥¹Ù…±¥µ…¹½¹¥…°µÙ…±Õ”œ¤ìÉ•ÑÕÉ¸)M=8¹ÍÑÉ¥¹¥™ä¡Ù…±Õ”¤ìô(€¥˜€¡ÉÉ…ä¹¥ÍÉÉ…ä¡Ù…±Õ”¤¤É•ÑÕÉ¸l‘íÙ…±Õ”¹µ…À¡…¹½¹¥…°¤¹©½¥¸ œ°œ¥õu€ì(€¥˜€¡Ù…±Õ”€˜˜ÑåÁ•½˜Ù…±Õ”€ôôô€½‰©•Ğœ¤É•ÑÕÉ¸ì‘í=‰©•Ğ¹­•åÌ¡Ù…±Õ”¤¹Í½ÉĞ ¤¹µ…À ¡­•ä¤€ôø€‘í)M=8¹ÍÑÉ¥¹¥™ä¡­•ä¥ôè‘í…¹½¹¥…°¡Ù…±Õ•m­•åt¥õ€¤¹©½¥¸ œ°œ¥õõ€ì(€™…¥° ¥¹Ù…±¥µ…¹½¹¥…°µÙ…±Õ”œ¤ì)ô)™Õ¹Ñ¥½¸½µµ¥Ñµ•¹Ğ¡±…¥µÌ°É•ÅÕ•ÍĞ°©İ¬°¹½¹”°Á½±¥ä¤ì(€É•ÑÕÉ¸ì(€€€Øè€„ÌÀÌµ‰¥¹µØÄœ°ÍÙŒèÁ½±¥ä¹Í•ÉÙ¥”°(€€€É•Á½Í¥Ñ½Éå}¥è±…¥µÌ¹É•Á½Í¥Ñ½Éå}¥°ÉÕ¹}¥è±…¥µÌ¹ÉÕ¹}¥°ÉÕ¹}…ÑÑ•µÁĞè±…¥µÌ¹ÉÕ¹}…ÑÑ•µÁĞ°(€€€…±±•É}İ½É­™±½İ}É•˜è±…¥µÌ¹İ½É­™±½İ}É•˜°…±±•É}İ½É­™±½İ}Í¡„è±…¥µÌ¹İ½É­™±½İ}Í¡„°(€€€…±±•‘}İ½É­™±½İ}É•˜è±…¥µÌ¹©½‰}İ½É­™±½İ}É•˜°…±±•‘}İ½É­™±½İ}Í¡„è±…¥µÌ¹©½‰}İ½É­™±½İ}Í¡„°(€€€•¹ØèÉ•ÅÕ•ÍĞ¹•¹Ù}¥°…Ñ¥½¸èÉ•ÅÕ•ÍĞ¹…Ñ¥½¹}¥°É•Í½ÕÉ”èÉ•ÅÕ•ÍĞ¹É•Í½ÕÉ•}¥°(€€€…ÉÑ¥™…ĞèÉ•ÅÕ•ÍĞ¹…ÉÑ¥™…Ñ}‘¥•ÍĞ°(€€€É•ÅÕ•ÍĞèˆØĞ¡Í¡„¡	Õ™™•È¹™É½´¡…¹½¹¥…°¡É•ÅÕ•ÍĞ¤°€ÕÑ˜àœ¤¤¤°(€€€ÁÉ½½™}­•å}Ñ¡Õµ‰ÁÉ¥¹ĞèÑ¡Õµ‰ÁÉ¥¹Ğ¡©İ¬¤°¹½¹”°(€ôì)ô)™Õ¹Ñ¥½¸•áÁ•Ñ•‘Õ‘¥•¹”¡Ù…±Õ”¤ìÉ•ÑÕÉ¸€‘íU%9}AI%aô‘íˆØĞ¡Í¡„¡	Õ™™•È¹™É½´¡…¹½¹¥…°¡Ù…±Õ”¤°€ÕÑ˜àœ¤¤¥õ€ìô)…Íå¹Œ™Õ¹Ñ¥½¸É•ÅÕ•ÍÑå¹…µ¥Õ‘¥•¹•Q½­•¸¡ì¥‘•¹Ñ¥Ñä°É•ÅÕ•ÍĞ°©İ¬°¹½¹”°Á½±¥ä°•¹Ø°ÉÕ¹Ñ¥µ•I•ÅÕ•ÍĞô¤ì(€½¹ÍĞ¥‘•¹Ñ¥Ñå-•åÌ€ôlÉ•Á½Í¥Ñ½Éå}¥œ°€ÉÕ¹}¥œ°€ÉÕ¹}…ÑÑ•µÁĞœ°€İ½É­™±½İ}É•˜œ°€İ½É­™±½İ}Í¡„œ°€©½‰}İ½É­™±½İ}É•˜œ°€©½‰}İ½É­™±½İ}Í¡„tì(€¥˜€ …¥‘•¹Ñ¥Ñäñğ¥‘•¹Ñ¥Ñå-•åÌ¹Í½µ” ¡­•ä¤€ôøÑåÁ•½˜¥‘•¹Ñ¥Ñåm­•åt€„ôô€ÍÑÉ¥¹œœñğ¥‘•¹Ñ¥Ñåm­•åt¹±•¹Ñ €ôôô€À¤¤™…¥° ¥Ñ¡Õˆµ¥‘•¹Ñ¥ÑäµÁ½±¥äµµ¥ÍÍ¥¹œœ¤ì(€¥˜€ …É•ÅÕ•ÍĞñğl•¹Ù}¥œ°€…Ñ¥½¹}¥œ°€É•Í½ÕÉ•}¥œ°€…ÉÑ¥™…Ñ}‘¥•ÍĞt¹Í½µ” ¡­•ä¤€ôøÑåÁ•½˜É•ÅÕ•ÍÑm­•åt€„ôô€ÍÑÉ¥¹œœñğÉ•ÅÕ•ÍÑm­•åt¹±•¹Ñ €ôôô€À¤¤™…¥° É•ÅÕ•ÍĞµÁ½±¥äµµ¥ÍÍ¥¹œœ¤ì(€¥˜€ …Á½±¥äñğÑåÁ•½˜Á½±¥ä¹Í•ÉÙ¥”€„ôô€ÍÑÉ¥¹œœñğ€…Á½±¥ä¹Í•ÉÙ¥”¤™…¥° ±½…°µÍ•ÉÙ•ÈµÁ½±¥äµµ¥ÍÍ¥¹œœ¤ì(€½¹ÍĞ½µµ¥Ğ€ô½µµ¥Ñµ•¹Ğ¡¥‘•¹Ñ¥Ñä°É•ÅÕ•ÍĞ°©İ¬°¹½¹”°Á½±¥ä¤ì(€½¹ÍĞ…Õ‘¥•¹”€ô•áÁ•Ñ•‘Õ‘¥•¹”¡½µµ¥Ğ¤ì(€½¹ÍĞÑ½­•¸€ô…İ…¥Ğ½¥‘Œ¹É•ÅÕ•ÍÑ¥Ñ¡Õ‰%‘Q½­•¸¡ì•¹Ø°…Õ‘¥•¹”°É•ÅÕ•ÍĞèÉÕ¹Ñ¥µ•I•ÅÕ•ÍĞô¤ì(€É•ÑÕÉ¸=‰©•Ğ¹™É••é”¡ìÑ½­•¸°½µµ¥Ğ°…Õ‘¥•¹”ô¤ì)ô)™Õ¹Ñ¥½¸ÁÉ½½™5•ÍÍ…”¡Ñ½­•¸°½µµ¥Ğ°•áÁ½ÉÑ•È¤ì(€¥˜€¡ÑåÁ•½˜Ñ½­•¸€„ôô€ÍÑÉ¥¹œœñğ€„½ymqàÈÄµqàİ•t¬¼¹Ñ•ÍĞ¡Ñ½­•¸¤¤™…¥° ¥¹Ù…±¥µÑ½­•¸µ‰åÑ•Ìœ¤ì(€½¹ÍĞÑ½­•¹	åÑ•Ì€ô	Õ™™•È¹™É½´¡Ñ½­•¸°€…Í¥¤œ¤ì(€É•ÑÕÉ¸	Õ™™•È¹™É½´¡€‘íAI%aô‘íˆØĞ¡Í¡„¡Ñ½­•¹	åÑ•Ì¤¥õq¸‘íˆØĞ¡Í¡„¡	Õ™™•È¹™É½´¡…¹½¹¥…°¡½µµ¥Ğ¤°€ÕÑ˜àœ¤¤¥õq¸‘íˆØĞ¡•áÁ½ÉÑ•È¥õ€°€ÕÑ˜àœ¤ì)ô)™Õ¹Ñ¥½¸Í¥¹ÕÉÉ•¹Ñ½¹¹•Ñ¥½¸¡Í½­•Ğ°Ñ½­•¸°½µµ¥Ğ°ÁÉ¥Ù…Ñ•-•ä¤ì(€¥˜€ …Í½­•ĞñğÍ½­•Ğ¹•ÑAÉ½Ñ½½° ¤€„ôô€Q1MØÄ¸Ìœ¤™…¥° Ñ±ÌµÙ•ÉÍ¥½¸µÉ•©•Ñ•œ¤ì(€½¹ÍĞ•áÁ½ÉÑ•È€ôÍ½­•Ğ¹•áÁ½ÉÑ-•å¥¹5…Ñ•É¥…° ÌÈ°1	0°	Õ™™•È¹…±±½Œ À¤¤ì(€É•ÑÕÉ¸ˆØĞ¡ÉåÁÑ¼¹Í¥¸¡¹Õ±°°ÁÉ½½™5•ÍÍ…”¡Ñ½­•¸°½µµ¥Ğ°•áÁ½ÉÑ•È¤°ÁÉ¥Ù…Ñ•-•ä¤¤ì)ô((¼¼M¥¹±”µÕÍ”½™™±¥¹”µÍ•µ•¹Ğ±¥•¹Ğ•¹ÑÉä¸%‘•¹Ñ¥Ñä…¹…Ñ¥½¸½¹Ñ•áĞ…É”(¼¼•áÁ±¥¥Ğ¥¹ÁÕÑÌì…±±•ÉÌµÕÍĞÍÕÁÁ±äÑ¡”…±É•…‘äµ…ÁÁÉ½Ù•Q1L±¥•¹Ğ(¼¼µ…Ñ•É¥…°…¹…¸¥¹©•Ñ•Ñ½­•¸ÑÉ…¹ÍÁ½ÉĞ€¡Ñ•ÍÑÌÕÍ”„Í¥¹•±½…°™¥áÑÕÉ”¤¸)…Íå¹Œ™Õ¹Ñ¥½¸ÉÕ¹1½…±±¥•¹Ğ¡ì¥‘•¹Ñ¥Ñä°É•ÅÕ•ÍĞ°Á½±¥ä°•¹Ø°ÉÕ¹Ñ¥µ•I•ÅÕ•ÍĞ°Ñ±Í=ÁÑ¥½¹Ì°É…¹‘½µ	åÑ•Ì€ôÉåÁÑ¼¹É…¹‘½µ	åÑ•Ìô¤ì(€¥˜€ …Ñ±Í=ÁÑ¥½¹ÌñğÑ±Í=ÁÑ¥½¹Ì¹¡½ÍĞ€„ôô€œÄÈÜ¸À¸À¸ÄœñğÑ±Í=ÁÑ¥½¹Ì¹µ¥¹Y•ÉÍ¥½¸€„ôô€Q1MØÄ¸ÌœñğÑ±Í=ÁÑ¥½¹Ì¹µ…áY•ÉÍ¥½¸€„ôô€Q1MØÄ¸Ìœ(€€€ñğÑ±Í=ÁÑ¥½¹Ì¹É•©•ÑU¹…ÕÑ¡½É¥é•€„ôôÑÉÕ”ñğ€…Ñ±Í=ÁÑ¥½¹Ì¹­•äñğ€…Ñ±Í=ÁÑ¥½¹Ì¹•ÉĞñğ€…Ñ±Í=ÁÑ¥½¹Ì¹„¤™…¥° ±½…°µ±¥•¹ĞµÁ½±¥äµµ¥ÍÍ¥¹œœ¤ì(€½¹ÍĞÁ…¥È€ôÉåÁÑ¼¹•¹•É…Ñ•-•åA…¥ÉMå¹Œ •ÈÔÔÄäœ¤ì(€½¹ÍĞ•áÁ½ÉÑ•€ôÁ…¥È¹ÁÕ‰±¥-•ä¹•áÁ½ÉĞ¡ì™½Éµ…Ğè€©İ¬œô¤ì(€½¹ÍĞ©İ¬€ôì­Ñäè•áÁ½ÉÑ•¹­Ñä°ÉØè•áÁ½ÉÑ•¹ÉØ°àè•áÁ½ÉÑ•¹àôì(€½¹ÍĞ¹½¹•	åÑ•Ì€ôÉ…¹‘½µ	åÑ•Ì ÌÈ¤ì(€¥˜€ …	Õ™™•È¹¥Í	Õ™™•È¡¹½¹•	åÑ•Ì¤ñğ¹½¹•	åÑ•Ì¹±•¹Ñ €„ôô€ÌÈ¤™…¥° ¹½¹”µ•¹•É…Ñ¥½¸µ™…¥±•œ¤ì(€½¹ÍĞ¹½¹”€ôˆØĞ¡¹½¹•	åÑ•Ì¤ì(€½¹ÍĞìÑ½­•¸°½µµ¥Ğô€ô…İ…¥ĞÉ•ÅÕ•ÍÑå¹…µ¥Õ‘¥•¹•Q½­•¸¡ì¥‘•»=¶‰ËkºwµçeĞœô¤¤ì(€€€€€½¹ÍĞ¹•İ±¥¹”€ôÉ•ÍÁ½¹Í”¹¥¹‘•á=˜ q¸œ¤ì(€€€€€¥˜€¡¹•İ±¥¹”€øô€À¤ì(€€€€€€€¥˜€¡¹•İ±¥¹”€„ôôÉ•ÍÁ½¹Í”¹±•¹Ñ €´€Ä¤É•ÑÕÉ¸™¥¹¥Í ¡=‰©•Ğ¹…ÍÍ¥¸¡¹•ÜÉÉ½È É•ÍÁ½¹Í”µ¥¹Ù…±¥œ¤°ì½‘”è€É•ÍÁ½¹Í”µ¥¹Ù…±¥œô¤¤ì(€€€€€€€ÑÉäì½¹ÍĞÉ•ÍÕ±Ğ€ôÁ…ÉÍ•)Í½¹9½ÕÁ±¥…Ñ•Ì¡É•ÍÁ½¹Í”¹Í±¥” À°¹•İ±¥¹”¤¤ì¥˜€ …É•ÍÕ±ĞñğÉ•ÍÕ±Ğ¹½¬€„ôôÑÉÕ”¤É•ÑÕÉ¸™¥¹¥Í ¡=‰©•Ğ¹…ÍÍ¥¸¡¹•ÜÉÉ½È¡É•ÍÕ±Ğ€˜˜É•ÍÕ±Ğ¹½‘”ñğ€Ù•É¥™¥…Ñ¥½¸µÉ•©•Ñ•œ¤°ì½‘”èÉ•ÍÕ±Ğ€˜˜É•ÍÕ±Ğ¹½‘”ñğ€Ù•É¥™¥…Ñ¥½¸µÉ•©•Ñ•œô¤¤ì™¥¹¥Í ¡¹Õ±°°É•ÍÕ±Ğ¤ìô(€€€€€€€…Ñ €¡•ÉÉ½È¤ì™¥¹¥Í ¡•ÉÉ½È¤ìô(€€€€€ô(€€€ô¤ì(€ô¤ì)ô)™Õ¹Ñ¥½¸Á…ÉÍ•)Í½¹U¹¥ÅÕ”¡Ñ•áĞ¤ì(€½¹ÍĞÙ…±Õ”€ô)M=8¹Á…ÉÍ”¡Ñ•áĞ¤ì(€€¼¼Q¡”±½…°Ù•É¥™¥•È…•ÁÑÌ½¹±äÑ¡”Íå¹Ñ¡•Ñ¥Œ¥ÍÍÕ•ÈÌ½µÁ…Ğ‘M)]P¸(€€¼¼%ÑÌ¥ÍÍÕ•ÈÍ¥¹ÌÑ¡•Í”‰åÑ•Ìì‘ÕÁ±¥…Ñ”µ­•äÉ•©•Ñ¥½¸¥Ì¡…¹‘±•‰äÑ¡”(€€¼¼•á¥ÍÑ¥¹œÍµ½­”Á…ÉÍ•È‰•™½É”Ñ¡¥Ì¡•±Á•È¥ÌÕÍ•¥¸ÁÉ½‘ÕÑ¥½¸¥¹Ñ•É…Ñ¥½¸¸(€É•ÑÕÉ¸Ù…±Õ”ì)ô)™Õ¹Ñ¥½¸Ù•É¥™åMå¹Ñ¡•Ñ¥Q½­•¸¡Ñ½­•¸°Á½±¥ä¤ì(€¥˜€¡ÑåÁ•½˜Ñ½­•¸€„ôô€ÍÑÉ¥¹œœñğ€„½ymqàÈÄµqàİ•t¬¼¹Ñ•ÍĞ¡Ñ½­•¸¤¤™…¥° ¥¹Ù…±¥µÑ½­•¸œ¤ì(€½¹ÍĞÁ…ÉÑÌ€ôÑ½­•¸¹ÍÁ±¥Ğ œ¸œ¤ì(€¥˜€¡Á…ÉÑÌ¹±•¹Ñ €„ôô€ÌñğÁ…ÉÑÌ¹Í½µ” ¡Á…ÉĞ¤€ôø€…Á…ÉĞ¤¤™…¥° ¥¹Ù…±¥µÑ½­•¸œ¤ì(€½¹ÍĞm¡•…°‰½‘ä°Í¥t€ôÁ…ÉÑÌì(€½¹ÍĞ¡•…‘•È€ôÁ…ÉÍ•)Í½¹9½ÕÁ±¥…Ñ•Ì¡‘•½‘”¡¡•…¤¹Ñ½MÑÉ¥¹œ ÕÑ˜àœ¤¤ì(€½¹ÍĞ±…¥µÌ€ôÁ…ÉÍ•)Í½¹9½ÕÁ±¥…Ñ•Ì¡‘•½‘”¡‰½‘ä¤¹Ñ½MÑÉ¥¹œ ÕÑ˜àœ¤¤ì(€¥˜€ …•á…Ñ-•åÌ¡¡•…‘•È°l…±œœ°€­¥œ°€ÑåÀt¤ñğ¡•…‘•È¹…±œ€„ôô€‘Mœñğ¡•…‘•È¹ÑåÀ€„ôô€)]Pœñğ¡•…‘•È¹­¥€„ôôÁ½±¥ä¹¥ÍÍÕ•É-¥¤™…¥° ¥ÍÍÕ•Èµ¡•…‘•ÈµÉ•©•Ñ•œ¤ì(€¥˜€ …ÉåÁÑ¼¹Ù•É¥™ä¡¹Õ±°°	Õ™™•È¹™É½´¡€‘í¡•…‘ô¸‘í‰½‘åõ€°€…Í¥¤œ¤°Á½±¥ä¹¥ÍÍÕ•ÉAÕ‰±¥-•ä°‘•½‘”¡Í¥œ°€ØĞ¤¤¤™…¥° ¥ÍÍÕ•ÈµÍ¥¹…ÑÕÉ”µÉ•©•Ñ•œ¤ì(€¥˜€ …±…¥µÌñğ±…¥µÌ¹¥ÍÌ€„ôôÁ½±¥ä¹¥ÍÍÕ•È¤™…¥° ¥ÍÍÕ•Èµ±…¥´µÉ•©•Ñ•œ¤ì(€É•ÑÕÉ¸±…¥µÌì)ô)™Õ¹Ñ¥½¸Ù•É¥™å¥Ñ¡Õ‰Q½­•¸¡Ñ½­•¸°Á½±¥ä¤ì(€½¹ÍĞ¹½Ü€ô…Ñ”¹¹½Ü ¤ì(€¥˜€¡Á½±¥ä¹¥ÍÍÕ•È€„ôô%Q!U	}%MMUHñğ€…ÉÉ…ä¹¥ÍÉÉ…ä¡Á½±¥ä¹¥Ñ¡Õ‰)İ­Í-•åÌ¤ñğÁ½±¥ä¹¥Ñ¡Õ‰)İ­Í-•åÌ¹±•¹Ñ €ôôô€À(€€€ñğ€…9Õµ‰•È¹¥ÍM…™•%¹Ñ••È¡Á½±¥ä¹¥Ñ¡Õ‰)İ­Í•Ñ¡•‘Ğ¤ñğ€…9Õµ‰•È¹¥ÍM…™•%¹Ñ••È¡Á½±¥ä¹¥Ñ¡Õ‰)İ­ÍáÁ¥É•ÍĞ¤(€€€ñğÁ½±¥ä¹¥Ñ¡Õ‰)İ­ÍáÁ¥É•ÍĞ€ğô¹½ÜñğÁ½±¥ä¹¥Ñ¡Õ‰)İ­ÍáÁ¥É•ÍĞ€´Á½±¥ä¹¥Ñ¡Õ‰)İ­Í•Ñ¡•‘Ğ€ø½¥‘Œ¹)]-M}M9AM!=Q}QQ1}5L(€€€ñğÁ½±¥ä¹¥Ñ¡Õ‰)İ­Í•Ñ¡•‘Ğ€ø¹½Ü¤™…¥° ¥Ñ¡Õˆµ©İ­ÌµÍ¹…ÁÍ¡½Ğµ•áÁ¥É•œ¤ì(€½¹ÍĞ½µÁ…Ğ€ô½¥‘Œ¹Á…ÉÍ•½µÁ…Ñ)İĞ¡Ñ½­•¸¤ì(€½¹ÍĞ…¹‘¥‘…Ñ•Ì€ôÁ½±¥ä¹¥Ñ¡Õ‰)İ­Í-•åÌ¹™¥±Ñ•È ¡­•ä¤€ôø­•ä€˜˜­•ä¹­¥€ôôô½µÁ…Ğ¹¡•…‘•È¹­¥¤ì(€¥˜€¡…¹‘¥‘…Ñ•Ì¹±•¹Ñ €„ôô€Ä¤™…¥° ©İ­Ìµ­¥µ¹½Ğµ™½Õ¹œ¤ì(€½¹ÍĞ±…¥µÌ€ô½¥‘Œ¹Ù•É¥™åIÌÈÔÙ½µÁ…ÑQ½­•¸¡½µÁ…Ğ°…¹‘¥‘…Ñ•ÍlÁt¤ì(€¥˜€ …±…¥µÌñğ±…¥µÌ¹¥ÍÌ€„ôô%Q!U	}%MMUH¤™…¥° ¥ÍÍÕ•Èµ±…¥´µÉ•©•Ñ•œ¤ì(€É•ÑÕÉ¸±…¥µÌì)ô)™Õ¹Ñ¥½¸É•ÅÕ¥É•¥Ñ¡Õ‰A½±¥ä¡Á½±¥ä¤ì(€½¹ÍĞÉ•ÅÕ¥É•€ôlÉ•Á½Í¥Ñ½Éå}¥œ°€İ½É­™±½İ}É•˜œ°€İ½É­™±½İ}Í¡„œ°€©½‰}İ½É­™±½İ}É•˜œ°€©½‰}İ½É­™±½İ}Í¡„œ°€•¹Ù¥É½¹µ•¹Ğœ°€ÉÕ¹}…ÑÑ•µÁĞtì(€¥˜€ …Á½±¥ä¹•áÁ•Ñ•‘±…¥µÌñğÉ•ÅÕ¥É•¹Í½µ” ¡¹…µ”¤€ôøÑåÁ•½˜Á½±¥ä¹•áÁ•Ñ•‘±…¥µÍm¹…µ•t€„ôô€ÍÑÉ¥¹œœñğÁ½±¥ä¹•áÁ•Ñ•‘±…¥µÍm¹…µ•t¹±•¹Ñ €ôôô€À¤(€€€ñğÁ½±¥ä¹•áÁ•Ñ•‘±…¥µÌ¹ÉÕ¹}…ÑÑ•µÁĞ€„ôô€œÄœ¤™…¥° ¥Ñ¡Õˆµ¥‘•¹Ñ¥ÑäµÁ½±¥äµµ¥ÍÍ¥¹œœ¤ì)ô)™Õ¹Ñ¥½¸Ù•É¥™åÕÉÉ•¹Ñ½¹¹•Ñ¥½¸¡Í½­•Ğ°ìÑ½­•¸°ÁÉ½½˜°©İ¬°Á½±¥ä°É•ÅÕ•ÍĞ°¹½¹”ô¤ì(€¥˜€ …Í½­•ĞñğÍ½­•Ğ¹•ÑAÉ½Ñ½½° ¤€„ôô€Q1MØÄ¸ÌœñğÍ½­•Ğ¹…ÕÑ¡½É¥é•€„ôôÑÉÕ”¤™…¥° Ñ±ÌµÁ••ÈµÉ•©•Ñ•œ¤ì(€¥˜€¡ÑåÁ•½˜Í½­•Ğ¹¥ÍM•ÍÍ¥½¹I•ÕÍ•€ôôô€™Õ¹Ñ¥½¸œ€˜˜Í½­•Ğ¹¥ÍM•ÍÍ¥½¹I•ÕÍ• ¤¤™…¥° Í•ÍÍ¥½¸µÉ•ÍÕµÁÑ¥½¸µÉ•©•Ñ•œ¤ì(€½¹ÍĞÁ••È€ôÍ½­•Ğ¹•ÑA••É•ÉÑ¥™¥…Ñ”¡ÑÉÕ”¤ì(€¥˜€ …Á••Èñğ€…Á••È¹É…Üñğ€…Á½±¥ä¹…±±½İ•‘A••É¥¹•ÉÁÉ¥¹ÑÌ¹¥¹±Õ‘•Ì¡Í¡„¡Á••È¹É…Ü¤¹Ñ½MÑÉ¥¹œ ¡•àœ¤¤¤™…¥° Á••Èµ¥‘•¹Ñ¥ÑäµÉ•©•Ñ•œ¤ì(€½¹ÍĞ±…¥µÌ€ôÁ½±¥ä¹µ½‘”€ôôô€¥Ñ¡Õˆµ½¥‘Œœ€üÙ•É¥™å¥Ñ¡Õ‰Q½­•¸¡Ñ½­•¸°Á½±¥ä¤€èÙ•É¥™åMå¹Ñ¡•Ñ¥Q½­•¸¡Ñ½­•¸°Á½±¥ä¤ì(€™½È€¡½¹ÍĞm­•ä°•áÁ•Ñ•‘t½˜=‰©•Ğ¹•¹ÑÉ¥•Ì¡Á½±¥ä¹•áÁ•Ñ•‘±…¥µÌ¤¤¥˜€¡±…¥µÍm­•åt€„ôô•áÁ•Ñ•¤™…¥° ±…¥´µÁ½±¥äµµ¥Íµ…Ñ œ¤ì(€½¹ÍĞ½µµ¥Ğ€ô½µµ¥Ñµ•¹Ğ¡±…¥µÌ°É•ÅÕ•ÍĞ°©İ¬°¹½¹”°Á½±¥ä¤ì(€½¹ÍĞ…Õ‘¥•¹”€ô•áÁ•Ñ•‘Õ‘¥•¹”¡½µµ¥Ğ¤ì(€¥˜€¡Á½±¥ä¹µ½‘”€ôôô€¥Ñ¡Õˆµ½¥‘Œœ¤½¥‘Œ¹Ù…±¥‘…Ñ•±…¥µÌ¡±…¥µÌ°…Õ‘¥•¹”°Á½±¥ä¹•áÁ•Ñ•‘±…¥µÌ¹•¹Ù¥É½¹µ•¹Ğ°Á½±¥ä¹•áÁ•Ñ•‘±…¥µÌ¹ÉÕ¹}…ÑÑ•µÁĞ°5…Ñ ¹™±½½È¡…Ñ”¹¹½Ü ¤€¼€ÄÀÀÀ¤¤ì(€•±Í”¥˜€¡±…¥µÌ¹…Õ€„ôô…Õ‘¥•¹”¤™…¥° …Õ‘¥•¹”µµ¥Íµ…Ñ œ¤ì(€½¹ÍĞ­•ä€ôÉåÁÑ¼¹É•…Ñ•AÕ‰±¥-•ä¡ì­•äè©İ¬°™½Éµ…Ğè€©İ¬œô¤ì(€½¹ÍĞ•áÁ½ÉÑ•È€ôÍ½­•Ğ¹•áÁ½ÉÑ-•å¥¹5…Ñ•É¥…° ÌÈ°1	0°	Õ™™•È¹…±±½Œ À¤¤ì(€¥˜€ …ÉåÁÑ¼¹Ù•É¥™ä¡¹Õ±°°ÁÉ½½™5•ÍÍ…”¡Ñ½­•¸°½µµ¥Ğ°•áÁ½ÉÑ•È¤°­•ä°‘•½‘”¡ÁÉ½½˜°€ØĞ¤¤¤™…¥° ÁÉ½½˜µ¥¹Ù…±¥œ¤ì(€É•ÑÕÉ¸ì½¬èÑÉÕ”°É•ÍÕ±Ğè€Íå¹Ñ¡•Ñ¥Œµ±½…°µÁÉ½½˜µ…•ÁÑ•œôì)ô()™Õ¹Ñ¥½¸ÍÑ…ÉÑ1½…±Y•É¥™¥…Ñ¥½¹M•ÉÙ•È¡½ÁÑ¥½¹Ì¤ì(€½¹ÍĞìÁ½±¥äô€ô½ÁÑ¥½¹Ìñğíôì(€¥˜€ …½ÁÑ¥½¹Ìñğ€…Á½±¥äñğ€…Á½±¥ä¹Ñ±Í-•äñğ€…Á½±¥ä¹Ñ±Í•ÉĞñğ€…Á½±¥ä¹„(€€€ñğ€…Á½±¥ä¹¥ÍÍÕ•Èñğ€¡Á½±¥ä¹µ½‘”€„ôô€¥Ñ¡Õˆµ½¥‘Œœ€˜˜€ …Á½±¥ä¹¥ÍÍÕ•É-¥ñğ€…Á½±¥ä¹¥ÍÍÕ•ÉAÕ‰±¥-•ä¤¤(€€€ñğ€¡Á½±¥ä¹µ½‘”€ôôô€¥Ñ¡Õˆµ½¥‘Œœ€˜˜€¡Á½±¥ä¹¥ÍÍÕ•È€„ôô%Q!U	}%MMUHñğ€…ÉÉ…ä¹¥ÍÉÉ…ä¡Á½±¥ä¹¥Ñ¡Õ‰)İ­Í-•åÌ¤ñğÁ½±¥ä¹¥Ñ¡Õ‰)İ­Í-•åÌ¹±•¹Ñ €ôôô€À(€€€€€ñğ€…9Õµ‰•È¹¥ÍM…™•%¹Ñ••È¡Á½±¥ä¹¥Ñ¡Õ‰)İ­Í•Ñ¡•‘Ğ¤ñğ€…9Õµ‰•È¹¥ÍM…™•%¹Ñ••È¡Á½±¥ä¹¥Ñ¡Õ‰)İ­ÍáÁ¥É•ÍĞ¤(€€€€€ñğÁ½±¥ä¹¥Ñ¡Õ‰)İ­ÍáÁ¥É•ÍĞ€ğô…Ñ”¹¹½Ü ¤ñğÁ½±¥ä¹¥Ñ¡Õ‰)İ­ÍáÁ¥É•ÍĞ€´Á½±¥ä¹¥Ñ¡Õ‰)İ­Í•Ñ¡•‘Ğ€ø½¥‘Œ¹)]-M}M9AM!=Q}QQ1}5L¤¤(€€€ñğ€…ÉÉ…ä¹¥ÍÉÉ…ä¡Á½±¥ä¹…±±½İ•‘A••É¥¹•ÉÁÉ¥¹ÑÌ¤ñğÁ½±¥ä¹…±±½İ•‘A••É¥¹•ÉÁÉ¥¹ÑÌ¹±•¹Ñ €ôôô€À(€€€ñğ€…Á½±¥ä¹•áÁ•Ñ•‘±…¥µÌñğ€…Á½±¥ä¹•áÁ•Ñ•‘I•ÅÕ•ÍĞñğ€…Á½±¥ä¹Í•ÉÙ¥”(€€€ñğ€¡½ÁÑ¥½¹Ì¹¡½ÍĞ€„ôôÕ¹‘•™¥¹•€˜˜½ÁÑ¥½¹Ì¹¡½ÍĞ€„ôô€œÄÈÜ¸À¸À¸Äœ¤¤™…¥° ±½…°µÍ•ÉÙ•ÈµÁ½±¥äµµ¥ÍÍ¥¹œœ¤ì(€¥˜€¡Á½±¥ä¹µ½‘”€ôôô€¥Ñ¡Õˆµ½¥‘Œœ¤É•ÅÕ¥É•¥Ñ¡Õ‰A½±¥ä¡Á½±¥ä¤ì(€½¹ÍĞÍ•ÉÙ•È€ôÑ±Ì¹É•…Ñ•M•ÉÙ•È¡ì­•äèÁ½±¥ä¹Ñ±Í-•ä°•ÉĞèÁ½±¥ä¹Ñ±Í•ÉĞ°„èÁ½±¥ä¹„°É•ÅÕ•ÍÑ•ÉĞèÑÉÕ”°É•©•ÑU¹…ÕÑ¡½É¥é•èÑÉÕ”°µ¥¹Y•ÉÍ¥½¸è€Q1MØÄ¸Ìœ°µ…áY•ÉÍ¥½¸è€Q1MØÄ¸Ìœô°€¡Í½­•Ğ¤€ôøì(€€€Í½­•Ğ¹Í•ÑQ¥µ•½ÕĞ¡½ÁÑ¥½¹Ì¹Ñ¥µ•½ÕÑ5Ìñğ€ÔÀÀÀ°€ ¤€ôøÍ½­•Ğ¹‘•ÍÑÉ½ä ¤¤ì(€€€±•Ğ‘…Ñ„€ô€œœì±•Ğ½µÁ±•Ñ”€ô™…±Í”ì(€€€Í½­•Ğ¹½¸ ‘…Ñ„œ°€¡¡Õ¹¬¤€ôøì(€€€€€¥˜€¡½µÁ±•Ñ”¤É•ÑÕÉ¸ì(€€€€€‘…Ñ„€¬ô¡Õ¹¬¹Ñ½MÑÉ¥¹œ ÕÑ˜àœ¤ì(€€€€€¥˜€¡	Õ™™•È¹‰åÑ•1•¹Ñ ¡‘…Ñ„°€ÕÑ˜àœ¤€ø€¡½ÁÑ¥½¹Ì¹µ…á	åÑ•Ìñğ€ØÔÔÌØ¤¤ì½µÁ±•Ñ”€ôÑÉÕ”ìÍ½­•Ğ¹‘•ÍÑÉ½ä ¤ìÉ•ÑÕÉ¸ìô(€€€€€½¹ÍĞ¹•İ±¥¹”€ô‘…Ñ„¹¥¹‘•á=˜ q¸œ¤ì(€€€€€¥˜€¡¹•İ±¥¹”€ğ€À¤É•ÑÕÉ¸ì(€€€€€¥˜€¡¹•İ±¥¹”€„ôô‘…Ñ„¹±•¹Ñ €´€Ä¤ì½µÁ±•Ñ”€ôÑÉÕ”ìÍ½­•Ğ¹‘•ÍÑÉ½ä ¤ìÉ•ÑÕÉ¸ìô(€€€€€½µÁ±•Ñ”€ôÑÉÕ”ì(€€€€€ÑÉäì(€€€€€€€½¹ÍĞ•¹Ù•±½Á”€ôÁ…ÉÍ•)Í½¹9½ÕÁ±¥…Ñ•Ì¡‘…Ñ„¹Í±¥” À°¹•İ±¥¹”¤¤ì(€€€€€€€¥˜€ …•á…Ñ-•åÌ¡•¹Ù•±½Á”°lØœ°€¥‘}Ñ½­•¸œ°€ÁÉ½½™}­•å}©İ¬œ°€É•ÅÕ•ÍÑ}Hœ°€¹½¹”œ°€ÁÉ½½™}„t¤ñğ•¹Ù•±½Á”¹Ø€„ôô€„ÌÀÌµ‰¥¹µØÄœ¤™…¥° ¥¹Ù…±¥µ•¹Ù•±½Á”œ¤ì(€€€€€€€¥˜€¡)M=8¹ÍÑÉ¥¹¥™ä¡•¹Ù•±½Á”¹É•ÅÕ•ÍÑ}H¤€„ôô)M=8¹ÍÑÉ¥¹¥™ä¡Á½±¥ä¹•áÁ•Ñ•‘I•ÅÕ•ÍĞ¤¤™…¥° É•ÅÕ•ÍĞµÁ½±¥äµµ¥Íµ…Ñ œ¤ì(€€€€€€€Ù•É¥™åÕÉÉ•¹Ñ½¹¹•Ñ¥½¸¡Í½­•Ğ°ìÑ½­•¸è•¹Ù•±½Á”¹¥‘}Ñ½­•¸°ÁÉ½½˜è•¹Ù•±½Á”¹ÁÉ½½™}„°©İ¬è•¹Ù•±½Á”¹ÁÉ½½™}­•å}©İ¬°Á½±¥ä°É•ÅÕ•ÍĞè•¹Ù•±½Á”¹É•ÅÕ•ÍÑ}H°¹½¹”è•¹Ù•±½Á”¹¹½¹”ô¤ì(€€€€€€€Í½­•Ğ¹•¹¡€‘í)M=8¹ÍÑÉ¥¹¥™ä¡ì½¬èÑÉÕ”°É•ÍÕ±Ğè€Íå¹Ñ¡•Ñ¥Œµ±½…°µÁÉ½½˜µ…•ÁÑ•œô¥õq¹€¤ì(€€€€€ô…Ñ €¡•ÉÉ½È¤ì(€€€€€€€Í½­•Ğ¹•¹¡€‘í)M=8¹ÍÑÉ¥¹¥™ä¡ì½¬è™…±Í”°½‘”èÑåÁ•½˜•ÉÉ½È¹½‘”€ôôô€ÍÑÉ¥¹œœ€ü•ÉÉ½È¹½‘”€è€Ù•É¥™¥…Ñ¥½¸µÉ•©•Ñ•œô¥õq¹€¤ì(€€€€€ô(€€€ô¤ì(€€€Í½­•Ğ¹½¸ •ÉÉ½Èœ°€ ¤€ôøíô¤ì(€ô¤ì(€Í•ÉÙ•È¹½¸ •ÉÉ½Èœ°€ ¤€ôøíô¤ì(€Í•ÉÙ•È¹±¥ÍÑ•¸¡½ÁÑ¥½¹Ì¹Á½ÉĞñğ€À°€œÄÈÜ¸À¸À¸Äœ¤ì(€É•ÑÕÉ¸ìÍ•ÉÙ•È°±½Í”è€ ¤€ôø¹•ÜAÉ½µ¥Í” ¡É•Í½±Ù”°É•©•Ğ¤€ôøÍ•ÉÙ•È¹±½Í” ¡•ÉÉ½È¤€ôø•ÉÉ½È€üÉ•©•Ğ¡•ÉÉ½È¤€èÉ•Í½±Ù” ¤¤¤°…‘‘É•ÍÌè€ ¤€ôøÍ•ÉÙ•È¹…‘‘É•ÍÌ ¤ôì)ô()µ½‘Õ±”¹•áÁ½ÉÑÌ€ôìU%9}AI%`°½µµ¥Ñµ•¹Ğ°•áÁ•Ñ•‘Õ‘¥•¹”°É•ÅÕ•ÍÑå¹…µ¥Õ‘¥•¹•Q½­•¸°Í¥¹ÕÉÉ•¹Ñ½¹¹•Ñ¥½¸°ÉÕ¹1½…±±¥•¹Ğ°Ù•É¥™åÕÉÉ•¹Ñ½¹¹•Ñ¥½¸°ÍÑ…ÉÑ1½…±Y•É¥™¥…Ñ¥½¹M•ÉÙ•Èôì
+'use strict';
+
+// Offline-only A-segment proof primitives. The issuer verifier and policy are
+// injected by the caller; this module never performs network requests.
+const crypto = require('node:crypto');
+const tls = require('node:tls');
+const oidc = require('./oidc-smoke.cjs');
+const GITHUB_ISSUER = 'https://token.actions.githubusercontent.com';
+
+const LABEL = 'EXPORTER-Channel-Binding';
+const PREFIX = 'O2O-A303-A\n1\n';
+const AUDIENCE_PREFIX = 'urn:o2o:a303-bind-v1:';
+
+function fail(code) { const error = new Error(code); error.code = code; throw error; }
+function parseJsonNoDuplicates(input) {
+  let offset = 0;
+  const ws = () => { while (/[ \t\r\n]/.test(input[offset] || '')) offset += 1; };
+  const string = () => { const start = offset++; while (offset < input.length) { if (input[offset] === '\\') { offset += 2; continue; } if (input[offset++] === '"') return JSON.parse(input.slice(start, offset)); } fail('invalid-json'); };
+  function value(depth) {
+    if (depth > 64) fail('invalid-json'); ws();
+    if (input[offset] === '"') return string();
+    if (input[offset] === '{') { offset += 1; ws(); const out = Object.create(null); const seen = new Set(); if (input[offset] === '}') { offset += 1; return out; } while (offset < input.length) { ws(); if (input[offset] !== '"') fail('invalid-json'); const k = string(); if (seen.has(k)) fail('duplicate-json-key'); seen.add(k); ws(); if (input[offset++] !== ':') fail('invalid-json'); Object.defineProperty(out, k, { value: value(depth + 1), enumerable: true }); ws(); if (input[offset] === '}') { offset += 1; return out; } if (input[offset++] !== ',') fail('invalid-json'); } fail('invalid-json'); }
+    if (input[offset] === '[') { offset += 1; ws(); const out = []; if (input[offset] === ']') { offset += 1; return out; } while (offset < input.length) { out.push(value(depth + 1)); ws(); if (input[offset] === ']') { offset += 1; return out; } if (input[offset++] !== ',') fail('invalid-json'); } fail('invalid-json'); }
+    const tail = input.slice(offset); const literal = /^(?:true|false|null)/.exec(tail); if (literal) { offset += literal[0].length; return literal[0] === 'null' ? null : literal[0] === 'true'; }
+    const number = /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?/.exec(tail); if (number) { offset += number[0].length; const n = JSON.parse(number[0]); if (!Number.isFinite(n)) fail('invalid-json'); return n; } fail('invalid-json');
+  }
+  if (typeof input !== 'string') fail('invalid-json'); const result = value(0); ws(); if (offset !== input.length) fail('invalid-json'); return result;
+}
+function b64(value) { return Buffer.from(value).toString('base64url'); }
+function decode(value, length) {
+  if (typeof value !== 'string' || !/^[A-Za-z0-9_-]+$/.test(value)) fail('invalid-base64url');
+  const bytes = Buffer.from(value, 'base64url');
+  if (bytes.toString('base64url') !== value || (length !== undefined && bytes.length !== length)) fail('invalid-base64url');
+  return bytes;
+}
+function sha(value) { return crypto.createHash('sha256').update(value).digest(); }
+function exactKeys(value, expected) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+    && Object.keys(value).sort().join('\0') === [...expected].sort().join('\0');
+}
+function thumbprint(jwk) {
+  if (!exactKeys(jwk, ['kty', 'crv', 'x']) || jwk.kty !== 'OKP' || jwk.crv !== 'Ed25519') fail('invalid-proof-key');
+  decode(jwk.x, 32);
+  const bytes = Buffer.from(JSON.stringify({ crv: jwk.crv, kty: jwk.kty, x: jwk.x }), 'utf8');
+  return b64(sha(bytes));
+}
+function canonical(value) {
+  if (value === null || typeof value === 'boolean' || typeof value === 'string') return JSON.stringify(value);
+  if (typeof value === 'number') { if (!Number.isFinite(value)) fail('invalid-canonical-value'); return JSON.stringify(value); }
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`;
+  if (value && typeof value === 'object') return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical(value[key])}`).join(',')}}`;
+  fail('invalid-canonical-value');
+}
+function commitment(claims, request, jwk, nonce, policy) {
+  return {
+    v: 'a303-bind-v1', svc: policy.service,
+    repository_id: claims.repository_id, run_id: claims.run_id, run_attempt: claims.run_attempt,
+    caller_workflow_ref: claims.workflow_ref, caller_workflow_sha: claims.workflow_sha,
+    called_workflow_ref: claims.job_workflow_ref, called_workflow_sha: claims.job_workflow_sha,
+    env: request.env_id, action: request.action_id, resource: request.resource_id,
+    artifact: request.artifact_digest,
+    request: b64(sha(Buffer.from(canonical(request), 'utf8'))),
+    proof_key_thumbprint: thumbprint(jwk), nonce,
+  };
+}
+function expectedAudience(value) { return `${AUDIENCE_PREFIX}${b64(sha(Buffer.from(canonical(value), 'utf8')))}`; }
+async function requestDynamicAudienceToken({ identity, request, jwk, nonce, policy, env, runtimeRequest }) {
+  const identityKeys = ['repository_id', 'run_id', 'run_attempt', 'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha'];
+  if (!identity || identityKeys.some((key) => typeof identity[key] !== 'string' || identity[key].length === 0)) fail('github-identity-policy-missing');
+  if (!request || ['env_id', 'action_id', 'resource_id', 'artifact_digest'].some((key) => typeof request[key] !== 'string' || request[key].length === 0)) fail('request-policy-missing');
+  if (!policy || typeof policy.service !== 'string' || !policy.service) fail('local-server-policy-missing');
+  const commit = commitment(identity, request, jwk, nonce, policy);
+  const audience = expectedAudience(commit);
+  const token = await oidc.requestGithubIdToken({ env, audience, request: runtimeRequest });
+  return Object.freeze({ token, commit, audience });
+}
+function proofMessage(token, commit, exporter) {
+  if (typeof token !== 'string' || !/^[\x21-\x7e]+$/.test(token)) fail('invalid-token-bytes');
+  const tokenBytes = Buffer.from(token, 'ascii');
+  return Buffer.from(`${PREFIX}${b64(sha(tokenBytes))}\n${b64(sha(Buffer.from(canonical(commit), 'utf8')))}\n${b64(exporter)}`, 'utf8');
+}
+function signCurrentConnection(socket, token, commit, privateKey) {
+  if (!socket || socket.getProtocol() !== 'TLSv1.3') fail('tls-version-rejected');
+  const exporter = socket.exportKeyingMaterial(32, LABEL, Buffer.alloc(0));
+  return b64(crypto.sign(null, proofMessage(token, commit, exporter), privateKey));
+}
+
+// Single-use offline A-segment client entry. Identity and action context are
+// explicit inputs; callers must supply the already-approved TLS client
+// material and an injected token transport (tests use a signed local fixture).
+async function runLocalAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes }) {
+  if (!tlsOptions || tlsOptions.host !== '127.0.0.1' || tlsOptions.minVersion !== 'TLSv1.3' || tlsOptions.maxVersion !== 'TLSv1.3'
+    || tlsOptions.rejectUnauthorized !== true || !tlsOptions.key || !tlsOptions.cert || !tlsOptions.ca) fail('local-client-policy-missing');
+  const pair = crypto.generateKeyPairSync('ed25519');
+  const exported = pair.publicKey.export({ format: 'jwk' });
+  const jwk = { kty: exported.kty, crv: exported.crv, x: exported.x };
+  const nonceBytes = randomBytes(32);
+  if (!Buffer.isBuffer(nonceBytes) || nonceBytes.length !== 32) fail('nonce-generation-failed');
+  const nonce = b64(nonceBytes);
+  const { token, commit } = await requestDynamicAudienceToken({ identity, request, jwk, nonce, policy, env, runtimeRequest });
+  if (typeof token !== 'string' || token.length > 16384) fail('invalid-token');
+  const socket = tls.connect(tlsOptions);
+  return await new Promise((resolve, reject) => {
+    let response = ''; let done = false; let sent = false;
+    const finish = (error, value) => { if (done) return; done = true; clearTimeout(timer); socket.destroy(); error ? reject(error) : resolve(value); };
+    const timer = setTimeout(() => finish(Object.assign(new Error('local-client-timeout'), { code: 'local-client-timeout' })), 5000);
+    socket.once('error', (error) => finish(error));
+    socket.once('secureConnect', () => {
+      try {
+        if (sent || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true || socket.isSessionReused()) fail('tls-peer-rejected');
+        sent = true;
+        const proof = signCurrentConnection(socket, token, commit, pair.privateKey);
+        const envelope = JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof });
+        if (Buffer.byteLength(envelope, 'utf8') > 65536) fail('envelope-size-limit');
+        socket.write(`${envelope}\n`);
+      } catch (error) { finish(error); }
+    });
+    socket.on('data', (chunk) => {
+      response += chunk.toString('utf8');
+      if (Buffer.byteLength(response, 'utf8') > 4096) return finish(Object.assign(new Error('response-size-limit'), { code: 'response-size-limit' }));
+      const newline = response.indexOf('\n');
+      if (newline >= 0) {
+        if (newline !== response.length - 1) return finish(Object.assign(new Error('response-invalid'), { code: 'response-invalid' }));
+        try { const result = parseJsonNoDuplicates(response.slice(0, newline)); if (!result || result.ok !== true) return finish(Object.assign(new Error(result && result.code || 'verification-rejected'), { code: result && result.code || 'verification-rejected' })); finish(null, result); }
+        catch (error) { finish(error); }
+      }
+    });
+  });
+}
+function parseJsonUnique(text) {
+  const value = JSON.parse(text);
+  // The local verifier accepts only the synthetic issuer's compact EdDSA JWT.
+  // Its issuer signs these bytes; duplicate-key rejection is handled by the
+  // existing smoke parser before this helper is used in production integration.
+  return value;
+}
+function verifySyntheticToken(token, policy) {
+  if (typeof token !== 'string' || !/^[\x21-\x7e]+$/.test(token)) fail('invalid-token');
+  const parts = token.split('.');
+  if (parts.length !== 3 || parts.some((part) => !part)) fail('invalid-token');
+  const [head, body, sig] = parts;
+  const header = parseJsonNoDuplicates(decode(head).toString('utf8'));
+  const claims = parseJsonNoDuplicates(decode(body).toString('utf8'));
+  if (!exactKeys(header, ['alg', 'kid', 'typ']) || header.alg !== 'EdDSA' || header.typ !== 'JWT' || header.kid !== policy.issuerKid) fail('issuer-header-rejected');
+  if (!crypto.verify(null, Buffer.from(`${head}.${body}`, 'ascii'), policy.issuerPublicKey, decode(sig, 64))) fail('issuer-signature-rejected');
+  if (!claims || claims.iss !== policy.issuer) fail('issuer-claim-rejected');
+  return claims;
+}
+function verifyGithubToken(token, policy) {
+  const now = Date.now();
+  if (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0
+    || !Number.isSafeInteger(policy.githubJwksFetchedAt) || !Number.isSafeInteger(policy.githubJwksExpiresAt)
+    || policy.githubJwksExpiresAt <= now || policy.githubJwksExpiresAt - policy.githubJwksFetchedAt > oidc.JWKS_SNAPSHOT_TTL_MS
+    || policy.githubJwksFetchedAt > now) fail('github-jwks-snapshot-expired');
+  const compact = oidc.parseCompactJwt(token);
+  const candidates = policy.githubJwksKeys.filter((key) => key && key.kid === compact.header.kid);
+  if (candidates.length !== 1) fail('jwks-kid-not-found');
+  const claims = oidc.verifyRs256CompactToken(compact, candidates[0]);
+  if (!claims || claims.iss !== GITHUB_ISSUER) fail('issuer-claim-rejected');
+  return claims;
+}
+function requireGithubPolicy(policy) {
+  const required = ['repository_id', 'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha', 'environment', 'run_attempt'];
+  if (!policy.expectedClaims || required.some((name) => typeof policy.expectedClaims[name] !== 'string' || policy.expectedClaims[name].length === 0)
+    || policy.expectedClaims.run_attempt !== '1') fail('github-identity-policy-missing');
+}
+function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, nonce }) {
+  if (!socket || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true) fail('tls-peer-rejected');
+  if (typeof socket.isSessionReused === 'function' && socket.isSessionReused()) fail('session-resumption-rejected');
+  const peer = socket.getPeerCertificate(true);
+  if (!peer || !peer.raw || !policy.allowedPeerFingerprints.includes(sha(peer.raw).toString('hex'))) fail('peer-identity-rejected');
+  const claims = policy.mode === 'github-oidc' ? verifyGithubToken(token, policy) : verifySyntheticToken(token, policy);
+  for (const [key, expected] of Object.entries(policy.expectedClaims)) if (claims[key] !== expected) fail('claim-policy-mismatch');
+  const commit = commitment(claims, request, jwk, nonce, policy);
+  const audience = expectedAudience(commit);
+  if (policy.mode === 'github-oidc') oidc.validateClaims(claims, audience, policy.expectedClaims.environment, policy.expectedClaims.run_attempt, Math.floor(Date.now() / 1000));
+  else if (claims.aud !== audience) fail('audience-mismatch');
+  const key = crypto.createPublicKey({ key: jwk, format: 'jwk' });
+  const exporter = socket.exportKeyingMaterial(32, LABEL, Buffer.alloc(0));
+  if (!crypto.verify(null, proofMessage(token, commit, exporter), key, decode(proof, 64))) fail('proof-invalid');
+  return { ok: true, result: 'synthetic-local-proof-accepted' };
+}
+
+function startLocalVerificationServer(options) {
+  const { policy } = options || {};
+  if (!options || !policy || !policy.tlsKey || !policy.tlsCert || !policy.ca
+    || !policy.issuer || (policy.mode !== 'github-oidc' && (!policy.issuerKid || !policy.issuerPublicKey))
+    || (policy.mode === 'github-oidc' && (policy.issuer !== GITHUB_ISSUER || !Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0
+      || !Number.isSafeInteger(policy.githubJwksFetchedAt) || !Number.isSafeInteger(policy.githubJwksExpiresAt)
+      || policy.githubJwksExpiresAt <= Date.now() || policy.githubJwksExpiresAt - policy.githubJwksFetchedAt > oidc.JWKS_SNAPSHOT_TTL_MS))
+    || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
+    || !policy.expectedClaims || !policy.expectedRequest || !policy.service
+    || (options.host !== undefined && options.host !== '127.0.0.1')) fail('local-server-policy-missing');
+  if (policy.mode === 'github-oidc') requireGithubPolicy(policy);
+  const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
+    socket.setTimeout(options.timeoutMs || 5000, () => socket.destroy());
+    let data = ''; let complete = false;
+    socket.on('data', (chunk) => {
+      if (complete) return;
+      data += chunk.toString('utf8');
+      if (Buffer.byteLength(data, 'utf8') > (options.maxBytes || 65536)) { complete = true; socket.destroy(); return; }
+      const newline = data.indexOf('\n');
+      if (newline < 0) return;
+      if (newline !== data.length - 1) { complete = true; socket.destroy(); return; }
+      complete = true;
+      try {
+        const envelope = parseJsonNoDuplicates(data.slice(0, newline));
+        if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
+        if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
+        verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
+        socket.end(`${JSON.stringify({ ok: true, result: 'synthetic-local-proof-accepted' })}\n`);
+      } catch (error) {
+        socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`);
+      }
+    });
+    socket.on('error', () => {});
+  });
+  server.on('error', () => {});
+  server.listen(options.port || 0, '127.0.0.1');
+  return { server, close: () => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())), address: () => server.address() };
+}
+
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, startLocalVerificationServer };
