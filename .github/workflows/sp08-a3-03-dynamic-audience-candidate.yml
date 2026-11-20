@@ -1,0 +1,24 @@
+name: SP08-A3-03 dynamic audience candidate
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Synthetic candidate action identifier
+        required: true
+        type: choice
+        options: [fixture-proof-check]
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: o2o-a303-dynamic-audience-candidate-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  candidate:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    uses: ./.github/workflows/sp08-a3-03-dynamic-audience-candidate-reusable.yml
+    with:
+      action: ${{ inputs.action }}
+    permissions:
+      contents: read
+      id-token: write

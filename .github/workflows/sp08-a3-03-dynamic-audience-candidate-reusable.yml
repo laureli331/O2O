@@ -1,0 +1,37 @@
+name: SP08-A3-03 dynamic audience candidate reusable
+on:
+  workflow_call:
+    inputs:
+      action:
+        required: true
+        type: string
+jobs:
+  candidate:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    environment:
+      name: SP08-A3-03-OIDC-smoke
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+          lfs: false
+      - name: Fail closed until independent trust policy and fixture are approved
+        env:
+          ACTION: ${{ inputs.action }}
+          REPOSITORY: ${{ github.repository }}
+          REPOSITORY_ID: ${{ github.repository_id }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          ACTOR: ${{ github.actor }}
+          REF: ${{ github.ref }}
+          WORKFLOW_REF: ${{ github.workflow_ref }}
+          WORKFLOW_SHA: ${{ github.workflow_sha }}
+          ENVIRONMENT: SP08-A3-03-OIDC-smoke
+        run: node tools/sp08-a3-03-github-oidc-smoke/dynamic-audience-candidate.cjs
