@@ -15,6 +15,7 @@ const RESPONSE_LIMITS = Object.freeze({
   discovery: 64 * 1024,
   jwks: 256 * 1024,
 });
+const JWKS_SNAPSHOT_TTL_MS = 15 * 60 * 1000;
 
 class SmokeError extends Error {
   constructor(code) {
@@ -152,6 +153,15 @@ function parseCompactJwt(token) {
   return { header, payloadBytes, signature, signingInput: `${parts[0]}.${parts[1]}` };
 }
 
+function verifyRs256CompactToken(compact, jwk) {
+  if (!jwk || jwk.kty !== 'RSA' || jwk.alg !== 'RS256' || jwk.use !== 'sig' || typeof jwk.n !== 'string' || typeof jwk.e !== 'string') fail('jwks-key-invalid');
+  let publicKey;
+  try { publicKey = crypto.createPublicKey({ key: { kty: 'RSA', n: jwk.n, e: jwk.e }, format: 'jwk' }); } catch { fail('jwks-key-invalid'); }
+  if (publicKey.asymmetricKeyDetails?.modulusLength < 2048) fail('jwks-key-invalid');
+  if (!crypto.verify('RSA-SHA256', Buffer.from(compact.signingInput, 'ascii'), publicKey, compact.signature)) fail('signature-invalid');
+  return parseJsonUnique(compact.payloadBytes.toString('utf8'));
+}
+
 function requireStringClaim(claims, name) {
   if (typeof claims[name] !== 'string' || claims[name].length === 0) fail('claim-schema');
 }
@@ -237,6 +247,53 @@ function makeHttpsGet(url, { headers, maxBytes, timeoutMs, signal }) {
     request.on('error', (error) => reject(error instanceof SmokeError ? error : new SmokeError('transport-failed')));
     request.end();
   });
+}
+
+// Fixed-origin, read-only key preparation for the bounded A-segment session.
+// Callers cannot supply a discovery/JWKS URL or a trust key.
+async function loadTrustedGithubJwks({ request = makeHttpsGet, now = Date.now(), totalTimeoutMs = TOTAL_TIMEOUT_MS } = {}) {
+  if (typeof now !== 'number' || !Number.isSafeInteger(now) || totalTimeoutMs <= 0 || totalTimeoutMs > TOTAL_TIMEOUT_MS) fail('jwks-loader-config-invalid');
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), totalTimeoutMs);
+  const counts = { total: 0, discovery: 0, jwks: 0 };
+  const getJson = async (kind, url) => {
+    if (counts.total >= 2 || counts[kind] >= 1) fail('request-budget-exceeded');
+    const parsed = validateHttpsUrl(url, 'invalid-request-url');
+    if (parsed.href !== url || parsed.origin !== new URL(ISSUER).origin) fail('fixed-origin-rejected');
+    counts.total += 1;
+    counts[kind] += 1;
+    let response;
+    try {
+      response = await raceAbort(Promise.resolve().then(() => request(parsed, {
+        method: 'GET', headers: { accept: 'application/json' }, maxBytes: RESPONSE_LIMITS[kind],
+        timeoutMs: REQUEST_TIMEOUT_MS, followRedirects: false, retries: 0, signal: controller.signal,
+      })), controller.signal);
+    } catch { fail(controller.signal.aborted ? 'total-timeout' : 'transport-failed'); }
+    const body = Buffer.isBuffer(response.body) ? response.body : Buffer.from(response.body || '');
+    if (body.length > RESPONSE_LIMITS[kind]) fail('response-too-large');
+    if (response.statusCode >= 300 && response.statusCode < 400) fail('redirect-rejected');
+    if (response.statusCode !== 200) fail('http-status-rejected');
+    const contentType = getHeader(response.headers, 'content-type');
+    if (typeof contentType !== 'string' || !/^application\/json(?:\s*;|\s*$)/i.test(contentType)) fail('content-type-rejected');
+    return parseJsonUnique(body.toString('utf8'));
+  };
+  try {
+    const discovery = await getJson('discovery', DISCOVERY_URL);
+    if (!discovery || discovery.issuer !== ISSUER || !Array.isArray(discovery.id_token_signing_alg_values_supported)
+      || !discovery.id_token_signing_alg_values_supported.includes('RS256')) fail('discovery-invalid');
+    const jwksUrl = validateHttpsUrl(discovery.jwks_uri, 'discovery-jwks-url-invalid');
+    if (jwksUrl.href !== JWKS_URL || jwksUrl.origin !== new URL(ISSUER).origin) fail('fixed-origin-rejected');
+    const jwks = await getJson('jwks', JWKS_URL);
+    if (!jwks || !Array.isArray(jwks.keys)) fail('jwks-invalid');
+    const keyIds = jwks.keys.filter((key) => key && typeof key === 'object' && typeof key.kid === 'string').map((key) => key.kid);
+    if (new Set(keyIds).size !== keyIds.length) fail('jwks-duplicate-kid');
+    const keys = jwks.keys.filter((key) => key && typeof key === 'object' && key.kty === 'RSA' && key.alg === 'RS256' && key.use === 'sig'
+      && typeof key.kid === 'string' && key.kid.length > 0 && typeof key.n === 'string' && typeof key.e === 'string')
+      .filter((key) => { try { const pub = crypto.createPublicKey({ key: { kty: 'RSA', n: key.n, e: key.e }, format: 'jwk' }); return (pub.asymmetricKeyDetails?.modulusLength || 0) >= 2048; } catch { return false; } });
+    if (!keys.length) fail('jwks-key-invalid');
+    return Object.freeze({ issuer: ISSUER, keys: Object.freeze(keys), fetchedAt: now, expiresAt: now + JWKS_SNAPSHOT_TTL_MS,
+      requestBudget: Object.freeze({ limit: 2, used: counts.total, redirectsFollowed: 0, retries: 0 }) });
+  } finally { clearTimeout(timer); }
 }
 
 function raceAbort(promise, signal) {
@@ -327,17 +384,7 @@ async function runOidcSmoke({ env = process.env, request = makeHttpsGet, nowSeco
     const jwk = candidates[0];
     if (jwk.kty !== 'RSA' || jwk.alg !== 'RS256' || jwk.use !== 'sig' || typeof jwk.n !== 'string' || typeof jwk.e !== 'string') fail('jwks-key-invalid');
 
-    let publicKey;
-    try {
-      publicKey = crypto.createPublicKey({ key: { kty: 'RSA', n: jwk.n, e: jwk.e }, format: 'jwk' });
-    } catch {
-      fail('jwks-key-invalid');
-    }
-    if (publicKey.asymmetricKeyDetails?.modulusLength < 2048) fail('jwks-key-invalid');
-    const signatureOk = crypto.verify('RSA-SHA256', Buffer.from(compact.signingInput, 'ascii'), publicKey, compact.signature);
-    if (!signatureOk) fail('signature-invalid');
-
-    const claims = parseJsonUnique(compact.payloadBytes.toString('utf8'));
+    const claims = verifyRs256CompactToken(compact, jwk);
     const claimTypes = validateClaims(claims, expectedAudience, expectedEnvironment, runAttempt, nowSeconds);
     return {
       ok: true,
@@ -360,6 +407,48 @@ async function runOidcSmoke({ env = process.env, request = makeHttpsGet, nowSeco
   }
 }
 
+// One-shot token request for the offline A-segment dynamic-audience model.
+// Identity and audience are supplied explicitly by the caller; this helper
+// never infers workflow metadata or changes the fixed smoke path above.
+async function requestGithubIdToken({ env = process.env, audience, request = makeHttpsGet, totalTimeoutMs = TOTAL_TIMEOUT_MS } = {}) {
+  if (!Number.isSafeInteger(totalTimeoutMs) || totalTimeoutMs <= 0 || totalTimeoutMs > TOTAL_TIMEOUT_MS) fail('token-request-config-invalid');
+  if (typeof audience !== 'string' || !audience.startsWith(AUDIENCE_PREFIX)
+    || audience.length !== AUDIENCE_PREFIX.length + 43
+    || !/^[A-Za-z0-9_-]{43}$/.test(audience.slice(AUDIENCE_PREFIX.length))) fail('invalid-dynamic-audience');
+  const bearer = env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+  const rawRequestUrl = env.ACTIONS_ID_TOKEN_REQUEST_URL;
+  const expectedOidcOrigin = env.A303_EXPECTED_OIDC_ORIGIN;
+  if (typeof bearer !== 'string' || bearer.length === 0) fail('missing-runtime-credential');
+  if (typeof expectedOidcOrigin !== 'string' || expectedOidcOrigin.length === 0) fail('missing-oidc-origin-policy');
+  const base = validateHttpsUrl(rawRequestUrl, 'invalid-runtime-url');
+  const expectedOrigin = validateHttpsUrl(expectedOidcOrigin, 'invalid-oidc-origin-policy');
+  if (expectedOrigin.origin !== expectedOidcOrigin || base.origin !== expectedOrigin.origin) fail('runtime-origin-mismatch');
+  if (base.searchParams.has('audience')) fail('runtime-url-has-audience');
+  const url = new URL(base.toString());
+  url.searchParams.set('audience', audience);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), totalTimeoutMs);
+  try {
+    let response;
+    try {
+      response = await raceAbort(Promise.resolve().then(() => request(url, {
+        method: 'GET', headers: { accept: 'application/json', authorization: `Bearer ${bearer}` },
+        maxBytes: RESPONSE_LIMITS.token, timeoutMs: REQUEST_TIMEOUT_MS,
+        followRedirects: false, retries: 0, signal: controller.signal,
+      })), controller.signal);
+    } catch { fail(controller.signal.aborted ? 'total-timeout' : 'transport-failed'); }
+    const body = Buffer.isBuffer(response.body) ? response.body : Buffer.from(response.body || '');
+    if (body.length > RESPONSE_LIMITS.token) fail('response-too-large');
+    if (response.statusCode >= 300 && response.statusCode < 400) fail('redirect-rejected');
+    if (response.statusCode !== 200) fail('http-status-rejected');
+    const contentType = getHeader(response.headers, 'content-type');
+    if (typeof contentType !== 'string' || !/^application\/json(?:\s*;|\s*$)/i.test(contentType)) fail('content-type-rejected');
+    const tokenResponse = parseJsonUnique(body.toString('utf8'));
+    if (!tokenResponse || typeof tokenResponse !== 'object' || typeof tokenResponse.value !== 'string') fail('token-response-invalid');
+    return tokenResponse.value;
+  } finally { clearTimeout(timer); }
+}
+
 if (require.main === module) {
   runOidcSmoke().then((result) => {
     process.stdout.write(`${JSON.stringify(result)}\n`);
@@ -369,4 +458,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { runOidcSmoke };
+module.exports = { runOidcSmoke, requestGithubIdToken, parseCompactJwt, parseJsonUnique, verifyRs256CompactToken, validateClaims, loadTrustedGithubJwks, JWKS_SNAPSHOT_TTL_MS };
