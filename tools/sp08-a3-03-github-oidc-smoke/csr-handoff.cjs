@@ -49,6 +49,31 @@ function selectSourceRun(runs, expected, budget) {
   return valid[0];
 }
 
+async function waitForReturnRun({ token, repository, workflowId, expected, budget, fetchImpl, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
+  const bounded = validateBudget(budget);
+  if (typeof token !== 'string' || token.length < 1 || token.length > 4096 || typeof repository !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository) || !/^[A-Za-z0-9_.-]+$/.test(workflowId) || typeof fetchImpl !== 'function') fail('poll-configuration-invalid');
+  const origin = 'https://api.github.com';
+  const endpoint = `${origin}/repos/${repository}/actions/workflows/${workflowId}/runs?event=workflow_dispatch&status=completed&per_page=${bounded.maxCandidates}&page=1`;
+  for (let poll = 0; poll < bounded.maxPolls; poll += 1) {
+    const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
+    if (!response || response.status !== 200 || response.url && new URL(response.url).origin !== origin) fail('poll-http-failed');
+    const link = response.headers?.get?.('link');
+    if (link) fail('poll-pagination-limit');
+    const body = await response.json();
+    if (!isRecord(body) || !Array.isArray(body.workflow_runs) || body.workflow_runs.length > bounded.maxCandidates || !Number.isSafeInteger(body.total_count)) fail('poll-response-invalid');
+    const matching = body.workflow_runs.filter((run) => isRecord(run)
+      && run.event === 'workflow_dispatch' && run.status === 'completed' && run.conclusion === 'success'
+      && String(run.repository?.full_name) === repository && run.path === expected.workflowPath
+      && run.head_sha === expected.trustedHeadSha && run.run_attempt === 1
+      && String(run.actor?.id) === expected.actorId && run.actor?.login === expected.actorLogin
+      && typeof run.created_at === 'string' && Date.parse(run.created_at) >= expected.notBeforeMs && Date.parse(run.created_at) <= expected.notAfterMs);
+    if (matching.length > 1) fail('return-run-ambiguous');
+    if (matching.length === 1) return Object.freeze({ runId: String(matching[0].id), attempt: matching[0].run_attempt, headSha: matching[0].head_sha, workflowPath: matching[0].path });
+    if (poll + 1 < bounded.maxPolls) await sleep(bounded.pollIntervalMs);
+  }
+  fail('return-run-timeout');
+}
+
 function verifyCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, caPem, expectedCaFingerprint256, privateKeyPem, pwshPath, now = Date.now(), maxBytes = 65536, timeoutMs = 5000 }) {
   for (const [label, value] of Object.entries({ csrBytes, leafPem, caPem, privateKeyPem })) {
     const size = Buffer.isBuffer(value) ? value.byteLength : Buffer.byteLength(value || '');
@@ -74,4 +99,4 @@ function verifyCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, caPem,
   return Object.freeze({ csrSha256: csrDigest, caFingerprint256: caFingerprint, leafFingerprint256: leaf.fingerprint256.replaceAll(':', '').toLowerCase() });
 }
 
-module.exports = { selectSourceRun, validateBudget, verifyCertificateBinding };
+module.exports = { selectSourceRun, validateBudget, verifyCertificateBinding, waitForReturnRun };

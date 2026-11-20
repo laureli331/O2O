@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
-const { selectSourceRun, validateBudget, verifyCertificateBinding } = require('../tools/sp08-a3-03-github-oidc-smoke/csr-handoff.cjs');
+const { selectSourceRun, validateBudget, verifyCertificateBinding, waitForReturnRun } = require('../tools/sp08-a3-03-github-oidc-smoke/csr-handoff.cjs');
 
 const budget = { maxPolls: 1, maxPages: 1, maxCandidates: 10, maxArtifactBytes: 65536, maxWaitMs: 60000, pollIntervalMs: 5000 };
 const expected = { repositoryId: '123', trustedHeadSha: 'a'.repeat(40), actorId: '77', actorLogin: 'operator', workflowPath: '.github/workflows/csr-source.yml', notBeforeMs: 1000, notAfterMs: 2000 };
@@ -23,6 +23,20 @@ test('source listing budget is explicit and hard bounded', () => {
   assert.throws(() => validateBudget({ ...budget, maxPolls: 5, maxPages: 1 }), /hard-limit/);
   assert.throws(() => validateBudget({ ...budget, maxWaitMs: 300001 }), /hard-limit/);
   assert.throws(() => selectSourceRun(Array(11).fill(source), expected, budget), /candidate-count-limit/);
+});
+
+test('return-run polling uses fixed API origin, bounded GETs and rejects redirects, pages, ambiguity and timeout', async () => {
+  const run = { id: 456, event: 'workflow_dispatch', status: 'completed', conclusion: 'success', repository: { full_name: 'org/repo' }, path: expected.workflowPath, head_sha: expected.trustedHeadSha, run_attempt: 1, actor: { id: 77, login: 'operator' }, created_at: new Date(1500).toISOString() };
+  const seen = [];
+  const fetchImpl = async (url, options) => { seen.push({ url, options }); return { status: 200, url, headers: { get: () => null }, json: async () => ({ total_count: 1, workflow_runs: [run] }) }; };
+  const selected = await waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl });
+  assert.equal(selected.runId, '456');
+  assert.equal(seen.length, 1);
+  assert.match(seen[0].url, /^https:\/\/api\.github\.com\//);
+  assert.equal(seen[0].options.redirect, 'error');
+  await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl: async () => ({ status: 302, headers: { get: () => null } }) }), /poll-http-failed/);
+  await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl: async (url) => ({ status: 200, url, headers: { get: () => 'https://api.github.com/page=2' }, json: async () => ({ total_count: 101, workflow_runs: [] }) }) }), /poll-pagination-limit/);
+  await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl: async (url) => ({ status: 200, url, headers: { get: () => null }, json: async () => ({ total_count: 0, workflow_runs: [] }) }), sleep: async () => {} }), /return-run-timeout/);
 });
 
 test('CSR digest and all certificate inputs are size bounded before parsing', () => {
