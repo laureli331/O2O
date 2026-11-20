@@ -3,20 +3,25 @@
 const crypto = require('node:crypto');
 const aSegment = require('./a-segment-local.cjs');
 const oidc = require('./oidc-smoke.cjs');
+const originPreflight = require('./oidc-origin-preflight.cjs');
 
 const REQUIRED = Object.freeze([
-  'repository', 'repository_id', 'run_id', 'run_attempt', 'actor', 'ref',
+  'repository', 'repository_id', 'run_id', 'run_attempt', 'actor', 'actor_id', 'ref',
   'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha', 'environment',
 ]);
+const STABLE_POLICY = Object.freeze(['repository_id', 'actor', 'actor_id', 'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha', 'environment', 'run_attempt']);
 function fail(code) { const error = new Error(code); error.code = code; throw error; }
 function validateCandidateContext({ context, policy, action }) {
   if (!context || typeof context !== 'object' || !policy || typeof policy !== 'object') fail('trust-policy-missing');
   if (policy.approved !== true || !policy.context || typeof policy.context !== 'object') fail('trust-policy-unapproved');
-  for (const field of REQUIRED) {
+  for (const field of STABLE_POLICY) {
     const actual = context[field]; const expected = policy.context[field];
     if (typeof actual !== 'string' || !actual || typeof expected !== 'string' || !expected) fail('trust-policy-incomplete');
     if (actual !== expected) fail(`context-${field}-mismatch`);
   }
+  for (const field of ['run_id', 'repository', 'ref']) if (typeof context[field] !== 'string' || !context[field]) fail('runner-context-incomplete');
+  if (!/^[1-9][0-9]*$/.test(context.repository_id) || !/^[1-9][0-9]*$/.test(context.run_id)
+    || context.run_attempt !== '1' || !/^[0-9]+$/.test(context.actor_id)) fail('runner-context-invalid');
   if (!Array.isArray(policy.allowedActions) || !policy.allowedActions.includes(action)) fail('action-not-approved');
   return Object.freeze({ ...context });
 }
@@ -52,13 +57,15 @@ async function runCandidate({ env = process.env, request } = {}) {
   try { policy = JSON.parse(env.A303_DYNAMIC_AUDIENCE_TRUST_POLICY_JSON || ''); }
   catch { fail('trust-policy-unconfigured'); }
   const context = {
-    repository: env.GITHUB_REPOSITORY, repository_id: env.GITHUB_REPOSITORY_ID,
-    run_id: env.GITHUB_RUN_ID, run_attempt: env.GITHUB_RUN_ATTEMPT, actor: env.GITHUB_ACTOR,
-    ref: env.GITHUB_REF, workflow_ref: env.GITHUB_WORKFLOW_REF, workflow_sha: env.GITHUB_WORKFLOW_SHA,
-    job_workflow_ref: env.GITHUB_JOB_WORKFLOW_REF, job_workflow_sha: env.GITHUB_JOB_WORKFLOW_SHA,
-    environment: env.GITHUB_ENVIRONMENT,
+    repository: env.O2O_RUNNER_REPOSITORY, repository_id: env.O2O_RUNNER_REPOSITORY_ID,
+    run_id: env.O2O_RUNNER_RUN_ID, run_attempt: env.O2O_RUNNER_RUN_ATTEMPT, actor: env.O2O_RUNNER_ACTOR, actor_id: env.O2O_RUNNER_ACTOR_ID,
+    ref: env.O2O_RUNNER_REF, workflow_ref: env.O2O_RUNNER_WORKFLOW_REF, workflow_sha: env.O2O_RUNNER_WORKFLOW_SHA,
+    job_workflow_ref: env.O2O_RUNNER_CALLED_WORKFLOW_REF, job_workflow_sha: env.O2O_RUNNER_CALLED_WORKFLOW_SHA,
+    environment: env.O2O_RUNNER_ENVIRONMENT,
   };
-  const action = env.A303_CANDIDATE_ACTION;
+  const action = env.O2O_CANDIDATE_ACTION;
+  const origin = originPreflight.inspectRuntimeOidcOrigin(env);
+  if (!origin.ok || env.A303_EXPECTED_OIDC_ORIGIN !== origin.origin) fail('oidc-origin-rejected');
   const trusted = validateCandidateContext({ context, policy, action });
   const request_R = createSyntheticRequest(trusted);
   const acquired = await acquireCandidateToken({ context: trusted, policy, action, request: request_R, env, transport: request });
@@ -77,4 +84,4 @@ if (require.main === module) {
     process.exitCode = 1;
   });
 }
-module.exports = { REQUIRED, validateCandidateContext, validateSignedClaims, createSyntheticRequest, createProofMaterial, acquireCandidateToken, runCandidate };
+module.exports = { REQUIRED, STABLE_POLICY, validateCandidateContext, validateSignedClaims, createSyntheticRequest, createProofMaterial, acquireCandidateToken, runCandidate };

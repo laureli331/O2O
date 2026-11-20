@@ -7,8 +7,9 @@ const path = require('node:path');
 const candidate = require('../tools/sp08-a3-03-github-oidc-smoke/dynamic-audience-candidate.cjs');
 const workflow = fs.readFileSync(path.join(__dirname, '../.github/workflows/sp08-a3-03-dynamic-audience-candidate.yml'), 'utf8');
 const reusable = fs.readFileSync(path.join(__dirname, '../.github/workflows/sp08-a3-03-dynamic-audience-candidate-reusable.yml'), 'utf8');
-const context = Object.fromEntries(candidate.REQUIRED.map((key) => [key, key === 'run_attempt' ? '1' : key === 'repository_id' ? '1234' : key === 'run_id' ? '2345' : `fixture-${key}`]));
-const policy = { approved: true, context, allowedActions: ['fixture-proof-check'] };
+const context = Object.fromEntries(candidate.REQUIRED.map((key) => [key, key === 'run_attempt' ? '1' : key === 'repository_id' ? '1234' : key === 'run_id' ? '2345' : key === 'actor_id' ? '6789' : `fixture-${key}`]));
+const policyContext = Object.fromEntries(candidate.STABLE_POLICY.map((key) => [key, context[key]]));
+const policy = { approved: true, context: policyContext, allowedActions: ['fixture-proof-check'] };
 test('candidate context requires independently approved exact policy fields and action', () => {
   assert.throws(() => candidate.validateCandidateContext({ context, action: 'fixture-proof-check' }), { code: 'trust-policy-missing' });
   assert.throws(() => candidate.validateCandidateContext({ context, policy: { ...policy, context: { ...context, workflow_sha: 'wrong' } }, action: 'fixture-proof-check' }), { code: 'context-workflow_sha-mismatch' });
@@ -33,7 +34,13 @@ test('candidate workflows are dispatch-only, pinned to isolated ref and fail clo
   assert.match(workflow, /workflow_dispatch:/); assert.match(workflow, /refs\/heads\/codex\/sp08-a3-03-tls-prep/);
   assert.match(workflow, /uses:\s*\.\/\.github\/workflows\/sp08-a3-03-dynamic-audience-candidate-reusable\.yml/);
   assert.match(reusable, /workflow_call:/); assert.match(reusable, /contents:\s*read/); assert.match(reusable, /id-token:\s*write/);
-  assert.match(reusable, /fail closed/i); assert.doesNotMatch(reusable, /A303_OIDC_SMOKE_AUDIENCE/);
+  assert.match(reusable, /A303_DYNAMIC_AUDIENCE_TRUST_POLICY_JSON/); assert.doesNotMatch(reusable, /A303_OIDC_SMOKE_AUDIENCE/);
+  for (const mapping of ['O2O_RUNNER_REPOSITORY_ID: ${{ github.repository_id }}', 'O2O_RUNNER_RUN_ID: ${{ github.run_id }}',
+    'O2O_RUNNER_WORKFLOW_REF: ${{ github.workflow_ref }}', 'O2O_RUNNER_CALLED_WORKFLOW_REF: ${{ job.workflow_ref }}',
+    'O2O_RUNNER_CALLED_WORKFLOW_SHA: ${{ job.workflow_sha }}', 'O2O_RUNNER_ENVIRONMENT: SP08-A3-03-OIDC-smoke',
+    'O2O_CANDIDATE_ACTION: ${{ inputs.action }}', 'A303_DYNAMIC_AUDIENCE_TRUST_POLICY_JSON: ${{ vars.A303_DYNAMIC_AUDIENCE_TRUST_POLICY_JSON }}',
+    'A303_EXPECTED_OIDC_ORIGIN: ${{ steps.oidc-origin.outputs.origin }}']) assert.ok(reusable.includes(mapping), mapping);
+  assert.doesNotMatch(reusable, /GITHUB_[A-Z0-9_]+:\s*\$\{\{/);
 });
 test('candidate CLI runs one dynamic token GET and two fixed discovery/JWKS GETs then verifies exact RS256 claims', async () => {
   const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
@@ -42,14 +49,17 @@ test('candidate CLI runs one dynamic token GET and two fixed discovery/JWKS GETs
     iat: Math.floor(Date.now() / 1000) - 1, nbf: Math.floor(Date.now() / 1000) - 1, exp: Math.floor(Date.now() / 1000) + 60 };
   const env = { ACTIONS_ID_TOKEN_REQUEST_URL: 'https://oidc.test/request', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'fixture-bearer', A303_EXPECTED_OIDC_ORIGIN: 'https://oidc.test',
     A303_DYNAMIC_AUDIENCE_TRUST_POLICY_JSON: JSON.stringify(policy), A303_CANDIDATE_ACTION: 'fixture-proof-check',
-    GITHUB_REPOSITORY: context.repository, GITHUB_REPOSITORY_ID: context.repository_id, GITHUB_RUN_ID: context.run_id, GITHUB_RUN_ATTEMPT: context.run_attempt,
-    GITHUB_ACTOR: context.actor, GITHUB_REF: context.ref, GITHUB_WORKFLOW_REF: context.workflow_ref, GITHUB_WORKFLOW_SHA: context.workflow_sha,
-    GITHUB_JOB_WORKFLOW_REF: context.job_workflow_ref, GITHUB_JOB_WORKFLOW_SHA: context.job_workflow_sha, GITHUB_ENVIRONMENT: context.environment };
+    A303_EXPECTED_OIDC_ORIGIN: 'https://runner-oidc.actions.githubusercontent.com', ACTIONS_ID_TOKEN_REQUEST_URL: 'https://runner-oidc.actions.githubusercontent.com/request', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'fixture-bearer',
+    O2O_CANDIDATE_ACTION: 'fixture-proof-check',
+    O2O_RUNNER_REPOSITORY: context.repository, O2O_RUNNER_REPOSITORY_ID: context.repository_id, O2O_RUNNER_RUN_ID: context.run_id, O2O_RUNNER_RUN_ATTEMPT: context.run_attempt,
+    O2O_RUNNER_ACTOR: context.actor, O2O_RUNNER_ACTOR_ID: context.actor_id, O2O_RUNNER_REF: context.ref, O2O_RUNNER_WORKFLOW_REF: context.workflow_ref,
+    O2O_RUNNER_WORKFLOW_SHA: context.workflow_sha, O2O_RUNNER_CALLED_WORKFLOW_REF: context.job_workflow_ref, O2O_RUNNER_CALLED_WORKFLOW_SHA: context.job_workflow_sha,
+    O2O_RUNNER_ENVIRONMENT: context.environment };
   const calls = [];
   const request = async (url, options) => {
     calls.push({ url: url.href, options });
     const json = (value) => ({ statusCode: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify(value) });
-    if (url.origin === 'https://oidc.test') {
+    if (url.origin === 'https://runner-oidc.actions.githubusercontent.com') {
       claims.aud = url.searchParams.get('audience');
       const encode = (value) => Buffer.from(JSON.stringify(value)).toString('base64url');
       const input = `${encode({ alg: 'RS256', kid: jwk.kid, typ: 'JWT' })}.${encode(claims)}`;
@@ -62,7 +72,9 @@ test('candidate CLI runs one dynamic token GET and two fixed discovery/JWKS GETs
   const result = await candidate.runCandidate({ env, request });
   assert.deepEqual(result, { ok: true, claimComparisons: candidate.REQUIRED.length, audienceMatch: true, requestBudget: 3 });
   assert.equal(calls.length, 3);
-  assert.equal(calls.filter((call) => new URL(call.url).origin === 'https://oidc.test').length, 1);
+  assert.equal(calls.filter((call) => new URL(call.url).origin === 'https://runner-oidc.actions.githubusercontent.com').length, 1);
   assert.equal(calls.filter((call) => new URL(call.url).origin === 'https://token.actions.githubusercontent.com').length, 2);
   assert.ok(calls.every(({ options }) => options.retries === 0 && options.followRedirects === false));
+  assert.equal(Object.hasOwn(policy.context, 'run_id'), false);
+  assert.throws(() => candidate.validateCandidateContext({ context: { ...context, run_id: '+2345' }, policy, action: 'fixture-proof-check' }), { code: 'runner-context-invalid' });
 });
