@@ -1,0 +1,52 @@
+name: SP08-A3-03 CSR certificate return candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      bundle:
+        description: JSON containing the public leaf certificate, CA certificate and source binding
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-upload-public-material:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the reviewed candidate files
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+          lfs: false
+
+      - name: Fail closed until independently reviewed policy is configured
+        env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
+          A303_POLICY_SIDE: return
+          A303_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          A303_WORKFLOW_REF: ${{ github.workflow_ref }}
+          A303_ACTOR_ID: ${{ github.actor_id }}
+          A303_ACTOR_LOGIN: ${{ github.actor }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs
+
+      - name: Validate public return input without shell interpolation
+        id: bundle
+        env:
+          A303_RETURN_BUNDLE: ${{ inputs.bundle }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/return-bundle.cjs
+
+      - name: Upload only public certificate and binding metadata
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ${{ steps.bundle.outputs.artifact_name }}
+          path: ${{ runner.temp }}/a303-return/
+          if-no-files-found: error
+          retention-days: 1

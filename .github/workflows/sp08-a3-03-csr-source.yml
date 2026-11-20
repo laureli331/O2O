@@ -1,0 +1,79 @@
+name: SP08-A3-03 CSR source candidate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  source-csr:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Check out the reviewed candidate files
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+          lfs: false
+
+      - name: Fail closed until independent source and CA policy is configured
+        env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
+          A303_POLICY_SIDE: source
+          A303_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          A303_WORKFLOW_REF: ${{ github.workflow_ref }}
+          A303_ACTOR_ID: ${{ github.actor_id }}
+          A303_ACTOR_LOGIN: ${{ github.actor }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs
+
+      - name: Generate a job-local key and CSR
+        id: csr
+        env:
+          A303_PWSH: pwsh
+        run: node tools/sp08-a3-03-github-oidc-smoke/source-csr.cjs
+
+      - name: Upload only the public CSR and its binding manifest
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sp08-a303-csr-${{ github.run_id }}-1
+          path: |
+            ${{ runner.temp }}/source.csr.pem
+            ${{ runner.temp }}/source-manifest.json
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Wait for exactly one trusted certificate return run
+        id: returned
+        env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          A303_SOURCE_STARTED_AT: ${{ steps.csr.outputs.source_started_at }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/poll-return.cjs
+
+      - name: Download the uniquely selected return artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: sp08-a303-return-${{ github.run_id }}-1
+          path: ${{ runner.temp }}/a303-return
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.returned.outputs.run_id }}
+
+      - name: Verify run binding, CSR digest, trust anchor, leaf and private-key match
+        env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
+          A303_RETURN_RUN_ID: ${{ steps.returned.outputs.run_id }}
+          A303_PWSH: pwsh
+        run: node tools/sp08-a3-03-github-oidc-smoke/verify-return.cjs
+
+      - name: Remove job-local key and CSR material
+        if: ${{ always() }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/clean-source.cjs
