@@ -7,7 +7,7 @@ const aSegment = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.
 const tls = require('node:tls');
 const net = require('node:net');
 const { spawnSync } = require('node:child_process');
-const { commitment, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer } = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
+const { commitment, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer, runLocalAClient } = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
 
 test('A proof is signed against exporter of the current authorized TLS 1.3 socket', () => {
   const pair = crypto.generateKeyPairSync('ed25519');
@@ -89,7 +89,7 @@ Write-Output $out
     await new Promise((resolve, reject) => { server.once('error', reject); server.once('listening', resolve); });
     try {
       const port = local.address().port;
-      const clientSocket = tls.connect({ host: '127.0.0.1', port, key: clientKey, cert: clientCert, ca, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3', rejectUnauthorized: true, servername: 'localhost' });
+      const clientOptions = { host: '127.0.0.1', port, key: clientKey, cert: clientCert, ca, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3', rejectUnauthorized: true, servername: 'localhost' };
       const now = Math.floor(Date.now() / 1000);
       const claims = { ...identity, run_id: '2', jti: 'fixture-jti', runner_environment: 'github-hosted', iat: now - 10, nbf: now - 10, exp: now + 300 };
       const request = policy.expectedRequest; const nonce = crypto.randomBytes(32).toString('base64url');
@@ -97,18 +97,36 @@ Write-Output $out
       const commit = commitment(claims, request, jwk, nonce, policy); const audience = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs').expectedAudience(commit);
       const part = (v) => Buffer.from(JSON.stringify(v)).toString('base64url'); const h = part({ alg: github ? 'RS256' : 'EdDSA', kid: github ? 'github-fixture' : 'fixture-kid', typ: 'JWT' }); const b = part({ iss: policy.issuer, aud: alterAudience ? `${audience}x` : audience, ...claims }); const input = `${h}.${b}`;
       const token = `${input}.${crypto.sign(github ? 'RSA-SHA256' : null, Buffer.from(input, 'ascii'), issuer.privateKey).toString('base64url')}`;
-      const response = new Promise((resolve, reject) => {
-        let received = ''; const timer = setTimeout(() => reject(new Error('response-timeout')), 5000);
-        clientSocket.on('data', (chunk) => { received += chunk.toString('utf8'); if (received.includes('\n')) { clearTimeout(timer); resolve(JSON.parse(received.trim())); } });
-        clientSocket.once('error', (error) => { clearTimeout(timer); reject(error); });
-      });
-      await new Promise((resolve, reject) => { const timer=setTimeout(()=>reject(new Error('tls-timeout')),5000); clientSocket.once('secureConnect',()=>{clearTimeout(timer);resolve();}); clientSocket.once('error',(error)=>{clearTimeout(timer);reject(error);}); });
-      assert.equal(clientSocket.getProtocol(), 'TLSv1.3');
-      const proof = signCurrentConnection(clientSocket, token, commit, pair.privateKey);
-      clientSocket.write(`${JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof })}\n`);
-      if (alterAudience) assert.deepEqual(await response, { ok: false, code: 'audience-mismatch' });
-      else assert.deepEqual(await response, { ok: true, result: 'synthetic-local-proof-accepted' });
-      clientSocket.end();
+      if (github) {
+        const proofClientIdentity = { repository_id: '1', run_id: '2', run_attempt: '1', workflow_ref: identity.workflow_ref, workflow_sha: identity.workflow_sha, job_workflow_ref: identity.job_workflow_ref, job_workflow_sha: identity.job_workflow_sha };
+        const fullRequest = { v: 'a303-request-v1', method: 'POST', route_id: 'r', env_id: 'e', resource_id: 'r', action_id: 'a', artifact_digest: 'd', repository_id: '1', run_id: '2', run_attempt: '1', payload: { fixture: true } };
+        policy.expectedRequest = fullRequest;
+        let tokenCalls = 0;
+        const resultPromise = runLocalAClient({ identity: proofClientIdentity, request: fullRequest, policy, env: { ACTIONS_ID_TOKEN_REQUEST_URL: 'https://fixture.invalid/token', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'fixture', A303_EXPECTED_OIDC_ORIGIN: 'https://fixture.invalid' }, tlsOptions: clientOptions,
+          runtimeRequest: async (url) => {
+            tokenCalls += 1;
+            const aud = new URL(String(url)).searchParams.get('audience');
+            const claims = { iss: policy.issuer, ...identity, run_id: '2', jti: 'fixture-jti', runner_environment: 'github-hosted', iat: now - 10, nbf: now - 10, exp: now + 300, aud: alterAudience ? `${aud}x` : aud };
+            const part = (v) => Buffer.from(JSON.stringify(v)).toString('base64url'); const h = part({ alg: 'RS256', kid: 'github-fixture', typ: 'JWT' }); const b = part(claims); const input = `${h}.${b}`;
+            const signed = `${input}.${crypto.sign('RSA-SHA256', Buffer.from(input, 'ascii'), issuer.privateKey).toString('base64url')}`;
+            return { statusCode: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ value: signed }) };
+          } });
+        if (alterAudience) await assert.rejects(resultPromise, { code: 'audience-mismatch' });
+        else { const result = await resultPromise; assert.equal(result.ok, true); assert.equal(result.result, 'synthetic-local-proof-accepted'); }
+        assert.equal(tokenCalls, 1);
+      } else {
+        const clientSocket = tls.connect(clientOptions);
+        await new Promise((resolve, reject) => { const timer=setTimeout(()=>reject(new Error('tls-timeout')),5000); clientSocket.once('secureConnect',()=>{clearTimeout(timer);resolve();}); clientSocket.once('error',(error)=>{clearTimeout(timer);reject(error);}); });
+        const response = new Promise((resolve, reject) => {
+          let received = ''; const timer = setTimeout(() => reject(new Error('response-timeout')), 5000);
+          clientSocket.on('data', (chunk) => { received += chunk.toString('utf8'); if (received.includes('\n')) { clearTimeout(timer); resolve(JSON.parse(received.trim())); } });
+          clientSocket.once('error', (error) => { clearTimeout(timer); reject(error); });
+        });
+        const proof = signCurrentConnection(clientSocket, token, commit, pair.privateKey);
+        clientSocket.write(`${JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof })}\n`);
+        assert.deepEqual(await response, { ok: true, result: 'synthetic-local-proof-accepted' });
+        clientSocket.end();
+      }
     } finally { await local.close(); }
 }
 

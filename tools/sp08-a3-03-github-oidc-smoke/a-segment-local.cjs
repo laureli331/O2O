@@ -84,6 +84,49 @@ function signCurrentConnection(socket, token, commit, privateKey) {
   const exporter = socket.exportKeyingMaterial(32, LABEL, Buffer.alloc(0));
   return b64(crypto.sign(null, proofMessage(token, commit, exporter), privateKey));
 }
+
+// Single-use offline A-segment client entry. Identity and action context are
+// explicit inputs; callers must supply the already-approved TLS client
+// material and an injected token transport (tests use a signed local fixture).
+async function runLocalAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes }) {
+  if (!tlsOptions || tlsOptions.host !== '127.0.0.1' || tlsOptions.minVersion !== 'TLSv1.3' || tlsOptions.maxVersion !== 'TLSv1.3'
+    || tlsOptions.rejectUnauthorized !== true || !tlsOptions.key || !tlsOptions.cert || !tlsOptions.ca) fail('local-client-policy-missing');
+  const pair = crypto.generateKeyPairSync('ed25519');
+  const exported = pair.publicKey.export({ format: 'jwk' });
+  const jwk = { kty: exported.kty, crv: exported.crv, x: exported.x };
+  const nonceBytes = randomBytes(32);
+  if (!Buffer.isBuffer(nonceBytes) || nonceBytes.length !== 32) fail('nonce-generation-failed');
+  const nonce = b64(nonceBytes);
+  const { token, commit } = await requestDynamicAudienceToken({ identity, request, jwk, nonce, policy, env, runtimeRequest });
+  if (typeof token !== 'string' || token.length > 16384) fail('invalid-token');
+  const socket = tls.connect(tlsOptions);
+  return await new Promise((resolve, reject) => {
+    let response = ''; let done = false; let sent = false;
+    const finish = (error, value) => { if (done) return; done = true; clearTimeout(timer); socket.destroy(); error ? reject(error) : resolve(value); };
+    const timer = setTimeout(() => finish(Object.assign(new Error('local-client-timeout'), { code: 'local-client-timeout' })), 5000);
+    socket.once('error', (error) => finish(error));
+    socket.once('secureConnect', () => {
+      try {
+        if (sent || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true || socket.isSessionReused()) fail('tls-peer-rejected');
+        sent = true;
+        const proof = signCurrentConnection(socket, token, commit, pair.privateKey);
+        const envelope = JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof });
+        if (Buffer.byteLength(envelope, 'utf8') > 65536) fail('envelope-size-limit');
+        socket.write(`${envelope}\n`);
+      } catch (error) { finish(error); }
+    });
+    socket.on('data', (chunk) => {
+      response += chunk.toString('utf8');
+      if (Buffer.byteLength(response, 'utf8') > 4096) return finish(Object.assign(new Error('response-size-limit'), { code: 'response-size-limit' }));
+      const newline = response.indexOf('\n');
+      if (newline >= 0) {
+        if (newline !== response.length - 1) return finish(Object.assign(new Error('response-invalid'), { code: 'response-invalid' }));
+        try { const result = parseJsonNoDuplicates(response.slice(0, newline)); if (!result || result.ok !== true) return finish(Object.assign(new Error(result && result.code || 'verification-rejected'), { code: result && result.code || 'verification-rejected' })); finish(null, result); }
+        catch (error) { finish(error); }
+      }
+    });
+  });
+}
 function parseJsonUnique(text) {
   const value = JSON.parse(text);
   // The local verifier accepts only the synthetic issuer's compact EdDSA JWT.
@@ -177,4 +220,4 @@ function startLocalVerificationServer(options) {
   return { server, close: () => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())), address: () => server.address() };
 }
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer };
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, startLocalVerificationServer };
