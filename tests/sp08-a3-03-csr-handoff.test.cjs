@@ -6,7 +6,7 @@ const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 const { selectSourceRun, validateBudget, verifyCertificateBinding, waitForReturnRun } = require('../tools/sp08-a3-03-github-oidc-smoke/csr-handoff.cjs');
 
-const budget = { maxPolls: 1, maxPages: 1, maxCandidates: 10, maxArtifactBytes: 65536, maxWaitMs: 60000, pollIntervalMs: 5000 };
+const budget = { maxPolls: 1, maxPages: 1, maxCandidates: 10, maxArtifactBytes: 65536, maxWaitMs: 60000, requestTimeoutMs: 10000, pollIntervalMs: 5000 };
 const expected = { repositoryId: '123', trustedHeadSha: 'a'.repeat(40), actorId: '77', actorLogin: 'operator', workflowPath: '.github/workflows/csr-source.yml', notBeforeMs: 1000, notAfterMs: 2000 };
 const source = { event: 'workflow_dispatch', status: 'completed', conclusion: 'success', repository: { id: 123 }, path: expected.workflowPath, head_sha: expected.trustedHeadSha, run_attempt: 1, actor: { id: 77, login: 'operator' }, created_at: new Date(1500).toISOString() };
 
@@ -37,6 +37,18 @@ test('return-run polling uses fixed API origin, bounded GETs and rejects redirec
   await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl: async () => ({ status: 302, headers: { get: () => null } }) }), /poll-http-failed/);
   await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl: async (url) => ({ status: 200, url, headers: { get: () => 'https://api.github.com/page=2' }, json: async () => ({ total_count: 101, workflow_runs: [] }) }) }), /poll-pagination-limit/);
   await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl: async (url) => ({ status: 200, url, headers: { get: () => null }, json: async () => ({ total_count: 0, workflow_runs: [] }) }), sleep: async () => {} }), /return-run-timeout/);
+});
+
+test('poll schedule makes four bounded GETs at 0, 90, 180 and 270 seconds', async () => {
+  const scheduleBudget = { ...budget, maxPolls: 4, maxPages: 1, maxWaitMs: 300000, pollDelaysMs: [0, 90000, 90000, 90000] };
+  const observed = [];
+  let elapsed = 0;
+  const response = async (url) => { observed.push(elapsed); return { status: 200, url, headers: { get: () => null }, json: async () => ({ total_count: 0, workflow_runs: [] }) }; };
+  await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget: scheduleBudget, fetchImpl: response, sleep: async (delay) => { elapsed += delay; } }), /return-run-timeout/);
+  assert.deepEqual(observed, [0, 90000, 180000, 270000]);
+  assert.equal(observed.length, 4);
+  assert.throws(() => validateBudget({ ...scheduleBudget, maxWaitMs: 269999 }), /budget-exceeds-hard-limit/);
+  assert.throws(() => validateBudget({ ...scheduleBudget, requestTimeoutMs: 30001 }), /budget-exceeds-hard-limit/);
 });
 
 test('CSR digest and all certificate inputs are size bounded before parsing', () => {

@@ -28,6 +28,12 @@ jobs:
           lfs: false
 
       - name: Fail closed until independently reviewed policy is configured
+        env:
+          A303_POLICY_SIDE: return
+          A303_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          A303_WORKFLOW_REF: ${{ github.workflow_ref }}
+          A303_ACTOR_ID: ${{ github.actor_id }}
+          A303_ACTOR_LOGIN: ${{ github.actor }}
         run: node tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs
 
       - name: Validate public return input without shell interpolation

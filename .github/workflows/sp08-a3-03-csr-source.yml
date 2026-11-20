@@ -25,6 +25,12 @@ jobs:
           lfs: false
 
       - name: Fail closed until independent source and CA policy is configured
+        env:
+          A303_POLICY_SIDE: source
+          A303_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          A303_WORKFLOW_REF: ${{ github.workflow_ref }}
+          A303_ACTOR_ID: ${{ github.actor_id }}
+          A303_ACTOR_LOGIN: ${{ github.actor }}
         run: node tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs
 
       - name: Generate a job-local key and CSR
@@ -47,7 +53,7 @@ jobs:
         id: returned
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          GITHUB_RUN_STARTED_AT: ${{ github.run_started_at }}
+          A303_SOURCE_STARTED_AT: ${{ steps.csr.outputs.source_started_at }}
         run: node tools/sp08-a3-03-github-oidc-smoke/poll-return.cjs
 
       - name: Download the uniquely selected return artifact

@@ -10,9 +10,9 @@ function verifyReturn({ tempDir, artifactDir, runId, runAttempt, commit, returnR
   const policy = requireConfiguredPolicy();
   const manifest = JSON.parse(fs.readFileSync(path.join(tempDir, 'source-manifest.json'), 'utf8'));
   const binding = JSON.parse(fs.readFileSync(path.join(artifactDir, 'binding.json'), 'utf8'));
-  if (JSON.stringify(Object.keys(binding).sort()) !== JSON.stringify(['csr_sha256', 'source_commit', 'source_job_id', 'source_run_attempt', 'source_run_id'].sort())) throw new Error('return-binding-fields-invalid');
+  if (JSON.stringify(Object.keys(binding).sort()) !== JSON.stringify(['csr_sha256', 'source_commit', 'source_job_id', 'source_run_attempt', 'source_run_id', 'source_started_at'].sort())) throw new Error('return-binding-fields-invalid');
   for (const data of [manifest, binding]) {
-    if (data.source_run_id !== runId || data.source_job_id !== 'source-csr' || data.source_run_attempt !== runAttempt || data.source_commit !== commit) throw new Error('return-source-binding-mismatch');
+    if (data.source_run_id !== runId || data.source_job_id !== 'source-csr' || data.source_run_attempt !== runAttempt || data.source_commit !== commit || data.source_started_at !== manifest.source_started_at) throw new Error('return-source-binding-mismatch');
   }
   if (manifest.csr_sha256 !== binding.csr_sha256) throw new Error('return-csr-digest-binding-mismatch');
   const csrBytes = fs.readFileSync(path.join(tempDir, 'source.csr.pem'));

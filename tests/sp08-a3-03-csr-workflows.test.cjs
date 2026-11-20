@@ -7,7 +7,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { createSourceCsr } = require('../tools/sp08-a3-03-github-oidc-smoke/source-csr.cjs');
 const { parseReturnBundle } = require('../tools/sp08-a3-03-github-oidc-smoke/return-bundle.cjs');
-const { POLICY, requireConfiguredPolicy } = require('../tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs');
+const { POLICY, requireConfiguredPolicy, requireWorkflowPolicy } = require('../tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs');
 
 const root = path.resolve(__dirname, '..');
 const returnWorkflow = fs.readFileSync(path.join(root, '.github/workflows/sp08-a3-03-csr-return.yml'), 'utf8');
@@ -26,16 +26,19 @@ test('return workflow is manual only, read-only, reviewed-ref gated and pins off
 
 test('unconfigured trust policy refuses run and synthetic independent policy validates', () => {
   assert.throws(() => requireConfiguredPolicy(), /handoff-policy-unconfigured/);
-  const fixture = { ...POLICY, repository: 'owner/repo', sourceWorkflowSha: 'a'.repeat(40), returnWorkflowSha: 'b'.repeat(40), operatorActorId: '123', operatorLogin: 'operator', caFingerprint256: 'c'.repeat(64) };
+  const fixture = { ...POLICY, repository: 'owner/repo', sourceWorkflowRef: 'refs/heads/main', sourceWorkflowSha: 'a'.repeat(40), returnWorkflowRef: 'refs/heads/main', returnWorkflowSha: 'b'.repeat(40), operatorActorId: '123', operatorLogin: 'operator', caFingerprint256: 'c'.repeat(64) };
   assert.equal(requireConfiguredPolicy(fixture), fixture);
   assert.throws(() => requireConfiguredPolicy({ ...fixture, caFingerprint256: 'z'.repeat(64) }), /handoff-policy-invalid/);
+  const context = { repository: fixture.repository, workflowSha: fixture.sourceWorkflowSha, workflowRef: `${fixture.repository}/${fixture.sourceWorkflowPath}@${fixture.sourceWorkflowRef}`, actorId: fixture.operatorActorId, actorLogin: fixture.operatorLogin };
+  assert.equal(requireWorkflowPolicy('source', context, fixture), fixture);
+  assert.throws(() => requireWorkflowPolicy('source', { ...context, workflowSha: 'd'.repeat(40) }, fixture), /workflow-trust-context-mismatch/);
 });
 
 test('return bundle enforces exact fields, public PEM bounds and source binding shape', () => {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-return-'));
   try {
     const pem = '-----BEGIN CERTIFICATE-----\nZm9v\n-----END CERTIFICATE-----\n';
-    const value = { source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: 'b'.repeat(40), csr_sha256: 'a'.repeat(64), leaf_certificate: pem, ca_certificate: pem };
+    const value = { source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: 'b'.repeat(40), source_started_at: '2026-11-20T00:00:00.000Z', csr_sha256: 'a'.repeat(64), leaf_certificate: pem, ca_certificate: pem };
     const result = parseReturnBundle(JSON.stringify(value), directory);
     assert.equal(result.artifactName, 'sp08-a303-return-123-1');
     assert.deepEqual(fs.readdirSync(directory).sort(), ['binding.json', 'ca.pem', 'leaf.pem']);
@@ -65,6 +68,8 @@ test('source candidate is manual only, read only, gates before key generation an
   assert.ok(sourceWorkflow.indexOf('download-artifact') < sourceWorkflow.indexOf('verify-return.cjs'));
   assert.match(sourceWorkflow, /if:\s*\$\{\{ always\(\) \}\}[\s\S]*clean-source\.cjs/);
   assert.match(sourceWorkflow, /name:\s*sp08-a303-return-\$\{\{ github\.run_id \}\}-1[\s\S]*run-id:\s*\$\{\{ steps\.returned\.outputs\.run_id \}\}/);
+  assert.match(sourceWorkflow, /A303_WORKFLOW_SHA:\s*\$\{\{ github\.workflow_sha \}\}/);
+  assert.match(sourceWorkflow, /A303_SOURCE_STARTED_AT:\s*\$\{\{ steps\.csr\.outputs\.source_started_at \}\}/);
 });
 
 test('source CSR generator creates signed synthetic request, bounded manifest and mode-restricted private key', (t) => {
@@ -77,6 +82,7 @@ test('source CSR generator creates signed synthetic request, bounded manifest an
     if (process.platform !== 'win32') assert.equal(fs.statSync(result.keyPath).mode & 0o777, 0o600);
     assert.match(fs.readFileSync(result.csrPath, 'utf8'), /BEGIN CERTIFICATE REQUEST/);
     assert.equal(JSON.parse(fs.readFileSync(manifestPath, 'utf8')).csr_sha256, result.csrSha256);
+    assert.match(JSON.parse(fs.readFileSync(manifestPath, 'utf8')).source_started_at, /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/);
   } finally {
     for (const name of ['source.csr.pem', 'source.key.pem', 'source-manifest.json']) { try { fs.unlinkSync(path.join(directory, name)); } catch {} }
     fs.rmdirSync(directory);

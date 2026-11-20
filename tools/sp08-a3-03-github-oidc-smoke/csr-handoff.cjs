@@ -26,11 +26,13 @@ function csrPublicKey(csrBytes, { pwshPath, timeoutMs }) {
 
 function validateBudget(budget) {
   if (!isRecord(budget)) fail('budget-invalid');
-  for (const key of ['maxPolls', 'maxPages', 'maxCandidates', 'maxArtifactBytes', 'maxWaitMs', 'pollIntervalMs']) {
+  for (const key of ['maxPolls', 'maxPages', 'maxCandidates', 'maxArtifactBytes', 'maxWaitMs', 'requestTimeoutMs']) {
     if (!Number.isSafeInteger(budget[key]) || budget[key] < 1) fail(`budget-${key}-invalid`);
   }
-  if (budget.maxPolls * budget.maxPages > 4 || budget.maxWaitMs > 300000 || budget.pollIntervalMs > budget.maxWaitMs) fail('budget-exceeds-hard-limit');
-  return Object.freeze({ ...budget, maxListRequests: budget.maxPolls * budget.maxPages });
+  const delays = budget.pollDelaysMs || Array.from({ length: budget.maxPolls }, (_, index) => index === 0 ? 0 : budget.pollIntervalMs);
+  if (!Array.isArray(delays) || delays.length !== budget.maxPolls || delays.some((delay) => !Number.isSafeInteger(delay) || delay < 0)) fail('budget-poll-delays-invalid');
+  if (budget.maxPolls * budget.maxPages > 4 || budget.maxWaitMs > 300000 || budget.requestTimeoutMs > 30000 || delays.reduce((sum, value) => sum + value, 0) > budget.maxWaitMs) fail('budget-exceeds-hard-limit');
+  return Object.freeze({ ...budget, pollDelaysMs: Object.freeze([...delays]), maxListRequests: budget.maxPolls * budget.maxPages });
 }
 
 function selectSourceRun(runs, expected, budget) {
@@ -55,7 +57,8 @@ async function waitForReturnRun({ token, repository, workflowId, expected, budge
   const origin = 'https://api.github.com';
   const endpoint = `${origin}/repos/${repository}/actions/workflows/${workflowId}/runs?event=workflow_dispatch&status=completed&per_page=${bounded.maxCandidates}&page=1`;
   for (let poll = 0; poll < bounded.maxPolls; poll += 1) {
-    const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
+    if (bounded.pollDelaysMs[poll] > 0) await sleep(bounded.pollDelaysMs[poll]);
+    const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', signal: AbortSignal.timeout(bounded.requestTimeoutMs), headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
     if (!response || response.status !== 200 || response.url && new URL(response.url).origin !== origin) fail('poll-http-failed');
     const link = response.headers?.get?.('link');
     if (link) fail('poll-pagination-limit');
@@ -69,7 +72,6 @@ async function waitForReturnRun({ token, repository, workflowId, expected, budge
       && typeof run.created_at === 'string' && Date.parse(run.created_at) >= expected.notBeforeMs && Date.parse(run.created_at) <= expected.notAfterMs);
     if (matching.length > 1) fail('return-run-ambiguous');
     if (matching.length === 1) return Object.freeze({ runId: String(matching[0].id), attempt: matching[0].run_attempt, headSha: matching[0].head_sha, workflowPath: matching[0].path });
-    if (poll + 1 < bounded.maxPolls) await sleep(bounded.pollIntervalMs);
   }
   fail('return-run-timeout');
 }
