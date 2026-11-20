@@ -29,6 +29,7 @@ jobs:
 
       - name: Fail closed until independently reviewed policy is configured
         env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
           A303_POLICY_SIDE: return
           A303_WORKFLOW_SHA: ${{ github.workflow_sha }}
           A303_WORKFLOW_REF: ${{ github.workflow_ref }}

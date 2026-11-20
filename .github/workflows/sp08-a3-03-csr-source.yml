@@ -26,6 +26,7 @@ jobs:
 
       - name: Fail closed until independent source and CA policy is configured
         env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
           A303_POLICY_SIDE: source
           A303_WORKFLOW_SHA: ${{ github.workflow_sha }}
           A303_WORKFLOW_REF: ${{ github.workflow_ref }}
@@ -52,6 +53,7 @@ jobs:
       - name: Wait for exactly one trusted certificate return run
         id: returned
         env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
           GITHUB_TOKEN: ${{ github.token }}
           A303_SOURCE_STARTED_AT: ${{ steps.csr.outputs.source_started_at }}
         run: node tools/sp08-a3-03-github-oidc-smoke/poll-return.cjs
@@ -67,6 +69,7 @@ jobs:
 
       - name: Verify run binding, CSR digest, trust anchor, leaf and private-key match
         env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
           A303_RETURN_RUN_ID: ${{ steps.returned.outputs.run_id }}
           A303_PWSH: pwsh
         run: node tools/sp08-a3-03-github-oidc-smoke/verify-return.cjs

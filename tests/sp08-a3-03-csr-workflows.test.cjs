@@ -7,7 +7,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { createSourceCsr } = require('../tools/sp08-a3-03-github-oidc-smoke/source-csr.cjs');
 const { parseReturnBundle } = require('../tools/sp08-a3-03-github-oidc-smoke/return-bundle.cjs');
-const { POLICY, requireConfiguredPolicy, requireWorkflowPolicy } = require('../tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs');
+const { POLICY_KEYS, parsePolicy, requireConfiguredPolicy, requireWorkflowPolicy } = require('../tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs');
 
 const root = path.resolve(__dirname, '..');
 const returnWorkflow = fs.readFileSync(path.join(root, '.github/workflows/sp08-a3-03-csr-return.yml'), 'utf8');
@@ -25,8 +25,12 @@ test('return workflow is manual only, read-only, reviewed-ref gated and pins off
 });
 
 test('unconfigured trust policy refuses run and synthetic independent policy validates', () => {
-  assert.throws(() => requireConfiguredPolicy(), /handoff-policy-unconfigured/);
-  const fixture = { ...POLICY, repository: 'owner/repo', sourceWorkflowRef: 'refs/heads/main', sourceWorkflowSha: 'a'.repeat(40), returnWorkflowRef: 'refs/heads/main', returnWorkflowSha: 'b'.repeat(40), operatorActorId: '123', operatorLogin: 'operator', caFingerprint256: 'c'.repeat(64) };
+  assert.throws(() => parsePolicy(undefined), /handoff-policy-missing/);
+  assert.throws(() => requireConfiguredPolicy(), /handoff-policy-missing/);
+  const fixture = { repository: 'owner/repo', sourceWorkflowPath: '.github/workflows/sp08-a3-03-csr-source.yml', sourceWorkflowRef: 'refs/heads/main', sourceWorkflowSha: 'a'.repeat(40), returnWorkflowPath: '.github/workflows/sp08-a3-03-csr-return.yml', returnWorkflowRef: 'refs/heads/main', returnWorkflowSha: 'b'.repeat(40), operatorActorId: '123', operatorLogin: 'operator', caFingerprint256: 'c'.repeat(64) };
+  assert.deepEqual(Object.keys(parsePolicy(JSON.stringify(fixture))).sort(), POLICY_KEYS);
+  assert.throws(() => parsePolicy(JSON.stringify({ ...fixture, injected: 'shell' })), /policy-schema-invalid/);
+  assert.throws(() => parsePolicy('x'.repeat(4097)), /policy-missing-or-oversized/);
   assert.equal(requireConfiguredPolicy(fixture), fixture);
   assert.throws(() => requireConfiguredPolicy({ ...fixture, caFingerprint256: 'z'.repeat(64) }), /handoff-policy-invalid/);
   const context = { repository: fixture.repository, workflowSha: fixture.sourceWorkflowSha, workflowRef: `${fixture.repository}/${fixture.sourceWorkflowPath}@${fixture.sourceWorkflowRef}`, actorId: fixture.operatorActorId, actorLogin: fixture.operatorLogin };
@@ -70,6 +74,9 @@ test('source candidate is manual only, read only, gates before key generation an
   assert.match(sourceWorkflow, /name:\s*sp08-a303-return-\$\{\{ github\.run_id \}\}-1[\s\S]*run-id:\s*\$\{\{ steps\.returned\.outputs\.run_id \}\}/);
   assert.match(sourceWorkflow, /A303_WORKFLOW_SHA:\s*\$\{\{ github\.workflow_sha \}\}/);
   assert.match(sourceWorkflow, /A303_SOURCE_STARTED_AT:\s*\$\{\{ steps\.csr\.outputs\.source_started_at \}\}/);
+  assert.match(sourceWorkflow, /A303_HANDOFF_POLICY:\s*\$\{\{ vars\.A303_HANDOFF_POLICY \}\}/);
+  assert.doesNotMatch(sourceWorkflow, /sourceWorkflowSha:\s*['"][a-f0-9]{40}['"]/);
+  assert.match(returnWorkflow, /A303_HANDOFF_POLICY:\s*\$\{\{ vars\.A303_HANDOFF_POLICY \}\}/);
 });
 
 test('source CSR generator creates signed synthetic request, bounded manifest and mode-restricted private key', (t) => {
