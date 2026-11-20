@@ -1,0 +1,47 @@
+name: SP08-A3-03 dynamic audience candidate reusable
+on:
+  workflow_call:
+    inputs:
+      action:
+        required: true
+        type: string
+jobs:
+  candidate:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    environment:
+      name: SP08-A3-03-OIDC-smoke
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+          lfs: false
+      - name: Inspect runner OIDC origin without network access
+        id: oidc-origin
+        run: node tools/sp08-a3-03-github-oidc-smoke/oidc-origin-preflight.cjs
+      - name: Verify dynamic audience candidate claims
+        env:
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
+          A303_EXPECTED_OIDC_ORIGIN: ${{ steps.oidc-origin.outputs.origin }}
+          A303_DYNAMIC_AUDIENCE_TRUST_POLICY_JSON: ${{ vars.A303_DYNAMIC_AUDIENCE_TRUST_POLICY_JSON }}
+          O2O_CANDIDATE_ACTION: ${{ inputs.action }}
+          O2O_RUNNER_REPOSITORY: ${{ github.repository }}
+          O2O_RUNNER_REPOSITORY_ID: ${{ github.repository_id }}
+          O2O_RUNNER_RUN_ID: ${{ github.run_id }}
+          O2O_RUNNER_RUN_ATTEMPT: ${{ github.run_attempt }}
+          O2O_RUNNER_ACTOR: ${{ github.actor }}
+          O2O_RUNNER_ACTOR_ID: ${{ github.actor_id }}
+          O2O_RUNNER_REF: ${{ github.ref }}
+          O2O_RUNNER_WORKFLOW_REF: ${{ github.workflow_ref }}
+          O2O_RUNNER_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          O2O_RUNNER_CALLED_WORKFLOW_REF: ${{ job.workflow_ref }}
+          O2O_RUNNER_CALLED_WORKFLOW_SHA: ${{ job.workflow_sha }}
+          O2O_RUNNER_ENVIRONMENT: SP08-A3-03-OIDC-smoke
+        run: node tools/sp08-a3-03-github-oidc-smoke/dynamic-audience-candidate.cjs
