@@ -164,6 +164,35 @@ function requireGithubPolicy(policy) {
   if (!policy.expectedClaims || required.some((name) => typeof policy.expectedClaims[name] !== 'string' || policy.expectedClaims[name].length === 0)
     || policy.expectedClaims.run_attempt !== '1') fail('github-identity-policy-missing');
 }
+function validateLocalServerMaterial(policy) {
+  try {
+    const ip = policy.serverIPv4;
+    if (typeof ip !== 'string' || !/^\d{1,3}(?:\.\d{1,3}){3}$/.test(ip)
+      || ip.split('.').some((part) => Number(part) > 255)) fail('local-server-policy-missing');
+    const server = new crypto.X509Certificate(policy.tlsCert);
+    const key = crypto.createPrivateKey(policy.tlsKey);
+    const ca = new crypto.X509Certificate(policy.ca);
+    if (!server.checkPrivateKey(key) || Date.parse(server.validFrom) > Date.now() || Date.parse(server.validTo) <= Date.now()) fail('tls-server-certificate-invalid');
+    const san = server.subjectAltName || '';
+    if (!san.split(/,\s*/).includes(`IP Address:${ip}`)) fail('tls-server-ip-san-mismatch');
+    if (!server.keyUsage || !server.keyUsage.includes('1.3.6.1.5.5.7.3.1')) fail('tls-server-auth-eku-missing');
+    const expectedCa = policy.expectedCaFingerprint256;
+    if (typeof expectedCa !== 'string' || !/^[a-f0-9]{64}$/.test(expectedCa)
+      || ca.fingerprint256.replaceAll(':', '').toLowerCase() !== expectedCa) fail('tls-ca-pin-mismatch');
+    const pins = policy.allowedPeerFingerprints;
+    if (!Array.isArray(pins) || pins.length === 0 || pins.some((pin) => typeof pin !== 'string' || !/^[a-f0-9]{64}$/.test(pin))) fail('client-certificate-pin-invalid');
+    if (!policy.expectedClaims || !policy.expectedRequest || !policy.service) fail('local-server-policy-missing');
+    if (policy.mode === 'github-oidc') {
+      const required = ['repository_id', 'run_id', 'run_attempt', 'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha', 'environment'];
+      if (required.some((name) => typeof policy.expectedClaims[name] !== 'string' || !policy.expectedClaims[name].length)) fail('github-identity-policy-missing');
+      if (!policy.expectedRequest || typeof policy.expectedRequest !== 'object'
+        || ['v', 'method', 'route_id', 'env_id', 'resource_id', 'action_id', 'artifact_digest', 'repository_id', 'run_id', 'run_attempt', 'payload'].some((name) => !(name in policy.expectedRequest))) fail('github-request-policy-missing');
+    }
+  } catch (error) {
+    if (error && typeof error.code === 'string') throw error;
+    fail('tls-server-material-invalid');
+  }
+}
 function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, nonce }) {
   if (!socket || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true) fail('tls-peer-rejected');
   if (typeof socket.isSessionReused === 'function' && socket.isSessionReused()) fail('session-resumption-rejected');
@@ -191,6 +220,7 @@ function startLocalVerificationServer(options) {
     || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
     || !policy.expectedClaims || !policy.expectedRequest || !policy.service
     || (options.host !== undefined && options.host !== '127.0.0.1')) fail('local-server-policy-missing');
+  validateLocalServerMaterial(policy);
   if (policy.mode === 'github-oidc') requireGithubPolicy(policy);
   const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
     socket.setTimeout(options.timeoutMs || 5000, () => socket.destroy());
@@ -220,4 +250,4 @@ function startLocalVerificationServer(options) {
   return { server, close: () => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())), address: () => server.address() };
 }
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, startLocalVerificationServer };
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer };

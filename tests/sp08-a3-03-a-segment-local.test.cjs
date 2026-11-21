@@ -54,22 +54,22 @@ test('GitHub OIDC mode refuses to start without trusted JWKS keys', () => {
   } }), { code: 'local-server-policy-missing' });
 });
 
-test('GitHub OIDC mode refuses to start when fixed identity policy is incomplete', () => {
+test('GitHub OIDC mode refuses to start before TLS material is valid', () => {
   const pair = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
   const publicJwk = pair.publicKey.export({ format: 'jwk' });
   assert.throws(() => startLocalVerificationServer({ policy: {
     mode: 'github-oidc', service: 'fixture-service', issuer: 'https://token.actions.githubusercontent.com',
     githubJwksKeys: [{ ...publicJwk, kid: 'trusted', alg: 'RS256', use: 'sig' }], githubJwksFetchedAt: Date.now(), githubJwksExpiresAt: Date.now() + 60_000,
-    expectedClaims: { repository_id: '1', workflow_ref: 'r', workflow_sha: 'a', job_workflow_ref: 'j', job_workflow_sha: 'b', environment: 'e' },
+    expectedClaims: { repository_id: '1', run_id: '2', run_attempt: '1', workflow_ref: 'r', workflow_sha: 'a', job_workflow_ref: 'j', job_workflow_sha: 'b', environment: 'e' },
     expectedRequest: {}, allowedPeerFingerprints: ['00'], tlsKey: 'key', tlsCert: 'cert', ca: 'ca',
-  } }), { code: 'github-identity-policy-missing' });
+  } }), { code: 'local-server-policy-missing' });
 });
 
 async function runLoopback(mode, alterAudience = false, certificateReturn = false) {
   const certScript = `$ErrorActionPreference='Stop'
 function New-KeyCert([string]$name) { $key=[System.Security.Cryptography.RSA]::Create(2048); $req=[System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$name",$key,[System.Security.Cryptography.HashAlgorithmName]::SHA256,[System.Security.Cryptography.RSASignaturePadding]::Pkcs1); return @{key=$key;req=$req} }
 $ca=New-KeyCert 'o2o-test-ca'; $ca.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true,$false,0,$true)); $ca.cert=$ca.req.CreateSelfSigned([datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddHours(1))
-function New-Leaf([string]$name,$caCert,$caKey) { $leaf=New-KeyCert $name; $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false,$false,0,$true)); $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,$true)); if($name -eq 'localhost'){$san=[System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder]::new();$san.AddDnsName('localhost');$leaf.req.CertificateExtensions.Add($san.Build())}; if($name -eq 'synthetic-client'){$eku=[System.Security.Cryptography.OidCollection]::new();$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.2'));$leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))}; $csr=$leaf.req.CreateSigningRequestPem(); $leaf.cert=$leaf.req.Create($caCert,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddMinutes(10),[byte[]]([guid]::NewGuid().ToByteArray())); return @{cert=$leaf.cert.ExportCertificatePem();key=$leaf.key.ExportPkcs8PrivateKeyPem();csr=$csr} }
+function New-Leaf([string]$name,$caCert,$caKey) { $leaf=New-KeyCert $name; $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false,$false,0,$true)); $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,$true)); if($name -eq 'localhost'){$san=[System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder]::new();$san.AddDnsName('localhost');$san.AddIpAddress([System.Net.IPAddress]::Parse('192.0.2.10'));$leaf.req.CertificateExtensions.Add($san.Build());$eku=[System.Security.Cryptography.OidCollection]::new();$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.1'));$leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))}; if($name -eq 'synthetic-client'){$eku=[System.Security.Cryptography.OidCollection]::new();$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.2'));$leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))}; $csr=$leaf.req.CreateSigningRequestPem(); $leaf.cert=$leaf.req.Create($caCert,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddMinutes(10),[byte[]]([guid]::NewGuid().ToByteArray())); return @{cert=$leaf.cert.ExportCertificatePem();key=$leaf.key.ExportPkcs8PrivateKeyPem();csr=$csr} }
 $server=New-Leaf 'localhost' $ca.cert $ca.key; $client=New-Leaf 'synthetic-client' $ca.cert $ca.key
 $out=@{ca=$ca.cert.ExportCertificatePem();server=$server;client=$client}|ConvertTo-Json -Compress
 Write-Output $out
@@ -83,9 +83,13 @@ Write-Output $out
     const clientCert = certs.client.cert;
     const github = mode === 'github-oidc';
     const issuer = crypto.generateKeyPairSync(github ? 'rsa' : 'ed25519', github ? { modulusLength: 2048 } : {});
-    const identity = { repository_id: '1', workflow_ref: 'repo/.github/workflows/caller.yml@refs/heads/main', workflow_sha: 'a'.repeat(40), job_workflow_ref: 'repo/.github/workflows/reusable.yml@refs/heads/main', job_workflow_sha: 'b'.repeat(40), environment: 'fixture-env', run_attempt: '1' };
+    const identity = { repository_id: '1', run_id: '2', workflow_ref: 'repo/.github/workflows/caller.yml@refs/heads/main', workflow_sha: 'a'.repeat(40), job_workflow_ref: 'repo/.github/workflows/reusable.yml@refs/heads/main', job_workflow_sha: 'b'.repeat(40), environment: 'fixture-env', run_attempt: '1' };
     const jwksKey = github ? { ...issuer.publicKey.export({ format: 'jwk' }), kid: 'github-fixture', alg: 'RS256', use: 'sig' } : null;
-    const policy = { mode: github ? 'github-oidc' : undefined, service: 'fixture-service', issuer: github ? 'https://token.actions.githubusercontent.com' : 'synthetic:issuer', issuerKid: github ? undefined : 'fixture-kid', issuerPublicKey: github ? undefined : issuer.publicKey, githubJwksKeys: github ? [jwksKey] : undefined, githubJwksFetchedAt: github ? Date.now() : undefined, githubJwksExpiresAt: github ? Date.now() + 60_000 : undefined, expectedClaims: github ? identity : {}, expectedRequest: { env_id: 'e', action_id: 'a', resource_id: 'r', artifact_digest: 'd' }, allowedPeerFingerprints: [new crypto.X509Certificate(clientCert).fingerprint256.replaceAll(':', '').toLowerCase()], tlsKey: certs.server.key, tlsCert: serverCert, ca };
+    const fullRequest = { v: 'a303-request-v1', method: 'POST', route_id: 'r', env_id: 'e', resource_id: 'r', action_id: 'a', artifact_digest: 'd', repository_id: '1', run_id: '2', run_attempt: '1', payload: { fixture: true } };
+    const policy = { mode: github ? 'github-oidc' : undefined, service: 'fixture-service', issuer: github ? 'https://token.actions.githubusercontent.com' : 'synthetic:issuer', issuerKid: github ? undefined : 'fixture-kid', issuerPublicKey: github ? undefined : issuer.publicKey, githubJwksKeys: github ? [jwksKey] : undefined, githubJwksFetchedAt: github ? Date.now() : undefined, githubJwksExpiresAt: github ? Date.now() + 60_000 : undefined, expectedClaims: github ? identity : {}, expectedRequest: github ? fullRequest : { env_id: 'e', action_id: 'a', resource_id: 'r', artifact_digest: 'd' }, allowedPeerFingerprints: [new crypto.X509Certificate(clientCert).fingerprint256.replaceAll(':', '').toLowerCase()], tlsKey: certs.server.key, tlsCert: serverCert, ca, serverIPv4: '192.0.2.10', expectedCaFingerprint256: new crypto.X509Certificate(ca).fingerprint256.replaceAll(':', '').toLowerCase() };
+    assert.throws(() => startLocalVerificationServer({ policy: { ...policy, serverIPv4: '192.0.2.11' } }), { code: 'tls-server-ip-san-mismatch' });
+    assert.throws(() => startLocalVerificationServer({ policy: { ...policy, expectedCaFingerprint256: '0'.repeat(64) } }), { code: 'tls-ca-pin-mismatch' });
+    assert.throws(() => startLocalVerificationServer({ policy: { ...policy, allowedPeerFingerprints: ['not-a-sha256-pin'] } }), { code: 'client-certificate-pin-invalid' });
     const serverKey = certs.server.key;
     const clientKey = certs.client.key;
     const local = startLocalVerificationServer({ policy });
@@ -105,7 +109,6 @@ Write-Output $out
       const token = `${input}.${crypto.sign(github ? 'RSA-SHA256' : null, Buffer.from(input, 'ascii'), issuer.privateKey).toString('base64url')}`;
       if (github) {
         const proofClientIdentity = { repository_id: '1', run_id: '2', run_attempt: '1', workflow_ref: identity.workflow_ref, workflow_sha: identity.workflow_sha, job_workflow_ref: identity.job_workflow_ref, job_workflow_sha: identity.job_workflow_sha };
-        const fullRequest = { v: 'a303-request-v1', method: 'POST', route_id: 'r', env_id: 'e', resource_id: 'r', action_id: 'a', artifact_digest: 'd', repository_id: '1', run_id: '2', run_attempt: '1', payload: { fixture: true } };
         policy.expectedRequest = fullRequest;
         let tokenCalls = 0;
         const actionArgs = { identity: proofClientIdentity, request: fullRequest, policy, env: { ACTIONS_ID_TOKEN_REQUEST_URL: 'https://fixture.invalid/token', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'fixture', A303_EXPECTED_OIDC_ORIGIN: 'https://fixture.invalid' }, tlsOptions: clientOptions,
