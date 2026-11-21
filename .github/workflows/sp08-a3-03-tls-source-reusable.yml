@@ -1,0 +1,102 @@
+name: SP08-A3-03 same-job TLS source reusable candidate
+on:
+  workflow_call: {}
+jobs:
+  source-csr:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    environment:
+      name: SP08-A3-03-OIDC-smoke
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+          lfs: false
+      - name: Verify independent workflow and runner policies before creating a key
+        env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
+          A303_POLICY_SIDE: source
+          A303_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          A303_WORKFLOW_REF: ${{ github.workflow_ref }}
+          A303_ACTOR_ID: ${{ github.actor_id }}
+          A303_ACTOR_LOGIN: ${{ github.actor }}
+          A303_TLS_RUNNER_POLICY: ${{ vars.A303_TLS_RUNNER_POLICY }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/handoff-policy.cjs
+      - name: Check approved target, certificate and request before creating a key
+        env:
+          A303_TLS_RUNNER_POLICY: ${{ vars.A303_TLS_RUNNER_POLICY }}
+          A303_PWSH: pwsh
+          O2O_RUNNER_REPOSITORY: ${{ github.repository }}
+          O2O_RUNNER_REPOSITORY_ID: ${{ github.repository_id }}
+          O2O_RUNNER_RUN_ID: ${{ github.run_id }}
+          O2O_RUNNER_RUN_ATTEMPT: ${{ github.run_attempt }}
+          O2O_RUNNER_ACTOR: ${{ github.actor }}
+          O2O_RUNNER_ACTOR_ID: ${{ github.actor_id }}
+          O2O_RUNNER_REF: ${{ github.ref }}
+          O2O_RUNNER_WORKFLOW_REF: ${{ github.workflow_ref }}
+          O2O_RUNNER_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          O2O_RUNNER_CALLED_WORKFLOW_REF: ${{ job.workflow_ref }}
+          O2O_RUNNER_CALLED_WORKFLOW_SHA: ${{ job.workflow_sha }}
+          O2O_RUNNER_ENVIRONMENT: SP08-A3-03-OIDC-smoke
+        run: node tools/sp08-a3-03-github-oidc-smoke/prepare-a-runner.cjs --check-only
+      - name: Generate job-local key and CSR
+        id: csr
+        env: { A303_PWSH: pwsh }
+        run: node tools/sp08-a3-03-github-oidc-smoke/source-csr.cjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        name: Upload only public CSR and binding manifest
+        with:
+          name: sp08-a303-csr-${{ github.run_id }}-1
+          path: |
+            ${{ runner.temp }}/source.csr.pem
+            ${{ runner.temp }}/source-manifest.json
+          if-no-files-found: error
+          retention-days: 1
+      - name: Wait for exactly one trusted certificate return run
+        id: returned
+        env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
+          GITHUB_TOKEN: ${{ github.token }}
+          A303_SOURCE_STARTED_AT: ${{ steps.csr.outputs.source_started_at }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/poll-return.cjs
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        name: Download the uniquely selected public return bundle
+        with:
+          name: sp08-a303-return-${{ github.run_id }}-1
+          path: ${{ runner.temp }}/a303-return
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          run-id: ${{ steps.returned.outputs.run_id }}
+      - name: Inspect OIDC origin without network access
+        id: oidc-origin
+        run: node tools/sp08-a3-03-github-oidc-smoke/oidc-origin-preflight.cjs
+      - name: Execute approved TLS action through runner entry
+        env:
+          A303_HANDOFF_POLICY: ${{ vars.A303_HANDOFF_POLICY }}
+          A303_TLS_RUNNER_POLICY: ${{ vars.A303_TLS_RUNNER_POLICY }}
+          A303_RETURN_RUN_ID: ${{ steps.returned.outputs.run_id }}
+          A303_PWSH: pwsh
+          A303_EXPECTED_OIDC_ORIGIN: ${{ steps.oidc-origin.outputs.origin }}
+          O2O_RUNNER_REPOSITORY: ${{ github.repository }}
+          O2O_RUNNER_REPOSITORY_ID: ${{ github.repository_id }}
+          O2O_RUNNER_RUN_ID: ${{ github.run_id }}
+          O2O_RUNNER_RUN_ATTEMPT: ${{ github.run_attempt }}
+          O2O_RUNNER_ACTOR: ${{ github.actor }}
+          O2O_RUNNER_ACTOR_ID: ${{ github.actor_id }}
+          O2O_RUNNER_REF: ${{ github.ref }}
+          O2O_RUNNER_WORKFLOW_REF: ${{ github.workflow_ref }}
+          O2O_RUNNER_WORKFLOW_SHA: ${{ github.workflow_sha }}
+          O2O_RUNNER_CALLED_WORKFLOW_REF: ${{ job.workflow_ref }}
+          O2O_RUNNER_CALLED_WORKFLOW_SHA: ${{ job.workflow_sha }}
+          O2O_RUNNER_ENVIRONMENT: SP08-A3-03-OIDC-smoke
+        run: node tools/sp08-a3-03-github-oidc-smoke/prepare-a-runner.cjs --execute-approved
+      - name: Remove job-local key and CSR material
+        if: ${{ always() }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/clean-source.cjs
