@@ -26,7 +26,8 @@ $server=New-Leaf 'localhost' $ca.cert $ca.key; $client=New-Leaf 'client' $ca.cer
   const identity = { repository_id: 'fixture-repo', run_id: 'fixture-run', run_attempt: '1', workflow_ref: 'fixture/workflow@refs/heads/main', workflow_sha: 'a'.repeat(40), job_workflow_ref: 'fixture/reusable@refs/heads/main', job_workflow_sha: 'b'.repeat(40), environment: 'fixture' };
   const expectedRequest = { v: 'a303-request-v1', method: 'POST', route_id: 'fixture-route', env_id: 'fixture-env', resource_id: 'fixture-resource', action_id: 'fixture-action', artifact_digest: 'd'.repeat(64), repository_id: identity.repository_id, run_id: identity.run_id, run_attempt: identity.run_attempt, payload: { fixture: true } };
   const ca = new crypto.X509Certificate(certs.ca);
-  return { mode: 'check-only', authorizedUntil: now + 60_000, policy: {
+  return { mode: 'start-approved', authorization: 'explicit-temporary', authorizedUntil: now + 60_000,
+    interfaceName: 'fixture0', bindIPv4: '10.20.30.40', port: 8443, policy: {
     mode: 'github-oidc', issuer: ISSUER, service: 'fixture-service', expectedClaims: identity, expectedRequest,
     allowedPeerFingerprints: [new crypto.X509Certificate(certs.client.cert).fingerprint256.replaceAll(':', '').toLowerCase()],
     tlsKey: certs.server.key, tlsCert: certs.server.cert, ca: certs.ca, serverIPv4: '192.0.2.10',
@@ -46,8 +47,14 @@ test('synthetic loader snapshot round-trips through public handoff and existing 
     return calls === 1 ? reply({ issuer: ISSUER, jwks_uri: `${ISSUER}/.well-known/jwks`, id_token_signing_alg_values_supported: ['RS256'] })
       : reply({ keys: [jwk] });
   };
-  const snapshot = await oidc.loadTrustedGithubJwks({ request, now });
-  const publicBytes = handoff.publicHandoff(snapshot);
+  let cliOutput = '';
+  let cliError = '';
+  const fetchCode = await handoff.main(['fetch-public', path.join(dir, 'public.json')], {
+    fetchOptions: { request, now }, writeOut: (value) => { cliOutput += value; }, writeError: (value) => { cliError += value; },
+  });
+  assert.equal(fetchCode, 0, cliError);
+  assert.equal(JSON.parse(cliOutput).command, 'fetch-public');
+  const publicBytes = fs.readFileSync(path.join(dir, 'public.json'));
   const publicData = JSON.parse(publicBytes.toString());
   assert.deepEqual(Object.keys(publicData).sort(), ['expiresAt', 'fetchedAt', 'issuer', 'keys']);
   assert.deepEqual(Object.keys(publicData.keys[0]).sort(), ['alg', 'e', 'kid', 'kty', 'n', 'use']);
@@ -55,18 +62,26 @@ test('synthetic loader snapshot round-trips through public handoff and existing 
   assert.equal(publicData.expiresAt - publicData.fetchedAt, oidc.JWKS_SNAPSHOT_TTL_MS);
   assert.equal(calls, 2);
   const handoffPath = path.join(dir, 'public.json');
-  fs.writeFileSync(handoffPath, publicBytes, { flag: 'wx', mode: 0o600 });
   const templatePath = path.join(dir, 'template.json');
   const outputPath = path.join(dir, 'new-config.json');
   fs.writeFileSync(templatePath, JSON.stringify(fixtureConfig(now)));
-  const result = handoff.assembleLocal(templatePath, handoffPath, outputPath, { now });
-  assert.equal(result.validated, true);
+  cliOutput = '';
+  cliError = '';
+  const assembleCode = await handoff.main(['assemble-local', templatePath, handoffPath, outputPath], {
+    assembleOptions: { now },
+    writeOut: (value) => { cliOutput += value; }, writeError: (value) => { cliError += value; },
+  });
+  assert.equal(assembleCode, 0, cliError);
+  assert.equal(JSON.parse(cliOutput).command, 'assemble-local');
   const assembled = JSON.parse(fs.readFileSync(outputPath, 'utf8'));
   assert.deepEqual(assembled.policy.githubJwksKeys, publicData.keys);
   assert.equal(assembled.policy.issuer, ISSUER);
   assert.equal(assembled.policy.githubJwksFetchedAt, now);
   assert.equal(assembled.policy.githubJwksExpiresAt, now + oidc.JWKS_SNAPSHOT_TTL_MS);
-  assert.equal(entry.validateCheckOnlyConfig(assembled, now).checked, true);
+  assert.equal(entry.validateStartApprovedConfig(assembled, { now }).listenerBound, false);
+  assert.equal(assembled.mode, 'start-approved');
+  assert.equal(assembled.authorization, 'explicit-temporary');
+  assert.equal(assembled.authorizedUntil, now + 60_000);
 });
 
 test('rejects expired/malformed handoffs and never overwrites an existing output', async (t) => {

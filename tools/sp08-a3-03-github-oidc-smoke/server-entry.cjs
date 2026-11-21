@@ -33,6 +33,23 @@ function validateCheckOnlyConfig(config, now = Date.now()) {
   return Object.freeze({ checked: true, mode: 'check-only', networkRequests: 0, listenersBound: 0 });
 }
 
+function validateStartApprovedAuthorization(config, now) {
+  if (!config || config.mode !== 'start-approved' || config.authorization !== 'explicit-temporary'
+    || !Number.isSafeInteger(config.authorizedUntil) || config.authorizedUntil <= now
+    || config.authorizedUntil - now > 15 * 60 * 1000
+    || typeof config.interfaceName !== 'string' || config.interfaceName.length === 0
+    || typeof config.bindIPv4 !== 'string' || !localA.isPrivateIPv4(config.bindIPv4)
+    || config.port !== 8443) {
+    const error = new Error('server-entry-authorization-invalid'); error.code = 'server-entry-authorization-invalid'; throw error;
+  }
+}
+
+function validateStartApprovedConfig(config, { now = Date.now() } = {}) {
+  validateStartApprovedAuthorization(config, now);
+  validateConfigMaterial(config, 'start-approved', now);
+  return Object.freeze({ checked: true, mode: 'start-approved', listenerBound: false, networkRequests: 0 });
+}
+
 async function main(argv = process.argv.slice(2), deps = {}) {
   const writeOut = deps.writeOut || ((value) => process.stdout.write(value));
   const writeError = deps.writeError || ((value) => process.stderr.write(value));
@@ -72,14 +89,8 @@ async function main(argv = process.argv.slice(2), deps = {}) {
 
 function startApproved(config, { interfaces = os.networkInterfaces(), bind = (server, host, port, signal) => server.listen({ port, host, signal }) } = {}) {
   const now = Date.now();
-  if (!config || config.mode !== 'start-approved' || config.authorization !== 'explicit-temporary'
-    || !Number.isSafeInteger(config.authorizedUntil) || config.authorizedUntil <= now
-    || config.authorizedUntil - now > 15 * 60 * 1000
-    || typeof config.interfaceName !== 'string' || config.interfaceName.length === 0
-    || typeof config.bindIPv4 !== 'string' || !localA.isPrivateIPv4(config.bindIPv4)
-    || config.port !== 8443 || typeof bind !== 'function') {
-    const error = new Error('server-entry-authorization-invalid'); error.code = 'server-entry-authorization-invalid'; throw error;
-  }
+  if (typeof bind !== 'function') { const error = new Error('server-entry-authorization-invalid'); error.code = 'server-entry-authorization-invalid'; throw error; }
+  validateStartApprovedAuthorization(config, now);
   const addresses = interfaces[config.interfaceName];
   if (!Array.isArray(addresses) || !addresses.some((address) => address && address.address === config.bindIPv4
     && address.family === 'IPv4' && address.internal === false)) {
@@ -94,4 +105,4 @@ function startApproved(config, { interfaces = os.networkInterfaces(), bind = (se
 }
 
 if (require.main === module) void main().then((code) => { process.exitCode = code; });
-module.exports = { validateCheckOnlyConfig, startApproved, main };
+module.exports = { validateCheckOnlyConfig, validateStartApprovedConfig, startApproved, main };
