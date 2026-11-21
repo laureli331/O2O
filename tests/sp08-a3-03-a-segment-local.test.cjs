@@ -11,7 +11,20 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { verifyReturnAndRunLocalA } = require('../tools/sp08-a3-03-github-oidc-smoke/verify-return.cjs');
-const { commitment, signCurrentConnection, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, runLocalAClient } = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
+const { commitment, signCurrentConnection, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate, runLocalAClient } = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
+
+test('single-use candidate requires explicit loopback bind, exact fixed port and bounded future authorization', () => {
+  const now = 1_000_000;
+  const policy = { service: 'fixture', issuer: 'fixture', allowedPeerFingerprints: ['a'.repeat(64)], expectedClaims: {}, expectedRequest: {}, tlsKey: 'key', tlsCert: 'cert', ca: 'ca' };
+  const bind = () => { throw new Error('bind-must-not-run'); };
+  const base = { policy, host: '127.0.0.1', port: 8443, authorizedUntil: now + 60_000, now: () => now, bind };
+  for (const invalid of [
+    { ...base, host: '0.0.0.0' }, { ...base, host: '192.0.2.1' }, { ...base, port: 0 },
+    { ...base, port: 8444 }, { ...base, authorizedUntil: undefined },
+    { ...base, authorizedUntil: now }, { ...base, authorizedUntil: now + 15 * 60 * 1000 + 1 },
+    { ...base, policy: undefined }, { ...base, policy: { ...policy, allowedPeerFingerprints: [] } },
+  ]) assert.throws(() => startSingleUseAListenerCandidate(invalid), { code: 'single-use-policy-invalid' });
+});
 
 test('A proof is signed against exporter of the current authorized TLS 1.3 socket', () => {
   const pair = crypto.generateKeyPairSync('ed25519');

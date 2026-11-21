@@ -253,4 +253,75 @@ function startLocalVerificationServer(options) {
   return { server, close: () => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())), address: () => server.address() };
 }
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer };
+// Offline-only A-segment listener candidate. The caller must supply an exact,
+// expiring authorization window and a reviewed policy; the bind function is
+// injectable so this candidate can be exercised without opening a socket.
+function startSingleUseAListenerCandidate(options) {
+  const { policy, authorizedUntil, now = Date.now, bind } = options || {};
+  if (!options || !policy || typeof bind !== 'function' || typeof now !== 'function'
+    || !Number.isSafeInteger(authorizedUntil) || !Number.isSafeInteger(now())
+    || authorizedUntil <= now() || authorizedUntil - now() > 15 * 60 * 1000
+    || options.host !== '127.0.0.1' || options.port !== 8443
+    || !policy.tlsKey || !policy.tlsCert || !policy.ca || !policy.issuer
+    || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
+    || !policy.expectedClaims || !policy.expectedRequest || !policy.service
+    || (policy.mode === 'github-oidc' && (!Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0
+      || !Number.isSafeInteger(policy.githubJwksFetchedAt) || !Number.isSafeInteger(policy.githubJwksExpiresAt)
+      || policy.githubJwksExpiresAt <= now() || policy.githubJwksExpiresAt - policy.githubJwksFetchedAt > oidc.JWKS_SNAPSHOT_TTL_MS))) fail('single-use-policy-invalid');
+  validateLocalServerMaterial(policy);
+  if (policy.mode === 'github-oidc') requireGithubPolicy(policy);
+  let finished = false;
+  let accepted = false;
+  let closed = false;
+  let deadline;
+  const sockets = new Set();
+  let resolveClosed;
+  const closedPromise = new Promise((resolve) => { resolveClosed = resolve; });
+  const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
+    sockets.add(socket);
+    socket.once('close', () => sockets.delete(socket));
+    let data = ''; let complete = false;
+    socket.setTimeout(5000, () => socket.destroy());
+    socket.on('data', (chunk) => {
+      if (complete || finished) { socket.destroy(); return; }
+      data += chunk.toString('utf8');
+      if (Buffer.byteLength(data, 'utf8') > 65536) { complete = true; socket.destroy(); void close(); return; }
+      const newline = data.indexOf('\n');
+      if (newline < 0) return;
+      complete = true;
+      try {
+        if (newline !== data.length - 1 || now() >= authorizedUntil) fail('authorization-window-expired');
+        const envelope = parseJsonNoDuplicates(data.slice(0, newline));
+        if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
+        if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
+        verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
+        if (accepted) fail('single-use-proof-already-accepted');
+        accepted = true; finished = true;
+        socket.end(`${JSON.stringify({ ok: true, result: 'synthetic-local-proof-accepted' })}\n`, () => { void close(); });
+      } catch (error) {
+        finished = true;
+        socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`);
+        void close();
+      }
+    });
+    socket.on('error', () => { finished = true; void close(); });
+  });
+  server.on('error', () => { finished = true; void close(); });
+  const close = () => {
+    if (closed) return closedPromise;
+    closed = true; finished = true;
+    if (deadline) clearTimeout(deadline);
+    for (const socket of sockets) socket.destroy();
+    if (!server.listening) { resolveClosed(); return closedPromise; }
+    server.close(() => resolveClosed());
+    return closedPromise;
+  };
+  deadline = setTimeout(() => { void close(); }, authorizedUntil - now());
+  deadline.unref?.();
+  let bound;
+  try { bound = bind(server, options.host, options.port); }
+  catch (error) { void close(); throw error; }
+  return { server, close, closed: closedPromise, get accepted() { return accepted; }, bound };
+}
+
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate };
