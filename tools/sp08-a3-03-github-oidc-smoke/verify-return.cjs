@@ -6,6 +6,7 @@ const crypto = require('node:crypto');
 const { verifyCertificateBinding } = require('./csr-handoff.cjs');
 const { requireConfiguredPolicy } = require('./handoff-policy.cjs');
 const { runLocalAClient } = require('./a-segment-local.cjs');
+const { runApprovedAClient } = require('./a-segment-local.cjs');
 
 function verifyReturn({ tempDir, artifactDir, runId, runAttempt, commit, returnRunId, pwshPath, onVerifiedMaterial, policy: suppliedPolicy }) {
   const policy = requireConfiguredPolicy(suppliedPolicy);
@@ -41,6 +42,20 @@ async function verifyReturnAndRunLocalA({ verifyOptions, identity, request, poli
   return await clientPromise;
 }
 
+async function verifyReturnAndRunApprovedA({ verifyOptions, identity, request, policy, env, runtimeRequest, approvedTarget, authorizationDeadline }) {
+  if (!approvedTarget || typeof approvedTarget.ipv4 !== 'string' || approvedTarget.port !== 8443
+    || policy?.serverIPv4 !== approvedTarget.ipv4) throw new Error('approved-target-policy-invalid');
+  let clientPromise;
+  verifyReturn({ ...verifyOptions, onVerifiedMaterial: (material) => {
+    clientPromise = runApprovedAClient({ identity, request, policy, env, runtimeRequest,
+      approvedTarget, authorizationDeadline,
+      tlsOptions: { host: approvedTarget.ipv4, port: 8443, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3', rejectUnauthorized: true,
+        key: material.privateKeyPem, cert: material.leafPem, ca: material.caPem } });
+  } });
+  if (!clientPromise) throw new Error('verified-material-missing');
+  return await clientPromise;
+}
+
 if (require.main === module) {
   try {
     const result = verifyReturn({ tempDir: process.env.RUNNER_TEMP, artifactDir: path.join(process.env.RUNNER_TEMP, 'a303-return'), runId: process.env.GITHUB_RUN_ID, runAttempt: process.env.GITHUB_RUN_ATTEMPT, commit: process.env.GITHUB_SHA, returnRunId: process.env.A303_RETURN_RUN_ID, pwshPath: process.env.A303_PWSH });
@@ -48,4 +63,4 @@ if (require.main === module) {
   } catch (error) { process.stderr.write(`certificate-rejected:${error.message}\n`); process.exitCode = 1; }
 }
 
-module.exports = { verifyReturn, verifyReturnAndRunLocalA };
+module.exports = { verifyReturn, verifyReturnAndRunLocalA, verifyReturnAndRunApprovedA };

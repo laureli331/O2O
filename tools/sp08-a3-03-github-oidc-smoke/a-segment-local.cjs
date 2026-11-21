@@ -89,9 +89,14 @@ function signCurrentConnection(socket, token, commit, privateKey) {
 // Single-use offline A-segment client entry. Identity and action context are
 // explicit inputs; callers must supply the already-approved TLS client
 // material and an injected token transport (tests use a signed local fixture).
-async function runLocalAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes }) {
-  if (!tlsOptions || tlsOptions.host !== '127.0.0.1' || tlsOptions.minVersion !== 'TLSv1.3' || tlsOptions.maxVersion !== 'TLSv1.3'
+async function runAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes, approvedTarget, authorizationDeadline }) {
+  const approved = approvedTarget && typeof approvedTarget.ipv4 === 'string' && net.isIPv4(approvedTarget.ipv4)
+    && approvedTarget.port === 8443 && policy?.serverIPv4 === approvedTarget.ipv4
+    && tlsOptions?.host === approvedTarget.ipv4 && tlsOptions?.port === 8443;
+  if (!tlsOptions || (approved ? !approved : tlsOptions.host !== '127.0.0.1') || tlsOptions.minVersion !== 'TLSv1.3' || tlsOptions.maxVersion !== 'TLSv1.3'
     || tlsOptions.rejectUnauthorized !== true || !tlsOptions.key || !tlsOptions.cert || !tlsOptions.ca) fail('local-client-policy-missing');
+  if (approved) validateApprovedTargetMaterial(policy, approvedTarget.ipv4);
+  if (approved && (!Number.isSafeInteger(authorizationDeadline) || Date.now() >= authorizationDeadline)) fail('authorization-window-expired');
   const pair = crypto.generateKeyPairSync('ed25519');
   const exported = pair.publicKey.export({ format: 'jwk' });
   const jwk = { kty: exported.kty, crv: exported.crv, x: exported.x };
@@ -99,15 +104,17 @@ async function runLocalAClient({ identity, request, policy, env, runtimeRequest,
   if (!Buffer.isBuffer(nonceBytes) || nonceBytes.length !== 32) fail('nonce-generation-failed');
   const nonce = b64(nonceBytes);
   const { token, commit } = await requestDynamicAudienceToken({ identity, request, jwk, nonce, policy, env, runtimeRequest });
+  if (approved && Date.now() >= authorizationDeadline) fail('authorization-window-expired');
   if (typeof token !== 'string' || token.length > 16384) fail('invalid-token');
   const socket = tls.connect(tlsOptions);
   return await new Promise((resolve, reject) => {
     let response = ''; let done = false; let sent = false;
     const finish = (error, value) => { if (done) return; done = true; clearTimeout(timer); socket.destroy(); error ? reject(error) : resolve(value); };
-    const timer = setTimeout(() => finish(Object.assign(new Error('local-client-timeout'), { code: 'local-client-timeout' })), 5000);
+    const timer = setTimeout(() => finish(Object.assign(new Error('local-client-timeout'), { code: 'local-client-timeout' })), approved ? Math.min(5000, authorizationDeadline - Date.now()) : 5000);
     socket.once('error', (error) => finish(error));
     socket.once('secureConnect', () => {
       try {
+        if (approved && Date.now() >= authorizationDeadline) fail('authorization-window-expired');
         if (sent || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true || socket.isSessionReused()) fail('tls-peer-rejected');
         sent = true;
         const proof = signCurrentConnection(socket, token, commit, pair.privateKey);
@@ -127,6 +134,12 @@ async function runLocalAClient({ identity, request, policy, env, runtimeRequest,
       }
     });
   });
+}
+function runLocalAClient(options) { return runAClient(options); }
+function runApprovedAClient(options) {
+  if (!options || !options.approvedTarget || typeof options.approvedTarget.ipv4 !== 'string' || net.isIPv4(options.approvedTarget.ipv4) !== true || options.approvedTarget.port !== 8443
+    || !options.policy || options.policy.serverIPv4 !== options.approvedTarget.ipv4) fail('approved-target-policy-invalid');
+  return runAClient(options);
 }
 function parseJsonUnique(text) {
   const value = JSON.parse(text);
@@ -195,6 +208,21 @@ function validateLocalServerMaterial(policy, now = Date.now()) {
     if (error && typeof error.code === 'string') throw error;
     fail('tls-server-material-invalid');
   }
+}
+function validateApprovedTargetMaterial(policy, targetIPv4, now = Date.now()) {
+  try {
+    if (typeof targetIPv4 !== 'string' || net.isIPv4(targetIPv4) !== true) fail('approved-target-policy-invalid');
+    const server = new crypto.X509Certificate(policy.tlsCert);
+    const ca = new crypto.X509Certificate(policy.ca);
+    const validFrom = Date.parse(server.validFrom); const validTo = Date.parse(server.validTo);
+    if (!Number.isFinite(validFrom) || !Number.isFinite(validTo) || validFrom > now || validTo <= now) fail('tls-server-certificate-invalid');
+    if (server.checkIP(targetIPv4) !== targetIPv4) fail('tls-server-ip-san-mismatch');
+    if (!server.keyUsage || !server.keyUsage.includes('1.3.6.1.5.5.7.3.1')) fail('tls-server-auth-eku-missing');
+    const expectedCa = policy.expectedCaFingerprint256;
+    if (typeof expectedCa !== 'string' || !/^[a-f0-9]{64}$/.test(expectedCa)
+      || ca.fingerprint256.replaceAll(':', '').toLowerCase() !== expectedCa) fail('tls-ca-pin-mismatch');
+    if (!ca.ca || !server.checkIssued(ca) || !server.verify(ca.publicKey)) fail('tls-server-ca-binding-invalid');
+  } catch (error) { if (error && typeof error.code === 'string') throw error; fail('tls-server-material-invalid'); }
 }
 function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, nonce }) {
   if (!socket || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true) fail('tls-peer-rejected');
@@ -354,4 +382,4 @@ function isPrivateIPv4(value) {
     || (octets[0] === 192 && octets[1] === 168);
 }
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate, isPrivateIPv4 };
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, runApprovedAClient, verifyCurrentConnection, validateLocalServerMaterial, validateApprovedTargetMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate, isPrivateIPv4 };
