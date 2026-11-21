@@ -6,6 +6,7 @@ const crypto = require('node:crypto');
 const { EventEmitter } = require('node:events');
 const { spawnSync } = require('node:child_process');
 const runner = require('../tools/sp08-a3-03-github-oidc-smoke/runner-entry.cjs');
+const prepareRunner = require('../tools/sp08-a3-03-github-oidc-smoke/prepare-a-runner.cjs');
 const aSegment = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
 const { runApprovedAClient, runLocalAClient } = aSegment;
 
@@ -33,6 +34,39 @@ function certificates() {
   assert.equal(result.status, 0, 'certificate fixture generation failed');
   return JSON.parse(result.stdout.trim());
 }
+
+test('prepare runner enters runner.main for check and one approved synthetic execution', async () => {
+  const fixture = certificates();
+  const { env: base } = contextFixture();
+  const env = { ...base, O2O_RUNNER_WORKFLOW_REF: 'owner/repo/.github/workflows/sp08-a3-03-tls-caller.yml@refs/heads/main',
+    O2O_RUNNER_CALLED_WORKFLOW_REF: 'owner/repo/.github/workflows/sp08-a3-03-tls-source-reusable.yml@refs/heads/main',
+    RUNNER_TEMP: 'C:/runner-temp', A303_PWSH: process.env.O2O_TEST_PWSH || 'pwsh' };
+  const ca = fixture.ca;
+  const caFingerprint256 = new crypto.X509Certificate(ca).fingerprint256.replaceAll(':', '').toLowerCase();
+  const handoff = { caFingerprint256, operatorActorId: '30', operatorLogin: 'operator', repository: 'owner/repo',
+    returnWorkflowPath: '.github/workflows/sp08-a3-03-csr-return.yml', returnWorkflowRef: 'refs/heads/main', returnWorkflowSha: 'd'.repeat(40),
+    sourceWorkflowPath: '.github/workflows/sp08-a3-03-tls-caller.yml', sourceWorkflowRef: 'refs/heads/main', sourceWorkflowSha: 'a'.repeat(40) };
+  const request = { v: 'a303-request-v1', method: 'POST', route_id: 'route', env_id: 'fixture-env', resource_id: 'resource', action_id: 'action', artifact_digest: 'sha256:synthetic', payload: { fixed: true } };
+  const claims = { repository: 'owner/repo', repository_id: '10', run_attempt: '1', actor: 'operator', actor_id: '30', ref: 'refs/heads/main',
+    workflow_ref: env.O2O_RUNNER_WORKFLOW_REF, workflow_sha: 'a'.repeat(40), job_workflow_ref: env.O2O_RUNNER_CALLED_WORKFLOW_REF,
+    job_workflow_sha: 'b'.repeat(40), environment: 'fixture-env' };
+  const policy = { mode: 'start-approved', authorization: 'explicit-temporary', authorizedUntil: Date.now() + 60_000,
+    targetIPv4: '10.20.30.40', requestTemplate: request,
+    policy: { serverIPv4: '10.20.30.40', tlsCert: fixture.server.cert, ca, expectedCaFingerprint256: caFingerprint256, expectedClaims: claims } };
+  const runtime = { ...env, A303_HANDOFF_POLICY: JSON.stringify(handoff), A303_TLS_RUNNER_POLICY: JSON.stringify(policy) };
+  const calls = [];
+  const deps = { env: runtime, writeOut: () => {}, writeError: (value) => { throw new Error(value); }, execute: async (options) => { calls.push(options); return { ok: true, result: 'accepted' }; } };
+  assert.equal(await prepareRunner.main(['--check-only'], deps), 0);
+  assert.equal(calls.length, 0);
+  runtime.A303_RETURN_RUN_ID = '44';
+  assert.equal(await prepareRunner.main(['--execute-approved'], deps), 0);
+  assert.equal(calls.length, 1);
+  assert.deepEqual(calls[0].verifyOptions, { tempDir: env.RUNNER_TEMP, artifactDir: require('node:path').join(env.RUNNER_TEMP, 'a303-return'), runId: '20', runAttempt: '1', commit: 'a'.repeat(40), returnRunId: '44', pwshPath: env.A303_PWSH });
+  assert.deepEqual(calls[0].identity, { repository_id: '10', run_id: '20', run_attempt: '1', workflow_ref: env.O2O_RUNNER_WORKFLOW_REF, workflow_sha: 'a'.repeat(40), job_workflow_ref: env.O2O_RUNNER_CALLED_WORKFLOW_REF, job_workflow_sha: 'b'.repeat(40) });
+  delete runtime.A303_HANDOFF_POLICY;
+  assert.equal(await prepareRunner.main(['--execute-approved'], { ...deps, writeError: () => {} }), 1);
+  assert.equal(calls.length, 1);
+});
 
 test('runner entry refuses absent config, implicit modes, and nonapproved target before execution', async () => {
   const env = { GITHUB_REPOSITORY: 'o/r', GITHUB_REPOSITORY_ID: '1', GITHUB_RUN_ID: '2', GITHUB_RUN_ATTEMPT: '1', GITHUB_WORKFLOW_REF: 'o/r/.github/workflows/a.yml@refs/heads/main', GITHUB_WORKFLOW_SHA: 'a'.repeat(40) };
