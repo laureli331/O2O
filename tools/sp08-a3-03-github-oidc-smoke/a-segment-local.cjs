@@ -3,6 +3,7 @@
 // Offline-only A-segment proof primitives. The issuer verifier and policy are
 // injected by the caller; this module never performs network requests.
 const crypto = require('node:crypto');
+const net = require('node:net');
 const tls = require('node:tls');
 const oidc = require('./oidc-smoke.cjs');
 const GITHUB_ISSUER = 'https://token.actions.githubusercontent.com';
@@ -164,21 +165,23 @@ function requireGithubPolicy(policy) {
   if (!policy.expectedClaims || required.some((name) => typeof policy.expectedClaims[name] !== 'string' || policy.expectedClaims[name].length === 0)
     || policy.expectedClaims.run_attempt !== '1') fail('github-identity-policy-missing');
 }
-function validateLocalServerMaterial(policy) {
+function validateLocalServerMaterial(policy, now = Date.now()) {
   try {
     const ip = policy.serverIPv4;
-    if (typeof ip !== 'string' || !/^\d{1,3}(?:\.\d{1,3}){3}$/.test(ip)
-      || ip.split('.').some((part) => Number(part) > 255)) fail('local-server-policy-missing');
+    if (typeof ip !== 'string' || net.isIPv4(ip) !== true) fail('local-server-policy-missing');
     const server = new crypto.X509Certificate(policy.tlsCert);
     const key = crypto.createPrivateKey(policy.tlsKey);
     const ca = new crypto.X509Certificate(policy.ca);
-    if (!server.checkPrivateKey(key) || Date.parse(server.validFrom) > Date.now() || Date.parse(server.validTo) <= Date.now()) fail('tls-server-certificate-invalid');
-    const san = server.subjectAltName || '';
-    if (!san.split(/,\s*/).includes(`IP Address:${ip}`)) fail('tls-server-ip-san-mismatch');
+    const validFrom = Date.parse(server.validFrom);
+    const validTo = Date.parse(server.validTo);
+    if (!server.checkPrivateKey(key) || !Number.isFinite(validFrom) || !Number.isFinite(validTo)
+      || validFrom > now || validTo <= now) fail('tls-server-certificate-invalid');
+    if (server.checkIP(ip) !== ip) fail('tls-server-ip-san-mismatch');
     if (!server.keyUsage || !server.keyUsage.includes('1.3.6.1.5.5.7.3.1')) fail('tls-server-auth-eku-missing');
     const expectedCa = policy.expectedCaFingerprint256;
     if (typeof expectedCa !== 'string' || !/^[a-f0-9]{64}$/.test(expectedCa)
       || ca.fingerprint256.replaceAll(':', '').toLowerCase() !== expectedCa) fail('tls-ca-pin-mismatch');
+    if (!ca.ca || !server.checkIssued(ca) || !server.verify(ca.publicKey)) fail('tls-server-ca-binding-invalid');
     const pins = policy.allowedPeerFingerprints;
     if (!Array.isArray(pins) || pins.length === 0 || pins.some((pin) => typeof pin !== 'string' || !/^[a-f0-9]{64}$/.test(pin))) fail('client-certificate-pin-invalid');
     if (!policy.expectedClaims || !policy.expectedRequest || !policy.service) fail('local-server-policy-missing');

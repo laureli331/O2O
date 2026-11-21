@@ -11,7 +11,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { verifyReturnAndRunLocalA } = require('../tools/sp08-a3-03-github-oidc-smoke/verify-return.cjs');
-const { commitment, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer, runLocalAClient } = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
+const { commitment, signCurrentConnection, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, runLocalAClient } = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
 
 test('A proof is signed against exporter of the current authorized TLS 1.3 socket', () => {
   const pair = crypto.generateKeyPairSync('ed25519');
@@ -69,9 +69,10 @@ async function runLoopback(mode, alterAudience = false, certificateReturn = fals
   const certScript = `$ErrorActionPreference='Stop'
 function New-KeyCert([string]$name) { $key=[System.Security.Cryptography.RSA]::Create(2048); $req=[System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$name",$key,[System.Security.Cryptography.HashAlgorithmName]::SHA256,[System.Security.Cryptography.RSASignaturePadding]::Pkcs1); return @{key=$key;req=$req} }
 $ca=New-KeyCert 'o2o-test-ca'; $ca.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true,$false,0,$true)); $ca.cert=$ca.req.CreateSelfSigned([datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddHours(1))
+$otherCa=New-KeyCert 'unapproved-test-ca'; $otherCa.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true,$false,0,$true)); $otherCa.cert=$otherCa.req.CreateSelfSigned([datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddHours(1))
 function New-Leaf([string]$name,$caCert,$caKey) { $leaf=New-KeyCert $name; $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false,$false,0,$true)); $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,$true)); if($name -eq 'localhost'){$san=[System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder]::new();$san.AddDnsName('localhost');$san.AddIpAddress([System.Net.IPAddress]::Parse('192.0.2.10'));$leaf.req.CertificateExtensions.Add($san.Build());$eku=[System.Security.Cryptography.OidCollection]::new();$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.1'));$leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))}; if($name -eq 'synthetic-client'){$eku=[System.Security.Cryptography.OidCollection]::new();$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.2'));$leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))}; $csr=$leaf.req.CreateSigningRequestPem(); $leaf.cert=$leaf.req.Create($caCert,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddMinutes(10),[byte[]]([guid]::NewGuid().ToByteArray())); return @{cert=$leaf.cert.ExportCertificatePem();key=$leaf.key.ExportPkcs8PrivateKeyPem();csr=$csr} }
-$server=New-Leaf 'localhost' $ca.cert $ca.key; $client=New-Leaf 'synthetic-client' $ca.cert $ca.key
-$out=@{ca=$ca.cert.ExportCertificatePem();server=$server;client=$client}|ConvertTo-Json -Compress
+$server=New-Leaf 'localhost' $ca.cert $ca.key; $client=New-Leaf 'synthetic-client' $ca.cert $ca.key; $otherServer=New-Leaf 'localhost' $otherCa.cert $otherCa.key
+$out=@{ca=$ca.cert.ExportCertificatePem();server=$server;client=$client;otherServer=$otherServer}|ConvertTo-Json -Compress
 Write-Output $out
 `;
     const shell = process.env.O2O_TEST_PWSH || 'pwsh';
@@ -87,6 +88,8 @@ Write-Output $out
     const jwksKey = github ? { ...issuer.publicKey.export({ format: 'jwk' }), kid: 'github-fixture', alg: 'RS256', use: 'sig' } : null;
     const fullRequest = { v: 'a303-request-v1', method: 'POST', route_id: 'r', env_id: 'e', resource_id: 'r', action_id: 'a', artifact_digest: 'd', repository_id: '1', run_id: '2', run_attempt: '1', payload: { fixture: true } };
     const policy = { mode: github ? 'github-oidc' : undefined, service: 'fixture-service', issuer: github ? 'https://token.actions.githubusercontent.com' : 'synthetic:issuer', issuerKid: github ? undefined : 'fixture-kid', issuerPublicKey: github ? undefined : issuer.publicKey, githubJwksKeys: github ? [jwksKey] : undefined, githubJwksFetchedAt: github ? Date.now() : undefined, githubJwksExpiresAt: github ? Date.now() + 60_000 : undefined, expectedClaims: github ? identity : {}, expectedRequest: github ? fullRequest : { env_id: 'e', action_id: 'a', resource_id: 'r', artifact_digest: 'd' }, allowedPeerFingerprints: [new crypto.X509Certificate(clientCert).fingerprint256.replaceAll(':', '').toLowerCase()], tlsKey: certs.server.key, tlsCert: serverCert, ca, serverIPv4: '192.0.2.10', expectedCaFingerprint256: new crypto.X509Certificate(ca).fingerprint256.replaceAll(':', '').toLowerCase() };
+    assert.throws(() => validateLocalServerMaterial(policy, Date.now() + 60 * 60 * 1000), { code: 'tls-server-certificate-invalid' });
+    assert.throws(() => validateLocalServerMaterial({ ...policy, tlsCert: certs.otherServer.cert, tlsKey: certs.otherServer.key }), { code: 'tls-server-ca-binding-invalid' });
     assert.throws(() => startLocalVerificationServer({ policy: { ...policy, serverIPv4: '192.0.2.11' } }), { code: 'tls-server-ip-san-mismatch' });
     assert.throws(() => startLocalVerificationServer({ policy: { ...policy, expectedCaFingerprint256: '0'.repeat(64) } }), { code: 'tls-ca-pin-mismatch' });
     assert.throws(() => startLocalVerificationServer({ policy: { ...policy, allowedPeerFingerprints: ['not-a-sha256-pin'] } }), { code: 'client-certificate-pin-invalid' });
