@@ -3,6 +3,7 @@
 // Offline-only A-segment proof primitives. The issuer verifier and policy are
 // injected by the caller; this module never performs network requests.
 const crypto = require('node:crypto');
+const net = require('node:net');
 const tls = require('node:tls');
 const oidc = require('./oidc-smoke.cjs');
 const GITHUB_ISSUER = 'https://token.actions.githubusercontent.com';
@@ -88,9 +89,14 @@ function signCurrentConnection(socket, token, commit, privateKey) {
 // Single-use offline A-segment client entry. Identity and action context are
 // explicit inputs; callers must supply the already-approved TLS client
 // material and an injected token transport (tests use a signed local fixture).
-async function runLocalAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes }) {
-  if (!tlsOptions || tlsOptions.host !== '127.0.0.1' || tlsOptions.minVersion !== 'TLSv1.3' || tlsOptions.maxVersion !== 'TLSv1.3'
+async function runAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes, approvedTarget, authorizationDeadline, connectTransport = tls.connect }) {
+  const approved = approvedTarget && typeof approvedTarget.ipv4 === 'string' && net.isIPv4(approvedTarget.ipv4)
+    && approvedTarget.port === 8443 && policy?.serverIPv4 === approvedTarget.ipv4
+    && tlsOptions?.host === approvedTarget.ipv4 && tlsOptions?.port === 8443;
+  if (!tlsOptions || (approved ? !approved : tlsOptions.host !== '127.0.0.1') || tlsOptions.minVersion !== 'TLSv1.3' || tlsOptions.maxVersion !== 'TLSv1.3'
     || tlsOptions.rejectUnauthorized !== true || !tlsOptions.key || !tlsOptions.cert || !tlsOptions.ca) fail('local-client-policy-missing');
+  if (approved) validateApprovedTargetMaterial(policy, approvedTarget.ipv4);
+  if (approved && (!Number.isSafeInteger(authorizationDeadline) || Date.now() >= authorizationDeadline)) fail('authorization-window-expired');
   const pair = crypto.generateKeyPairSync('ed25519');
   const exported = pair.publicKey.export({ format: 'jwk' });
   const jwk = { kty: exported.kty, crv: exported.crv, x: exported.x };
@@ -98,16 +104,28 @@ async function runLocalAClient({ identity, request, policy, env, runtimeRequest,
   if (!Buffer.isBuffer(nonceBytes) || nonceBytes.length !== 32) fail('nonce-generation-failed');
   const nonce = b64(nonceBytes);
   const { token, commit } = await requestDynamicAudienceToken({ identity, request, jwk, nonce, policy, env, runtimeRequest });
+  if (approved && Date.now() >= authorizationDeadline) fail('authorization-window-expired');
   if (typeof token !== 'string' || token.length > 16384) fail('invalid-token');
-  const socket = tls.connect(tlsOptions);
+  const forbiddenTlsOverrides = ['servername', 'checkServerIdentity', 'lookup', 'session'];
+  if (approved && forbiddenTlsOverrides.some((key) => Object.hasOwn(tlsOptions, key))) fail('local-client-policy-missing');
+  const socket = connectTransport(tlsOptions);
   return await new Promise((resolve, reject) => {
     let response = ''; let done = false; let sent = false;
     const finish = (error, value) => { if (done) return; done = true; clearTimeout(timer); socket.destroy(); error ? reject(error) : resolve(value); };
-    const timer = setTimeout(() => finish(Object.assign(new Error('local-client-timeout'), { code: 'local-client-timeout' })), 5000);
+    const timer = setTimeout(() => finish(Object.assign(new Error('local-client-timeout'), { code: 'local-client-timeout' })), approved ? Math.min(5000, authorizationDeadline - Date.now()) : 5000);
     socket.once('error', (error) => finish(error));
     socket.once('secureConnect', () => {
       try {
+        if (approved && Date.now() >= authorizationDeadline) fail('authorization-window-expired');
         if (sent || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true || socket.isSessionReused()) fail('tls-peer-rejected');
+        if (approved) {
+          const peer = socket.getPeerCertificate(true);
+          const expectedLeaf = new crypto.X509Certificate(policy.tlsCert);
+          const expectedCa = new crypto.X509Certificate(policy.ca);
+          if (!peer || !peer.raw || !crypto.timingSafeEqual(sha(peer.raw), sha(expectedLeaf.raw))
+            || new crypto.X509Certificate(peer.raw).checkIP(approvedTarget.ipv4) !== approvedTarget.ipv4
+            || !expectedLeaf.checkIssued(expectedCa) || !expectedLeaf.verify(expectedCa.publicKey)) fail('tls-peer-certificate-mismatch');
+        }
         sent = true;
         const proof = signCurrentConnection(socket, token, commit, pair.privateKey);
         const envelope = JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof });
@@ -126,6 +144,16 @@ async function runLocalAClient({ identity, request, policy, env, runtimeRequest,
       }
     });
   });
+}
+function runLocalAClient(options) {
+  if (!options) return runAClient(options);
+  const { approvedTarget: _approvedTarget, authorizationDeadline: _authorizationDeadline, connectTransport: _connectTransport, ...localOptions } = options;
+  return runAClient({ ...localOptions, approvedTarget: undefined, authorizationDeadline: undefined, connectTransport: tls.connect });
+}
+function runApprovedAClient(options) {
+  if (!options || !options.approvedTarget || !isApprovedTargetIPv4(options.approvedTarget.ipv4) || options.approvedTarget.port !== 8443
+    || !options.policy || options.policy.serverIPv4 !== options.approvedTarget.ipv4) fail('approved-target-policy-invalid');
+  return runAClient(options);
 }
 function parseJsonUnique(text) {
   const value = JSON.parse(text);
@@ -164,6 +192,52 @@ function requireGithubPolicy(policy) {
   if (!policy.expectedClaims || required.some((name) => typeof policy.expectedClaims[name] !== 'string' || policy.expectedClaims[name].length === 0)
     || policy.expectedClaims.run_attempt !== '1') fail('github-identity-policy-missing');
 }
+function validateLocalServerMaterial(policy, now = Date.now()) {
+  try {
+    const ip = policy.serverIPv4;
+    if (typeof ip !== 'string' || net.isIPv4(ip) !== true) fail('local-server-policy-missing');
+    const server = new crypto.X509Certificate(policy.tlsCert);
+    const key = crypto.createPrivateKey(policy.tlsKey);
+    const ca = new crypto.X509Certificate(policy.ca);
+    const validFrom = Date.parse(server.validFrom);
+    const validTo = Date.parse(server.validTo);
+    if (!server.checkPrivateKey(key) || !Number.isFinite(validFrom) || !Number.isFinite(validTo)
+      || validFrom > now || validTo <= now) fail('tls-server-certificate-invalid');
+    if (server.checkIP(ip) !== ip) fail('tls-server-ip-san-mismatch');
+    if (!server.keyUsage || !server.keyUsage.includes('1.3.6.1.5.5.7.3.1')) fail('tls-server-auth-eku-missing');
+    const expectedCa = policy.expectedCaFingerprint256;
+    if (typeof expectedCa !== 'string' || !/^[a-f0-9]{64}$/.test(expectedCa)
+      || ca.fingerprint256.replaceAll(':', '').toLowerCase() !== expectedCa) fail('tls-ca-pin-mismatch');
+    if (!ca.ca || !server.checkIssued(ca) || !server.verify(ca.publicKey)) fail('tls-server-ca-binding-invalid');
+    const pins = policy.allowedPeerFingerprints;
+    if (!Array.isArray(pins) || pins.length === 0 || pins.some((pin) => typeof pin !== 'string' || !/^[a-f0-9]{64}$/.test(pin))) fail('client-certificate-pin-invalid');
+    if (!policy.expectedClaims || !policy.expectedRequest || !policy.service) fail('local-server-policy-missing');
+    if (policy.mode === 'github-oidc') {
+      const required = ['repository_id', 'run_id', 'run_attempt', 'workflow_ref', 'workflow_sha', 'job_workflow_ref', 'job_workflow_sha', 'environment'];
+      if (required.some((name) => typeof policy.expectedClaims[name] !== 'string' || !policy.expectedClaims[name].length)) fail('github-identity-policy-missing');
+      if (!policy.expectedRequest || typeof policy.expectedRequest !== 'object'
+        || ['v', 'method', 'route_id', 'env_id', 'resource_id', 'action_id', 'artifact_digest', 'repository_id', 'run_id', 'run_attempt', 'payload'].some((name) => !(name in policy.expectedRequest))) fail('github-request-policy-missing');
+    }
+  } catch (error) {
+    if (error && typeof error.code === 'string') throw error;
+    fail('tls-server-material-invalid');
+  }
+}
+function validateApprovedTargetMaterial(policy, targetIPv4, now = Date.now()) {
+  try {
+    if (typeof targetIPv4 !== 'string' || net.isIPv4(targetIPv4) !== true) fail('approved-target-policy-invalid');
+    const server = new crypto.X509Certificate(policy.tlsCert);
+    const ca = new crypto.X509Certificate(policy.ca);
+    const validFrom = Date.parse(server.validFrom); const validTo = Date.parse(server.validTo);
+    if (!Number.isFinite(validFrom) || !Number.isFinite(validTo) || validFrom > now || validTo <= now) fail('tls-server-certificate-invalid');
+    if (server.checkIP(targetIPv4) !== targetIPv4) fail('tls-server-ip-san-mismatch');
+    if (!server.keyUsage || !server.keyUsage.includes('1.3.6.1.5.5.7.3.1')) fail('tls-server-auth-eku-missing');
+    const expectedCa = policy.expectedCaFingerprint256;
+    if (typeof expectedCa !== 'string' || !/^[a-f0-9]{64}$/.test(expectedCa)
+      || ca.fingerprint256.replaceAll(':', '').toLowerCase() !== expectedCa) fail('tls-ca-pin-mismatch');
+    if (!ca.ca || !server.checkIssued(ca) || !server.verify(ca.publicKey)) fail('tls-server-ca-binding-invalid');
+  } catch (error) { if (error && typeof error.code === 'string') throw error; fail('tls-server-material-invalid'); }
+}
 function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, nonce }) {
   if (!socket || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true) fail('tls-peer-rejected');
   if (typeof socket.isSessionReused === 'function' && socket.isSessionReused()) fail('session-resumption-rejected');
@@ -171,6 +245,7 @@ function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, n
   if (!peer || !peer.raw || !policy.allowedPeerFingerprints.includes(sha(peer.raw).toString('hex'))) fail('peer-identity-rejected');
   const claims = policy.mode === 'github-oidc' ? verifyGithubToken(token, policy) : verifySyntheticToken(token, policy);
   for (const [key, expected] of Object.entries(policy.expectedClaims)) if (claims[key] !== expected) fail('claim-policy-mismatch');
+  if (policy.mode === 'github-oidc') for (const key of ['repository_id', 'run_id', 'run_attempt']) if (claims[key] !== request[key]) fail('request-identity-claim-mismatch');
   const commit = commitment(claims, request, jwk, nonce, policy);
   const audience = expectedAudience(commit);
   if (policy.mode === 'github-oidc') oidc.validateClaims(claims, audience, policy.expectedClaims.environment, policy.expectedClaims.run_attempt, Math.floor(Date.now() / 1000));
@@ -179,6 +254,14 @@ function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, n
   const exporter = socket.exportKeyingMaterial(32, LABEL, Buffer.alloc(0));
   if (!crypto.verify(null, proofMessage(token, commit, exporter), key, decode(proof, 64))) fail('proof-invalid');
   return { ok: true, result: 'synthetic-local-proof-accepted' };
+}
+
+function verifyLocalEnvelope(socket, line, policy, checkWindow = () => {}) {
+  const envelope = parseJsonNoDuplicates(line);
+  if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
+  if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
+  checkWindow();
+  return verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
 }
 
 function startLocalVerificationServer(options) {
@@ -191,6 +274,7 @@ function startLocalVerificationServer(options) {
     || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
     || !policy.expectedClaims || !policy.expectedRequest || !policy.service
     || (options.host !== undefined && options.host !== '127.0.0.1')) fail('local-server-policy-missing');
+  validateLocalServerMaterial(policy);
   if (policy.mode === 'github-oidc') requireGithubPolicy(policy);
   const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
     socket.setTimeout(options.timeoutMs || 5000, () => socket.destroy());
@@ -204,10 +288,7 @@ function startLocalVerificationServer(options) {
       if (newline !== data.length - 1) { complete = true; socket.destroy(); return; }
       complete = true;
       try {
-        const envelope = parseJsonNoDuplicates(data.slice(0, newline));
-        if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
-        if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
-        verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
+        verifyLocalEnvelope(socket, data.slice(0, newline), policy);
         socket.end(`${JSON.stringify({ ok: true, result: 'synthetic-local-proof-accepted' })}\n`);
       } catch (error) {
         socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`);
@@ -220,4 +301,109 @@ function startLocalVerificationServer(options) {
   return { server, close: () => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())), address: () => server.address() };
 }
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, startLocalVerificationServer };
+// Offline-only A-segment listener candidate. The caller must supply an exact,
+// expiring authorization window and a reviewed policy; the bind function is
+// injectable so this candidate can be exercised without opening a socket.
+function startSingleUseAListenerCandidate(options) {
+  const { policy, authorizedUntil, now = Date.now, bind } = options || {};
+  const privateBind = typeof options?.host === 'string' && isPrivateIPv4(options.host)
+    && typeof options.interfaceName === 'string' && options.interfaceName.length > 0
+    && Array.isArray(options.interfaces)
+    && options.interfaces.some((entry) => entry && entry.name === options.interfaceName
+      && Array.isArray(entry.addresses) && entry.addresses.some((address) => address
+        && address.address === options.host && address.family === 'IPv4' && address.internal === false));
+  if (!options || !policy || typeof bind !== 'function' || typeof now !== 'function'
+    || !Number.isSafeInteger(authorizedUntil) || !Number.isSafeInteger(now())
+    || authorizedUntil <= now() || authorizedUntil - now() > 15 * 60 * 1000
+    || (options.host !== '127.0.0.1' && !privateBind) || options.port !== 8443
+    || !policy.tlsKey || !policy.tlsCert || !policy.ca || !policy.issuer
+    || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
+    || !policy.expectedClaims || !policy.expectedRequest || !policy.service
+    || (policy.mode === 'github-oidc' && (!Array.isArray(policy.githubJwksKeys) || policy.githubJwksKeys.length === 0
+      || !Number.isSafeInteger(policy.githubJwksFetchedAt) || !Number.isSafeInteger(policy.githubJwksExpiresAt)
+      || policy.githubJwksExpiresAt <= now() || policy.githubJwksExpiresAt - policy.githubJwksFetchedAt > oidc.JWKS_SNAPSHOT_TTL_MS))) fail('single-use-policy-invalid');
+  validateLocalServerMaterial(policy);
+  if (policy.mode === 'github-oidc') requireGithubPolicy(policy);
+  let finished = false;
+  let accepted = false;
+  let closed = false;
+  let deadline;
+  const sockets = new Set();
+  const bindAbort = new AbortController();
+  let resolveClosed;
+  const closedPromise = new Promise((resolve) => { resolveClosed = resolve; });
+  const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
+    if (finished) { socket.destroy(); return; }
+    let data = ''; let complete = false;
+    socket.setTimeout(5000, () => socket.destroy());
+    socket.on('data', (chunk) => {
+      if (complete || finished) { socket.destroy(); return; }
+      data += chunk.toString('utf8');
+      if (Buffer.byteLength(data, 'utf8') > 65536) { complete = true; socket.destroy(); void close(); return; }
+      const newline = data.indexOf('\n');
+      if (newline < 0) return;
+      complete = true;
+      try {
+        if (newline !== data.length - 1) fail('invalid-envelope');
+        verifyLocalEnvelope(socket, data.slice(0, newline), policy, () => { if (now() >= authorizedUntil) fail('authorization-window-expired'); });
+        if (accepted) fail('single-use-proof-already-accepted');
+        accepted = true; finished = true;
+        socket.end(`${JSON.stringify({ ok: true, result: 'synthetic-local-proof-accepted' })}\n`, () => { void close(); });
+      } catch (error) {
+        finished = true;
+        socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`, () => { void close(); });
+      }
+    });
+    socket.on('error', () => { finished = true; void close(); });
+  });
+  server.once('close', () => resolveClosed());
+  server.on('connection', (socket) => {
+    if (finished || closed) { socket.destroy(); return; }
+    sockets.add(socket);
+    socket.once('close', () => sockets.delete(socket));
+    socket.setTimeout(options.socketTimeoutMs || 5000, () => { socket.destroy(); void close(); });
+    socket.on('error', () => { if (!finished) void close(); });
+  });
+  server.on('listening', () => { if (closed) server.close(() => resolveClosed()); });
+  server.on('error', () => { finished = true; if (!closed) void close(); else resolveClosed(); });
+  const close = () => {
+    if (closed) return closedPromise;
+    closed = true; finished = true;
+    bindAbort.abort();
+    if (deadline) clearTimeout(deadline);
+    for (const socket of sockets) socket.destroy();
+    if (!server.listening) {
+      try { server.close(() => resolveClosed()); } catch { resolveClosed(); }
+      return closedPromise;
+    }
+    server.close(() => resolveClosed());
+    return closedPromise;
+  };
+  deadline = setTimeout(() => { void close(); }, authorizedUntil - now());
+  deadline.unref?.();
+  let bound;
+  try {
+    bound = bind(server, options.host, options.port, bindAbort.signal);
+    if (bound !== server) fail('listener-bind-must-be-synchronous');
+  }
+  catch (error) { void close(); throw error; }
+  return { server, close, closed: closedPromise, address: () => server.address(), get accepted() { return accepted; }, bound };
+}
+
+function isPrivateIPv4(value) {
+  if (net.isIPv4(value) !== true) return false;
+  const octets = value.split('.').map(Number);
+  return octets[0] === 10 || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)
+    || (octets[0] === 192 && octets[1] === 168);
+}
+function isApprovedTargetIPv4(value) {
+  if (typeof value !== 'string' || net.isIPv4(value) !== true) return false;
+  const octets = value.split('.').map(Number);
+  return value !== '0.0.0.0' && value !== '255.255.255.255' && octets[0] !== 0 && octets[0] !== 127
+    && octets[0] < 224 && octets[3] !== 255 && !(octets[0] === 169 && octets[1] === 254)
+    && !(octets[0] === 192 && octets[1] === 0 && octets[2] === 2)
+    && !(octets[0] === 198 && octets[1] === 51 && octets[2] === 100)
+    && !(octets[0] === 203 && octets[1] === 0 && octets[2] === 113);
+}
+
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, runApprovedAClient, verifyCurrentConnection, validateLocalServerMaterial, validateApprovedTargetMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate, isPrivateIPv4, isApprovedTargetIPv4 };

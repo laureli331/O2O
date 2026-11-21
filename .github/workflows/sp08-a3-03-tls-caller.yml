@@ -1,0 +1,14 @@
+name: SP08-A3-03 same-job TLS caller candidate
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source-csr:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    uses: ./.github/workflows/sp08-a3-03-tls-source-reusable.yml
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
