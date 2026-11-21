@@ -213,6 +213,14 @@ function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, n
   return { ok: true, result: 'synthetic-local-proof-accepted' };
 }
 
+function verifyLocalEnvelope(socket, line, policy, checkWindow = () => {}) {
+  const envelope = parseJsonNoDuplicates(line);
+  if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
+  if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
+  checkWindow();
+  return verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
+}
+
 function startLocalVerificationServer(options) {
   const { policy } = options || {};
   if (!options || !policy || !policy.tlsKey || !policy.tlsCert || !policy.ca
@@ -237,10 +245,7 @@ function startLocalVerificationServer(options) {
       if (newline !== data.length - 1) { complete = true; socket.destroy(); return; }
       complete = true;
       try {
-        const envelope = parseJsonNoDuplicates(data.slice(0, newline));
-        if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
-        if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
-        verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
+        verifyLocalEnvelope(socket, data.slice(0, newline), policy);
         socket.end(`${JSON.stringify({ ok: true, result: 'synthetic-local-proof-accepted' })}\n`);
       } catch (error) {
         socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`);
@@ -275,11 +280,11 @@ function startSingleUseAListenerCandidate(options) {
   let closed = false;
   let deadline;
   const sockets = new Set();
+  const bindAbort = new AbortController();
   let resolveClosed;
   const closedPromise = new Promise((resolve) => { resolveClosed = resolve; });
   const server = tls.createServer({ key: policy.tlsKey, cert: policy.tlsCert, ca: policy.ca, requestCert: true, rejectUnauthorized: true, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3' }, (socket) => {
-    sockets.add(socket);
-    socket.once('close', () => sockets.delete(socket));
+    if (finished) { socket.destroy(); return; }
     let data = ''; let complete = false;
     socket.setTimeout(5000, () => socket.destroy());
     socket.on('data', (chunk) => {
@@ -290,38 +295,46 @@ function startSingleUseAListenerCandidate(options) {
       if (newline < 0) return;
       complete = true;
       try {
-        if (newline !== data.length - 1 || now() >= authorizedUntil) fail('authorization-window-expired');
-        const envelope = parseJsonNoDuplicates(data.slice(0, newline));
-        if (!exactKeys(envelope, ['v', 'id_token', 'proof_key_jwk', 'request_R', 'nonce', 'proof_a']) || envelope.v !== 'a303-bind-v1') fail('invalid-envelope');
-        if (JSON.stringify(envelope.request_R) !== JSON.stringify(policy.expectedRequest)) fail('request-policy-mismatch');
-        verifyCurrentConnection(socket, { token: envelope.id_token, proof: envelope.proof_a, jwk: envelope.proof_key_jwk, policy, request: envelope.request_R, nonce: envelope.nonce });
+        if (newline !== data.length - 1) fail('invalid-envelope');
+        verifyLocalEnvelope(socket, data.slice(0, newline), policy, () => { if (now() >= authorizedUntil) fail('authorization-window-expired'); });
         if (accepted) fail('single-use-proof-already-accepted');
         accepted = true; finished = true;
         socket.end(`${JSON.stringify({ ok: true, result: 'synthetic-local-proof-accepted' })}\n`, () => { void close(); });
       } catch (error) {
         finished = true;
-        socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`);
-        void close();
+        socket.end(`${JSON.stringify({ ok: false, code: typeof error.code === 'string' ? error.code : 'verification-rejected' })}\n`, () => { void close(); });
       }
     });
     socket.on('error', () => { finished = true; void close(); });
   });
-  server.on('error', () => { finished = true; void close(); });
+  server.on('connection', (socket) => {
+    if (finished || closed) { socket.destroy(); return; }
+    sockets.add(socket);
+    socket.once('close', () => sockets.delete(socket));
+    socket.setTimeout(options.socketTimeoutMs || 5000, () => { socket.destroy(); void close(); });
+    socket.on('error', () => { if (!finished) void close(); });
+  });
+  server.on('listening', () => { if (closed) server.close(() => resolveClosed()); });
+  server.on('error', () => { finished = true; if (!closed) void close(); else resolveClosed(); });
   const close = () => {
     if (closed) return closedPromise;
     closed = true; finished = true;
+    bindAbort.abort();
     if (deadline) clearTimeout(deadline);
     for (const socket of sockets) socket.destroy();
-    if (!server.listening) { resolveClosed(); return closedPromise; }
+    if (!server.listening) return closedPromise;
     server.close(() => resolveClosed());
     return closedPromise;
   };
   deadline = setTimeout(() => { void close(); }, authorizedUntil - now());
   deadline.unref?.();
   let bound;
-  try { bound = bind(server, options.host, options.port); }
+  try {
+    bound = bind(server, options.host, options.port, bindAbort.signal);
+    if (bound !== server) fail('listener-bind-must-be-synchronous');
+  }
   catch (error) { void close(); throw error; }
-  return { server, close, closed: closedPromise, get accepted() { return accepted; }, bound };
+  return { server, close, closed: closedPromise, address: () => server.address(), get accepted() { return accepted; }, bound };
 }
 
 module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate };

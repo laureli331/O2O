@@ -78,7 +78,7 @@ test('GitHub OIDC mode refuses to start before TLS material is valid', () => {
   } }), { code: 'local-server-policy-missing' });
 });
 
-async function runLoopback(mode, alterAudience = false, certificateReturn = false) {
+async function runLoopback(mode, alterAudience = false, certificateReturn = false, singleUse = false) {
   const certScript = `$ErrorActionPreference='Stop'
 function New-KeyCert([string]$name) { $key=[System.Security.Cryptography.RSA]::Create(2048); $req=[System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$name",$key,[System.Security.Cryptography.HashAlgorithmName]::SHA256,[System.Security.Cryptography.RSASignaturePadding]::Pkcs1); return @{key=$key;req=$req} }
 $ca=New-KeyCert 'o2o-test-ca'; $ca.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true,$false,0,$true)); $ca.cert=$ca.req.CreateSelfSigned([datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddHours(1))
@@ -108,13 +108,26 @@ Write-Output $out
     assert.throws(() => startLocalVerificationServer({ policy: { ...policy, allowedPeerFingerprints: ['not-a-sha256-pin'] } }), { code: 'client-certificate-pin-invalid' });
     const serverKey = certs.server.key;
     const clientKey = certs.client.key;
-    const local = startLocalVerificationServer({ policy });
+    const bindCalls = [];
+    const local = singleUse
+      ? startSingleUseAListenerCandidate({ policy, host: '127.0.0.1', port: 8443, authorizedUntil: Date.now() + 60_000, socketTimeoutMs: 1000, bind: (server, host, port) => { bindCalls.push({ host, port }); server.listen(port, host); return server; } })
+      : startLocalVerificationServer({ policy });
     let tlsConnections = 0;
     local.server.on('secureConnection', () => { tlsConnections += 1; });
     const server = local.server;
     await new Promise((resolve, reject) => { server.once('error', reject); server.once('listening', resolve); });
     try {
       const port = local.address().port;
+      if (singleUse === 'timeout') {
+        const raw = net.connect({ host: '127.0.0.1', port });
+        await new Promise((resolve, reject) => { raw.once('connect', resolve); raw.once('error', reject); });
+        await new Promise((resolve) => raw.once('close', resolve));
+        await local.closed;
+        assert.equal(local.accepted, false);
+        assert.equal(local.server.listening, false);
+        await local.close();
+        return;
+      }
       const clientOptions = { host: '127.0.0.1', port, key: clientKey, cert: clientCert, ca, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3', rejectUnauthorized: true, servername: 'localhost' };
       const now = Math.floor(Date.now() / 1000);
       const claims = { ...identity, run_id: '2', jti: 'fixture-jti', runner_environment: 'github-hosted', iat: now - 10, nbf: now - 10, exp: now + 300 };
@@ -174,12 +187,21 @@ Write-Output $out
         const proof = signCurrentConnection(clientSocket, token, commit, pair.privateKey);
         clientSocket.write(`${JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof })}\n`);
         assert.deepEqual(await response, { ok: true, result: 'synthetic-local-proof-accepted' });
+        if (singleUse) {
+          await local.closed;
+          assert.equal(local.accepted, true);
+          assert.deepEqual(bindCalls, [{ host: '127.0.0.1', port: 8443 }]);
+          assert.equal(local.server.listening, false);
+          await local.close();
+        }
         clientSocket.end();
       }
     } finally { await local.close(); }
 }
 
 test('A proof verifies over a real loopback TLS 1.3 client/server socket', () => runLoopback('synthetic'));
+test('single-use candidate accepts one real loopback proof and closes idempotently', () => runLoopback('synthetic', false, false, true));
+test('single-use candidate closes on an idle non-TLS connection timeout', () => runLoopback('synthetic', false, false, 'timeout'));
 test('GitHub RS256 proof verifies over a real loopback TLS 1.3 client/server socket', () => runLoopback('github-oidc'));
 test('GitHub RS256 dynamic audience mismatch is rejected by server recomputation', () => runLoopback('github-oidc', true));
 test('returned source-job certificate reaches one local mTLS A segment only after binding verification', () => runLoopback('github-oidc', false, true));
