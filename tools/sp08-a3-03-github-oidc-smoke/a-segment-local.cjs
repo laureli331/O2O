@@ -263,10 +263,16 @@ function startLocalVerificationServer(options) {
 // injectable so this candidate can be exercised without opening a socket.
 function startSingleUseAListenerCandidate(options) {
   const { policy, authorizedUntil, now = Date.now, bind } = options || {};
+  const privateBind = typeof options?.host === 'string' && isPrivateIPv4(options.host)
+    && typeof options.interfaceName === 'string' && options.interfaceName.length > 0
+    && Array.isArray(options.interfaces)
+    && options.interfaces.some((entry) => entry && entry.name === options.interfaceName
+      && Array.isArray(entry.addresses) && entry.addresses.some((address) => address
+        && address.address === options.host && address.family === 'IPv4' && address.internal === false));
   if (!options || !policy || typeof bind !== 'function' || typeof now !== 'function'
     || !Number.isSafeInteger(authorizedUntil) || !Number.isSafeInteger(now())
     || authorizedUntil <= now() || authorizedUntil - now() > 15 * 60 * 1000
-    || options.host !== '127.0.0.1' || options.port !== 8443
+    || (options.host !== '127.0.0.1' && !privateBind) || options.port !== 8443
     || !policy.tlsKey || !policy.tlsCert || !policy.ca || !policy.issuer
     || !Array.isArray(policy.allowedPeerFingerprints) || policy.allowedPeerFingerprints.length === 0
     || !policy.expectedClaims || !policy.expectedRequest || !policy.service
@@ -337,4 +343,11 @@ function startSingleUseAListenerCandidate(options) {
   return { server, close, closed: closedPromise, address: () => server.address(), get accepted() { return accepted; }, bound };
 }
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate };
+function isPrivateIPv4(value) {
+  if (net.isIPv4(value) !== true) return false;
+  const octets = value.split('.').map(Number);
+  return octets[0] === 10 || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)
+    || (octets[0] === 192 && octets[1] === 168);
+}
+
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, verifyCurrentConnection, validateLocalServerMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate, isPrivateIPv4 };
