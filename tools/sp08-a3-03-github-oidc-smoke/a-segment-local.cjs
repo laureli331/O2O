@@ -89,7 +89,7 @@ function signCurrentConnection(socket, token, commit, privateKey) {
 // Single-use offline A-segment client entry. Identity and action context are
 // explicit inputs; callers must supply the already-approved TLS client
 // material and an injected token transport (tests use a signed local fixture).
-async function runAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes, approvedTarget, authorizationDeadline }) {
+async function runAClient({ identity, request, policy, env, runtimeRequest, tlsOptions, randomBytes = crypto.randomBytes, approvedTarget, authorizationDeadline, connectTransport = tls.connect }) {
   const approved = approvedTarget && typeof approvedTarget.ipv4 === 'string' && net.isIPv4(approvedTarget.ipv4)
     && approvedTarget.port === 8443 && policy?.serverIPv4 === approvedTarget.ipv4
     && tlsOptions?.host === approvedTarget.ipv4 && tlsOptions?.port === 8443;
@@ -106,7 +106,9 @@ async function runAClient({ identity, request, policy, env, runtimeRequest, tlsO
   const { token, commit } = await requestDynamicAudienceToken({ identity, request, jwk, nonce, policy, env, runtimeRequest });
   if (approved && Date.now() >= authorizationDeadline) fail('authorization-window-expired');
   if (typeof token !== 'string' || token.length > 16384) fail('invalid-token');
-  const socket = tls.connect(tlsOptions);
+  const forbiddenTlsOverrides = ['servername', 'checkServerIdentity', 'lookup', 'session'];
+  if (approved && forbiddenTlsOverrides.some((key) => Object.hasOwn(tlsOptions, key))) fail('local-client-policy-missing');
+  const socket = connectTransport(tlsOptions);
   return await new Promise((resolve, reject) => {
     let response = ''; let done = false; let sent = false;
     const finish = (error, value) => { if (done) return; done = true; clearTimeout(timer); socket.destroy(); error ? reject(error) : resolve(value); };
@@ -116,6 +118,14 @@ async function runAClient({ identity, request, policy, env, runtimeRequest, tlsO
       try {
         if (approved && Date.now() >= authorizationDeadline) fail('authorization-window-expired');
         if (sent || socket.getProtocol() !== 'TLSv1.3' || socket.authorized !== true || socket.isSessionReused()) fail('tls-peer-rejected');
+        if (approved) {
+          const peer = socket.getPeerCertificate(true);
+          const expectedLeaf = new crypto.X509Certificate(policy.tlsCert);
+          const expectedCa = new crypto.X509Certificate(policy.ca);
+          if (!peer || !peer.raw || !crypto.timingSafeEqual(sha(peer.raw), sha(expectedLeaf.raw))
+            || new crypto.X509Certificate(peer.raw).checkIP(approvedTarget.ipv4) !== approvedTarget.ipv4
+            || !expectedLeaf.checkIssued(expectedCa) || !expectedLeaf.verify(expectedCa.publicKey)) fail('tls-peer-certificate-mismatch');
+        }
         sent = true;
         const proof = signCurrentConnection(socket, token, commit, pair.privateKey);
         const envelope = JSON.stringify({ v: 'a303-bind-v1', id_token: token, proof_key_jwk: jwk, request_R: request, nonce, proof_a: proof });
@@ -135,9 +145,13 @@ async function runAClient({ identity, request, policy, env, runtimeRequest, tlsO
     });
   });
 }
-function runLocalAClient(options) { return runAClient(options); }
+function runLocalAClient(options) {
+  if (!options) return runAClient(options);
+  const { approvedTarget: _approvedTarget, authorizationDeadline: _authorizationDeadline, connectTransport: _connectTransport, ...localOptions } = options;
+  return runAClient({ ...localOptions, approvedTarget: undefined, authorizationDeadline: undefined, connectTransport: tls.connect });
+}
 function runApprovedAClient(options) {
-  if (!options || !options.approvedTarget || typeof options.approvedTarget.ipv4 !== 'string' || net.isIPv4(options.approvedTarget.ipv4) !== true || options.approvedTarget.port !== 8443
+  if (!options || !options.approvedTarget || !isApprovedTargetIPv4(options.approvedTarget.ipv4) || options.approvedTarget.port !== 8443
     || !options.policy || options.policy.serverIPv4 !== options.approvedTarget.ipv4) fail('approved-target-policy-invalid');
   return runAClient(options);
 }
@@ -231,6 +245,7 @@ function verifyCurrentConnection(socket, { token, proof, jwk, policy, request, n
   if (!peer || !peer.raw || !policy.allowedPeerFingerprints.includes(sha(peer.raw).toString('hex'))) fail('peer-identity-rejected');
   const claims = policy.mode === 'github-oidc' ? verifyGithubToken(token, policy) : verifySyntheticToken(token, policy);
   for (const [key, expected] of Object.entries(policy.expectedClaims)) if (claims[key] !== expected) fail('claim-policy-mismatch');
+  if (policy.mode === 'github-oidc') for (const key of ['repository_id', 'run_id', 'run_attempt']) if (claims[key] !== request[key]) fail('request-identity-claim-mismatch');
   const commit = commitment(claims, request, jwk, nonce, policy);
   const audience = expectedAudience(commit);
   if (policy.mode === 'github-oidc') oidc.validateClaims(claims, audience, policy.expectedClaims.environment, policy.expectedClaims.run_attempt, Math.floor(Date.now() / 1000));
@@ -381,5 +396,14 @@ function isPrivateIPv4(value) {
   return octets[0] === 10 || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)
     || (octets[0] === 192 && octets[1] === 168);
 }
+function isApprovedTargetIPv4(value) {
+  if (typeof value !== 'string' || net.isIPv4(value) !== true) return false;
+  const octets = value.split('.').map(Number);
+  return value !== '0.0.0.0' && value !== '255.255.255.255' && octets[0] !== 0 && octets[0] !== 127
+    && octets[0] < 224 && octets[3] !== 255 && !(octets[0] === 169 && octets[1] === 254)
+    && !(octets[0] === 192 && octets[1] === 0 && octets[2] === 2)
+    && !(octets[0] === 198 && octets[1] === 51 && octets[2] === 100)
+    && !(octets[0] === 203 && octets[1] === 0 && octets[2] === 113);
+}
 
-module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, runApprovedAClient, verifyCurrentConnection, validateLocalServerMaterial, validateApprovedTargetMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate, isPrivateIPv4 };
+module.exports = { AUDIENCE_PREFIX, commitment, expectedAudience, requestDynamicAudienceToken, signCurrentConnection, runLocalAClient, runApprovedAClient, verifyCurrentConnection, validateLocalServerMaterial, validateApprovedTargetMaterial, startLocalVerificationServer, startSingleUseAListenerCandidate, isPrivateIPv4, isApprovedTargetIPv4 };

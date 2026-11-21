@@ -42,13 +42,17 @@ async function verifyReturnAndRunLocalA({ verifyOptions, identity, request, poli
   return await clientPromise;
 }
 
-async function verifyReturnAndRunApprovedA({ verifyOptions, identity, request, policy, env, runtimeRequest, approvedTarget, authorizationDeadline }) {
+async function verifyReturnAndRunApprovedA({ verifyOptions, identity, request, policy, env, runtimeRequest, approvedTarget, authorizationDeadline, connectTransport }) {
   if (!approvedTarget || typeof approvedTarget.ipv4 !== 'string' || approvedTarget.port !== 8443
     || policy?.serverIPv4 !== approvedTarget.ipv4) throw new Error('approved-target-policy-invalid');
   let clientPromise;
   verifyReturn({ ...verifyOptions, onVerifiedMaterial: (material) => {
+    const returnedCa = new crypto.X509Certificate(material.caPem);
+    const trustedCa = new crypto.X509Certificate(policy.ca);
+    if (returnedCa.fingerprint256 !== trustedCa.fingerprint256) throw Object.assign(new Error('tls-ca-pin-mismatch'), { code: 'tls-ca-pin-mismatch' });
     clientPromise = runApprovedAClient({ identity, request, policy, env, runtimeRequest,
       approvedTarget, authorizationDeadline,
+      connectTransport,
       tlsOptions: { host: approvedTarget.ipv4, port: 8443, minVersion: 'TLSv1.3', maxVersion: 'TLSv1.3', rejectUnauthorized: true,
         key: material.privateKeyPem, cert: material.leafPem, ca: material.caPem } });
   } });
