@@ -7,6 +7,10 @@ const aSegment = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.
 const tls = require('node:tls');
 const net = require('node:net');
 const { spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { verifyReturnAndRunLocalA } = require('../tools/sp08-a3-03-github-oidc-smoke/verify-return.cjs');
 const { commitment, signCurrentConnection, verifyCurrentConnection, startLocalVerificationServer, runLocalAClient } = require('../tools/sp08-a3-03-github-oidc-smoke/a-segment-local.cjs');
 
 test('A proof is signed against exporter of the current authorized TLS 1.3 socket', () => {
@@ -61,11 +65,11 @@ test('GitHub OIDC mode refuses to start when fixed identity policy is incomplete
   } }), { code: 'github-identity-policy-missing' });
 });
 
-async function runLoopback(mode, alterAudience = false) {
+async function runLoopback(mode, alterAudience = false, certificateReturn = false) {
   const certScript = `$ErrorActionPreference='Stop'
 function New-KeyCert([string]$name) { $key=[System.Security.Cryptography.RSA]::Create(2048); $req=[System.Security.Cryptography.X509Certificates.CertificateRequest]::new("CN=$name",$key,[System.Security.Cryptography.HashAlgorithmName]::SHA256,[System.Security.Cryptography.RSASignaturePadding]::Pkcs1); return @{key=$key;req=$req} }
 $ca=New-KeyCert 'o2o-test-ca'; $ca.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($true,$false,0,$true)); $ca.cert=$ca.req.CreateSelfSigned([datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddHours(1))
-function New-Leaf([string]$name,$caCert,$caKey) { $leaf=New-KeyCert $name; $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false,$false,0,$true)); $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,$true)); if($name -eq 'localhost'){$san=[System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder]::new();$san.AddDnsName('localhost');$leaf.req.CertificateExtensions.Add($san.Build())}; $leaf.cert=$leaf.req.Create($caCert,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddMinutes(10),[byte[]]([guid]::NewGuid().ToByteArray())); return @{cert=$leaf.cert.ExportCertificatePem();key=$leaf.key.ExportPkcs8PrivateKeyPem()} }
+function New-Leaf([string]$name,$caCert,$caKey) { $leaf=New-KeyCert $name; $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509BasicConstraintsExtension]::new($false,$false,0,$true)); $leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509KeyUsageExtension]::new([System.Security.Cryptography.X509Certificates.X509KeyUsageFlags]::DigitalSignature,$true)); if($name -eq 'localhost'){$san=[System.Security.Cryptography.X509Certificates.SubjectAlternativeNameBuilder]::new();$san.AddDnsName('localhost');$leaf.req.CertificateExtensions.Add($san.Build())}; if($name -eq 'synthetic-client'){$eku=[System.Security.Cryptography.OidCollection]::new();$null=$eku.Add([System.Security.Cryptography.Oid]::new('1.3.6.1.5.5.7.3.2'));$leaf.req.CertificateExtensions.Add([System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]::new($eku,$true))}; $csr=$leaf.req.CreateSigningRequestPem(); $leaf.cert=$leaf.req.Create($caCert,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::UtcNow.AddMinutes(10),[byte[]]([guid]::NewGuid().ToByteArray())); return @{cert=$leaf.cert.ExportCertificatePem();key=$leaf.key.ExportPkcs8PrivateKeyPem();csr=$csr} }
 $server=New-Leaf 'localhost' $ca.cert $ca.key; $client=New-Leaf 'synthetic-client' $ca.cert $ca.key
 $out=@{ca=$ca.cert.ExportCertificatePem();server=$server;client=$client}|ConvertTo-Json -Compress
 Write-Output $out
@@ -85,6 +89,8 @@ Write-Output $out
     const serverKey = certs.server.key;
     const clientKey = certs.client.key;
     const local = startLocalVerificationServer({ policy });
+    let tlsConnections = 0;
+    local.server.on('secureConnection', () => { tlsConnections += 1; });
     const server = local.server;
     await new Promise((resolve, reject) => { server.once('error', reject); server.once('listening', resolve); });
     try {
@@ -102,7 +108,7 @@ Write-Output $out
         const fullRequest = { v: 'a303-request-v1', method: 'POST', route_id: 'r', env_id: 'e', resource_id: 'r', action_id: 'a', artifact_digest: 'd', repository_id: '1', run_id: '2', run_attempt: '1', payload: { fixture: true } };
         policy.expectedRequest = fullRequest;
         let tokenCalls = 0;
-        const resultPromise = runLocalAClient({ identity: proofClientIdentity, request: fullRequest, policy, env: { ACTIONS_ID_TOKEN_REQUEST_URL: 'https://fixture.invalid/token', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'fixture', A303_EXPECTED_OIDC_ORIGIN: 'https://fixture.invalid' }, tlsOptions: clientOptions,
+        const actionArgs = { identity: proofClientIdentity, request: fullRequest, policy, env: { ACTIONS_ID_TOKEN_REQUEST_URL: 'https://fixture.invalid/token', ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'fixture', A303_EXPECTED_OIDC_ORIGIN: 'https://fixture.invalid' }, tlsOptions: clientOptions,
           runtimeRequest: async (url) => {
             tokenCalls += 1;
             const aud = new URL(String(url)).searchParams.get('audience');
@@ -110,10 +116,34 @@ Write-Output $out
             const part = (v) => Buffer.from(JSON.stringify(v)).toString('base64url'); const h = part({ alg: 'RS256', kid: 'github-fixture', typ: 'JWT' }); const b = part(claims); const input = `${h}.${b}`;
             const signed = `${input}.${crypto.sign('RSA-SHA256', Buffer.from(input, 'ascii'), issuer.privateKey).toString('base64url')}`;
             return { statusCode: 200, headers: { 'content-type': 'application/json' }, body: JSON.stringify({ value: signed }) };
-          } });
-        if (alterAudience) await assert.rejects(resultPromise, { code: 'audience-mismatch' });
+          } };
+        let resultPromise;
+        if (certificateReturn) {
+          const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-return-source-'));
+          const artifactDir = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-return-artifact-'));
+          const policyForReturn = { caFingerprint256: new crypto.X509Certificate(ca).fingerprint256.replaceAll(':', '').toLowerCase(), operatorActorId: '1', operatorLogin: 'fixture', repository: 'owner/repo', returnWorkflowPath: '.github/workflows/sp08-a3-03-csr-return.yml', returnWorkflowRef: 'refs/heads/main', returnWorkflowSha: 'a'.repeat(40), sourceWorkflowPath: '.github/workflows/sp08-a3-03-csr-source.yml', sourceWorkflowRef: 'refs/heads/main', sourceWorkflowSha: 'b'.repeat(40) };
+          const sourceRun = { source_run_id: '2', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: 'c'.repeat(40), source_started_at: '2026-11-21T00:00:00Z' };
+          const csrBytes = Buffer.from(certs.client.csr);
+          const csrSha = crypto.createHash('sha256').update(csrBytes).digest('hex');
+          fs.writeFileSync(path.join(tempDir, 'source.key.pem'), certs.client.key);
+          fs.writeFileSync(path.join(tempDir, 'source.csr.pem'), csrBytes);
+          fs.writeFileSync(path.join(tempDir, 'source-manifest.json'), JSON.stringify({ ...sourceRun, csr_sha256: csrSha }));
+          fs.writeFileSync(path.join(artifactDir, 'binding.json'), JSON.stringify({ ...sourceRun, csr_sha256: alterAudience ? '0'.repeat(64) : csrSha }));
+          fs.writeFileSync(path.join(artifactDir, 'leaf.pem'), clientCert);
+          fs.writeFileSync(path.join(artifactDir, 'ca.pem'), ca);
+          const verifyOptions = { tempDir, artifactDir, runId: '2', runAttempt: '1', commit: 'c'.repeat(40), returnRunId: '3', pwshPath: process.env.O2O_TEST_PWSH, policy: policyForReturn };
+          const localTlsOptions = { host: clientOptions.host, port: clientOptions.port, minVersion: clientOptions.minVersion, maxVersion: clientOptions.maxVersion, rejectUnauthorized: clientOptions.rejectUnauthorized, servername: clientOptions.servername };
+          resultPromise = verifyReturnAndRunLocalA({ verifyOptions, ...actionArgs, tlsOptions: localTlsOptions }).finally(() => {
+            for (const name of ['source.key.pem', 'source.csr.pem', 'source-manifest.json']) fs.unlinkSync(path.join(tempDir, name));
+            for (const name of ['binding.json', 'leaf.pem', 'ca.pem']) fs.unlinkSync(path.join(artifactDir, name));
+            fs.rmdirSync(tempDir); fs.rmdirSync(artifactDir);
+          });
+        } else resultPromise = runLocalAClient(actionArgs);
+        if (alterAudience && certificateReturn) await assert.rejects(resultPromise, /return-csr-digest-binding-mismatch/);
+        else if (alterAudience) await assert.rejects(resultPromise, { code: 'audience-mismatch' });
         else { const result = await resultPromise; assert.equal(result.ok, true); assert.equal(result.result, 'synthetic-local-proof-accepted'); }
-        assert.equal(tokenCalls, 1);
+        assert.equal(tokenCalls, certificateReturn && alterAudience ? 0 : 1);
+        if (certificateReturn) assert.equal(tlsConnections, alterAudience ? 0 : 1);
       } else {
         const clientSocket = tls.connect(clientOptions);
         await new Promise((resolve, reject) => { const timer=setTimeout(()=>reject(new Error('tls-timeout')),5000); clientSocket.once('secureConnect',()=>{clearTimeout(timer);resolve();}); clientSocket.once('error',(error)=>{clearTimeout(timer);reject(error);}); });
@@ -133,6 +163,8 @@ Write-Output $out
 test('A proof verifies over a real loopback TLS 1.3 client/server socket', () => runLoopback('synthetic'));
 test('GitHub RS256 proof verifies over a real loopback TLS 1.3 client/server socket', () => runLoopback('github-oidc'));
 test('GitHub RS256 dynamic audience mismatch is rejected by server recomputation', () => runLoopback('github-oidc', true));
+test('returned source-job certificate reaches one local mTLS A segment only after binding verification', () => runLoopback('github-oidc', false, true));
+test('failed certificate return binding causes zero token and TLS actions', () => runLoopback('github-oidc', true, true));
 
 test('dynamic audience is derived from explicit workflow identity, request, fresh proof key and nonce before one injected token request', async () => {
   const pair = crypto.generateKeyPairSync('ed25519');
