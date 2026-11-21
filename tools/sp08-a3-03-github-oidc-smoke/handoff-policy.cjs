@@ -2,6 +2,7 @@
 
 const POLICY_KEYS = Object.freeze(['caFingerprint256', 'operatorActorId', 'operatorLogin', 'repository', 'returnWorkflowPath', 'returnWorkflowRef', 'returnWorkflowSha', 'sourceWorkflowPath', 'sourceWorkflowRef', 'sourceWorkflowSha']);
 const SOURCE_PATH = '.github/workflows/sp08-a3-03-csr-source.yml';
+const TLS_CALLER_PATH = '.github/workflows/sp08-a3-03-tls-caller.yml';
 const RETURN_PATH = '.github/workflows/sp08-a3-03-csr-return.yml';
 
 function parsePolicy(serialized) {
@@ -15,7 +16,7 @@ function parsePolicy(serialized) {
 function requireConfiguredPolicy(policy = parsePolicy(process.env.A303_HANDOFF_POLICY)) {
   if (!policy || Object.values(policy).some((value) => typeof value !== 'string' || value.length === 0)) throw new Error('handoff-policy-unconfigured');
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(policy.repository)
-    || policy.sourceWorkflowPath !== SOURCE_PATH || policy.returnWorkflowPath !== RETURN_PATH
+    || ![SOURCE_PATH, TLS_CALLER_PATH].includes(policy.sourceWorkflowPath) || policy.returnWorkflowPath !== RETURN_PATH
     || !/^refs\/heads\/[A-Za-z0-9_.\/-]{1,180}$/.test(policy.sourceWorkflowRef)
     || !/^refs\/heads\/[A-Za-z0-9_.\/-]{1,180}$/.test(policy.returnWorkflowRef)
     || !/^[a-f0-9]{40}$/.test(policy.sourceWorkflowSha)

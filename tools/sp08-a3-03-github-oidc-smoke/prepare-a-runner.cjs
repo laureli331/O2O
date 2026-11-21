@@ -23,8 +23,9 @@ function buildApprovedConfig({ serialized, env = process.env, returnRunId }) {
   const request = { ...template, repository_id: context.repository_id, run_id: context.run_id, run_attempt: context.run_attempt };
   const verify = approved.verifyTemplate;
   if (!verify || !/^[1-9][0-9]*$/.test(returnRunId || '') || !env.RUNNER_TEMP || !env.A303_PWSH) reject('runner-launch-context-invalid');
+  const policy = { ...approved.policy, expectedRequest: request };
   const config = { mode: approved.mode, authorization: approved.authorization, authorizedUntil: approved.authorizedUntil,
-    targetIPv4: approved.targetIPv4, port: 8443, policy: approved.policy, request, approvedRequest: structuredClone(request),
+    targetIPv4: approved.targetIPv4, port: 8443, policy, request, approvedRequest: structuredClone(request),
     verifyOptions: { tempDir: env.RUNNER_TEMP, artifactDir: path.join(env.RUNNER_TEMP, 'a303-return'), runId: context.run_id,
       runAttempt: context.run_attempt, commit: context.workflow_sha, returnRunId, pwshPath: env.A303_PWSH,
       ...verify } };
@@ -33,9 +34,12 @@ function buildApprovedConfig({ serialized, env = process.env, returnRunId }) {
 }
 async function main(argv = process.argv.slice(2), deps = {}) {
   try {
+    const checkOnly = argv[0] === '--check-only';
+    if (!checkOnly && argv[0] !== '--execute-approved') reject('runner-mode-invalid');
     const config = buildApprovedConfig({ serialized: (deps.env || process.env).A303_TLS_RUNNER_POLICY,
-      env: deps.env || process.env, returnRunId: (deps.env || process.env).A303_RETURN_RUN_ID });
-    return await runnerMain([argv[0], 'in-memory'], { ...deps, readConfig: () => config });
+      env: deps.env || process.env, returnRunId: checkOnly ? '1' : (deps.env || process.env).A303_RETURN_RUN_ID });
+    if (checkOnly) { config.mode = 'check-only'; config.authorization = 'local-check-only'; }
+    return await runnerMain([checkOnly ? '--check-only' : '--execute-approved', 'in-memory'], { ...deps, readConfig: () => config });
   } catch (error) {
     (deps.writeError || ((value) => process.stderr.write(value)))(`${error.code || 'runner-policy-invalid'}\n`);
     return 1;
