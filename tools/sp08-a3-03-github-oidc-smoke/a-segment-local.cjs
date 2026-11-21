@@ -313,6 +313,7 @@ function startSingleUseAListenerCandidate(options) {
     });
     socket.on('error', () => { finished = true; void close(); });
   });
+  server.once('close', () => resolveClosed());
   server.on('connection', (socket) => {
     if (finished || closed) { socket.destroy(); return; }
     sockets.add(socket);
@@ -328,7 +329,10 @@ function startSingleUseAListenerCandidate(options) {
     bindAbort.abort();
     if (deadline) clearTimeout(deadline);
     for (const socket of sockets) socket.destroy();
-    if (!server.listening) return closedPromise;
+    if (!server.listening) {
+      try { server.close(() => resolveClosed()); } catch { resolveClosed(); }
+      return closedPromise;
+    }
     server.close(() => resolveClosed());
     return closedPromise;
   };

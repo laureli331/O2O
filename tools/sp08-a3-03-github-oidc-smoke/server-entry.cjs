@@ -1,14 +1,15 @@
 'use strict';
 
 // Explicit offline preflight entry. It reads a caller-supplied local JSON file,
-// validates the existing A-segment TLS/JWKS material, and never binds or fetches.
+// validates the existing A-segment TLS/JWKS material. Check-only never binds/fetches.
 const fs = require('node:fs');
 const os = require('node:os');
 const localA = require('./a-segment-local.cjs');
+const oidc = require('./oidc-smoke.cjs');
 
-function validateCheckOnlyConfig(config, now = Date.now()) {
+function validateConfigMaterial(config, mode, now) {
   if (!config || typeof config !== 'object' || Array.isArray(config)
-    || config.mode !== 'check-only' || !Number.isSafeInteger(config.authorizedUntil)
+    || config.mode !== mode || !Number.isSafeInteger(config.authorizedUntil)
     || !Number.isSafeInteger(now) || config.authorizedUntil <= now
     || config.authorizedUntil - now > 15 * 60 * 1000) {
     const error = new Error('server-entry-authorization-invalid'); error.code = 'server-entry-authorization-invalid'; throw error;
@@ -19,31 +20,57 @@ function validateCheckOnlyConfig(config, now = Date.now()) {
       || !Array.isArray(config.policy.githubJwksKeys) || config.policy.githubJwksKeys.length === 0
       || !Number.isSafeInteger(config.policy.githubJwksFetchedAt)
       || !Number.isSafeInteger(config.policy.githubJwksExpiresAt)
-      || config.policy.githubJwksExpiresAt <= now) {
+      || config.policy.githubJwksFetchedAt > now
+      || config.policy.githubJwksExpiresAt <= now
+      || config.policy.githubJwksExpiresAt - config.policy.githubJwksFetchedAt > oidc.JWKS_SNAPSHOT_TTL_MS) {
       const error = new Error('server-entry-jwks-snapshot-invalid'); error.code = 'server-entry-jwks-snapshot-invalid'; throw error;
     }
   }
+}
+
+function validateCheckOnlyConfig(config, now = Date.now()) {
+  validateConfigMaterial(config, 'check-only', now);
   return Object.freeze({ checked: true, mode: 'check-only', networkRequests: 0, listenersBound: 0 });
 }
 
-function main(argv = process.argv.slice(2)) {
+async function main(argv = process.argv.slice(2), deps = {}) {
+  const writeOut = deps.writeOut || ((value) => process.stdout.write(value));
+  const writeError = deps.writeError || ((value) => process.stderr.write(value));
   if (argv.length !== 2 || (argv[0] !== '--check-only' && argv[0] !== '--start-approved')) {
-    process.stderr.write('usage: node server-entry.cjs --check-only|--start-approved <local-config.json>\n');
+    writeError('usage: node server-entry.cjs --check-only|--start-approved <local-config.json>\n');
     return 2;
   }
   try {
-    const config = JSON.parse(fs.readFileSync(argv[1], 'utf8'));
-    const result = argv[0] === '--check-only' ? validateCheckOnlyConfig(config) : startApproved(config);
-    process.stdout.write(`${JSON.stringify(result)}\n`);
-    return 0;
+    const config = (deps.readConfig || ((filename) => JSON.parse(fs.readFileSync(filename, 'utf8'))))(argv[1]);
+    if (argv[0] === '--check-only') {
+      validateCheckOnlyConfig(config);
+      writeOut(`${JSON.stringify({ checked: true, mode: 'check-only', networkRequests: 0, listenerAttempts: 0, listenersActive: 0 })}\n`);
+      return 0;
+    }
+    const listener = (deps.startApproved || startApproved)(config, deps.startOptions);
+    let interrupted = false;
+    const stop = () => { interrupted = true; void listener.close(); };
+    const onInt = () => stop();
+    const onTerm = () => stop();
+    process.on('SIGINT', onInt);
+    process.on('SIGTERM', onTerm);
+    try {
+      await listener.closed;
+    } finally {
+      process.off('SIGINT', onInt);
+      process.off('SIGTERM', onTerm);
+    }
+    const accepted = listener.accepted === true;
+    writeOut(`${JSON.stringify({ mode: 'start-approved', ready: false, accepted, result: accepted ? 'accepted' : 'not-accepted', interrupted, listenerAttempts: 1, listenersActive: 0, networkRequests: 0 })}\n`);
+    return accepted && !interrupted ? 0 : 1;
   } catch (error) {
     const code = error && typeof error.code === 'string' ? error.code : 'server-entry-check-failed';
-    process.stderr.write(`${code}\n`);
+    writeError(`${code}\n`);
     return 1;
   }
 }
 
-function startApproved(config, { interfaces = os.networkInterfaces(), bind = (server, host, port) => server.listen(port, host) } = {}) {
+function startApproved(config, { interfaces = os.networkInterfaces(), bind = (server, host, port, signal) => server.listen({ port, host, signal }) } = {}) {
   const now = Date.now();
   if (!config || config.mode !== 'start-approved' || config.authorization !== 'explicit-temporary'
     || !Number.isSafeInteger(config.authorizedUntil) || config.authorizedUntil <= now
@@ -58,7 +85,7 @@ function startApproved(config, { interfaces = os.networkInterfaces(), bind = (se
     && address.family === 'IPv4' && address.internal === false)) {
     const error = new Error('server-entry-interface-address-mismatch'); error.code = 'server-entry-interface-address-mismatch'; throw error;
   }
-  localA.validateLocalServerMaterial(config.policy, now);
+  validateConfigMaterial(config, 'start-approved', now);
   return localA.startSingleUseAListenerCandidate({
     policy: config.policy, host: config.bindIPv4, interfaceName: config.interfaceName,
     interfaces: [{ name: config.interfaceName, addresses }], port: 8443,
@@ -66,5 +93,5 @@ function startApproved(config, { interfaces = os.networkInterfaces(), bind = (se
   });
 }
 
-if (require.main === module) process.exitCode = main();
+if (require.main === module) void main().then((code) => { process.exitCode = code; });
 module.exports = { validateCheckOnlyConfig, startApproved, main };
