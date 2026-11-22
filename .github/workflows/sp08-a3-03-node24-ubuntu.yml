@@ -1,0 +1,51 @@
+name: SP08 A3-03 Ubuntu Node 24 targeted tests
+
+on:
+  push:
+    branches:
+      - codex/sp08-a303-node24-ubuntu
+    paths:
+      - .github/workflows/sp08-a3-03-node24-ubuntu.yml
+      - tools/sp08-a3-03-github-oidc-smoke/jwks-handoff.cjs
+      - tools/sp08-a3-03-github-oidc-smoke/jwks-handoff.test.cjs
+      - tools/sp08-a3-03-github-oidc-smoke/jwks-loader.test.cjs
+      - tools/sp08-a3-03-github-oidc-smoke/server-entry.cjs
+      - tests/sp08-a3-03-server-entry.test.cjs
+      - tests/sp08-a3-03-a-segment-local.test.cjs
+
+permissions:
+  contents: read
+
+jobs:
+  ubuntu-node24:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the exact validation commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Set up official Node.js 24.22.3 x64
+        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+        with:
+          node-version: 24.22.3
+          architecture: x64
+          check-latest: true
+      - name: Verify runner, runtime and PowerShell fixture support
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -s)" = Linux
+          test "$(uname -m)" = x86_64
+          node -e "if (process.version !== 'v24.22.3' || process.platform !== 'linux' || process.arch !== 'x64') process.exit(1); console.log(JSON.stringify({node: process.version, platform: process.platform, arch: process.arch, openssl: process.versions.openssl}))"
+          command -v pwsh
+          pwsh -NoProfile -NonInteractive -Command '$PSVersionTable.PSVersion.ToString()'
+          echo "O2O_TEST_PWSH=$(command -v pwsh)" >> "$GITHUB_ENV"
+      - name: Run only the four approved Node test files
+        shell: bash
+        run: |
+          node --test \
+            tools/sp08-a3-03-github-oidc-smoke/jwks-handoff.test.cjs \
+            tools/sp08-a3-03-github-oidc-smoke/jwks-loader.test.cjs \
+            tests/sp08-a3-03-server-entry.test.cjs \
+            tests/sp08-a3-03-a-segment-local.test.cjs
