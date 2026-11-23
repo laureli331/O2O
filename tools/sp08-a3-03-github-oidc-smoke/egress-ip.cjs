@@ -8,6 +8,7 @@ const net = require('node:net');
 const ENDPOINT = 'https://api.ipify.org/';
 const MAX_BODY_BYTES = 64;
 const MAX_AGE_MS = 5 * 60 * 1000;
+const TOTAL_TIMEOUT_MS = 10000;
 
 function fail(code) { throw new Error(code); }
 
@@ -32,34 +33,45 @@ function validateContext(context) {
     || !/^[a-f0-9]{64}$/.test(context.csrSha256)) fail('egress-context-invalid');
 }
 
-function requestPublicIpv4(request = https.get) {
+function requestPublicIpv4(request = https.get, totalTimeoutMs = TOTAL_TIMEOUT_MS) {
   return new Promise((resolve, reject) => {
     let settled = false;
+    let req;
+    let res;
+    const timer = setTimeout(() => finish(new Error('egress-total-timeout')), totalTimeoutMs);
     const done = (error, value) => {
       if (settled) return;
       settled = true;
+      clearTimeout(timer);
+      if (error) {
+        if (res && typeof res.destroy === 'function') res.destroy();
+        if (req && typeof req.destroy === 'function') req.destroy();
+      }
       if (error) reject(error); else resolve(value);
     };
-    let req;
+    const finish = done;
     try {
-      req = request(ENDPOINT, { timeout: 5000, headers: { accept: 'text/plain' } }, (res) => {
-        if (res.statusCode !== 200 || res.headers.location !== undefined) {
-          res.resume(); done(new Error('egress-http-response-rejected')); return;
+      req = request(ENDPOINT, { timeout: 5000, headers: { accept: 'text/plain' } }, (response) => {
+        res = response;
+        if (response.statusCode !== 200 || response.headers.location !== undefined) {
+          done(new Error('egress-http-response-rejected')); return;
         }
-        let body = '';
+        const chunks = [];
         let bytes = 0;
-        res.setEncoding('ascii');
-        res.on('data', (chunk) => {
-          bytes += Buffer.byteLength(chunk, 'ascii');
-          if (bytes > MAX_BODY_BYTES) { res.destroy(); done(new Error('egress-response-too-large')); return; }
-          body += chunk;
+        response.on('data', (chunk) => {
+          const raw = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+          bytes += raw.length;
+          if (bytes > MAX_BODY_BYTES) { done(new Error('egress-response-too-large')); return; }
+          chunks.push(raw);
         });
-        res.on('end', () => {
-          const ip = body.trim();
+        response.on('end', () => {
+          const body = Buffer.concat(chunks);
+          if (body.some((byte) => byte > 0x7f)) { done(new Error('egress-response-nonascii')); return; }
+          const ip = body.toString('ascii').trim();
           if (!isUsablePublicIpv4(ip)) { done(new Error('egress-ip-invalid')); return; }
           done(null, ip);
         });
-        res.on('error', () => done(new Error('egress-response-failed')));
+        response.on('error', () => done(new Error('egress-response-failed')));
       });
     } catch { done(new Error('egress-request-failed')); return; }
     req.on('timeout', () => req.destroy(new Error('timeout')));
@@ -102,6 +114,7 @@ function verifyEgressManifest(value, expected, now = new Date()) {
     || !isUsablePublicIpv4(value.ipv4) || value.cidr_suggestion !== `${value.ipv4}/32`) fail('egress-manifest-content-invalid');
   const queried = Date.parse(value.queried_at);
   const expires = Date.parse(value.expires_at);
+  if (!(now instanceof Date) || !Number.isFinite(now.getTime())) fail('egress-now-invalid');
   const isoMillis = /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/;
   if (!isoMillis.test(value.queried_at) || !isoMillis.test(value.expires_at)
     || !Number.isFinite(queried) || !Number.isFinite(expires) || expires - queried !== MAX_AGE_MS
@@ -109,9 +122,28 @@ function verifyEgressManifest(value, expected, now = new Date()) {
   return value.cidr_suggestion;
 }
 
+function readExpectedContext(file) {
+  const value = JSON.parse(fs.readFileSync(file, 'utf8'));
+  if (!value || typeof value !== 'object' || Array.isArray(value)
+    || Object.keys(value).sort().join('|') !== ['csrSha256', 'runAttempt', 'runId', 'workflowSha'].sort().join('|')) fail('egress-expected-context-invalid');
+  validateContext(value);
+  return value;
+}
+
+function verifyManifestFile(manifestFile, expectedContextFile, now = new Date()) {
+  const manifest = JSON.parse(fs.readFileSync(manifestFile, 'utf8'));
+  const expected = readExpectedContext(expectedContextFile);
+  return verifyEgressManifest(manifest, expected, now);
+}
+
 if (require.main === module) {
   (async () => {
     try {
+      if (process.argv[2] === 'verify') {
+        if (process.argv.length !== 5) fail('egress-verify-usage');
+        process.stdout.write(`${verifyManifestFile(process.argv[3], process.argv[4])}\n`);
+        return;
+      }
       const { RUNNER_TEMP, GITHUB_RUN_ID, GITHUB_RUN_ATTEMPT, GITHUB_WORKFLOW_SHA, GITHUB_OUTPUT } = process.env;
       if (!RUNNER_TEMP || !GITHUB_OUTPUT || !process.env.A303_CSR_SHA256) fail('egress-runner-context-required');
       const outputFile = path.join(RUNNER_TEMP, 'egress-ip-manifest.json');
@@ -125,4 +157,4 @@ if (require.main === module) {
   })();
 }
 
-module.exports = { createEgressManifest, isUsablePublicIpv4, requestPublicIpv4, verifyEgressManifest };
+module.exports = { createEgressManifest, isUsablePublicIpv4, readExpectedContext, requestPublicIpv4, verifyEgressManifest, verifyManifestFile };
