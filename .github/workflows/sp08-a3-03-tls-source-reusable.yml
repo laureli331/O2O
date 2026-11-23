@@ -50,6 +50,11 @@ jobs:
         id: csr
         env: { A303_PWSH: pwsh }
         run: node tools/sp08-a3-03-github-oidc-smoke/source-csr.cjs
+      - name: Observe bounded public IPv4 for a same-job /32 suggestion
+        id: egress
+        env:
+          A303_CSR_SHA256: ${{ steps.csr.outputs.csr_sha256 }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/egress-ip.cjs
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         name: Upload only public CSR and binding manifest
         with:
@@ -57,6 +62,7 @@ jobs:
           path: |
             ${{ runner.temp }}/source.csr.pem
             ${{ runner.temp }}/source-manifest.json
+            ${{ runner.temp }}/egress-ip-manifest.json
           if-no-files-found: error
           retention-days: 1
       - name: Wait for exactly one trusted certificate return run
