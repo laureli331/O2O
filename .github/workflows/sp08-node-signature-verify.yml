@@ -1,0 +1,23 @@
+name: SP08 Node release signature verification
+
+on:
+  push:
+    branches:
+      - codex/sp08-node-signature-verify
+    paths:
+      - .github/workflows/sp08-node-signature-verify.yml
+      - tools/sp08-node-signature-verify.sh
+      - tests/sp08-node-signature-verify.test.cjs
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: ${{ github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-node-signature-verify' && github.event_name == 'push' && github.run_attempt == 1 }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Verify official Node.js release signature and recorded digest
+        run: bash tools/sp08-node-signature-verify.sh
