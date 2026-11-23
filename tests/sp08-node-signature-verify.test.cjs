@@ -24,7 +24,9 @@ test('Node release signature candidate is manual, read-only, pinned, and digest-
   assert.match(script, /4f2b175a6d53a5c617a80dba2676238a0688cef28c6da4eba35c7d844e66fcfb/);
   assert.match(script, /release-keys\/\$\{release_keys_commit\}\/gpg\/pubring\.kbx/);
   assert.match(script, /readonly release_keys_commit='481637f813e912c4aa3622d7964ab426c97b8e8d'/);
-  assert.match(script, /gpgv --keyring/);
+  assert.equal((script.match(/gpgv --keyring/g) ?? []).length, 1);
+  assert.match(script, /SHASUMS256\.txt\.asc/);
+  assert.doesNotMatch(script, /SHASUMS256\.txt\.sig/);
   assert.match(script, /count != 1 \|\| bad/);
   assert.doesNotMatch(script, /node-v24\.22\.3-linux-x64\.tar\.xz"\s+-o|apt(-get)?\s+install/i);
 });

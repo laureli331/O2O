@@ -12,13 +12,10 @@ workdir="$(mktemp -d)"
 # GitHub-hosted runner is disposable; leave its temporary evidence to runner teardown.
 
 curl --fail --silent --show-error --location "${base}/SHASUMS256.txt.asc" -o "${workdir}/SHASUMS256.txt.asc"
-curl --fail --silent --show-error --location "${base}/SHASUMS256.txt.sig" -o "${workdir}/SHASUMS256.txt.sig"
 curl --fail --silent --show-error --location "${keyring_url}" -o "${workdir}/pubring.kbx"
 
-# Node's official clear-signed manifest is verified by gpgv; the detached
-# signature is fetched too as the requested release artifact and cross-check.
+# Follow Node's official clear-signed manifest verification procedure.
 gpgv --keyring "${workdir}/pubring.kbx" --output "${workdir}/SHASUMS256.txt" "${workdir}/SHASUMS256.txt.asc"
-gpgv --keyring "${workdir}/pubring.kbx" "${workdir}/SHASUMS256.txt.sig" "${workdir}/SHASUMS256.txt"
 
 awk -v file="${archive}" -v expected="${expected}" '
   $2 == file { count++; if ($1 != expected) bad=1 }
