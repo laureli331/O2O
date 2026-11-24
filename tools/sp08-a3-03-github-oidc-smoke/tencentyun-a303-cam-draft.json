@@ -11,14 +11,7 @@
       "resource": [
         "qcs::tat::uin/<ACCOUNT_ID>:command/<FIXED_COMMAND_ID>",
         "qcs::cvm:<REGION>:uin/<ACCOUNT_ID>:instance/<ONE_CVM_ID>"
-      ],
-      "condition": {
-        "ip": {
-          "qcs:source-ip": [
-            "<OPERATOR_EGRESS>/32"
-          ]
-        }
-      }
+      ]
     },
     {
       "effect": "allow",
@@ -27,14 +20,7 @@
       ],
       "resource": [
         "<UNRESOLVED — DO NOT GRANT UNTIL CAM RESOURCE GRANULARITY IS VERIFIED>"
-      ],
-      "condition": {
-        "ip": {
-          "qcs:source-ip": [
-            "<OPERATOR_EGRESS>/32"
-          ]
-        }
-      }
+      ]
     },
     {
       "effect": "allow",
@@ -45,8 +31,7 @@
       ],
       "resource": [
         "qcs::cvm::uin/<ACCOUNT_ID>:sg/<DEDICATED_RUNNER_SG_ID>"
-      ],
-      "condition": null
+      ]
     }
   ]
 }
