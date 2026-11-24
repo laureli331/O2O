@@ -5,7 +5,7 @@ jobs:
   source-csr:
     if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 6
+    timeout-minutes: 10
     environment:
       name: SP08-A3-03-OIDC-smoke
     permissions:
