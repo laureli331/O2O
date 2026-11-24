@@ -3,35 +3,35 @@
   "version": "2.0",
   "statement": [
     {
-      "effect": "allow",
+      "resource": [
+        "qcs::tat:<REGION>:uin/<ACCOUNT_ID>:command/<FIXED_COMMAND_ID>",
+        "qcs::cvm:<REGION>:uin/<ACCOUNT_ID>:instance/<ONE_CVM_ID>"
+      ],
       "action": [
-        "tat:InvokeCommand",
+        "tat:InvokeCommand"
+      ],
+      "effect": "allow"
+    },
+    {
+      "resource": [
+        "qcs::tat:<REGION>:uin/<ACCOUNT_ID>:command/<FIXED_COMMAND_ID>",
+        "qcs::cvm:<REGION>:uin/<ACCOUNT_ID>:instance/<ONE_CVM_ID>"
+      ],
+      "action": [
         "tat:DescribeInvocationTasks"
       ],
-      "resource": [
-        "qcs::tat::uin/<ACCOUNT_ID>:command/<FIXED_COMMAND_ID>",
-        "qcs::cvm:<REGION>:uin/<ACCOUNT_ID>:instance/<ONE_CVM_ID>"
-      ]
+      "effect": "allow"
     },
     {
-      "effect": "allow",
-      "action": [
-        "tat:DescribeInvocations"
+      "resource": [
+        "qcs::cvm:<REGION>:uin/<ACCOUNT_ID>:sg/<DEDICATED_RUNNER_SG_ID>"
       ],
-      "resource": [
-        "<UNRESOLVED — DO NOT GRANT UNTIL CAM RESOURCE GRANULARITY IS VERIFIED>"
-      ]
-    },
-    {
-      "effect": "allow",
       "action": [
         "vpc:DescribeSecurityGroupPolicies",
         "vpc:CreateSecurityGroupPolicies",
         "vpc:DeleteSecurityGroupPolicies"
       ],
-      "resource": [
-        "qcs::cvm::uin/<ACCOUNT_ID>:sg/<DEDICATED_RUNNER_SG_ID>"
-      ]
+      "effect": "allow"
     }
   ]
 }
