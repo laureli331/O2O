@@ -2,10 +2,11 @@
 
 ## SP08/A3-03 单次A段真实整链与回收（2026-11-24）
 
-- 任务状态：**BLOCKED，等待两项云资源回收证据**；A3-03 继续 HOLD。候选已发布 SHA：`713df29056c979992e9ecb646ad25498eee0ec13`。未运行 caller/CSR-return 作业，未设置临时 GitHub 变量，未执行 TAT 供应。
-- 创建记录（北京时间）：CVM `ins-knnuwne7`，开通列表记录 12:45:24；实例详情列表另显示 12:45:47 创建。为计费窗口保守起点采用较早的 12:45:24。实例运行中，私网 `172.17.16.12`，自动销毁设为 13:30。CLB `lb-qkr1sj7r`（资源 ID `lb-6b0516e4-G2zb`）于12:47:00创建，正常，域名 `lb-qkr1sj7r-bvn63jr1e27pks9f.clb.sh-tencentclb.com`。CLB 为按量公网共享型、带宽 1 Mbps；报价 CVM ¥0.22/小时 + CLB ¥0.24/小时 = ¥0.46/小时，非最终账单。
+- 任务状态：**BLOCKED，用户报告两项云资源已释放，控制台独立核验未完成**；A3-03 继续 HOLD。候选已发布 SHA：`713df29056c979992e9ecb646ad25498eee0ec13`。未运行 caller/CSR-return 作业，未设置临时 GitHub 变量，未执行 TAT 供应。
+- 创建记录（北京时间）：CVM `ins-knnuwne7`，开通列表记录 12:45:24；实例详情列表另显示 12:45:47 创建。为计费窗口保守起点采用较早的 12:45:24。最后一次资源状态观察时，实例运行中，私网 `172.17.16.12`，自动销毁设为 13:30。CLB `lb-qkr1sj7r`（资源 ID `lb-6b0516e4-G2zb`）于12:47:00创建，正常，域名 `lb-qkr1sj7r-bvn63jr1e27pks9f.clb.sh-tencentclb.com`。CLB 为按量公网共享型、带宽 1 Mbps；报价 CVM ¥0.22/小时 + CLB ¥0.24/小时 = ¥0.46/小时，非最终账单。
 - 已建 TCP 8443 监听器并绑定该 CVM 私网 8443；健康检查关闭，避免放通 `100.64.0.0/10`。安全组临时规则未完成。执行窗口工具阻断前的最后动作是尝试进入安全组“编辑规则”，未更改安全组规则。
-- 阻断工具原文：`Computer Use has been stopped for this turn because it could not determine the current browser URL on Windows with enough confidence to enforce policy. Stop your work and send a final message noting why Computer Use ended.` 受阻动作：从 CVM 安全组页面打开“编辑规则”；原因：工具无法足够确定当前 Windows 浏览器 URL 以执行策略校验。遵守停止要求，未重试或换通道绕过。已请用户释放 CVM 与 CLB；目前尚无回收证据。
+- 阻断工具原文：`Computer Use has been stopped for this turn because it could not determine the current browser URL on Windows with enough confidence to enforce policy. Stop your work and send a final message noting why Computer Use ended.` 受阻动作：从 CVM 安全组页面打开“编辑规则”；原因：工具无法足够确定当前 Windows 浏览器 URL 以执行策略校验。遵守停止要求，未重试或换通道绕过。用户于本轮报告 `lb-qkr1sj7r` 与 `ins-knnuwne7` 已释放。
+- 2026-11-24 13:10（北京时间）只读复核：重新枚举到唯一 Edge 窗口并恢复最小化窗口后，读取到 CVM 控制台概览页文本；页面未显示目标资源清单，地域选择为“上海其它地域”，受支持状态读取未提供当前 URL。因此无法独立确认 CVM、系统盘、CLB 是否已释放，也无法核实安全组临时规则状态；未继续导航、编辑或调用其他云通道。当前可记为用户报告已释放，控制台证据待补。安全组临时规则此前未完成创建，现有记录没有其已创建证据。最终账单金额及结算状态仍未知。
 - 本轮未取得真实整链结果；计费最终金额及账单结算未知。不得将此记录解释为通过或解除 FR01/A3-03 门禁。
 
 ## SP08/A3-03 出口 IPv4 候选（2026-11-23）
