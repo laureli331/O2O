@@ -1,5 +1,13 @@
 # 外部证据台账与待发送咨询草稿
 
+## SP08/A3-03 出口 IPv4 候选（2026-11-23）
+
+基于候选父提交 `4f16e9e683236e290cbe385be3c639cbc18cb9f2` 收尾。任务 ID：SP08/A3-03「ipify出口IP查询与同作业绑定候选」。修复项：HTTPS 查询增加总截止并在失败时销毁请求/响应；响应按原始字节拒绝非 ASCII；manifest 校验拒绝无效 `Date`；新增本地 `verify` CLI；候选边界检查复用主区 TypeScript 5.9.3（`NODE_PATH` 仅限本次进程）。Node 20专项及既有 JWKS 回归 11/11 通过，候选边界检查通过，`git diff --check` 通过。
+
+本地 CLI 次序：控制面先从受信 GitHub artifact/run 元数据确认 artifact 来源、run/attempt、固定 workflow SHA，并从 CSR/source manifest 校验 CSR 摘要；再将这些已核实值写入严格四字段 `expected-context.json`（`runId`、`runAttempt`、`workflowSha`、`csrSha256`），运行 `node tools/sp08-a3-03-github-oidc-smoke/egress-ip.cjs verify <artifact目录\\egress-ip-manifest.json> <expected-context.json>` 获取 `/32` 建议。该 CLI 只做 manifest schema、绑定、时间和 IPv4 检查；它不验证 expected-context 文件来源，不能由 artifact 自己生成该期望文件来证明自身。现有控制面尚无上述来源核验/expected-context 生成实现，因此该步骤是供经人工/受信控制面调用的暂停点，不触发云配置。
+
+本轮只做本地合成验证；没有调用 ipify、运行 GitHub Actions、推送、采购或修改云资源。查询真实出口、后续可能的云验证/规则配置须另行授权；公网 IP 可能随时间或目标变化，不保证稳定。A3-03 继续 **HOLD**，不代表 TLS 整链或 FR01 放行。
+
 2026-10-26范围更新：商家99元入驻与V11—V13广告已纳首版，基础活动／免费满减券随入驻权益交付。该决定不证明真实主体、类目、支付、退款、核验、数据或云环境已通过；E01—E06等仍需按新范围取得实际证据。最新范围与已确认规则见[首版范围确认](v1-scope-confirmed-20261026.md)。下列早期账号及范围记载不直接作为当前适用结论。
 
 支付公开资料核实（2026-10-18）：[第一版三类收费接入研究](v1-payment-access-research-20261018.md)已读取微信官方普通/虚拟支付、退款、费率及服务类目正文；AI次数包建议核实企业/个体户虚拟支付入口，iOS退款由Apple处理。佣金所依赖的多经营者业务类目、自营储值适用/材料与各端退回本金仍待项目依据；公开文档可用不等于本项目E01/E04通过。用户后续已选A，先核佣金场景和AI直购，余额保留待资质、用途及退款执行确认后再决定首版启用；原商业规则不变；下方旧主体/旧推广套餐及历史抓取状态仍按原时间阅读。
