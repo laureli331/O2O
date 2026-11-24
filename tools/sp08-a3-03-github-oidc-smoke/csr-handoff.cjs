@@ -101,4 +101,27 @@ function verifyCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, caPem,
   return Object.freeze({ csrSha256: csrDigest, caFingerprint256: caFingerprint, leafFingerprint256: leaf.fingerprint256.replaceAll(':', '').toLowerCase() });
 }
 
-module.exports = { selectSourceRun, validateBudget, verifyCertificateBinding, waitForReturnRun };
+function verifyPublicCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, caPem, expectedCaFingerprint256, pwshPath, now = Date.now(), maxBytes = 65536, timeoutMs = 5000 }) {
+  for (const [label, value] of Object.entries({ csrBytes, leafPem, caPem })) {
+    const size = Buffer.isBuffer(value) ? value.byteLength : Buffer.byteLength(value || '');
+    if (size < 1 || size > maxBytes) fail(`${label}-size-limit`);
+  }
+  if (typeof expectedCsrSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(expectedCsrSha256)
+    || crypto.createHash('sha256').update(csrBytes).digest('hex') !== expectedCsrSha256) fail('csr-digest-mismatch');
+  if (typeof expectedCaFingerprint256 !== 'string' || !/^[a-f0-9]{64}$/i.test(expectedCaFingerprint256)) fail('ca-fingerprint-invalid');
+  const ca = new crypto.X509Certificate(caPem);
+  const leaf = new crypto.X509Certificate(leafPem);
+  if (ca.raw.equals(leaf.raw)) fail('ca-must-not-be-leaf');
+  const caFingerprint = ca.fingerprint256.replaceAll(':', '').toLowerCase();
+  if (caFingerprint !== expectedCaFingerprint256.toLowerCase()) fail('ca-fingerprint-mismatch');
+  if (!leaf.verify(ca.publicKey) || !leaf.checkIssued(ca)) fail('certificate-chain-invalid');
+  if (!Array.isArray(leaf.keyUsage) || !leaf.keyUsage.includes('1.3.6.1.5.5.7.3.2')) fail('client-auth-eku-required');
+  const timestamp = new Date(now);
+  if (timestamp < new Date(leaf.validFrom) || timestamp > new Date(leaf.validTo)) fail('certificate-expired-or-not-yet-valid');
+  const csrKey = csrPublicKey(csrBytes, { pwshPath, timeoutMs });
+  const leafKey = leaf.publicKey.export({ type: 'spki', format: 'der' });
+  if (csrKey.byteLength !== leafKey.byteLength || !crypto.timingSafeEqual(csrKey, leafKey)) fail('csr-leaf-public-key-mismatch');
+  return Object.freeze({ csrSha256: expectedCsrSha256, caFingerprint256: caFingerprint, leafFingerprint256: leaf.fingerprint256.replaceAll(':', '').toLowerCase() });
+}
+
+module.exports = { csrPublicKey, selectSourceRun, validateBudget, verifyCertificateBinding, verifyPublicCertificateBinding, waitForReturnRun };

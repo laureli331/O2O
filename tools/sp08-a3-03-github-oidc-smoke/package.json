@@ -1,0 +1,11 @@
+{
+  "name": "sp08-a3-03-github-oidc-smoke",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Isolated Tencent Cloud API adapter for offline SP08-A3-03 verification",
+  "dependencies": {
+    "tencentcloud-sdk-nodejs-common": "4.1.220",
+    "tencentcloud-sdk-nodejs-tat": "4.1.241",
+    "tencentcloud-sdk-nodejs-vpc": "4.1.351"
+  }
+}
