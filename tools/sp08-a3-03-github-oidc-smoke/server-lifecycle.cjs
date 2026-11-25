@@ -117,7 +117,7 @@ async function runServerLifecycle({ clients, targets, verifiedMaterials, serverI
   let startError;
   let result;
   try {
-    const start = await invokeLifecycleCommand({ clients, target: fixed, commandId: fixed.startCommandId, parameters: { server_input_b64: inputB64 }, now, deadline: startDeadlineWithSnapshot });
+    const start = await invokeLifecycleCommand({ clients, target: fixed, commandId: fixed.startCommandId, parameters: { server_input_b64: inputB64, source_run_id: verifiedMaterials.sourceRunId }, now, deadline: startDeadlineWithSnapshot });
     await pollLifecycleTask({ clients, invocation: start, expectedOutput: 'listener_ready=private_ipv4:8443', deadline: startDeadlineWithSnapshot, now, ...(sleep ? { sleep } : {}) });
     result = await awaitTerminalWithin(buildReturn(), Math.min(sourceState.callerJobDeadline, cleanupDeadline), now);
     if (!result) fail('return-build-deadline-unknown-manual-recovery');
@@ -148,4 +148,4 @@ async function runServerLifecycleWithIngress({ clients, securityTarget, verified
     operation: async () => runServerLifecycle({ ...lifecycleOptions, clients, verifiedMaterials, now }) });
 }
 
-module.exports = { bindVerifiedSourceInput, runServerLifecycle, runServerLifecycleWithIngress, validateLifecycleTargets, validateServerInput };
+module.exports = { bindVerifiedSourceInput, invokeLifecycleCommand, pollLifecycleTask, runServerLifecycle, runServerLifecycleWithIngress, validateLifecycleTargets, validateServerInput };

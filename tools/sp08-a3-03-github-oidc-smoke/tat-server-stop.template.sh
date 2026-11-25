@@ -29,12 +29,13 @@ rm -f "$ROOT/pki/ca.srl"
 rm -f "$ROOT/tmp/client.csr.pem"
 rm -f "$ROOT/tmp/client.ext"
 rm -f "$ROOT/tmp/client.pem"
+rm -f "$ROOT/pki/client.pem"
 rm -f "$ROOT/tmp/server-template.json"
 rm -f "$ROOT/server-config.json"
 rm -f "$ROOT/server.pid"
 rm -f "$ROOT/server-public-input.json"
 rm -f "$ROOT/tmp/server-lifecycle-owner.json"
-for secret_path in "$ROOT/pki/ca.key.pem" "$ROOT/pki/server.key.pem" "$ROOT/pki/server.csr.pem" "$ROOT/pki/ca.srl" "$ROOT/tmp/client.csr.pem" "$ROOT/tmp/client.ext" "$ROOT/tmp/client.pem" "$ROOT/tmp/server-template.json" "$ROOT/server-config.json" "$ROOT/server.pid" "$ROOT/server-public-input.json" "$ROOT/tmp/server-lifecycle-owner.json"; do
+for secret_path in "$ROOT/pki/ca.key.pem" "$ROOT/pki/server.key.pem" "$ROOT/pki/server.csr.pem" "$ROOT/pki/ca.srl" "$ROOT/pki/client.pem" "$ROOT/tmp/client.csr.pem" "$ROOT/tmp/client.ext" "$ROOT/tmp/client.pem" "$ROOT/tmp/server-template.json" "$ROOT/server-config.json" "$ROOT/server.pid" "$ROOT/server-public-input.json" "$ROOT/tmp/server-lifecycle-owner.json"; do
   if test -e "$secret_path"; then
     printf '%s\n' 'server_stop_state=unknown_secret_cleanup_incomplete' >&2
     exit 31

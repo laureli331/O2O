@@ -266,7 +266,7 @@ async function invokeOnce({ clients, target, verifiedMaterials, now = () => Date
   const cidr = validateEgressCidr(verifiedMaterials.cidr);
   const csrB64 = validateCsr(verifiedMaterials.csrPem, verifiedMaterials.csrSha256);
   let invocation;
-  try { invocation = await requestWithinDeadline({ client: clients.tat, method: 'InvokeCommand', args: [{ CommandId: fixed.commandId, InstanceIds: [fixed.instanceId], Parameters: JSON.stringify({ csr_b64: csrB64 }), Timeout: Math.min(300, Math.max(1, Math.floor((requestDeadline - timestamp) / 1000))) }], deadline: requestDeadline, now }); }
+  try { invocation = await requestWithinDeadline({ client: clients.tat, method: 'InvokeCommand', args: [{ CommandId: fixed.commandId, InstanceIds: [fixed.instanceId], Parameters: JSON.stringify({ csr_b64: csrB64, source_run_id: verifiedMaterials.sourceRunId }), Timeout: Math.min(300, Math.max(1, Math.floor((requestDeadline - timestamp) / 1000))) }], deadline: requestDeadline, now }); }
   catch { fail('invoke-outcome-unknown-manual-recovery'); }
   if (!isRecord(invocation) || typeof invocation.InvocationId !== 'string' || !/^inv-[a-z0-9]+$/.test(invocation.InvocationId)) fail('invocation-result-unknown-manual-recovery');
   const invocationState = Object.freeze({ invocationId: invocation.InvocationId, instanceId: fixed.instanceId, commandId: fixed.commandId, region: fixed.region, securityGroupId: fixed.securityGroupId, cidr, csrSha256: verifiedMaterials.csrSha256, startedAt: timestamp });

@@ -73,7 +73,7 @@ test('stop template removes config/key copies after partial startup and reports 
   const bash = candidates.find((candidate) => fs.existsSync(candidate));
   if (!bash) { t.skip('Git for Windows Bash unavailable; bash -n is verified separately'); return; }
   const stop = fs.readFileSync(path.join(__dirname, 'tat-server-stop.template.sh'), 'utf8');
-  const filePaths = ['pki/ca.key.pem', 'pki/server.key.pem', 'pki/server.csr.pem', 'pki/ca.srl', 'tmp/client.csr.pem',
+  const filePaths = ['pki/ca.key.pem', 'pki/server.key.pem', 'pki/server.csr.pem', 'pki/ca.srl', 'pki/client.pem', 'tmp/client.csr.pem',
     'tmp/client.ext', 'tmp/client.pem', 'tmp/server-template.json', 'server-config.json', 'server.pid', 'server-public-input.json', 'tmp/server-lifecycle-owner.json'];
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-stop-offline-'));
   const cleanup = () => {

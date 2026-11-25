@@ -111,7 +111,7 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
   assert.equal(requests[0].service, 'tat');
   assert.equal(requests[0].action, 'InvokeCommand');
   assert.deepEqual(requests[0].request.InstanceIds, [target.instanceId]);
-  assert.deepEqual(JSON.parse(requests[0].request.Parameters), { csr_b64: Buffer.from(fixture.csrPem).toString('base64') });
+  assert.deepEqual(JSON.parse(requests[0].request.Parameters), { csr_b64: Buffer.from(fixture.csrPem).toString('base64'), source_run_id: verifiedMaterials.sourceRunId });
   const signed = await pollTask({ clients, invocation: result, now: () => testNow, certificateNow: Date.now });
   assert.equal(signed.state, 'success');
   assert.equal(signed.output.csr_sha256, fixture.csrSha256);

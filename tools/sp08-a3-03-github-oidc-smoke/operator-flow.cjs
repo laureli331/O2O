@@ -1,7 +1,7 @@
 'use strict';
 
 const { invokeOnce, pollUntilTerminal, requireVerifiedSourceMaterials, validateTarget } = require('./tencentcloud-a303-api.cjs');
-const { bindVerifiedSourceInput, runServerLifecycleWithIngress, validateLifecycleTargets, validateServerInput } = require('./server-lifecycle.cjs');
+const { bindVerifiedSourceInput, invokeLifecycleCommand, pollLifecycleTask, runServerLifecycleWithIngress, validateLifecycleTargets, validateServerInput } = require('./server-lifecycle.cjs');
 const { dispatchReturnOnce, preflightReturnDispatch, recordReturnRunId } = require('./return-dispatch-once.cjs');
 const { requireVerifiedReturnRun } = require('./csr-handoff.cjs');
 
@@ -34,9 +34,22 @@ async function runOperatorFlow({ enableExternalDispatch, clients, target, lifecy
   validateServerInput(boundServerInput, { ...expectedInput, now: startAt, instanceId: fixedLifecycle.instanceId,
     sourceRunId: verified.sourceRunId, attempt: verified.attempt, workflowSha: verified.workflowSha, csrSha256: verifiedMaterials.csrSha256 });
   preflightReturnDispatch({ verifiedMaterials, journalPath, token, deadline: Math.min(verified.sourceDeadline, verified.egressDeadline, verified.callerJobDeadline), now });
-  const invoke = await invokeOnce({ clients, target: sourceTarget, verifiedMaterials, now,
-    deadline: Math.min(verified.sourceDeadline, verified.egressDeadline) });
-  const certificate = await pollUntilTerminal({ clients, invocation: invoke, deadlineMs: Math.min(verified.sourceDeadline, verified.egressDeadline, invoke.startedAt + 300000), now, ...(sleep ? { sleep } : {}) });
+  let certificate;
+  try {
+    const invoke = await invokeOnce({ clients, target: sourceTarget, verifiedMaterials, now,
+      deadline: Math.min(verified.sourceDeadline, verified.egressDeadline) });
+    certificate = await pollUntilTerminal({ clients, invocation: invoke, deadlineMs: Math.min(verified.sourceDeadline, verified.egressDeadline, invoke.startedAt + 300000), now, ...(sleep ? { sleep } : {}) });
+  } catch (error) {
+    let cleanupError;
+    try {
+      const cleanupDeadline = verified.resourceDeadline;
+      const stop = await invokeLifecycleCommand({ clients, target: fixedLifecycle, commandId: fixedLifecycle.stopCommandId,
+        parameters: { source_run_id: verified.sourceRunId }, now, deadline: cleanupDeadline });
+      await pollLifecycleTask({ clients, invocation: stop, expectedOutput: 'server_stopped_and_keys_removed=true', deadline: cleanupDeadline, now, ...(sleep ? { sleep } : {}) });
+    } catch (stopError) { cleanupError = stopError; }
+    if (cleanupError) throw Object.assign(new Error('operator-sign-failed-stop-unknown-manual-recovery', { cause: error }), { stopErrorCode: cleanupError.message });
+    throw error;
+  }
   if (!certificate || certificate.state !== 'success' || !certificate.output) fail('operator-certificate-unverified');
   const lifecycle = await runServerLifecycleWithIngress({ clients, securityTarget: fixedSecurityTarget, verifiedMaterials,
     lifecycleOptions: { targets: lifecycleTargets, serverInput, expectedInput,
