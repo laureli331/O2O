@@ -54,4 +54,3 @@ Use a purpose-limited sub-user/role and temporary credentials/STS if supported f
 ## Reuse and validation
 
 Reuses existing TAT scripts, source/return workflow, CSR handoff, egress verification and tests. Tencent official modular Node SDK packages are isolated to this operator tool; the approved uuid override addresses the audited GHSA-w5hq-g745-h8pq path. Node 20.19.3 offline tests validate SDK module loading and real Common SDK v4 trace-ID generation; `npm audit` on the tool dependency tree previously reported zero vulnerabilities after the override. No live Tencent request was made. This evidence does not prove Tencent IAM enforcement, network latency, or completion within the 300-second window. Draft validation asserts placeholders, action allowlist and wildcard boundary; egress/JWKS tests remain relevant to their respective local contracts.
-

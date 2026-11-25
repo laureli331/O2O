@@ -54,5 +54,3 @@ try {
   foreach ($secure in $secrets) { $secure.Dispose() }
   $plain.Clear()
 }
-
-
