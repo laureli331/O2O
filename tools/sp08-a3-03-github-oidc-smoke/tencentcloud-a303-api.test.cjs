@@ -54,8 +54,8 @@ $rsa.Dispose();$caRsa.Dispose();$ca.Dispose();$leaf.Dispose()`, { flag: 'wx' });
   assert.equal(zipped.status, 0, zipped.stderr);
   const zipBytes = fs.readFileSync(zipPath);
   const artifactDigest = `sha256:${require('node:crypto').createHash('sha256').update(zipBytes).digest('hex')}`;
-  const expected = { sourceRunId: '123', repositoryId: '456', trustedHeadSha: 'a'.repeat(40), actorId: '789', actorLogin: 'operator', workflowPath: '.github/workflows/sp08-a3-03-tls-caller.yml', notBeforeMs: nowMs - 10 * 60 * 1000, notAfterMs: nowMs, caFingerprint256: certificates.fingerprint };
-  const run = { id: 123, event: 'workflow_dispatch', status: 'in_progress', conclusion: null, repository: { id: 456 }, path: expected.workflowPath, head_sha: expected.trustedHeadSha, run_attempt: 1, actor: { id: 789, login: 'operator' }, created_at: '2026-11-24T11:55:00Z' };
+  const expected = { sourceRunId: '123', repositoryId: '456', trustedHeadSha: 'a'.repeat(40), actorId: '789', actorLogin: 'operator', workflowPath: '.github/workflows/sp08-a3-03-tls-caller.yml', workflowRef: 'owner/repo/.github/workflows/sp08-a3-03-tls-caller.yml@refs/heads/codex/sp08-a3-03-tls-prep', notBeforeMs: nowMs - 10 * 60 * 1000, notAfterMs: nowMs, caFingerprint256: certificates.fingerprint };
+  const run = { id: 123, event: 'workflow_dispatch', status: 'in_progress', conclusion: null, repository: { id: 456 }, path: expected.workflowPath, head_sha: expected.trustedHeadSha, head_branch: 'codex/sp08-a3-03-tls-prep', run_attempt: 1, actor: { id: 789, login: 'operator' }, created_at: '2026-11-24T11:55:00Z' };
   const fetchImpl = async (url, options) => {
     assert.equal(options.redirect, url.endsWith('/artifacts/99/zip') ? 'manual' : 'error');
     if (url === 'https://api.github.com/repos/owner/repo/actions/runs/123') return { status: 200, url, json: async () => run };
@@ -84,6 +84,11 @@ test('rejects draft targets and malformed or mismatched CSR before transport', a
 test('SDK generated method reaches injectable transport with exact single-CVM request', async () => {
   const fixture = fixtureMaterials();
   const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: fixture.now, pwshPath: fixture.pwshPath });
+  const sourceCompletion = { id: 123, repository: { id: 456 }, run_attempt: 1, path: fixture.expected.workflowPath, head_sha: 'a'.repeat(40),
+    head_branch: 'codex/sp08-a3-03-tls-prep', event: 'workflow_dispatch', actor: { id: 789, login: 'operator' }, status: 'completed', conclusion: 'success' };
+  const completionArgs = { verifiedMaterials, token: 'offline-test-token', deadline: Date.parse('2026-11-24T12:05:00.000Z'), now: fixture.now };
+  await assert.rejects(awaitVerifiedCallerRun({ ...completionArgs, fetchImpl: async () => ({ status: 200, json: async () => ({ ...sourceCompletion, id: 124 }) }) }), /caller-run-binding-mismatch/);
+  await assert.rejects(awaitVerifiedCallerRun({ ...completionArgs, fetchImpl: async () => ({ status: 200, json: async () => ({ ...sourceCompletion, head_branch: 'main' }) }) }), /caller-run-binding-mismatch/);
   const requests = [];
   const scriptOutput = `csr_sha256=${fixture.csrSha256}\nleaf_cert_b64=${Buffer.from(fixture.certificates.leaf).toString('base64')}\nca_cert_b64=${Buffer.from(fixture.certificates.ca).toString('base64')}\n`;
   const taskOutput = Buffer.from(scriptOutput).toString('base64');
@@ -135,13 +140,11 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
     }, awaitCallerTlsCompletion: async () => {
       lifecycleEvents.push('runner-wait');
       let callerPoll = 0;
-      return awaitVerifiedCallerRun({ expected: { verifiedMaterials, sourceRunId: '123', sourceRunAttempt: '1', runId: '124', runAttempt: '1', event: 'workflow_dispatch', workflowSha: 'a'.repeat(40),
-        repositoryId: '456', workflowPath: '.github/workflows/caller.yml', workflowRef: 'owner/repo/.github/workflows/caller.yml@refs/heads/codex/sp08-a3-03-tls-prep' },
-      token: 'offline-test-token', repository: 'owner/repo', deadline: Date.parse('2026-11-24T12:05:00.000Z'),
+      return awaitVerifiedCallerRun({ verifiedMaterials, token: 'offline-test-token', deadline: Date.parse('2026-11-24T12:05:00.000Z'),
       now: () => Date.parse('2026-11-24T11:59:30.000Z'), sleep: async () => { lifecycleEvents.push('caller-still-running'); if (callerPoll === 5) await new Promise((resolve) => { releaseCaller = resolve; }); },
-      fetchImpl: async (url, options) => { callerPoll += 1; assert.equal(url, 'https://api.github.com/repos/owner/repo/actions/runs/124'); assert.equal(options.redirect, 'error');
+      fetchImpl: async (url, options) => { callerPoll += 1; assert.equal(url, 'https://api.github.com/repos/owner/repo/actions/runs/123'); assert.equal(options.redirect, 'error');
         const completed = callerPoll === 6;
-        return { status: 200, url, json: async () => ({ id: 124, repository: { id: 456 }, run_attempt: 1, path: '.github/workflows/caller.yml', head_sha: 'a'.repeat(40), event: 'workflow_dispatch',
+        return { status: 200, url, json: async () => ({ id: 123, repository: { id: 456 }, run_attempt: 1, path: '.github/workflows/sp08-a3-03-tls-caller.yml', head_sha: 'a'.repeat(40), head_branch: 'codex/sp08-a3-03-tls-prep', event: 'workflow_dispatch', actor: { id: 789, login: 'operator' },
           status: completed ? 'completed' : 'in_progress', conclusion: completed ? 'success' : null }) }; } });
     } });
   await new Promise((resolve) => setImmediate(resolve));
@@ -150,17 +153,15 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
   releaseCaller();
   assert.deepEqual(await lifecyclePromise, { artifactName: 'sp08-a303-return-123-1' });
   assert.deepEqual(lifecycleEvents, ['invoke:cmd-fake-start', 'return-submitted', 'runner-wait', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'invoke:cmd-fake-stop']);
-  const callerExpected = { verifiedMaterials, sourceRunId: '123', sourceRunAttempt: '1', runId: '124', runAttempt: '1', event: 'workflow_dispatch', workflowSha: 'a'.repeat(40), repositoryId: '456',
-    workflowPath: '.github/workflows/caller.yml', workflowRef: 'owner/repo/.github/workflows/caller.yml@refs/heads/codex/sp08-a3-03-tls-prep' };
   const callerDeadline = Date.parse('2026-11-24T12:05:00.000Z');
   let clockNow = callerDeadline - 5000;
-  await assert.rejects(awaitVerifiedCallerRun({ expected: callerExpected, token: 'offline-test-token', repository: 'owner/repo', deadline: callerDeadline,
+  await assert.rejects(awaitVerifiedCallerRun({ verifiedMaterials, token: 'offline-test-token', deadline: callerDeadline,
     now: () => clockNow, sleep: async (ms) => { clockNow += ms; }, fetchImpl: async () => ({ status: 200,
-      json: async () => ({ id: 124, repository: { id: 456 }, run_attempt: 1, path: callerExpected.workflowPath, head_sha: 'a'.repeat(40), event: 'workflow_dispatch', status: 'in_progress' }) }) }), /caller-run-check-deadline-unknown/);
+      json: async () => ({ id: 123, repository: { id: 456 }, run_attempt: 1, path: '.github/workflows/sp08-a3-03-tls-caller.yml', head_sha: 'a'.repeat(40), head_branch: 'codex/sp08-a3-03-tls-prep', event: 'workflow_dispatch', actor: { id: 789, login: 'operator' }, status: 'in_progress' }) }) }), /caller-run-check-deadline-unknown/);
   clockNow = callerDeadline - 1000;
-  await assert.rejects(awaitVerifiedCallerRun({ expected: callerExpected, token: 'offline-test-token', repository: 'owner/repo', deadline: callerDeadline,
+  await assert.rejects(awaitVerifiedCallerRun({ verifiedMaterials, token: 'offline-test-token', deadline: callerDeadline,
     now: () => clockNow, fetchImpl: async () => { clockNow = callerDeadline; return { status: 200,
-      json: async () => ({ id: 124, repository: { id: 456 }, run_attempt: 1, path: callerExpected.workflowPath, head_sha: 'a'.repeat(40), event: 'workflow_dispatch', status: 'completed', conclusion: 'success' }) }; } }), /caller-run-check-deadline-unknown/);
+      json: async () => ({ id: 123, repository: { id: 456 }, run_attempt: 1, path: '.github/workflows/sp08-a3-03-tls-caller.yml', head_sha: 'a'.repeat(40), head_branch: 'codex/sp08-a3-03-tls-prep', event: 'workflow_dispatch', actor: { id: 789, login: 'operator' }, status: 'completed', conclusion: 'success' }) }; } }), /caller-run-check-deadline-unknown/);
   await assert.rejects(invokeOnce({ clients, target, verifiedMaterials, now: () => 1000 }), /invoke-already-attempted-manual-recovery/);
   fixture.cleanup();
 });

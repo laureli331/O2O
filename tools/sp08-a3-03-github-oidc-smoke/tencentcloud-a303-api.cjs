@@ -49,7 +49,9 @@ function requireVerifiedSourceMaterials(material) {
   const state = isRecord(material) && verifiedMaterialState.get(material);
   if (!state) fail('verified-source-materials-required');
   return Object.freeze({ sourceStartedAt: state.sourceStartedAt, sourceDeadline: state.sourceDeadline, egressDeadline: state.egressDeadline,
-    callerJobDeadline: state.callerJobDeadline, resourceDeadline: state.resourceDeadline });
+    callerJobDeadline: state.callerJobDeadline, resourceDeadline: state.resourceDeadline, sourceRunId: state.sourceRunId,
+    attempt: state.attempt, repository: state.repository, repositoryId: state.repositoryId, actorId: state.actorId,
+    actorLogin: state.actorLogin, workflowPath: state.workflowPath, workflowSha: state.workflowSha, workflowRef: state.workflowRef });
 }
 
 async function verifySourceMaterials({ expected, token, repository, fetchImpl = globalThis.fetch, now = Date.now, pwshPath }) {
@@ -61,6 +63,8 @@ async function verifySourceMaterials({ expected, token, repository, fetchImpl = 
     || !isRecord(expected) || !/^[0-9]+$/.test(expected.repositoryId) || !/^[0-9]+$/.test(expected.actorId)
     || typeof expected.actorLogin !== 'string' || !/^[A-Za-z0-9-]+$/.test(expected.actorLogin)
     || typeof expected.workflowPath !== 'string' || !/^\.github\/workflows\/[A-Za-z0-9_.-]+\.yml$/.test(expected.workflowPath)
+    || typeof expected.workflowRef !== 'string' || !expected.workflowRef.startsWith(`${repository}/${expected.workflowPath}@refs/heads/`)
+    || !/^refs\/heads\/[A-Za-z0-9_.\/-]{1,180}$/.test(expected.workflowRef.slice(`${repository}/${expected.workflowPath}@`.length))
     || !/^[a-f0-9]{40,64}$/.test(expected.trustedHeadSha) || !Number.isSafeInteger(expected.notBeforeMs)
     || !Number.isSafeInteger(expected.notAfterMs) || expected.notAfterMs < expected.notBeforeMs) fail('source-verification-config-invalid');
   const time = now();
@@ -72,8 +76,10 @@ async function verifySourceMaterials({ expected, token, repository, fetchImpl = 
   const response = await fetchImpl(url, requestOptions);
   if (!response || response.status !== 200 || (response.url && new URL(response.url).origin !== 'https://api.github.com')) fail('source-run-api-failed');
   const actualRun = await response.json();
+  const approvedBranch = expected.workflowRef.slice(`${repository}/${expected.workflowPath}@refs/heads/`.length);
   if (!isRecord(actualRun) || String(actualRun.id) !== sourceRunId || String(actualRun.repository?.id) !== expected.repositoryId
     || actualRun.path !== expected.workflowPath || actualRun.head_sha !== expected.trustedHeadSha || actualRun.run_attempt !== 1
+    || actualRun.head_branch !== approvedBranch
     || actualRun.event !== 'workflow_dispatch' || actualRun.status !== 'in_progress' || actualRun.conclusion !== null
     || String(actualRun.actor?.id) !== expected.actorId || actualRun.actor?.login !== expected.actorLogin
     || typeof actualRun.created_at !== 'string' || !Number.isFinite(Date.parse(actualRun.created_at))
@@ -149,6 +155,8 @@ async function verifySourceMaterials({ expected, token, repository, fetchImpl = 
     sourceStartedAt, sourceDeadline: sourceStartedAt + 300000, egressDeadline: Date.parse(egress.expires_at), callerJobDeadline: sourceStartedAt + 600000,
     resourceDeadline: sourceStartedAt + 105 * 60 * 1000 });
   verifiedMaterialState.set(material, { invokeUsed: false, ingressUsed: false, csrBytes: Buffer.from(csr), expectedCaFingerprint256: expected.caFingerprint256, pwshPath,
+    sourceRunId, attempt: '1', repository, repositoryId: expected.repositoryId, actorId: expected.actorId, actorLogin: expected.actorLogin,
+    workflowPath: expected.workflowPath, workflowSha: actualRun.head_sha, workflowRef: expected.workflowRef,
     sourceStartedAt, sourceDeadline: material.sourceDeadline, egressDeadline: material.egressDeadline, callerJobDeadline: material.callerJobDeadline, resourceDeadline: material.resourceDeadline });
   return material;
 }
@@ -190,23 +198,14 @@ async function requestWithinDeadline({ client, method, args, deadline, now = Dat
   }
 }
 
-async function awaitVerifiedCallerRun({ expected, token, repository, fetchImpl = globalThis.fetch, deadline, now = Date.now, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
-  const source = requireVerifiedSourceMaterials(expected?.verifiedMaterials);
-  const workflowRef = expected?.workflowRef;
-  const refAt = typeof workflowRef === 'string' ? workflowRef.lastIndexOf('@') : -1;
-  const workflowRefPath = refAt > 0 ? workflowRef.slice(0, refAt) : '';
-  const expectedRepoPrefix = typeof repository === 'string' ? `${repository}/` : '';
-  if (!isRecord(expected) || expected.sourceRunId !== expected.verifiedMaterials.sourceRunId
-    || expected.sourceRunAttempt !== expected.verifiedMaterials.attempt
-    || typeof expected.runAttempt !== 'string' || !/^[1-9][0-9]*$/.test(expected.runAttempt)
-    || expected.workflowSha !== expected.verifiedMaterials.workflowSha || !/^[0-9]+$/.test(expected.repositoryId || '')
-    || !/^[0-9]+$/.test(expected.runId || '') || typeof expected.workflowPath !== 'string' || !expected.workflowPath.startsWith('.github/workflows/')
-    || expected.event !== 'workflow_dispatch'
-    || !workflowRefPath.startsWith(`${expectedRepoPrefix}.github/workflows/`) || workflowRefPath.slice(expectedRepoPrefix.length) !== expected.workflowPath
-    || typeof token !== 'string' || token.length < 1 || token.length > 4096
-    || typeof repository !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)
-    || typeof fetchImpl !== 'function' || !Number.isSafeInteger(deadline) || deadline > source.callerJobDeadline) fail('caller-run-check-config-invalid');
-  const url = `https://api.github.com/repos/${repository}/actions/runs/${expected.runId}`;
+async function awaitVerifiedCallerRun({ verifiedMaterials, token, fetchImpl = globalThis.fetch, deadline, now = Date.now, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
+  const expected = requireVerifiedSourceMaterials(verifiedMaterials);
+  const approvedBranch = expected.workflowRef.slice(`${expected.repository}/${expected.workflowPath}@refs/heads/`.length);
+  if (typeof token !== 'string' || token.length < 1 || token.length > 4096
+    || typeof fetchImpl !== 'function' || !Number.isSafeInteger(deadline) || deadline > expected.callerJobDeadline
+    || !/^[1-9][0-9]{0,19}$/.test(expected.sourceRunId || '') || !/^[0-9]+$/.test(expected.repositoryId || '')
+    || !/^[0-9]+$/.test(expected.actorId || '') || !/^[a-f0-9]{40,64}$/.test(expected.workflowSha || '')) fail('caller-run-check-config-invalid');
+  const url = `https://api.github.com/repos/${expected.repository}/actions/runs/${expected.sourceRunId}`;
   const firstCheckAt = now();
   if (!Number.isSafeInteger(firstCheckAt) || firstCheckAt >= deadline) fail('caller-run-check-deadline-unknown');
   const maxPolls = Math.min(120, Math.ceil((deadline - firstCheckAt) / 5000) + 1);
@@ -229,13 +228,15 @@ async function awaitVerifiedCallerRun({ expected, token, repository, fetchImpl =
     catch { fail('caller-run-check-outcome-unknown'); }
     finally { if (timer) clearTimeout(timer); }
     if (now() >= deadline) fail('caller-run-check-deadline-unknown');
-    if (!isRecord(run) || String(run.id) !== expected.runId || String(run.repository?.id) !== expected.repositoryId
-      || run.run_attempt !== Number(expected.runAttempt) || run.path !== expected.workflowPath || run.head_sha !== expected.workflowSha
-      || run.event !== expected.event) fail('caller-run-binding-mismatch');
+    if (!isRecord(run) || String(run.id) !== expected.sourceRunId || String(run.repository?.id) !== expected.repositoryId
+      || run.run_attempt !== Number(expected.attempt) || run.path !== expected.workflowPath || run.head_sha !== expected.workflowSha
+      || run.head_branch !== approvedBranch || run.event !== 'workflow_dispatch' || String(run.actor?.id) !== expected.actorId
+      || run.actor?.login !== expected.actorLogin) fail('caller-run-binding-mismatch');
     if (run.status === 'completed') {
       if (run.conclusion !== 'success') fail('caller-run-tls-workflow-failed');
-      const evidence = Object.freeze({ runId: expected.runId, runAttempt: expected.runAttempt, workflowSha: expected.workflowSha,
-        workflowPath: expected.workflowPath, sourceRunId: expected.sourceRunId, sourceRunAttempt: expected.sourceRunAttempt, conclusion: 'success' });
+      const evidence = Object.freeze({ runId: expected.sourceRunId, runAttempt: expected.attempt, workflowSha: expected.workflowSha,
+        workflowPath: expected.workflowPath, workflowRef: expected.workflowRef, repositoryId: expected.repositoryId,
+        actorId: expected.actorId, conclusion: 'success' });
       verifiedCallerCompletions.add(evidence);
       return evidence;
     }

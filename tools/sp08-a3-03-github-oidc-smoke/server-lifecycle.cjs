@@ -125,8 +125,10 @@ async function runServerLifecycle({ clients, targets, verifiedMaterials, serverI
     const terminal = await awaitTerminalWithin(completion, Math.min(sourceState.callerJobDeadline, cleanupDeadline), now);
     if (!terminal) fail('caller-tls-completion-unknown-manual-recovery');
     const verified = requireVerifiedCallerCompletion(terminal);
-    if (verified.sourceRunId !== verifiedMaterials.sourceRunId || verified.sourceRunAttempt !== verifiedMaterials.attempt
-      || verified.workflowSha !== verifiedMaterials.workflowSha) fail('caller-tls-completion-binding-mismatch');
+    if (verified.runId !== verifiedMaterials.sourceRunId || verified.runAttempt !== verifiedMaterials.attempt
+      || verified.workflowSha !== verifiedMaterials.workflowSha || verified.workflowPath !== sourceState.workflowPath
+      || verified.workflowRef !== sourceState.workflowRef || verified.repositoryId !== sourceState.repositoryId
+      || verified.actorId !== sourceState.actorId) fail('caller-tls-completion-binding-mismatch');
   } catch (error) { startError = error; }
   let stopError;
   try {
