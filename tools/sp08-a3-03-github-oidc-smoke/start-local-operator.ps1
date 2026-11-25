@@ -19,6 +19,7 @@ try {
   & $NodePath (Join-Path $PSScriptRoot 'local-operator-launcher.cjs') --check-only ([IO.Path]::GetFullPath($ConfigPath)) | Out-Null
   if ($LASTEXITCODE -ne 0) { throw '公开配置预检失败。' }
   if (-not $RunOnce) { Write-Output '{"state":"check-only","readyToDispatch":false}'; return }
+  Add-Type -Path (Join-Path $PSScriptRoot 'bounded-process-output.cs')
   $names = @('STS 临时 SecretId', 'STS 临时 SecretKey', 'STS Token', 'GitHub token')
   foreach ($name in $names) { $secrets.Add((Read-Host -Prompt $name -AsSecureString)) }
   $expirationText = Read-Host -Prompt 'STS 凭据有效期（ISO 8601）'
@@ -37,20 +38,18 @@ try {
   $start.UseShellExecute = $false; $start.RedirectStandardInput = $true; $start.RedirectStandardOutput = $true; $start.RedirectStandardError = $true; $start.CreateNoWindow = $true
   $process = [Diagnostics.Process]::new(); $process.StartInfo = $start
   if (-not $process.Start()) { throw '启动子进程失败。' }
-  $stdout = [Text.StringBuilder]::new(); $stderr = [Text.StringBuilder]::new(); $outputOverflow = [hashtable]::Synchronized(@{ value = $false })
-  $stdoutHandler = [Diagnostics.DataReceivedEventHandler]{ param($sender, $eventArgs) if ($null -ne $eventArgs.Data) { if ($stdout.Length + $eventArgs.Data.Length -gt 4096) { $outputOverflow.value = $true; try { $process.Kill() } catch {} } else { [void]$stdout.AppendLine($eventArgs.Data) } } }
-  $stderrHandler = [Diagnostics.DataReceivedEventHandler]{ param($sender, $eventArgs) if ($null -ne $eventArgs.Data) { if ($stderr.Length + $eventArgs.Data.Length -gt 4096) { $outputOverflow.value = $true; try { $process.Kill() } catch {} } else { [void]$stderr.AppendLine($eventArgs.Data) } } }
-  $process.add_OutputDataReceived($stdoutHandler); $process.add_ErrorDataReceived($stderrHandler)
-  $process.BeginOutputReadLine(); $process.BeginErrorReadLine()
+  $stdoutTask = [BoundedProcessOutput]::DrainAsync($process.StandardOutput.BaseStream, 4096, $process)
+  $stderrTask = [BoundedProcessOutput]::DrainAsync($process.StandardError.BaseStream, 4096, $process)
   $process.StandardInput.Write($envelope); $process.StandardInput.Close(); $envelope = $null
   if (-not $process.WaitForExit(900000)) { $process.Kill(); throw '本地启动超过15分钟；结果未知，不自动重试。' }
-  if ($outputOverflow.value -or $process.ExitCode -ne 0 -or $stdout.ToString().Trim() -notmatch '^\{"state":"tls-complete","sourceRunId":"[1-9][0-9]{0,19}"\}$') { throw '执行失败、输出超限或结果格式无效；未自动重试。' }
-  Write-Output $stdout.ToString().Trim()
+  try { $out = $stdoutTask.GetAwaiter().GetResult(); $err = $stderrTask.GetAwaiter().GetResult() } catch { throw '子进程输出无效或超限；未自动重试。' }
+  if ($process.ExitCode -ne 0 -or $err.Length -ne 0 -or $out -notmatch '^\{"state":"tls-complete","sourceRunId":"[1-9][0-9]{0,19}"\}\r?\n?$') { throw '执行失败、输出超限或结果格式无效；未自动重试。' }
+  Write-Output $out.Trim()
 } catch {
   [Console]::Error.WriteLine('本地启动未完成；请按状态检查流程处理，不要自动重试。')
   exit 1
 } finally {
-  if ($process) { if (-not $process.HasExited) { try { $process.Kill(); $process.WaitForExit(5000) | Out-Null } catch {} }; $process.Dispose() }
+  if ($process) { try { if (-not $process.HasExited) { $process.Kill(); $process.WaitForExit(5000) | Out-Null } } catch {}; try { $process.Dispose() } catch {} }
   foreach ($ptr in $buffers) { if ($ptr -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) } }
   foreach ($secure in $secrets) { $secure.Dispose() }
   $plain.Clear()

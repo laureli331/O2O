@@ -5,6 +5,7 @@ const assert = require('node:assert/strict');
 const { Readable } = require('node:stream');
 const fs = require('node:fs'); const os = require('node:os'); const path = require('node:path');
 const { executeOnce, main, readEnvelope, validateSecretEnvelope } = require('./local-operator-launcher.cjs');
+const { spawnSync } = require('node:child_process');
 
 const envelope = () => ({ credential: { secretId: 'sentinel-id', secretKey: 'sentinel-key', token: 'sentinel-sts-token' }, token: 'sentinel-github-token', expiration: '2027-01-01T00:00:00Z' });
 const config = { public: true };
@@ -44,4 +45,11 @@ test('runner exception and secret sentinels are suppressed at the CLI boundary',
     });
     assert.equal(code, 1); assert.equal(out.includes('sentinel'), false); assert.equal(err.includes('sentinel'), false);
   } finally { fs.unlinkSync(file); }
+});
+
+test('PowerShell bounded drain kills a real local fake child writing oversized no-newline output', { skip: process.platform !== 'win32' }, () => {
+  const pwsh = 'C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe';
+  const result = spawnSync(pwsh, ['-NoProfile', '-File', path.join(__dirname, 'bounded-process-output.test.ps1')], { encoding: 'utf8', timeout: 15000 });
+  assert.equal(result.status, 0, result.stderr); assert.match(result.stdout, /bounded stdout and stderr children stopped/);
+  assert.equal(`${result.stdout}${result.stderr}`.includes('SENTINEL-'), false);
 });
