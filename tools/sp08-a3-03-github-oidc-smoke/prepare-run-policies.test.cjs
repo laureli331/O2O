@@ -8,6 +8,9 @@ const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 const { prepareRunPolicies } = require('./prepare-run-policies.cjs');
 const { buildApprovedConfig } = require('./prepare-a-runner.cjs');
+const { validateConfig } = require('./runner-entry.cjs');
+const { prepareOperatorConfig } = require('./prepare-operator-config.cjs');
+const { checkOnly, runOperatorEntry } = require('./operator-entry.cjs');
 
 function certificates() {
   const pwsh = 'C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe';
@@ -52,6 +55,7 @@ test('public policies bind one explicit SHA and pass existing runner context che
     O2O_RUNNER_ENVIRONMENT: 'SP08-A3-03-OIDC-smoke', RUNNER_TEMP: os.tmpdir(), A303_PWSH: 'pwsh' };
   const checked = buildApprovedConfig({ serialized: built.variables.A303_TLS_RUNNER_POLICY, handoffSerialized: built.variables.A303_HANDOFF_POLICY, env, checkOnly: true });
   assert.equal(checked.request.run_id, '20');
+  assert.equal(validateConfig(checked, env, now).checked, true);
   for (const patch of [{ trustedHeadSha: undefined }, { trustedHeadSha: 'OLD' }, { authorizedUntil: now },
     { authorizedUntil: now + 900001 }, { targetIPv4: '10.0.0.1' }, { targetIPv4: '8.8.4.4' },
     { caCertificate: 'PRIVATE KEY' }, { extra: true }]) assert.throws(() => prepareRunPolicies({ ...input, ...patch }, now));
@@ -68,4 +72,44 @@ test('public policies bind one explicit SHA and pass existing runner context che
     if (fs.existsSync(output)) fs.unlinkSync(output);
     fs.unlinkSync(source); fs.rmdirSync(dir);
   }
+});
+
+test('operator config uses the same public policies and rejects expired, inconsistent or secret-bearing input', async () => {
+  const now = Date.now();
+  const preparedPolicies = prepareRunPolicies({ ...certificates(), repository: 'owner/repo', repositoryId: '10',
+    actorId: '30', actorLogin: 'operator', branch: 'codex/test', trustedHeadSha: 'a'.repeat(40),
+    targetIPv4: '8.8.8.8', authorizedUntil: now + 60000 }, now);
+  const input = { preparedPolicies, sourceRunId: '123', notBeforeMs: now - 1000, notAfterMs: now + 1000,
+    instanceId: 'ins-abcdefgh', securityGroupId: 'sg-abcdefgh', region: 'ap-shanghai',
+    commandIds: { sign: 'cmd-abcdefgh', start: 'cmd-bcdefghi', stop: 'cmd-cdefghij' },
+    privateIPv4: '172.17.16.11', interfaceName: 'eth0', jwksFetchedAt: now - 1000, jwksExpiresAt: now + 60000,
+    journalPath: path.join(os.tmpdir(), 'a303-never-written-journal.json'), pwshPath: process.execPath };
+  const before = JSON.stringify(input);
+  const config = prepareOperatorConfig(input, now);
+  assert.equal(JSON.stringify(input), before);
+  assert.equal(checkOnly(config).readyToDispatch, false);
+  assert.equal(config.lifecycleTargets.instanceId, config.target.instanceId);
+  assert.equal(config.securityTarget.securityGroupId, input.securityGroupId);
+  const server = JSON.parse(config.serverInput);
+  assert.equal(server.policy.expectedClaims.run_id, input.sourceRunId);
+  assert.equal(server.policy.expectedRequest.run_id, input.sourceRunId);
+  assert.equal(server.policy.expectedRequest.env_id, server.policy.expectedClaims.environment);
+  assert.equal(Object.hasOwn(server, 'sourceBinding'), false, 'CSR digest binding remains the verified runtime responsibility');
+  assert.equal(server.policy.githubJwksExpiresAt, input.jwksExpiresAt);
+  for (const patch of [{ jwksExpiresAt: now }, { jwksFetchedAt: now + 1 }, { privateIPv4: '8.8.8.8' },
+    { sourceRunId: '0' }, { notAfterMs: now - 1 }, { notBeforeMs: now - 300001 },
+    { interfaceName: 'eth0;echo' }, { journalPath: 'relative.json' },
+    { commandIds: { ...input.commandIds, start: input.commandIds.sign } }]) {
+    assert.throws(() => prepareOperatorConfig({ ...input, ...patch }, now));
+  }
+  const malicious = structuredClone(preparedPolicies);
+  const runner = JSON.parse(malicious.variables.A303_TLS_RUNNER_POLICY); runner.policy.tlsKey = 'PRIVATE KEY';
+  malicious.variables.A303_TLS_RUNNER_POLICY = JSON.stringify(runner);
+  assert.throws(() => prepareOperatorConfig({ ...input, preparedPolicies: malicious }, now));
+  const mismatched = structuredClone(preparedPolicies); mismatched.trustedHeadSha = 'b'.repeat(40);
+  assert.throws(() => prepareOperatorConfig({ ...input, preparedPolicies: mismatched }, now));
+  let calls = 0;
+  await assert.rejects(runOperatorEntry(config, {}, { enableExternalDispatch: false,
+    fetchImpl: async () => { calls += 1; throw new Error('must-not-fetch'); } }), /explicit-enable/);
+  assert.equal(calls, 0);
 });

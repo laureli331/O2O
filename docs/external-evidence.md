@@ -2,6 +2,8 @@
 
 ## SP08/A3-03 本地临时凭据入口准备（2026-11-25）
 
+- 运行配置补齐：新增 `prepare-operator-config.cjs`，复用现有 runner/command/lifecycle/operator 校验，将公开策略与显式提供的实际资源、运行 ID 和 JWKS 时间戳生成启动器所需 JSON；只在本机写入新文件，不覆盖、不联网、不读取凭据、不派发，也不铸造可信材料。补测完整 `runner-entry.validateConfig` 时先复现 `runner-request-context-mismatch`：旧临时脚本沿用的请求 `env_id` 与固定 GitHub environment 不一致；已改为从同一 environment 值生成，并验证完整静态入口通过。假数据测试覆盖过期、私网/公网位置不符、错误命令、不同 SHA、私钥字段和未显式启用时零外部调用。此前仅通过构建层的测试不代表完整 runner 校验，现已补齐；仍不代表云端验收。
+
 - 后续公开配置准备：已发布分支经只读 `git ls-remote` 核对为 `cccb20878e58612dce4239041c042fefac0170ce`。新增 `prepare-run-policies.cjs`，复用旧准备脚本的固定证明请求和现有 handoff/证书校验，改为显式输入提交号、身份、实际公网目标与公开证书，只生成两个 GitHub 变量的公开值，不写远端、不派发、不覆盖已有输出、不新增依赖。假证书/身份用例通过现有 runner 配置入口，验证绑定同一 SHA、拒绝失配 SAN/私网目标/过期窗口/私钥字段，并按 UTF-8/LF 计算源码摘要。旧临时文件保留；它们的旧 SHA 及旧直接写变量路径不再用于下一轮默认准备。真实资源、权限、JWKS、运行 ID 和启动器运行配置仍待实际值，不能据此解除 HOLD。
 
 - 用户报告已创建无权限的 `o2o-sp08-a303-operator` 角色（UIN `100054294673`，RoleID `4611686018450669466`），信任策略要求 MFA；用户报告通过控制台 API Explorer 的临时 AccessKey 成功 AssumeRole，返回密钥未提供给本地，也未独立读取/验证返回有效期或 RequestId。此预检角色没有资源权限，不能作为真实运行凭据或云端验收证据。

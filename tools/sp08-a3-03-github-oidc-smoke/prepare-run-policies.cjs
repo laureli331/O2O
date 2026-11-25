@@ -37,7 +37,7 @@ function prepareRunPolicies(input, now = Date.now()) {
     tlsCert: input.serverCertificate, ca: input.caCertificate, expectedCaFingerprint256: caFingerprint256, expectedClaims: claims };
   validateApprovedTargetMaterial(policy, input.targetIPv4, now);
   const requestTemplate = { v: 'a303-request-v1', method: 'POST', route_id: 'sp08-a3-03-a-segment-proof',
-    env_id: 'sp08-a3-03-isolated-test', resource_id: 'single-use-cvm-listener', action_id: 'verify-a-segment-tls-proof',
+    env_id: claims.environment, resource_id: 'single-use-cvm-listener', action_id: 'verify-a-segment-tls-proof',
     artifact_digest: `sha256:${crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname, 'a-segment-local.cjs'), 'utf8').replaceAll('\r\n', '\n')).digest('hex')}`,
     payload: { purpose: 'single-use-a-segment-tls-proof', database_access: false } };
   const runner = { mode: 'start-approved', authorization: 'explicit-temporary', authorizedUntil: input.authorizedUntil,
