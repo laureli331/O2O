@@ -57,18 +57,49 @@ function selectSourceRun(runs, expected, budget) {
   return valid[0];
 }
 
-async function waitForReturnRun({ token, repository, workflowId, expected, budget, fetchImpl, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
+async function waitForReturnRun({ token, repository, workflowId, expected, budget, fetchImpl, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)), deadline, now = Date.now }) {
   const bounded = validateBudget(budget);
   if (typeof token !== 'string' || token.length < 1 || token.length > 4096 || typeof repository !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository) || !/^[A-Za-z0-9_.-]+$/.test(workflowId) || typeof fetchImpl !== 'function') fail('poll-configuration-invalid');
   const origin = 'https://api.github.com';
   const endpoint = `${origin}/repos/${repository}/actions/workflows/${workflowId}/runs?event=workflow_dispatch&status=completed&per_page=${bounded.maxCandidates}&page=1`;
+  const request = async () => {
+    if (deadline === undefined) {
+      const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', signal: AbortSignal.timeout(bounded.requestTimeoutMs), headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
+      return { response, body: await response.json() };
+    }
+    const remaining = deadline - now();
+    if (!Number.isSafeInteger(remaining) || remaining <= 0) fail('poll-deadline-expired');
+    const controller = new AbortController();
+    let timer;
+    try {
+      const pending = Promise.resolve().then(async () => {
+        const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', signal: controller.signal, headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
+        if (now() >= deadline) fail('poll-deadline-unknown');
+        if (!response || typeof response.json !== 'function') fail('poll-response-invalid');
+        const body = await response.json();
+        if (now() >= deadline) fail('poll-deadline-unknown');
+        return { response, body };
+      });
+      const timeout = new Promise((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('poll-timeout')); }, Math.min(remaining, bounded.requestTimeoutMs)); });
+      const result = await Promise.race([pending, timeout]);
+      if (now() >= deadline) fail('poll-deadline-unknown');
+      return result;
+    } catch { fail('poll-deadline-unknown'); }
+    finally { if (timer) clearTimeout(timer); }
+  };
   for (let poll = 0; poll < bounded.maxPolls; poll += 1) {
-    if (bounded.pollDelaysMs[poll] > 0) await sleep(bounded.pollDelaysMs[poll]);
-    const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', signal: AbortSignal.timeout(bounded.requestTimeoutMs), headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
+    if (deadline !== undefined) {
+      if (!Number.isSafeInteger(deadline) || typeof now !== 'function') fail('poll-deadline-invalid');
+      const remaining = deadline - now();
+      if (remaining <= 0) fail('poll-deadline-expired');
+      const delay = Math.min(bounded.pollDelaysMs[poll], remaining);
+      if (delay > 0) await sleep(delay);
+      if (now() >= deadline) fail('poll-deadline-expired');
+    } else if (bounded.pollDelaysMs[poll] > 0) await sleep(bounded.pollDelaysMs[poll]);
+    const { response, body } = await request();
     if (!response || response.status !== 200 || response.url && new URL(response.url).origin !== origin) fail('poll-http-failed');
     const link = response.headers?.get?.('link');
     if (link) fail('poll-pagination-limit');
-    const body = await response.json();
     if (!isRecord(body) || !Array.isArray(body.workflow_runs) || body.workflow_runs.length > bounded.maxCandidates || !Number.isSafeInteger(body.total_count)) fail('poll-response-invalid');
     const matching = body.workflow_runs.filter((run) => isRecord(run)
       && run.event === 'workflow_dispatch' && run.status === 'completed' && run.conclusion === 'success'

@@ -12,6 +12,7 @@ const { runServerLifecycle } = require('./server-lifecycle.cjs');
 const { dispatchReturnOnce } = require('./return-dispatch-once.cjs');
 const { assertOperatorReturnRunBinding, runOperatorFlow } = require('./operator-flow.cjs');
 const { waitForReturnRun } = require('./csr-handoff.cjs');
+const { runOperatorEntry } = require('./operator-entry.cjs');
 
 const target = { commandId: 'cmd-approved1', instanceId: 'ins-approved1', region: 'ap-guangzhou', securityGroupId: 'sg-approved1' };
 const pem = '-----BEGIN CERTIFICATE REQUEST-----\nQUJD\n-----END CERTIFICATE REQUEST-----\n';
@@ -463,7 +464,17 @@ test('operator flow completes fixture CSR, cert validation, leased ingress, retu
     await assert.rejects(runOperatorFlow(flowOptions), /dispatch-journal-already-exists/);
     assert.equal(trace.length, 0);
     fs.unlinkSync(journalPath);
-    const result = await runOperatorFlow(flowOptions);
+    const entryConfig = { repository: 'owner/repo', repositoryId: '456', actorId: '789', actorLogin: 'operator',
+      workflowPath: fixture.expected.workflowPath, workflowRef: fixture.expected.workflowRef, trustedHeadSha: fixture.expected.trustedHeadSha,
+      sourceRunId: '123', notBeforeMs: fixture.expected.notBeforeMs, notAfterMs: fixture.expected.notAfterMs,
+      caFingerprint256: fixture.expected.caFingerprint256, target: operationTarget, lifecycleTargets, securityTarget,
+      serverInput, expectedInput, journalPath, pwshPath: fixture.pwshPath };
+    const entryFetch = async (url, options) => url.includes('/actions/artifacts/') || url.includes('/actions/runs/123/artifacts') || url.startsWith('https://artifact-download.invalid/')
+      ? fixture.fetchImpl(url, options) : url.endsWith('/actions/runs/123') && !trace.includes('github-dispatch')
+        ? fixture.fetchImpl(url, options) : githubFetch(url, options);
+    const result = await runOperatorEntry(entryConfig, { token: 'offline-token', credential: { secretId: 'offline', secretKey: 'offline' } },
+      { enableExternalDispatch: true, fetchImpl: entryFetch, callerFetchImpl: async (url) => ({ status: 200, url, json: async () => tlsSource }),
+        now: () => nowMs, sleep: async () => {}, buildClients: () => clients });
     assert.equal(result.state, 'tls-complete');
     assert.equal(result.returnRunId, '456');
     assert.deepEqual(ingress, []);
@@ -516,5 +527,5 @@ test('operator flow completes fixture CSR, cert validation, leased ingress, retu
           json: async () => { if (url.endsWith('/actions/runs/123')) return badRun; throw new Error('unexpected-request-after-bad-source'); } }) }), /return-source-binding-mismatch/);
       assert.equal(fs.existsSync(badJournal), false);
     }
-  } finally { fs.unlinkSync(journalPath); fs.rmdirSync(journalDir); fixture.cleanup(); }
+  } finally { if (fs.existsSync(journalPath)) fs.unlinkSync(journalPath); fs.rmdirSync(journalDir); fixture.cleanup(); }
 });
