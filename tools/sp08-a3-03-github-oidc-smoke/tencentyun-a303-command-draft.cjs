@@ -24,7 +24,28 @@ function buildCommandDraft(ids) {
       createCommandInput: Object.freeze({ CommandName: `a303-${kind}-DRAFT`, Description: 'DRAFT ONLY — review required', Content: content,
         CommandType: 'SHELL', Timeout: 300, EnableParameter: true, WorkingDirectory: '/root' }), parameterNames: parameters });
   });
-  return Object.freeze({ NOTICE: 'DRAFT ONLY — NOT DEPLOYABLE. Explicit IDs and resource inputs are required; this file cannot submit or grant.', commands });
+  const draft = Object.freeze({ NOTICE: 'DRAFT ONLY — NOT DEPLOYABLE. Explicit IDs and resource inputs are required; this file cannot submit or grant.', commands });
+  validateCommandDraft(draft);
+  return draft;
+}
+
+function validateCommandDraft(draft) {
+  if (!draft || draft.NOTICE !== 'DRAFT ONLY — NOT DEPLOYABLE. Explicit IDs and resource inputs are required; this file cannot submit or grant.'
+    || !Array.isArray(draft.commands) || draft.commands.length !== definitions.length) throw new Error('command-draft-shape-invalid');
+  for (const [index, [kind, filename, parameterNames]] of definitions.entries()) {
+    const item = draft.commands[index];
+    if (!item || Object.keys(item).sort().join('|') !== 'createCommandInput|id|kind|parameterNames|scriptSha256'
+      || item.kind !== kind || !Array.isArray(item.parameterNames) || item.parameterNames.join('|') !== parameterNames.join('|')) throw new Error(`command-draft-${kind}-fields-invalid`);
+    const script = fs.readFileSync(path.join(root, filename), 'utf8').replace(/\r\n/g, '\n');
+    const input = item.createCommandInput;
+    if (!input || Object.keys(input).sort().join('|') !== 'CommandName|CommandType|Content|Description|EnableParameter|Timeout|WorkingDirectory'
+      || input.CommandName !== `a303-${kind}-DRAFT` || input.Description !== 'DRAFT ONLY — review required' || input.CommandType !== 'SHELL'
+      || input.Timeout !== 300 || input.EnableParameter !== true || input.WorkingDirectory !== '/root'
+      || typeof input.Content !== 'string' || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(input.Content)
+      || Buffer.from(input.Content, 'base64').toString('base64') !== input.Content || Buffer.from(input.Content, 'base64').toString('utf8') !== script
+      || item.scriptSha256 !== crypto.createHash('sha256').update(script, 'utf8').digest('hex')) throw new Error(`command-draft-${kind}-content-or-digest-invalid`);
+  }
+  return true;
 }
 
 function buildPolicy({ region, accountUin, instanceId, securityGroupId, commandIds }) {
@@ -43,4 +64,4 @@ function buildPolicy({ region, accountUin, instanceId, securityGroupId, commandI
   ] });
 }
 
-module.exports = { buildCommandDraft, buildPolicy };
+module.exports = { buildCommandDraft, buildPolicy, validateCommandDraft };

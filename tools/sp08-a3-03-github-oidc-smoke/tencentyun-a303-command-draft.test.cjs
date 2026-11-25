@@ -1,7 +1,7 @@
 'use strict';
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { buildCommandDraft, buildPolicy } = require('./tencentyun-a303-command-draft.cjs');
+const { buildCommandDraft, buildPolicy, validateCommandDraft } = require('./tencentyun-a303-command-draft.cjs');
 
 const ids = { sign: 'cmd-abcdefgh', start: 'cmd-bcdefghi', stop: 'cmd-cdefghij' };
 test('command draft carries exact reviewed scripts and parameter declarations', () => {
@@ -11,11 +11,25 @@ test('command draft carries exact reviewed scripts and parameter declarations', 
     ['csr_b64', 'source_run_id'], ['server_input_b64', 'source_run_id'], ['source_run_id'],
   ]);
   for (const command of draft.commands) {
-    assert.equal(Buffer.from(command.createCommandInput.Content, 'base64').toString('utf8').length > 0, true);
+    assert.ok(Buffer.from(command.createCommandInput.Content, 'base64').toString('utf8').length > 0);
     assert.equal(command.createCommandInput.Timeout, 300);
     assert.equal(command.createCommandInput.EnableParameter, true);
     assert.match(command.scriptSha256, /^[a-f0-9]{64}$/);
   }
+  assert.equal(validateCommandDraft(draft), true);
+});
+
+test('command draft verifier rejects changed template bytes, digest, parameters and CreateCommand fields', () => {
+  const original = buildCommandDraft(ids);
+  const changed = (mutate) => {
+    const copy = structuredClone(original);
+    mutate(copy.commands[0]);
+    return () => validateCommandDraft(copy);
+  };
+  assert.throws(changed((item) => { item.createCommandInput.Content = Buffer.from('echo altered\n').toString('base64'); }), /content-or-digest-invalid/);
+  assert.throws(changed((item) => { item.scriptSha256 = '0'.repeat(64); }), /content-or-digest-invalid/);
+  assert.throws(changed((item) => { item.parameterNames.push('extra'); }), /fields-invalid/);
+  assert.throws(changed((item) => { item.createCommandInput.Unreviewed = true; }), /content-or-digest-invalid/);
 });
 
 test('CAM candidate scopes invoke and task read to three distinct commands and one instance', () => {
