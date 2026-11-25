@@ -6,6 +6,12 @@ const path = require('node:path');
 
 const fail = (code) => { throw new Error(code); };
 const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+const verifiedReturnRuns = new WeakSet();
+
+function requireVerifiedReturnRun(value) {
+  if (!value || !verifiedReturnRuns.has(value)) fail('return-run-evidence-unverified');
+  return value;
+}
 
 function csrPublicKey(csrBytes, { pwshPath, timeoutMs }) {
   if (typeof pwshPath !== 'string' || pwshPath.length === 0) fail('pwsh-path-required');
@@ -69,9 +75,15 @@ async function waitForReturnRun({ token, repository, workflowId, expected, budge
       && String(run.repository?.full_name) === repository && run.path === expected.workflowPath
       && run.head_sha === expected.trustedHeadSha && run.run_attempt === 1
       && String(run.actor?.id) === expected.actorId && run.actor?.login === expected.actorLogin
+      && (expected.headBranch === undefined || run.head_branch === expected.headBranch)
       && typeof run.created_at === 'string' && Date.parse(run.created_at) >= expected.notBeforeMs && Date.parse(run.created_at) <= expected.notAfterMs);
     if (matching.length > 1) fail('return-run-ambiguous');
-    if (matching.length === 1) return Object.freeze({ runId: String(matching[0].id), attempt: matching[0].run_attempt, headSha: matching[0].head_sha, workflowPath: matching[0].path });
+    if (matching.length === 1) {
+      const selected = Object.freeze({ runId: String(matching[0].id), attempt: matching[0].run_attempt, headSha: matching[0].head_sha,
+        workflowPath: matching[0].path, headBranch: matching[0].head_branch, repository, actorId: expected.actorId, actorLogin: expected.actorLogin });
+      verifiedReturnRuns.add(selected);
+      return selected;
+    }
   }
   fail('return-run-timeout');
 }
@@ -124,4 +136,4 @@ function verifyPublicCertificateBinding({ csrBytes, expectedCsrSha256, leafPem, 
   return Object.freeze({ csrSha256: expectedCsrSha256, caFingerprint256: caFingerprint, leafFingerprint256: leaf.fingerprint256.replaceAll(':', '').toLowerCase() });
 }
 
-module.exports = { csrPublicKey, selectSourceRun, validateBudget, verifyCertificateBinding, verifyPublicCertificateBinding, waitForReturnRun };
+module.exports = { csrPublicKey, requireVerifiedReturnRun, selectSourceRun, validateBudget, verifyCertificateBinding, verifyPublicCertificateBinding, waitForReturnRun };

@@ -10,13 +10,17 @@ const { addIngressRule, awaitVerifiedCallerRun, buildClients, buildSdkClients, i
 const { parseReturnBundle } = require('./return-bundle.cjs');
 const { runServerLifecycle } = require('./server-lifecycle.cjs');
 const { dispatchReturnOnce } = require('./return-dispatch-once.cjs');
+const { assertOperatorReturnRunBinding, runOperatorFlow } = require('./operator-flow.cjs');
+const { waitForReturnRun } = require('./csr-handoff.cjs');
 
 const target = { commandId: 'cmd-approved1', instanceId: 'ins-approved1', region: 'ap-guangzhou', securityGroupId: 'sg-approved1' };
 const pem = '-----BEGIN CERTIFICATE REQUEST-----\nQUJD\n-----END CERTIFICATE REQUEST-----\n';
 const digest = require('node:crypto').createHash('sha256').update(pem).digest('hex');
-function fixtureMaterials() {
+function fixtureMaterials(nowMs = Date.parse('2026-11-24T12:00:00.000Z')) {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-sdk-'));
-  const nowMs = Date.parse('2026-11-24T12:00:00.000Z');
+  const sourceStartedAt = new Date(nowMs - 5 * 60 * 1000).toISOString();
+  const egressQueriedAt = new Date(nowMs - 60 * 1000).toISOString();
+  const egressExpiresAt = new Date(nowMs + 4 * 60 * 1000).toISOString();
   const names = ['source.csr.pem', 'source-manifest.json', 'egress-ip-manifest.json'];
   const sourceManifestPath = path.join(tempDir, names[1]);
   const egressPath = path.join(tempDir, names[2]);
@@ -48,15 +52,15 @@ $rsa.Dispose();$caRsa.Dispose();$ca.Dispose();$leaf.Dispose()`, { flag: 'wx' });
   const csrPem = fs.readFileSync(path.join(tempDir, names[0]), 'utf8');
   const csrSha256 = require('node:crypto').createHash('sha256').update(csrPem).digest('hex');
   const certificates = JSON.parse(fs.readFileSync(certPath, 'utf8'));
-  fs.writeFileSync(sourceManifestPath, JSON.stringify({ source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: 'a'.repeat(40), source_started_at: '2026-11-24T11:55:00.000Z', csr_sha256: csrSha256 }), { flag: 'wx' });
-  fs.writeFileSync(egressPath, JSON.stringify({ schema: 'sp08-a303-egress-ip-v1', source_run_id: '123', source_run_attempt: '1', workflow_sha: 'a'.repeat(40), csr_sha256: csrSha256, query_source: 'https://api.ipify.org/', queried_at: '2026-11-24T11:59:00.000Z', ipv4: '8.8.8.8', cidr_suggestion: '8.8.8.8/32', expires_at: '2026-11-24T12:04:00.000Z', identity_note: 'Public IP observation only; not an identity credential or authorization.' }), { flag: 'wx' });
+  fs.writeFileSync(sourceManifestPath, JSON.stringify({ source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: 'a'.repeat(40), source_started_at: sourceStartedAt, csr_sha256: csrSha256 }), { flag: 'wx' });
+  fs.writeFileSync(egressPath, JSON.stringify({ schema: 'sp08-a303-egress-ip-v1', source_run_id: '123', source_run_attempt: '1', workflow_sha: 'a'.repeat(40), csr_sha256: csrSha256, query_source: 'https://api.ipify.org/', queried_at: egressQueriedAt, ipv4: '8.8.8.8', cidr_suggestion: '8.8.8.8/32', expires_at: egressExpiresAt, identity_note: 'Public IP observation only; not an identity credential or authorization.' }), { flag: 'wx' });
   fs.writeFileSync(scriptPath, `Compress-Archive -LiteralPath @('${path.join(tempDir, names[0])}','${sourceManifestPath}','${egressPath}') -DestinationPath '${zipPath}' -Force`, { flag: 'wx' });
   const zipped = spawnSync(pwshPath, ['-NoProfile', '-NonInteractive', '-File', scriptPath], { encoding: 'utf8', timeout: 10000, windowsHide: true, shell: false });
   assert.equal(zipped.status, 0, zipped.stderr);
   const zipBytes = fs.readFileSync(zipPath);
   const artifactDigest = `sha256:${require('node:crypto').createHash('sha256').update(zipBytes).digest('hex')}`;
   const expected = { sourceRunId: '123', repositoryId: '456', trustedHeadSha: 'a'.repeat(40), actorId: '789', actorLogin: 'operator', workflowPath: '.github/workflows/sp08-a3-03-tls-caller.yml', workflowRef: 'owner/repo/.github/workflows/sp08-a3-03-tls-caller.yml@refs/heads/codex/sp08-a3-03-tls-prep', notBeforeMs: nowMs - 10 * 60 * 1000, notAfterMs: nowMs, caFingerprint256: certificates.fingerprint };
-  const run = { id: 123, event: 'workflow_dispatch', status: 'in_progress', conclusion: null, repository: { id: 456 }, path: expected.workflowPath, head_sha: expected.trustedHeadSha, head_branch: 'codex/sp08-a3-03-tls-prep', run_attempt: 1, actor: { id: 789, login: 'operator' }, created_at: '2026-11-24T11:55:00Z' };
+  const run = { id: 123, event: 'workflow_dispatch', status: 'in_progress', conclusion: null, repository: { id: 456 }, path: expected.workflowPath, head_sha: expected.trustedHeadSha, head_branch: 'codex/sp08-a3-03-tls-prep', run_attempt: 1, actor: { id: 789, login: 'operator' }, created_at: sourceStartedAt };
   const fetchImpl = async (url, options) => {
     assert.equal(options.redirect, url.endsWith('/artifacts/99/zip') ? 'manual' : 'error');
     if (url === 'https://api.github.com/repos/owner/repo/actions/runs/123') return { status: 200, url, json: async () => run };
@@ -355,4 +359,162 @@ test('return dispatch deadline aborts a response body that stalls after headers'
     await assert.rejects(dispatchReturnOnce({ verifiedMaterials, journalPath, bundle, token: 'offline-token', fetchImpl: hangingFetch, deadline: nowMs + 20, now: () => nowMs }), /outcome-unknown/);
     assert.equal(fs.existsSync(journalPath), false);
   } finally { fs.rmdirSync(directory); fixture.cleanup(); }
+});
+
+test('operator flow completes fixture CSR, cert validation, leased ingress, return dispatch, same-run TLS, stop and lease removal', async () => {
+  const nowMs = Date.now();
+  const fixture = fixtureMaterials(nowMs + 60 * 1000);
+  const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo',
+    fetchImpl: fixture.fetchImpl, now: () => nowMs, pwshPath: fixture.pwshPath });
+  const journalDir = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-flow-journal-'));
+  const journalPath = path.join(journalDir, 'return-dispatch.json');
+  const operationTarget = { commandId: 'cmd-sign01', instanceId: 'ins-flow01', region: 'ap-guangzhou', securityGroupId: 'sg-flow01' };
+  const lifecycleTargets = { region: operationTarget.region, instanceId: operationTarget.instanceId, securityGroupId: operationTarget.securityGroupId,
+    startCommandId: 'cmd-start01', stopCommandId: 'cmd-stop01' };
+  const securityTarget = { ...operationTarget, commandId: 'cmd-sign01' };
+  const tlsSource = { id: 123, repository: { id: 456 }, run_attempt: 1, path: fixture.expected.workflowPath, head_sha: fixture.expected.trustedHeadSha,
+    head_branch: 'codex/sp08-a3-03-tls-prep', event: 'workflow_dispatch', actor: { id: 789, login: 'operator' }, status: 'completed', conclusion: 'success' };
+  const returnWorkflowPath = '.github/workflows/sp08-a3-03-csr-return.yml';
+  const returnWorkflowSha = fixture.expected.trustedHeadSha;
+  const trace = [];
+  let dispatchStatus = 204;
+  let ingress = [];
+  let version = '1';
+  const certOutput = `csr_sha256=${fixture.csrSha256}\nleaf_cert_b64=${Buffer.from(fixture.certificates.leaf).toString('base64')}\nca_cert_b64=${Buffer.from(fixture.certificates.ca).toString('base64')}\n`;
+  const clients = buildClients({ region: operationTarget.region, transport: async (_service, action, request) => {
+    trace.push(action === 'InvokeCommand' ? request.CommandId : action);
+    if (action === 'InvokeCommand') {
+      if (request.CommandId === operationTarget.commandId) return { InvocationId: 'inv-cert1' };
+      if (request.CommandId === lifecycleTargets.startCommandId) return { InvocationId: 'inv-start1' };
+      if (request.CommandId === lifecycleTargets.stopCommandId) return { InvocationId: 'inv-stop1' };
+    }
+    if (action === 'DescribeInvocationTasks') {
+      const invocationId = request.Filters[0].Values[0];
+      const output = invocationId === 'inv-cert1' ? Buffer.from(certOutput).toString('base64')
+        : Buffer.from(`${invocationId === 'inv-start1' ? 'listener_ready=private_ipv4:8443' : 'server_stopped_and_keys_removed=true'}\n`).toString('base64');
+      const id = invocationId === 'inv-cert1' ? operationTarget.commandId : invocationId === 'inv-start1' ? lifecycleTargets.startCommandId : lifecycleTargets.stopCommandId;
+      return { TotalCount: 1, InvocationTaskSet: [{ InvocationId: invocationId, InstanceId: operationTarget.instanceId, CommandId: id,
+        TaskStatus: 'SUCCESS', TaskResult: { ExitCode: 0, Dropped: 0, Output: output } }] };
+    }
+    if (action === 'DescribeSecurityGroupPolicies') return { SecurityGroupPolicySet: { Version: version, Ingress: structuredClone(ingress) } };
+    if (action === 'CreateSecurityGroupPolicies') { ingress.push({ ...request.SecurityGroupPolicySet.Ingress[0], PolicyIndex: 4 }); version = '2'; return { RequestId: 'create' }; }
+    if (action === 'DeleteSecurityGroupPolicies') { ingress = []; version = '3'; return { RequestId: 'delete' }; }
+    throw new Error(`unexpected-${action}`);
+  } });
+  const expectedClaims = { run_id: '123', run_attempt: '1', workflow_sha: fixture.expected.trustedHeadSha, repository_id: '456' };
+  const serverInput = JSON.stringify({ mode: 'start-approved', authorization: 'explicit-temporary', authorizedUntil: nowMs + 60000,
+    interfaceName: 'eth0', bindIPv4: '10.0.0.2', port: 8443, policy: { mode: 'github-oidc', serverIPv4: '198.51.100.8',
+      githubJwksFetchedAt: nowMs - 1000, githubJwksExpiresAt: nowMs + 60000, expectedClaims,
+      expectedRequest: { run_id: '123', run_attempt: '1', repository_id: '456', payload: { database_access: false } } } });
+  const expectedInput = { clbIPv4: '198.51.100.8' };
+  const githubFetch = async (url, options) => {
+    trace.push(options.method === 'POST' ? 'github-dispatch' : url.includes('/actions/runs/123') ? 'github-source-read' : 'github-return-poll');
+    if (url.endsWith('/actions/runs/123')) return { status: 200, url, json: async () => options.method === 'GET' && trace.includes('github-dispatch') ? tlsSource : {
+      ...tlsSource, status: 'in_progress', conclusion: null } };
+    if (url.includes('/actions/workflows/sp08-a3-03-csr-return.yml/runs?') && options.method === 'GET'
+      && url.includes('status=completed')) return { status: 200, headers: { get: () => null }, json: async () => ({ total_count: 1, workflow_runs: [{ id: 456,
+        event: 'workflow_dispatch', status: 'completed', conclusion: 'success', repository: { full_name: 'owner/repo' }, path: returnWorkflowPath,
+        head_sha: returnWorkflowSha, head_branch: 'codex/sp08-a3-03-tls-prep', run_attempt: 1, actor: { id: 789, login: 'operator' }, created_at: new Date(nowMs).toISOString() }] }) };
+    if (url.includes('/actions/workflows/sp08-a3-03-csr-return.yml/runs?')) return { status: 200, json: async () => ({ workflow_runs: [] }) };
+    if (url.endsWith('/actions/workflows/sp08-a3-03-csr-return.yml/dispatches')) {
+      const parsed = JSON.parse(options.body);
+      const bundle = JSON.parse(parsed.inputs.bundle);
+      assert.equal(parsed.ref, 'codex/sp08-a3-03-tls-prep');
+      assert.equal(bundle.csr_sha256, fixture.csrSha256);
+      assert.equal(bundle.source_run_id, '123');
+      trace.push('exact-return-body');
+      return { status: dispatchStatus };
+    }
+    throw new Error(`unexpected-github-${url}`);
+  };
+  const callerFetch = async (url) => ({ status: 200, url, json: async () => tlsSource });
+  const awaitCallerTlsCompletion = async ({ deadline }) => awaitVerifiedCallerRun({ verifiedMaterials, token: 'offline-token', fetchImpl: callerFetch,
+    deadline, now: () => nowMs, sleep: async () => {} });
+  const untrustedActorReturn = await waitForReturnRun({ token: 'offline-token', repository: 'owner/repo', workflowId: 'sp08-a3-03-csr-return.yml',
+    expected: { workflowPath: returnWorkflowPath, trustedHeadSha: returnWorkflowSha, actorId: '999', actorLogin: 'other-operator',
+      notBeforeMs: verifiedMaterials.sourceStartedAt, notAfterMs: verifiedMaterials.sourceStartedAt + 300000 },
+    budget: { maxPolls: 1, maxPages: 1, maxCandidates: 2, maxArtifactBytes: 65536, maxWaitMs: 300000, requestTimeoutMs: 10000, pollDelaysMs: [0] },
+    fetchImpl: async (url) => ({ status: 200, url, headers: { get: () => null }, json: async () => ({ total_count: 1, workflow_runs: [{ id: 457,
+      event: 'workflow_dispatch', status: 'completed', conclusion: 'success', repository: { full_name: 'owner/repo' }, path: returnWorkflowPath,
+      head_sha: returnWorkflowSha, head_branch: 'codex/sp08-a3-03-tls-prep', run_attempt: 1,
+      actor: { id: 999, login: 'other-operator' }, created_at: new Date(nowMs).toISOString() }] }) }), sleep: async () => {} });
+  assert.throws(() => assertOperatorReturnRunBinding(untrustedActorReturn, verifiedMaterials), /operator-return-run-binding-invalid/);
+  const untrustedShaReturn = await waitForReturnRun({ token: 'offline-token', repository: 'owner/repo', workflowId: 'sp08-a3-03-csr-return.yml',
+    expected: { workflowPath: returnWorkflowPath, trustedHeadSha: 'd'.repeat(40), actorId: '789', actorLogin: 'operator',
+      notBeforeMs: verifiedMaterials.sourceStartedAt, notAfterMs: verifiedMaterials.sourceStartedAt + 300000 },
+    budget: { maxPolls: 1, maxPages: 1, maxCandidates: 2, maxArtifactBytes: 65536, maxWaitMs: 300000, requestTimeoutMs: 10000, pollDelaysMs: [0] },
+    fetchImpl: async (url) => ({ status: 200, url, headers: { get: () => null }, json: async () => ({ total_count: 1, workflow_runs: [{ id: 458,
+      event: 'workflow_dispatch', status: 'completed', conclusion: 'success', repository: { full_name: 'owner/repo' }, path: returnWorkflowPath,
+      head_sha: 'd'.repeat(40), head_branch: 'codex/sp08-a3-03-tls-prep', run_attempt: 1,
+      actor: { id: 789, login: 'operator' }, created_at: new Date(nowMs).toISOString() }] }) }), sleep: async () => {} });
+  assert.throws(() => assertOperatorReturnRunBinding(untrustedShaReturn, verifiedMaterials), /operator-return-run-binding-invalid/);
+  try {
+    const flowOptions = { enableExternalDispatch: true, clients, target: operationTarget, lifecycleTargets, securityTarget,
+      verifiedMaterials, serverInput, expectedInput, journalPath, token: 'offline-token', fetchImpl: githubFetch, now: () => nowMs,
+      sleep: async () => {}, awaitVerifiedReturnRun: async ({ deadline }) => waitForReturnRun({ token: 'offline-token', repository: 'owner/repo',
+        workflowId: 'sp08-a3-03-csr-return.yml', expected: { workflowPath: returnWorkflowPath, trustedHeadSha: returnWorkflowSha,
+          actorId: '789', actorLogin: 'operator', notBeforeMs: verifiedMaterials.sourceStartedAt, notAfterMs: verifiedMaterials.sourceStartedAt + 300000 },
+        budget: { maxPolls: 1, maxPages: 1, maxCandidates: 10, maxArtifactBytes: 65536, maxWaitMs: 300000, requestTimeoutMs: 10000, pollDelaysMs: [0] },
+        headBranch: 'codex/sp08-a3-03-tls-prep',
+        fetchImpl: githubFetch, sleep: async () => {} }), awaitCallerTlsCompletion };
+    await assert.rejects(runOperatorFlow({ ...flowOptions, securityTarget: { ...securityTarget, instanceId: 'ins-other01' } }), /operator-targets-disagree/);
+    assert.equal(trace.length, 0);
+    fs.writeFileSync(journalPath, '{}', { flag: 'wx' });
+    await assert.rejects(runOperatorFlow(flowOptions), /dispatch-journal-already-exists/);
+    assert.equal(trace.length, 0);
+    fs.unlinkSync(journalPath);
+    const result = await runOperatorFlow(flowOptions);
+    assert.equal(result.state, 'tls-complete');
+    assert.equal(result.returnRunId, '456');
+    assert.deepEqual(ingress, []);
+    assert.deepEqual(JSON.parse(fs.readFileSync(journalPath, 'utf8')).returnRunId, '456');
+    await assert.rejects(dispatchReturnOnce({ verifiedMaterials, journalPath, bundle: '{}', token: 'offline-token', fetchImpl: githubFetch,
+      deadline: verifiedMaterials.sourceDeadline, now: () => nowMs }), /dispatch-journal-already-exists/);
+    assert.ok(trace.indexOf('github-dispatch') > trace.indexOf('cmd-start01'));
+    assert.ok(trace.indexOf('cmd-stop01') > trace.indexOf('github-return-poll'));
+    assert.ok(trace.includes('exact-return-body'));
+    const unknownJournalPath = path.join(journalDir, 'unknown-dispatch.json');
+    const retryMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo',
+      fetchImpl: fixture.fetchImpl, now: () => nowMs, pwshPath: fixture.pwshPath });
+    trace.length = 0;
+    ingress = [];
+    version = '1';
+    dispatchStatus = 500;
+    await assert.rejects(runOperatorFlow({ ...flowOptions, verifiedMaterials: retryMaterials, journalPath: unknownJournalPath }), /return-dispatch-outcome-unknown/);
+    assert.equal(JSON.parse(fs.readFileSync(unknownJournalPath, 'utf8')).state, 'intent');
+    assert.ok(trace.includes('cmd-stop01'));
+    assert.deepEqual(ingress, []);
+    fs.unlinkSync(unknownJournalPath);
+    const concurrentJournalPath = path.join(journalDir, 'concurrent-dispatch.json');
+    dispatchStatus = 204;
+    let postCount = 0;
+    const concurrentFetch = async (url, options) => {
+      if (options.method === 'POST') { postCount += 1; return { status: 204 }; }
+      if (url.endsWith('/actions/runs/123')) return { status: 200, json: async () => ({ ...tlsSource, status: 'in_progress', conclusion: null }) };
+      if (url.includes('/actions/workflows/sp08-a3-03-csr-return.yml/runs?')) return { status: 200, json: async () => ({ workflow_runs: [] }) };
+      throw new Error('unexpected-concurrency-url');
+    };
+    const concurrencyBundle = JSON.stringify({ source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1',
+      source_commit: fixture.expected.trustedHeadSha, source_started_at: new Date(verifiedMaterials.sourceStartedAt).toISOString(),
+      csr_sha256: fixture.csrSha256, leaf_certificate: fixture.certificates.leaf, ca_certificate: fixture.certificates.ca });
+    const concurrent = await Promise.allSettled([1, 2].map(() => dispatchReturnOnce({ verifiedMaterials, journalPath: concurrentJournalPath,
+      bundle: concurrencyBundle, token: 'offline-token', fetchImpl: concurrentFetch, deadline: verifiedMaterials.sourceDeadline, now: () => nowMs })));
+    assert.equal(concurrent.filter((item) => item.status === 'fulfilled').length, 1);
+    assert.equal(postCount, 1);
+    assert.equal(JSON.parse(fs.readFileSync(concurrentJournalPath, 'utf8')).state, 'accepted');
+    fs.unlinkSync(concurrentJournalPath);
+    const sourceBase = { id: 123, repository: { id: 456 }, path: fixture.expected.workflowPath, head_sha: fixture.expected.trustedHeadSha,
+      run_attempt: 1, status: 'in_progress', conclusion: null, event: 'workflow_dispatch', actor: { id: 789, login: 'operator' }, head_branch: 'codex/sp08-a3-03-tls-prep' };
+    const badSourceRuns = [
+      { ...sourceBase, id: 124 }, { ...sourceBase, repository: { id: 457 } }, { ...sourceBase, run_attempt: 2 },
+      { ...sourceBase, head_sha: 'd'.repeat(40) }, { ...sourceBase, head_branch: 'refs/heads/other' },
+    ];
+    for (const [index, badRun] of badSourceRuns.entries()) {
+      const badJournal = path.join(journalDir, `bad-binding-${index}.json`);
+      await assert.rejects(dispatchReturnOnce({ verifiedMaterials, journalPath: badJournal, bundle: concurrencyBundle, token: 'offline-token',
+        deadline: verifiedMaterials.sourceDeadline, now: () => nowMs, fetchImpl: async (url) => ({ status: 200,
+          json: async () => { if (url.endsWith('/actions/runs/123')) return badRun; throw new Error('unexpected-request-after-bad-source'); } }) }), /return-source-binding-mismatch/);
+      assert.equal(fs.existsSync(badJournal), false);
+    }
+  } finally { fs.unlinkSync(journalPath); fs.rmdirSync(journalDir); fixture.cleanup(); }
 });

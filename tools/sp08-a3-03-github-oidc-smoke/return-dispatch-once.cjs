@@ -29,6 +29,17 @@ function validateJournalPath(filePath) {
   return filePath;
 }
 
+function preflightReturnDispatch({ verifiedMaterials, journalPath, token, deadline, now = Date.now }) {
+  const verified = requireVerifiedSourceMaterials(verifiedMaterials);
+  validateBinding({ repository: verified.repository, repositoryId: verified.repositoryId, actorId: verified.actorId,
+    sourceRunId: verified.sourceRunId, attempt: verified.attempt, workflowPath: verified.workflowPath, workflowRef: verified.workflowRef,
+    workflowSha: verified.workflowSha, csrSha256: verifiedMaterials.csrSha256 });
+  validateJournalPath(journalPath);
+  if (typeof token !== 'string' || token.length < 1 || token.length > 4096 || !Number.isSafeInteger(deadline)
+    || deadline > verified.sourceDeadline || deadline <= now()) fail('return-dispatch-input-invalid');
+  return true;
+}
+
 function writeJournal(fd, record) {
   const bytes = Buffer.from(`${JSON.stringify(record)}\n`, 'utf8');
   fs.writeFileSync(fd, bytes);
@@ -56,7 +67,8 @@ async function dispatchReturnOnce({ verifiedMaterials, journalPath, bundle, toke
   const binding = validateBinding({ repository: verified.repository, repositoryId: verified.repositoryId, actorId: verified.actorId,
     sourceRunId: verified.sourceRunId, attempt: verified.attempt, workflowPath: verified.workflowPath, workflowRef: verified.workflowRef,
     workflowSha: verified.workflowSha, csrSha256: verifiedMaterials.csrSha256 });
-  const filePath = validateJournalPath(journalPath);
+  preflightReturnDispatch({ verifiedMaterials, journalPath, token, deadline, now });
+  const filePath = journalPath;
   if (typeof bundle !== 'string' || bundle.length < 1 || bundle.length > 60000 || typeof token !== 'string' || token.length < 1 || token.length > 4096 || typeof fetchImpl !== 'function'
     || !Number.isSafeInteger(deadline) || deadline > verified.sourceDeadline) fail('return-dispatch-input-invalid');
   const apiRequest = async (url, options, code, parseJson = false) => {
@@ -114,9 +126,10 @@ async function dispatchReturnOnce({ verifiedMaterials, journalPath, bundle, toke
   fs.closeSync(fd);
   const dispatchBody = { ref: branch, inputs: { bundle } };
   try {
-    const response = await apiRequest(`${apiRoot}/actions/workflows/sp08-a3-03-csr-return.yml/dispatches`, {
+    const dispatchResult = await apiRequest(`${apiRoot}/actions/workflows/sp08-a3-03-csr-return.yml/dispatches`, {
       method: 'POST', headers: { ...headers, 'content-type': 'application/json' }, body: JSON.stringify(dispatchBody), redirect: 'error',
     }, 'return-dispatch');
+    const response = dispatchResult.response;
     if (!response || response.status !== 204) fail('return-dispatch-outcome-unknown-manual-recovery');
     const fdUpdate = fs.openSync(filePath, 'r+');
     try {
@@ -132,4 +145,4 @@ async function dispatchReturnOnce({ verifiedMaterials, journalPath, bundle, toke
   }
 }
 
-module.exports = { dispatchReturnOnce, recordReturnRunId, validateBinding, validateJournalPath };
+module.exports = { dispatchReturnOnce, preflightReturnDispatch, recordReturnRunId, validateBinding, validateJournalPath };
