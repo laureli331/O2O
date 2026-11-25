@@ -1,5 +1,7 @@
 # A3-03 server lifecycle adapter (offline)
 
+Task **SP08/A3-03HOLD** — lifecycle handoff implementation complete; A3-03 remains `HOLD`. Commits: `e3355dd`, `056d959`, `2c8854e`. Verification: 29/29 package tests pass; both shell templates pass Git for Windows `bash -n`; candidate worktree clean. Remaining evidence: no real reviewed CommandIds/CVM/TAT run or 300-second timing has been authorized/performed, and no Linux listener/process cleanup run exists. No cloud/CAM/GitHub operation performed.
+
 ## Verification plan and reuse
 
 Before implementation, compared `server-entry.cjs`, `prepare-a-runner.cjs`, `jwks-handoff.cjs`, `return-bundle.cjs`, `verify-return.cjs`, the TAT/VPC adapter and its fixtures with the operator scripts dated 2026-11-24. The existing adapter already binds a source artifact to an in-progress run, verifies run/attempt/workflow SHA/CSR and egress, provides bounded TAT task polling, and leases/removes only its marked ingress rule. `server-entry.cjs` validates the 15-minute authorization and JWKS snapshot; `return-bundle.cjs` builds the already-defined return artifact. This change reuses those boundaries and adds no package or CAM action.
