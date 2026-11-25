@@ -37,9 +37,11 @@ No cloud resources/IDs currently exist in this draft. No cloud action was perfor
 | `tat-sign-csr.sh` | 300s | accepts public CSR base64; outputs CSR SHA-256, leaf cert and CA cert base64; private CA key remains on CVM |
 | `tat-build-check-start-server.sh` | 300s | installs configured public inputs, check-only, starts private 8443 listener and checks readiness |
 | `tat-stop-and-key-cleanup.txt` | recovery | exact stop and key-file deletion commands; invoke individually, confirm process stopped and keys absent |
-| `tat-install-server-code.sh` | prep | installs packaged server code; verify pinned source/package digest before later authorized use |
+| `tat-install-server-code.sh` | prep | use the versioned script beside this document, not the old temp copy; checks private Node v24.22.3 before extracting the original embedded four-file package; rejects existing server-code; offline test compares extracted sources with this checkout |
 
 Three separate time budgets remain hard: CSR return 300s, egress validity 5m, JWKS authorization 15m, job deadline 10m. None has been relaxed; no latency guarantee is claimed.
+
+The versioned installer reuses the existing operator package and bootstrap layout without downloads, dependencies or a global PATH change. Local Git Bash tests exercise a fake private Node and actual ZIP extraction; NTFS permission helpers are substituted in the fixture, so this is not Linux permission or cloud execution evidence. The embedded source package must continue matching the four repository sources; the test fails if they drift. Keep the old temporary preparation files as historical inputs, not the executable source for the next attempt.
 
 ## Offline sequence and recovery
 

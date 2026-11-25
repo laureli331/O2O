@@ -6,7 +6,7 @@
 - 用户报告将上海 `cmd-a5ul2voi`（sign 草稿）、`cmd-dcyvdcw6`（start）、`cmd-5ntlcjl8`（stop）固定命令保存未执行。用户逐项复制命令内容后，本地比对在规范化换行后正文一致，剪贴板文本仅少末尾换行；不是逐字节一致，也不是自动云端读取。
 - 用户截图报告专用安全组 `sg-1ruydxou` 已保存 5 条出站规则：TCP 443 到 `169.254.0.3/32`，TCP/UDP 53 分别到 `183.60.83.19/32` 和 `183.60.82.98/32`；此前用户提供的入站/出站空态截图显示各为 0。保存后未重新查询入站。`169.254.0.3` 是 11 月 23 日实际镜像解析值，不证明永久固定或完整链路连通。关联实例数为 0；没有新购 CVM/CLB。
 - 本地启动器新增 PowerShell 7 隐藏输入与 stdin 管道，Node 复用现有 `runOperatorEntry`，本单元仅假凭据/假子进程验证，不读取真实凭据，不调用腾讯云、GitHub，不派发、不推送。A3-03 继续 HOLD；真实资源、真实运行、CSR 时间窗及 CA pin 尚未就绪。
-- 额外只读检查：用户提供的 `server-code.zip` 中 4 个源码条目经 CRLF→LF 规范化后与候选源码一致，未解压执行。仍有安装脚本缺口：`tat-install-server-code.sh` 使用裸 `node --version`，而 `tat-bootstrap.sh` 仅解压 Node 到 `/opt/o2o-sp08-a303/node-v24.22.3`、不写 PATH；后续准备需修正为 Node 绝对路径，不能把剩余工作描述为只缺资源 ID。
+- 安装路径修复（2026-11-25）：旧临时 `tat-install-server-code.sh` 保留不改；在 `tools/sp08-a3-03-github-oidc-smoke/tat-install-server-code.sh` 版本化保存修正版，复用原嵌入 ZIP（4 个自有 CJS 源码，无新第三方依赖），解压前验证 `/opt/o2o-sp08-a303/node-v24.22.3/bin/node` 可执行且版本为 `v24.22.3`，末尾也只调用该绝对路径，不再依赖 PATH。本地 Git Bash 假 Node 验证缺失/错误版本时不写 ZIP、成功安装 4 文件与当前源码规范化换行后相同、重复运行拒绝覆盖。Windows NTFS 权限与 Linux 不同，测试仅替代 install/chmod 权限操作，不据此声称 Linux 权限、真实 Node 二进制或 TAT 云端运行已通过。后续使用 Git 中修正版；旧临时副本仍有裸 Node 缺口。
 
 ## SP08/A3-03 单次A段真实整链与回收（2026-11-24）
 
