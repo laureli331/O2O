@@ -2,7 +2,7 @@
 
 const crypto = require('node:crypto');
 const localA = require('./a-segment-local.cjs');
-const { withIngressRule } = require('./tencentcloud-a303-api.cjs');
+const { requireVerifiedSourceMaterials, withIngressRule } = require('./tencentcloud-a303-api.cjs');
 
 const fail = (code) => { throw new Error(code); };
 const placeholders = /<[^>]+>|DRAFT|TODO|UNRESOLVED|PLACEHOLDER/i;
@@ -54,10 +54,12 @@ function bindVerifiedSourceInput(serialized, source) {
     workflow_sha: source.workflowSha, csr_sha256: source.csrSha256 } });
 }
 
-async function invokeLifecycleCommand({ clients, target, commandId, parameters, now }) {
+async function invokeLifecycleCommand({ clients, target, commandId, parameters, now, deadline }) {
   const startedAt = now();
+  const remaining = deadline - startedAt;
+  if (!Number.isSafeInteger(startedAt) || !Number.isSafeInteger(remaining) || remaining <= 0) fail('lifecycle-deadline-expired-manual-recovery');
   let response;
-  try { response = await clients.tat.InvokeCommand({ CommandId: commandId, InstanceIds: [target.instanceId], Parameters: JSON.stringify(parameters), Timeout: 300 }); }
+  try { response = await clients.tat.InvokeCommand({ CommandId: commandId, InstanceIds: [target.instanceId], Parameters: JSON.stringify(parameters), Timeout: Math.min(300, Math.max(1, Math.floor(remaining / 1000))) }); }
   catch { fail('lifecycle-invoke-outcome-unknown-manual-recovery'); }
   if (!response || typeof response.InvocationId !== 'string' || !/^inv-[a-z0-9]+$/.test(response.InvocationId)) fail('lifecycle-invocation-unknown-manual-recovery');
   const invocation = Object.freeze({ invocationId: response.InvocationId, commandId, instanceId: target.instanceId, startedAt });
@@ -65,18 +67,19 @@ async function invokeLifecycleCommand({ clients, target, commandId, parameters, 
   return invocation;
 }
 
-async function pollLifecycleTask({ clients, invocation, expectedOutput, now = Date.now, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
+async function pollLifecycleTask({ clients, invocation, expectedOutput, deadline, now = Date.now, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
   if (!invocationIds.has(invocation)) fail('lifecycle-invocation-untrusted');
-  const deadline = invocation.startedAt + 300000;
+  const taskDeadline = Math.min(deadline, invocation.startedAt + 300000);
   for (let attempt = 0; attempt < 4; attempt += 1) {
-    if (now() >= deadline) fail('lifecycle-task-deadline-manual-recovery');
+    if (now() >= taskDeadline) fail('lifecycle-task-deadline-manual-recovery');
     const response = await clients.tat.DescribeInvocationTasks({ Filters: [{ Name: 'invocation-id', Values: [invocation.invocationId] }, { Name: 'instance-id', Values: [invocation.instanceId] }], Limit: 100, Offset: 0, HideOutput: false });
     if (!response || !Number.isSafeInteger(response.TotalCount) || !Array.isArray(response.InvocationTaskSet) || response.TotalCount !== 1 || response.InvocationTaskSet.length !== 1) fail('lifecycle-task-ambiguous-manual-recovery');
     const task = response.InvocationTaskSet[0];
     if (task.InvocationId !== invocation.invocationId || task.InstanceId !== invocation.instanceId || task.CommandId !== invocation.commandId) fail('lifecycle-task-binding-invalid');
+    if (now() >= taskDeadline) fail('lifecycle-task-deadline-manual-recovery');
     if (['PENDING', 'DELIVERING', 'RUNNING'].includes(task.TaskStatus)) {
       if (attempt === 3) break;
-      await sleep(Math.min(1000, deadline - now()));
+      await sleep(Math.min(1000, taskDeadline - now()));
       continue;
     }
     if (task.TaskStatus !== 'SUCCESS' || !task.TaskResult || task.TaskResult.ExitCode !== 0 || task.TaskResult.Dropped !== 0 || typeof task.TaskResult.Output !== 'string') fail('lifecycle-task-failed-manual-recovery');
@@ -87,25 +90,47 @@ async function pollLifecycleTask({ clients, invocation, expectedOutput, now = Da
   fail('lifecycle-task-still-running-manual-recovery');
 }
 
-async function runServerLifecycle({ clients, targets, verifiedMaterials, serverInput, expectedInput, operation, now = Date.now, sleep }) {
+async function awaitTerminalWithin(promise, deadline, now) {
+  const remaining = deadline - now();
+  if (!Number.isSafeInteger(remaining) || remaining <= 0) return null;
+  let timer;
+  try {
+    return await Promise.race([Promise.resolve(promise), new Promise((resolve) => { timer = setTimeout(() => resolve(null), remaining); })]);
+  } finally { if (timer) clearTimeout(timer); }
+}
+
+async function runServerLifecycle({ clients, targets, verifiedMaterials, serverInput, expectedInput, buildReturn, awaitCallerTlsCompletion, now = Date.now, sleep }) {
   const fixed = validateLifecycleTargets(targets);
+  const sourceState = requireVerifiedSourceMaterials(verifiedMaterials);
   if (!verifiedMaterials || typeof verifiedMaterials.sourceRunId !== 'string' || typeof verifiedMaterials.attempt !== 'string'
     || typeof verifiedMaterials.workflowSha !== 'string' || typeof verifiedMaterials.csrSha256 !== 'string'
-    || typeof operation !== 'function') fail('lifecycle-source-or-operation-invalid');
+    || typeof buildReturn !== 'function' || typeof awaitCallerTlsCompletion !== 'function') fail('lifecycle-source-or-operation-invalid');
+  const startDeadline = Math.min(sourceState.sourceDeadline, sourceState.egressDeadline, sourceState.callerJobDeadline, sourceState.resourceDeadline);
+  const parsedInput = JSON.parse(serverInput);
+  const cleanupDeadline = Math.min(sourceState.resourceDeadline, Number.isSafeInteger(parsedInput.authorizedUntil) ? parsedInput.authorizedUntil : sourceState.resourceDeadline);
   const boundInput = bindVerifiedSourceInput(serverInput, verifiedMaterials);
-  const inputB64 = validateServerInput(boundInput, { ...expectedInput, now: now(), instanceId: fixed.instanceId,
+  const startAt = now();
+  if (startAt >= startDeadline || startAt >= cleanupDeadline) fail('lifecycle-start-window-expired');
+  const inputB64 = validateServerInput(boundInput, { ...expectedInput, now: startAt, instanceId: fixed.instanceId,
     sourceRunId: verifiedMaterials.sourceRunId, attempt: verifiedMaterials.attempt, workflowSha: verifiedMaterials.workflowSha, csrSha256: verifiedMaterials.csrSha256 });
+  const startDeadlineWithSnapshot = Math.min(startDeadline, JSON.parse(boundInput).policy.githubJwksExpiresAt);
   let startError;
   let result;
   try {
-    const start = await invokeLifecycleCommand({ clients, target: fixed, commandId: fixed.startCommandId, parameters: { server_input_b64: inputB64 }, now });
-    await pollLifecycleTask({ clients, invocation: start, expectedOutput: 'listener_ready=private_ipv4:8443', now, ...(sleep ? { sleep } : {}) });
-    result = await operation();
+    const start = await invokeLifecycleCommand({ clients, target: fixed, commandId: fixed.startCommandId, parameters: { server_input_b64: inputB64 }, now, deadline: startDeadlineWithSnapshot });
+    await pollLifecycleTask({ clients, invocation: start, expectedOutput: 'listener_ready=private_ipv4:8443', deadline: startDeadlineWithSnapshot, now, ...(sleep ? { sleep } : {}) });
+    result = await buildReturn();
+    const completion = awaitCallerTlsCompletion({ returnResult: result, deadline: Math.min(sourceState.callerJobDeadline, cleanupDeadline) });
+    const terminal = await awaitTerminalWithin(completion, Math.min(sourceState.callerJobDeadline, cleanupDeadline), now);
+    if (!terminal || terminal.runId !== verifiedMaterials.sourceRunId || terminal.runAttempt !== verifiedMaterials.attempt
+      || terminal.workflowSha !== verifiedMaterials.workflowSha || !['succeeded', 'failed'].includes(terminal.outcome)
+      || !['verified', 'failed'].includes(terminal.tlsOutcome)) fail('caller-tls-completion-unknown-manual-recovery');
+    if (terminal.outcome === 'failed' || terminal.tlsOutcome === 'failed') startError = new Error('caller-tls-verification-failed');
   } catch (error) { startError = error; }
   let stopError;
   try {
-    const stop = await invokeLifecycleCommand({ clients, target: fixed, commandId: fixed.stopCommandId, parameters: { source_run_id: verifiedMaterials.sourceRunId }, now });
-    await pollLifecycleTask({ clients, invocation: stop, expectedOutput: 'server_stopped_and_keys_removed=true', now, ...(sleep ? { sleep } : {}) });
+    const stop = await invokeLifecycleCommand({ clients, target: fixed, commandId: fixed.stopCommandId, parameters: { source_run_id: verifiedMaterials.sourceRunId }, now, deadline: cleanupDeadline });
+    await pollLifecycleTask({ clients, invocation: stop, expectedOutput: 'server_stopped_and_keys_removed=true', deadline: cleanupDeadline, now, ...(sleep ? { sleep } : {}) });
   } catch (error) { stopError = error; }
   if (startError) {
     if (stopError) throw Object.assign(new Error('lifecycle-failed-stop-unknown-manual-recovery', { cause: startError }), { stopErrorCode: stopError.message });

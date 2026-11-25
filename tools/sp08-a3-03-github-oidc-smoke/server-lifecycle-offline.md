@@ -4,7 +4,9 @@
 
 Before implementation, compared `server-entry.cjs`, `prepare-a-runner.cjs`, `jwks-handoff.cjs`, `return-bundle.cjs`, `verify-return.cjs`, the TAT/VPC adapter and its fixtures with the operator scripts dated 2026-11-24. The existing adapter already binds a source artifact to an in-progress run, verifies run/attempt/workflow SHA/CSR and egress, provides bounded TAT task polling, and leases/removes only its marked ingress rule. `server-entry.cjs` validates the 15-minute authorization and JWKS snapshot; `return-bundle.cjs` builds the already-defined return artifact. This change reuses those boundaries and adds no package or CAM action.
 
-Validation: `node --test server-lifecycle.test.cjs tencentcloud-a303-api.test.cjs`; offline transport must observe start Invoke → exact task/readiness result → existing return builder → stop Invoke → exact stop/cleanup result. Unknown Invoke/task results are never retried. Existing VPC lease cleanup remains owned by `withIngressRule` and runs in its `finally` path.
+Validation: `node --test *.test.cjs`; offline transport observes start Invoke → exact task/readiness result → return submission → wait for source-run/attempt/workflow-bound caller TLS terminal evidence → stop Invoke → exact stop/cleanup result. A built return artifact alone does not trigger stop. Unknown Invoke/task results are never retried; one stop attempt is made even when start outcome is unknown. The adapter accepts only source materials minted by the existing verified-artifact selector. Existing VPC lease cleanup remains owned by `withIngressRule` and runs in its `finally` path, including when stop fails.
+
+Start invocation and task polling share the actual remainder of the five-minute source, five-minute egress, ten-minute job, JWKS, authorization and 1h45 resource windows. Stop is bounded by the original authorization/resource cleanup deadline and its own remaining TAT timeout; it does not reset the source or resource window.
 
 ## Operator command templates
 

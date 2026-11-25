@@ -44,6 +44,13 @@ function validateEgressCidr(cidr) {
   return cidr;
 }
 
+function requireVerifiedSourceMaterials(material) {
+  const state = isRecord(material) && verifiedMaterialState.get(material);
+  if (!state) fail('verified-source-materials-required');
+  return Object.freeze({ sourceStartedAt: state.sourceStartedAt, sourceDeadline: state.sourceDeadline, egressDeadline: state.egressDeadline,
+    callerJobDeadline: state.callerJobDeadline, resourceDeadline: state.resourceDeadline });
+}
+
 async function verifySourceMaterials({ expected, token, repository, fetchImpl = globalThis.fetch, now = Date.now, pwshPath }) {
   const bounded = validateBudget({ maxPolls: 1, maxPages: 1, maxCandidates: 1, maxArtifactBytes: 65536, maxWaitMs: 300000, requestTimeoutMs: 10000, pollDelaysMs: [0] });
   if (typeof pwshPath !== 'string' || !path.isAbsolute(pwshPath)
@@ -136,9 +143,12 @@ async function verifySourceMaterials({ expected, token, repository, fetchImpl = 
   if (String(manifest.source_run_id) !== sourceRunId || manifest.source_commit !== run.head_sha) fail('source-manifest-run-binding-mismatch');
   const expectedEgress = { runId: manifest.source_run_id, runAttempt: '1', workflowSha: manifest.source_commit, csrSha256: manifest.csr_sha256 };
   const cidr = verifyEgressManifest(egress, expectedEgress, new Date(time));
+  const sourceStartedAt = Date.parse(manifest.source_started_at);
   const material = Object.freeze({ sourceRunId: manifest.source_run_id, attempt: '1', workflowSha: manifest.source_commit, csrSha256: manifest.csr_sha256, csrPem: csr.toString('utf8'), cidr,
-    sourceDeadline: Date.parse(manifest.source_started_at) + 300000, egressDeadline: Date.parse(egress.expires_at) });
-  verifiedMaterialState.set(material, { invokeUsed: false, ingressUsed: false, csrBytes: Buffer.from(csr), expectedCaFingerprint256: expected.caFingerprint256, pwshPath });
+    sourceStartedAt, sourceDeadline: sourceStartedAt + 300000, egressDeadline: Date.parse(egress.expires_at), callerJobDeadline: sourceStartedAt + 600000,
+    resourceDeadline: sourceStartedAt + 105 * 60 * 1000 });
+  verifiedMaterialState.set(material, { invokeUsed: false, ingressUsed: false, csrBytes: Buffer.from(csr), expectedCaFingerprint256: expected.caFingerprint256, pwshPath,
+    sourceStartedAt, sourceDeadline: material.sourceDeadline, egressDeadline: material.egressDeadline, callerJobDeadline: material.callerJobDeadline, resourceDeadline: material.resourceDeadline });
   return material;
 }
 
@@ -321,4 +331,4 @@ async function withIngressRule({ clients, target, verifiedMaterials, operation, 
   return result;
 }
 
-module.exports = { addIngressRule, buildClients, buildSdkClients, decodePublicOutput, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, validateCsr, validateTarget, verifySourceMaterials, withIngressRule };
+module.exports = { addIngressRule, buildClients, buildSdkClients, decodePublicOutput, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, requireVerifiedSourceMaterials, validateCsr, validateTarget, verifySourceMaterials, withIngressRule };

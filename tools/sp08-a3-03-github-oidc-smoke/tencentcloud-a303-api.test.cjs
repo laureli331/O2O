@@ -8,6 +8,7 @@ const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { addIngressRule, buildClients, buildSdkClients, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, validateCsr, validateTarget, verifySourceMaterials } = require('./tencentcloud-a303-api.cjs');
 const { parseReturnBundle } = require('./return-bundle.cjs');
+const { runServerLifecycle } = require('./server-lifecycle.cjs');
 
 const target = { commandId: 'cmd-approved1', instanceId: 'ins-approved1', region: 'ap-guangzhou', securityGroupId: 'sg-approved1' };
 const pem = '-----BEGIN CERTIFICATE REQUEST-----\nQUJD\n-----END CERTIFICATE REQUEST-----\n';
@@ -108,6 +109,36 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
   assert.equal(fs.readFileSync(path.join(returnDir, 'leaf.pem'), 'utf8'), `${fixture.certificates.leaf.replace(/\r\n/g, '\n').replace(/\n?$/, '\n')}`);
   for (const filename of ['leaf.pem', 'ca.pem', 'binding.json']) fs.unlinkSync(path.join(returnDir, filename));
   fs.rmdirSync(returnDir);
+  const lifecycleTargets = { region: target.region, instanceId: target.instanceId, securityGroupId: target.securityGroupId, startCommandId: 'cmd-fake-start', stopCommandId: 'cmd-fake-stop' };
+  const lifecycleInput = JSON.stringify({ mode: 'start-approved', authorization: 'explicit-temporary', authorizedUntil: Date.parse('2026-11-24T12:10:00.000Z'),
+    interfaceName: 'eth0', bindIPv4: '10.0.0.2', port: 8443, policy: { mode: 'github-oidc', serverIPv4: '198.51.100.8',
+      issuer: 'https://token.actions.githubusercontent.com', githubJwksKeys: [{ kid: 'fixture' }], githubJwksFetchedAt: Date.parse('2026-11-24T11:59:00.000Z'),
+      githubJwksExpiresAt: Date.parse('2026-11-24T12:14:00.000Z'), expectedClaims: { run_id: '123', run_attempt: '1', workflow_sha: 'a'.repeat(40), repository_id: '456' },
+      expectedRequest: { run_id: '123', run_attempt: '1', repository_id: '456', payload: { database_access: false } } } });
+  const lifecycleEvents = [];
+  let releaseTls;
+  const tlsCompletion = new Promise((resolve) => { releaseTls = resolve; });
+  let nextLifecycleInvocation = 0;
+  const lifecycleClients = buildClients({ region: target.region, transport: async (_service, action, request) => {
+    if (action === 'InvokeCommand') { lifecycleEvents.push(`invoke:${request.CommandId}`); return { InvocationId: `inv-life${++nextLifecycleInvocation}` }; }
+    if (action === 'DescribeInvocationTasks') {
+      const id = request.Filters[0].Values[0];
+      const start = id === 'inv-life1';
+      return { TotalCount: 1, InvocationTaskSet: [{ InvocationId: id, InstanceId: target.instanceId,
+        CommandId: start ? lifecycleTargets.startCommandId : lifecycleTargets.stopCommandId, TaskStatus: 'SUCCESS',
+        TaskResult: { ExitCode: 0, Dropped: 0, Output: Buffer.from(`${start ? 'listener_ready=private_ipv4:8443' : 'server_stopped_and_keys_removed=true'}\n`).toString('base64') } }] };
+    }
+    throw new Error(`unexpected-lifecycle-action:${action}`);
+  } });
+  const lifecyclePromise = runServerLifecycle({ clients: lifecycleClients, targets: lifecycleTargets, verifiedMaterials, serverInput: lifecycleInput,
+    expectedInput: { clbIPv4: '198.51.100.8' }, now: () => Date.parse('2026-11-24T11:59:30.000Z'), buildReturn: async () => {
+      lifecycleEvents.push('return-submitted'); return { artifactName: 'sp08-a303-return-123-1' };
+    }, awaitCallerTlsCompletion: async () => { lifecycleEvents.push('runner-wait'); return tlsCompletion; } });
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(lifecycleEvents, ['invoke:cmd-fake-start', 'return-submitted', 'runner-wait']);
+  releaseTls({ runId: '123', runAttempt: '1', workflowSha: 'a'.repeat(40), outcome: 'succeeded', tlsOutcome: 'verified' });
+  assert.deepEqual(await lifecyclePromise, { artifactName: 'sp08-a303-return-123-1' });
+  assert.deepEqual(lifecycleEvents, ['invoke:cmd-fake-start', 'return-submitted', 'runner-wait', 'invoke:cmd-fake-stop']);
   await assert.rejects(invokeOnce({ clients, target, verifiedMaterials, now: () => 1000 }), /invoke-already-attempted-manual-recovery/);
   fixture.cleanup();
 });
