@@ -17,6 +17,7 @@ const IPV4 = /^(?:25[0-5]|2[0-4]\d|1?\d?\d)(?:\.(?:25[0-5]|2[0-4]\d|1?\d?\d)){3}
 const placeholders = /<[^>]+>|DRAFT|TODO|UNRESOLVED|PLACEHOLDER/i;
 const verifiedMaterialState = new WeakMap();
 const invocationMaterialState = new WeakMap();
+const verifiedCallerCompletions = new WeakSet();
 
 function validateTarget(target) {
   if (!isRecord(target) || Object.keys(target).sort().join('|') !== 'commandId|instanceId|region|securityGroupId') fail('target-fields-invalid');
@@ -168,6 +169,87 @@ function buildSdkClients({ region, credential, reqTimeoutMs = 10000 }) {
   const config = { credential: { secretId: credential.secretId, secretKey: credential.secretKey, ...(typeof credential.token === 'string' ? { token: credential.token } : {}) }, region,
     profile: { httpProfile: { reqTimeout: reqTimeoutMs } } };
   return Object.freeze({ tat: new TatClient(config), vpc: new VpcClient(config) });
+}
+
+async function requestWithinDeadline({ client, method, args, deadline, now = Date.now }) {
+  if (!client || typeof client[method] !== 'function' || !Number.isSafeInteger(deadline)) fail('deadline-request-config-invalid');
+  const remaining = deadline - now();
+  if (!Number.isFinite(remaining) || remaining <= 0) fail('deadline-request-expired-before-send');
+  const profile = client.profile?.httpProfile;
+  if (!profile) return await client[method](...args);
+  const previous = profile.reqTimeout;
+  profile.reqTimeout = Math.min(Number.isFinite(previous) && previous > 0 ? previous * 1000 : 30000, remaining) / 1000;
+  let timer;
+  try {
+    const request = Promise.resolve().then(() => client[method](...args));
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('deadline-request-outcome-unknown')), Math.max(1, remaining)); });
+    return await Promise.race([request, timeout]);
+  } finally {
+    if (timer) clearTimeout(timer);
+    profile.reqTimeout = previous;
+  }
+}
+
+async function awaitVerifiedCallerRun({ expected, token, repository, fetchImpl = globalThis.fetch, deadline, now = Date.now, sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)) }) {
+  const source = requireVerifiedSourceMaterials(expected?.verifiedMaterials);
+  const workflowRef = expected?.workflowRef;
+  const refAt = typeof workflowRef === 'string' ? workflowRef.lastIndexOf('@') : -1;
+  const workflowRefPath = refAt > 0 ? workflowRef.slice(0, refAt) : '';
+  const expectedRepoPrefix = typeof repository === 'string' ? `${repository}/` : '';
+  if (!isRecord(expected) || expected.sourceRunId !== expected.verifiedMaterials.sourceRunId
+    || expected.sourceRunAttempt !== expected.verifiedMaterials.attempt
+    || typeof expected.runAttempt !== 'string' || !/^[1-9][0-9]*$/.test(expected.runAttempt)
+    || expected.workflowSha !== expected.verifiedMaterials.workflowSha || !/^[0-9]+$/.test(expected.repositoryId || '')
+    || !/^[0-9]+$/.test(expected.runId || '') || typeof expected.workflowPath !== 'string' || !expected.workflowPath.startsWith('.github/workflows/')
+    || expected.event !== 'workflow_dispatch'
+    || !workflowRefPath.startsWith(`${expectedRepoPrefix}.github/workflows/`) || workflowRefPath.slice(expectedRepoPrefix.length) !== expected.workflowPath
+    || typeof token !== 'string' || token.length < 1 || token.length > 4096
+    || typeof repository !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository)
+    || typeof fetchImpl !== 'function' || !Number.isSafeInteger(deadline) || deadline > source.callerJobDeadline) fail('caller-run-check-config-invalid');
+  const url = `https://api.github.com/repos/${repository}/actions/runs/${expected.runId}`;
+  const firstCheckAt = now();
+  if (!Number.isSafeInteger(firstCheckAt) || firstCheckAt >= deadline) fail('caller-run-check-deadline-unknown');
+  const maxPolls = Math.min(120, Math.ceil((deadline - firstCheckAt) / 5000) + 1);
+  for (let attempt = 0; attempt < maxPolls; attempt += 1) {
+    const remaining = deadline - now();
+    if (!Number.isSafeInteger(remaining) || remaining <= 0) fail('caller-run-check-deadline-unknown');
+    const controller = new AbortController();
+    let timer;
+    let response;
+    let run;
+    try {
+      const request = Promise.resolve().then(async () => {
+        const result = await fetchImpl(url, { headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json' }, redirect: 'error', signal: controller.signal });
+        if (!result || result.status !== 200 || result.url && new URL(result.url).origin !== 'https://api.github.com') fail('caller-run-check-response-invalid');
+        return await result.json();
+      });
+      const timeout = new Promise((_, reject) => { timer = setTimeout(() => { controller.abort(); reject(new Error('caller-run-request-timeout')); }, remaining); });
+      run = await Promise.race([request, timeout]);
+    }
+    catch { fail('caller-run-check-outcome-unknown'); }
+    finally { if (timer) clearTimeout(timer); }
+    if (now() >= deadline) fail('caller-run-check-deadline-unknown');
+    if (!isRecord(run) || String(run.id) !== expected.runId || String(run.repository?.id) !== expected.repositoryId
+      || run.run_attempt !== Number(expected.runAttempt) || run.path !== expected.workflowPath || run.head_sha !== expected.workflowSha
+      || run.event !== expected.event) fail('caller-run-binding-mismatch');
+    if (run.status === 'completed') {
+      if (run.conclusion !== 'success') fail('caller-run-tls-workflow-failed');
+      const evidence = Object.freeze({ runId: expected.runId, runAttempt: expected.runAttempt, workflowSha: expected.workflowSha,
+        workflowPath: expected.workflowPath, sourceRunId: expected.sourceRunId, sourceRunAttempt: expected.sourceRunAttempt, conclusion: 'success' });
+      verifiedCallerCompletions.add(evidence);
+      return evidence;
+    }
+    if (run.status !== 'in_progress' || attempt + 1 === maxPolls) fail('caller-run-not-terminal-manual-recovery');
+    const delay = Math.min(5000, deadline - now());
+    if (delay <= 0) fail('caller-run-check-deadline-unknown');
+    await sleep(delay);
+  }
+  fail('caller-run-not-terminal-manual-recovery');
+}
+
+function requireVerifiedCallerCompletion(evidence) {
+  if (!evidence || !verifiedCallerCompletions.has(evidence)) fail('caller-run-evidence-unverified');
+  return evidence;
 }
 
 async function invokeOnce({ clients, target, verifiedMaterials, now = () => Date.now() }) {
@@ -331,4 +413,4 @@ async function withIngressRule({ clients, target, verifiedMaterials, operation, 
   return result;
 }
 
-module.exports = { addIngressRule, buildClients, buildSdkClients, decodePublicOutput, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, requireVerifiedSourceMaterials, validateCsr, validateTarget, verifySourceMaterials, withIngressRule };
+module.exports = { addIngressRule, awaitVerifiedCallerRun, buildClients, buildSdkClients, decodePublicOutput, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, requestWithinDeadline, requireVerifiedCallerCompletion, requireVerifiedSourceMaterials, validateCsr, validateTarget, verifySourceMaterials, withIngressRule };

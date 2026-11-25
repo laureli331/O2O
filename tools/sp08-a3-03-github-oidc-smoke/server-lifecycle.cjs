@@ -2,7 +2,7 @@
 
 const crypto = require('node:crypto');
 const localA = require('./a-segment-local.cjs');
-const { requireVerifiedSourceMaterials, withIngressRule } = require('./tencentcloud-a303-api.cjs');
+const { requestWithinDeadline, requireVerifiedCallerCompletion, requireVerifiedSourceMaterials, withIngressRule } = require('./tencentcloud-a303-api.cjs');
 
 const fail = (code) => { throw new Error(code); };
 const placeholders = /<[^>]+>|DRAFT|TODO|UNRESOLVED|PLACEHOLDER/i;
@@ -59,7 +59,7 @@ async function invokeLifecycleCommand({ clients, target, commandId, parameters, 
   const remaining = deadline - startedAt;
   if (!Number.isSafeInteger(startedAt) || !Number.isSafeInteger(remaining) || remaining <= 0) fail('lifecycle-deadline-expired-manual-recovery');
   let response;
-  try { response = await clients.tat.InvokeCommand({ CommandId: commandId, InstanceIds: [target.instanceId], Parameters: JSON.stringify(parameters), Timeout: Math.min(300, Math.max(1, Math.floor(remaining / 1000))) }); }
+  try { response = await requestWithinDeadline({ client: clients.tat, method: 'InvokeCommand', args: [{ CommandId: commandId, InstanceIds: [target.instanceId], Parameters: JSON.stringify(parameters), Timeout: Math.min(300, Math.max(1, Math.floor(remaining / 1000))) }], deadline, now }); }
   catch { fail('lifecycle-invoke-outcome-unknown-manual-recovery'); }
   if (!response || typeof response.InvocationId !== 'string' || !/^inv-[a-z0-9]+$/.test(response.InvocationId)) fail('lifecycle-invocation-unknown-manual-recovery');
   const invocation = Object.freeze({ invocationId: response.InvocationId, commandId, instanceId: target.instanceId, startedAt });
@@ -72,7 +72,7 @@ async function pollLifecycleTask({ clients, invocation, expectedOutput, deadline
   const taskDeadline = Math.min(deadline, invocation.startedAt + 300000);
   for (let attempt = 0; attempt < 4; attempt += 1) {
     if (now() >= taskDeadline) fail('lifecycle-task-deadline-manual-recovery');
-    const response = await clients.tat.DescribeInvocationTasks({ Filters: [{ Name: 'invocation-id', Values: [invocation.invocationId] }, { Name: 'instance-id', Values: [invocation.instanceId] }], Limit: 100, Offset: 0, HideOutput: false });
+    const response = await requestWithinDeadline({ client: clients.tat, method: 'DescribeInvocationTasks', args: [{ Filters: [{ Name: 'invocation-id', Values: [invocation.invocationId] }, { Name: 'instance-id', Values: [invocation.instanceId] }], Limit: 100, Offset: 0, HideOutput: false }], deadline: taskDeadline, now });
     if (!response || !Number.isSafeInteger(response.TotalCount) || !Array.isArray(response.InvocationTaskSet) || response.TotalCount !== 1 || response.InvocationTaskSet.length !== 1) fail('lifecycle-task-ambiguous-manual-recovery');
     const task = response.InvocationTaskSet[0];
     if (task.InvocationId !== invocation.invocationId || task.InstanceId !== invocation.instanceId || task.CommandId !== invocation.commandId) fail('lifecycle-task-binding-invalid');
@@ -119,13 +119,14 @@ async function runServerLifecycle({ clients, targets, verifiedMaterials, serverI
   try {
     const start = await invokeLifecycleCommand({ clients, target: fixed, commandId: fixed.startCommandId, parameters: { server_input_b64: inputB64 }, now, deadline: startDeadlineWithSnapshot });
     await pollLifecycleTask({ clients, invocation: start, expectedOutput: 'listener_ready=private_ipv4:8443', deadline: startDeadlineWithSnapshot, now, ...(sleep ? { sleep } : {}) });
-    result = await buildReturn();
+    result = await awaitTerminalWithin(buildReturn(), Math.min(sourceState.callerJobDeadline, cleanupDeadline), now);
+    if (!result) fail('return-build-deadline-unknown-manual-recovery');
     const completion = awaitCallerTlsCompletion({ returnResult: result, deadline: Math.min(sourceState.callerJobDeadline, cleanupDeadline) });
     const terminal = await awaitTerminalWithin(completion, Math.min(sourceState.callerJobDeadline, cleanupDeadline), now);
-    if (!terminal || terminal.runId !== verifiedMaterials.sourceRunId || terminal.runAttempt !== verifiedMaterials.attempt
-      || terminal.workflowSha !== verifiedMaterials.workflowSha || !['succeeded', 'failed'].includes(terminal.outcome)
-      || !['verified', 'failed'].includes(terminal.tlsOutcome)) fail('caller-tls-completion-unknown-manual-recovery');
-    if (terminal.outcome === 'failed' || terminal.tlsOutcome === 'failed') startError = new Error('caller-tls-verification-failed');
+    if (!terminal) fail('caller-tls-completion-unknown-manual-recovery');
+    const verified = requireVerifiedCallerCompletion(terminal);
+    if (verified.sourceRunId !== verifiedMaterials.sourceRunId || verified.sourceRunAttempt !== verifiedMaterials.attempt
+      || verified.workflowSha !== verifiedMaterials.workflowSha) fail('caller-tls-completion-binding-mismatch');
   } catch (error) { startError = error; }
   let stopError;
   try {

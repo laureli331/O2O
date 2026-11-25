@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
-const { addIngressRule, buildClients, buildSdkClients, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, validateCsr, validateTarget, verifySourceMaterials } = require('./tencentcloud-a303-api.cjs');
+const { addIngressRule, awaitVerifiedCallerRun, buildClients, buildSdkClients, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, validateCsr, validateTarget, verifySourceMaterials } = require('./tencentcloud-a303-api.cjs');
 const { parseReturnBundle } = require('./return-bundle.cjs');
 const { runServerLifecycle } = require('./server-lifecycle.cjs');
 
@@ -116,8 +116,7 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
       githubJwksExpiresAt: Date.parse('2026-11-24T12:14:00.000Z'), expectedClaims: { run_id: '123', run_attempt: '1', workflow_sha: 'a'.repeat(40), repository_id: '456' },
       expectedRequest: { run_id: '123', run_attempt: '1', repository_id: '456', payload: { database_access: false } } } });
   const lifecycleEvents = [];
-  let releaseTls;
-  const tlsCompletion = new Promise((resolve) => { releaseTls = resolve; });
+  let releaseCaller;
   let nextLifecycleInvocation = 0;
   const lifecycleClients = buildClients({ region: target.region, transport: async (_service, action, request) => {
     if (action === 'InvokeCommand') { lifecycleEvents.push(`invoke:${request.CommandId}`); return { InvocationId: `inv-life${++nextLifecycleInvocation}` }; }
@@ -133,12 +132,35 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
   const lifecyclePromise = runServerLifecycle({ clients: lifecycleClients, targets: lifecycleTargets, verifiedMaterials, serverInput: lifecycleInput,
     expectedInput: { clbIPv4: '198.51.100.8' }, now: () => Date.parse('2026-11-24T11:59:30.000Z'), buildReturn: async () => {
       lifecycleEvents.push('return-submitted'); return { artifactName: 'sp08-a303-return-123-1' };
-    }, awaitCallerTlsCompletion: async () => { lifecycleEvents.push('runner-wait'); return tlsCompletion; } });
+    }, awaitCallerTlsCompletion: async () => {
+      lifecycleEvents.push('runner-wait');
+      let callerPoll = 0;
+      return awaitVerifiedCallerRun({ expected: { verifiedMaterials, sourceRunId: '123', sourceRunAttempt: '1', runId: '124', runAttempt: '1', event: 'workflow_dispatch', workflowSha: 'a'.repeat(40),
+        repositoryId: '456', workflowPath: '.github/workflows/caller.yml', workflowRef: 'owner/repo/.github/workflows/caller.yml@refs/heads/codex/sp08-a3-03-tls-prep' },
+      token: 'offline-test-token', repository: 'owner/repo', deadline: Date.parse('2026-11-24T12:05:00.000Z'),
+      now: () => Date.parse('2026-11-24T11:59:30.000Z'), sleep: async () => { lifecycleEvents.push('caller-still-running'); if (callerPoll === 5) await new Promise((resolve) => { releaseCaller = resolve; }); },
+      fetchImpl: async (url, options) => { callerPoll += 1; assert.equal(url, 'https://api.github.com/repos/owner/repo/actions/runs/124'); assert.equal(options.redirect, 'error');
+        const completed = callerPoll === 6;
+        return { status: 200, url, json: async () => ({ id: 124, repository: { id: 456 }, run_attempt: 1, path: '.github/workflows/caller.yml', head_sha: 'a'.repeat(40), event: 'workflow_dispatch',
+          status: completed ? 'completed' : 'in_progress', conclusion: completed ? 'success' : null }) }; } });
+    } });
   await new Promise((resolve) => setImmediate(resolve));
-  assert.deepEqual(lifecycleEvents, ['invoke:cmd-fake-start', 'return-submitted', 'runner-wait']);
-  releaseTls({ runId: '123', runAttempt: '1', workflowSha: 'a'.repeat(40), outcome: 'succeeded', tlsOutcome: 'verified' });
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(lifecycleEvents, ['invoke:cmd-fake-start', 'return-submitted', 'runner-wait', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'caller-still-running']);
+  releaseCaller();
   assert.deepEqual(await lifecyclePromise, { artifactName: 'sp08-a303-return-123-1' });
-  assert.deepEqual(lifecycleEvents, ['invoke:cmd-fake-start', 'return-submitted', 'runner-wait', 'invoke:cmd-fake-stop']);
+  assert.deepEqual(lifecycleEvents, ['invoke:cmd-fake-start', 'return-submitted', 'runner-wait', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'caller-still-running', 'invoke:cmd-fake-stop']);
+  const callerExpected = { verifiedMaterials, sourceRunId: '123', sourceRunAttempt: '1', runId: '124', runAttempt: '1', event: 'workflow_dispatch', workflowSha: 'a'.repeat(40), repositoryId: '456',
+    workflowPath: '.github/workflows/caller.yml', workflowRef: 'owner/repo/.github/workflows/caller.yml@refs/heads/codex/sp08-a3-03-tls-prep' };
+  const callerDeadline = Date.parse('2026-11-24T12:05:00.000Z');
+  let clockNow = callerDeadline - 5000;
+  await assert.rejects(awaitVerifiedCallerRun({ expected: callerExpected, token: 'offline-test-token', repository: 'owner/repo', deadline: callerDeadline,
+    now: () => clockNow, sleep: async (ms) => { clockNow += ms; }, fetchImpl: async () => ({ status: 200,
+      json: async () => ({ id: 124, repository: { id: 456 }, run_attempt: 1, path: callerExpected.workflowPath, head_sha: 'a'.repeat(40), event: 'workflow_dispatch', status: 'in_progress' }) }) }), /caller-run-check-deadline-unknown/);
+  clockNow = callerDeadline - 1000;
+  await assert.rejects(awaitVerifiedCallerRun({ expected: callerExpected, token: 'offline-test-token', repository: 'owner/repo', deadline: callerDeadline,
+    now: () => clockNow, fetchImpl: async () => { clockNow = callerDeadline; return { status: 200,
+      json: async () => ({ id: 124, repository: { id: 456 }, run_attempt: 1, path: callerExpected.workflowPath, head_sha: 'a'.repeat(40), event: 'workflow_dispatch', status: 'completed', conclusion: 'success' }) }; } }), /caller-run-check-deadline-unknown/);
   await assert.rejects(invokeOnce({ clients, target, verifiedMaterials, now: () => 1000 }), /invoke-already-attempted-manual-recovery/);
   fixture.cleanup();
 });
