@@ -174,12 +174,15 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
 });
 
 test('official service clients load with explicit credentials without reading ambient credential files', () => {
-  const clients = buildSdkClients({ region: target.region, credential: { secretId: 'fixture-id', secretKey: 'fixture-secret' } });
+  const clients = buildSdkClients({ region: target.region, credential: { secretId: 'fixture-id', secretKey: 'fixture-secret', token: 'fixture-token' } });
   assert.equal(typeof clients.tat.InvokeCommand, 'function');
   assert.equal(typeof clients.tat.DescribeInvocationTasks, 'function');
   assert.equal(typeof clients.vpc.DescribeSecurityGroupPolicies, 'function');
   assert.equal(typeof clients.vpc.CreateSecurityGroupPolicies, 'function');
   assert.equal(typeof clients.vpc.DeleteSecurityGroupPolicies, 'function');
+  assert.equal(clients.tat.profile.httpProfile.reqTimeout, 10, '10000ms adapter timeout becomes 10 SDK seconds');
+  assert.equal(clients.tat.credential.token, 'fixture-token');
+  assert.equal(clients.vpc.credential.token, 'fixture-token');
 });
 
 test('SDK common uses patched uuid v4 in its real trace-id path without network IO', async () => {

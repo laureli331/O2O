@@ -175,7 +175,8 @@ function buildSdkClients({ region, credential, reqTimeoutMs = 10000 }) {
     || typeof credential.secretKey !== 'string' || credential.secretKey.length === 0
     || !Number.isSafeInteger(reqTimeoutMs) || reqTimeoutMs < 1000 || reqTimeoutMs > 30000) fail('sdk-client-config-invalid');
   const config = { credential: { secretId: credential.secretId, secretKey: credential.secretKey, ...(typeof credential.token === 'string' ? { token: credential.token } : {}) }, region,
-    profile: { httpProfile: { reqTimeout: reqTimeoutMs } } };
+    // Tencent common SDK interprets reqTimeout as seconds; the adapter accepts milliseconds.
+    profile: { httpProfile: { reqTimeout: reqTimeoutMs / 1000 } } };
   return Object.freeze({ tat: new TatClient(config), vpc: new VpcClient(config) });
 }
 
