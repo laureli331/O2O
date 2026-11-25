@@ -13,6 +13,8 @@ test('bounded stdin accepts one JSON envelope and rejects oversized input', asyn
   assert.equal((await readEnvelope(Readable.from([JSON.stringify(envelope())]))).token, 'sentinel-github-token');
   await assert.rejects(readEnvelope(Readable.from(['12345']), 4), /too-large/);
   await assert.rejects(readEnvelope(new Readable({ read() {} }), 100, 10), /timeout/);
+  const failedInput = new Readable({ read() { this.destroy(new Error('sentinel-stream-error')); } });
+  await assert.rejects(readEnvelope(failedInput), /input-invalid/);
 });
 
 test('temporary credentials require exact fields, token, and future expiration', () => {
@@ -20,6 +22,8 @@ test('temporary credentials require exact fields, token, and future expiration',
   for (const bad of [ { ...envelope(), expiration: 'bad' }, { ...envelope(), expiration: '2020-01-01T00:00:00Z' }, { ...envelope(), token: '' }, { ...envelope(), extra: 'x' }, { ...envelope(), token: 'x'.repeat(8193) } ]) {
     assert.throws(() => validateSecretEnvelope(bad, Date.parse('2026-01-01T00:00:00Z')));
   }
+  const missingStsToken = envelope(); delete missingStsToken.credential.token;
+  assert.throws(() => validateSecretEnvelope(missingStsToken, Date.parse('2026-01-01T00:00:00Z')), /fields-invalid/);
 });
 
 test('one explicit local call passes validated stdin secrets once and does not retry', async () => {

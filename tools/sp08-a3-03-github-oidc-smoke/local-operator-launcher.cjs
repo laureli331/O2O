@@ -45,6 +45,7 @@ async function readEnvelope(input, limit = MAX_INPUT_BYTES, timeoutMs = INPUT_TI
     }
   } catch (error) {
     input.destroy();
+    for (const chunk of chunks) chunk.fill(0);
     if (error && typeof error.message === 'string' && /^local-launcher-input-(?:timeout|too-large)$/.test(error.message)) fail(error.message);
     fail('local-launcher-input-invalid');
   }
@@ -79,7 +80,7 @@ async function main(args, stdin = process.stdin, stdout = process.stdout, stderr
   } catch {
     stderr.write('本地启动失败；未输出异常详情或输入内容。\n'); return 1;
   } finally {
-    if (envelope && envelope.credential) { envelope.credential.secretKey = ''; envelope.credential.secretId = ''; }
+    if (envelope && envelope.credential) { envelope.credential.secretKey = ''; envelope.credential.secretId = ''; envelope.credential.token = ''; }
     if (envelope) envelope.token = '';
   }
 }
