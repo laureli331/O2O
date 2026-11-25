@@ -7,6 +7,7 @@ const { waitForReturnRun } = require('./csr-handoff.cjs');
 const { runOperatorFlow } = require('./operator-flow.cjs');
 const { validateTarget } = require('./tencentcloud-a303-api.cjs');
 const { validateLifecycleTargets } = require('./server-lifecycle.cjs');
+const localA = require('./a-segment-local.cjs');
 
 const fail = (code) => { throw new Error(code); };
 const record = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -35,9 +36,11 @@ function checkOnly(config) {
   validateEntryConfig(config);
   let server;
   try { server = JSON.parse(config.serverInput); } catch { fail('operator-entry-server-input-invalid'); }
+  const checkNow = Date.now();
   if (!record(server) || Object.keys(server).sort().join('|') !== 'authorization|authorizedUntil|bindIPv4|interfaceName|mode|policy|port'
-    || server.mode !== 'start-approved' || typeof server.bindIPv4 !== 'string' || !/^\d{1,3}(?:\.\d{1,3}){3}$/.test(server.bindIPv4)
-    || !Number.isSafeInteger(server.authorizedUntil) || !Number.isSafeInteger(server.port) || server.port < 1 || server.port > 65535
+    || server.mode !== 'start-approved' || typeof server.bindIPv4 !== 'string' || !localA.isPrivateIPv4(server.bindIPv4)
+    || server.authorization !== 'explicit-temporary' || !Number.isSafeInteger(server.authorizedUntil)
+    || server.authorizedUntil <= checkNow || server.authorizedUntil > checkNow + 15 * 60 * 1000 || server.port !== 8443
     || typeof server.interfaceName !== 'string' || !server.interfaceName || !record(server.policy)
     || !record(server.policy.expectedClaims) || !record(server.policy.expectedRequest)) fail('operator-entry-server-input-invalid');
   if (config.expectedInput.clbIPv4 !== server.policy.serverIPv4 || typeof config.expectedInput.clbIPv4 !== 'string') fail('operator-entry-public-target-mismatch');

@@ -19,7 +19,7 @@ test('operator entry check-only validates the declared shape without creating cl
     target: { region: 'ap-shanghai', instanceId: 'ins-test', securityGroupId: 'sg-test', commandId: 'cmd-test' },
     lifecycleTargets: { region: 'ap-shanghai', instanceId: 'ins-test', securityGroupId: 'sg-test', startCommandId: 'cmd-start', stopCommandId: 'cmd-stop' },
     securityTarget: { region: 'ap-shanghai', instanceId: 'ins-test', securityGroupId: 'sg-test', commandId: 'cmd-test' },
-    serverInput: JSON.stringify({ mode: 'start-approved', authorization: 'example-token', authorizedUntil: 2000, bindIPv4: '10.0.0.2',
+    serverInput: JSON.stringify({ mode: 'start-approved', authorization: 'explicit-temporary', authorizedUntil: Date.now() + 60000, bindIPv4: '10.0.0.2',
       interfaceName: 'eth0', port: 8443, policy: { serverIPv4: '198.51.100.8', expectedClaims: {}, expectedRequest: {} } }),
     expectedInput: { clbIPv4: '198.51.100.8' }, journalPath: require('node:path').join(require('node:os').tmpdir(), 'entry-journal.json'),
     pwshPath: 'C:/Windows/System32/WindowsPowerShell/v1.0/powershell.exe' };
