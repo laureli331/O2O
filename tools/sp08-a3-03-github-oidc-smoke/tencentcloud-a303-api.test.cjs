@@ -7,6 +7,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const { addIngressRule, buildClients, buildSdkClients, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, validateCsr, validateTarget, verifySourceMaterials } = require('./tencentcloud-a303-api.cjs');
+const { parseReturnBundle } = require('./return-bundle.cjs');
 
 const target = { commandId: 'cmd-approved1', instanceId: 'ins-approved1', region: 'ap-guangzhou', securityGroupId: 'sg-approved1' };
 const pem = '-----BEGIN CERTIFICATE REQUEST-----\nQUJD\n-----END CERTIFICATE REQUEST-----\n';
@@ -83,7 +84,8 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
   const fixture = fixtureMaterials();
   const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: fixture.now, pwshPath: fixture.pwshPath });
   const requests = [];
-  const taskOutput = Buffer.from(JSON.stringify({ csr_sha256: fixture.csrSha256, leaf_certificate: fixture.certificates.leaf, ca_certificate: fixture.certificates.ca })).toString('base64');
+  const scriptOutput = `csr_sha256=${fixture.csrSha256}\nleaf_cert_b64=${Buffer.from(fixture.certificates.leaf).toString('base64')}\nca_cert_b64=${Buffer.from(fixture.certificates.ca).toString('base64')}\n`;
+  const taskOutput = Buffer.from(scriptOutput).toString('base64');
   const clients = buildClients({ region: target.region, transport: async (service, action, request) => {
     requests.push({ service, action, request });
     if (action === 'InvokeCommand') return { InvocationId: 'inv-123' };
@@ -96,10 +98,16 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
   assert.equal(requests[0].service, 'tat');
   assert.equal(requests[0].action, 'InvokeCommand');
   assert.deepEqual(requests[0].request.InstanceIds, [target.instanceId]);
-  assert.equal(JSON.parse(requests[0].request.Parameters).csr_b64, Buffer.from(fixture.csrPem).toString('base64'));
+  assert.deepEqual(JSON.parse(requests[0].request.Parameters), { csr_b64: Buffer.from(fixture.csrPem).toString('base64') });
   const signed = await pollTask({ clients, invocation: result });
   assert.equal(signed.state, 'success');
   assert.equal(signed.output.csr_sha256, fixture.csrSha256);
+  const bundle = JSON.stringify({ source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: 'a'.repeat(40), source_started_at: '2026-11-24T11:55:00.000Z', csr_sha256: signed.output.csr_sha256, leaf_certificate: signed.output.leaf_certificate, ca_certificate: signed.output.ca_certificate });
+  const returnDir = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-return-'));
+  assert.deepEqual(parseReturnBundle(bundle, returnDir), { artifactName: 'sp08-a303-return-123-1' });
+  assert.equal(fs.readFileSync(path.join(returnDir, 'leaf.pem'), 'utf8'), `${fixture.certificates.leaf.replace(/\r\n/g, '\n').replace(/\n?$/, '\n')}`);
+  for (const filename of ['leaf.pem', 'ca.pem', 'binding.json']) fs.unlinkSync(path.join(returnDir, filename));
+  fs.rmdirSync(returnDir);
   await assert.rejects(invokeOnce({ clients, target, verifiedMaterials, now: () => 1000 }), /invoke-already-attempted-manual-recovery/);
   fixture.cleanup();
 });

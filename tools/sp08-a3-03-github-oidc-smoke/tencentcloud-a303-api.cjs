@@ -231,13 +231,28 @@ function decodePublicOutput(encoded) {
   if (typeof encoded !== 'string' || encoded.length > 32000 || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(encoded)) fail('task-output-invalid');
   const text = Buffer.from(encoded, 'base64').toString('utf8');
   if (Buffer.byteLength(text, 'utf8') > 24000) fail('task-output-truncated-manual-recovery');
-  let result;
-  try { result = JSON.parse(text); } catch { fail('task-output-not-allowlisted-json'); }
-  if (!isRecord(result) || Object.keys(result).sort().join('|') !== 'ca_certificate|csr_sha256|leaf_certificate'
-    || typeof result.csr_sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(result.csr_sha256)
-    || typeof result.leaf_certificate !== 'string' || typeof result.ca_certificate !== 'string'
-    || !result.leaf_certificate.startsWith('-----BEGIN CERTIFICATE-----\n') || !result.ca_certificate.startsWith('-----BEGIN CERTIFICATE-----\n')) fail('task-output-not-allowlisted');
-  return Object.freeze(result);
+  const values = Object.create(null);
+  for (const line of text.replace(/\r\n/g, '\n').split('\n')) {
+    if (line.length === 0) continue;
+    const separator = line.indexOf('=');
+    if (separator < 1) fail('task-output-not-allowlisted');
+    const key = line.slice(0, separator);
+    if (!['csr_sha256', 'leaf_cert_b64', 'ca_cert_b64'].includes(key) || Object.hasOwn(values, key)) fail('task-output-not-allowlisted');
+    values[key] = line.slice(separator + 1);
+  }
+  if (Object.keys(values).sort().join('|') !== 'ca_cert_b64|csr_sha256|leaf_cert_b64'
+    || typeof values.csr_sha256 !== 'string' || !/^[a-f0-9]{64}$/.test(values.csr_sha256)) fail('task-output-not-allowlisted');
+  const decodeCertificate = (value) => {
+    if (typeof value !== 'string' || value.length < 4 || value.length > 32000
+      || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(value)) fail('task-output-certificate-invalid');
+    const decoded = Buffer.from(value, 'base64');
+    if (decoded.toString('base64') !== value) fail('task-output-certificate-invalid');
+    let pem = decoded.toString('utf8').replace(/\r\n/g, '\n');
+    if (!pem.startsWith('-----BEGIN CERTIFICATE-----\n') || !pem.endsWith('-----END CERTIFICATE-----\n') && !pem.endsWith('-----END CERTIFICATE-----')) fail('task-output-certificate-invalid');
+    if (!pem.endsWith('\n')) pem += '\n';
+    return pem;
+  };
+  return Object.freeze({ csr_sha256: values.csr_sha256, leaf_certificate: decodeCertificate(values.leaf_cert_b64), ca_certificate: decodeCertificate(values.ca_cert_b64) });
 }
 
 async function addIngressRule({ clients, target, verifiedMaterials, now = () => Date.now() }) {
