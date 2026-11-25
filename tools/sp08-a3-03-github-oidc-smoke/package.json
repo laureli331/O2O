@@ -7,5 +7,10 @@
     "tencentcloud-sdk-nodejs-common": "4.1.220",
     "tencentcloud-sdk-nodejs-tat": "4.1.241",
     "tencentcloud-sdk-nodejs-vpc": "4.1.351"
+  },
+  "overrides": {
+    "tencentcloud-sdk-nodejs-common": {
+      "uuid": "11.1.1"
+    }
   }
-}
+}\n

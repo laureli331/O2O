@@ -113,12 +113,29 @@ test('official service clients load with explicit credentials without reading am
   assert.equal(typeof clients.vpc.DeleteSecurityGroupPolicies, 'function');
 });
 
+test('SDK common uses patched uuid v4 in its real trace-id path without network IO', async () => {
+  const base = path.join(__dirname, 'node_modules');
+  assert.equal(require(path.join(base, 'tencentcloud-sdk-nodejs-tat/package.json')).version, '4.1.241');
+  assert.equal(require(path.join(base, 'tencentcloud-sdk-nodejs-vpc/package.json')).version, '4.1.351');
+  assert.equal(require(path.join(base, 'tencentcloud-sdk-nodejs-common/package.json')).version, '4.1.220');
+  assert.equal(require(path.join(base, 'uuid/package.json')).version, '11.1.1');
+  const { HttpConnection } = require(path.join(base, 'tencentcloud-sdk-nodejs-common/tencentcloud/common/http/http_connection.js'));
+  const original = HttpConnection.doRequestWithSign3;
+  let captured;
+  HttpConnection.doRequestWithSign3 = async (options) => { captured = options; throw new Error('offline transport fixture'); };
+  try {
+    const clients = buildSdkClients({ region: target.region, credential: { secretId: 'fixture-id', secretKey: 'fixture-secret' } });
+    await assert.rejects(clients.tat.DescribeInvocationTasks({ Filters: [], Limit: 1 }), /offline transport fixture/);
+  } finally { HttpConnection.doRequestWithSign3 = original; }
+  assert.match(captured.headers['X-TC-TraceId'], /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);
+});
+
 test('unknown Invoke result is not retried and requires manual reconciliation', async () => {
   const fixture = fixtureMaterials();
   const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: fixture.now, pwshPath: fixture.pwshPath });
   let calls = 0;
   const clients = buildClients({ region: target.region, transport: async () => { calls += 1; return {}; } });
-  await assert.rejects(invokeOnce({ clients, target, verifiedMaterials }), /invocation-result-unknown-manual-recovery/);
+  await assert.rejects(invokeOnce({ clients, target, verifiedMaterials, now: () => Date.parse('2026-11-24T11:59:59.999Z') }), /invocation-result-unknown-manual-recovery/);
   assert.equal(calls, 1);
   fixture.cleanup();
 });
