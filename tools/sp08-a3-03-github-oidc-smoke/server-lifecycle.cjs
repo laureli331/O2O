@@ -44,6 +44,16 @@ function validateServerInput(serialized, expected) {
   return Buffer.from(serialized, 'utf8').toString('base64');
 }
 
+function bindVerifiedSourceInput(serialized, source) {
+  if (typeof serialized !== 'string' || Buffer.byteLength(serialized, 'utf8') > 48000) fail('server-input-size-invalid');
+  let input;
+  try { input = JSON.parse(serialized); } catch { fail('server-input-json-invalid'); }
+  const keys = Object.keys(input || {}).sort().join('|');
+  if (keys !== 'authorization|authorizedUntil|bindIPv4|interfaceName|mode|policy|port') fail('server-input-fields-invalid');
+  return JSON.stringify({ ...input, sourceBinding: { run_id: source.sourceRunId, run_attempt: source.attempt,
+    workflow_sha: source.workflowSha, csr_sha256: source.csrSha256 } });
+}
+
 async function invokeLifecycleCommand({ clients, target, commandId, parameters, now }) {
   const startedAt = now();
   let response;
@@ -82,7 +92,8 @@ async function runServerLifecycle({ clients, targets, verifiedMaterials, serverI
   if (!verifiedMaterials || typeof verifiedMaterials.sourceRunId !== 'string' || typeof verifiedMaterials.attempt !== 'string'
     || typeof verifiedMaterials.workflowSha !== 'string' || typeof verifiedMaterials.csrSha256 !== 'string'
     || typeof operation !== 'function') fail('lifecycle-source-or-operation-invalid');
-  const inputB64 = validateServerInput(serverInput, { ...expectedInput, now: now(), instanceId: fixed.instanceId,
+  const boundInput = bindVerifiedSourceInput(serverInput, verifiedMaterials);
+  const inputB64 = validateServerInput(boundInput, { ...expectedInput, now: now(), instanceId: fixed.instanceId,
     sourceRunId: verifiedMaterials.sourceRunId, attempt: verifiedMaterials.attempt, workflowSha: verifiedMaterials.workflowSha, csrSha256: verifiedMaterials.csrSha256 });
   let startError;
   let result;
@@ -109,4 +120,4 @@ async function runServerLifecycleWithIngress({ clients, securityTarget, verified
     operation: async () => runServerLifecycle({ ...lifecycleOptions, clients, verifiedMaterials, now }) });
 }
 
-module.exports = { runServerLifecycle, runServerLifecycleWithIngress, validateLifecycleTargets, validateServerInput };
+module.exports = { bindVerifiedSourceInput, runServerLifecycle, runServerLifecycleWithIngress, validateLifecycleTargets, validateServerInput };
