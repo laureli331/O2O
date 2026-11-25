@@ -190,7 +190,7 @@ async function requestWithinDeadline({ client, method, args, deadline, now = Dat
   let timer;
   try {
     const request = Promise.resolve().then(() => client[method](...args));
-    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('deadline-request-outcome-unknown')), Math.max(1, remaining)); });
+    const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('deadline-request-outcome-unknown')), Math.max(1, Math.min(remaining, 30000))); });
     return await Promise.race([request, timeout]);
   } finally {
     if (timer) clearTimeout(timer);
@@ -253,18 +253,19 @@ function requireVerifiedCallerCompletion(evidence) {
   return evidence;
 }
 
-async function invokeOnce({ clients, target, verifiedMaterials, now = () => Date.now() }) {
+async function invokeOnce({ clients, target, verifiedMaterials, now = () => Date.now(), deadline }) {
   const fixed = validateTarget(target);
   const state = isRecord(verifiedMaterials) && verifiedMaterialState.get(verifiedMaterials);
   if (!state) fail('verified-source-materials-required');
   if (state.invokeUsed) fail('invoke-already-attempted-manual-recovery');
   const timestamp = now();
-  if (!Number.isSafeInteger(timestamp) || timestamp >= verifiedMaterials.sourceDeadline || timestamp >= verifiedMaterials.egressDeadline) fail('source-or-egress-deadline-expired');
+  const requestDeadline = Math.min(verifiedMaterials.sourceDeadline, verifiedMaterials.egressDeadline, Number.isSafeInteger(deadline) ? deadline : Number.MAX_SAFE_INTEGER);
+  if (!Number.isSafeInteger(timestamp) || timestamp >= requestDeadline) fail('source-or-egress-deadline-expired');
   state.invokeUsed = true;
   const cidr = validateEgressCidr(verifiedMaterials.cidr);
   const csrB64 = validateCsr(verifiedMaterials.csrPem, verifiedMaterials.csrSha256);
   let invocation;
-  try { invocation = await clients.tat.InvokeCommand({ CommandId: fixed.commandId, InstanceIds: [fixed.instanceId], Parameters: JSON.stringify({ csr_b64: csrB64 }), Timeout: 300 }); }
+  try { invocation = await requestWithinDeadline({ client: clients.tat, method: 'InvokeCommand', args: [{ CommandId: fixed.commandId, InstanceIds: [fixed.instanceId], Parameters: JSON.stringify({ csr_b64: csrB64 }), Timeout: Math.min(300, Math.max(1, Math.floor((requestDeadline - timestamp) / 1000))) }], deadline: requestDeadline, now }); }
   catch { fail('invoke-outcome-unknown-manual-recovery'); }
   if (!isRecord(invocation) || typeof invocation.InvocationId !== 'string' || !/^inv-[a-z0-9]+$/.test(invocation.InvocationId)) fail('invocation-result-unknown-manual-recovery');
   const invocationState = Object.freeze({ invocationId: invocation.InvocationId, instanceId: fixed.instanceId, commandId: fixed.commandId, region: fixed.region, securityGroupId: fixed.securityGroupId, cidr, csrSha256: verifiedMaterials.csrSha256, startedAt: timestamp });
@@ -272,13 +273,16 @@ async function invokeOnce({ clients, target, verifiedMaterials, now = () => Date
   return invocationState;
 }
 
-async function pollTask({ clients, invocation, maxPages = 1, now = () => Date.now() }) {
+async function pollTask({ clients, invocation, maxPages = 1, now = () => Date.now(), certificateNow = Date.now, deadline }) {
   if (!isRecord(invocation) || typeof invocation.invocationId !== 'string' || !/^inv-[a-z0-9]+$/.test(invocation.invocationId)
     || !Number.isSafeInteger(maxPages) || maxPages < 1 || maxPages > 4) fail('invocation-state-invalid');
   const tasks = [];
+  const requestDeadline = Number.isSafeInteger(deadline) ? deadline : (Number.isSafeInteger(invocation.startedAt) ? invocation.startedAt : now()) + 300000;
+  if (now() >= requestDeadline) fail('task-deadline-expired-manual-recovery');
   let offset = 0;
   for (let page = 0; page < maxPages; page += 1) {
-    const response = await clients.tat.DescribeInvocationTasks({ Filters: [{ Name: 'invocation-id', Values: [invocation.invocationId] }, { Name: 'instance-id', Values: [invocation.instanceId] }], Limit: 100, Offset: offset, HideOutput: false });
+    const response = await requestWithinDeadline({ client: clients.tat, method: 'DescribeInvocationTasks', args: [{ Filters: [{ Name: 'invocation-id', Values: [invocation.invocationId] }, { Name: 'instance-id', Values: [invocation.instanceId] }], Limit: 100, Offset: offset, HideOutput: false }], deadline: requestDeadline, now });
+    if (now() >= requestDeadline) fail('task-deadline-expired-manual-recovery');
     if (!isRecord(response) || !Number.isSafeInteger(response.TotalCount) || !Array.isArray(response.InvocationTaskSet)) fail('task-response-invalid-manual-recovery');
     tasks.push(...response.InvocationTaskSet);
     if (tasks.length >= response.TotalCount) break;
@@ -297,7 +301,7 @@ async function pollTask({ clients, invocation, maxPages = 1, now = () => Date.no
   try {
     verifyPublicCertificateBinding({ csrBytes: materialState.csrBytes, expectedCsrSha256: invocation.csrSha256,
       leafPem: output.leaf_certificate, caPem: output.ca_certificate, expectedCaFingerprint256: materialState.expectedCaFingerprint256,
-      pwshPath: materialState.pwshPath, now: now() });
+      pwshPath: materialState.pwshPath, now: certificateNow() });
   } catch { fail('task-certificate-binding-invalid-manual-recovery'); }
   return Object.freeze({ state: 'success', output });
 }
@@ -309,7 +313,7 @@ async function pollUntilTerminal({ clients, invocation, maxPolls = 3, maxPages =
   for (let attempt = 0; attempt < maxPolls; attempt += 1) {
     const current = now();
     if (!Number.isSafeInteger(current) || current >= deadlineMs) fail('task-deadline-expired-manual-recovery');
-    const result = await pollTask({ clients, invocation, maxPages });
+    const result = await pollTask({ clients, invocation, maxPages, now, deadline: deadlineMs });
     if (now() >= deadlineMs) fail('task-deadline-expired-manual-recovery');
     if (result.state !== 'running') return result;
     if (attempt + 1 === maxPolls) break;

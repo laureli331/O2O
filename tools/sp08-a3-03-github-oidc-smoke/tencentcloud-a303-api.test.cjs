@@ -9,6 +9,7 @@ const { spawnSync } = require('node:child_process');
 const { addIngressRule, awaitVerifiedCallerRun, buildClients, buildSdkClients, invokeOnce, pollTask, pollUntilTerminal, removeIngressRule, validateCsr, validateTarget, verifySourceMaterials } = require('./tencentcloud-a303-api.cjs');
 const { parseReturnBundle } = require('./return-bundle.cjs');
 const { runServerLifecycle } = require('./server-lifecycle.cjs');
+const { dispatchReturnOnce } = require('./return-dispatch-once.cjs');
 
 const target = { commandId: 'cmd-approved1', instanceId: 'ins-approved1', region: 'ap-guangzhou', securityGroupId: 'sg-approved1' };
 const pem = '-----BEGIN CERTIFICATE REQUEST-----\nQUJD\n-----END CERTIFICATE REQUEST-----\n';
@@ -83,10 +84,11 @@ test('rejects draft targets and malformed or mismatched CSR before transport', a
 
 test('SDK generated method reaches injectable transport with exact single-CVM request', async () => {
   const fixture = fixtureMaterials();
-  const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: fixture.now, pwshPath: fixture.pwshPath });
+  const testNow = Date.parse('2026-11-24T11:59:50.000Z');
+  const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: () => testNow, pwshPath: fixture.pwshPath });
   const sourceCompletion = { id: 123, repository: { id: 456 }, run_attempt: 1, path: fixture.expected.workflowPath, head_sha: 'a'.repeat(40),
     head_branch: 'codex/sp08-a3-03-tls-prep', event: 'workflow_dispatch', actor: { id: 789, login: 'operator' }, status: 'completed', conclusion: 'success' };
-  const completionArgs = { verifiedMaterials, token: 'offline-test-token', deadline: Date.parse('2026-11-24T12:05:00.000Z'), now: fixture.now };
+  const completionArgs = { verifiedMaterials, token: 'offline-test-token', deadline: Date.parse('2026-11-24T12:05:00.000Z'), now: () => testNow };
   await assert.rejects(awaitVerifiedCallerRun({ ...completionArgs, fetchImpl: async () => ({ status: 200, json: async () => ({ ...sourceCompletion, id: 124 }) }) }), /caller-run-binding-mismatch/);
   await assert.rejects(awaitVerifiedCallerRun({ ...completionArgs, fetchImpl: async () => ({ status: 200, json: async () => ({ ...sourceCompletion, head_branch: 'main' }) }) }), /caller-run-binding-mismatch/);
   const requests = [];
@@ -98,14 +100,14 @@ test('SDK generated method reaches injectable transport with exact single-CVM re
     if (action === 'DescribeInvocationTasks') return { TotalCount: 1, InvocationTaskSet: [{ InvocationId: 'inv-123', InstanceId: target.instanceId, CommandId: target.commandId, TaskStatus: 'SUCCESS', TaskResult: { ExitCode: 0, Dropped: 0, Output: taskOutput } }] };
     throw new Error('unexpected-action');
   } });
-  const result = await invokeOnce({ clients, target, verifiedMaterials, now: () => 1000 });
+  const result = await invokeOnce({ clients, target, verifiedMaterials, now: () => testNow });
   assert.equal(result.invocationId, 'inv-123');
   assert.equal(requests.length, 1);
   assert.equal(requests[0].service, 'tat');
   assert.equal(requests[0].action, 'InvokeCommand');
   assert.deepEqual(requests[0].request.InstanceIds, [target.instanceId]);
   assert.deepEqual(JSON.parse(requests[0].request.Parameters), { csr_b64: Buffer.from(fixture.csrPem).toString('base64') });
-  const signed = await pollTask({ clients, invocation: result });
+  const signed = await pollTask({ clients, invocation: result, now: () => testNow, certificateNow: Date.now });
   assert.equal(signed.state, 'success');
   assert.equal(signed.output.csr_sha256, fixture.csrSha256);
   const bundle = JSON.stringify({ source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: 'a'.repeat(40), source_started_at: '2026-11-24T11:55:00.000Z', csr_sha256: signed.output.csr_sha256, leaf_certificate: signed.output.leaf_certificate, ca_certificate: signed.output.ca_certificate });
@@ -310,4 +312,47 @@ test('unknown security-group create and delete outcomes reconcile by this rule m
   const removal = await removeIngressRule({ clients, lease });
   assert.deepEqual(removal, { removed: true, deleteOutcome: 'recovered-by-readback' });
   fixture.cleanup();
+});
+
+test('return dispatch binds minted source, durably reserves once and never retries an unknown POST', async () => {
+  const fixture = fixtureMaterials();
+  const nowMs = Date.parse('2026-11-24T11:59:50.000Z');
+  const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: () => nowMs, pwshPath: fixture.pwshPath });
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-return-journal-'));
+  const journalPath = path.join(directory, 'dispatch.json');
+  const bindingBranch = 'codex/sp08-a3-03-tls-prep';
+  const sourceRun = { id: 123, repository: { id: 456 }, path: fixture.expected.workflowPath, head_sha: fixture.expected.trustedHeadSha,
+    run_attempt: 1, status: 'in_progress', conclusion: null, event: 'workflow_dispatch', actor: { id: 789 }, head_branch: bindingBranch };
+  let posts = 0;
+  let unknown = true;
+  const fetchImpl = async (url, options) => {
+    assert.equal(options.signal instanceof AbortSignal, true);
+    if (options.method === 'GET' && url.endsWith('/actions/runs/123')) return { status: 200, json: async () => sourceRun };
+    if (options.method === 'GET' && url.includes('/actions/workflows/sp08-a3-03-csr-return.yml/runs?')) return { status: 200, json: async () => ({ workflow_runs: [] }) };
+    if (options.method === 'POST') { posts += 1; const body = JSON.parse(options.body); assert.equal(body.ref, bindingBranch); assert.equal(body.inputs.bundle.length < 60000, true); if (unknown) throw new Error('connection-lost-after-send'); return { status: 204 }; }
+    throw new Error('unexpected-request');
+  };
+  const bundle = JSON.stringify({ source_run_id: '123', source_job_id: 'source-csr', source_run_attempt: '1', source_commit: fixture.expected.trustedHeadSha,
+    source_started_at: '2026-11-24T11:55:00.000Z', csr_sha256: fixture.csrSha256, leaf_certificate: fixture.certificates.leaf, ca_certificate: fixture.certificates.ca });
+  try {
+    await assert.rejects(dispatchReturnOnce({ verifiedMaterials, journalPath, bundle, token: 'offline-token', fetchImpl, deadline: verifiedMaterials.sourceDeadline, now: () => nowMs }), /outcome-unknown/);
+    assert.deepEqual(JSON.parse(fs.readFileSync(journalPath, 'utf8')).state, 'intent');
+    unknown = false;
+    await assert.rejects(dispatchReturnOnce({ verifiedMaterials, journalPath, bundle, token: 'offline-token', fetchImpl, deadline: verifiedMaterials.sourceDeadline, now: () => nowMs }), /journal-already-exists/);
+    assert.equal(posts, 1);
+  } finally { fs.unlinkSync(journalPath); fs.rmdirSync(directory); fixture.cleanup(); }
+});
+
+test('return dispatch deadline aborts a response body that stalls after headers', async () => {
+  const fixture = fixtureMaterials();
+  const nowMs = Date.parse('2026-11-24T11:59:50.000Z');
+  const verifiedMaterials = await verifySourceMaterials({ expected: fixture.expected, token: 'offline-test-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: () => nowMs, pwshPath: fixture.pwshPath });
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-return-timeout-'));
+  const journalPath = path.join(directory, 'dispatch.json');
+  const hangingFetch = async () => ({ status: 200, json: async () => new Promise(() => {}) });
+  const bundle = JSON.stringify({ source_run_id: '123', source_run_attempt: '1', source_commit: fixture.expected.trustedHeadSha, csr_sha256: fixture.csrSha256, source_job_id: 'source-csr' });
+  try {
+    await assert.rejects(dispatchReturnOnce({ verifiedMaterials, journalPath, bundle, token: 'offline-token', fetchImpl: hangingFetch, deadline: nowMs + 20, now: () => nowMs }), /outcome-unknown/);
+    assert.equal(fs.existsSync(journalPath), false);
+  } finally { fs.rmdirSync(directory); fixture.cleanup(); }
 });
