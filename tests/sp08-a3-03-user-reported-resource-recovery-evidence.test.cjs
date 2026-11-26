@@ -35,3 +35,12 @@ test('November 25 closure keeps preparation, screenshot recovery and unverified 
     '不作为重新购买或重新授权的批准',
   ]) assert.ok(section.includes(value), `closure preserves ${value}`);
 });
+
+test('prepurchase checks distinguish supplied cloud JSON and reported token creation from authenticated live execution', () => {
+  const section = ledger.split('## SP08/A3-03 11月25日晚间准备与回收（2026-11-26补录）')[1]?.split('\n## ')[0];
+  for (const value of ['c494b586-afef-4574-a69e-f0b2a7061683', '697daf21-6064-4962-b921-7dc4123d197b',
+    '不是本工具独立查询腾讯云', '尚未用其做真实认证验证', '不批准采购或放行 FR00',
+    '完成 stdin 输入后才固定本次发现截止时间', '资源回收时间不变']) {
+    assert.ok(section.includes(value), `prepurchase evidence preserves ${value}`);
+  }
+});

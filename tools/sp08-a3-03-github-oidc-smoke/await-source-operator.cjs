@@ -9,17 +9,17 @@ const runId = (value) => (typeof value === 'string' || typeof value === 'number'
 const SOURCE = '.github/workflows/sp08-a3-03-tls-caller.yml';
 
 function checkAwaitPlan(plan, now = Date.now()) {
-  if (!record(plan) || Object.keys(plan).sort().join('|') !== 'operatorInput|resourceCleanupAtMs|watchUntilMs'
+  if (!record(plan) || Object.keys(plan).sort().join('|') !== 'operatorInput|resourceCleanupAtMs|watchDurationMs'
     || !record(plan.operatorInput) || Object.keys(plan.operatorInput).sort().join('|') !== INPUT_KEYS
-    || !Number.isSafeInteger(now) || !Number.isSafeInteger(plan.watchUntilMs)
-    || plan.watchUntilMs <= now || plan.watchUntilMs > now + 60000
+    || !Number.isSafeInteger(now) || !Number.isSafeInteger(plan.watchDurationMs)
+    || plan.watchDurationMs <= 0 || plan.watchDurationMs > 60000
     || !Number.isSafeInteger(plan.resourceCleanupAtMs)
-    || plan.resourceCleanupAtMs < plan.watchUntilMs + 360000) fail('await-plan-window-invalid');
+    || plan.resourceCleanupAtMs < now + plan.watchDurationMs + 360000) fail('await-plan-window-invalid');
   // Validate the complete static template, without selecting or trusting a real run.
   const template = prepareOperatorConfig({ ...plan.operatorInput, sourceRunId: '1', notBeforeMs: now, notAfterMs: now }, now);
   const server = JSON.parse(template.serverInput);
-  if (server.authorizedUntil < plan.watchUntilMs + 360000
-    || plan.operatorInput.jwksExpiresAt < plan.watchUntilMs + 360000) fail('await-plan-lifetime-insufficient');
+  if (server.authorizedUntil < now + plan.watchDurationMs + 360000
+    || plan.operatorInput.jwksExpiresAt < now + plan.watchDurationMs + 360000) fail('await-plan-lifetime-insufficient');
   return { state: 'check-only', readyToDispatch: false };
 }
 
@@ -63,7 +63,9 @@ async function awaitSourceOperator({ plan, envelope, enableExternalDispatch, fet
   const checkedAt = now();
   checkAwaitPlan(snapshot, checkedAt);
   const secrets = require('./local-operator-launcher.cjs').validateSecretEnvelope(envelope, checkedAt);
-  if (Date.parse(envelope.expiration) < snapshot.watchUntilMs + 360000 || secrets.token.length > 4096) fail('await-source-credential-lifetime-insufficient');
+  // This entry is called only after stdin credential collection has completed.
+  const watchUntilMs = checkedAt + snapshot.watchDurationMs;
+  if (Date.parse(envelope.expiration) < watchUntilMs + 360000 || secrets.token.length > 4096) fail('await-source-credential-lifetime-insufficient');
   if (typeof fetchImpl !== 'function' || typeof sleep !== 'function' || typeof run !== 'function' || typeof onReady !== 'function') fail('await-source-dependency-invalid');
   const input = snapshot.operatorInput;
   const policy = JSON.parse(input.preparedPolicies.variables.A303_TLS_RUNNER_POLICY);
@@ -75,25 +77,25 @@ async function awaitSourceOperator({ plan, envelope, enableExternalDispatch, fet
       || !Array.isArray(body.workflow_runs) || body.workflow_runs.length !== body.total_count) fail('await-source-list-invalid');
     return body.workflow_runs;
   };
-  const baseline = validateList(await readJson(listUrl, secrets.token, snapshot.watchUntilMs, { fetchImpl, now }));
+  const baseline = validateList(await readJson(listUrl, secrets.token, watchUntilMs, { fetchImpl, now }));
   const baselineIds = new Set(baseline.map(item => {
     if (!record(item) || !runId(item.id)) fail('await-source-baseline-invalid');
     return String(item.id);
   }));
   // GitHub timestamps have second precision. Exclude the baseline IDs as well as older timestamps.
   const startedAt = Math.floor(now() / 1000) * 1000;
-  if (now() >= snapshot.watchUntilMs) fail('await-source-deadline');
+  if (now() >= watchUntilMs) fail('await-source-deadline');
   onReady();
   let pinnedRunId;
   for (let poll = 0; poll < 12; poll += 1) {
-    if (now() >= snapshot.watchUntilMs) fail('await-source-deadline');
-    const body = await readJson(listUrl, secrets.token, snapshot.watchUntilMs, { fetchImpl, now });
+    if (now() >= watchUntilMs) fail('await-source-deadline');
+    const body = await readJson(listUrl, secrets.token, watchUntilMs, { fetchImpl, now });
     const candidates = validateList(body).filter(item => record(item) && !baselineIds.has(String(item.id)) && item.path === SOURCE
       && String(item.repository?.id) === claims.repository_id && item.repository?.full_name === claims.repository
       && item.head_sha === input.preparedPolicies.trustedHeadSha && item.head_branch === branch
       && item.event === 'workflow_dispatch' && String(item.actor?.id) === claims.actor_id && item.actor?.login === claims.actor
       && typeof item.created_at === 'string' && Date.parse(item.created_at) >= startedAt
-      && Date.parse(item.created_at) <= Math.min(now(), snapshot.watchUntilMs));
+      && Date.parse(item.created_at) <= Math.min(now(), watchUntilMs));
     if (candidates.length > 1) fail('await-source-ambiguous');
     if (candidates.length === 1) {
       const source = candidates[0];
@@ -104,7 +106,7 @@ async function awaitSourceOperator({ plan, envelope, enableExternalDispatch, fet
       pinnedRunId = id;
       if (source.status === 'in_progress') {
         const artifacts = await readJson(`https://api.github.com/repos/${claims.repository}/actions/runs/${id}/artifacts?per_page=100`,
-          secrets.token, snapshot.watchUntilMs, { fetchImpl, now });
+          secrets.token, watchUntilMs, { fetchImpl, now });
         if (!record(artifacts) || !Number.isSafeInteger(artifacts.total_count) || artifacts.total_count < 0
           || artifacts.total_count > 1 || !Array.isArray(artifacts.artifacts) || artifacts.artifacts.length !== artifacts.total_count) fail('await-source-artifacts-invalid');
         if (artifacts.total_count === 1) {
@@ -116,7 +118,7 @@ async function awaitSourceOperator({ plan, envelope, enableExternalDispatch, fet
         }
       }
     } else if (pinnedRunId) fail('await-source-run-disappeared');
-    if (poll < 11) await sleep(Math.min(5000, Math.max(0, snapshot.watchUntilMs - now())));
+    if (poll < 11) await sleep(Math.min(5000, Math.max(0, watchUntilMs - now())));
   }
   fail('await-source-poll-limit');
 }

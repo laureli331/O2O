@@ -34,7 +34,7 @@ $cert=$req.Create($ca,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::
 function awaitFixture() {
   const certs = certificates();
   const time = Math.floor(Date.now() / 1000) * 1000;
-  const plan = { watchUntilMs: time + 60000, resourceCleanupAtMs: time + 600000,
+  const plan = { watchDurationMs: 60000, resourceCleanupAtMs: time + 600000,
     operatorInput: { preparedPolicies: prepareRunPolicies({ ...certs, repository: 'owner/repo', repositoryId: '10',
       actorId: '30', actorLogin: 'operator', branch: 'codex/test', trustedHeadSha: 'a'.repeat(40),
       targetIPv4: '8.8.8.8', authorizedUntil: time + 600000 }, time),
@@ -62,7 +62,7 @@ test('await-source validates public preparation, deadlines and distinct secrets 
   let calls = 0;
   const options = { plan, envelope, now: () => time, fetchImpl: async () => { calls += 1; throw new Error('must-not-fetch'); } };
   await assert.rejects(awaitSourceOperator(options), /explicit-enable/);
-  for (const patch of [{ watchUntilMs: time }, { watchUntilMs: time + 60001 },
+  for (const patch of [{ watchDurationMs: 0 }, { watchDurationMs: 60001 }, { watchUntilMs: time + 60000 },
     { resourceCleanupAtMs: time + 419999 }, { extra: true },
     { operatorInput: { ...plan.operatorInput, sourceRunId: '123' } },
     { operatorInput: { ...plan.operatorInput, jwksExpiresAt: time + 419999 } }]) {
@@ -109,6 +109,33 @@ test('await-source discovers one active run and public artifact then builds the 
   assert.equal(seen.every(url => url.startsWith('https://api.github.com/repos/owner/repo/actions/')), true);
 });
 
+test('credential-entry delay does not consume discovery duration or extend any absolute authorization deadline', async () => {
+  const { plan, envelope, source, time } = awaitFixture();
+  checkAwaitPlan(plan, time); // PowerShell precheck before credential prompts.
+  const afterInput = time + 61000;
+  assert.equal(checkAwaitPlan(plan, afterInput).readyToDispatch, false);
+  let calls = 0;
+  let invoked = 0;
+  await awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => afterInput,
+    fetchImpl: async url => {
+      calls += 1;
+      return jsonResponse(url, calls === 1 ? { total_count: 0, workflow_runs: [] }
+        : url.includes('/artifacts?') ? { total_count: 1, artifacts: [{ name: 'sp08-a303-csr-123-1', expired: false }] }
+        : { total_count: 1, workflow_runs: [{ ...source, created_at: new Date(afterInput).toISOString() }] });
+    }, run: async config => {
+      invoked += 1;
+      assert.equal(config.notBeforeMs, afterInput);
+      assert.equal(JSON.parse(config.serverInput).authorizedUntil, time + 600000);
+      return { state: 'tls-complete', sourceRunId: '123' };
+    } });
+  assert.equal(invoked, 1);
+  await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => time + 180001,
+    fetchImpl: async () => assert.fail('absolute recovery margin exhausted; must-not-fetch') }), /window-invalid/);
+  assert.equal(plan.resourceCleanupAtMs, time + 600000);
+  assert.equal(plan.operatorInput.jwksExpiresAt, time + 600000);
+  assert.equal(envelope.expiration, new Date(time + 600000).toISOString());
+});
+
 test('await-source rejects ambiguous, completed or retried sources and malformed artifacts without operator calls', async () => {
   const { plan, envelope, source, time } = awaitFixture();
   for (const candidates of [[source, { ...source, id: 124 }], [{ ...source, status: 'completed', conclusion: 'failure' }], [{ ...source, run_attempt: 2 }]]) {
@@ -141,7 +168,7 @@ test('await-source ignores old or mismatched identities, has twelve-poll and har
   await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => time,
     fetchImpl: async url => { calls += 1; return jsonResponse(url, {}, 503); } }), /response-invalid/);
   assert.equal(calls, 1);
-  const shortPlan = { ...plan, watchUntilMs: time + 25 };
+  const shortPlan = { ...plan, watchDurationMs: 25 };
   await assert.rejects(awaitSourceOperator({ plan: shortPlan, envelope, enableExternalDispatch: true, now: () => time,
     fetchImpl: async () => new Promise(() => {}) }), /request-unknown/);
 });
@@ -160,7 +187,7 @@ test('await-source bounds response bodies and rejects pagination, foreign URLs a
     assert.equal(calls, 1); assert.equal(ready, 0);
   }
   let ready = 0;
-  await assert.rejects(awaitSourceOperator({ plan: { ...plan, watchUntilMs: time + 25 }, envelope,
+  await assert.rejects(awaitSourceOperator({ plan: { ...plan, watchDurationMs: 25 }, envelope,
     enableExternalDispatch: true, now: () => time, onReady: () => { ready += 1; }, fetchImpl: async url => {
       const response = new Response(new ReadableStream({ start() {} }));
       Object.defineProperty(response, 'url', { value: url }); return response;
