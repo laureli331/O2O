@@ -44,3 +44,12 @@ test('prepurchase checks distinguish supplied cloud JSON and reported token crea
     assert.ok(section.includes(value), `prepurchase evidence preserves ${value}`);
   }
 });
+
+test('last attempt requires a separate platform-only preflight decision before procurement and never promises success', () => {
+  const proposal = readFileSync(join(__dirname, '..', 'docs', 'sp08-a3-03-next-live-proposal-20261126.md'), 'utf8');
+  for (const value of ['最后一次', '不自动重跑、延长或要求新购下一轮', '此约束不代表必定成功',
+    'preflight_only', '默认false', 'id-token/none', '最长2分钟', '保留1天',
+    '预检失败就保留日志和HOLD，不采购', '不自动采购']) {
+    assert.ok(proposal.includes(value), `last attempt preserves ${value}`);
+  }
+});

@@ -71,6 +71,7 @@ test('await-source validates public preparation, deadlines and distinct secrets 
   await assert.rejects(awaitSourceOperator({ ...options, enableExternalDispatch: true,
     envelope: { ...envelope, expiration: new Date(time + 419999).toISOString() } }), /lifetime-insufficient/);
   assert.equal(calls, 0);
+  assert.throws(() => checkAwaitPlan({ ...plan, resourceCleanupAtMs: time + 500000 }, time), /lifetime-insufficient/);
 });
 
 test('await-source discovers one active run and public artifact then builds the real config once without dispatching source', async () => {

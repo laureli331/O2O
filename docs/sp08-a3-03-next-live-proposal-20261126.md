@@ -2,6 +2,16 @@
 
 本文件是具体待审方案，不代表已批准新一轮采购、权限绑定、GitHub变量写入或工作流派发。A3-03 / FR00 仍为 HOLD。GitHub token 已由用户报告生成；本地未读取令牌，尚未验证其真实认证能力。
 
+后续确认与收紧：用户已确认e040bc59发布及原单次真实验证范围，随后明确希望这是最后一次。按此约束不再立即开通资源：先完成下述平台预检方案的审阅与独立授权。最后一次云端尝试无论成功或失败均收尾，不自动重跑、延长或要求新购下一轮；失败保持HOLD并交付实际阻塞证据。此约束不代表必定成功。
+
+## 先于采购的平台预检（待确认发布及派发）
+
+- 在已登记的caller增加显式`preflight_only`布尔输入（默认false）和`expected_sha`输入；true只调用专用只读reusable，原TLS source job明确排除true。复用既有caller，避免依赖尚未进入默认分支的新workflow登记；不修改默认分支。实际派发仍须API接受并核对唯一run，不能仅凭文件认为已验证。
+- 只在原候选分支人工派发一次，输入独立审阅的准确SHA。专用job的权限仅contents/read、actions/read、id-token/none，最长2分钟；不继承secrets，不使用用户PAT、腾讯云STS、GitHub临时变量或CVM/CLB，也不申请OIDC令牌、不生成CSR/私钥、不连接TLS目标。
+- 记录真实caller/called workflow ref及SHA、Node和PowerShell版本；只上传一个白名单公开JSON，保留1天。通过最多4轮同run GET检查job仍在运行时工件可读及归属/digest字段，最长30秒；单请求/正文最多10秒、64KiB、不跟随重定向、不翻页，错误不自动重试。公网出口、OIDC签名、PAT/TAT权限和TLS整链仍不在该预检的证明范围内。
+- 复用`runnerContext`和既有等待器的有界GitHub JSON读取实现（抽为独立模块以便Linux runner不加载腾讯云SDK），无新增依赖。官方依据：[job上下文](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#job-context)、[运行查询](https://docs.github.com/en/rest/actions/workflow-runs#get-a-workflow-run)、[工件查询](https://docs.github.com/en/rest/actions/artifacts#list-workflow-run-artifacts)。查阅确认github.com支持job.workflow_ref/job.workflow_sha；这不是该项目已运行成功的证据。
+- 预检失败就保留日志和HOLD，不采购。预检成功也不自动采购；先核对真实版本/结果及其仍未覆盖的云端条件，再与用户确定是否执行已批准范围内的最后一次云端尝试。
+
 ## 验证与复用
 
 沿用已经发布和本地回归的固定命令、公开策略生成器、Windows隐藏凭据输入、来源等待器及原有operator/TAT/规则回收流程。先验证61秒输入延迟不消耗发现窗口、不延长原绝对授权/回收期限，再运行相关合成测试、Windows桥接和CSR/TLS fixture。没有新增第三方依赖、架构或业务功能。真实阶段只接受同一候选SHA、同一caller/CSR/返回作业的TLS证明；不能把准备命令成功、空规则基线或本地fixture当作验收通过。

@@ -1,0 +1,53 @@
+name: SP08-A3-03 reusable platform preflight only
+on:
+  workflow_call:
+    inputs:
+      expected_sha:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+  id-token: none
+jobs:
+  platform:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    environment: SP08-A3-03-OIDC-smoke
+    env:
+      O2O_RUNNER_REPOSITORY: ${{ github.repository }}
+      O2O_RUNNER_REPOSITORY_ID: ${{ github.repository_id }}
+      O2O_RUNNER_RUN_ID: ${{ github.run_id }}
+      O2O_RUNNER_RUN_ATTEMPT: ${{ github.run_attempt }}
+      O2O_RUNNER_ACTOR: ${{ github.actor }}
+      O2O_RUNNER_ACTOR_ID: ${{ github.actor_id }}
+      O2O_RUNNER_REF: ${{ github.ref }}
+      O2O_RUNNER_WORKFLOW_REF: ${{ github.workflow_ref }}
+      O2O_RUNNER_WORKFLOW_SHA: ${{ github.workflow_sha }}
+      O2O_RUNNER_ENVIRONMENT: SP08-A3-03-OIDC-smoke
+      A303_PREFLIGHT_SHA: ${{ inputs.expected_sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+          submodules: false
+          lfs: false
+      - name: Check real caller and called context plus installed runtimes
+        id: capture
+        env:
+          O2O_RUNNER_CALLED_WORKFLOW_REF: ${{ job.workflow_ref }}
+          O2O_RUNNER_CALLED_WORKFLOW_SHA: ${{ job.workflow_sha }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/platform-preflight.cjs --capture
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sp08-a303-platform-${{ github.run_id }}-1
+          path: ${{ steps.capture.outputs.public_file }}
+          if-no-files-found: error
+          retention-days: 1
+      - name: Check public artifact visibility while this same job is active
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          O2O_RUNNER_CALLED_WORKFLOW_REF: ${{ job.workflow_ref }}
+          O2O_RUNNER_CALLED_WORKFLOW_SHA: ${{ job.workflow_sha }}
+        run: node tools/sp08-a3-03-github-oidc-smoke/platform-preflight.cjs --verify-visible

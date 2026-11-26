@@ -69,6 +69,8 @@ async function verifySourceMaterials({ expected, token, repository, fetchImpl = 
     || !Number.isSafeInteger(expected.notAfterMs) || expected.notAfterMs < expected.notBeforeMs) fail('source-verification-config-invalid');
   const time = now();
   if (!Number.isSafeInteger(time)) fail('source-verification-time-invalid');
+  if (expected.resourceDeadline !== undefined && (!Number.isSafeInteger(expected.resourceDeadline)
+    || expected.resourceDeadline <= time || expected.resourceDeadline > time + 900000)) fail('source-resource-deadline-invalid');
   const sourceRunId = expected.sourceRunId;
   if (typeof sourceRunId !== 'string' || !/^[1-9][0-9]{0,19}$/.test(sourceRunId)) fail('source-run-id-required');
   const url = `https://api.github.com/repos/${repository}/actions/runs/${sourceRunId}`;
@@ -153,7 +155,7 @@ async function verifySourceMaterials({ expected, token, repository, fetchImpl = 
   const sourceStartedAt = Date.parse(manifest.source_started_at);
   const material = Object.freeze({ sourceRunId: manifest.source_run_id, attempt: '1', workflowSha: manifest.source_commit, csrSha256: manifest.csr_sha256, csrPem: csr.toString('utf8'), cidr,
     sourceStartedAt, sourceDeadline: sourceStartedAt + 300000, egressDeadline: Date.parse(egress.expires_at), callerJobDeadline: sourceStartedAt + 600000,
-    resourceDeadline: sourceStartedAt + 105 * 60 * 1000 });
+    resourceDeadline: Math.min(sourceStartedAt + 105 * 60 * 1000, expected.resourceDeadline ?? Number.MAX_SAFE_INTEGER) });
   verifiedMaterialState.set(material, { invokeUsed: false, ingressUsed: false, csrBytes: Buffer.from(csr), expectedCaFingerprint256: expected.caFingerprint256, pwshPath,
     sourceRunId, attempt: '1', repository, repositoryId: expected.repositoryId, actorId: expected.actorId, actorLogin: expected.actorLogin,
     workflowPath: expected.workflowPath, workflowSha: actualRun.head_sha, workflowRef: expected.workflowRef,

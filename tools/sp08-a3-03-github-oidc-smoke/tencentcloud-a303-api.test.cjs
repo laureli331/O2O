@@ -17,6 +17,22 @@ const { runOperatorEntry } = require('./operator-entry.cjs');
 const target = { commandId: 'cmd-approved1', instanceId: 'ins-approved1', region: 'ap-guangzhou', securityGroupId: 'sg-approved1' };
 const pem = '-----BEGIN CERTIFICATE REQUEST-----\nQUJD\n-----END CERTIFICATE REQUEST-----\n';
 const digest = require('node:crypto').createHash('sha256').update(pem).digest('hex');
+
+test('verified resource lifetime is capped by the explicit operator authorization and rejects invalid caps before reads', async () => {
+  const nowMs = Date.now();
+  const fixture = fixtureMaterials(nowMs);
+  try {
+    const cap = nowMs + 60000;
+    const material = await verifySourceMaterials({ expected: { ...fixture.expected, resourceDeadline: cap },
+      token: 'offline-token', repository: 'owner/repo', fetchImpl: fixture.fetchImpl, now: () => nowMs, pwshPath: fixture.pwshPath });
+    assert.equal(material.resourceDeadline, cap);
+    assert.equal(require('./tencentcloud-a303-api.cjs').requireVerifiedSourceMaterials(material).resourceDeadline, cap);
+    for (const resourceDeadline of [nowMs, nowMs + 900001, 'later']) {
+      await assert.rejects(verifySourceMaterials({ expected: { ...fixture.expected, resourceDeadline }, token: 'offline-token',
+        repository: 'owner/repo', fetchImpl: async () => assert.fail('must-not-read'), now: () => nowMs, pwshPath: fixture.pwshPath }), /source-resource-deadline-invalid/);
+    }
+  } finally { fixture.cleanup(); }
+});
 function fixtureMaterials(nowMs = Date.parse('2026-11-24T12:00:00.000Z')) {
   const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-sdk-'));
   const sourceStartedAt = new Date(nowMs - 5 * 60 * 1000).toISOString();

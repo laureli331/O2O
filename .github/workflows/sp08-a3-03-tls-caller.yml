@@ -1,12 +1,31 @@
 name: SP08-A3-03 same-job TLS caller candidate
 on:
   workflow_dispatch:
+    inputs:
+      preflight_only:
+        description: Platform context and public artifact visibility only; no TLS source
+        required: false
+        default: false
+        type: boolean
+      expected_sha:
+        description: Reviewed candidate SHA required for platform preflight
+        required: false
+        type: string
 permissions:
   contents: read
   actions: read
 jobs:
+  platform-preflight:
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 && inputs.preflight_only == true }}
+    uses: ./.github/workflows/sp08-a3-03-platform-preflight-reusable.yml
+    permissions:
+      contents: read
+      actions: read
+      id-token: none
+    with:
+      expected_sha: ${{ inputs.expected_sha }}
   source-csr:
-    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.repository == 'laureli331/O2O' && github.ref == 'refs/heads/codex/sp08-a3-03-tls-prep' && github.run_attempt == 1 && inputs.preflight_only != true }}
     uses: ./.github/workflows/sp08-a3-03-tls-source-reusable.yml
     permissions:
       contents: read

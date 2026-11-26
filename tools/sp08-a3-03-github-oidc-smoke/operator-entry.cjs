@@ -56,7 +56,9 @@ async function runOperatorEntry(config, secrets, { enableExternalDispatch, fetch
     || typeof secrets.credential.secretKey !== 'string' || !secrets.credential.secretKey
     || typeof secrets.token !== 'string' || secrets.token.length < 1 || secrets.token.length > 4096) fail('operator-entry-explicit-secrets-required');
   if (typeof fetchImpl !== 'function' || typeof buildClients !== 'function') fail('operator-entry-runtime-dependency-invalid');
-  const expected = { repositoryId: config.repositoryId, actorId: config.actorId, actorLogin: config.actorLogin,
+  const resourceDeadline = JSON.parse(config.serverInput).authorizedUntil;
+  if (!Number.isSafeInteger(resourceDeadline) || resourceDeadline <= now() || resourceDeadline > now() + 900000) fail('operator-entry-resource-deadline-invalid');
+  const expected = { repositoryId: config.repositoryId, actorId: config.actorId, actorLogin: config.actorLogin, resourceDeadline,
     workflowPath: config.workflowPath, workflowRef: config.workflowRef, trustedHeadSha: config.trustedHeadSha,
     sourceRunId: config.sourceRunId, notBeforeMs: config.notBeforeMs, notAfterMs: config.notAfterMs,
     caFingerprint256: config.caFingerprint256 };
