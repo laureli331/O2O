@@ -1,7 +1,8 @@
 param(
   [Parameter(Mandatory = $true)][string]$ConfigPath,
   [Parameter(Mandatory = $true)][string]$NodePath,
-  [switch]$RunOnce
+  [switch]$RunOnce,
+  [switch]$AwaitSource
 )
 $ErrorActionPreference = 'Stop'
 $secrets = [System.Collections.Generic.List[System.Security.SecureString]]::new()
@@ -16,7 +17,8 @@ try {
   $nodeVersion = & $NodePath --version 2>$null
   if ($LASTEXITCODE -ne 0 -or $nodeVersion -ne 'v20.19.3') { throw 'Node版本不符合本地验证基线。' }
   $config = Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
-  & $NodePath (Join-Path $PSScriptRoot 'local-operator-launcher.cjs') --check-only ([IO.Path]::GetFullPath($ConfigPath)) | Out-Null
+  $checkMode = if ($AwaitSource) { '--check-await-source' } else { '--check-only' }
+  & $NodePath (Join-Path $PSScriptRoot 'local-operator-launcher.cjs') $checkMode ([IO.Path]::GetFullPath($ConfigPath)) | Out-Null
   if ($LASTEXITCODE -ne 0) { throw '公开配置预检失败。' }
   if (-not $RunOnce) { Write-Output '{"state":"check-only","readyToDispatch":false}'; return }
   Add-Type -Path (Join-Path $PSScriptRoot 'bounded-process-output.cs')
@@ -34,13 +36,24 @@ try {
   $entry = Join-Path $PSScriptRoot 'local-operator-launcher.cjs'
   $start = [Diagnostics.ProcessStartInfo]::new()
   $start.FileName = $nodePath
-  $start.ArgumentList.Add($entry); $start.ArgumentList.Add('--run-once'); $start.ArgumentList.Add([IO.Path]::GetFullPath($ConfigPath))
+  $runMode = if ($AwaitSource) { '--await-source' } else { '--run-once' }
+  $start.ArgumentList.Add($entry); $start.ArgumentList.Add($runMode); $start.ArgumentList.Add([IO.Path]::GetFullPath($ConfigPath))
   $start.UseShellExecute = $false; $start.RedirectStandardInput = $true; $start.RedirectStandardOutput = $true; $start.RedirectStandardError = $true; $start.CreateNoWindow = $true
   $process = [Diagnostics.Process]::new(); $process.StartInfo = $start
   if (-not $process.Start()) { throw '启动子进程失败。' }
-  $stdoutTask = [BoundedProcessOutput]::DrainAsync($process.StandardOutput.BaseStream, 4096, $process)
   $stderrTask = [BoundedProcessOutput]::DrainAsync($process.StandardError.BaseStream, 4096, $process)
-  $process.StandardInput.Write($envelope); $process.StandardInput.Close(); $envelope = $null
+  if ($AwaitSource) { $readyTask = [BoundedProcessOutput]::ReadAwaitReadyAsync($process.StandardOutput.BaseStream) }
+  else { $stdoutTask = [BoundedProcessOutput]::DrainAsync($process.StandardOutput.BaseStream, 4096, $process) }
+  $writeTask = $process.StandardInput.WriteAsync($envelope)
+  if (-not $writeTask.Wait(5000)) { throw '子进程未及时读取本机输入。' }
+  $writeTask.GetAwaiter().GetResult()
+  $process.StandardInput.Close(); $envelope = $null
+  if ($AwaitSource) {
+    if (-not $readyTask.Wait(15000)) { throw '等待入口未就绪；结果未知。' }
+    $readyTask.GetAwaiter().GetResult()
+    Write-Output '{"state":"waiting-for-source","readyToDispatch":false}'
+    $stdoutTask = [BoundedProcessOutput]::DrainAsync($process.StandardOutput.BaseStream, 4096, $process)
+  }
   if (-not $process.WaitForExit(900000)) { $process.Kill(); throw '本地启动超过15分钟；结果未知，不自动重试。' }
   try { $out = $stdoutTask.GetAwaiter().GetResult(); $err = $stderrTask.GetAwaiter().GetResult() } catch { throw '子进程输出无效或超限；未自动重试。' }
   if ($process.ExitCode -ne 0 -or $err.Length -ne 0 -or $out -notmatch '^\{"state":"tls-complete","sourceRunId":"[1-9][0-9]{0,19}"\}\r?\n?$') { throw '执行失败、输出超限或结果格式无效；未自动重试。' }
@@ -53,4 +66,5 @@ try {
   foreach ($ptr in $buffers) { if ($ptr -ne [IntPtr]::Zero) { [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($ptr) } }
   foreach ($secure in $secrets) { $secure.Dispose() }
   $plain.Clear()
+  $envelope = $null
 }

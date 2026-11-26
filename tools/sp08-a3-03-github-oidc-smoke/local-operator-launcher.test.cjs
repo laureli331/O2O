@@ -53,3 +53,24 @@ test('PowerShell bounded drain kills a real local fake child writing oversized n
   assert.equal(result.status, 0, result.stderr); assert.match(result.stdout, /bounded stdout and stderr children stopped/);
   assert.equal(`${result.stdout}${result.stderr}`.includes('SENTINEL-'), false);
 });
+
+test('await-source CLI checks without reading stdin and uses a fixed readiness marker without leaking failure details', async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'a303-await-cli-'));
+  const file = path.join(dir, 'plan.json'); fs.writeFileSync(file, '{}');
+  let out = ''; let err = ''; let calls = 0;
+  try {
+    assert.equal(await main(['--check-await-source', file], { [Symbol.asyncIterator]() { assert.fail('must-not-read-input'); } },
+      { write: s => { out += s; } }, { write: s => { err += s; } }, {
+        checkAwait: () => ({ state: 'check-only', readyToDispatch: false }),
+      }), 0);
+    assert.match(out, /check-only/); assert.equal(err, ''); out = '';
+    const input = envelope();
+    assert.equal(await main(['--await-source', file], Readable.from([JSON.stringify(input)]),
+      { write: s => { out += s; } }, { write: s => { err += s; } }, {
+        awaitRun: async options => { calls += 1; assert.equal(options.enableExternalDispatch, true);
+          assert.equal(options.envelope.token, 'sentinel-github-token'); options.onReady(); throw new Error('sentinel-key'); },
+      }), 1);
+    assert.equal(calls, 1); assert.equal(out, 'A303_AWAIT_SOURCE_READY\n');
+    assert.equal(`${out}${err}`.includes('sentinel'), false);
+  } finally { fs.unlinkSync(file); fs.rmdirSync(dir); }
+});

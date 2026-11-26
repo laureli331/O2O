@@ -62,18 +62,22 @@ async function executeOnce({ config, envelope, now = Date.now, run = runOperator
 }
 
 async function main(args, stdin = process.stdin, stdout = process.stdout, stderr = process.stderr, dependencies = {}) {
-  if (args.length === 2 && args[0] === '--check-only' && require('node:path').isAbsolute(args[1])) {
-    try { stdout.write(`${JSON.stringify((dependencies.check || checkOnly)(JSON.parse(fs.readFileSync(args[1], 'utf8'))))}\n`); return 0; }
+  if (args.length === 2 && ['--check-only', '--check-await-source'].includes(args[0]) && require('node:path').isAbsolute(args[1])) {
+    const check = args[0] === '--check-await-source' ? (dependencies.checkAwait || require('./await-source-operator.cjs').checkAwaitPlan) : (dependencies.check || checkOnly);
+    try { stdout.write(`${JSON.stringify(check(JSON.parse(fs.readFileSync(args[1], 'utf8'))))}\n`); return 0; }
     catch { stderr.write('公开配置检查失败。\n'); return 1; }
   }
-  if (args.length !== 2 || args[0] !== '--run-once' || !require('node:path').isAbsolute(args[1])) {
-    stderr.write('仅支持：node local-operator-launcher.cjs --run-once <绝对公开配置路径>\n'); return 2;
+  if (args.length !== 2 || !['--run-once', '--await-source'].includes(args[0]) || !require('node:path').isAbsolute(args[1])) {
+    stderr.write('仅支持 check-only/check-await-source/run-once/await-source 和绝对公开配置路径。\n'); return 2;
   }
   let envelope;
   try {
     const config = JSON.parse(fs.readFileSync(args[1], 'utf8'));
     envelope = await readEnvelope(stdin);
-    const result = await executeOnce({ config, envelope, run: dependencies.run || runOperatorEntry, check: dependencies.check || checkOnly });
+    const result = args[0] === '--await-source'
+      ? await (dependencies.awaitRun || require('./await-source-operator.cjs').awaitSourceOperator)({ plan: config, envelope, enableExternalDispatch: true,
+        onReady: () => stdout.write('A303_AWAIT_SOURCE_READY\n') })
+      : await executeOnce({ config, envelope, run: dependencies.run || runOperatorEntry, check: dependencies.check || checkOnly });
     if (!result || result.state !== 'tls-complete' || !/^[1-9][0-9]{0,19}$/.test(result.sourceRunId)) fail('local-launcher-result-invalid');
     stdout.write(`${JSON.stringify({ state: result.state, sourceRunId: result.sourceRunId })}\n`);
     return 0;

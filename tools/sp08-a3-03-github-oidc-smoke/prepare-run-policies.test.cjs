@@ -11,6 +11,7 @@ const { buildApprovedConfig } = require('./prepare-a-runner.cjs');
 const { validateConfig } = require('./runner-entry.cjs');
 const { prepareOperatorConfig } = require('./prepare-operator-config.cjs');
 const { checkOnly, runOperatorEntry } = require('./operator-entry.cjs');
+const { checkAwaitPlan, awaitSourceOperator } = require('./await-source-operator.cjs');
 
 function certificates() {
   const pwsh = 'C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe';
@@ -29,6 +30,156 @@ $cert=$req.Create($ca,[datetimeoffset]::UtcNow.AddMinutes(-1),[datetimeoffset]::
   assert.equal(result.status, 0, result.stderr);
   return JSON.parse(result.stdout);
 }
+
+function awaitFixture() {
+  const certs = certificates();
+  const time = Math.floor(Date.now() / 1000) * 1000;
+  const plan = { watchUntilMs: time + 60000, resourceCleanupAtMs: time + 600000,
+    operatorInput: { preparedPolicies: prepareRunPolicies({ ...certs, repository: 'owner/repo', repositoryId: '10',
+      actorId: '30', actorLogin: 'operator', branch: 'codex/test', trustedHeadSha: 'a'.repeat(40),
+      targetIPv4: '8.8.8.8', authorizedUntil: time + 600000 }, time),
+    instanceId: 'ins-abcdefgh', securityGroupId: 'sg-abcdefgh', region: 'ap-shanghai',
+    commandIds: { sign: 'cmd-abcdefgh', start: 'cmd-bcdefghi', stop: 'cmd-cdefghij' },
+    privateIPv4: '172.17.16.4', interfaceName: 'eth0', jwksFetchedAt: time - 1000, jwksExpiresAt: time + 600000,
+    journalPath: path.join(os.tmpdir(), 'a303-await-never-written.json'), pwshPath: process.execPath } };
+  const envelope = { credential: { secretId: 'sentinel-id', secretKey: 'sentinel-key', token: 'sentinel-sts' },
+    token: 'sentinel-github', expiration: new Date(time + 600000).toISOString() };
+  const source = { id: 123, repository: { id: 10, full_name: 'owner/repo' }, actor: { id: 30, login: 'operator' },
+    event: 'workflow_dispatch', status: 'in_progress', conclusion: null, run_attempt: 1,
+    path: '.github/workflows/sp08-a3-03-tls-caller.yml', head_sha: 'a'.repeat(40), head_branch: 'codex/test', created_at: new Date(time).toISOString() };
+  return { plan, envelope, source, time };
+}
+
+function jsonResponse(url, body, status = 200, headers = {}) {
+  const response = new Response(JSON.stringify(body), { status, headers });
+  Object.defineProperty(response, 'url', { value: url });
+  return response;
+}
+
+test('await-source validates public preparation, deadlines and distinct secrets before any network call', async () => {
+  const { plan, envelope, time } = awaitFixture();
+  assert.equal(checkAwaitPlan(plan, time).readyToDispatch, false);
+  let calls = 0;
+  const options = { plan, envelope, now: () => time, fetchImpl: async () => { calls += 1; throw new Error('must-not-fetch'); } };
+  await assert.rejects(awaitSourceOperator(options), /explicit-enable/);
+  for (const patch of [{ watchUntilMs: time }, { watchUntilMs: time + 60001 },
+    { resourceCleanupAtMs: time + 419999 }, { extra: true },
+    { operatorInput: { ...plan.operatorInput, sourceRunId: '123' } },
+    { operatorInput: { ...plan.operatorInput, jwksExpiresAt: time + 419999 } }]) {
+    assert.throws(() => checkAwaitPlan({ ...plan, ...patch }, time));
+  }
+  await assert.rejects(awaitSourceOperator({ ...options, enableExternalDispatch: true,
+    envelope: { ...envelope, expiration: new Date(time + 419999).toISOString() } }), /lifetime-insufficient/);
+  assert.equal(calls, 0);
+});
+
+test('await-source discovers one active run and public artifact then builds the real config once without dispatching source', async () => {
+  const { plan, envelope, source, time } = awaitFixture();
+  const original = JSON.stringify(plan);
+  let clock = time;
+  let lists = 0;
+  let artifacts = 0;
+  let runs = 0;
+  let ready = 0;
+  const seen = [];
+  const result = await awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => clock,
+    onReady: () => { ready += 1; assert.equal(lists, 1); assert.equal(artifacts, 0); },
+    sleep: async delay => { clock += delay; },
+    fetchImpl: async (url, options) => {
+      seen.push(url); assert.equal(options.method, 'GET'); assert.equal(options.redirect, 'error');
+      assert.equal(options.headers.authorization, 'Bearer sentinel-github');
+      if (url.includes('/artifacts?')) {
+        artifacts += 1;
+        return jsonResponse(url, { total_count: artifacts === 1 ? 0 : 1,
+          artifacts: artifacts === 1 ? [] : [{ name: 'sp08-a303-csr-123-1', expired: false }] });
+      }
+      lists += 1;
+      return jsonResponse(url, { total_count: lists <= 2 ? 0 : 1,
+        workflow_runs: lists <= 2 ? [] : [{ ...source, status: lists === 3 ? 'queued' : 'in_progress' }] });
+    }, run: async (config, secrets, options) => {
+      runs += 1; assert.equal(checkOnly(config).readyToDispatch, false);
+      assert.equal(config.sourceRunId, '123'); assert.equal(config.notBeforeMs, time);
+      assert.equal(config.notAfterMs, clock); assert.equal(secrets.credential.token, 'sentinel-sts');
+      assert.equal(options.enableExternalDispatch, true);
+      assert.equal(Object.hasOwn(JSON.parse(config.serverInput), 'sourceBinding'), false);
+      return { state: 'tls-complete', sourceRunId: config.sourceRunId };
+    } });
+  assert.equal(result.sourceRunId, '123'); assert.equal(runs, 1);
+  assert.equal(lists, 5); assert.equal(artifacts, 2); assert.equal(ready, 1); assert.equal(JSON.stringify(plan), original);
+  assert.equal(seen.every(url => url.startsWith('https://api.github.com/repos/owner/repo/actions/')), true);
+});
+
+test('await-source rejects ambiguous, completed or retried sources and malformed artifacts without operator calls', async () => {
+  const { plan, envelope, source, time } = awaitFixture();
+  for (const candidates of [[source, { ...source, id: 124 }], [{ ...source, status: 'completed', conclusion: 'failure' }], [{ ...source, run_attempt: 2 }]]) {
+    let writes = 0;
+    let calls = 0;
+    await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => time,
+      fetchImpl: async url => { calls += 1; return jsonResponse(url,
+        { total_count: calls === 1 ? 0 : candidates.length, workflow_runs: calls === 1 ? [] : candidates }); },
+      run: async () => { writes += 1; } }), /await-source-(ambiguous|run-invalid)/);
+    assert.equal(writes, 0);
+  }
+  let calls = 0;
+  await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => time,
+    fetchImpl: async url => { calls += 1; return jsonResponse(url, calls === 1 ? { total_count: 0, workflow_runs: [] } : url.includes('/artifacts?')
+      ? { total_count: 1, artifacts: [{ name: 'other', expired: false }] }
+      : { total_count: 1, workflow_runs: [source] }); }, run: async () => assert.fail('must-not-run') }), /artifact-invalid/);
+});
+
+test('await-source ignores old or mismatched identities, has twelve-poll and hard-clock bounds, and never retries failed GETs', async () => {
+  const { plan, envelope, source, time } = awaitFixture();
+  let clock = time;
+  let calls = 0;
+  const stale = { ...source, created_at: new Date(time - 1).toISOString() };
+  await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => clock,
+    sleep: async delay => { clock += delay; }, fetchImpl: async url => { calls += 1; return jsonResponse(url,
+      { total_count: 2, workflow_runs: [stale, { ...source, head_sha: 'b'.repeat(40) }] }); },
+    run: async () => assert.fail('must-not-run') }), /poll-limit/);
+  assert.equal(calls, 13); assert.equal(clock - time, 55000);
+  calls = 0;
+  await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => time,
+    fetchImpl: async url => { calls += 1; return jsonResponse(url, {}, 503); } }), /response-invalid/);
+  assert.equal(calls, 1);
+  const shortPlan = { ...plan, watchUntilMs: time + 25 };
+  await assert.rejects(awaitSourceOperator({ plan: shortPlan, envelope, enableExternalDispatch: true, now: () => time,
+    fetchImpl: async () => new Promise(() => {}) }), /request-unknown/);
+});
+
+test('await-source bounds response bodies and rejects pagination, foreign URLs and stalled streams before readiness', async () => {
+  const { plan, envelope, time } = awaitFixture();
+  const factories = [
+    url => jsonResponse(url, {}, 200, { link: '<https://api.github.com/page=2>; rel="next"' }),
+    () => jsonResponse('https://example.invalid', {}),
+    url => jsonResponse(url, 'x'.repeat(65537)),
+  ];
+  for (const factory of factories) {
+    let calls = 0; let ready = 0;
+    await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => time,
+      onReady: () => { ready += 1; }, fetchImpl: async url => { calls += 1; return factory(url); } }), /await-source-response/);
+    assert.equal(calls, 1); assert.equal(ready, 0);
+  }
+  let ready = 0;
+  await assert.rejects(awaitSourceOperator({ plan: { ...plan, watchUntilMs: time + 25 }, envelope,
+    enableExternalDispatch: true, now: () => time, onReady: () => { ready += 1; }, fetchImpl: async url => {
+      const response = new Response(new ReadableStream({ start() {} }));
+      Object.defineProperty(response, 'url', { value: url }); return response;
+    } }), /request-unknown/);
+  assert.equal(ready, 0);
+});
+
+test('await-source excludes the initial run IDs and never switches from a pinned source to a replacement', async () => {
+  const { plan, envelope, source, time } = awaitFixture();
+  let clock = time; let lists = 0;
+  await assert.rejects(awaitSourceOperator({ plan, envelope, enableExternalDispatch: true, now: () => clock,
+    sleep: async delay => { clock += delay; }, fetchImpl: async url => {
+      lists += 1;
+      // The baseline run has the same second timestamp but must not be adopted.
+      const item = lists === 1 ? source : { ...source, id: lists === 2 ? 124 : 125, status: 'queued' };
+      return jsonResponse(url, { total_count: 1, workflow_runs: [item] });
+    }, run: async () => assert.fail('must-not-run') }), /run-invalid/);
+  assert.equal(lists, 3);
+});
 
 test('public policies bind one explicit SHA and pass existing runner context checks without dispatch', () => {
   const now = Date.now();

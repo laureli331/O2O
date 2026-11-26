@@ -2,6 +2,7 @@
 
 ## SP08/A3-03 11月25日晚间准备与回收（2026-11-26补录）
 
+- 11月26日连续入口补齐（本地合成验证范围）：新增 `await-source-operator.cjs`，在原 Windows 启动器增加 `-AwaitSource`，提前在本机输入凭据。校验公开计划/有效期并读取来源运行基线后才显示等待就绪；在显式60秒上限内只读识别唯一新 caller 和公开工件，再在内存生成配置、调用既有 `runOperatorEntry` 重新验证实际来源材料。复用原凭据 stdin 管道、配置生成器、SDK/生命周期和合成证书测试，不增加第三方依赖，不写 GitHub 变量，不派发 source。接口已对照 [GitHub运行列表](https://docs.github.com/en/rest/actions/workflow-runs#list-workflow-runs-for-a-workflow) 与 [工件列表](https://docs.github.com/en/rest/actions/artifacts#list-workflow-run-artifacts)；未实际联网验证该新模式。运行与工件发现不是来源信任证明，60秒发现预算及后续5分钟/回收余量也不是云端完成保证；费用、部署、授权和真实 TLS 仍待明确批准与实测。详细字段、就绪信号及边界见 `tools/sp08-a3-03-github-oidc-smoke/operator-entry.md`。
 - 来源：用户提供的控制台截图、命令输出和公开文本，非本工具自动化独立读取云端资源。对应本轮 CVM `ins-jzia3btz`、系统盘 `disk-e7de2hev`、CLB `lb-mh8sn34x`；不得与11月24日资源混用。CVM 页面创建时间为北京时间2026-11-25 20:49:11，系统盘页面为20:48:54；定时销毁最终保存为21:45:00。实际释放时刻及最终账单/结算状态未知。
 - 准备结果：用户执行只读网卡命令成功，输出 `eth0 172.17.16.4/20`；bootstrap 结果显示 Node `v24.22.3`，归档 SHA-256 `4f2b175a6d53a5c617a80dba2676238a0688cef28c6da4eba35c7d844e66fcfb`。公开证书本地检查通过 CA 指纹、签名、serverAuth 和当轮目标 IP SAN 校验；本轮 CA SHA-256 为 `c8c7761d373b6f6831684a3a89806f658cf9fbf5e9bdf6dceaf2910b37500c62`。版本化代码安装命令截图显示 ExitCode 0、Node 版本及4个源码摘要与本地规范化 LF 源码一致。这些是准备结果，不是实际 TLS 联通证据；证书私钥未提供给本地。
 - CLB 截图显示 TCP 8443 监听器已创建，用户选择 `172.17.16.4:8443`、权重10；没有取得提交后的后端列表截图，后端绑定最终保存状态未核实。公开 JWKS 在本机生成并准备了传入脚本，但未收到其云端执行结果，不记为已安装。

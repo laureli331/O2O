@@ -6,6 +6,25 @@ using System.Threading.Tasks;
 
 public static class BoundedProcessOutput
 {
+    public static async Task ReadAwaitReadyAsync(Stream stream)
+    {
+        byte[] expected = Encoding.ASCII.GetBytes("A303_AWAIT_SOURCE_READY\n");
+        byte[] buffer = new byte[expected.Length];
+        try
+        {
+            int offset = 0;
+            while (offset < expected.Length)
+            {
+                int count = await stream.ReadAsync(buffer, offset, expected.Length - offset).ConfigureAwait(false);
+                if (count == 0) throw new InvalidDataException("child-not-ready");
+                offset += count;
+            }
+            for (int i = 0; i < expected.Length; i++)
+                if (buffer[i] != expected[i]) throw new InvalidDataException("child-not-ready");
+        }
+        finally { Array.Clear(buffer, 0, buffer.Length); }
+    }
+
     public static async Task<string> DrainAsync(Stream stream, int maxBytes, Process process)
     {
         byte[] buffer = new byte[1024];

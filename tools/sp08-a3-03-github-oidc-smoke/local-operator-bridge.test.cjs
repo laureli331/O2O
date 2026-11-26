@@ -23,10 +23,12 @@ function prepareFixture(t) {
   const childPath = path.join(dir, 'child-started.txt');
   const fake = String.raw`'use strict';
 const fs = require('node:fs');
-if (process.argv[2] === '--check-only') {
+if (['--check-only', '--check-await-source'].includes(process.argv[2])) {
   const cfg = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
   process.exitCode = cfg.valid === true ? 0 : 4;
-} else if (process.argv[2] === '--run-once') {
+} else if (['--run-once', '--await-source'].includes(process.argv[2])) {
+  if (process.argv[2] === '--await-source') process.stdout.write(JSON.parse(fs.readFileSync(process.argv[3], 'utf8')).mode === 'bad-ready'
+    ? 'SENTINEL-BAD-READY.........\n' : 'A303_AWAIT_SOURCE_READY\n');
   fs.writeFileSync(${JSON.stringify(childPath)}, 'started');
   let input = '';
   process.stdin.setEncoding('utf8');
@@ -64,7 +66,9 @@ function Read-Host {
   ConvertTo-SecureString -String $value -AsPlainText -Force
 }
 $scriptPath = Join-Path $PSScriptRoot 'start-local-operator.ps1'
-if ($Mode -in @('success','fail','cancel')) { & $scriptPath -ConfigPath $ConfigPath -NodePath $NodePath -RunOnce }
+if ($Mode -in @('watch','watch-bad-ready')) { & $scriptPath -ConfigPath $ConfigPath -NodePath $NodePath -RunOnce -AwaitSource }
+elseif ($Mode -eq 'watch-check') { & $scriptPath -ConfigPath $ConfigPath -NodePath $NodePath -AwaitSource }
+elseif ($Mode -in @('success','fail','cancel')) { & $scriptPath -ConfigPath $ConfigPath -NodePath $NodePath -RunOnce }
 else { & $scriptPath -ConfigPath $ConfigPath -NodePath $NodePath }
 Write-Output "PROMPTCOUNT=$global:promptCount"
 `;
@@ -84,6 +88,23 @@ test('Windows PowerShell bridge stays offline, prompts only after check, maps di
   assert.equal(defaultRun.status, 0, defaultRun.stderr);
   assert.match(defaultRun.stdout, /"state":"check-only"/, defaultRun.stderr);
   assert.equal(fs.existsSync(fixture.childPath), false);
+
+  const watchCheck = runBridge(fixture, 'watch-check');
+  assert.equal(watchCheck.status, 0, watchCheck.stderr);
+  assert.match(watchCheck.stdout, /PROMPTCOUNT=0/);
+  assert.equal(fs.existsSync(fixture.childPath), false);
+  const watch = runBridge(fixture, 'watch');
+  assert.equal(watch.status, 0, watch.stderr);
+  assert.match(watch.stdout, /"state":"waiting-for-source","readyToDispatch":false/);
+  assert.match(watch.stdout, /"sourceRunId":"123"/);
+  assert.equal(`${watch.stdout}${watch.stderr}`.includes('sentinel'), false);
+  fs.unlinkSync(fixture.childPath);
+  const badReadyPath = fixture.write('bad-ready.json', JSON.stringify({ valid: true, mode: 'bad-ready' }));
+  const badReady = runBridge(fixture, 'watch-bad-ready', badReadyPath);
+  assert.match(`${badReady.stdout}${badReady.stderr}`, /本地启动未完成/);
+  assert.equal(`${badReady.stdout}${badReady.stderr}`.includes('SENTINEL'), false);
+  assert.equal(badReady.stdout.includes('waiting-for-source'), false);
+  fs.unlinkSync(fixture.childPath);
 
   const badConfig = fixture.write('bad-config.json', '{invalid');
   const bad = runBridge(fixture, 'default', badConfig);
