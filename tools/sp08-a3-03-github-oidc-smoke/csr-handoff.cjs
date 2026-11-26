@@ -62,9 +62,14 @@ async function waitForReturnRun({ token, repository, workflowId, expected, budge
   if (typeof token !== 'string' || token.length < 1 || token.length > 4096 || typeof repository !== 'string' || !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository) || !/^[A-Za-z0-9_.-]+$/.test(workflowId) || typeof fetchImpl !== 'function') fail('poll-configuration-invalid');
   const origin = 'https://api.github.com';
   const endpoint = `${origin}/repos/${repository}/actions/workflows/${workflowId}/runs?event=workflow_dispatch&status=completed&per_page=${bounded.maxCandidates}&page=1`;
+  const validateResponse = (response) => {
+    if (!response || response.status !== 200 || response.url && new URL(response.url).origin !== origin) fail('poll-http-failed');
+    if (typeof response.json !== 'function') fail('poll-response-invalid');
+  };
   const request = async () => {
     if (deadline === undefined) {
       const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', signal: AbortSignal.timeout(bounded.requestTimeoutMs), headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
+      validateResponse(response);
       return { response, body: await response.json() };
     }
     const remaining = deadline - now();
@@ -75,7 +80,7 @@ async function waitForReturnRun({ token, repository, workflowId, expected, budge
       const pending = Promise.resolve().then(async () => {
         const response = await fetchImpl(endpoint, { method: 'GET', redirect: 'error', signal: controller.signal, headers: { accept: 'application/vnd.github+json', authorization: `Bearer ${token}`, 'x-github-api-version': '2022-11-28' } });
         if (now() >= deadline) fail('poll-deadline-unknown');
-        if (!response || typeof response.json !== 'function') fail('poll-response-invalid');
+        validateResponse(response);
         const body = await response.json();
         if (now() >= deadline) fail('poll-deadline-unknown');
         return { response, body };

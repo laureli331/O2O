@@ -39,6 +39,26 @@ test('return-run polling uses fixed API origin, bounded GETs and rejects redirec
   await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml', expected, budget, fetchImpl: async (url) => ({ status: 200, url, headers: { get: () => null }, json: async () => ({ total_count: 0, workflow_runs: [] }) }), sleep: async () => {} }), /return-run-timeout/);
 });
 
+test('rejects HTTP failures and foreign origins before reading a body or retrying in either deadline mode', async () => {
+  for (const bounded of [false, true]) {
+    for (const response of [null, { status: 302 }, { status: 503 }, { status: 200, url: 'https://example.invalid/runs' }]) {
+      let calls = 0;
+      let reads = 0;
+      const fetchImpl = async () => {
+        calls += 1;
+        return response && { ...response, json: async () => { reads += 1; throw new Error('must-not-parse'); } };
+      };
+      await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml',
+        expected, budget, fetchImpl, ...(bounded ? { deadline: 10000, now: () => 1000 } : {}) }),
+      bounded ? /poll-deadline-unknown/ : /poll-http-failed/);
+      assert.equal(calls, 1);
+      assert.equal(reads, 0);
+    }
+  }
+  await assert.rejects(waitForReturnRun({ token: 'mock-token', repository: 'org/repo', workflowId: 'return.yml',
+    expected, budget, fetchImpl: async () => ({ status: 200 }) }), /poll-response-invalid/);
+});
+
 test('poll schedule makes four bounded GETs at 0, 90, 180 and 270 seconds', async () => {
   const scheduleBudget = { ...budget, maxPolls: 4, maxPages: 1, maxWaitMs: 300000, pollDelaysMs: [0, 90000, 90000, 90000] };
   const observed = [];
